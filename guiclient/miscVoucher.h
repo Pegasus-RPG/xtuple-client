@@ -25,11 +25,18 @@ public:
     miscVoucher(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~miscVoucher();
 
+    Q_INVOKABLE virtual int id()   const;
+    Q_INVOKABLE virtual int mode() const;
+  
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sSave();
     virtual void sHandleVoucherNumber();
     virtual void sPopulateVendorInfo( int pVendid );
+    virtual void sNewCharacteristic();
+    virtual void sEditCharacteristic();
+    virtual void sDeleteCharacteristic();
+    virtual void sFillCharacteristic();
     virtual void sNewMiscDistribution();
     virtual void sEditMiscDistribution();
     virtual void sDeleteMiscDistribution();

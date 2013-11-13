@@ -48,13 +48,14 @@ class XTUPLEWIDGETS_EXPORT ProjectLineEdit : public CrmClusterLineEdit
       void setExtraClause(const QString &pExt);
       void setAllowedStatuses(const ProjectStatuses);
       void setType(enum ProjectType ptype);
+      void sCopy();
 
     protected:
       void buildExtraClause();
 
       QString          _prjExtraClause;
       ProjectStatuses  _allowedStatuses;
-      
+  
     private:
       enum ProjectType _type;
 

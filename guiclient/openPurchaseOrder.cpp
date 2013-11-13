@@ -24,11 +24,14 @@ openPurchaseOrder::openPurchaseOrder(QWidget* parent, const char* name, bool mod
 {
   setupUi(this);
 
-  connect(_select, SIGNAL(clicked()), this, SLOT(sSelect()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  _po->addColumn(tr("PO #"),        -1,  Qt::AlignLeft,   true,  "pohead_number");
-  _po->addColumn(tr("PO Date"),        -1,  Qt::AlignLeft,   true,  "pohead_orderdate");
-  _po->addColumn(tr("Created By"),        -1,  Qt::AlignLeft,   true,  "pohead_agent_username");
+  _select->setEnabled(false);
+  connect(_po,     SIGNAL(valid(bool)),       _select, SLOT(setEnabled(bool)));
+  connect(_po,     SIGNAL(itemSelected(int)), _select, SLOT(animateClick()));
+  connect(_select, SIGNAL(clicked()),         this,    SLOT(sSelect()));
+  connect(_close,  SIGNAL(clicked()),         this,    SLOT(reject()));
+  _po->addColumn(tr("PO #"),         -1,  Qt::AlignLeft,   true,  "pohead_number");
+  _po->addColumn(tr("PO Date"),      -1,  Qt::AlignLeft,   true,  "pohead_orderdate");
+  _po->addColumn(tr("Created By"),   -1,  Qt::AlignLeft,   true,  "pohead_agent_username");
 }
 
 openPurchaseOrder::~openPurchaseOrder()

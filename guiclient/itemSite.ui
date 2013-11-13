@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>714</width>
-    <height>619</height>
+    <width>757</width>
+    <height>625</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -827,6 +827,9 @@ to be bound by its terms.</comment>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
+                   <property name="allowNull">
+                    <bool>true</bool>
+                   </property>
                   </widget>
                  </item>
                  <item>
@@ -874,6 +877,9 @@ to be bound by its terms.</comment>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
+                   <property name="allowNull">
+                    <bool>true</bool>
+                   </property>
                   </widget>
                  </item>
                  <item>
@@ -920,6 +926,9 @@ to be bound by its terms.</comment>
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="allowNull">
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>

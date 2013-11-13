@@ -143,7 +143,7 @@ enum SetResponse empGroup::set(const ParameterList &pParams)
   }
   _name->setEnabled(_mode == cNew);
   _descrip->setEnabled(editing);
-  _new->setEnabled(editing);
+  _new->setEnabled(_mode == cEdit);
 
   return NoError;
 }

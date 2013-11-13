@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>846</width>
-    <height>849</height>
+    <width>945</width>
+    <height>866</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,8 +26,8 @@ to be bound by its terms.</comment>
   <property name="windowTitle">
    <string>Sales Order Item</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
     <layout class="QGridLayout">
      <property name="margin">
       <number>12</number>
@@ -251,7 +251,7 @@ to be bound by its terms.</comment>
           <property name="spacing">
            <number>5</number>
           </property>
-          <item row="0" column="0" colspan="2">
+          <item row="0" column="0" colspan="3">
            <widget class="ItemCluster" name="_item">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -264,7 +264,67 @@ to be bound by its terms.</comment>
             </property>
            </widget>
           </item>
-          <item row="0" column="2" rowspan="3">
+          <item row="2" column="0" colspan="3">
+           <layout class="QHBoxLayout">
+            <item>
+             <widget class="QCheckBox" name="_sub">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>Su&amp;bstitute for:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="ItemLineEdit" name="_subItem">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::StrongFocus</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="_subItemList">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string> ... </string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="_customerPNLit">
+            <property name="text">
+             <string>Customer P/N:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3" rowspan="3">
            <layout class="QGridLayout">
             <item row="0" column="0">
              <widget class="QLabel" name="_warehouseLit">
@@ -318,83 +378,17 @@ to be bound by its terms.</comment>
               </property>
              </spacer>
             </item>
+            <item row="0" column="2">
+             <widget class="XCheckBox" name="_reserveOnSave">
+              <property name="text">
+               <string>Reserve On Save</string>
+              </property>
+             </widget>
+            </item>
            </layout>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="_customerPNLit">
-            <property name="text">
-             <string>Customer P/N:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLabel" name="_customerPN">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" colspan="2">
-           <layout class="QHBoxLayout">
-            <item>
-             <widget class="QCheckBox" name="_sub">
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text">
-               <string>Su&amp;bstitute for:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="ItemLineEdit" name="_subItem">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::StrongFocus</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="_subItemList">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text">
-               <string> ... </string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
+           <widget class="XLineEdit" name="_customerPN"/>
           </item>
          </layout>
         </widget>
@@ -850,22 +844,22 @@ to be bound by its terms.</comment>
               </widget>
              </item>
              <item>
+              <widget class="QRadioButton" name="_supplyOrderButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Supply Order</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QRadioButton" name="_itemSourcesButton">
                <property name="enabled">
                 <bool>false</bool>
                </property>
                <property name="text">
                 <string>Item Sources</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="_dependenciesButton">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>Dependencies</string>
                </property>
               </widget>
              </item>
@@ -900,8 +894,8 @@ to be bound by its terms.</comment>
               <number>0</number>
              </property>
              <widget class="QWidget" name="_inventoryPage">
-              <layout class="QGridLayout">
-               <item row="0" column="0">
+              <layout class="QHBoxLayout" name="horizontalLayout_8">
+               <item>
                 <widget class="QGroupBox" name="_availabilityGroup">
                  <property name="enabled">
                   <bool>true</bool>
@@ -923,6 +917,16 @@ to be bound by its terms.</comment>
                    <layout class="QVBoxLayout">
                     <item>
                      <layout class="QGridLayout">
+                      <item row="5" column="0">
+                       <widget class="QLabel" name="_reservedLit">
+                        <property name="text">
+                         <string>Reserved:</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
                       <item row="0" column="0">
                        <widget class="QLabel" name="_onHandLit">
                         <property name="text">
@@ -1038,7 +1042,7 @@ to be bound by its terms.</comment>
                         </property>
                        </widget>
                       </item>
-                      <item row="5" column="0">
+                      <item row="7" column="0">
                        <widget class="QLabel" name="_leadtimeLit">
                         <property name="text">
                          <string>Lead Time:</string>
@@ -1048,7 +1052,7 @@ to be bound by its terms.</comment>
                         </property>
                        </widget>
                       </item>
-                      <item row="5" column="1">
+                      <item row="7" column="1">
                        <widget class="QLabel" name="_leadtime">
                         <property name="minimumSize">
                          <size>
@@ -1056,6 +1060,30 @@ to be bound by its terms.</comment>
                           <height>0</height>
                          </size>
                         </property>
+                        <property name="alignment">
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="6" column="0">
+                       <widget class="QLabel" name="_reservableLit">
+                        <property name="text">
+                         <string>Reservable:</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="5" column="1">
+                       <widget class="XLabel" name="_reserved">
+                        <property name="alignment">
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="6" column="1">
+                       <widget class="XLabel" name="_reservable">
                         <property name="alignment">
                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                         </property>
@@ -1078,29 +1106,62 @@ to be bound by its terms.</comment>
                     </item>
                    </layout>
                   </item>
-                  <item row="0" column="1">
-                   <spacer>
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>0</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
                  </layout>
                 </widget>
                </item>
-               <item row="0" column="1">
+               <item>
+                <layout class="QVBoxLayout">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="XCheckBox" name="_showIndented">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
+                   </property>
+                   <property name="text">
+                    <string>Show dependencies as Indented BOM</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="XTreeWidget" name="_availability">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
+                   </property>
+                   <property name="rootIsDecorated">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="_supplyOrderPage">
+              <layout class="QHBoxLayout" name="horizontalLayout_10">
+               <item>
                 <widget class="QGroupBox" name="_createSupplyOrder">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                   <horstretch>1</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="title">
                   <string>Create Supply Order</string>
                  </property>
                  <property name="checkable">
                   <bool>true</bool>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
                  </property>
                  <layout class="QGridLayout">
                   <item row="0" column="0">
@@ -1109,15 +1170,29 @@ to be bound by its terms.</comment>
                      <layout class="QVBoxLayout">
                       <item>
                        <layout class="QGridLayout">
-                        <item row="2" column="0">
-                         <widget class="QLabel" name="_supplyOrderQtyLit">
-                          <property name="text">
-                           <string>Qty.:</string>
-                          </property>
-                          <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                         </widget>
+                        <item row="2" column="1">
+                         <layout class="QHBoxLayout" name="horizontalLayout_7">
+                          <item>
+                           <widget class="XLineEdit" name="_supplyOrderQty">
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="horizontalSpacer_2">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
                         </item>
                         <item row="0" column="0">
                          <widget class="QLabel" name="_supplyOrderLit">
@@ -1187,7 +1262,7 @@ to be bound by its terms.</comment>
                           <item>
                            <widget class="DLineEdit" name="_supplyOrderDueDate">
                             <property name="enabled">
-                             <bool>true</bool>
+                             <bool>false</bool>
                             </property>
                            </widget>
                           </item>
@@ -1318,29 +1393,22 @@ to be bound by its terms.</comment>
                           </property>
                          </widget>
                         </item>
-                        <item row="2" column="1">
-                         <layout class="QHBoxLayout" name="horizontalLayout_7">
-                          <item>
-                           <widget class="XLineEdit" name="_supplyOrderQty">
-                            <property name="alignment">
-                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <spacer name="horizontalSpacer_2">
-                            <property name="orientation">
-                             <enum>Qt::Horizontal</enum>
-                            </property>
-                            <property name="sizeHint" stdset="0">
-                             <size>
-                              <width>40</width>
-                              <height>20</height>
-                             </size>
-                            </property>
-                           </spacer>
-                          </item>
-                         </layout>
+                        <item row="2" column="0">
+                         <widget class="QLabel" name="_supplyOrderQtyLit">
+                          <property name="text">
+                           <string>Qty.:</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="6" column="1">
+                         <widget class="QCheckBox" name="_supplyRollupPrices">
+                          <property name="text">
+                           <string>Rollup Prices</string>
+                          </property>
+                         </widget>
                         </item>
                        </layout>
                       </item>
@@ -1359,22 +1427,100 @@ to be bound by its terms.</comment>
                       </item>
                      </layout>
                     </item>
-                    <item>
-                     <spacer>
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>0</width>
-                        <height>121</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
                    </layout>
                   </item>
                  </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QStackedWidget" name="_supplyOrderStack">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="currentIndex">
+                  <number>3</number>
+                 </property>
+                 <widget class="QWidget" name="_workOrderPage">
+                  <layout class="QVBoxLayout" name="verticalLayout_7">
+                   <item>
+                    <layout class="QVBoxLayout" name="verticalLayout_5">
+                     <item>
+                      <widget class="QLabel" name="_woListLit">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="text">
+                        <string>W/O Materials and Operations</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_9">
+                       <item>
+                        <widget class="XTreeWidget" name="_woIndentedList"/>
+                       </item>
+                       <item>
+                        <layout class="QVBoxLayout" name="verticalLayout_6">
+                         <item>
+                          <widget class="QPushButton" name="_supplyWoNewMatl">
+                           <property name="enabled">
+                            <bool>true</bool>
+                           </property>
+                           <property name="text">
+                            <string>New &amp;Matl.</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QPushButton" name="_supplyWoEdit">
+                           <property name="enabled">
+                            <bool>false</bool>
+                           </property>
+                           <property name="text">
+                            <string>Edit</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QPushButton" name="_supplyWoDelete">
+                           <property name="enabled">
+                            <bool>false</bool>
+                           </property>
+                           <property name="text">
+                            <string>Delete</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <spacer name="verticalSpacer">
+                           <property name="orientation">
+                            <enum>Qt::Vertical</enum>
+                           </property>
+                           <property name="sizeHint" stdset="0">
+                            <size>
+                             <width>20</width>
+                             <height>17</height>
+                            </size>
+                           </property>
+                          </spacer>
+                         </item>
+                        </layout>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="_purchaseOrderPage"/>
+                 <widget class="QWidget" name="_purchaseRequestPage"/>
+                 <widget class="QWidget" name="_blankOrderPage"/>
                 </widget>
                </item>
               </layout>
@@ -1387,43 +1533,6 @@ to be bound by its terms.</comment>
                   <bool>false</bool>
                  </property>
                 </widget>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="_dependenciesPage">
-              <layout class="QGridLayout">
-               <item row="0" column="0">
-                <layout class="QVBoxLayout">
-                 <property name="spacing">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <widget class="XCheckBox" name="_showIndented">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="focusPolicy">
-                    <enum>Qt::NoFocus</enum>
-                   </property>
-                   <property name="text">
-                    <string>Show dependencies as Indented BOM</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="XTreeWidget" name="_availability">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="focusPolicy">
-                    <enum>Qt::NoFocus</enum>
-                   </property>
-                   <property name="rootIsDecorated">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
                </item>
               </layout>
              </widget>
@@ -2063,6 +2172,7 @@ to be bound by its terms.</comment>
  <tabstops>
   <tabstop>_item</tabstop>
   <tabstop>_warehouse</tabstop>
+  <tabstop>_customerPN</tabstop>
   <tabstop>_subItem</tabstop>
   <tabstop>_qtyOrdered</tabstop>
   <tabstop>_qtyUOM</tabstop>
@@ -2075,7 +2185,6 @@ to be bound by its terms.</comment>
   <tabstop>_tabs</tabstop>
   <tabstop>_showAvailability</tabstop>
   <tabstop>_inventoryButton</tabstop>
-  <tabstop>_dependenciesButton</tabstop>
   <tabstop>_createSupplyOrder</tabstop>
   <tabstop>_supplyOrderQty</tabstop>
   <tabstop>_supplyOrderDueDate</tabstop>
@@ -2139,22 +2248,6 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>525</x>
      <y>92</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_item</sender>
-   <signal>aliasChanged(QString)</signal>
-   <receiver>_customerPN</receiver>
-   <slot>setText(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>39</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>349</x>
-     <y>153</y>
     </hint>
    </hints>
   </connection>
@@ -2401,7 +2494,7 @@ to be bound by its terms.</comment>
   <connection>
    <sender>_showAvailability</sender>
    <signal>toggled(bool)</signal>
-   <receiver>_dependenciesButton</receiver>
+   <receiver>_supplyOrderButton</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">

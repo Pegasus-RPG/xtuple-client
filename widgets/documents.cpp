@@ -38,38 +38,45 @@ const Documents::DocumentMap Documents::_documentMap[] =
   DocumentMap( Address,           "ADDR"),
   DocumentMap( BBOMHead,          "BBH" ),
   DocumentMap( BBOMItem,          "BBI" ),
-  DocumentMap( BOMHead,           "BMH" ),
+  DocumentMap( BOMHead,           "BMH",   "bomhead_id", "bom"           ),
   DocumentMap( BOMItem,           "BMI" ),
   DocumentMap( BOOHead,           "BOH" ),
   DocumentMap( BOOItem,           "BOI" ),
+  DocumentMap( CreditMemo,        "CM",    "cmhead_id",  "creditMemo"    ),
+  DocumentMap( CreditMemoItem,    "CMI" ),
   DocumentMap( CRMAccount,        "CRMA",  "crmacct_id", "crmaccount"    ),
   DocumentMap( Contact,           "T",     "cntct_id",   "contact"       ),
   DocumentMap( Contract,          "CNTR",  "contrct_id", "contrct"       ),
   DocumentMap( Customer,          "C",     "cust_id",    "customer"      ),
   DocumentMap( Employee,          "EMP",   "emp_id",     "employee"      ),
   DocumentMap( Incident,          "INCDT", "incdt_id",   "incident"      ),
+  DocumentMap( Invoice,           "INV",   "invchead_id","invoice"       ),
+  DocumentMap( InvoiceItem,       "INVI"),
   DocumentMap( Item,              "I",     "item_id",    "item"          ),
   DocumentMap( ItemSite,          "IS"  ),
-  DocumentMap( ItemSource,        "IR"  ),
+  DocumentMap( ItemSource,        "IR",    "itemsrc_id", "itemSource"    ),
   DocumentMap( Location,          "L"   ),
-  DocumentMap( LotSerial,         "LS"   ),
+  DocumentMap( LotSerial,         "LS",    "ls_id",      "lotSerial"     ),
   DocumentMap( Opportunity,       "OPP",   "ophead_id",  "opportunity"   ),
   DocumentMap( Project,           "J",     "prj_id",     "project"       ),
   DocumentMap( PurchaseOrder,     "P",     "pohead_id",  "purchaseOrder" ),
   DocumentMap( PurchaseOrderItem, "PI"  ),
-  DocumentMap( ReturnAuth,        "RA"  ),
+  DocumentMap( ReturnAuth,        "RA",    "rahead_id",  "returnAuthorization"  ),
   DocumentMap( ReturnAuthItem,    "RI"  ),
-  DocumentMap( Quote,             "Q",     "quhead_id",   "salesOrder"    ),
+  DocumentMap( Quote,             "Q",     "quhead_id",  "salesOrder"    ),
   DocumentMap( QuoteItem,         "QI"  ),
-  DocumentMap( SalesOrder,        "S",    "sohead_id",   "salesOrder"    ),
+  DocumentMap( SalesOrder,        "S",     "sohead_id",  "salesOrder"    ),
   DocumentMap( SalesOrderItem,    "SI"  ),
+  DocumentMap( ShipTo,            "SHP",   "shipto_id",  "shipTo"        ),
   DocumentMap( TimeExpense,       "TE"  ),
-  DocumentMap( Todo,              "TODO", "todoitem_id", "todoItem"      ),
-  DocumentMap( TransferOrder,     "TO"  ),
+  DocumentMap( Todo,              "TODO",  "todoitem_id","todoItem"      ),
+  DocumentMap( TransferOrder,     "TO",    "tohead_id",  "transferOrder" ),
   DocumentMap( TransferOrderItem, "TI"  ),
-  DocumentMap( Vendor,            "V",    "vend_id",     "vendor"        ),
+  DocumentMap( Vendor,            "V",     "vend_id",    "vendor"        ),
+  DocumentMap( Voucher,           "VCH",   "vohead_id",  "voucher"        ),
   DocumentMap( Warehouse,         "WH"  ),
-  DocumentMap( WorkOrder,         "W",    "wo_id",       "workOrder"     ),
+  DocumentMap( WorkOrder,         "W",     "wo_id",      "workOrder"     ),
+  DocumentMap( ProjectTask,       "TASK",  "prjtask_id", "projectTask"   ),
 };
 
 GuiClientInterface* Documents::_guiClientInterface = 0;
@@ -474,6 +481,7 @@ void Documents::refresh()
               " WHEN (target_type='I') THEN :item "
               " WHEN (target_type='OPP') THEN :opp "
               " WHEN (target_type='J') THEN :project "
+              " WHEN (target_type='TASK') THEN :projecttask "
               " WHEN (target_type='P') THEN :po "
               " WHEN (target_type='S') THEN :so "
               " WHEN (target_type='Q') THEN :quote "
@@ -509,6 +517,7 @@ void Documents::refresh()
   query.bindValue(":todo", tr("To-Do"));
   query.bindValue(":task", tr("Task"));
   query.bindValue(":project", tr("Project"));
+  query.bindValue(":projecttask", tr("Project Task")); 
   query.bindValue(":item", tr("Item"));
   query.bindValue(":crma", tr("CRM Account"));
   query.bindValue(":cust", tr("Customer"));

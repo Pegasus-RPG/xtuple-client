@@ -38,6 +38,14 @@ public:
                Items         = 0x00000040,
                LotSerial     = 0x00000080,
                Opportunities = 0x00000100,
+               Quotes         = 0x00000200,
+               SalesOrders    = 0x00000400,
+               Invoices       = 0x00000800,
+               Vendors        = 0x00001000,
+               PurchaseOrders = 0x00002000,
+               Vouchers       = 0x00004000,
+               Projects       = 0x00008000,
+    	       Tasks  	      = 0x00010000	
              };
 
 public slots:

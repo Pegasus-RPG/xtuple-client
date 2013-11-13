@@ -14,8 +14,13 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QVariant>
+#include <QToolBar>
+#include <QToolButton>
+#include <metasql.h>
 
 #include "guiclient.h"
+#include "project.h"
+#include "task.h"
 #include "salesOrder.h"
 #include "salesOrderItem.h"
 #include "invoice.h"
@@ -41,11 +46,48 @@ dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char
   list()->addColumn(tr("Status"),      _orderColumn, Qt::AlignLeft,   true,  "status"   );
   list()->addColumn(tr("Item #"),      _itemColumn,  Qt::AlignLeft,   true,  "item"   );
   list()->addColumn(tr("Description"), -1          , Qt::AlignLeft,   true,  "descrip" );
+  list()->addColumn(tr("Account/Customer"), -1          , Qt::AlignLeft,   true,  "customer" );
+  list()->addColumn(tr("Contact"), -1          , Qt::AlignLeft,   false,  "contact" );
+  list()->addColumn(tr("City"), -1          , Qt::AlignLeft,   false,  "city" );
+  list()->addColumn(tr("State"), -1          , Qt::AlignLeft,   false,  "state" );
   list()->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignRight,  true,  "qty"  );
   list()->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft,   true,  "uom"  );
   list()->addColumn(tr("Value"),      _qtyColumn,   Qt::AlignRight,  true,  "value"  );
 
+  list()->addColumn(tr("Due Date"),      _dateColumn,   Qt::AlignRight,  true,  "due"  );
+  list()->addColumn(tr("Assigned"),      _dateColumn,   Qt::AlignRight,  true,  "assigned"  );
+  list()->addColumn(tr("Started"),      _dateColumn,   Qt::AlignRight,  true,  "started"  );
+  list()->addColumn(tr("Completed"),      _dateColumn,   Qt::AlignRight,  true,  "completed"  );
+  list()->addColumn(tr("Hrs. Budget"),      _qtyColumn,   Qt::AlignRight,  true,  "hrs_budget"  );
+  list()->addColumn(tr("Hrs. Actual"),      _qtyColumn,   Qt::AlignRight,  true,  "hrs_actual"  );
+  list()->addColumn(tr("Hrs. Balance"),      _qtyColumn,   Qt::AlignRight,  true,  "hrs_balance"  );
+  list()->addColumn(tr("Exp. Budget"),      _priceColumn,   Qt::AlignRight,  true,  "exp_budget"  );
+  list()->addColumn(tr("Exp. Actual"),      _priceColumn,   Qt::AlignRight,  true,  "exp_actual"  );
+  list()->addColumn(tr("Exp. Balance"),      _priceColumn,   Qt::AlignRight,  true,  "exp_balance"  );
+
   list()->setPopulateLinear(true);
+
+  disconnect(newAction(), SIGNAL(triggered()), this, SLOT(sNew()));
+  connect(newAction(), SIGNAL(triggered()), this, SLOT(sNewProjectTask()));
+  connect(_showSo, SIGNAL(checked()), this, SLOT(sFillList()));
+  connect(_showPo, SIGNAL(checked()), this, SLOT(sFillList()));
+  connect(_showWo, SIGNAL(checked()), this, SLOT(sFillList()));
+
+  QToolButton * newBtn = (QToolButton*)toolBar()->widgetForAction(newAction());
+  newBtn->setPopupMode(QToolButton::MenuButtonPopup);
+  QAction *menuItem;
+  QMenu * newMenu = new QMenu;
+  menuItem = newMenu->addAction(tr("Task"), this, SLOT(sNewProjectTask()));
+  menuItem->setEnabled(_privileges->check("MaintainAllProjects"));
+  newMenu->addSeparator();
+  menuItem = newMenu->addAction(tr("Sales Order"), this, SLOT(sNewSalesOrder()));
+  menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
+  menuItem = newMenu->addAction(tr("Purchase Order"),   this, SLOT(sNewPurchaseOrder()));
+  menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
+  menuItem = newMenu->addAction(tr("Work Order"),   this, SLOT(sNewWorkOrder()));
+  menuItem->setEnabled(_privileges->check("MaintainWorkOrders"));
+  newBtn->setMenu(newMenu);
+
 }
 
 void dspOrderActivityByProject::languageChange()
@@ -54,7 +96,7 @@ void dspOrderActivityByProject::languageChange()
   retranslateUi(this);
 }
 
-enum SetResponse dspOrderActivityByProject::set(const ParameterList &pParams)
+enum SetResponse dspOrderActivityByProject::set(const ParameterList &pParams)	
 {
   XWidget::set(pParams);
 
@@ -77,6 +119,19 @@ enum SetResponse dspOrderActivityByProject::set(const ParameterList &pParams)
 void dspOrderActivityByProject::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int)
 {
   QAction *menuItem;
+
+  if(list()->altId() == 5)
+  {
+    menuItem = pMenu->addAction(tr("Edit Task..."), this, SLOT(sEdit()));
+    menuItem->setEnabled(_privileges->check("MaintainAllProjects") || _privileges->check("MaintainPersonalProjects"));
+
+    menuItem = pMenu->addAction(tr("View Task..."), this, SLOT(sView()));
+    menuItem->setEnabled(_privileges->check("MaintainAllProjects") ||
+			 _privileges->check("MaintainPersonalProjects") ||
+                         _privileges->check("ViewAllProjects")  ||
+			 _privileges->check("ViewPersonalProjects"));
+
+  }
 
   if(list()->altId() == 15)
   {
@@ -181,7 +236,17 @@ void dspOrderActivityByProject::sEdit()
 {
   ParameterList params;
 
-  if(list()->altId() == 15)
+  if(list()->altId() == 5)
+  {
+    params.append("mode", "edit");
+    params.append("prjtask_id", list()->id());
+
+    task newdlg(this, "", TRUE);
+    newdlg.set(params);
+    if (newdlg.exec() != XDialog::Rejected)
+     sFillList();
+  }
+  else if(list()->altId() == 15)
   {
     params.append("mode", "editQuote");
     params.append("quhead_id", list()->id());
@@ -263,7 +328,16 @@ void dspOrderActivityByProject::sView()
 {
   ParameterList params;
 
-  if(list()->altId() == 15)
+  if(list()->altId() == 5)
+  {
+    params.append("mode", "view");
+    params.append("prjtask_id", list()->id());
+
+    task newdlg(this, "", TRUE);
+    newdlg.set(params);
+    newdlg.exec();
+  }
+  else if(list()->altId() == 15)
   {
     params.append("mode", "viewQuote");
     params.append("quhead_id", list()->id());
@@ -352,7 +426,7 @@ void dspOrderActivityByProject::sView()
 
 bool dspOrderActivityByProject::setParams(ParameterList &params)
 {
-  if(_project->id() == -1)
+  if(_project->id() == -1 && _run)
   {
     QMessageBox::warning(this, tr("Project Required"),
       tr("You must specify a Project."));
@@ -366,6 +440,7 @@ bool dspOrderActivityByProject::setParams(ParameterList &params)
     list()->clear();
     return false;
   }
+
 
   params.append("prj_id", _project->id());
   
@@ -391,7 +466,9 @@ bool dspOrderActivityByProject::setParams(ParameterList &params)
   params.append("posted", tr("Posted"));
   params.append("exploded", tr("Exploded"));
   params.append("released", tr("Released"));
+  params.append("planning", tr("Concept"));
   params.append("inprocess", tr("In Process"));
+  params.append("complete", tr("Complete"));
   params.append("unreleased", tr("Unreleased"));
   params.append("total", tr("Total"));
 
@@ -424,3 +501,71 @@ void dspOrderActivityByProject::showEvent(QShowEvent *event)
     sFillList();
 }
 
+void dspOrderActivityByProject::sNewProjectTask()
+{
+
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("prj_id", _project->id());
+
+  XSqlQuery projectpopulate;
+  projectpopulate.prepare( "SELECT * "
+             "FROM prj "
+             "WHERE (prj_id=:prj_id);" );
+  projectpopulate.bindValue(":prj_id", _project->id());
+  projectpopulate.exec();
+  if (projectpopulate.first())
+  {   
+    params.append("prj_owner_username", projectpopulate.value("prj_owner_username").toString());
+    params.append("prj_username", projectpopulate.value("prj_username").toString());
+    params.append("prj_start_date", projectpopulate.value("prj_start_date").toDate());
+    params.append("prj_due_date",   projectpopulate.value("prj_due_date").toDate());
+    params.append("prj_assigned_date", projectpopulate.value("prj_assigned_date").toDate());
+    params.append("prj_completed_date", projectpopulate.value("prj_completed_date").toDate());
+  } else {
+    QMessageBox::warning(this, tr("Project Required"),
+      tr("Please save the Project first."));
+  }
+
+  task newdlg(this, "", TRUE);
+  newdlg.set(params);
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void dspOrderActivityByProject::sNewSalesOrder()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("prj_id", _project->id());
+
+  salesOrder *newdlg = new salesOrder(this);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+  sFillList();
+}
+
+
+void dspOrderActivityByProject::sNewPurchaseOrder()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("prj_id", _project->id());
+
+  purchaseOrder *newdlg = new purchaseOrder(this);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+  sFillList();
+}
+
+void dspOrderActivityByProject::sNewWorkOrder()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("prj_id", _project->id());
+
+  workOrder *newdlg = new workOrder(this);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+  sFillList();
+}

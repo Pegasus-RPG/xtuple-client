@@ -370,13 +370,15 @@ void enterPoReceipt::sPost()
       {
         XSqlQuery issue;
         issue.prepare("SELECT issueToShipping('SO', coitem_id, "
-                      "  (recv_qty * poitem_invvenduomratio / coitem_qty_invuomratio), "
+                      "  roundQty(item_fractional, (recv_qty * poitem_invvenduomratio / coitem_qty_invuomratio)), "
                       "  :itemlocseries, recv_gldistdate, invhist_id ) AS result, "
                       "  coitem_cohead_id, cohead_holdtype "
                       "FROM invhist, recv "
                       " JOIN poitem ON (poitem_id=recv_orderitem_id) "
                       " JOIN coitem ON (coitem_id=poitem_order_id AND poitem_order_type='S') "
                       " JOIN cohead ON (coitem_cohead_id=cohead_id) "
+                      " JOIN itemsite ON (itemsite_id=coitem_itemsite_id)"
+                      " JOIN item ON (item_id=itemsite_item_id)"
                       "WHERE ((invhist_series=:itemlocseries) "
                       " AND (recv_id=:id));");
         issue.bindValue(":itemlocseries", postLine.value("result").toInt());

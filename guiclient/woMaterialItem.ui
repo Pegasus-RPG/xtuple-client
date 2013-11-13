@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>488</width>
-    <height>588</height>
+    <height>610</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -156,81 +156,7 @@ to be bound by its terms.</comment>
           <layout class="QVBoxLayout">
            <item>
             <layout class="QGridLayout">
-             <item row="1" column="0">
-              <widget class="XLabel" name="_qtyPerLit">
-               <property name="text">
-                <string>Qty. Per:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="2">
-              <layout class="QHBoxLayout">
-               <item>
-                <widget class="XLineEdit" name="_qtyPer">
-                 <property name="alignment">
-                  <set>Qt::AlignRight</set>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item row="2" column="0">
-              <widget class="XLabel" name="_uomLit">
-               <property name="text">
-                <string>Issue UOM:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="2">
-              <layout class="QHBoxLayout">
-               <item>
-                <widget class="XComboBox" name="_uom"/>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item row="3" column="0">
-              <widget class="XLabel" name="_scrapLit">
-               <property name="text">
-                <string>Scrap %:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="2">
+             <item row="7" column="2">
               <layout class="QHBoxLayout">
                <item>
                 <widget class="XLineEdit" name="_scrap">
@@ -266,7 +192,37 @@ to be bound by its terms.</comment>
                </item>
               </layout>
              </item>
-             <item row="4" column="0">
+             <item row="6" column="2">
+              <layout class="QHBoxLayout">
+               <item>
+                <widget class="XComboBox" name="_uom"/>
+               </item>
+               <item>
+                <spacer>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item row="6" column="0">
+              <widget class="XLabel" name="_uomLit">
+               <property name="text">
+                <string>Issue UOM:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="0">
               <widget class="XLabel" name="_qtyRequiredLit">
                <property name="text">
                 <string>Qty. Required:</string>
@@ -276,7 +232,17 @@ to be bound by its terms.</comment>
                </property>
               </widget>
              </item>
-             <item row="4" column="2">
+             <item row="9" column="0">
+              <widget class="XLabel" name="_issueMethodLit">
+               <property name="text">
+                <string>Issue Method:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="2">
               <layout class="QHBoxLayout">
                <item>
                 <widget class="XLabel" name="_qtyRequired">
@@ -307,9 +273,19 @@ to be bound by its terms.</comment>
               </layout>
              </item>
              <item row="5" column="0">
-              <widget class="XLabel" name="_issueMethodLit">
+              <widget class="XLabel" name="_qtyPerLit">
                <property name="text">
-                <string>Issue Method:</string>
+                <string>Qty. Per:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="XLabel" name="_scrapLit">
+               <property name="text">
+                <string>Scrap %:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -317,6 +293,64 @@ to be bound by its terms.</comment>
               </widget>
              </item>
              <item row="5" column="2">
+              <layout class="QHBoxLayout">
+               <item>
+                <widget class="XLineEdit" name="_qtyPer">
+                 <property name="alignment">
+                  <set>Qt::AlignRight</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item row="4" column="2">
+              <layout class="QHBoxLayout" name="_2">
+               <item>
+                <widget class="XLineEdit" name="_qtyFxd">
+                 <property name="alignment">
+                  <set>Qt::AlignRight</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item row="4" column="0">
+              <widget class="XLabel" name="_fixedQtyLit">
+               <property name="text">
+                <string>Fixed Qty.:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="2">
               <layout class="QHBoxLayout">
                <property name="spacing">
                 <number>0</number>
@@ -381,27 +415,23 @@ to be bound by its terms.</comment>
                </item>
               </layout>
              </item>
-             <item row="0" column="0">
-              <widget class="XLabel" name="_fixedQtyLit">
+             <item row="3" column="0">
+              <widget class="QLabel" name="_priceLit">
                <property name="text">
-                <string>Fixed Qty.:</string>
+                <string>Price:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
-             <item row="0" column="2">
-              <layout class="QHBoxLayout" name="_2">
+             <item row="3" column="2">
+              <layout class="QHBoxLayout" name="horizontalLayout">
                <item>
-                <widget class="XLineEdit" name="_qtyFxd">
-                 <property name="alignment">
-                  <set>Qt::AlignRight</set>
-                 </property>
-                </widget>
+                <widget class="CurrCluster" name="_price"/>
                </item>
                <item>
-                <spacer>
+                <spacer name="horizontalSpacer_2">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -467,6 +497,16 @@ to be bound by its terms.</comment>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
+   <class>CurrCluster</class>
+   <extends>CurrDisplay</extends>
+   <header>currcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CurrDisplay</class>
+   <extends>QWidget</extends>
+   <header>currcluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
@@ -508,15 +548,17 @@ to be bound by its terms.</comment>
   <tabstop>_wo</tabstop>
   <tabstop>_item</tabstop>
   <tabstop>_tab</tabstop>
+  <tabstop>_price</tabstop>
   <tabstop>_qtyFxd</tabstop>
   <tabstop>_qtyPer</tabstop>
   <tabstop>_uom</tabstop>
   <tabstop>_scrap</tabstop>
   <tabstop>_issueMethod</tabstop>
-  <tabstop>_close</tabstop>
-  <tabstop>_save</tabstop>
+  <tabstop>_pickList</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_ref</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
  <connections>

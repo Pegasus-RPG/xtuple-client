@@ -59,6 +59,7 @@
        classcode_code
 FROM item
   JOIN classcode ON (item_classcode_id=classcode_id)
+  JOIN prodcat ON (item_prodcat_id=prodcat_id)
   JOIN uom iuom ON (item_inv_uom_id=iuom.uom_id)
   JOIN uom puom ON (item_price_uom_id=puom.uom_id)
 &lt;? if exists("itemgrp_id") ?>

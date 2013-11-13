@@ -28,10 +28,14 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void  clear();
     virtual void  setItemExtraClause();
     Q_INVOKABLE virtual int id() { return _soitemid; }
+    Q_INVOKABLE virtual int supplyid() { return _supplyOrderId; }
+    Q_INVOKABLE virtual int mode()  { return _mode; }
+    Q_INVOKABLE virtual int modeType() const;
 
   public slots:
     virtual SetResponse set( const ParameterList &pParams );
-    virtual void        sSave();
+    virtual void        sSaveClicked();
+    virtual void        sSave(bool pPartial);
     virtual void        sPopulateItemsiteInfo();
     virtual void        sListPrices();
     virtual void        sDeterminePrice();
@@ -45,11 +49,20 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void        sPopulateItemSubs( int pItemid );
     virtual void        sPopulateSubMenu(QMenu *, QTreeWidgetItem *, int);
     virtual void        sSubstitute();
+    virtual void        sReserveStock();
     virtual void        sPopulateHistory();
     virtual void        sCalculateDiscountPrcnt();
     virtual void        sCalculateExtendedPrice();
-    virtual void        sHandleWo( bool pCreate );
+    virtual void        sCheckSupplyOrder();
+    virtual void        sHandleSupplyOrder();
     virtual void        sPopulateOrderInfo();
+    virtual void        sRollupPrices();
+    virtual void        sFillWoIndentedList();
+    virtual void        sPopulateWoMenu( QMenu * pMenu, QTreeWidgetItem * selected );
+    virtual void        sNewWoMatl();
+    virtual void        sEditWoMatl();
+    virtual void        sViewWoMatl();
+    virtual void        sDeleteWoMatl();
     virtual void        sCalculateFromDiscount();
     virtual void        sCalculateFromMarkup();
     virtual void        populate();
@@ -75,7 +88,6 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
   private:
     QString _custName;
     double  _priceRatio;
-    QDate   _cScheduledDate;
     int     _preferredWarehouseid;
     int     _shiptoid;
     int     _supplyOrderId;
@@ -88,7 +100,9 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     int     _itemsrc;
     bool    _modified;
     bool    _canceling;
+    bool    _partialsaved;
     bool    _error;
+    bool    _stocked;
     int     _availabilityLastItemid;
     int     _availabilityLastWarehousid;
     QDate   _availabilityLastSchedDate;
@@ -102,7 +116,11 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     int     _priceUOMCache;
     double  _qtyOrderedCache;
     double  _supplyOrderQtyCache;
+    double  _supplyOrderQtyOrderedCache;
     QDate   _supplyOrderDueDateCache;
+    QDate   _supplyOrderScheduledDateCache;
+    bool    _supplyOrderDropShipCache;
+    double  _supplyOverridePriceCache;
     double  _cachedPct;
     double  _cachedRate;
     int     _taxzoneid;

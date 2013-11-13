@@ -19,6 +19,7 @@
 
 #include "distributeInventory.h"
 #include "mqlutil.h"
+#include "parameterwidget.h"
 #include "shippingInformation.h"
 #include "shipOrder.h"
 #include "salesOrder.h"
@@ -34,22 +35,50 @@ maintainShipping::maintainShipping(QWidget* parent, const char* name, Qt::WFlags
 {
   setupUi(this);
 
+  if (_metrics->boolean("MultiWhs"))
+    _parameterWidget->append(tr("Site"), "warehous_id", ParameterWidget::Site);
+  _parameterWidget->append(tr("Customer"),   "cust_id",   ParameterWidget::Customer);
+  _parameterWidget->append(tr("Sales Order"), "cohead_id", ParameterWidget::SalesOrder);
+  
+  _parameterWidget->applyDefaultFilterSet();
+
   connect(_ship, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
   _ship->setRootIsDecorated(TRUE);
-  _ship->addColumn(tr("Shipment #"),       _orderColumn,  Qt::AlignLeft,  true, "shiphead_number");
-  _ship->addColumn(tr("Order Type"),       _statusColumn, Qt::AlignLeft,  true, "ordertype");
-  _ship->addColumn(tr("Order/Line #"),     _itemColumn,   Qt::AlignRight, true, "linenumber");
-  _ship->addColumn(tr("Printed"),          _dateColumn,   Qt::AlignCenter,true, "sfstatus");
-  _ship->addColumn(tr("Cust./Item #"),     _itemColumn,   Qt::AlignLeft,  true, "dest");
-  _ship->addColumn(tr("Name/Description"), -1,            Qt::AlignLeft,  true, "description");
-  _ship->addColumn(tr("Ship Via"),         _itemColumn,   Qt::AlignLeft,  true, "shiphead_shipvia");
-  _ship->addColumn(tr("UOM"),              _uomColumn,    Qt::AlignLeft,  true, "uom_name");
-  _ship->addColumn(tr("Qty. At Ship"),     _qtyColumn,    Qt::AlignRight, true, "shipqty");
-  _ship->addColumn(tr("Value At Ship"),    _moneyColumn,  Qt::AlignRight, true, "shipvalue");
-  _ship->addColumn(tr("Hold Type"),        _statusColumn, Qt::AlignCenter,true, "holdtype");
+
+  if (_metrics->boolean("EnableSOReservationsByLocation"))
+  {
+    _stockAtShippingLit->setText("Stock at Shipping with Distributions:");
+    _ship->addColumn(tr("Shipment #"),            _orderColumn,  Qt::AlignLeft,  true, "shiphead_number");
+    _ship->addColumn(tr("Order Type"),            _statusColumn, Qt::AlignLeft,  true, "ordertype");
+    _ship->addColumn(tr("Order/Line #"),          _itemColumn,   Qt::AlignRight, true, "linenumber");
+    _ship->addColumn(tr("Printed"),               _dateColumn,   Qt::AlignCenter,true, "sfstatus");
+    _ship->addColumn(tr("Cust./Item/Loc."),       _itemColumn,   Qt::AlignLeft,  true, "dest");
+    _ship->addColumn(tr("Name/Desc./LotSerial"),  -1,            Qt::AlignLeft,  true, "description");
+    _ship->addColumn(tr("Ship Via/Expiration"),   _itemColumn,   Qt::AlignLeft,  true, "shiphead_shipvia");
+    _ship->addColumn(tr("UOM"),                   _uomColumn,    Qt::AlignLeft,  true, "uom_name");
+    _ship->addColumn(tr("Qty. At Ship/Dist."),    _qtyColumn,    Qt::AlignRight, true, "shipqty");
+    _ship->addColumn(tr("Value At Ship"),         _moneyColumn,  Qt::AlignRight, true, "shipvalue");
+    _ship->addColumn(tr("Hold Type"),             _statusColumn, Qt::AlignCenter,true, "holdtype");
+    _ship->addColumn(tr("Notes"),                 _itemColumn,   Qt::AlignCenter,false,"notes");
+  }
+  else
+  {
+    _ship->addColumn(tr("Shipment #"),       _orderColumn,  Qt::AlignLeft,  true, "shiphead_number");
+    _ship->addColumn(tr("Order Type"),       _statusColumn, Qt::AlignLeft,  true, "ordertype");
+    _ship->addColumn(tr("Order/Line #"),     _itemColumn,   Qt::AlignRight, true, "linenumber");
+    _ship->addColumn(tr("Printed"),          _dateColumn,   Qt::AlignCenter,true, "sfstatus");
+    _ship->addColumn(tr("Cust./Item #"),     _itemColumn,   Qt::AlignLeft,  true, "dest");
+    _ship->addColumn(tr("Name/Description"), -1,            Qt::AlignLeft,  true, "description");
+    _ship->addColumn(tr("Ship Via"),         _itemColumn,   Qt::AlignLeft,  true, "shiphead_shipvia");
+    _ship->addColumn(tr("UOM"),              _uomColumn,    Qt::AlignLeft,  true, "uom_name");
+    _ship->addColumn(tr("Qty. At Ship"),     _qtyColumn,    Qt::AlignRight, true, "shipqty");
+    _ship->addColumn(tr("Value At Ship"),    _moneyColumn,  Qt::AlignRight, true, "shipvalue");
+    _ship->addColumn(tr("Hold Type"),        _statusColumn, Qt::AlignCenter,true, "holdtype");
+    _ship->addColumn(tr("Notes"),            _itemColumn,   Qt::AlignCenter,false,"notes");
+  }
 
 }
 
@@ -325,12 +354,14 @@ void maintainShipping::sFillList()
   XSqlQuery maintainFillList;
   ParameterList params;
 
+  _parameterWidget->appendValue(params);
+
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
 
-  if (_warehouse->isSelected())
-    params.append("warehous_id", _warehouse->id());
-
+  if (_metrics->boolean("EnableSOReservationsByLocation"))
+    params.append("includeDistributions");
+  
   params.append("notPrinted",	tr("No"));
   params.append("dirty",	tr("Dirty"));
   params.append("printed",	tr("Yes"));
@@ -339,6 +370,7 @@ void maintainShipping::sFillList()
   maintainFillList = mql.toQuery(params);
   maintainFillList.exec();
   _ship->populate(maintainFillList, true);
+  _ship->expandAll();
   if (maintainFillList.lastError().type() != QSqlError::NoError)
   {
     systemError(this, maintainFillList.lastError().databaseText(), __FILE__, __LINE__);
@@ -350,11 +382,10 @@ void maintainShipping::sPrint()
 {
   ParameterList params;
 
+  _parameterWidget->appendValue(params);
+  
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
-
-  if (_warehouse->isSelected())
-    params.append("warehous_id", _warehouse->id());
 
   params.append("notPrinted",	tr("No"));
   params.append("dirty",	tr("Dirty"));

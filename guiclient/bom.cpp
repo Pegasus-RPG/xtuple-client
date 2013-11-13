@@ -92,6 +92,7 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
   _revision->setMode(RevisionLineEdit::Maintain);
   _revision->setType("BOM");
+  _bomheadid = -1;
 }
 
 BOM::~BOM()
@@ -107,6 +108,7 @@ void BOM::languageChange()
 enum SetResponse BOM::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
+  XSqlQuery bomet;
   QVariant param;
   bool     valid;
   
@@ -118,6 +120,18 @@ enum SetResponse BOM::set(const ParameterList &pParams)
       _mode = cNew;
       _new->setEnabled(FALSE);
       _revision->setId(-1);
+
+      bomet.exec("SELECT NEXTVAL('bomhead_bomhead_id_seq') AS bomhead_id");
+      if (bomet.first())
+      {
+        _bomheadid = bomet.value("bomhead_id").toInt();
+        _documents->setId(_bomheadid);
+      }
+      else if (bomet.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, bomet.lastError().databaseText(), __FILE__, __LINE__);
+        return UndefinedError;
+      }
     }
     else if (param.toString() == "edit")
     {
@@ -130,11 +144,12 @@ enum SetResponse BOM::set(const ParameterList &pParams)
       _new->setEnabled(FALSE);
       _item->setReadOnly(TRUE);
       _documentNum->setEnabled(FALSE);
-      _revision->setEnabled(FALSE);
+//      _revision->setEnabled(FALSE);
       _revisionDate->setEnabled(FALSE);
       _batchSize->setEnabled(FALSE);
       _doRequireQtyPer->setEnabled(FALSE);
       _requiredQtyPer->setEnabled(FALSE);
+      _documents->setReadOnly(TRUE);
       _save->setEnabled(FALSE);
       
       connect(_bomitem, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
@@ -151,6 +166,16 @@ enum SetResponse BOM::set(const ParameterList &pParams)
   }
   
   return NoError;
+}
+
+int BOM::id() const
+{
+  return _bomheadid;
+}
+
+int BOM::mode() const
+{
+  return _mode;
 }
 
 bool BOM::sSave()
@@ -175,38 +200,31 @@ bool BOM::sSave()
   if(!sCheckRequiredQtyPer())
     return false;
   
-  BSave.prepare( "SELECT bomhead_id "
-             "FROM bomhead "
-             "WHERE ((bomhead_item_id=:item_id) "
-			 "AND (bomhead_rev_id=:bomhead_rev_id));" );
-  BSave.bindValue(":item_id", _item->id());
-  BSave.bindValue(":bomhead_rev_id", _revision->id());
-  BSave.exec();
-  if (BSave.first())
+  if (_mode == cEdit)
   {   
     BSave.prepare( "UPDATE bomhead "
                "SET bomhead_docnum=:bomhead_docnum,"
-               "    bomhead_revision=:bomhead_revision, bomhead_revisiondate=:bomhead_revisiondate,"
+               "    bomhead_revision=:bomhead_revision,"
+               "    bomhead_revisiondate=:bomhead_revisiondate,"
                "    bomhead_batchsize=:bomhead_batchsize,"
                "    bomhead_requiredqtyper=:bomhead_requiredqtyper "
-               "WHERE ((bomhead_item_id=:bomhead_item_id) "
-			   "AND (bomhead_rev_id=:bomhead_rev_id));" );
-    BSave.bindValue(":bomhead_item_id", _item->id());
-    BSave.bindValue(":bomhead_rev_id", _revision->id());
+               "WHERE (bomhead_id=:bomhead_id);" );
   }
   else
   {
     BSave.prepare( "INSERT INTO bomhead "
-               "( bomhead_item_id, bomhead_docnum,"
+               "( bomhead_id, bomhead_item_id, bomhead_docnum,"
                "  bomhead_revision, bomhead_revisiondate,"
                "  bomhead_batchsize, bomhead_requiredqtyper ) "
                "VALUES "
-               "( :bomhead_item_id, :bomhead_docnum,"
+               "( :bomhead_id, :bomhead_item_id, :bomhead_docnum,"
                "  :bomhead_revision, :bomhead_revisiondate, "
                "  :bomhead_batchsize, :bomhead_requiredqtyper ) " );
-    BSave.bindValue(":bomhead_item_id", _item->id());
   }
   
+  BSave.bindValue(":bomhead_id", _bomheadid);
+  BSave.bindValue(":bomhead_item_id", _item->id());
+  BSave.bindValue(":bomhead_rev_id", _revision->id());
   BSave.bindValue(":bomhead_docnum", _documentNum->text());
   BSave.bindValue(":bomhead_revision", _revision->number());
   BSave.bindValue(":bomhead_revisiondate", _revisionDate->date());
@@ -413,6 +431,8 @@ void BOM::sFillList(int pItemid, bool)
     BFillList.exec();
     if (BFillList.first())
     {
+      _bomheadid = BFillList.value("bomhead_id").toInt();
+      _documents->setId(_bomheadid);
       _documentNum->setText(BFillList.value("bomhead_docnum"));
       _revisionDate->setDate(BFillList.value("bomhead_revisiondate").toDate());
       _batchSize->setDouble(BFillList.value("bomhead_batchsize").toDouble());

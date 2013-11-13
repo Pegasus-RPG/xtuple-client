@@ -31,6 +31,7 @@ itemSourceList::itemSourceList(QWidget* parent, const char* name, bool modal, Qt
   _itemsrc->addColumn(tr("Manufacturer"), _itemColumn,  Qt::AlignLeft,   true, "itemsrc_manuf_name");
   _itemsrc->addColumn(tr("Manuf. Item#"), _itemColumn,  Qt::AlignRight,  true, "itemsrc_manuf_item_number" );
   _itemsrc->addColumn(tr("Default"),      _itemColumn,  Qt::AlignLeft,   true, "itemsrc_default" );
+  _itemsrc->addColumn(tr("Contract"),            -1,  Qt::AlignLeft,   true, "contrct_number");
 }
 
 itemSourceList::~itemSourceList()

@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>1013</width>
-    <height>608</height>
+    <height>657</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -449,7 +449,7 @@ to be bound by its terms.</comment>
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="_notesTab">
       <attribute name="title">
@@ -668,6 +668,20 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="_documentsTab">
+      <attribute name="title">
+       <string>Documents</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <item>
+        <widget class="Documents" name="_documents">
+         <property name="type">
+          <enum>Documents::ItemSource</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item row="1" column="0">
@@ -784,6 +798,29 @@ to be bound by its terms.</comment>
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QLabel" name="_contractedQtyLit">
+          <property name="text">
+           <string>Contracted Qty:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="XLineEdit" name="_contractedQty">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight</set>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
      </item>
@@ -798,6 +835,11 @@ to be bound by its terms.</comment>
    <class>DateCluster</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Documents</class>
+   <extends>QWidget</extends>
+   <header>documents.h</header>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>

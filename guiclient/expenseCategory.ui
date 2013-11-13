@@ -150,27 +150,6 @@ to be bound by its terms.</comment>
      </item>
      <item>
       <layout class="QGridLayout">
-       <item row="3" column="1">
-        <widget class="GLCluster" name="_freight">
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="GLCluster" name="_purchasePrice">
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="_freightLit">
-         <property name="text">
-          <string>PO Line Freight Expense:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy">
-          <cstring>_liability</cstring>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="_expenseLit">
          <property name="text">
@@ -184,6 +163,9 @@ to be bound by its terms.</comment>
          </property>
         </widget>
        </item>
+       <item row="0" column="1">
+        <widget class="GLCluster" name="_expense"/>
+       </item>
        <item row="1" column="0">
         <widget class="QLabel" name="_purchasePriceLit">
          <property name="text">
@@ -193,13 +175,12 @@ to be bound by its terms.</comment>
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
          <property name="buddy">
-          <cstring>_expense</cstring>
+          <cstring>_purchasePrice</cstring>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="GLCluster" name="_expense">
-        </widget>
+       <item row="1" column="1">
+        <widget class="GLCluster" name="_purchasePrice"/>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="_poLiabilityClearingLit">
@@ -217,6 +198,22 @@ to be bound by its terms.</comment>
        <item row="2" column="1">
         <widget class="GLCluster" name="_liability">
         </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="_freightLit">
+         <property name="text">
+          <string>PO Line Freight Expense:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy">
+          <cstring>_freight</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="GLCluster" name="_freight"/>
        </item>
       </layout>
      </item>
@@ -251,6 +248,7 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -261,6 +259,7 @@ to be bound by its terms.</comment>
   <tabstop>_purchasePrice</tabstop>
   <tabstop>_liability</tabstop>
   <tabstop>_freight</tabstop>
+  <tabstop>_buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

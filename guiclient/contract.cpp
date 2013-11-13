@@ -23,20 +23,53 @@
 #include <metasql.h>
 #include <parameter.h>
 #include "mqlutil.h"
+#include "itemSource.h"
+#include "purchaseOrder.h"
+#include "enterPoReceipt.h"
+#include "enterPoReturn.h"
+#include <openreports.h>
 
-contract::contract(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+contract::contract(QWidget* parent, const char* name, Qt::WFlags fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
   connect(_close,              SIGNAL(clicked()), this, SLOT(reject()));
   connect(_save,               SIGNAL(clicked()), this, SLOT(sSaveClicked()));
   connect(this,               SIGNAL(rejected()), this, SLOT(sRejected()));
+  connect(_newItemSrc,         SIGNAL(clicked()), this, SLOT(sNewItemSrc()));
+  connect(_newPo,			   SIGNAL(clicked()), this, SLOT(sNewPo()));
+  connect(_editPo,			   SIGNAL(clicked()), this, SLOT(sEditPo()));
+  connect(_viewPo,             SIGNAL(clicked()), this, SLOT(sViewPo()));
+  connect(_deletePo,           SIGNAL(clicked()), this, SLOT(sDeletePo()));
+  connect(_newRcpt,            SIGNAL(clicked()), this, SLOT(sNewRcpt()));
+  connect(_newRtrn,            SIGNAL(clicked()), this, SLOT(sNewRtrn()));
+  connect(_print,              SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_itemSource,         SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_itemSource,         SIGNAL(itemClicked(XTreeWidgetItem *, int)), this, SLOT(sHandleButtons(XTreeWidgetItem *, int)));
 
   _dates->setStartNull(tr("Always"), omfgThis->startOfTime(), TRUE);
   _dates->setStartCaption(tr("Effective"));
   _dates->setEndNull(tr("Never"), omfgThis->endOfTime(), TRUE);
   _dates->setEndCaption(tr("Expires"));
+
+  if (_metrics->value("Application") == "Standard")
+  {
+    _itemSource->addColumn(tr("Item #"),          _itemColumn, Qt::AlignLeft, true, "item_number");
+    _itemSource->addColumn(tr("Description"),              -1, Qt::AlignLeft, true, "item_descrip1");
+	_itemSource->addColumn(tr("Vend Part #"),     _itemColumn, Qt::AlignLeft, true, "itemsrc_vend_item_number");
+    _itemSource->addColumn(tr("Vend UOM"),         _uomColumn, Qt::AlignLeft, true, "itemsrc_vend_uom");
+	_itemSource->addColumn(tr("Order/Oper"),     _orderColumn, Qt::AlignLeft, true, "poitem_ordnumber");
+	_itemSource->addColumn(tr("Contr Qty"),        _qtyColumn, Qt::AlignLeft, true, "contisrc_min");
+	_itemSource->addColumn(tr("Unrel Qty"),        _qtyColumn, Qt::AlignLeft, true, "poitem_qty_unreleased" );
+	_itemSource->addColumn(tr("Releas Qty"),       _qtyColumn, Qt::AlignLeft, true, "poitem_qty_ordered" );
+	_itemSource->addColumn(tr("Receiv Qty"),       _qtyColumn, Qt::AlignRight,true, "poitem_qty_received");
+	_itemSource->addColumn(tr("Return Qty"),       _qtyColumn, Qt::AlignRight,true, "poitem_qty_returned" );
+	_itemSource->addColumn(tr("Date"),            _dateColumn, Qt::AlignLeft, true, "poitem_duedate" );
+	_itemSource->addColumn(tr("Status/User"),     _userColumn, Qt::AlignLeft, true, "poitem_status" );
+  } 
+  else
+	_tab->removeTab(_tab->indexOf(_itemSrcTab));
 
   _captive = false;
   _new = false;
@@ -55,7 +88,7 @@ void contract::languageChange()
 enum SetResponse contract::set(const ParameterList &pParams)
 {
   XSqlQuery itemet;
-  XDialog::set(pParams);
+  XWidget::set(pParams);
   QVariant param;
   bool     valid;
 
@@ -82,6 +115,14 @@ enum SetResponse contract::set(const ParameterList &pParams)
       _mode = cNew;
       _new = true;
 
+ 	  _newItemSrc->setEnabled(true);
+      _newPo->setEnabled(false);
+      _editPo->setEnabled(false);
+      _viewPo->setEnabled(false);
+      _deletePo->setEnabled(false);
+      _newRcpt->setEnabled(false);
+      _newRtrn->setEnabled(false);
+
       itemet.exec("SELECT NEXTVAL('contrct_contrct_id_seq') AS contrct_id;");
       if (itemet.first())
       {
@@ -99,6 +140,13 @@ enum SetResponse contract::set(const ParameterList &pParams)
     {
       _mode = cEdit;
       _vendor->setEnabled(FALSE);
+	  _newItemSrc->setEnabled(true);
+      _newPo->setEnabled(false);
+      _editPo->setEnabled(false);
+      _viewPo->setEnabled(false);
+      _deletePo->setEnabled(false);
+      _newRcpt->setEnabled(false);
+      _newRtrn->setEnabled(false);
     }
     else if (param.toString() == "view")
     {
@@ -108,7 +156,14 @@ enum SetResponse contract::set(const ParameterList &pParams)
       _dates->setEnabled(FALSE);
       _number->setEnabled(FALSE);
       _descrip->setEnabled(FALSE);
-      _documents->setReadOnly(true);
+//      _documents->setReadOnly(true);
+	  _newItemSrc->setEnabled(true);
+      _newPo->setEnabled(false);
+      _editPo->setEnabled(false);
+      _viewPo->setEnabled(false);
+      _deletePo->setEnabled(false);
+      _newRcpt->setEnabled(false);
+      _newRtrn->setEnabled(false);
       _close->setText(tr("&Close"));
       _save->hide();
     }
@@ -141,7 +196,7 @@ void contract::sSaveClicked()
 {
   _captive = false;
   if (sSave())
-    done(_contrctid);
+    close();
 }
 
 bool contract::sSave()
@@ -261,6 +316,276 @@ bool contract::sSave()
   return true;
 }
 
+void contract::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem * pSelected )
+{
+  QAction *menuItem;
+  QString oper;
+  QString stat;
+
+  oper = pSelected->text(_itemSource->column("poitem_ordnumber"));
+  stat = pSelected->text(_itemSource->column("poitem_status"));
+
+  if (!((oper == "Receipt") || (oper == "Return")) && (oper > " "))
+  {
+     if (_mode == cNew || _mode == cEdit)
+     {
+       menuItem = pMenu->addAction(tr("Edit Purchase Order..."), this, SLOT(sEditPo()));
+       menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
+     }
+
+     menuItem = pMenu->addAction(tr("View Purchase Order..."), this, SLOT(sViewPo()));
+     menuItem->setEnabled(_privileges->check("ViewPurchaseOrders") || _privileges->check("MaintainPurchaseOrders"));
+
+     if (stat == "Unreleased" && _mode == cEdit)
+     {
+	   menuItem = pMenu->addAction(tr("Delete Purchase Order..."), this, SLOT(sDeletePo()));
+       menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
+     }
+
+     pMenu->addSeparator();
+  }
+
+  if (_itemSource->altId() > 0)
+  {
+    if (_mode == cNew || _mode == cEdit)
+    {
+       menuItem = pMenu->addAction(tr("New Receipt..."), this, SLOT(sNewRcpt()));
+       menuItem->setEnabled(_privileges->check("EnterReceipts"));
+
+       menuItem = pMenu->addAction(tr("New Return..."), this, SLOT(sNewRtrn()));
+       menuItem->setEnabled(_privileges->check("EnterReturns"));
+    }
+  }
+}
+
+void contract::sFillList()
+{
+  XSqlQuery itemsrcFillList;
+  MetaSQLQuery mql = mqlLoad("contrct", "itemsources");
+
+  ParameterList params;
+  params.append("contrct_id", _contrctid);
+
+  itemsrcFillList = mql.toQuery(params);
+  _itemSource->populate(itemsrcFillList, true);
+  if (itemsrcFillList.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, itemsrcFillList.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
+void contract::sNewItemSrc()
+{
+  if (_mode == cNew)
+  {
+	_captive = true;
+    if (!sSave())
+	  return;
+  }
+
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("contrct_id", _contrctid);
+  params.append("vend_id", _vendor->id());
+
+  itemSource newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+  _vendor->setReadOnly(true);
+}
+
+void contract::sNewPo()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("vend_id", _vendor->id());
+
+  XSqlQuery itemsite;
+
+  itemsite.prepare( "SELECT itemsite_id "
+                      "  FROM itemsite JOIN item    ON (item_id         = itemsite_item_id) "
+                      "                JOIN itemsrc ON (itemsrc_item_id = item_id) "
+                      "WHERE (itemsrc_id =:itemsite_id) LIMIT 1;" );
+  itemsite.bindValue(":itemsite_id", _itemSource->id());
+  itemsite.exec();
+  if (itemsite.first())
+  {
+    params.append("itemsite_id", itemsite.value("itemsite_id").toInt());
+  }
+  else
+  {
+    QMessageBox::warning(omfgThis, tr("Cannot Create P/O"),
+                         tr("<p>A Purchase Order cannot be automatically "
+                            "created for this Item as there are no Item "
+                            "Sites for it.  You must create one or "
+                            "more Item Sites for this Item before "
+                            "the application can automatically create "
+                            "Purchase Orders for it." ) );
+    return;
+  }
+
+  purchaseOrder *newdlg = new purchaseOrder();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+
+  sFillList();
+}
+
+void contract::sEditPo()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("pohead_id", _itemSource->altId());
+
+  purchaseOrder *newdlg = new purchaseOrder();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+
+  sFillList();
+}
+
+void contract::sViewPo()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("pohead_id", _itemSource->altId());
+
+  purchaseOrder *newdlg = new purchaseOrder();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+
+  sFillList();
+}
+
+void contract::sDeletePo()
+{
+  if (_mode == cView)
+  {
+    QMessageBox::warning(omfgThis, tr("View mode"),
+                         tr("Not allowed under View mode.") );
+    return;
+  }
+
+  if (QMessageBox::question(this, tr("Delete Purchase Order"),
+                                  tr("<p>Are you sure you want to delete the "
+                                     "selected Purchase Order?"),
+         QMessageBox::Yes,
+         QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+      return;
+ 
+  XSqlQuery unpostedDelete;
+
+  unpostedDelete.prepare( "SELECT deletePo(:pohead_id) AS result;");
+  unpostedDelete.bindValue(":pohead_id", _itemSource->altId());
+  unpostedDelete.exec();
+  if (unpostedDelete.first() && ! unpostedDelete.value("result").toBool())
+       systemError(this, tr("<p>Only Unposted Purchase Orders may be "
+                            "deleted. Check the status of Purchase Order "
+                            "%1. If it is 'U' then contact your system "
+                            "Administrator.").arg(_itemSource->currentItem()->rawValue("poitem_ordnumber").toString()),
+                   __FILE__, __LINE__);
+  else if (unpostedDelete.lastError().type() != QSqlError::NoError)
+    systemError(this, unpostedDelete.lastError().databaseText(), __FILE__, __LINE__);
+
+  sFillList();
+}
+
+void contract::sNewRcpt()
+{
+  ParameterList params;
+  params.append("pohead_id", _itemSource->altId());
+
+  enterPoReceipt *newdlg = new enterPoReceipt();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+
+  sFillList();
+}
+
+void contract::sNewRtrn()
+{
+  ParameterList params;
+  params.append("pohead_id", _itemSource->altId());
+
+  enterPoReturn *newdlg = new enterPoReturn();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+
+  sFillList();
+}
+
+void contract::sPrint()
+{
+  ParameterList params;
+  params.append("contrct_id", _contrctid);
+  orReport report("ContractActivity", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
+}
+
+void contract::sHandleButtons(XTreeWidgetItem *pItem, int pCol)
+{
+  QString oper;
+  QString stat;
+
+  if (_mode != cNew)
+  {
+    oper = pItem->text(_itemSource->column("poitem_ordnumber"));
+    stat = pItem->text(_itemSource->column("poitem_status"));
+
+    if (!(oper > " "))
+      _newPo->setEnabled(true);
+    else
+      _newPo->setEnabled(false);
+
+      if (!((oper == "Receipt") || (oper == "Return")) && (oper > " "))
+      {
+        if (_mode == cNew || _mode == cEdit)
+          _editPo->setEnabled(_privileges->check("MaintainPurchaseOrders"));
+        else
+          _editPo->setEnabled(false);
+
+        _viewPo->setEnabled(_privileges->check("ViewPurchaseOrders") || _privileges->check("MaintainPurchaseOrders"));
+
+        if (stat == "Unreleased" && _mode == cEdit)
+          _deletePo->setEnabled(_privileges->check("MaintainPurchaseOrders"));
+        else
+          _deletePo->setEnabled(false);
+      }
+      else
+      {
+        _editPo->setEnabled(false);
+        _viewPo->setEnabled(false);
+        _deletePo->setEnabled(false);
+      }
+
+      if (pItem->altId() > 0)
+      {
+        if (_mode == cNew || _mode == cEdit)
+        {
+          _newRcpt->setEnabled(_privileges->check("EnterReceipts"));
+          _newRtrn->setEnabled(_privileges->check("EnterReturns"));
+        }
+        else
+        {
+          _newRcpt->setEnabled(false);
+          _newRtrn->setEnabled(false);
+        }
+      }
+      else
+      {
+        _newRcpt->setEnabled(false);
+        _newRtrn->setEnabled(false);
+      }
+    }
+
+}
+
 void contract::populate()
 {
   XSqlQuery contrctQ;
@@ -277,6 +602,7 @@ void contract::populate()
     _number->setText(contrctQ.value("contrct_number").toString());
     _descrip->setText(contrctQ.value("contrct_descrip").toString());
     _notes->setText(contrctQ.value("contrct_note").toString());
+	sFillList();
   }
   else if (contrctQ.lastError().type() != QSqlError::NoError)
   {
@@ -288,7 +614,7 @@ void contract::populate()
 void contract::sRejected()
 {
   XSqlQuery itemRejected;
-  if (_new)
+  if (_new && (_itemSource->topLevelItemCount() == 0))
   {
     itemRejected.prepare( "DELETE FROM contrct "
                "WHERE (contrct_id=:contrct_id);" );

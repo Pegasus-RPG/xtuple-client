@@ -25,7 +25,7 @@
 #include "itemcluster.h"
 #include "xtreewidget.h"
 
-QString buildItemLineEditQuery(const QString, const QStringList, const QString, const unsigned int);
+QString buildItemLineEditQuery(const QString, const QStringList, const QString, const unsigned int, bool);
 QString buildItemLineEditTitle(const unsigned int, const QString);
 
 itemAliasList::itemAliasList(QWidget* parent, const char* name, bool modal, Qt::WFlags fl) :
@@ -177,7 +177,7 @@ void itemAliasList::sFillList()
     clauses << "(item_active)";
 
   XSqlQuery alias;
-  alias.prepare(buildItemLineEditQuery(pre, clauses, post, _itemType));
+  alias.prepare(buildItemLineEditQuery(pre, clauses, post, _itemType, false));
   alias.bindValue(":searchString", _alias->text().trimmed());
   alias.exec();
   if (alias.first())

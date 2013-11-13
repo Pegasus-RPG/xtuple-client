@@ -19,9 +19,15 @@
 #include "createLotSerial.h"
 #include "printOptions.h"
 #include "xtsettings.h"
+#include "metasql.h"
+#include "mqlutil.h"
+#include "xsqlquery.h"
+#include <QSqlError>
 
 #include <parameter.h>
 #include <openreports.h>
+
+#define NUM_COLUMNS_BEFORE_CHARS 4
 
 assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -46,6 +52,11 @@ assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, 
   _itemlocdist->addColumn( tr("Expires"), _dateColumn, Qt::AlignCenter,true, "itemlocdist_expiration");
   _itemlocdist->addColumn( tr("Warranty"),_dateColumn, Qt::AlignCenter,true, "itemlocdist_warranty");
   _itemlocdist->addColumn( tr("Qty."),     _qtyColumn, Qt::AlignRight, true, "itemlocdist_qty");
+  QStringList char_names = _lschars.getLotCharNames();
+  for (int i=0; i < char_names.size(); i++)
+  {
+      _itemlocdist->addColumn(char_names.at(i), -1, Qt::AlignLeft, true, QString("lschar%1").arg(i));
+  }
 
   _qtyToAssign->setPrecision(omfgThis->qtyVal());
   _qtyAssigned->setPrecision(omfgThis->qtyVal());
@@ -279,6 +290,8 @@ void assignLotSerial::sFillList()
     systemError(this, assignFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+
+  _lschars.addCharsToTreeWidget(_itemlocdist, 0, NUM_COLUMNS_BEFORE_CHARS, true);
 }
 
 void assignLotSerial::sPrint()
@@ -322,6 +335,7 @@ void assignLotSerial::sPrint()
       ParameterList params;
       params.append("label", label);
       params.append("ls_id", qlabel.value("ls_id").toInt());
+      _lschars.setParams(params);
 
       orReport report("LotSerialLabel", params);
       if (report.isValid() && report.print(&printer, setupPrinter))

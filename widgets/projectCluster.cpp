@@ -9,6 +9,7 @@
  */
 
 #include "projectcluster.h"
+#include "projectCopy.h"
 
 ProjectCluster::ProjectCluster(QWidget* pParent, const char* pName) :
     VirtualCluster(pParent, pName)
@@ -69,6 +70,7 @@ ProjectLineEdit::ProjectLineEdit(enum ProjectType pPrjType, QWidget *pParent, co
 
   _type = pPrjType;
   _allowedStatuses = 0x00;
+
 }
 
 void ProjectLineEdit::buildExtraClause()
@@ -136,4 +138,17 @@ void ProjectLineEdit::setAllowedStatuses(const ProjectStatuses p)
 {
   _allowedStatuses = p;
   buildExtraClause();
+}
+
+void ProjectLineEdit::sCopy()
+{
+  ParameterList params;
+  params.append("prj_id", id());
+
+  projectCopy newdlg(parentWidget(), "", TRUE);
+  newdlg.set(params);
+
+  int copiedProjectid;
+  if ((copiedProjectid = newdlg.exec()) != QDialog::Rejected)
+    setId(copiedProjectid);
 }

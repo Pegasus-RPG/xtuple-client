@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>795</width>
+    <height>628</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1051,13 +1051,67 @@ and Purchase Order amounts</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="notesTab">
+     <widget class="QWidget" name="characteristicsTab">
       <attribute name="title">
-       <string>Notes</string>
+       <string>Characteristics</string>
       </attribute>
-      <layout class="QGridLayout">
-       <item row="0" column="0">
-        <widget class="XTextEdit" name="_notes"/>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="XTreeWidget" name="_charass">
+         <property name="focusPolicy">
+          <enum>Qt::ClickFocus</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="_9">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_newCharacteristic">
+           <property name="text">
+            <string>&amp;New</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_editCharacteristic">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Edit</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_deleteCharacteristic">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Delete</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -1078,12 +1132,63 @@ and Purchase Order amounts</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="ponotesTab">
+     <widget class="QWidget" name="notesTab">
       <attribute name="title">
-       <string>Order Notes</string>
+       <string>Notes</string>
       </attribute>
-      <layout class="QGridLayout">
-       <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="_notesLit">
+           <property name="text">
+            <string>Notes:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="XTextEdit" name="_notes"/>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="_poCommentsLit">
+           <property name="text">
+            <string>Order Notes:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
         <widget class="XTextEdit" name="_poComments"/>
        </item>
       </layout>
@@ -1381,7 +1486,6 @@ and Purchase Order amounts</string>
   <tabstop>_mainButton</tabstop>
   <tabstop>_altButton</tabstop>
   <tabstop>_address</tabstop>
-  <tabstop>_notes</tabstop>
   <tabstop>_comments</tabstop>
   <tabstop>_poComments</tabstop>
   <tabstop>_checksButton</tabstop>

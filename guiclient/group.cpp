@@ -111,6 +111,7 @@ enum SetResponse group::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
+      _name->setEnabled(FALSE);
       groupet.exec("BEGIN;");
     }
     else if (param.toString() == "view")

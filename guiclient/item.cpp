@@ -1655,7 +1655,7 @@ void item::sEditItemSite()
         params.append("itemsite_id", itemEditItemSite.value("itemsite_id").toInt());
       else
       {
-        if((_mode == cEdit) &&
+        if((_mode == cNew || _mode == cEdit) &&
            (QMessageBox::question(this, tr("No Item Site Found"),
               tr("There is no Item Site for this item. Would you like to create one now?"),
               QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes))
@@ -2070,7 +2070,7 @@ void item::sHandleRightButtons()
       else
         _workbench->show();
 
-    if(!_privileges->check("MaintainBOMs"))
+    if(!_privileges->check("MaintainBOMs") && !_privileges->check("ViewBOMs"))
       _materials->hide();
     else
       if (itemtype == "M" || // manufactured

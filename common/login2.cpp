@@ -54,7 +54,7 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   //connect(_options, SIGNAL(clicked()), this, SLOT(sOptions()));
   connect(_server, SIGNAL(editingFinished()), this, SLOT(sChangeURL()));
   connect(_database, SIGNAL(editTextChanged(QString)), this, SLOT(sChangeURL()));
-  connect(_port, SIGNAL(editingFinished()), this, SLOT(sChangeURL()));
+  connect(_port, SIGNAL(textChanged(QString)), this, SLOT(sChangeURL()));
   //connect(_otherOption, SIGNAL(toggled(bool)), _options, SLOT(setEnabled(bool)));
   //connect(_otherOption, SIGNAL(toggled(bool)), _recent, SLOT(setEnabled(bool)));
   //connect(_otherOption, SIGNAL(toggled(bool)), this, SLOT(sHandleButton()));
@@ -335,7 +335,8 @@ void login2::sLogin()
       break;  // break instead of for-loop condition to preserve methodidx
   }
 
-  // if connected using OpenMFG enhanced auth, remangle the password
+   // if connected using OpenMFG enhanced auth, remangle the password
+
   if (db.isOpen() && (methodidx == 2 || methodidx == 5))
       XSqlQuery chgpass(QString("ALTER USER \"%1\" WITH PASSWORD '%2'")
                       .arg(_cUsername, QMd5(QString(_cPassword + salt + _cUsername))));

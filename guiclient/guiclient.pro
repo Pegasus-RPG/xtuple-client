@@ -422,6 +422,8 @@ FORMS =   absoluteCalendarItem.ui               \
           profitCenters.ui                      \
           project.ui                            \
           projects.ui                           \
+	  projectType.ui			\
+	  projectTypes.ui			\
           prospect.ui                           \
           purchaseOrder.ui                      \
           purchaseOrderItem.ui                  \
@@ -431,6 +433,7 @@ FORMS =   absoluteCalendarItem.ui               \
           purgeInvoices.ui                      \
           purgePostedCountSlips.ui              \
           purgePostedCounts.ui                  \
+          quickRelocateLot.ui                   \
           quotes.ui                             \
           reasonCode.ui                         \
           reasonCodes.ui                        \
@@ -904,6 +907,7 @@ HEADERS = ../common/format.h                    \
           lotSerialSequence.h           \
           lotSerialSequences.h          \
           lotSerialRegistration.h       \
+          lotSerialUtils.h              \
           maintainBudget.h              \
           maintainItemCosts.h           \
           maintainShipping.h            \
@@ -1005,6 +1009,8 @@ HEADERS = ../common/format.h                    \
           profitCenters.h               \
           project.h                     \
           projects.h                    \
+	  projectType.h			\
+	  projectTypes.h		\
           prospect.h                    \
           prospects.h                   \
           purchaseOrder.h               \
@@ -1015,6 +1021,7 @@ HEADERS = ../common/format.h                    \
           purgeInvoices.h               \
           purgePostedCountSlips.h       \
           purgePostedCounts.h           \
+          quickRelocateLot.h            \
           quotes.h                      \
           reasonCode.h                  \
           reasonCodes.h                 \
@@ -1507,6 +1514,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           lotSerialSequence.cpp         \
           lotSerialSequences.cpp        \
           lotSerialRegistration.cpp     \
+          lotSerialUtils.cpp            \
           main.cpp                      \
           maintainBudget.cpp            \
           maintainItemCosts.cpp         \
@@ -1609,6 +1617,8 @@ SOURCES = absoluteCalendarItem.cpp              \
           profitCenters.cpp                     \
           project.cpp                           \
           projects.cpp                          \
+	  projectType.cpp			\
+	  projectTypes.cpp			\
           prospect.cpp                          \
           prospects.cpp                         \
           purchaseOrder.cpp                     \
@@ -1619,6 +1629,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           purgeInvoices.cpp                     \
           purgePostedCountSlips.cpp             \
           purgePostedCounts.cpp                 \
+          quickRelocateLot.cpp                  \
           quotes.cpp                            \
           reasonCode.cpp                        \
           reasonCodes.cpp                       \

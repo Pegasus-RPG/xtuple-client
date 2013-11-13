@@ -45,6 +45,7 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   _maxCost = 0.0;
   _dropship = false;
   _costmethod = "";
+  _captive = false;
 
   connect(_ordered, SIGNAL(editingFinished()), this, SLOT(sDeterminePrice()));
   connect(_inventoryItem, SIGNAL(toggled(bool)), this, SLOT(sInventoryItemToggled(bool)));
@@ -411,6 +412,10 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
     }
   }
 
+  param = pParams.value("captive", &valid);
+  if (valid)
+    _captive = true;
+  
   return NoError;
 }
 
@@ -476,7 +481,7 @@ void purchaseOrderItem::populate()
     {
       _inventoryItem->setChecked(TRUE);
       _item->setItemsiteid(purchasepopulate.value("poitem_itemsite_id").toInt());
-      sPopulateItemSourceInfo(_item->id());
+      sPopulateItemSourceInfo(purchasepopulate.value("poitem_itemsrc_id").toInt());
       if (_metrics->boolean("RevControl"))
       {
         _bomRevision->setId(purchasepopulate.value("poitem_bom_rev_id").toInt());
@@ -487,6 +492,7 @@ void purchaseOrderItem::populate()
     }
 
     _itemsrcid = purchasepopulate.value("poitem_itemsrc_id").toInt();
+    _contrctNumber->setText(purchasepopulate.value("contrct_number").toString());
     _vendorItemNumber->setText(purchasepopulate.value("poitem_vend_item_number").toString());
     _vendorDescrip->setText(purchasepopulate.value("poitem_vend_item_descrip").toString());
     _vendorUOM->setText(purchasepopulate.value("poitem_vend_uom").toString());
@@ -632,6 +638,7 @@ void purchaseOrderItem::clear()
   _invVendUOMRatio = 1;
   _minimumOrder = 0;
   _orderMultiple = 0;
+  _save->setEnabled(false);
 }
 
 void purchaseOrderItem::sSave()
@@ -649,6 +656,8 @@ void purchaseOrderItem::sSave()
                           tr("<p>You must select a Tax Type before you may save." ))
          << GuiErrorCheck(_so->text().length() == 0 && _costmethod == "J", _item,
                           tr("<p>You may not purchase a Job Item without an associated demand."))
+         << GuiErrorCheck(!_project->isValid() && _metrics->boolean("RequireProjectAssignment"), _project,
+                          tr("<p>You must enter a Project for this order item before you may save it."))
      ;
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Purchase Order Item"), errors))
@@ -866,7 +875,7 @@ void purchaseOrderItem::sSave()
   }
 
   
-  if (cNew == _mode)
+  if (cNew == _mode && !_captive)
   {
     clear();
     prepare();
@@ -1049,8 +1058,9 @@ void purchaseOrderItem::sPopulateItemSourceInfo(int pItemsrcid)
                  "       (CURRENT_DATE + itemsrc_leadtime) AS earliestdate, "
                  "       itemsrc_manuf_name, "
                  "       itemsrc_manuf_item_number, "
-                 "       itemsrc_manuf_item_descrip "
-                 "FROM itemsrc "
+                 "       itemsrc_manuf_item_descrip, "
+                 "       contrct_number "
+				 "FROM itemsrc LEFT OUTER JOIN contrct ON (itemsrc_contrct_id = contrct_id) "
                  "WHERE (itemsrc_id=:itemsrc_id);" );
       src.bindValue(":itemsrc_id", pItemsrcid);
       src.exec();
@@ -1071,6 +1081,7 @@ void purchaseOrderItem::sPopulateItemSourceInfo(int pItemsrcid)
         _invVendUOMRatio = src.value("itemsrc_invvendoruomratio").toDouble();
         _minimumOrder = src.value("itemsrc_minordqty").toDouble();
         _orderMultiple = src.value("itemsrc_multordqty").toDouble();
+        _contrctNumber->setText(src.value("contrct_number").toString());
         
         _manufName->setCode(src.value("itemsrc_manuf_name").toString());
         _manufItemNumber->setText(src.value("itemsrc_manuf_item_number").toString());
@@ -1155,7 +1166,7 @@ void purchaseOrderItem::sDeterminePrice()
 void purchaseOrderItem::sInventoryItemToggled( bool yes )
 {
   if(yes)
-    sPopulateItemSourceInfo(_item->id());
+    sPopulateItemSourceInfo(_itemsrcid);
   else
     sPopulateItemSourceInfo(-1);
 }

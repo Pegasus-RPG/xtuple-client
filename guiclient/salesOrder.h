@@ -15,6 +15,7 @@
 #include "xwidget.h"
 #include <parameter.h>
 #include "ui_salesOrder.h"
+#include "dspShipmentsBySalesOrder.h"
 
 class salesOrder : public XWidget, public Ui::salesOrder
 {
@@ -67,6 +68,10 @@ class salesOrder : public XWidget, public Ui::salesOrder
     virtual void        sTaxDetail();
     virtual void        sFreightDetail();
     virtual void        setFreeFormShipto( bool pFreeForm );
+    virtual void        sNewCharacteristic();
+    virtual void        sEditCharacteristic();
+    virtual void        sDeleteCharacteristic();
+    virtual void        sFillCharacteristic();
     virtual void        populateCMInfo();
     virtual void        populateCCInfo();
     virtual void        sNewCreditCard();
@@ -99,10 +104,15 @@ class salesOrder : public XWidget, public Ui::salesOrder
     virtual void        sMaintainPO();
     virtual void        sReleasePR();
     virtual void        sViewPR();
+    virtual void        sPopulateShipments();
+    virtual void        sViewItemWorkbench();
 
   protected slots:
     virtual void  languageChange();
     virtual bool  okToProcessCC();
+
+  protected:
+    dspShipmentsBySalesOrder *_dspShipmentsBySalesOrder;
 
   signals:
     void populated();

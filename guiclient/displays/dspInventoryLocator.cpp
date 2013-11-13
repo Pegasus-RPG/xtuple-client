@@ -17,6 +17,9 @@
 
 #include "relocateInventory.h"
 #include "reassignLotSerial.h"
+#include "characteristic.h"
+#include "parameterwidget.h"
+#include "metasql.h"
 
 dspInventoryLocator::dspInventoryLocator(QWidget* parent, const char*, Qt::WFlags fl)
     : display(parent, "dspInventoryLocator", fl)
@@ -35,6 +38,14 @@ dspInventoryLocator::dspInventoryLocator(QWidget* parent, const char*, Qt::WFlag
   list()->addColumn(tr("Expiration"),_dateColumn, Qt::AlignCenter,true, "expiration");
   list()->addColumn(tr("Warranty"),  _dateColumn, Qt::AlignCenter,true, "warranty");
   list()->addColumn(tr("Qty."),       _qtyColumn, Qt::AlignRight, true, "qoh");
+
+  ParameterWidget *pw = parameterWidget();
+  pw->append(tr("Site"), "site", ParameterWidget::Site);
+  pw->append(tr("Location"), "_location_name", ParameterWidget::Text);
+  pw->append(tr("Lot/Serial"), "lot_serial", ParameterWidget::Text);
+  setupCharacteristics(characteristic::LotSerial);
+
+  setParameterWidgetVisible(true);
 
 }
 
@@ -80,6 +91,13 @@ bool dspInventoryLocator::setParams(ParameterList &params)
   params.append("yes",     tr("Yes"));
   params.append("no",      tr("No"));
   params.append("na",      tr("N/A"));
+  ParameterList widgetParams = parameterWidget()->parameters();
+  foreach(const Parameter &p, widgetParams)
+  {
+      params.append(p);
+  }
+
+  display::setParams(params);
 
   //if (_showZeroLevel->isChecked())
   //  params.append("showZeroLevel");

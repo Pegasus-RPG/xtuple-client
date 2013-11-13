@@ -25,6 +25,9 @@ public:
     BOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~BOM();
 
+    Q_INVOKABLE virtual int id()   const;
+    Q_INVOKABLE virtual int mode() const;
+  
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual bool setParams(ParameterList &pParams);
@@ -49,8 +52,9 @@ protected slots:
 
 private:
     int _mode;
+    int _bomheadid;
+    int _revid;
     double _totalQtyPerCache;
-	int _revid;
 
 };
 

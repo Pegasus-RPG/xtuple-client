@@ -55,6 +55,7 @@ class menuInventory : public QObject
     void sRelocateInventory();
 
     void sReassignLotSerialNumber();
+    void sQuickRelocateLot();
 
     void sCreateCountTagsByClassCode();
     void sCreateCountTagsByPlannerCode();

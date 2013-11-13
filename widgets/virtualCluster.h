@@ -191,6 +191,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         virtual void sInfo();
         virtual void sList();
         virtual void sOpen();
+        virtual void sCopy();
         virtual void sNew();
         virtual void sSearch();
         virtual void setId(const int);
@@ -242,6 +243,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 
         QAction* _infoAct;
         QAction* _openAct;
+        QAction* _copyAct;
         QAction* _newAct;
         QCompleter* _completer;
         QLabel* _menuLabel;

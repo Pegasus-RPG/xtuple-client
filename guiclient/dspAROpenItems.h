@@ -30,6 +30,7 @@ public:
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual bool setParams(ParameterList &);
+    virtual void sOpenCustomer();
     virtual void sApplyAropenCM();
     virtual void sCCRefundCM();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem *pItem, int );

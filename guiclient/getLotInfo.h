@@ -15,6 +15,7 @@
 #include "xdialog.h"
 
 #include "ui_getLotInfo.h"
+#include "lotSerialUtils.h"
 
 class getLotInfo : public XDialog, public Ui::getLotInfo
 {
@@ -34,6 +35,10 @@ public slots:
 
 protected slots:
     virtual void languageChange();
+
+private:
+    LotSerialUtils _lschars;
+    QList<QWidget *> _charWidgets;
 
 };
 

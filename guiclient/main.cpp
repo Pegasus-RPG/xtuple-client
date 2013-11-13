@@ -323,12 +323,32 @@ int main(int argc, char *argv[])
   {
     _splash->showMessage(QObject::tr("Checking License Key"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
-    metric.exec("SELECT count(*) AS registered, (SELECT count(*) FROM pg_stat_activity WHERE datname=current_database()) AS total"
-                "  FROM pg_stat_activity, pg_locks"
-                " WHERE((database=datid)"
-                "   AND (classid=datid)"
-                "   AND (objsubid=2)"
-                "   AND (procpid = pg_backend_pid()));");
+	
+	// PostgreSQL changed the column "procpid" to just "pid" in 9.2.0+ Incident #21852
+	XSqlQuery checkVersion(QString("select compareversion('9.2.0');"));
+
+    if(checkVersion.first())
+    {
+      if(checkVersion.value("compareversion").toInt() <= 0)
+      {
+	   metric.exec("SELECT count(*) AS registered, (SELECT count(*) FROM pg_stat_activity WHERE datname=current_database()) AS total"
+			"  FROM pg_stat_activity, pg_locks"
+			" WHERE((database=datid)"
+			"   AND (classid=datid)"
+			"   AND (objsubid=2)"
+			"   AND (procpid = pg_backend_pid()));");
+      }
+	  else
+	  {
+	   metric.exec("SELECT count(*) AS registered, (SELECT count(*) FROM pg_stat_activity WHERE datname=current_database()) AS total"
+			"  FROM pg_stat_activity, pg_locks"
+			" WHERE((database=datid)"
+			"   AND (classid=datid)"
+			"   AND (objsubid=2)"
+			"   AND (pg_stat_activity.pid = pg_backend_pid()));");
+      }
+    }
+	
     int cnt = 50000;
     int tot = 50000;
     if(metric.first())

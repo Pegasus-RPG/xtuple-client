@@ -34,11 +34,16 @@ public:
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
+    virtual void setViewMode();
     virtual void populate();
     virtual void sSave();
     virtual void sNew();
     virtual void sEdit();
     virtual void sDelete();
+    virtual void sNewCharacteristic();
+    virtual void sEditCharacteristic();
+    virtual void sDeleteCharacteristic();
+    virtual void sFillCharacteristic();
     virtual void sVendaddrList();
     virtual void sHandleDeleteButton();
     virtual void sHandleOrderDate();
@@ -83,6 +88,7 @@ private:
     bool _printed;
     PoitemTableModel* _qeitem;
     int _NumberGen;
+    int _projectId;
 };
 
 #endif // PURCHASEORDER_H

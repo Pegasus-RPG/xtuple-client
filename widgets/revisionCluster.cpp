@@ -27,6 +27,7 @@ RevisionCluster::RevisionCluster(QWidget *pParent, const char *pName) :
 
   connect(_number, SIGNAL(modeChanged()), this, SLOT(sModeChanged()));
   connect(_number, SIGNAL(canActivate(bool)), this, SLOT(sCanActivate(bool)));
+  connect(_number, SIGNAL(canDeactivate(bool)), this, SLOT(sCanDeactivate(bool)));
 }
 
 void RevisionCluster::activate()
@@ -34,10 +35,21 @@ void RevisionCluster::activate()
   return (static_cast<RevisionLineEdit*>(_number)->activate());
 }
 
+void RevisionCluster::deactivate()
+{
+  return (static_cast<RevisionLineEdit*>(_number)->deactivate());
+}
+
 void RevisionCluster::sCanActivate(bool p)
 {
   emit canActivate(p);
 }
+
+void RevisionCluster::sCanDeactivate(bool p)
+{
+  emit canDeactivate(p);
+}
+
 void RevisionCluster::setActive()
 {
   return (static_cast<RevisionLineEdit*>(_number))->setActive();
@@ -82,7 +94,9 @@ void RevisionCluster::sModeChanged()
                    ((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && (_x_privileges->check("MaintainRevisions") ||
                                                                                                         _x_privileges->check("ViewInactiveRevisions")));
 
-      (static_cast<RevisionLineEdit*>(_number))->setDisabled(((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && !_x_privileges->check("MaintainRevisions")) ||
+      (static_cast<RevisionLineEdit*>(_number))->setDisabled(((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) &&
+                                                              !_x_privileges->check("MaintainRevisions") &&
+                                                              !_x_privileges->check("ViewInactiveRevisions")) ||
                                                              ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) ||
                                                               (RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode())));
     }
@@ -97,7 +111,7 @@ void RevisionCluster::sModeChanged()
 
 RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
   VirtualClusterLineEdit(pParent, "rev", "rev_id", "rev_number", "rev_status",
-                         QString("case when rev_status='A' then '%1' when rev_status='P' then '%2' else '%3' end ").arg(tr("Active")).arg(tr("Pending")).arg(tr("Inactive")).toAscii(),
+                         QString("case rev_status when 'A' then '%1' when 'S' then '%2' when 'P' then '%3' else '%4' end ").arg(tr("Active")).arg(tr("Substitute")).arg(tr("Pending")).arg(tr("Inactive")).toAscii(),
                          0, pName),
   _allowNew(false),
   _isRevControl(false),
@@ -108,7 +122,9 @@ RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
   _typeText(""),
   _status(Inactive),
   _activateSep(0),
-  _activateAct(0)
+  _activateAct(0),
+  _deactivateSep(0),
+  _deactivateAct(0)
 
 {
   setTitles(tr("Revision"), tr("Revisions"));
@@ -137,6 +153,19 @@ RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
 
       menu()->addAction(_activateSep);
       menu()->addAction(_activateAct);
+
+      _deactivateSep = new QAction(this);
+      _deactivateSep->setSeparator(true);
+      _deactivateSep->setVisible(false);
+      
+      _deactivateAct = new QAction(tr("Deactivate"), this);
+      _deactivateAct->setToolTip(tr("Deactivate revision"));
+      _deactivateAct->setVisible(false);
+      connect(_deactivateAct, SIGNAL(triggered()), this, SLOT(deactivate()));
+      addAction(_deactivateAct);
+      
+      menu()->addAction(_deactivateSep);
+      menu()->addAction(_deactivateAct);
     }
   }
 }
@@ -168,10 +197,17 @@ RevisionLineEdit::Statuses RevisionLineEdit::status()
 
 void RevisionLineEdit::activate()
 {
-  if (QMessageBox::question(this, tr("Activate Revision"),
-                            tr("This action will make this revision the system default for the"
-                               "item it belongs to and deactivate the currently active revision. "
-                               "Are you sure you want proceed?"),
+  QString _message = "";
+  if (_x_metrics->boolean("BOOSubstitute"))
+    _message = tr("This action will make this revision the system default for the "
+                  "item it belongs to and substitute the currently active revision. "
+                  "Are you sure you want proceed?");
+  else
+    _message = tr("This action will make this revision the system default for the "
+                  "item it belongs to and deactivate the currently active revision. "
+                  "Are you sure you want proceed?");
+
+  if (QMessageBox::question(this, tr("Activate Revision"), _message,
                             QMessageBox::Yes,
                             QMessageBox::No  | QMessageBox::Escape | QMessageBox::Default) == QMessageBox::No)
     return;
@@ -189,6 +225,33 @@ void RevisionLineEdit::activate()
                                             .arg(__LINE__),
     activate.lastError().databaseText());
       return;
+  }
+}
+
+void RevisionLineEdit::deactivate()
+{
+  QString _message = "";
+  _message = tr("This action will make this revision inactive. "
+                "Are you sure you want proceed?");
+  
+  if (QMessageBox::question(this, tr("Deactivate Revision"), _message,
+                            QMessageBox::Yes,
+                            QMessageBox::No  | QMessageBox::Escape | QMessageBox::Default) == QMessageBox::No)
+    return;
+  
+  XSqlQuery deactivate;
+  deactivate.prepare("SELECT deactivateRev(:rev_id) AS result;");
+  deactivate.bindValue(":rev_id", id());
+  deactivate.exec();
+  if (deactivate.first())
+    setId(_id); // refresh
+  else  if (deactivate.lastError().type() != QSqlError::NoError)
+  {
+    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                          .arg(__FILE__)
+                          .arg(__LINE__),
+                          deactivate.lastError().databaseText());
+    return;
   }
 }
 
@@ -246,15 +309,22 @@ void RevisionLineEdit::setId(const int pId)
   _cachenum = text();
   if (_name == "A")
     _status = Active;
+  else if (_name == "S")
+    _status = Substitute;
   else if (_name == "P")
     _status = Pending;
   else
     _status = Inactive;
 
   if  (_x_privileges)
-    emit canActivate((_mode==Maintain) && 
+  {
+    emit canActivate( (_mode==Maintain) &&
+                      (_x_privileges->check("MaintainRevisions")) &&
+                      ((_status==Pending) || (_status==Substitute)) );
+    emit canDeactivate( (_mode==Maintain) &&
                         (_x_privileges->check("MaintainRevisions")) &&
-                                        (_status==Pending));
+                        (_status==Substitute) );
+  }
 }
 
 void RevisionLineEdit::setTargetId(int pItem)
@@ -287,8 +357,8 @@ void RevisionLineEdit::sUpdateMenu()
   VirtualClusterLineEdit::sUpdateMenu();
   if (_x_privileges && _activateSep && _activateAct)
   {
-    if((_mode==Maintain) &&
-       (_status==Pending))
+    if( (_mode==Maintain) &&
+        ((_status==Pending) || (_status==Substitute)) )
     {
       _activateSep->setVisible(true);
       _activateAct->setVisible(true);
@@ -298,6 +368,21 @@ void RevisionLineEdit::sUpdateMenu()
     {
       _activateSep->setVisible(false);
       _activateAct->setVisible(false);
+    }
+  }
+  if (_x_privileges && _deactivateSep && _deactivateAct)
+  {
+    if( (_mode==Maintain) &&
+        (_status==Substitute) )
+    {
+      _deactivateSep->setVisible(true);
+      _deactivateAct->setVisible(true);
+      _deactivateAct->setEnabled(_x_privileges->check("MaintainRevisions"));
+    }
+    else
+    {
+      _deactivateSep->setVisible(false);
+      _deactivateAct->setVisible(false);
     }
   }
 }

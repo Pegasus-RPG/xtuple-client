@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>400</height>
+    <width>539</width>
+    <height>442</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -173,9 +173,6 @@ to be bound by its terms.</comment>
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
-     </property>
-     <property name="currentIndex">
-      <number>0</number>
      </property>
      <widget class="QWidget" name="_scheduleTab">
       <attribute name="title">
@@ -529,6 +526,84 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="_characteristicsTab">
+      <attribute name="title">
+       <string>Characteristics</string>
+      </attribute>
+      <layout class="QGridLayout">
+       <item row="0" column="0">
+        <widget class="XTreeWidget" name="_charass">
+         <property name="focusPolicy">
+          <enum>Qt::ClickFocus</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <layout class="QVBoxLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_newCharacteristic">
+           <property name="text">
+            <string>&amp;New</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_editCharacteristic">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Edit</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_deleteCharacteristic">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Delete</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="DocumentsTab">
+      <attribute name="title">
+       <string>Documents</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="Documents" name="_documents">
+         <property name="type">
+          <enum>Documents::ProjectTask</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -550,6 +625,11 @@ to be bound by its terms.</comment>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Documents</class>
+   <extends>QWidget</extends>
+   <header>documents.h</header>
   </customwidget>
   <customwidget>
    <class>UsernameCluster</class>

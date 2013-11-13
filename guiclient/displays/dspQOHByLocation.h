@@ -29,6 +29,7 @@ public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPopulateLocations();
     virtual void sRelocate();
+    virtual void sAddToPackingListBatch();
     virtual void sPopulateMenu(QMenu * menu, QTreeWidgetItem *, int);
     virtual void sFillList();
 

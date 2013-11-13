@@ -98,6 +98,7 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
   if (valid)
   {
     _cmheadid = param.toInt();
+    _documents->setId(_cmheadid);
     populate();
   }
 
@@ -111,7 +112,10 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
       creditet.prepare("SELECT NEXTVAL('cmhead_cmhead_id_seq') AS cmhead_id;");
       creditet.exec();
       if (creditet.first())
+      {
         _cmheadid = creditet.value("cmhead_id").toInt();
+        _documents->setId(_cmheadid);
+      }
       else if (creditet.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, creditet.lastError().databaseText(), __FILE__, __LINE__);
@@ -180,6 +184,7 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
       _currency->setEnabled(FALSE);
       _shippingZone->setEnabled(FALSE);
       _saleType->setEnabled(FALSE);
+//      _documents->setReadOnly(TRUE);
       _save->hide();
       _new->hide();
       _delete->hide();
@@ -194,6 +199,16 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
     _cust->setId(param.toInt());
 
   return NoError;
+}
+
+int creditMemo::id() const
+{
+  return _cmheadid;
+}
+
+int creditMemo::mode() const
+{
+  return _mode;
 }
 
 void creditMemo::setNumber()

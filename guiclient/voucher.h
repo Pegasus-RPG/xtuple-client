@@ -25,6 +25,8 @@ public:
     ~voucher();
 
     Q_INVOKABLE void enableWindowModifiedSetting();
+    Q_INVOKABLE virtual int id()   const;
+    Q_INVOKABLE virtual int mode() const;
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
@@ -39,6 +41,10 @@ public slots:
     virtual void sNewMiscDistribution();
     virtual void sEditMiscDistribution();
     virtual void sDeleteMiscDistribution();
+    virtual void sNewCharacteristic();
+    virtual void sEditCharacteristic();
+    virtual void sDeleteCharacteristic();
+    virtual void sFillCharacteristic();
     virtual void sFillList();
     virtual void sFillMiscList();
     virtual void sPopulatePoInfo();

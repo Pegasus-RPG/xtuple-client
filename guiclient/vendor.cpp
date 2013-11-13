@@ -19,6 +19,7 @@
 #include <openreports.h>
 
 #include "addresscluster.h"
+#include "characteristicAssignment.h"
 #include "comment.h"
 #include "crmaccount.h"
 #include "errorReporter.h"
@@ -35,24 +36,27 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_crmacct, SIGNAL(clicked()), this, SLOT(sCrmAccount()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_printAddresses, SIGNAL(clicked()), this, SLOT(sPrintAddresses()));
-  connect(_newAddress, SIGNAL(clicked()), this, SLOT(sNewAddress()));
-  connect(_editAddress, SIGNAL(clicked()), this, SLOT(sEditAddress()));
-  connect(_viewAddress, SIGNAL(clicked()), this, SLOT(sViewAddress()));
-  connect(_deleteAddress, SIGNAL(clicked()), this, SLOT(sDeleteAddress()));
-  connect(_deleteTaxreg, SIGNAL(clicked()), this, SLOT(sDeleteTaxreg()));
-  connect(_editTaxreg,   SIGNAL(clicked()), this, SLOT(sEditTaxreg()));
-  connect(_newTaxreg,    SIGNAL(clicked()), this, SLOT(sNewTaxreg()));
-  connect(_viewTaxreg,   SIGNAL(clicked()), this, SLOT(sViewTaxreg()));
-  connect(_next, SIGNAL(clicked()), this, SLOT(sNext()));
-  connect(_previous, SIGNAL(clicked()), this, SLOT(sPrevious()));
-  connect(_mainButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-  connect(_altButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-  connect(_checksButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-  connect(_number, SIGNAL(textEdited(const QString&)), this, SLOT(sNumberEdited()));
-  connect(_number, SIGNAL(editingFinished()), this, SLOT(sCheck()));
+  connect(_crmacct,             SIGNAL(clicked()),                       this,         SLOT(sCrmAccount()));
+  connect(_save,                SIGNAL(clicked()),                       this,         SLOT(sSave()));
+  connect(_printAddresses,      SIGNAL(clicked()),                       this,         SLOT(sPrintAddresses()));
+  connect(_newAddress,          SIGNAL(clicked()),                       this,         SLOT(sNewAddress()));
+  connect(_editAddress,         SIGNAL(clicked()),                       this,         SLOT(sEditAddress()));
+  connect(_viewAddress,         SIGNAL(clicked()),                       this,         SLOT(sViewAddress()));
+  connect(_deleteAddress,       SIGNAL(clicked()),                       this,         SLOT(sDeleteAddress()));
+  connect(_deleteTaxreg,        SIGNAL(clicked()),                       this,         SLOT(sDeleteTaxreg()));
+  connect(_editTaxreg,          SIGNAL(clicked()),                       this,         SLOT(sEditTaxreg()));
+  connect(_newTaxreg,           SIGNAL(clicked()),                       this,         SLOT(sNewTaxreg()));
+  connect(_viewTaxreg,          SIGNAL(clicked()),                       this,         SLOT(sViewTaxreg()));
+  connect(_next,                SIGNAL(clicked()),                       this,         SLOT(sNext()));
+  connect(_previous,            SIGNAL(clicked()),                       this,         SLOT(sPrevious()));
+  connect(_mainButton,          SIGNAL(clicked()),                       this,         SLOT(sHandleButtons()));
+  connect(_altButton,           SIGNAL(clicked()),                       this,         SLOT(sHandleButtons()));
+  connect(_checksButton,        SIGNAL(clicked()),                       this,         SLOT(sHandleButtons()));
+  connect(_number,              SIGNAL(textEdited(const QString&)),      this,         SLOT(sNumberEdited()));
+  connect(_number,              SIGNAL(editingFinished()),               this,         SLOT(sCheck()));
+  connect(_newCharacteristic,   SIGNAL(clicked()),                       this,         SLOT(sNewCharacteristic()));
+  connect(_editCharacteristic,  SIGNAL(clicked()),                       this,         SLOT(sEditCharacteristic()));
+  connect(_deleteCharacteristic,SIGNAL(clicked()),                       this,         SLOT(sDeleteCharacteristic()));
 
   connect(_address, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _contact2, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
@@ -70,17 +74,20 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
   _routingNumber->setValidator(_routingValidator);
   _achAccountNumber->setValidator(_accountValidator);
 
-  _vendaddr->addColumn(tr("Number"), 70, Qt::AlignLeft, true, "vendaddr_code");
-  _vendaddr->addColumn(tr("Name"),   50, Qt::AlignLeft, true, "vendaddr_name");
-  _vendaddr->addColumn(tr("City"),   -1, Qt::AlignLeft, true, "addr_city");
-  _vendaddr->addColumn(tr("State"),  -1, Qt::AlignLeft, true, "addr_state");
-  _vendaddr->addColumn(tr("Country"),-1, Qt::AlignLeft, true, "addr_country");
-  _vendaddr->addColumn(tr("Postal Code"),-1, Qt::AlignLeft, true, "addr_postalcode");
+  _vendaddr->addColumn(tr("Number"),        70,              Qt::AlignLeft,   true,  "vendaddr_code");
+  _vendaddr->addColumn(tr("Name"),          50,              Qt::AlignLeft,   true,  "vendaddr_name");
+  _vendaddr->addColumn(tr("City"),          -1,              Qt::AlignLeft,   true,  "addr_city");
+  _vendaddr->addColumn(tr("State"),         -1,              Qt::AlignLeft,   true,  "addr_state");
+  _vendaddr->addColumn(tr("Country"),       -1,              Qt::AlignLeft,   true,  "addr_country");
+  _vendaddr->addColumn(tr("Postal Code"),   -1,              Qt::AlignLeft,   true,  "addr_postalcode");
 
-  _taxreg->addColumn(tr("Tax Authority"), 100, Qt::AlignLeft, true, "taxauth_code");
-  _taxreg->addColumn(tr("Tax Zone"),      100, Qt::AlignLeft, true, "taxzone_code");
-  _taxreg->addColumn(tr("Registration #"), -1, Qt::AlignLeft, true, "taxreg_number");
+  _taxreg->addColumn(tr("Tax Authority"),   100,             Qt::AlignLeft,   true,  "taxauth_code");
+  _taxreg->addColumn(tr("Tax Zone"),        100,             Qt::AlignLeft,   true,  "taxzone_code");
+  _taxreg->addColumn(tr("Registration #"),  -1,              Qt::AlignLeft,   true,  "taxreg_number");
 
+  _charass->addColumn(tr("Characteristic"), _itemColumn,     Qt::AlignLeft,   true,  "char_name" );
+  _charass->addColumn(tr("Value"),          -1,              Qt::AlignLeft,   true,  "charass_value" );
+  
   _accountType->append(0, "Checking", "K");
   _accountType->append(1, "Savings",  "C");
 
@@ -181,6 +188,9 @@ SetResponse vendor::set(const ParameterList &pParams)
         connect(_vendaddr, SIGNAL(itemSelected(int)), _viewAddress, SLOT(animateClick()));
       }
 
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
+
       emit newId(_vendid);
     }
     else if (param.toString() == "edit")
@@ -199,6 +209,8 @@ SetResponse vendor::set(const ParameterList &pParams)
         connect(_vendaddr, SIGNAL(itemSelected(int)), _viewAddress, SLOT(animateClick()));
       }
 
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "view")
     {
@@ -227,6 +239,7 @@ SetResponse vendor::set(const ParameterList &pParams)
       _match->setEnabled(false);
       _newTaxreg->setEnabled(false);
       _comments->setReadOnly(TRUE);
+      _newCharacteristic->setEnabled(FALSE);
 
       _achGroup->setEnabled(false);
       _routingNumber->setEnabled(false);
@@ -809,6 +822,7 @@ bool vendor::sPopulate()
 
     sFillAddressList();
     sFillTaxregList();
+    sFillCharacteristic();
 
     _comments->setId(_crmacctid);
     _address->setSearchAcct(_crmacctid);
@@ -983,6 +997,62 @@ void vendor::sDeleteTaxreg()
     return;
 
   sFillTaxregList();
+}
+
+void vendor::sNewCharacteristic()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("vend_id", _vendid);
+  
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillCharacteristic();
+}
+
+void vendor::sEditCharacteristic()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("charass_id", _charass->id());
+  
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillCharacteristic();
+}
+
+void vendor::sDeleteCharacteristic()
+{
+  XSqlQuery itemDelete;
+  itemDelete.prepare( "DELETE FROM charass "
+                     "WHERE (charass_id=:charass_id);" );
+  itemDelete.bindValue(":charass_id", _charass->id());
+  itemDelete.exec();
+  
+  sFillCharacteristic();
+}
+
+void vendor::sFillCharacteristic()
+{
+  XSqlQuery charassq;
+  charassq.prepare( "SELECT charass_id, char_name, "
+                   " CASE WHEN char_type < 2 THEN "
+                   "   charass_value "
+                   " ELSE "
+                   "   formatDate(charass_value::date) "
+                   "END AS charass_value "
+                   "FROM charass JOIN char ON (char_id=charass_char_id) "
+                   "WHERE ( (charass_target_type=:target_type)"
+                   "  AND   (charass_target_id=:target_id) ) "
+                   "ORDER BY char_order, char_name;" );
+  charassq.bindValue(":target_id", _vendid);
+  charassq.bindValue(":target_type", "V");
+  charassq.exec();
+  _charass->populate(charassq);
 }
 
 void vendor::sNext()

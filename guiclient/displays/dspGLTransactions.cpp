@@ -297,7 +297,8 @@ bool dspGLTransactions::setParams(ParameterList &params)
                   "FROM gltrans "
                   "  JOIN accnt ON (gltrans_accnt_id=accnt_id) "
                   "WHERE ((gltrans_date BETWEEN :periodstart AND date :querystart - interval '1 day')"
-                  "  AND  (gltrans_accnt_id=:accnt_id)) "
+                  "  AND  (gltrans_accnt_id=:accnt_id)"
+                  "  AND  (NOT gltrans_deleted)) "
                   "GROUP BY accnt_type;");
       glq.bindValue(":periodstart", periodStart);
       glq.bindValue(":querystart",  params.value("startDate").toDate());
@@ -476,8 +477,10 @@ void dspGLTransactions::sViewDocument()
       dspViewDocument.prepare("SELECT apopen_id"
                 "  FROM apopen"
                 " WHERE ( (apopen_docnumber=:docnumber) "
+                "  AND (apopen_journalnumber=:journalnumber)"
                 "  AND (apopen_doctype IN ('C', 'D')) );");
       dspViewDocument.bindValue(":docnumber", item->rawValue("docnumber").toString());
+      dspViewDocument.bindValue(":journalnumber", item->rawValue("gltrans_journalnumber").toString());
       dspViewDocument.exec();
       if(!dspViewDocument.first())
         return;

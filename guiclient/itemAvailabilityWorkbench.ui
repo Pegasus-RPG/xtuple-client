@@ -203,6 +203,13 @@ to be bound by its terms.</comment>
             </widget>
            </item>
            <item>
+            <widget class="QRadioButton" name="_customerPricesButton">
+             <property name="text">
+              <string>Customer Prices</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="horizontalSpacer_2">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -233,6 +240,9 @@ to be bound by its terms.</comment>
            </widget>
            <widget class="QWidget" name="_quoteItemsPage">
             <layout class="QGridLayout" name="gridLayout_30"/>
+           </widget>
+           <widget class="QWidget" name="_customerPricesPage">
+            <layout class="QGridLayout" name="gridLayout_33"/>
            </widget>
           </widget>
          </item>

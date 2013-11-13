@@ -15,6 +15,7 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include "characteristic.h"
 #include "salesOrder.h"
 #include "salesOrderItem.h"
 #include "parameterwidget.h"
@@ -48,6 +49,7 @@ dspBacklog::dspBacklog(QWidget* parent, const char*, Qt::WFlags fl)
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
 
   parameterWidget()->applyDefaultFilterSet();
+  setupCharacteristics(characteristic::SalesOrders);
 
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -60,7 +62,11 @@ dspBacklog::dspBacklog(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Shipped"),      _qtyColumn, Qt::AlignRight, true, "coitem_qtyshipped");
   list()->addColumn(tr("Balance"),      _qtyColumn, Qt::AlignRight, true, "qtybalance");
   if (_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"))
-    list()->addColumn(tr("Ext. Price"), _bigMoneyColumn, Qt::AlignRight, true, "baseextpricebalance");
+  {
+    list()->addColumn(tr("Base Ext. Price"), _bigMoneyColumn, Qt::AlignRight,  true, "baseextpricebalance");
+    list()->addColumn(tr("Ext. Price"),      _bigMoneyColumn, Qt::AlignRight,  true, "extpricebalance");
+    list()->addColumn(tr("Currency"),        _dateColumn,     Qt::AlignCenter, true, "currAbbr");
+  }
   list()->addColumn(tr("Firm"),         _ynColumn,  Qt::AlignCenter,false, "coitem_firm");
 
   list()->setPopulateLinear(true);

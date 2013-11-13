@@ -13,75 +13,181 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>483</width>
-    <height>211</height>
+    <width>718</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Copy Item</string>
   </property>
-  <layout class="QHBoxLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_6">
    <item>
-    <layout class="QVBoxLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <layout class="QVBoxLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QLabel" name="lblSourceItemLit">
-         <property name="text">
-          <string>Source Item:</string>
+        <layout class="QVBoxLayout">
+         <property name="spacing">
+          <number>0</number>
          </property>
-        </widget>
+         <item>
+          <widget class="QLabel" name="lblSourceItemLit">
+           <property name="text">
+            <string>Source Item:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="ItemCluster" name="_source">
+           <property name="focusPolicy">
+            <enum>Qt::StrongFocus</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="ItemCluster" name="_source">
-         <property name="focusPolicy">
-          <enum>Qt::StrongFocus</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout">
-       <item>
-        <widget class="QLabel" name="_targetItemNumberLit">
-         <property name="text">
-          <string>&amp;Target Item Number:</string>
-         </property>
-         <property name="buddy">
-          <cstring>_targetItemNumber</cstring>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout">
+         <item>
+          <widget class="QLabel" name="_targetItemNumberLit">
+           <property name="text">
+            <string>&amp;Target Item Number:</string>
+           </property>
+           <property name="buddy">
+            <cstring>_targetItemNumber</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="XLineEdit" name="_targetItemNumber"/>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="XLineEdit" name="_targetItemNumber"/>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QLabel" name="_targetItemDescripLit">
+           <property name="text">
+            <string>Target Item Description:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="XLineEdit" name="_targetItemDescrip"/>
+         </item>
+        </layout>
        </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout">
        <item>
-        <widget class="QCheckBox" name="_copyCosts">
-         <property name="text">
-          <string>Copy &amp;Item Costs</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="1">
+          <widget class="XCheckBox" name="_copyItemsite">
+           <property name="text">
+            <string>Copy Item Sites</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="XCheckBox" name="_copyBOM">
+           <property name="text">
+            <string>Copy Bill of Materials</string>
+           </property>
+           <property name="forgetful">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="_copyBOM">
-         <property name="text">
-          <string>Copy &amp;Bill of Materials</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_7">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="XCheckBox" name="_rollupPrices">
+             <property name="text">
+              <string>Rollup Prices</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_8">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="_listPriceLit">
+               <property name="text">
+                <string>List Price:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="_listCostLit">
+               <property name="text">
+                <string>Wholesale Price:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_9">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="XLineEdit" name="_listPrice"/>
+             </item>
+             <item>
+              <widget class="XLineEdit" name="_listCost"/>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
        <item>
         <spacer>
@@ -101,47 +207,218 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
+     <item>
+      <layout class="QVBoxLayout">
+       <item>
+        <widget class="QPushButton" name="_close">
+         <property name="text">
+          <string>&amp;Cancel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_copy">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Co&amp;py</string>
+         </property>
+         <property name="default">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>87</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout">
-     <item>
-      <widget class="QPushButton" name="_close">
-       <property name="text">
-        <string>&amp;Cancel</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="_copy">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Co&amp;py</string>
-       </property>
-       <property name="default">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>87</width>
-         <height>0</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+    <widget class="QTabWidget" name="_tab">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="_bomTab">
+      <attribute name="title">
+       <string>Bill of Material</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QLabel" name="_searchForLit">
+             <property name="text">
+              <string>Search For Item:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="XLineEdit" name="_searchForBOM"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="XTreeWidget" name="_availablebomitems"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <spacer>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QPushButton" name="_addBOM">
+             <property name="text">
+              <string>Add-&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_revokeBOM">
+             <property name="text">
+              <string>&lt;-Remove</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QLabel" name="_addedbomitemsLit">
+           <property name="text">
+            <string>Component Items:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="XTreeWidget" name="_addedbomitems"/>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="_itemsiteTab">
+      <attribute name="title">
+       <string>Item Site</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_10">
+         <item>
+          <widget class="QLabel" name="_addeditemsitesLit">
+           <property name="text">
+            <string>Item Sites:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="XTreeWidget" name="_addeditemsites"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_11">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_12">
+           <item>
+            <widget class="QPushButton" name="_addItemsite">
+             <property name="text">
+              <string>Copy</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_revokeItemsite">
+             <property name="text">
+              <string>Remove</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -153,18 +430,43 @@ to be bound by its terms.</comment>
    <header>itemcluster.h</header>
   </customwidget>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>_source</tabstop>
   <tabstop>_targetItemNumber</tabstop>
-  <tabstop>_copyCosts</tabstop>
+  <tabstop>_targetItemDescrip</tabstop>
   <tabstop>_copyBOM</tabstop>
+  <tabstop>_copyItemsite</tabstop>
+  <tabstop>_rollupPrices</tabstop>
+  <tabstop>_listPrice</tabstop>
+  <tabstop>_listCost</tabstop>
   <tabstop>_copy</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_tab</tabstop>
+  <tabstop>_searchForBOM</tabstop>
+  <tabstop>_availablebomitems</tabstop>
+  <tabstop>_addBOM</tabstop>
+  <tabstop>_revokeBOM</tabstop>
+  <tabstop>_addedbomitems</tabstop>
+  <tabstop>_addeditemsites</tabstop>
+  <tabstop>_addItemsite</tabstop>
+  <tabstop>_revokeItemsite</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -188,7 +490,7 @@ to be bound by its terms.</comment>
    <sender>_close</sender>
    <signal>clicked()</signal>
    <receiver>copyItem</receiver>
-   <slot>reject()</slot>
+   <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>20</x>

@@ -29,6 +29,9 @@ public:
     static void editInvoice( int pId, QWidget *parent = 0 );
     static void viewInvoice( int pId, QWidget *parent = 0 );
 
+    Q_INVOKABLE virtual int id()   const;
+    Q_INVOKABLE virtual int mode() const;
+  
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sClose();
@@ -41,6 +44,10 @@ public slots:
     virtual void sView();
     virtual void sDelete();
     virtual void populate();
+    virtual void sNewCharacteristic();
+    virtual void sEditCharacteristic();
+    virtual void sDeleteCharacteristic();
+    virtual void sFillCharacteristic();
     virtual void sFillItemList();
     virtual void sCalculateTotal();
     virtual void sCalculateTax();

@@ -164,6 +164,7 @@ friend class ItemLineEditDelegate;
   public slots:
     void sHandleCompleter();
     void sInfo();
+    void sCopy();
     void sList();
     void sSearch();
     void sSearch(ParameterList params);

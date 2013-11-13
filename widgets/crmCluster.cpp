@@ -164,6 +164,11 @@ void CrmClusterLineEdit::sUpdateMenu()
                         (_x_privileges->check(_editOwnPriv) && (_owner == _x_username || _assignto == _x_username)) ||
                         (_x_privileges->check(_viewOwnPriv) && (_owner == _x_username || _assignto == _x_username))) &&
                         _id != -1);
+  _copyAct->setEnabled((_x_privileges->check(_editPriv) ||
+                        _x_privileges->check(_viewPriv) ||
+                        (_x_privileges->check(_editOwnPriv) && (_owner == _x_username || _assignto == _x_username)) ||
+                        (_x_privileges->check(_viewOwnPriv) && (_owner == _x_username || _assignto == _x_username))) &&
+                       _id != -1 && isEnabled() && _uiName == "project");
   _newAct->setEnabled((_x_privileges->check(_newPriv) || _x_privileges->check(_editOwnPriv)) &&
                       isEnabled());
 
@@ -172,6 +177,9 @@ void CrmClusterLineEdit::sUpdateMenu()
     if (!menu()->actions().contains(_openAct))
       menu()->addAction(_openAct);
 
+    if (!menu()->actions().contains(_copyAct))
+      menu()->addAction(_copyAct);
+    
     if (!menu()->actions().contains(_newAct) &&
         !_newPriv.isEmpty())
       menu()->addAction(_newAct);
@@ -181,6 +189,9 @@ void CrmClusterLineEdit::sUpdateMenu()
     if (menu()->actions().contains(_openAct))
       menu()->removeAction(_openAct);
 
+    if (menu()->actions().contains(_copyAct))
+      menu()->removeAction(_copyAct);
+    
     if (menu()->actions().contains(_newAct))
       menu()->removeAction(_newAct);
   }

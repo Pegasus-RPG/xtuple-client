@@ -350,6 +350,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 {
   XSqlQuery _GGUIClient;
   _menuBar = 0;
+  _activeWindow = 0;
   _shown = false;
   _shuttingDown = false;
 
@@ -400,19 +401,10 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _systemFont = new QFont(qApp->font());
 
   _workspace = new QMdiArea();
-  xtViewMode prevmode = (xtViewMode)(xtsettingsValue("GUIClient/viewMode",
-                                                     SubWindowView).toInt());
-  if (FreeFloatingView == prevmode)
-    _workspace->setViewMode(QMdiArea::SubWindowView);
-  else
-    _workspace->setViewMode((QMdiArea::ViewMode)(prevmode));
 
-  _workspace->setOption(QMdiArea::DontMaximizeSubWindowOnActivation, false);
   _workspace->setWindowIcon(QIcon(":/images/clear.png"));
   _workspace->setActivationOrder(QMdiArea::ActivationHistoryOrder);
-#if defined Q_WS_MACX
-  _workspace->setDocumentMode(true);
-#endif
+
   setCentralWidget(_workspace);
   _workspace->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   _workspace->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -471,7 +463,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
       background.loadFromData(QUUDecode(_GGUIClient.value("image_data").toString()));
       _workspace->setBackground(QBrush(QPixmap::fromImage(background)));
-      //_workspace->setBackgroundMode(Qt::FixedPixmap);
     }
   }
 
@@ -506,15 +497,13 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   qApp->processEvents();
   _splash->finish(this);
 
+  connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(sFocusChanged(QWidget*,QWidget*))); // Need this?
+
   //Restore Window Size Saved on Close
   QRect availableGeometry = QApplication::desktop()->availableGeometry();
 
-  QSize defsize = QSize();
-#if defined Q_WS_MACX
-  defsize = QSize(1000, 650);
-#endif
   QPoint pos = xtsettingsValue("GUIClient/geometry/pos", QPoint()).toPoint();
-  QSize size = xtsettingsValue("GUIClient/geometry/size", defsize).toSize();
+  QSize size = xtsettingsValue("GUIClient/geometry/size", QSize()).toSize();
   int mainXMax = availableGeometry.bottomRight().x();
   int mainYMax = availableGeometry.bottomRight().y();
 
@@ -584,18 +573,6 @@ GUIClient::WindowSystem GUIClient::getWindowSystem()
 #else
   return Unknown;
 #endif
-}
-
-// TODO: can we get rid of _showTopLevel altogether?
-GUIClient::xtViewMode GUIClient::viewMode() const
-{
-  if (_showTopLevel)
-    return FreeFloatingView;
-  else if (_workspace)
-    return (GUIClient::xtViewMode)(_workspace->viewMode());
-
-  qWarning("GUIClient:: Don't know what viewMode I'm in");
-  return FreeFloatingView;
 }
 
 bool GUIClient::singleCurrency()
@@ -824,7 +801,6 @@ void GUIClient::closeEvent(QCloseEvent *event)
   // save main window info for next login
   xtsettingsSetValue("GUIClient/geometry/pos",  pos());
   xtsettingsSetValue("GUIClient/geometry/size", size());
-  xtsettingsSetValue("GUIClient/viewMode",      viewMode());
 
   // save state of any main window children
   QList<QMainWindow*> windows = findChildren<QMainWindow*>();
@@ -1676,119 +1652,26 @@ void GUIClient::windowDestroyed(QObject * o)
 bool SaveSizePositionEventFilter::eventFilter(QObject *obj, QEvent *event)
 {
   if(event->type() == QEvent::Close)
-    omfgThis->saveWidgetSizePos(qobject_cast<QWidget *>(obj));
-
+  {
+    QWidget * w = qobject_cast<QWidget *>(obj);
+    if(w)
+    {
+      QString objName = w->objectName();
+      xtsettingsSetValue(objName + "/geometry/size", w->size());
+      if(omfgThis->showTopLevel())
+        xtsettingsSetValue(objName + "/geometry/pos", w->pos());
+      else if (w->parentWidget() != 0)
+        xtsettingsSetValue(objName + "/geometry/pos", w->parentWidget()->pos());
+    }
+  }
   return QObject::eventFilter(obj, event);
 }
 
-/** Save the size and position of the passed in widget for future use.
-
-  @return The return value indicates whether the position or size was saved or
-          not. It might not have been saved because the user told us not to
-          save them for this widget, because the application is running in
-          tabbed mode, or something similar.
-*/
-bool GUIClient::saveWidgetSizePos(QWidget *pWidget)
-{
-  if (! pWidget)
-    return false;
-
-  bool returnVal = false;
-
-  QString objName = pWidget->objectName();
-
-/*
-qDebug() << __FUNCTION__    << pWidget->isMaximized()
-         << pWidget->size() << xtsettingsValue(objName + "/geometry/rememberSize", true).toBool()
-         << pWidget->pos()  << xtsettingsValue(objName + "/geometry/rememberPos", true).toBool();
-
-*/
-  if (! pWidget->isMaximized())
-  { 
-    if (xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
-    {
-      xtsettingsSetValue(objName + "/geometry/size", pWidget->size());
-      returnVal = true;
-    }
-
-    if (xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
-    {
-      xtsettingsSetValue(objName + "/geometry/pos", pWidget->pos());
-      returnVal = true;
-    }
-  }
-
-  return returnVal;
-}
-
-bool GUIClient::restoreWidgetSizePos(QWidget *pWidget, bool forceFloat)
-{
-  bool returnVal = false;
-
-  if (! pWidget)
-    returnVal = false;
-
-  else if (windowFlags() & (Qt::Window | Qt::Dialog) &&
-           metaObject()->className() != QString("xTupleDesigner"))
-  {
-    QRect availableGeometry = QApplication::desktop()->availableGeometry();
-    if (! showTopLevel() && ! pWidget->isModal())
-      availableGeometry = _workspace->geometry();
-
-    QString objName = pWidget->objectName();
-    QPoint  pos     = xtsettingsValue(objName + "/geometry/pos").toPoint();
-    QSize   lsize   = xtsettingsValue(objName + "/geometry/size").toSize();
-
-/*
-qDebug() << __FUNCTION__   << pWidget->isModal()
-         << showTopLevel() << _workspace->viewMode()
-         << availableGeometry
-         << lsize << xtsettingsValue(objName + "/geometry/rememberSize", true).toBool()
-         << pos   << xtsettingsValue(objName + "/geometry/rememberPos", true).toBool();
-*/
-    QMainWindow *mw = qobject_cast<QMainWindow*>(pWidget);
-    if (mw)
-      mw->statusBar()->show();
-
-    QWidget *parentWindow = qobject_cast<QWidget*>(pWidget->parent());
-    if (lsize.isValid() &&
-        xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
-    {
-      if (showTopLevel())
-        pWidget->resize(lsize);
-      else if (parentWindow && _workspace->viewMode() == QMdiArea::SubWindowView &&
-               (!pWidget->inherits("setup") && !pWidget->inherits("userPreferences") &&
-                !pWidget->inherits("copyItem") && !pWidget->inherits("copyBOM")))
-        parentWindow->resize(lsize);
-    }
-
-    bool shouldRestore = ! pos.isNull() &&
-                         availableGeometry.contains(QRect(pos, pWidget->size())) &&
-                         xtsettingsValue(objName + "/geometry/rememberPos", true).toBool();
-    if (showTopLevel() || pWidget->isModal() || forceFloat)
-    {
-      if (shouldRestore)
-        pWidget->move(pos);
-    }
-    else if (_workspace->viewMode() == QMdiArea::TabbedView)
-      pWidget->setWindowState(Qt::WindowMaximized);
-    else if (shouldRestore)
-      pWidget->parentWidget()->move(pos);
-
-    returnVal = true;
-  }
-
-  return returnVal;
-}
-
-/* TODO: in workspace subwindow mode, w->show is called twice for every call to
-   handleNewWindow. w gets resized between the 1st and 2nd calls, so pos memory
-   works but not size memory. why are there 2 show() calls & who is resizing w?
-   TODO: combine window handling from here, scripttoolbox, & guiclientinterface
-*/
 void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloat)
 {
-  if (! w->isModal())
+  // TO DO:  This function should be replaced by a centralized openWindow function
+  // used by toolbox, guiclient interface, and core windows
+  if(!w->isModal())
   {
     if (w->parentWidget())
     {
@@ -1797,9 +1680,10 @@ void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloa
       else
       {
         w->setWindowModality(m);
-        // don't destroy nonmodal children if their nonmodal parents get closed.
-        // setParent(0) because using 'this' embeds w in the main app window.
-        // reset the focusWidget because setParent changes it (?)
+        // Remove the parent because this is not a behavior we want unless
+        // window is modal.  Does, however, completely eliminate ability
+        // to set a parent on non-modal window with this implementation
+        // Get the focusWidget and then reset it as the setParent changes it.
         QWidget * fw = w->focusWidget();
         w->setParent(0);
         if(fw)
@@ -1812,32 +1696,57 @@ void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloa
 
   connect(w, SIGNAL(destroyed(QObject*)), this, SLOT(windowDestroyed(QObject*)));
 
-  w->setAttribute(Qt::WA_DeleteOnClose);
-  _windowList.append(w);
-
-  if (! forceFloat && ! w->isModal() && ! showTopLevel())
+  if(w->inherits("XMainWindow") || w->inherits("XWidget") || w->inherits("XDialog"))
   {
+    if(w->inherits("XDialog"))
+      qDebug() << "warning: " << w->objectName() << " inherts XDialog and was passed to handleNewWindow()";
+    w->show();
+    return;
+  }
+
+  qDebug() << "GUIClient::handleNewWindow() called on object that doesn't inherit XMainWindow: " << w->objectName();
+
+  QRect availableGeometry = QApplication::desktop()->availableGeometry();
+  if(!_showTopLevel && !w->isModal() && !forceFloat)
+    availableGeometry = _workspace->geometry();
+
+  QString objName = w->objectName();
+  QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
+  QSize size = xtsettingsValue(objName + "/geometry/size").toSize();
+
+  if(size.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool() && (metaObject()->className() != QString("xTupleDesigner")))
+    w->resize(size);
+
+  bool wIsModal = w->isModal();
+  if(_showTopLevel || wIsModal || forceFloat)
+  {
+    _windowList.append(w);
+    w->setAttribute(Qt::WA_DeleteOnClose);
+    QMainWindow *mw = qobject_cast<QMainWindow*>(w);
+    if (mw)
+      mw->statusBar()->show();
+    QRect r(pos, w->size());
+    if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
+      w->move(pos);
+    w->show();
+  }
+  else
+  {
+    QWidget * fw = w->focusWidget();
+    w->setAttribute(Qt::WA_DeleteOnClose);
     QMdiSubWindow *subwin = _workspace->addSubWindow(w);
     _workspace->setActiveSubWindow(subwin);
-
-    if (QDialog *dlg = qobject_cast<QDialog*>(w)) // not ==
-      connect(dlg, SIGNAL(finished(int)), subwin, SLOT(hide()));
-
     connect(w, SIGNAL(destroyed(QObject*)), subwin, SLOT(close()));
+    QRect r(pos, w->size());
+    if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
+      w->move(pos);
+    w->show();
+    if(fw)
+      fw->setFocus();
   }
 
-  // TODO: why do {XDialog,XMainWindow,XWidget}::showEvent call restoreWidgetSizePos?
-  if (! w->inherits("XDialog") && ! w->inherits("XMainWindow") && ! w->inherits("XWidget"))
-  {
-    restoreWidgetSizePos(w, forceFloat);
-    if (! w->isModal())
-      w->installEventFilter(__saveSizePositionEventFilter);
-  }
-
-  w->show();
-
-  if (showTopLevel())
-    w->activateWindow();
+  if(!wIsModal)
+    w->installEventFilter(__saveSizePositionEventFilter);
 }
 
 QMenuBar *GUIClient::menuBar()
@@ -1908,6 +1817,23 @@ void GUIClient::tabifyDockWidget ( QDockWidget * first, QDockWidget * second )
 void GUIClient::setCentralWidget(QWidget * widget)
 {
   QMainWindow::setCentralWidget(widget);
+}
+
+void GUIClient::sFocusChanged(QWidget * /*old*/, QWidget * /*now*/)
+{
+  QWidget * thisActive = workspace()->activeSubWindow();
+  if(omfgThis->showTopLevel())
+    thisActive = qApp->activeWindow();
+  if(thisActive == this)
+    return;
+  if(thisActive && thisActive->inherits("QMessageBox"))
+    return;
+  _activeWindow = thisActive;
+}
+
+QWidget * GUIClient::myActiveWindow()
+{
+  return _activeWindow;
 }
 
 // TODO: when std edition is extracted, replace this with a script include()
