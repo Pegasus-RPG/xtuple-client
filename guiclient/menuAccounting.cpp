@@ -132,6 +132,7 @@
 #include "vendors.h"
 #include "bankAccounts.h"
 #include "checkFormats.h"
+#include "assessFinanceCharges.h"
 
 #include "customers.h"
 
@@ -210,6 +211,8 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
   taxMenu->setObjectName("menu.accnt.tax");
   taxMenu->setObjectName("menu.accnt.tax.taxreports");
   utilitiesMenu->setObjectName("menu.accnt.utilities");
+
+  _privileges->set("AssessFinanceCharges", true);
 
   actionProperties acts[] = { 
     // Accounting | Accounts Payable
@@ -431,6 +434,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "gl.forwardUpdateAccounts",	tr("&Forward Update Accounts..."),	SLOT(sForwardUpdateAccounts()),	utilitiesMenu,	"ViewTrialBalances",	NULL, NULL, _metrics->boolean("ManualForwardUpdate"), NULL },
     { "gl.duplicateAccountNumbers",      tr("&Duplicate Account Numbers..."),  SLOT(sDuplicateAccountNumbers()), utilitiesMenu,  "MaintainChartOfAccounts", NULL, NULL, true, NULL },
     { "separator",		  NULL,					NULL,					utilitiesMenu,		"true",					       NULL, NULL, true, NULL },
+    { "gl.assessFinanceCharges", tr("&Assess Finance Charges"), SLOT(sAssessFinanceCharges()), utilitiesMenu, "MaintainChartOfAccounts", NULL, NULL, true, NULL },
     { "so.purgeInvoices", tr("Purge &Invoices..."), SLOT(sPurgeInvoices()), utilitiesMenu, "PurgeInvoices", NULL, NULL, true , NULL },
     { "ar.updateLateCustCreditStatus", tr("&Update Late Customer Credit Status..."), SLOT(sUpdateLateCustCreditStatus()), utilitiesMenu, "UpdateCustomerCreditStatus", NULL, NULL, _metrics->boolean("AutoCreditWarnLateCustomers"), NULL },
 //    { "ar.createRecurringInvoices", tr("&Create Recurring Invoices..."), SLOT(sCreateRecurringInvoices()), utilitiesMenu, "MaintainMiscInvoices", NULL, NULL, true, NULL },
@@ -505,6 +509,12 @@ void menuAccounting::addActionsToMenu(actionProperties acts[], unsigned int numE
                   acts[i].priv ) ;
     }
   }
+}
+
+//FC
+void menuAccounting::sAssessFinanceCharges()
+{
+     omfgThis->handleNewWindow(new assessFinanceCharges());
 }
 
 //  Purchase Orders
