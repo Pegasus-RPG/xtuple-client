@@ -238,6 +238,117 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
     _cacheuseSubaccounts = true;
   }
   
+  //FC
+  /*
+  -----------------------------------------------------------------------------------------------------
+  */
+
+  //Get and set up the annual interest rate
+  XSqlQuery query;
+  query.exec("SELECT fincharg_air FROM fincharg LIMIT 1;");
+  if(query.first())
+  {
+      QString val = query.value(0).toString();
+      if(val.isEmpty())
+      {
+          QMessageBox::critical(this, tr("VAL IS EMPTY"), val);
+          _annualInterestRate->setText("0%");
+      }
+      else
+      {
+          _annualInterestRate->setText(val);
+      }
+  }
+
+  //Get and set up _minFinanceCharge
+  query.exec("SELECT fincharg_mincharg FROM fincharg LIMIT 1;");
+  if(query.first())
+  {
+      QString val = query.value(0).toString();
+      if(val.isEmpty())
+      {
+          QMessageBox::critical(this, tr("Minimum Finance Charge"), "Minimum finance charge data could not be found!");
+          _minFinanceCharge->setText("0.00");
+      }
+      else
+      {
+          _minFinanceCharge->setText(val);
+      }
+  }
+
+  query.exec("SELECT fincharg_graceperiod FROM fincharg LIMIT 1;");
+  if(query.first())
+  {
+      QString val = query.value(0).toString();
+      if(val.isEmpty())
+      {
+          QMessageBox::critical(this, tr("Grace Period"), "Grace period data could not be found!");
+          _gracePeriod->setText("0");
+      }
+      else
+      {
+          _gracePeriod->setText(val);
+      }
+  }
+
+  query.exec("SELECT fincharg_calcfrom FROM fincharg LIMIT 1;");
+  if(query.first())
+  {
+      int val = query.value(0).toInt();
+      if(val == 1 || val == 2)
+      {
+          if(val == 1)
+          {
+              _dueDate->setChecked(true);
+          }
+          else
+          {
+              _invoiceDate->setChecked(true);
+          }
+      }
+      else
+      {
+          QMessageBox::critical(this, tr("Calculate From"), "Unable to find data!");
+          _dueDate->setChecked(true);
+      }
+  }
+
+  query.exec("SELECT fincharg_assessoverdue FROM fincharg LIMIT 1;");
+  if(query.first())
+  {
+      bool val = query.value(0).toBool();
+      _assignOnOverdue->setChecked(val);
+  }
+
+  query.exec("SELECT fincharg_markoninvoice FROM fincharg LIMIT 1;");
+  if(query.first())
+  {
+      QString val = query.value(0).toString();
+      if(val.isEmpty())
+      {
+          QMessageBox::critical(this, tr("Mark On Invoice"), "Data could not be found!");
+          _financeChargeLabel->setText("Finance Charge (DEFAULT)");
+      }
+      else
+      {
+          _financeChargeLabel->setText(val);
+      }
+  }
+
+  //get and set up the dropdown for the GL accounts
+  query.exec("SELECT DISTINCT accnt.accnt_descrip FROM accnt INNER JOIN gltrans ON gltrans.gltrans_accnt_id=accnt.accnt_id ORDER BY accnt.accnt_descrip;");
+  int i = 0;
+  while(query.next()) {
+    //get the next account id
+    QString name = query.value(0).toString();
+    _financeChargeAccount->insertItem(i, name, name);
+    i++;
+  }
+
+  //END FC
+  /*
+  -----------------------------------------------------------------------------------------------------
+  */
   adjustSize();
 }
 
@@ -794,5 +905,78 @@ bool configureGL::sSave()
                                "system is configured to perform encryption."));
   }
 
+  //FC
+  XSqlQuery configSave;
+
+  QString command = "UPDATE fincharg SET fincharg_mincharg='" + _minFinanceCharge->text() + "' WHERE fincharg_id='1';";
+  configureSave.exec(command);
+
+  command = "UPDATE fincharg SET fincharg_air='" + _annualInterestRate->text() + "' WHERE fincharg_id='1';";
+  configureSave.exec(command);
+
+  command = "UPDATE fincharg SET fincharg_graceperiod='" + _gracePeriod->text() + "' WHERE fincharg_id='1';";
+  configureSave.exec(command);
+
+  //A little extra work for this one
+  XSqlQuery query;
+  QString q = "SELECT DISTINCT accnt_id FROM accnt WHERE accnt_descrip='" + _financeChargeAccount->currentText() + "';";
+  query.exec(q);
+  if(query.first())
+  {
+      command = "UPDATE fincharg SET fincharg_glaccnt='" + query.value(0).toString() + "' WHERE fincharg_id='1';";
+      configureSave.exec(command);
+  }
+
+  if(_dueDate->isChecked())
+  {
+      command = "UPDATE fincharg SET fincharg_calcfrom='1' WHERE fincharg_id='1';";
+      configureSave.exec(command);
+  }
+  else
+  {
+      command = "UPDATE fincharg SET fincharg_calcfrom='2' WHERE fincharg_id='1';";
+      configureSave.exec(command);
+  }
+
+  if(_assignOnOverdue->isChecked())
+  {
+    command = "UPDATE fincharg SET fincharg_assessoverdue='1' WHERE fincharg_id='1';";
+  }
+  else
+  {
+      command = "UPDATE fincharg SET fincharg_assessoverdue='2' WHERE fincharg_id='1';";
+  }
+  configureSave.exec(command);
+
+  command = "UPDATE fincharg SET fincharg_markoninvoice='" + _financeChargeLabel->text() + "' WHERE fincharg_id='1';";
+  configureSave.exec(command);
+
   return true;
 }
+
+bool configureGL::isDec(QString string)
+{
+    QChar* temp = new QChar[string.length()];
+    for(int i = 0; i < string.length(); i++)
+    {
+        temp[i] = string.at(i);
+    }
+    return true;
+}
+
+bool configureGL::isInt(QChar ch)
+{
+    if(ch == '48')
+    {
+        QMessageBox::question(this, tr("Set Encryption?"),tr("THIS CHARACTER IS 0!"));
+        printf("THIS CHARACTER IS 0!");
+        return true;
+    }
+    return false;
+}
+
+void configureGL::on__fc_destroyed()
+{
+
+}
+
