@@ -263,6 +263,7 @@ class GUIClient : public QMainWindow
     void sCashReceiptsUpdated(int, bool);
     void sChecksUpdated(int, int, bool);
     void sConfigureGLUpdated();
+    void sContractsUpdated(int, bool);
     void sCreditMemosUpdated();
     void sCrmAccountsUpdated(int);
     void sCustomCommand();
@@ -324,6 +325,7 @@ class GUIClient : public QMainWindow
     void cashReceiptsUpdated(int, bool);
     void checksUpdated(int, int, bool);
     void configureGLUpdated();
+    void contractsUpdated(int, bool);
     void creditMemosUpdated();
     void crmAccountsUpdated(int);
     void customersUpdated(int, bool);

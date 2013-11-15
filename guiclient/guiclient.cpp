@@ -1026,6 +1026,11 @@ void GUIClient::sWarehousesUpdated()
   emit warehousesUpdated();
 }
 
+void GUIClient::sContractsUpdated(int pContrctid, bool pLocal)
+{
+  emit contractsUpdated(pContrctid, pLocal);
+}
+
 void GUIClient::sCustomersUpdated(int pCustid, bool pLocal)
 {
   emit customersUpdated(pCustid, pLocal);

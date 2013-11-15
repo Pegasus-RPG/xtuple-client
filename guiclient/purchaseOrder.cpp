@@ -175,11 +175,12 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
   XWidget::set(pParams);
   QVariant param;
   bool     valid;
-  int      itemsiteid;
+  int      itemsiteid = -1;
+  int      itemsrcid = -1;
   int      parentwo = -1;
   int      parentso = -1;
   int      prjid = -1;
-  double   qty;
+  double   qty = 0.0;
   QDate    dueDate;
   QString  prnotes;
 
@@ -192,14 +193,14 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
   param = pParams.value("itemsite_id", &valid);
   if (valid)
     itemsiteid = param.toInt();
-  else
-    itemsiteid = -1;
 
+  param = pParams.value("itemsrc_id", &valid);
+  if (valid)
+    itemsrcid = param.toInt();
+  
   param = pParams.value("qty", &valid);
   if (valid)
     qty = param.toDouble();
-  else
-    qty = 0.0;
 
   param = pParams.value("dueDate", &valid);
   if (valid)
@@ -252,15 +253,14 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
       connect(_poitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
       connect(_vendor, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
       //_new->setEnabled(TRUE);
-      int itemsrcid =-1;
       int openpoid =-1;
-      if (itemsiteid != -1)
+      if (itemsiteid != -1 && itemsrcid == -1)
       {
-              purchaseet.prepare( "SELECT itemsite_item_id, itemsrc_id, itemsrc_default "
-                   "FROM itemsite, itemsrc "
-                   "WHERE ( (itemsrc_item_id=itemsite_item_id)"
-                   " AND (itemsite_id=:itemsite_id) ) "
-                    "LIMIT 1;" );
+        purchaseet.prepare( "SELECT itemsite_item_id, itemsrc_id, itemsrc_default "
+                            "FROM itemsite, itemsrc "
+                            "WHERE ( (itemsrc_item_id=itemsite_item_id)"
+                            " AND (itemsite_id=:itemsite_id) ) "
+                            "LIMIT 1;" );
         purchaseet.bindValue(":itemsite_id", itemsiteid);
         purchaseet.exec();
         if (!purchaseet.first())
@@ -274,168 +274,174 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
                                   "Purchase Orders for it." ) );
           return UndefinedError;
         }
-                if (purchaseet.first())
-                {
-                  XSqlQuery itemsrcdefault;
-                  MetaSQLQuery mql = mqlLoad("itemSources", "detail");
+        if (purchaseet.first())
+        {
+          XSqlQuery itemsrcdefault;
+          MetaSQLQuery mql = mqlLoad("itemSources", "detail");
 
-                  ParameterList paramsdft;
-                  paramsdft.append("item_id", purchaseet.value("itemsite_item_id").toInt());
+          ParameterList paramsdft;
+          paramsdft.append("item_id", purchaseet.value("itemsite_item_id").toInt());
 				  paramsdft.append("defaultOnly", true);
-                  itemsrcdefault = mql.toQuery(paramsdft);
-                  itemsrcdefault.exec();
-                  if (itemsrcdefault.first())
-                  {
-                    itemsrcid=(itemsrcdefault.value("itemsrc_id").toInt());
-                  }
-                  else
-                  {
-        ParameterList itemSourceParams;
-        itemSourceParams.append("item_id", purchaseet.value("itemsite_item_id").toInt());
-        itemSourceParams.append("qty", qty);
-  
-        itemSourceList newdlg(omfgThis, "", TRUE);
-        newdlg.set(itemSourceParams);
-        itemsrcid = newdlg.exec();
-        if (itemsrcid == XDialog::Rejected)
-        {
-          deleteLater();
-          return UndefinedError;
-            }
-                  }
-        }
-
-        purchaseet.prepare( "SELECT itemsrc_vend_id, vend_name  "
-                   "FROM itemsrc LEFT OUTER JOIN vendinfo ON (vend_id = itemsrc_vend_id) "
-                   "WHERE (itemsrc_id=:itemsrc_id);" );
-        purchaseet.bindValue(":itemsrc_id", itemsrcid);
-        purchaseet.exec();
-        if (!purchaseet.first())
-        {
-          systemError(this, tr("A System Error occurred at %1::%2.")
-                            .arg(__FILE__)
-                            .arg(__LINE__) );
-          return UndefinedError;
-        }
-        else
-        {
-          int vendid = purchaseet.value("itemsrc_vend_id").toInt();
-          QString vendname = purchaseet.value("vend_name").toString();
-
-          purchaseet.prepare( "SELECT pohead_id "
-                     "FROM pohead "
-                     "WHERE ( (pohead_status='U')"
-                     " AND (pohead_vend_id=:vend_id) ) "
-                     "ORDER BY pohead_number "
-                     "LIMIT 1;" );
-          purchaseet.bindValue(":vend_id", vendid);
-          purchaseet.exec();
-          if (purchaseet.first())
+          itemsrcdefault = mql.toQuery(paramsdft);
+          itemsrcdefault.exec();
+          if (itemsrcdefault.first())
           {
-            if(QMessageBox::question( this, tr("Purchase Order Exists"),
-                tr("An Unreleased Purchase Order already exists for this Vendor.\n"
-                   "Would you like to use this Purchase Order?\n"
-                   "Click Yes to use the existing Purchase Order otherwise a new one will be created."),
-                QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
-            {
-              ParameterList openPurchaseOrderParams;
-              openPurchaseOrderParams.append("vend_id", vendid);
-              openPurchaseOrderParams.append("vend_name", vendname);
-              openPurchaseOrder newdlg(omfgThis, "", TRUE);
-              newdlg.set(openPurchaseOrderParams);
-              openpoid = newdlg.exec();
-
-              if (openpoid == XDialog::Rejected)
-              {
-                deleteLater();
-                return UndefinedError;
-              }
-//  Use an existing pohead
-              _mode = cEdit;
-
-              setPoheadid(openpoid);
-              _orderNumber->setEnabled(FALSE);
-              _orderDate->setEnabled(FALSE);
-              _vendor->setReadOnly(TRUE);
-              populate();
-            }
-            else
-            {
-              _vendor->setId(vendid);
-              createHeader();
-            }
+            itemsrcid=(itemsrcdefault.value("itemsrc_id").toInt());
           }
           else
           {
-//  Create a new pohead for the chosen vend
+            ParameterList itemSourceParams;
+            itemSourceParams.append("item_id", purchaseet.value("itemsite_item_id").toInt());
+            itemSourceParams.append("qty", qty);
+  
+            itemSourceList newdlg(omfgThis, "", TRUE);
+            newdlg.set(itemSourceParams);
+            itemsrcid = newdlg.exec();
+            if (itemsrcid == XDialog::Rejected)
+            {
+              deleteLater();
+              return UndefinedError;
+            }
+          }
+        }
+      }
+
+      purchaseet.prepare( "SELECT itemsrc_vend_id, vend_name  "
+                          "FROM itemsrc LEFT OUTER JOIN vendinfo ON (vend_id = itemsrc_vend_id) "
+                          "WHERE (itemsrc_id=:itemsrc_id);" );
+      purchaseet.bindValue(":itemsrc_id", itemsrcid);
+      purchaseet.exec();
+      if (!purchaseet.first())
+      {
+        systemError(this, tr("A System Error occurred at %1::%2.")
+                            .arg(__FILE__)
+                            .arg(__LINE__) );
+        return UndefinedError;
+      }
+      else
+      {
+        int vendid = purchaseet.value("itemsrc_vend_id").toInt();
+        QString vendname = purchaseet.value("vend_name").toString();
+
+        purchaseet.prepare( "SELECT pohead_id "
+                            "FROM pohead "
+                            "WHERE ( (pohead_status='U')"
+                            " AND (pohead_vend_id=:vend_id) ) "
+                            "ORDER BY pohead_number "
+                            "LIMIT 1;" );
+        purchaseet.bindValue(":vend_id", vendid);
+        purchaseet.exec();
+        if (purchaseet.first())
+        {
+          if(QMessageBox::question( this, tr("Purchase Order Exists"),
+                                    tr("An Unreleased Purchase Order already exists for this Vendor.\n"
+                                       "Would you like to use this Purchase Order?\n"
+                                       "Click Yes to use the existing Purchase Order otherwise a new one will be created."),
+                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
+          {
+            ParameterList openPurchaseOrderParams;
+            openPurchaseOrderParams.append("vend_id", vendid);
+            openPurchaseOrderParams.append("vend_name", vendname);
+            openPurchaseOrder newdlg(omfgThis, "", TRUE);
+            newdlg.set(openPurchaseOrderParams);
+            openpoid = newdlg.exec();
+
+            if (openpoid == XDialog::Rejected)
+            {
+              deleteLater();
+              return UndefinedError;
+            }
+//  Use an existing pohead
+            _mode = cEdit;
+
+            setPoheadid(openpoid);
+            _orderNumber->setEnabled(FALSE);
+            _orderDate->setEnabled(FALSE);
+            _vendor->setReadOnly(TRUE);
+            populate();
+          }
+          else
+          {
             _vendor->setId(vendid);
             createHeader();
           }
-
-//  Start to create the new Poitem
-          ParameterList newItemParams;
-          newItemParams.append("mode", "new");
-          newItemParams.append("captive", true);
-          newItemParams.append("pohead_id", _poheadid);
-          newItemParams.append("itemsite_id", itemsiteid);
-          newItemParams.append("itemsrc_id", itemsrcid);
-
-          if (qty > 0.0)
-            newItemParams.append("qty", qty);
-
-          if (!dueDate.isNull())
-            newItemParams.append("dueDate", dueDate);
-
-          if (parentwo != -1)
-            newItemParams.append("parentWo", parentwo);
-
-          if (parentso != -1)
-            newItemParams.append("parentSo", parentso);
-
-          if (prjid != -1)
-            newItemParams.append("prj_id", prjid);
-
-          newItemParams.append("pr_releasenote", prnotes);
-
-          purchaseOrderItem poItem(this, "", TRUE);
-          poItem.set(newItemParams);
-          if (poItem.exec() != XDialog::Rejected)
-          {
-            if(_mode == cEdit)
-            {
-              // check for another open window
-              QWidgetList list = omfgThis->windowList();
-              for(int i = 0; i < list.size(); i++)
-              {
-                QWidget * w = list.at(i);
-                if (strcmp(w->metaObject()->className(), "purchaseOrder") == 0 && w != this)
-                {
-                  purchaseOrder *other = (purchaseOrder*)w;
-                  if(_poheadid == other->_poheadid)
-                  {
-                    if(_prid != -1 && cEdit == other->_mode)
-                    {
-                      purchaseet.prepare("SELECT deletePr(:pr_id) AS _result;");
-                      purchaseet.bindValue(":pr_id", _prid);
-                      purchaseet.exec();
-                      omfgThis->sPurchaseRequestsUpdated();
-                    }
-                    other->sFillList();
-                    return UndefinedError;
-                  }
-                }
-              }
-            }
-            sFillList();
-          }
-          else
-            _prid = -1;
+        }
+        else
+        {
+//  Create a new pohead for the chosen vend
+          _vendor->setId(vendid);
+          createHeader();
         }
       }
+
+//  Start to create the new Poitem
+      ParameterList newItemParams;
+      newItemParams.append("mode", "new");
+      newItemParams.append("captive", true);
+      newItemParams.append("pohead_id", _poheadid);
+      if (itemsiteid > 0)
+        newItemParams.append("itemsite_id", itemsiteid);
+      if (itemsrcid > 0)
+        newItemParams.append("itemsrc_id", itemsrcid);
+
+      if (qty > 0.0)
+        newItemParams.append("qty", qty);
+
+      if (!dueDate.isNull())
+        newItemParams.append("dueDate", dueDate);
+
+      if (parentwo != -1)
+        newItemParams.append("parentWo", parentwo);
+
+      if (parentso != -1)
+        newItemParams.append("parentSo", parentso);
+
+      if (prjid != -1)
+        newItemParams.append("prj_id", prjid);
+
+      newItemParams.append("pr_releasenote", prnotes);
+
+      purchaseOrderItem poItem(this, "", TRUE);
+      poItem.set(newItemParams);
+      if (poItem.exec() != XDialog::Rejected)
+      {
+        if(_mode == cEdit)
+        {
+          // check for another open window
+          QWidgetList list = omfgThis->windowList();
+          for(int i = 0; i < list.size(); i++)
+          {
+            QWidget * w = list.at(i);
+            if (strcmp(w->metaObject()->className(), "purchaseOrder") == 0 && w != this)
+            {
+              purchaseOrder *other = (purchaseOrder*)w;
+              if(_poheadid == other->_poheadid)
+              {
+                if(_prid != -1 && cEdit == other->_mode)
+                {
+                  purchaseet.prepare("SELECT deletePr(:pr_id) AS _result;");
+                  purchaseet.bindValue(":pr_id", _prid);
+                  purchaseet.exec();
+                  omfgThis->sPurchaseRequestsUpdated();
+                }
+                other->sFillList();
+                return UndefinedError;
+              }
+            }
+          }
+        }
+        sFillList();
+      }
       else
-//  This is a new P/O without a chosen Itemsite Line Item
-        createHeader();
+      {
+        _prid = -1;
+      }
     }
+//    else
+//    {
+      //  This is a new P/O without a chosen Itemsite Line Item
+//      createHeader();
+//    }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
