@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>568</width>
-    <height>520</height>
+    <height>646</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -231,40 +231,6 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="_notesTab">
-      <attribute name="title">
-       <string>&amp;Notes</string>
-      </attribute>
-      <layout class="QHBoxLayout">
-       <property name="spacing">
-        <number>5</number>
-       </property>
-       <property name="margin">
-        <number>5</number>
-       </property>
-       <item>
-        <widget class="XTextEdit" name="_notes">
-         <property name="spellEnable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="_documentsTab">
-      <attribute name="title">
-       <string>&amp;Documents</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <item>
-        <widget class="Documents" name="_documents">
-         <property name="type">
-          <enum>Documents::Contract</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="_itemSrcTab">
       <attribute name="title">
        <string>Item Sources</string>
@@ -300,7 +266,7 @@
            <item>
             <widget class="QPushButton" name="_newItemSrc">
              <property name="text">
-              <string>New Item Src</string>
+              <string>New Item Source</string>
              </property>
             </widget>
            </item>
@@ -383,6 +349,40 @@
           </layout>
          </item>
         </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="_notesTab">
+      <attribute name="title">
+       <string>&amp;Notes</string>
+      </attribute>
+      <layout class="QHBoxLayout">
+       <property name="spacing">
+        <number>5</number>
+       </property>
+       <property name="margin">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="XTextEdit" name="_notes">
+         <property name="spellEnable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="_documentsTab">
+      <attribute name="title">
+       <string>&amp;Documents</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="Documents" name="_documents">
+         <property name="type">
+          <enum>Documents::Contract</enum>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

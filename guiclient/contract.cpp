@@ -36,10 +36,10 @@ contract::contract(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(_close,              SIGNAL(clicked()), this, SLOT(reject()));
   connect(_save,               SIGNAL(clicked()), this, SLOT(sSaveClicked()));
-  connect(this,               SIGNAL(rejected()), this, SLOT(sRejected()));
+  connect(this,                SIGNAL(rejected()), this, SLOT(sRejected()));
   connect(_newItemSrc,         SIGNAL(clicked()), this, SLOT(sNewItemSrc()));
-  connect(_newPo,			   SIGNAL(clicked()), this, SLOT(sNewPo()));
-  connect(_editPo,			   SIGNAL(clicked()), this, SLOT(sEditPo()));
+  connect(_newPo,              SIGNAL(clicked()), this, SLOT(sNewPo()));
+  connect(_editPo,             SIGNAL(clicked()), this, SLOT(sEditPo()));
   connect(_viewPo,             SIGNAL(clicked()), this, SLOT(sViewPo()));
   connect(_deletePo,           SIGNAL(clicked()), this, SLOT(sDeletePo()));
   connect(_newRcpt,            SIGNAL(clicked()), this, SLOT(sNewRcpt()));
@@ -47,6 +47,7 @@ contract::contract(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_print,              SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_itemSource,         SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_itemSource,         SIGNAL(itemClicked(XTreeWidgetItem *, int)), this, SLOT(sHandleButtons(XTreeWidgetItem *, int)));
+  connect(_itemSource,         SIGNAL(itemSelected(int)), this, SLOT(sEditItemSrc()));
 
   _dates->setStartNull(tr("Always"), omfgThis->startOfTime(), TRUE);
   _dates->setStartCaption(tr("Effective"));
@@ -55,18 +56,18 @@ contract::contract(QWidget* parent, const char* name, Qt::WFlags fl)
 
   if (_metrics->value("Application") == "Standard")
   {
-    _itemSource->addColumn(tr("Item #"),          _itemColumn, Qt::AlignLeft, true, "item_number");
-    _itemSource->addColumn(tr("Description"),              -1, Qt::AlignLeft, true, "item_descrip1");
-	_itemSource->addColumn(tr("Vend Part #"),     _itemColumn, Qt::AlignLeft, true, "itemsrc_vend_item_number");
-    _itemSource->addColumn(tr("Vend UOM"),         _uomColumn, Qt::AlignLeft, true, "itemsrc_vend_uom");
-	_itemSource->addColumn(tr("Order/Oper"),     _orderColumn, Qt::AlignLeft, true, "poitem_ordnumber");
-	_itemSource->addColumn(tr("Contr Qty"),        _qtyColumn, Qt::AlignLeft, true, "contisrc_min");
-	_itemSource->addColumn(tr("Unrel Qty"),        _qtyColumn, Qt::AlignLeft, true, "poitem_qty_unreleased" );
-	_itemSource->addColumn(tr("Releas Qty"),       _qtyColumn, Qt::AlignLeft, true, "poitem_qty_ordered" );
-	_itemSource->addColumn(tr("Receiv Qty"),       _qtyColumn, Qt::AlignRight,true, "poitem_qty_received");
-	_itemSource->addColumn(tr("Return Qty"),       _qtyColumn, Qt::AlignRight,true, "poitem_qty_returned" );
-	_itemSource->addColumn(tr("Date"),            _dateColumn, Qt::AlignLeft, true, "poitem_duedate" );
-	_itemSource->addColumn(tr("Status/User"),     _userColumn, Qt::AlignLeft, true, "poitem_status" );
+    _itemSource->addColumn(tr("Item Number"),         _itemColumn, Qt::AlignLeft,   true, "item_number");
+    _itemSource->addColumn(tr("Description"),                  -1, Qt::AlignLeft,   true, "item_descrip1");
+    _itemSource->addColumn(tr("Vendor Item Number"),  _itemColumn, Qt::AlignLeft,   true, "itemsrc_vend_item_number");
+    _itemSource->addColumn(tr("Vendor UOM"),           _uomColumn, Qt::AlignLeft,   true, "itemsrc_vend_uom");
+    _itemSource->addColumn(tr("PO Number/Oper"),     _orderColumn, Qt::AlignLeft,   true, "poitem_ordnumber");
+    _itemSource->addColumn(tr("Contracted"),           _qtyColumn, Qt::AlignRight,  true, "itemsrc_contrct_min");
+    _itemSource->addColumn(tr("Unreleased"),           _qtyColumn, Qt::AlignRight,  true, "poitem_qty_unreleased" );
+    _itemSource->addColumn(tr("Released"),             _qtyColumn, Qt::AlignRight,  true, "poitem_qty_ordered" );
+    _itemSource->addColumn(tr("Received"),             _qtyColumn, Qt::AlignRight,  true, "poitem_qty_received");
+    _itemSource->addColumn(tr("Returned"),             _qtyColumn, Qt::AlignRight,  true, "poitem_qty_returned" );
+    _itemSource->addColumn(tr("Due Date"),            _dateColumn, Qt::AlignCenter, true, "poitem_duedate" );
+    _itemSource->addColumn(tr("Status/User"),         _userColumn, Qt::AlignCenter, true, "poitem_status" );
   } 
   else
 	_tab->removeTab(_tab->indexOf(_itemSrcTab));
@@ -196,7 +197,10 @@ void contract::sSaveClicked()
 {
   _captive = false;
   if (sSave())
+  {
+    omfgThis->sContractsUpdated(_contrctid, TRUE);
     close();
+  }
 }
 
 bool contract::sSave()
@@ -361,7 +365,7 @@ void contract::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem * pSelected )
 void contract::sFillList()
 {
   XSqlQuery itemsrcFillList;
-  MetaSQLQuery mql = mqlLoad("contrct", "itemsources");
+  MetaSQLQuery mql = mqlLoad("contract", "itemsources");
 
   ParameterList params;
   params.append("contrct_id", _contrctid);
@@ -377,12 +381,9 @@ void contract::sFillList()
 
 void contract::sNewItemSrc()
 {
-  if (_mode == cNew)
-  {
-	_captive = true;
-    if (!sSave())
-	  return;
-  }
+  _captive = true;
+  if (!sSave())
+    return;
 
   ParameterList params;
   params.append("mode", "new");
@@ -397,35 +398,53 @@ void contract::sNewItemSrc()
   _vendor->setReadOnly(true);
 }
 
+void contract::sEditItemSrc()
+{
+  _captive = true;
+  if (!sSave())
+    return;
+  
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("itemsrc_id", _itemSource->id());
+  
+  itemSource newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
 void contract::sNewPo()
 {
   ParameterList params;
   params.append("mode", "new");
   params.append("vend_id", _vendor->id());
+  params.append("itemsrc_id", _itemSource->id());
 
-  XSqlQuery itemsite;
+//  XSqlQuery itemsite;
 
-  itemsite.prepare( "SELECT itemsite_id "
-                      "  FROM itemsite JOIN item    ON (item_id         = itemsite_item_id) "
-                      "                JOIN itemsrc ON (itemsrc_item_id = item_id) "
-                      "WHERE (itemsrc_id =:itemsite_id) LIMIT 1;" );
-  itemsite.bindValue(":itemsite_id", _itemSource->id());
-  itemsite.exec();
-  if (itemsite.first())
-  {
-    params.append("itemsite_id", itemsite.value("itemsite_id").toInt());
-  }
-  else
-  {
-    QMessageBox::warning(omfgThis, tr("Cannot Create P/O"),
-                         tr("<p>A Purchase Order cannot be automatically "
-                            "created for this Item as there are no Item "
-                            "Sites for it.  You must create one or "
-                            "more Item Sites for this Item before "
-                            "the application can automatically create "
-                            "Purchase Orders for it." ) );
-    return;
-  }
+//  itemsite.prepare( "SELECT itemsite_id "
+//                      "  FROM itemsite JOIN item    ON (item_id         = itemsite_item_id) "
+//                      "                JOIN itemsrc ON (itemsrc_item_id = item_id) "
+//                      "WHERE (itemsrc_id =:itemsite_id) LIMIT 1;" );
+//  itemsite.bindValue(":itemsite_id", _itemSource->id());
+//  itemsite.exec();
+//  if (itemsite.first())
+//  {
+//    params.append("itemsite_id", itemsite.value("itemsite_id").toInt());
+//  }
+//  else
+//  {
+//    QMessageBox::warning(omfgThis, tr("Cannot Create P/O"),
+//                         tr("<p>A Purchase Order cannot be automatically "
+//                            "created for this Item as there are no Item "
+//                            "Sites for it.  You must create one or "
+//                            "more Item Sites for this Item before "
+//                            "the application can automatically create "
+//                            "Purchase Orders for it." ) );
+//    return;
+//  }
 
   purchaseOrder *newdlg = new purchaseOrder();
   newdlg->set(params);
