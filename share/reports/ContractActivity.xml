@@ -1,7 +1,7 @@
 <!DOCTYPE openRPTDef>
 <report>
  <title>Contract Activity Summary Report</title>
- <name>Contract Activity</name>
+ <name>ContractActivity</name>
  <description></description>
  <parameter default="11" active="true" listtype="static" type="integer" name="contrct_id">
   <description></description>
@@ -46,7 +46,7 @@ SELECT itemsrc_id,
 	item_descrip1,
 	itemsrc_vend_uom,
 	itemsrc_vend_item_number,
-	min(contisrc_min) AS contisrc_min,
+	itemsrc_contrct_min,
 	sum(poitem_qty_unreleased) AS poitem_qty_unreleased,
 	sum(poitem_qty_ordered)    AS poitem_qty_ordered,
 	sum(poitem_qty_received)   AS poitem_qty_received,
@@ -61,7 +61,7 @@ SELECT itemsrc_id,
 		item_descrip1,
 		itemsrc_vend_uom,
 		itemsrc_vend_item_number,
-		contisrc_min,
+		itemsrc_contrct_min,
 		CASE WHEN poitem_status = 'U' THEN poitem_qty_ordered
 		  ELSE 0
 		END AS poitem_qty_unreleased,
@@ -74,13 +74,13 @@ SELECT itemsrc_id,
 		poitem_duedate, 
 		poitem_status
 		FROM contrct JOIN itemsrc    ON (itemsrc_contrct_id  = contrct_id)
-		  LEFT OUTER JOIN contisrc   ON (contisrc_itemsrc_id = itemsrc_id)
 		  LEFT OUTER JOIN poitem     ON (poitem_itemsrc_id   = itemsrc_id)
 		  LEFT OUTER JOIN pohead     ON (pohead_id           = poitem_pohead_id)
 			   JOIN item       ON (itemsrc_item_id     = item_id)
 		WHERE (contrct_id = &lt;? value("contrct_id") ?>)) AS dummy1
 	WHERE (contrct_id = &lt;? value("contrct_id") ?>)
-	GROUP BY itemsrc_id, itemsrc_vend_item_number, itemsrc_vend_uom, item_number, item_descrip1
+	GROUP BY itemsrc_id, itemsrc_vend_item_number, itemsrc_vend_uom, itemsrc_contrct_min,
+                item_number, item_descrip1
 
 UNION  -- PO Line Items
 
@@ -92,7 +92,7 @@ SELECT itemsrc_id,
 	null AS item_descrip1,
 	null AS itemsrc_vend_uom,
 	null AS itemsrc_vend_item_number,
-	null AS contisrc_min,
+	null AS itemsrc_contrct_min,
 	CASE WHEN poitem_status = 'U' THEN poitem_qty_ordered
 	  ELSE 0
 	END AS poitem_qty_unreleased,
@@ -109,7 +109,6 @@ SELECT itemsrc_id,
 	END AS poitem_status,
 	1 AS xtindentrole 
 	FROM contrct JOIN itemsrc  ON (itemsrc_contrct_id  = contrct_id)
-	  LEFT OUTER JOIN contisrc ON (contisrc_itemsrc_id = itemsrc_id)
 		   JOIN poitem   ON (poitem_itemsrc_id   = itemsrc_id)
 		   JOIN pohead   ON (pohead_id           = poitem_pohead_id)
 		   JOIN item     ON (itemsrc_item_id     = item_id)
@@ -125,7 +124,7 @@ SELECT itemsrc_id,
 	null AS item_descrip1,
 	recv_vend_uom AS vend_uom,
 	null AS itemsrc_vend_item_number,
-	null AS contisrc_min,
+	null AS itemsrc_contrct_min,
 	null AS poitem_qty_unreleased,
 	null AS poitem_qty_ordered,
 	recv_qty AS poitem_qty_received,
@@ -152,7 +151,7 @@ SELECT itemsrc_id,
 	null AS item_descrip1,
 	poreject_vend_uom AS vend_uom,
 	null AS itemsrc_vend_item_number,
-	null AS contisrc_min,
+	null AS itemsrc_contrct_min,
 	null AS poitem_qty_unreleased,
 	null AS poitem_qty_ordered,
 	null AS poitem_qty_received,
@@ -778,7 +777,7 @@ ORDER BY itemsrc_id, seq, poitem_ordnumber, poitem_duedate, xtindentrole;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>contisrc_min</column>
+     <column>itemsrc_contrct_min</column>
     </data>
     <format builtin="true">qty</format>
    </field>

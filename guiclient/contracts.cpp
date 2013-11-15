@@ -47,6 +47,8 @@ contracts::contracts(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Expires"),            _dateColumn, Qt::AlignLeft,   true,  "contrct_expires"   );
   list()->addColumn(tr("Item Count"),         _itemColumn, Qt::AlignLeft,   true,  "item_count"   );
 
+  connect(omfgThis, SIGNAL(contractsUpdated(int, bool)), this, SLOT(sFillList()));
+
   if (_privileges->check("MaintainItemSources"))
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
   else

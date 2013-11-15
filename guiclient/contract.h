@@ -32,6 +32,7 @@ public slots:
     virtual void sSaveClicked();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
     virtual void sNewItemSrc();
+    virtual void sEditItemSrc();
     virtual void sNewPo();
     virtual void sEditPo();
     virtual void sViewPo();
