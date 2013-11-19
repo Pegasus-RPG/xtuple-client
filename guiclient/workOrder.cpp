@@ -2025,24 +2025,16 @@ void workOrder::populate()
 
     sFillList();
 
-    // If the W/O is Closed, Inprocess or Released don't allow changing some items.
-    if(wo.value("wo_status").toString() == "C" || wo.value("wo_status") == "I" || wo.value("wo_status") == "R")
-    {
-      _qty->setEnabled(false);
-    }
-    else
-    {
-      _qty->setEnabled(true);
-    }
-
     // If the W/O is Closed or Released don't allow changing some items.
     if(wo.value("wo_status").toString() == "C" || wo.value("wo_status") == "R")
     {
+      _qty->setEnabled(false);
       _dueDate->setEnabled(false);
       _startDate->setEnabled(false);
     }
     else
     {
+      _qty->setEnabled(true);
       _dueDate->setEnabled(true);
       _startDate->setEnabled(true);
     }

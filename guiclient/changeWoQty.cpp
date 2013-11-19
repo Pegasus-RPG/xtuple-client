@@ -28,7 +28,7 @@ changeWoQty::changeWoQty(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   _captive = FALSE;
 
-  _wo->setType(cWoOpen | cWoExploded);
+  _wo->setType(cWoOpen | cWoExploded | cWoIssued);
   _newQtyOrdered->setValidator(omfgThis->qtyVal());
   _newQtyReceived->setPrecision(omfgThis->qtyVal());
   _newQtyBalance->setPrecision(omfgThis->qtyVal());

@@ -485,10 +485,7 @@ void dspWoSchedule::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected, int)
   {
     menuItem = pMenu->addAction(tr("Reschedule..."), this, SLOT(sRescheduleWO()));
     menuItem->setEnabled(_privileges->check("RescheduleWorkOrders"));
-  }
 
-  if ((status == "O") || (status == "E"))
-  {
     menuItem = pMenu->addAction(tr("Change Quantity..."), this, SLOT(sChangeWOQty()));
     menuItem->setEnabled(_privileges->check("ChangeWorkOrderQty"));
   }
