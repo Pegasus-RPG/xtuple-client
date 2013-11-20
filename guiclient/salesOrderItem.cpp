@@ -3370,16 +3370,24 @@ void salesOrderItem::sRollupPrices()
     if (_supplyRollupPrices->isChecked())
     {
       XSqlQuery ordq;
-      ordq.prepare("SELECT COALESCE(SUM(price), 0.0) AS price "
-                   "FROM ( "
-                   "SELECT (womatl_price * womatl_qtyreq) AS price "
-                   "FROM womatl "
-                   "WHERE (womatl_wo_id = :wo_id) "
-                   "UNION "
-                   "SELECT ((wooper_price * wo_qtyord)) AS price "
-                   "FROM xtmfg.wooper JOIN wo ON (wo_id=wooper_wo_id) "
-                   "WHERE (wooper_wo_id = :wo_id) "
-                   " ) AS data;");
+      if (_metrics->boolean("Routings"))
+        ordq.prepare("SELECT SUM(COALESCE(price, 0.0)) AS price "
+                     "FROM ( "
+                     "SELECT (womatl_price * womatl_qtyreq) AS price "
+                     "FROM womatl "
+                     "WHERE (womatl_wo_id = :wo_id) "
+                     "UNION "
+                     "SELECT ((wooper_price * wo_qtyord)) AS price "
+                     "FROM xtmfg.wooper JOIN wo ON (wo_id=wooper_wo_id) "
+                     "WHERE (wooper_wo_id = :wo_id) "
+                     " ) AS data;");
+      else
+        ordq.prepare("SELECT SUM(COALESCE(price, 0.0)) AS price "
+                     "FROM ( "
+                     "SELECT (womatl_price * womatl_qtyreq) AS price "
+                     "FROM womatl "
+                     "WHERE (womatl_wo_id = :wo_id) "
+                     " ) AS data;");
       ordq.bindValue(":wo_id", _supplyOrderId);
       ordq.exec();
       if (ordq.first())
@@ -3498,9 +3506,6 @@ void salesOrderItem::sPopulateWoMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
         menuItem = pMenu->addAction(tr("New Material..."), this, SLOT(sNewWoMatl()));
         if (!_privileges->check("MaintainWoMaterials"))
           menuItem->setEnabled(false);
-        menuItem = pMenu->addAction(tr("New Operation..."), this, SLOT(sNewWoOper()));
-        if (!_privileges->check("MaintainWoOperations"))
-          menuItem->setEnabled(false);
       }
     }
   }
@@ -3546,7 +3551,9 @@ void salesOrderItem::sNewWoMatl()
   int currentAltId = _woIndentedList->altId();
   omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   sFillWoIndentedList();
-  _woIndentedList->setId(currentId,currentAltId);
+//  _woIndentedList->setId(currentId,currentAltId);
+  if (_supplyRollupPrices->isChecked())
+    sRollupPrices();
 }
 
 void salesOrderItem::sEditWoMatl()
@@ -3565,7 +3572,9 @@ void salesOrderItem::sEditWoMatl()
     int currentAltId = _woIndentedList->altId();
     omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
     sFillWoIndentedList();
-    _woIndentedList->setId(currentId,currentAltId);
+//    _woIndentedList->setId(currentId,currentAltId);
+    if (_supplyRollupPrices->isChecked())
+      sRollupPrices();
   }
 }
 
@@ -3626,6 +3635,8 @@ void salesOrderItem::sDeleteWoMatl()
     
     omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
     sFillWoIndentedList();
+    if (_supplyRollupPrices->isChecked())
+      sRollupPrices();
   }
 }
 
@@ -3825,11 +3836,13 @@ void salesOrderItem::populate()
         _itemsrc = -1;
       _supplyOverridePrice->setLocalValue(item.value("coitem_prcost").toDouble());
     }
-
-    _warranty->setChecked(item.value("coitem_warranty").toBool());
-    _altCosAccnt->setId(item.value("coitem_cos_accnt_id").toInt());
-    _altRevAccnt->setId(item.value("coitem_rev_accnt_id").toInt());
-    _qtyreserved = item.value("coitem_qtyreserved").toDouble();
+    else
+    {
+      _warranty->setChecked(item.value("coitem_warranty").toBool());
+      _altCosAccnt->setId(item.value("coitem_cos_accnt_id").toInt());
+      _altRevAccnt->setId(item.value("coitem_rev_accnt_id").toInt());
+      _qtyreserved = item.value("coitem_qtyreserved").toDouble();
+    }
 
     sCalculateDiscountPrcnt();
     sLookupTax();
