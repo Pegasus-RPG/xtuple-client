@@ -41,6 +41,7 @@ packingListBatch::packingListBatch(QWidget* parent, const char* name, Qt::WFlags
   connect(_printBatch,       SIGNAL(clicked()), this, SLOT(sPrintBatch()));
   connect(_printEditList,    SIGNAL(clicked()), this, SLOT(sPrintEditList()));
   connect(_printPackingList, SIGNAL(clicked()), this, SLOT(sPrintPackingList()));
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
   setAcceptDrops(TRUE);
 
@@ -92,6 +93,7 @@ void packingListBatch::sPrintBatch()
 		  "WHERE (pack_id=:packid);" );
 
   ParameterList params;
+  _warehouse->appendValue(params);
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
   MetaSQLQuery mql = mqlLoad("packingListBatch", "print");
@@ -141,6 +143,7 @@ void packingListBatch::sPrintBatch()
     {
       params.append("shiphead_id",  osmiscid);
     }
+    _warehouse->appendValue(params);
     if (_metrics->boolean("MultiWhs"))
       params.append("MultiWhs");
 
@@ -187,6 +190,7 @@ void packingListBatch::sPrintBatch()
 
 void packingListBatch::setParams(ParameterList & params)
 {
+  _warehouse->appendValue(params);
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
   params.append("none",		tr("None"));
@@ -211,19 +215,10 @@ void packingListBatch::sPrintEditList()
 void packingListBatch::sClearPrinted()
 {
   XSqlQuery packingClearPrinted;
-  packingClearPrinted.exec( "DELETE FROM pack "
-          "WHERE ( (pack_printed)"
-		  "  AND   (pack_head_type='SO')"
-		  "  AND   (checkSOSitePrivs(pack_head_id)) );" );
-  if (packingClearPrinted.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, packingClearPrinted.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  packingClearPrinted.exec( "DELETE FROM pack "
-          "WHERE ( (pack_printed)"
-		  "  AND   (pack_head_type='TO') );" );
+  ParameterList params;
+  setParams(params);
+  MetaSQLQuery mql = mqlLoad("packingListBatch", "clear");
+  packingClearPrinted = mql.toQuery(params);
   if (packingClearPrinted.lastError().type() != QSqlError::NoError)
   {
     systemError(this, packingClearPrinted.lastError().databaseText(), __FILE__, __LINE__);
@@ -264,6 +259,7 @@ void packingListBatch::sAddSO()
   XSqlQuery packingAddSO;
   ParameterList params;
   params.append("soType", cSoOpen);
+  _warehouse->appendValue(params);
   
   salesOrderList newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -289,6 +285,7 @@ void packingListBatch::sAddTO()
   XSqlQuery packingAddTO;
   ParameterList params;
   params.append("toType", cToOpen);
+  _warehouse->appendValue(params);
   
   transferOrderList newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -353,6 +350,7 @@ void packingListBatch::sPrintPackingList()
   }
 
   ParameterList params;
+  _warehouse->appendValue(params);
   if (_pack->currentItem()->rawValue("pack_head_type") == "TO")
   {
     params.append("head_id",     _pack->id());

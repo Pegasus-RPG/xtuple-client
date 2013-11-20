@@ -30,21 +30,21 @@ to be bound by its terms.</comment>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="XLabel" name="_shipmentLit">
-          <property name="text">
-           <string>Shipment #:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="XLabel" name="_shipment">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QLabel" name="_warehouseLit">
+            <property name="text">
+             <string>Site:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="WComboBox" name="_warehouse"/>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QLabel" name="_transDateLit">
@@ -208,6 +208,44 @@ to be bound by its terms.</comment>
                  <size>
                   <width>20</width>
                   <height>0</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_8">
+                <item>
+                 <widget class="XLabel" name="_shipmentLit">
+                  <property name="text">
+                   <string>Shipment #:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="XLabel" name="_shipment">
+                  <property name="minimumSize">
+                   <size>
+                    <width>100</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
                  </size>
                 </property>
                </spacer>
@@ -578,6 +616,11 @@ to be bound by its terms.</comment>
    <header>shiptocluster.h</header>
   </customwidget>
   <customwidget>
+   <class>WComboBox</class>
+   <extends>XComboBox</extends>
+   <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XCheckBox</class>
    <extends>QCheckBox</extends>
    <header>xcheckbox.h</header>
@@ -606,7 +649,6 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_shipment</tabstop>
   <tabstop>_transDate</tabstop>
   <tabstop>_issueBy</tabstop>
   <tabstop>_order</tabstop>

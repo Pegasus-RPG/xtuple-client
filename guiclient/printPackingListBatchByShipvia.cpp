@@ -26,6 +26,7 @@ printPackingListBatchByShipvia::printPackingListBatchByShipvia(QWidget* parent, 
   setupUi(this);
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(sPopulateShipVia()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
@@ -71,9 +72,11 @@ void printPackingListBatchByShipvia::sPrint()
   XSqlQuery packq;
   ParameterList params;
   _dates->appendValue(params);
+  _warehouse->appendValue(params);
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
-  params.append("shipvia", _shipvia->currentText());
+  if (_shipvia->isValid())
+    params.append("shipvia", _shipvia->currentText());
   MetaSQLQuery packm = mqlLoad("packingListBatchByShipVia", "print");
   packq = packm.toQuery(params);
   if (packq.lastError().type() != QSqlError::NoError)
@@ -102,6 +105,7 @@ void printPackingListBatchByShipvia::sPrint()
     {
       params.append("shiphead_id",  packq.value("pack_shiphead_id").toInt());
     }
+    _warehouse->appendValue(params);
     if (_metrics->boolean("MultiWhs"))
       params.append("MultiWhs");
 
@@ -156,12 +160,13 @@ void printPackingListBatchByShipvia::sPopulateShipVia()
 {
   XSqlQuery printPopulateShipVia;
   ParameterList params;
+  _warehouse->appendValue(params);
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
   MetaSQLQuery mql = mqlLoad("packingListBatchByShipVia", "shipVia");
   printPopulateShipVia = mql.toQuery(params);
-
   _shipvia->populate(printPopulateShipVia);
+
   if (printPopulateShipVia.lastError().type() != QSqlError::NoError)
     systemError(this, printPopulateShipVia.lastError().databaseText(), __FILE__, __LINE__);
 }

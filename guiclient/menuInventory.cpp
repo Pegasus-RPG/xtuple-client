@@ -270,7 +270,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     // Inventory | Shipping | Forms
     { "menu",                              tr("&Forms"),                                   (char*)shippingFormsMenu,                shippingMenu,      "true",                                          NULL, NULL, true, NULL },
     { "sr.packingListBatch",               tr("Packing List &Batch..."),                   SLOT(sPackingListBatch()),               shippingFormsMenu, "MaintainPackingListBatch ViewPackingListBatch", NULL, NULL, true, NULL },
-    { "sr.printPackingListBatchByShipvia", tr("Print Packing List Batch by Ship &Via..."), SLOT(sPrintPackingListBatchByShipvia()), shippingFormsMenu, "PrintPackingLists",  NULL, NULL, true, NULL },
+    { "sr.printPackingListBatchByShipvia", tr("Print Packing List Batch..."), SLOT(sPrintPackingListBatchByShipvia()), shippingFormsMenu, "PrintPackingLists",  NULL, NULL, true, NULL },
     { "sr.printPackingList",               tr("&Packing List..."),                         SLOT(sPrintPackingLists()),              shippingFormsMenu, "PrintPackingLists",  NULL, NULL, true, NULL },
     { "separator",                         NULL,                                           NULL,                                    shippingFormsMenu, "true",               NULL, NULL, true, NULL },
     { "sr.printShippingForm",              tr("&Shipping Form..."),                        SLOT(sPrintShippingForm()),              shippingFormsMenu, "PrintBillsOfLading", NULL, NULL, true, NULL },
