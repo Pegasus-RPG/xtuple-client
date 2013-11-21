@@ -909,18 +909,6 @@ bool salesOrder::save(bool partial)
                "WHERE (cohead_id=:id);" );
   else if (_mode == cNew)
   {
-    if (_metrics->boolean("AutoCreateProjectsForOrders"))
-    {
-      XSqlQuery prj;
-      prj.prepare("INSERT INTO prj (prj_number, prj_name, prj_descrip, prj_status, prj_so, prj_wo, prj_po) "
-                  " VALUES (:number, :number, :descrip, 'O', TRUE, TRUE, TRUE) "
-                  "RETURNING prj_id");
-      prj.bindValue(":number", _orderNumber->text());
-      prj.bindValue(":descrip", tr("Auto Generated Project from Sales Order."));
-      prj.exec();
-      if (prj.first())
-        _project->setId(prj.value("prj_id").toInt());
-    }
     saveSales.prepare("INSERT INTO cohead "
               "(cohead_id, cohead_number, cohead_cust_id,"
               "    cohead_custponumber, cohead_shipto_id,"
