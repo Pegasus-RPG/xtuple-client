@@ -649,6 +649,7 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_warehouse</tabstop>
   <tabstop>_transDate</tabstop>
   <tabstop>_issueBy</tabstop>
   <tabstop>_order</tabstop>
@@ -662,9 +663,10 @@ to be bound by its terms.</comment>
   <tabstop>_issueLine</tabstop>
   <tabstop>_returnStock</tabstop>
   <tabstop>_issueAll</tabstop>
-  <tabstop>_cust</tabstop>
   <tabstop>_ship</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_cust</tabstop>
+  <tabstop>_shipto</tabstop>
  </tabstops>
  <resources/>
  <connections>

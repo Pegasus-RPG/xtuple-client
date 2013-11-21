@@ -34,6 +34,7 @@ shipOrder::shipOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_shipment, SIGNAL(newId(int)),    this, SLOT(sFillList()));
   connect(_shipment, SIGNAL(newId(int)),    this, SLOT(sFillTracknum()));
   connect(_order,    SIGNAL(newId(int,QString)),    this, SLOT(sHandleOrder()));
+  connect(_warehouse,SIGNAL(newID(int)),            this, SLOT(sHandleOrder()));
   connect(_tracknum, SIGNAL(activated(const QString&)), this, SLOT(sFillFreight()));
   connect(_tracknum, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(sFillFreight()));
   connect(_tracknum, SIGNAL(highlighted(const QString&)), this, SLOT(sFillFreight()));
@@ -50,6 +51,12 @@ shipOrder::shipOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   sHandleButtons();
   _reject = false;
 
+  if (!_metrics->boolean("MultiWhs"))
+  {
+    _warehouseLit->hide();
+    _warehouse->hide();
+  }
+  
   _order->setAllowedStatuses(OrderLineEdit::Open);
   _order->setAllowedTypes(OrderLineEdit::Sales |
                           OrderLineEdit::Transfer);
@@ -395,7 +402,7 @@ void shipOrder::sShip()
 
 void shipOrder::sHandleOrder()
 {
-  if (_order->id() < 0)
+  if (_order->id() < 0 || _warehouse->id() < 0)
   {
     _shipment->clear();
     _billToName->setText("");
@@ -422,12 +429,16 @@ void shipOrder::sHandleSo()
   sHandleButtons();
 
 
-  shipHandleSo.prepare( "SELECT cohead_holdtype, cust_name, cohead_shiptoname, "
-             "       cohead_shiptoaddress1, cohead_curr_id, cohead_freight "
-             "FROM cohead, custinfo "
-             "WHERE ((cohead_cust_id=cust_id) "
-             "  AND  (cohead_id=:sohead_id));" );
+  shipHandleSo.prepare( "SELECT DISTINCT"
+                        "       cohead_holdtype, cust_name, cohead_shiptoname, "
+                        "       cohead_shiptoaddress1, cohead_curr_id, cohead_freight "
+                        "FROM cohead JOIN custinfo ON (cust_id=cohead_cust_id)"
+                        "            JOIN coitem ON (coitem_cohead_id=cohead_id)"
+                        "            JOIN itemsite ON (itemsite_id=coitem_itemsite_id) "
+                        "WHERE ((cohead_id=:sohead_id)"
+                        "  AND  (itemsite_warehous_id=:warehous_id));" );
   shipHandleSo.bindValue(":sohead_id", _order->id());
+  shipHandleSo.bindValue(":warehous_id", _warehouse->id());
   shipHandleSo.exec();
   if (shipHandleSo.first())
   {
@@ -462,16 +473,17 @@ void shipOrder::sHandleSo()
     _shipToName->setText(shipHandleSo.value("cohead_shiptoname").toString());
     _shipToAddr1->setText(shipHandleSo.value("cohead_shiptoaddress1").toString());
 
-    QString sql( "SELECT shiphead_id "
-                 "FROM shiphead "
-                 "WHERE ( (NOT shiphead_shipped)"
-                 "<? if exists(\"shiphead_id\") ?>"
-                 " AND (shiphead_id=<? value(\"shiphead_id\") ?>)"
-                 "<? endif ?>"
-                 " AND (shiphead_order_id=<? value(\"sohead_id\") ?>)"
-                 " AND (shiphead_order_type='SO'));" );
+    QString sql("SELECT shiphead_id "
+                "FROM shiphead "
+                "<? if exists(\"shiphead_id\") ?>"
+                "WHERE (shiphead_id=<? value(\"shiphead_id\") ?>)"
+                "<? else ?>"
+                "WHERE (shiphead_number=getOpenShipment('SO', <? value(\"sohead_id\") ?>, <? value(\"warehous_id\") ?>))"
+                "<? endif ?>"
+                ";" );
     ParameterList params;
     params.append("sohead_id", _order->id());
+    params.append("warehous_id", _warehouse->id());
     if (_shipment->isValid())
       params.append("shiphead_id", _shipment->id());
     MetaSQLQuery mql(sql);
@@ -497,6 +509,7 @@ void shipOrder::sHandleSo()
     {
       params.clear();
       params.append("sohead_id", _order->id());
+      params.append("warehous_id", _warehouse->id());
       MetaSQLQuery mql(sql);
       shipHandleSo = mql.toQuery(params);
       if (shipHandleSo.first())
@@ -543,15 +556,16 @@ void shipOrder::sHandleTo()
   sHandleButtons();
 
   shipHandleTo.prepare("SELECT tohead_freight_curr_id, tohead_destname,"
-            "       tohead_destaddress1,"
-            "       SUM(toitem_freight) + tohead_freight AS freight "
-            "FROM tohead, toitem "
-            "WHERE ((toitem_tohead_id=tohead_id)"
-            "  AND  (toitem_status<>'X')"
-            "  AND  (tohead_id=:tohead_id)) "
-            "GROUP BY tohead_freight_curr_id, tohead_destname,"
-            "         tohead_destaddress1, tohead_freight;");
+                       "       tohead_destaddress1,"
+                       "       SUM(toitem_freight) + tohead_freight AS freight "
+                       "FROM tohead JOIN toitem ON (toitem_tohead_id=tohead_id) "
+                       "WHERE ((toitem_status<>'X')"
+                       "  AND  (tohead_src_warehous_id=:warehous_id)"
+                       "  AND  (tohead_id=:tohead_id)) "
+                       "GROUP BY tohead_freight_curr_id, tohead_destname,"
+                       "         tohead_destaddress1, tohead_freight;");
   shipHandleTo.bindValue(":tohead_id", _order->id());
+  shipHandleTo.bindValue(":warehous_id", _warehouse->id());
   shipHandleTo.exec();
   if (shipHandleTo.first())
   {
@@ -567,16 +581,17 @@ void shipOrder::sHandleTo()
     return;
   }
 
-  QString sql( "SELECT shiphead_id "
-               "FROM shiphead "
-               "WHERE ( (NOT shiphead_shipped)"
-               "<? if exists(\"shiphead_id\") ?>"
-               " AND (shiphead_id=<? value(\"shiphead_id\") ?>)"
-               "<? endif ?>"
-               " AND (shiphead_order_id=<? value(\"tohead_id\") ?>)"
-               " AND (shiphead_order_type='TO'));" );
+  QString sql("SELECT shiphead_id "
+              "FROM shiphead "
+              "<? if exists(\"shiphead_id\") ?>"
+              "WHERE (shiphead_id=<? value(\"shiphead_id\") ?>)"
+              "<? else ?>"
+              "WHERE (shiphead_number=getOpenShipment('TO', <? value(\"tohead_id\") ?>, <? value(\"warehous_id\") ?>))"
+              "<? endif ?>"
+              ";" );
   ParameterList params;
   params.append("tohead_id", _order->id());
+  params.append("warehous_id", _warehouse->id());
   if (_shipment->isValid())
     params.append("shiphead_id", _shipment->id());
   MetaSQLQuery mql(sql);
@@ -602,6 +617,7 @@ void shipOrder::sHandleTo()
   {
     params.clear();
     params.append("tohead_id", _order->id());
+    params.append("warehous_id", _warehouse->id());
     MetaSQLQuery mql(sql);
     shipHandleTo = mql.toQuery(params);
     if (shipHandleTo.first())
@@ -660,12 +676,12 @@ void shipOrder::sFillList()
     XSqlQuery shipq;
     shipq.prepare("SELECT shiphead_order_id, shiphead_shipvia, shiphead_order_type,"
                   "       shiphead_tracknum, shiphead_freight, shiphead_freight_curr_id,"
-		  "       COALESCE(shipchrg_custfreight, TRUE) AS custfreight,"
-		  "       COALESCE(shiphead_shipdate,CURRENT_DATE) AS effective "
-		  "FROM shiphead LEFT OUTER JOIN "
-		  "     shipchrg ON (shiphead_shipchrg_id=shipchrg_id) "
-		  "WHERE ( (NOT shiphead_shipped)"
-		  " AND (shiphead_id=:shiphead_id));" );
+                  "       COALESCE(shipchrg_custfreight, TRUE) AS custfreight,"
+                  "       COALESCE(shiphead_shipdate,CURRENT_DATE) AS effective "
+                  "FROM shiphead LEFT OUTER JOIN "
+                  "     shipchrg ON (shiphead_shipchrg_id=shipchrg_id) "
+                  "WHERE ( (NOT shiphead_shipped)"
+                  " AND (shiphead_id=:shiphead_id));" );
     shipq.bindValue(":shiphead_id", _shipment->id());
     shipq.exec();
     if (shipq.first())

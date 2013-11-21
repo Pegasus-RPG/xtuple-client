@@ -320,10 +320,13 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_reprint</tabstop>
   <tabstop>_order</tabstop>
   <tabstop>_shipment</tabstop>
   <tabstop>_orderDate</tabstop>
+  <tabstop>_auto</tabstop>
+  <tabstop>_printPack</tabstop>
+  <tabstop>_printPick</tabstop>
+  <tabstop>_reprint</tabstop>
  </tabstops>
  <resources/>
  <connections/>

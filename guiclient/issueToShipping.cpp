@@ -40,6 +40,7 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
   connect(_bcFind,      SIGNAL(clicked()),                              this,         SLOT(sBcFind()));
   connect(_soitem,      SIGNAL(itemSelectionChanged()),                 this,         SLOT(sHandleButtons()));
   connect(_soitem,      SIGNAL(populateMenu(QMenu*,QTreeWidgetItem *)), this,         SLOT(sPopulateMenu(QMenu *)));
+  connect(_warehouse,   SIGNAL(newID(int)),                             this,         SLOT(sFillList()));
 
   _order->setAllowedStatuses(OrderLineEdit::Open);
   _order->setAllowedTypes(OrderLineEdit::Sales |
@@ -93,6 +94,12 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
 
   _bcQty->setValidator(omfgThis->qtyVal());
 
+  if (!_metrics->boolean("MultiWhs"))
+  {
+    _warehouseLit->hide();
+    _warehouse->hide();
+  }
+  
   if(_metrics->boolean("EnableSOReservations"))
   {
     _requireInventory->setChecked(true);
@@ -808,6 +815,7 @@ void issueToShipping::sFillList()
   }
 
   listp.append("ordertype", _order->type());
+  listp.append("warehous_id", _warehouse->id());
 
   if (_metrics->boolean("EnableSOReservationsByLocation"))
     listp.append("includeReservations");
