@@ -254,72 +254,76 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
       connect(_vendor, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
       //_new->setEnabled(TRUE);
       int openpoid =-1;
-      if (itemsiteid != -1 && itemsrcid == -1)
+      if (itemsiteid != -1 || itemsrcid != -1)
       {
-        purchaseet.prepare( "SELECT itemsite_item_id, itemsrc_id, itemsrc_default "
-                            "FROM itemsite, itemsrc "
-                            "WHERE ( (itemsrc_item_id=itemsite_item_id)"
-                            " AND (itemsite_id=:itemsite_id) ) "
-                            "LIMIT 1;" );
-        purchaseet.bindValue(":itemsite_id", itemsiteid);
-        purchaseet.exec();
-        if (!purchaseet.first())
+        if (itemsiteid != -1)
         {
-          QMessageBox::warning(omfgThis, tr("Cannot Create P/O"),
-                               tr("<p>A Purchase Order cannot be automatically "
-                                  "created for this Item as there are no Item "
-                                  "Sources for it.  You must create one or "
-                                  "more Item Sources for this Item before "
-                                  "the application can automatically create "
-                                  "Purchase Orders for it." ) );
-          return UndefinedError;
-        }
-        if (purchaseet.first())
-        {
-          XSqlQuery itemsrcdefault;
-          MetaSQLQuery mql = mqlLoad("itemSources", "detail");
-
-          ParameterList paramsdft;
-          paramsdft.append("item_id", purchaseet.value("itemsite_item_id").toInt());
-				  paramsdft.append("defaultOnly", true);
-          itemsrcdefault = mql.toQuery(paramsdft);
-          itemsrcdefault.exec();
-          if (itemsrcdefault.first())
+          purchaseet.prepare( "SELECT itemsite_item_id, itemsrc_id, itemsrc_default "
+                             "FROM itemsite, itemsrc "
+                             "WHERE ( (itemsrc_item_id=itemsite_item_id)"
+                             " AND (itemsite_id=:itemsite_id) ) "
+                             "LIMIT 1;" );
+          purchaseet.bindValue(":itemsite_id", itemsiteid);
+          purchaseet.exec();
+          if (!purchaseet.first())
           {
-            itemsrcid=(itemsrcdefault.value("itemsrc_id").toInt());
+            QMessageBox::warning(omfgThis, tr("Cannot Create P/O"),
+                                 tr("<p>A Purchase Order cannot be automatically "
+                                    "created for this Item as there are no Item "
+                                    "Sources for it.  You must create one or "
+                                    "more Item Sources for this Item before "
+                                    "the application can automatically create "
+                                    "Purchase Orders for it." ) );
+            return UndefinedError;
           }
-          else
+          if (purchaseet.first())
           {
-            ParameterList itemSourceParams;
-            itemSourceParams.append("item_id", purchaseet.value("itemsite_item_id").toInt());
-            itemSourceParams.append("qty", qty);
-  
-            itemSourceList newdlg(omfgThis, "", TRUE);
-            newdlg.set(itemSourceParams);
-            itemsrcid = newdlg.exec();
-            if (itemsrcid == XDialog::Rejected)
+            XSqlQuery itemsrcdefault;
+            MetaSQLQuery mql = mqlLoad("itemSources", "detail");
+            
+            ParameterList paramsdft;
+            paramsdft.append("item_id", purchaseet.value("itemsite_item_id").toInt());
+            paramsdft.append("defaultOnly", true);
+            itemsrcdefault = mql.toQuery(paramsdft);
+            itemsrcdefault.exec();
+            if (itemsrcdefault.first())
             {
-              deleteLater();
-              return UndefinedError;
+              itemsrcid=(itemsrcdefault.value("itemsrc_id").toInt());
+            }
+            else
+            {
+              ParameterList itemSourceParams;
+              itemSourceParams.append("item_id", purchaseet.value("itemsite_item_id").toInt());
+              itemSourceParams.append("qty", qty);
+              
+              itemSourceList newdlg(omfgThis, "", TRUE);
+              newdlg.set(itemSourceParams);
+              itemsrcid = newdlg.exec();
+              if (itemsrcid == XDialog::Rejected)
+              {
+                deleteLater();
+                return UndefinedError;
+              }
             }
           }
         }
-      }
+        
+        if (itemsrcid != -1)
+        {
+          purchaseet.prepare( "SELECT itemsrc_vend_id, vend_name  "
+                             "FROM itemsrc LEFT OUTER JOIN vendinfo ON (vend_id = itemsrc_vend_id) "
+                             "WHERE (itemsrc_id=:itemsrc_id);" );
+          purchaseet.bindValue(":itemsrc_id", itemsrcid);
+          purchaseet.exec();
+          if (!purchaseet.first())
+          {
+            systemError(this, tr("A System Error occurred at %1::%2.")
+                        .arg(__FILE__)
+                        .arg(__LINE__) );
+            return UndefinedError;
+          }
+        }
 
-      purchaseet.prepare( "SELECT itemsrc_vend_id, vend_name  "
-                          "FROM itemsrc LEFT OUTER JOIN vendinfo ON (vend_id = itemsrc_vend_id) "
-                          "WHERE (itemsrc_id=:itemsrc_id);" );
-      purchaseet.bindValue(":itemsrc_id", itemsrcid);
-      purchaseet.exec();
-      if (!purchaseet.first())
-      {
-        systemError(this, tr("A System Error occurred at %1::%2.")
-                            .arg(__FILE__)
-                            .arg(__LINE__) );
-        return UndefinedError;
-      }
-      else
-      {
         int vendid = purchaseet.value("itemsrc_vend_id").toInt();
         QString vendname = purchaseet.value("vend_name").toString();
 
@@ -372,76 +376,76 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
           _vendor->setId(vendid);
           createHeader();
         }
-      }
 
 //  Start to create the new Poitem
-      ParameterList newItemParams;
-      newItemParams.append("mode", "new");
-      newItemParams.append("captive", true);
-      newItemParams.append("pohead_id", _poheadid);
-      if (itemsiteid > 0)
-        newItemParams.append("itemsite_id", itemsiteid);
-      if (itemsrcid > 0)
-        newItemParams.append("itemsrc_id", itemsrcid);
+        ParameterList newItemParams;
+        newItemParams.append("mode", "new");
+        newItemParams.append("captive", true);
+        newItemParams.append("pohead_id", _poheadid);
+        if (itemsiteid > 0)
+          newItemParams.append("itemsite_id", itemsiteid);
+        if (itemsrcid > 0)
+          newItemParams.append("itemsrc_id", itemsrcid);
 
-      if (qty > 0.0)
-        newItemParams.append("qty", qty);
+        if (qty > 0.0)
+          newItemParams.append("qty", qty);
 
-      if (!dueDate.isNull())
-        newItemParams.append("dueDate", dueDate);
+        if (!dueDate.isNull())
+          newItemParams.append("dueDate", dueDate);
 
-      if (parentwo != -1)
-        newItemParams.append("parentWo", parentwo);
+        if (parentwo != -1)
+          newItemParams.append("parentWo", parentwo);
 
-      if (parentso != -1)
-        newItemParams.append("parentSo", parentso);
+        if (parentso != -1)
+          newItemParams.append("parentSo", parentso);
 
-      if (prjid != -1)
-        newItemParams.append("prj_id", prjid);
+        if (prjid != -1)
+          newItemParams.append("prj_id", prjid);
 
-      newItemParams.append("pr_releasenote", prnotes);
+        newItemParams.append("pr_releasenote", prnotes);
 
-      purchaseOrderItem poItem(this, "", TRUE);
-      poItem.set(newItemParams);
-      if (poItem.exec() != XDialog::Rejected)
-      {
-        if(_mode == cEdit)
+        purchaseOrderItem poItem(this, "", TRUE);
+        poItem.set(newItemParams);
+        if (poItem.exec() != XDialog::Rejected)
         {
-          // check for another open window
-          QWidgetList list = omfgThis->windowList();
-          for(int i = 0; i < list.size(); i++)
+          if(_mode == cEdit)
           {
-            QWidget * w = list.at(i);
-            if (strcmp(w->metaObject()->className(), "purchaseOrder") == 0 && w != this)
+            // check for another open window
+            QWidgetList list = omfgThis->windowList();
+            for(int i = 0; i < list.size(); i++)
             {
-              purchaseOrder *other = (purchaseOrder*)w;
-              if(_poheadid == other->_poheadid)
+              QWidget * w = list.at(i);
+              if (strcmp(w->metaObject()->className(), "purchaseOrder") == 0 && w != this)
               {
-                if(_prid != -1 && cEdit == other->_mode)
+                purchaseOrder *other = (purchaseOrder*)w;
+                if(_poheadid == other->_poheadid)
                 {
-                  purchaseet.prepare("SELECT deletePr(:pr_id) AS _result;");
-                  purchaseet.bindValue(":pr_id", _prid);
-                  purchaseet.exec();
-                  omfgThis->sPurchaseRequestsUpdated();
+                  if(_prid != -1 && cEdit == other->_mode)
+                  {
+                    purchaseet.prepare("SELECT deletePr(:pr_id) AS _result;");
+                    purchaseet.bindValue(":pr_id", _prid);
+                    purchaseet.exec();
+                    omfgThis->sPurchaseRequestsUpdated();
+                  }
+                  other->sFillList();
+                  return UndefinedError;
                 }
-                other->sFillList();
-                return UndefinedError;
               }
             }
           }
+          sFillList();
         }
-        sFillList();
+        else
+        {
+          _prid = -1;
+        }
       }
       else
       {
-        _prid = -1;
+      //  This is a new P/O without a chosen Itemsite Line Item
+        createHeader();
       }
     }
-//    else
-//    {
-      //  This is a new P/O without a chosen Itemsite Line Item
-//      createHeader();
-//    }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;

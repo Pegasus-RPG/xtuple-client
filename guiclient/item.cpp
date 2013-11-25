@@ -451,6 +451,7 @@ void item::saveCore()
     // TODO: We can enable certain functionality here that needs a saved record
     _newUOM->setEnabled(true);
     _tab->setEnabled(true);
+    _elements->findChild<ItemCluster*>("_item")->setId(_itemid);
 
     sHandleRightButtons();
   }

@@ -2025,15 +2025,20 @@ void workOrder::populate()
 
     sFillList();
 
-    // If the W/O is Closed, Inprocess or Released don't allow changing some items.
-    if(wo.value("wo_status").toString() == "C" || wo.value("wo_status") == "I" || wo.value("wo_status") == "R")
+    // If the W/O is Closed or Released don't allow changing some items.
+    if(wo.value("wo_status").toString() == "C" || wo.value("wo_status") == "R")
     {
       _qty->setEnabled(false);
       _dueDate->setEnabled(false);
       _startDate->setEnabled(false);
     }
-
-    _startDate->setEnabled(true);
+    else
+    {
+      _qty->setEnabled(true);
+      _dueDate->setEnabled(true);
+      _startDate->setEnabled(true);
+    }
+    
     _woNumber->setEnabled(false);
     _item->setReadOnly(true);
     _bomRevision->setEnabled(wo.value("wo_status").toString() == "O" && _privileges->boolean("UseInactiveRevisions"));

@@ -22,7 +22,7 @@ rescheduleWo::rescheduleWo(QWidget* parent, const char* name, bool modal, Qt::WF
 
   _captive = FALSE;
 
-  _wo->setType(cWoOpen | cWoExploded);
+  _wo->setType(cWoOpen | cWoExploded | cWoIssued);
   _cmnttype->setType(XComboBox::AllCommentTypes);
 
   if (_preferences->boolean("XCheckBox/forgetful"))
