@@ -97,7 +97,6 @@ FORMS =   absoluteCalendarItem.ui               \
           arOpenItem.ui                         \
           arWorkBench.ui                        \
           archRestoreSalesHistory.ui            \
-          assessFinanceCharges.ui               \
           assignClassCodeToPlannerCode.ui       \
           assignItemToPlannerCode.ui            \
           assignLotSerial.ui                    \
@@ -647,7 +646,6 @@ HEADERS = ../common/format.h                    \
           arOpenItem.h                          \
           arWorkBench.h                         \
           archRestoreSalesHistory.h             \
-          assessFinanceCharges.h                \
           assignClassCodeToPlannerCode.h        \
           assignItemToPlannerCode.h             \
           assignLotSerial.h                     \
@@ -1256,7 +1254,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           arOpenItem.cpp                        \
           arWorkBench.cpp                       \
           archRestoreSalesHistory.cpp           \
-          assessFinanceCharges.cpp              \
           assignClassCodeToPlannerCode.cpp      \
           assignItemToPlannerCode.cpp           \
           assignLotSerial.cpp                   \

@@ -2,10 +2,10 @@
 <ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
-Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+Copyright (c) 1999-2013 by OpenMFG LLC, d/b/a xTuple.
 It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
-is available at www.xtuple.com/CPAL.  By using this software, you agree
+is available at www.xtuple.com/CPAL. By using this software, you agree
 to be bound by its terms.</comment>
  <class>configureGL</class>
  <widget class="QWidget" name="configureGL">
@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>766</width>
+    <width>757</width>
     <height>582</height>
    </rect>
   </property>
@@ -24,7 +24,7 @@ to be bound by its terms.</comment>
    <item row="0" column="0">
     <widget class="QTabWidget" name="_tab">
      <property name="currentIndex">
-      <number>4</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="_gl">
       <attribute name="title">
@@ -1231,6 +1231,9 @@ to be bound by its terms.</comment>
                  <property name="allowNull">
                   <bool>true</bool>
                  </property>
+                 <property name="type">
+                  <enum>XComboBox::IncidentCategory</enum>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -1357,6 +1360,9 @@ to be bound by its terms.</comment>
                   <property name="nullStr">
                    <string>None</string>
                   </property>
+                  <property name="type">
+                   <enum>XComboBox::TaxAuths</enum>
+                  </property>
                  </widget>
                 </item>
                 <item>
@@ -1442,138 +1448,6 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="_fc">
-      <attribute name="title">
-       <string>Finance Charges</string>
-      </attribute>
-      <widget class="QWidget" name="formLayoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>30</y>
-         <width>418</width>
-         <height>121</height>
-        </rect>
-       </property>
-       <layout class="QFormLayout" name="formLayout">
-        <property name="fieldGrowthPolicy">
-         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-        </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Annual Interest Rate (%)</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="_annualInterestRate"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Minimum Finance Charge</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="_minFinanceCharge"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Grade Period (days)</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="_gracePeriod"/>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>Finance Charge Account</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QComboBox" name="_financeChargeAccount"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QGroupBox" name="groupBox">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>170</y>
-         <width>421</width>
-         <height>71</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Calculate Charges From:</string>
-       </property>
-       <widget class="QRadioButton" name="_dueDate">
-        <property name="geometry">
-         <rect>
-          <x>40</x>
-          <y>40</y>
-          <width>82</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Due Date</string>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="_invoiceDate">
-        <property name="geometry">
-         <rect>
-          <x>260</x>
-          <y>40</y>
-          <width>82</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Invoice/Billed Date</string>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QWidget" name="verticalLayoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>250</y>
-         <width>421</width>
-         <height>80</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_9">
-        <item>
-         <widget class="QCheckBox" name="_assignOnOverdue">
-          <property name="text">
-           <string>Assess finance charges on overdue finance charges. </string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_8">
-          <item>
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>Mark finance charges as: </string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="_financeChargeLabel"/>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </widget>
     </widget>
    </item>
   </layout>
@@ -1608,6 +1482,7 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_tab</tabstop>
   <tabstop>_useCompanySegment</tabstop>
   <tabstop>_companySegmentSize</tabstop>
   <tabstop>_externalConsolidation</tabstop>
