@@ -37,6 +37,7 @@ private:
     bool _cacheintar2gl;
     bool _cacheuseProfitCenters;
     bool _cacheuseSubaccounts;
+    int  _finchargid;
 
 signals:
     void saving();
