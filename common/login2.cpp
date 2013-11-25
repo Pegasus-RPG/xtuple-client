@@ -534,8 +534,8 @@ void login2::updateRecentOptionsActions()
   {
     list.takeFirst();
     int size = list.size();
-    if (size > 5)
-      size = 5;
+    if (size > 10)
+      size = 10;
 
     QString protocol;
     QString hostName;
