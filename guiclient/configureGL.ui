@@ -5,7 +5,7 @@ open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
 It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
-is available at www.xtuple.com/CPAL.  By using this software, you agree
+is available at www.xtuple.com/CPAL. By using this software, you agree
 to be bound by its terms.</comment>
  <class>configureGL</class>
  <widget class="QWidget" name="configureGL">
@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>766</width>
+    <width>757</width>
     <height>582</height>
    </rect>
   </property>
@@ -21,7 +21,7 @@ to be bound by its terms.</comment>
    <string>Accounting Configuration</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_16">
-   <item row="0" column="1">
+   <item row="0" column="0">
     <widget class="QTabWidget" name="_tab">
      <property name="currentIndex">
       <number>0</number>
@@ -1231,6 +1231,9 @@ to be bound by its terms.</comment>
                  <property name="allowNull">
                   <bool>true</bool>
                  </property>
+                 <property name="type">
+                  <enum>XComboBox::IncidentCategory</enum>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -1357,6 +1360,9 @@ to be bound by its terms.</comment>
                   <property name="nullStr">
                    <string>None</string>
                   </property>
+                  <property name="type">
+                   <enum>XComboBox::TaxAuths</enum>
+                  </property>
                  </widget>
                 </item>
                 <item>
@@ -1442,157 +1448,6 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="_fc">
-      <attribute name="title">
-       <string>Finance Charges</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_10">
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_9">
-         <item>
-          <layout class="QGridLayout" name="gridLayout_15">
-           <item row="0" column="0">
-            <widget class="QLabel" name="_annualInterestRateLit">
-             <property name="text">
-              <string>Annual Interest Rate (%):</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="XLineEdit" name="_annualInterestRate">
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="_minFinanceChargeLit">
-             <property name="text">
-              <string>Minimum Finance Charge:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="CurrCluster" name="_minFinanceCharge">
-             <property name="localControl">
-              <bool>true</bool>
-             </property>
-             <property name="currencyEditable" stdset="0">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="_gracePeriodLit">
-             <property name="text">
-              <string>Grace Period (days):</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QSpinBox" name="_gracePeriod"/>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="_financeChargeAccountLit">
-             <property name="text">
-              <string>Finance Charge Account:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="GLCluster" name="_financeChargeAccount"/>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="_calculateChargesGroup">
-           <property name="title">
-            <string>Calculate Charges From:</string>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_9">
-            <item>
-             <widget class="QRadioButton" name="_dueDate">
-              <property name="text">
-               <string>Due Date</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="_invoiceDate">
-              <property name="text">
-               <string>Invoice/Billed Date</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="_assignOnOverdue">
-           <property name="text">
-            <string>Assess finance charges on overdue finance charges. </string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_8">
-           <item>
-            <widget class="QLabel" name="_financeChargeLabelLit">
-             <property name="text">
-              <string>Mark finance charges as: </string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="_financeChargeLabel"/>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer name="verticalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_8">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>297</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
     </widget>
    </item>
   </layout>
@@ -1603,16 +1458,6 @@ to be bound by its terms.</comment>
    <class>AddressCluster</class>
    <extends>QWidget</extends>
    <header>addresscluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>CurrCluster</class>
-   <extends>CurrDisplay</extends>
-   <header>currcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>CurrDisplay</class>
-   <extends>QWidget</extends>
-   <header>currcluster.h</header>
   </customwidget>
   <customwidget>
    <class>GLCluster</class>
@@ -1637,6 +1482,7 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_tab</tabstop>
   <tabstop>_useCompanySegment</tabstop>
   <tabstop>_companySegmentSize</tabstop>
   <tabstop>_externalConsolidation</tabstop>

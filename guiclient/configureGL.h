@@ -30,8 +30,6 @@ protected slots:
     virtual void languageChange();
 
 private:
-    bool isDec(QString);
-    bool isInt(QChar);
     bool _cacheint2gl;
     bool _cacheintap2gl;
     bool _cacheintar2gl;
@@ -41,9 +39,6 @@ private:
 
 signals:
     void saving();
-
-private slots:
-    void on__fc_destroyed();
 
 };
 

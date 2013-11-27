@@ -147,8 +147,6 @@ class menuAccounting : public QObject
     void sDspBankrecHistory();
     void sDspSummarizedBankrecHistory();
 
-    void sAssessFinanceCharges();
-
     void sBudgets();
     void sMaintainBudget();
 
