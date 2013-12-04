@@ -270,6 +270,36 @@ void itemGroup::sNewParent()
       return;
     }
     
+    itemNew.prepare( "WITH RECURSIVE indentedgroups(id, name, descrip, catalog, depth, path, cycle) AS ( "
+                    "SELECT itemgrp_id AS id, "
+                    "       itemgrp_name AS name, "
+                    "       itemgrp_descrip AS descrip, "
+                    "       itemgrp_catalog AS catalog, "
+                    "       0 AS depth, array[itemgrp_id] AS path, false AS cycle "
+                    "FROM itemgrp WHERE (itemgrp_id=:itemgrp_id) "
+                    "UNION "
+                    "SELECT itemgrp_id AS id, "
+                    "       itemgrp_name AS name, "
+                    "       itemgrp_descrip AS descrip, "
+                    "       NULL AS catalog, "
+                    "       (depth+1) AS depth, (path || itemgrp_id) AS path, (itemgrp_id = any(path)) AS cycle "
+                    "FROM indentedgroups JOIN itemgrpitem ON (itemgrpitem_itemgrp_id=id) "
+                    "  JOIN itemgrp ON (itemgrp_id=itemgrpitem_item_id AND itemgrpitem_item_type='G') "
+                    "WHERE (itemgrp_id=:item_id) "
+                    ") "
+                    "SELECT id, name, descrip, catalog, depth, path, cycle "
+                    "FROM indentedgroups "
+                    "WHERE (id != :itemgrp_id);");
+    itemNew.bindValue(":itemgrp_id", _itemgrpid);
+    itemNew.bindValue(":item_id", itemid);
+    itemNew.exec();
+    if (itemNew.first())
+    {
+      QMessageBox::warning( this, tr("Cannot Add Parent Group to Item Group"),
+                           tr("The selected Group is already a child of this Item Group") );
+      return;
+    }
+    
     itemNew.prepare( "INSERT INTO itemgrpitem "
                     "(itemgrpitem_itemgrp_id, itemgrpitem_item_type, itemgrpitem_item_id) "
                     "VALUES "
