@@ -24,7 +24,7 @@
 #include "scriptablePrivate.h"
 #include "shortcuts.h"
 
-#define DEBUG false
+#define DEBUG true
 //
 // XWidgetPrivate
 //
@@ -142,8 +142,11 @@ void XWidget::showEvent(QShowEvent *event)
         {
         qDebug() << "lsize= " << lsize << "titleBarHeight= " << titleBarHeight; //before pixel tweak
         }
+        if(lsize.isValid())
+        {
         lsize.rheight() += titleBarHeight;
         lsize.rwidth() += 8;  //width compensation happened to be consistently 8 pixels
+        }
         if(DEBUG)
         qDebug() << "lsize2= " << lsize << "titleBarHeight= " << titleBarHeight; //after pixel tweak
         //end re-size hack
