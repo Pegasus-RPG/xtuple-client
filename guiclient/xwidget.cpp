@@ -24,7 +24,7 @@
 #include "scriptablePrivate.h"
 #include "shortcuts.h"
 
-#define DEBUG true
+#define DEBUG false
 //
 // XWidgetPrivate
 //
