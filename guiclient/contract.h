@@ -37,6 +37,7 @@ public slots:
     virtual void sEditPo();
     virtual void sViewPo();
     virtual void sDeletePo();
+    virtual void sReleasePo();
     virtual void sNewRcpt();
     virtual void sNewRtrn();
     virtual void sPrint();
