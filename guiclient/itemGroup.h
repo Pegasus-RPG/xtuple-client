@@ -31,7 +31,9 @@ public slots:
     virtual void sClose();
     virtual void sSave();
     virtual void sDelete();
+    virtual void sDeleteParent();
     virtual void sNew();
+    virtual void sNewParent();
     virtual void sFillList();
     virtual void populate();
 
