@@ -42,6 +42,7 @@ contract::contract(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_editPo,             SIGNAL(clicked()), this, SLOT(sEditPo()));
   connect(_viewPo,             SIGNAL(clicked()), this, SLOT(sViewPo()));
   connect(_deletePo,           SIGNAL(clicked()), this, SLOT(sDeletePo()));
+  connect(_releasePo,          SIGNAL(clicked()), this, SLOT(sReleasePo()));
   connect(_newRcpt,            SIGNAL(clicked()), this, SLOT(sNewRcpt()));
   connect(_newRtrn,            SIGNAL(clicked()), this, SLOT(sNewRtrn()));
   connect(_print,              SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -116,11 +117,12 @@ enum SetResponse contract::set(const ParameterList &pParams)
       _mode = cNew;
       _new = true;
 
- 	  _newItemSrc->setEnabled(true);
+      _newItemSrc->setEnabled(true);
       _newPo->setEnabled(false);
       _editPo->setEnabled(false);
       _viewPo->setEnabled(false);
       _deletePo->setEnabled(false);
+      _releasePo->setEnabled(false);
       _newRcpt->setEnabled(false);
       _newRtrn->setEnabled(false);
 
@@ -141,11 +143,12 @@ enum SetResponse contract::set(const ParameterList &pParams)
     {
       _mode = cEdit;
       _vendor->setEnabled(FALSE);
-	  _newItemSrc->setEnabled(true);
+      _newItemSrc->setEnabled(true);
       _newPo->setEnabled(false);
       _editPo->setEnabled(false);
       _viewPo->setEnabled(false);
       _deletePo->setEnabled(false);
+      _releasePo->setEnabled(false);
       _newRcpt->setEnabled(false);
       _newRtrn->setEnabled(false);
     }
@@ -158,11 +161,12 @@ enum SetResponse contract::set(const ParameterList &pParams)
       _number->setEnabled(FALSE);
       _descrip->setEnabled(FALSE);
 //      _documents->setReadOnly(true);
-	  _newItemSrc->setEnabled(true);
+      _newItemSrc->setEnabled(true);
       _newPo->setEnabled(false);
       _editPo->setEnabled(false);
       _viewPo->setEnabled(false);
       _deletePo->setEnabled(false);
+      _releasePo->setEnabled(false);
       _newRcpt->setEnabled(false);
       _newRtrn->setEnabled(false);
       _close->setText(tr("&Close"));
@@ -342,8 +346,11 @@ void contract::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem * pSelected )
 
      if (stat == "Unreleased" && _mode == cEdit)
      {
-	   menuItem = pMenu->addAction(tr("Delete Purchase Order..."), this, SLOT(sDeletePo()));
+       menuItem = pMenu->addAction(tr("Delete Purchase Order..."), this, SLOT(sDeletePo()));
        menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
+
+       menuItem = pMenu->addAction(tr("Release Purchase Order..."), this, SLOT(sReleasePo()));
+       menuItem->setEnabled(_privileges->check("ReleasePurchaseOrders"));
      }
 
      pMenu->addSeparator();
@@ -512,6 +519,39 @@ void contract::sDeletePo()
   sFillList();
 }
 
+void contract::sReleasePo()
+{
+  if (_mode == cView)
+  {
+    QMessageBox::warning(omfgThis, tr("View mode"),
+                         tr("Not allowed under View mode.") );
+    return;
+  }
+  
+  if (QMessageBox::question(this, tr("Release Purchase Order"),
+                            tr("<p>Are you sure you want to release the "
+                               "selected Purchase Order?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+    return;
+  
+  XSqlQuery unpostedRelease;
+  
+  unpostedRelease.prepare( "SELECT releasePurchaseOrder(:pohead_id) AS result;");
+  unpostedRelease.bindValue(":pohead_id", _itemSource->altId());
+  unpostedRelease.exec();
+  if (unpostedRelease.first() && (unpostedRelease.value("result").toInt() < 0))
+    systemError(this, tr("<p>Only Unrelease Purchase Orders may be "
+                         "released. Check the status of Purchase Order "
+                         "%1. If it is 'U' then contact your system "
+                         "Administrator.").arg(_itemSource->currentItem()->rawValue("poitem_ordnumber").toString()),
+                __FILE__, __LINE__);
+  else if (unpostedRelease.lastError().type() != QSqlError::NoError)
+    systemError(this, unpostedRelease.lastError().databaseText(), __FILE__, __LINE__);
+  
+  sFillList();
+}
+
 void contract::sNewRcpt()
 {
   ParameterList params;
@@ -572,15 +612,22 @@ void contract::sHandleButtons(XTreeWidgetItem *pItem, int pCol)
         _viewPo->setEnabled(_privileges->check("ViewPurchaseOrders") || _privileges->check("MaintainPurchaseOrders"));
 
         if (stat == "Unreleased" && _mode == cEdit)
+        {
           _deletePo->setEnabled(_privileges->check("MaintainPurchaseOrders"));
+          _releasePo->setEnabled(_privileges->check("ReleasePurchaseOrders"));
+        }
         else
+        {
           _deletePo->setEnabled(false);
+          _releasePo->setEnabled(false);
+        }
       }
       else
       {
         _editPo->setEnabled(false);
         _viewPo->setEnabled(false);
         _deletePo->setEnabled(false);
+        _releasePo->setEnabled(false);
       }
 
       if (pItem->altId() > 0)
