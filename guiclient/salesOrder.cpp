@@ -182,6 +182,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _CCCVV->setValidator(new QIntValidator(100, 9999, this));
   _weight->setValidator(omfgThis->weightVal());
   _commission->setValidator(omfgThis->percentVal());
+  _marginPercent->setValidator(omfgThis->percentVal());
 
   _applDate->setDate(omfgThis->dbDate(), true);
   _distDate->setDate(omfgThis->dbDate(), true);
@@ -206,6 +207,9 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _soitem->addColumn(tr("Extended"),        _priceColumn,          Qt::AlignRight,  true,  "extprice");
   _soitem->addColumn(tr("Cust. Price"),     _priceColumn,          Qt::AlignRight,  false, "coitem_custprice");
   _soitem->addColumn(tr("Cust. Discount"),  _priceColumn,          Qt::AlignRight,  false, "discountfromcust");
+  _soitem->addColumn(tr("Unit Cost"),       _priceColumn,          Qt::AlignRight,  false, "coitem_unitcost");
+  _soitem->addColumn(tr("Margin"),          _priceColumn,          Qt::AlignRight,  false, "margin");
+  _soitem->addColumn(tr("Margin %"),        _priceColumn,          Qt::AlignRight,  false, "marginpercent");
   _soitem->addColumn(tr("Prod. Weight"),    _qtyColumn,            Qt::AlignRight,  false, "prodweight");
   _soitem->addColumn(tr("Pkg. Weight"),     _qtyColumn,            Qt::AlignRight,  false, "packweight");
   _soitem->addColumn(tr("Supply Type"),     _itemColumn,           Qt::AlignCenter, false, "spplytype");
@@ -240,6 +244,8 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   {
     _margin->hide();
     _marginLit->hide();
+    _marginPercent->hide();
+    _marginPercentLit->hide();
   }
 
   _project->setType(ProjectLineEdit::SalesOrder);
@@ -2839,6 +2845,10 @@ void salesOrder::sFillItemList()
   {
     _subtotal->setLocalValue(fillSales.value("subtotal").toDouble());
     _margin->setLocalValue(fillSales.value("subtotal").toDouble() - fillSales.value("totalcost").toDouble());
+    if (_subtotal->localValue() > 0.0)
+      _marginPercent->setDouble(_margin->localValue() / _subtotal->localValue() * 100.0);
+    else
+      _marginPercent->setDouble(0.0);
   }
   else if (fillSales.lastError().type() != QSqlError::NoError)
   {
