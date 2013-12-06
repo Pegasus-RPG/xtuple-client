@@ -54,6 +54,13 @@ to be bound by its terms.</comment>
       </widget>
      </item>
      <item>
+      <widget class="QLabel" name="_billToNameExtra">
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -3228,6 +3235,22 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>137</x>
      <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_billToName</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>_billToNameExtra</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>310</x>
+     <y>303</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>189</x>
+     <y>25</y>
     </hint>
    </hints>
   </connection>
