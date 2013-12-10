@@ -373,7 +373,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     // Inventory | Utilities
     { "menu",                                     tr("&Utilities"),                       (char*)utilitiesMenu,                     mainMenu,       "true",                    NULL, NULL, true, NULL },
     { "im.dspUnbalancedQOHByClassCode",           tr("U&nbalanced QOH..."),               SLOT(sDspUnbalancedQOHByClassCode()),     utilitiesMenu,  "ViewItemSites",           NULL, NULL, true, NULL },
-    { "im.adjustInvValue",                        tr("Adjust Avg. Cost Value..."),        SLOT(sAdjustInvValue()),                  utilitiesMenu,  "CreateAdjustmentTrans ViewCosts", NULL, NULL, _metrics->boolean("AllowAvgCostMethod"), NULL },
+    { "im.adjustInvValue",                        tr("Adjust Avg. Cost Value..."),        SLOT(sAdjustInvValue()),                  utilitiesMenu,  "CreateAdjustmentTrans", NULL, NULL, _metrics->boolean("AllowAvgCostMethod"), NULL },
     { "separator",                                NULL,                                   NULL,                                     utilitiesMenu,  "true",                    NULL, NULL, true, NULL },
 
     // Inventory | Utilities | Update Item Controls
