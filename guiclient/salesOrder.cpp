@@ -1295,6 +1295,18 @@ bool salesOrder::save(bool partial)
 
 void salesOrder::sPopulateMenu(QMenu *pMenu)
 {
+  if (_mode == cView)
+  {
+    QAction *menuItem;
+    bool  didsomething = false;
+    if (_numSelected == 1)
+    {
+      didsomething = true;
+      if (_lineMode == cClosed)
+        pMenu->addAction(tr("Open Line..."), this, SLOT(sAction()));
+    }
+  }
+  
   if ((_mode == cNew) || (_mode == cEdit))
   {
     QAction *menuItem;
@@ -2200,33 +2212,35 @@ void salesOrder::sAction()
   if (_lineMode == cCanceled)
     return;
 
-  if ( (_mode == cNew) || (_mode == cEdit) )
+  if (_lineMode == cClosed)
   {
-    if (_lineMode == cClosed)
-      actionSales.prepare( "UPDATE coitem "
-                 "SET coitem_status='O' "
-                 "WHERE (coitem_id=:coitem_id);" );
-    else
-    {
-      actionSales.prepare( "SELECT qtyAtShipping(:coitem_id) AS atshipping;");
-      actionSales.bindValue(":coitem_id", _soitem->id());
-      actionSales.exec();
-      if (actionSales.first() && actionSales.value("atshipping").toDouble() > 0)
-      {
-        QMessageBox::information(this, tr("Cannot Close Item"),
-                                 tr("The item cannot be Closed at this time as there is inventory at shipping.") );
-        return;
-      }
-      if (_metrics->boolean("EnableSOReservations"))
-        sUnreserveStock();
-      actionSales.prepare( "UPDATE coitem "
-                 "SET coitem_status='C' "
-                 "WHERE (coitem_id=:coitem_id);" );
-    }
+    actionSales.prepare( "UPDATE coitem "
+                        "SET coitem_status='O' "
+                        "WHERE (coitem_id=:coitem_id);" );
     actionSales.bindValue(":coitem_id", _soitem->id());
     actionSales.exec();
-    sFillItemList();
   }
+  else if ( (_mode == cNew) || (_mode == cEdit) )
+  {
+    actionSales.prepare( "SELECT qtyAtShipping(:coitem_id) AS atshipping;");
+    actionSales.bindValue(":coitem_id", _soitem->id());
+    actionSales.exec();
+    if (actionSales.first() && actionSales.value("atshipping").toDouble() > 0)
+    {
+      QMessageBox::information(this, tr("Cannot Close Item"),
+                               tr("The item cannot be Closed at this time as there is inventory at shipping.") );
+      return;
+    }
+    if (_metrics->boolean("EnableSOReservations"))
+      sUnreserveStock();
+    actionSales.prepare( "UPDATE coitem "
+                        "SET coitem_status='C' "
+                        "WHERE (coitem_id=:coitem_id);" );
+    actionSales.bindValue(":coitem_id", _soitem->id());
+    actionSales.exec();
+  }
+  
+  sFillItemList();
 }
 
 void salesOrder::sDelete()
