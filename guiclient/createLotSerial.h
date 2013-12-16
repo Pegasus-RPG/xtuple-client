@@ -30,6 +30,7 @@ public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sAssign();
     virtual void sHandleLotSerial();
+    virtual void sHandleCharacteristics();
     virtual void sLotSerialSelected();
 
 protected slots:
