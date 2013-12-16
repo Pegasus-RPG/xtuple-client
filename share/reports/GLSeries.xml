@@ -161,7 +161,7 @@ SELECT (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,
    AND (sltrans_journalnumber BETWEEN &lt;? value("startJrnlnum") ?> AND &lt;? value("endJrnlnum") ?>)
 &lt;? endif ?>
        )
-GROUP BY accnt_id
+GROUP BY accnt_id, accnt_descrip
 ORDER BY formatGLAccount(accnt_id);
 &lt;? endif ?></sql>
  </querysource>
