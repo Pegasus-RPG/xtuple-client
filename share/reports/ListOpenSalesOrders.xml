@@ -27,35 +27,10 @@
        AS warehouse;
 </sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true">
   <name>detail</name>
-  <sql>SELECT DISTINCT cohead.*,
-                COALESCE(cust_number, :error) AS cust_number,
-                getSoSchedDate(cohead_id) AS scheddate,
-                formatDate(cohead_orderdate) AS f_orderdate
-FROM cohead 
-     JOIN custinfo ON (cohead_cust_id=cust_id) 
-     &lt;? if exists("selectedSites") ?> 
-       JOIN coitem ON (coitem_cohead_id=cohead_id) 
-       JOIN itemsite ON (coitem_itemsite_id=itemsite_id) 
-       JOIN site() ON (itemsite_warehous_id=warehous_id) 
-     &lt;? else ?> 
-       LEFT OUTER JOIN coitem ON (coitem_cohead_id=cohead_id) 
-       LEFT OUTER JOIN itemsite ON (coitem_itemsite_id=itemsite_id) 
-       LEFT OUTER JOIN site() ON (itemsite_warehous_id=warehous_id) 
-     &lt;? endif ?> 
-WHERE((true) 
-     &lt;? if exists("cust_id") ?>
-       AND (cust_id=&lt;? value("cust_id") ?> )
-     &lt;? endif ?>
-     &lt;? if not exists("showClosed") ?> 
-       AND ((coitem_status = 'O') OR (coitem_status IS NULL)) 
-     &lt;? endif ?>
-     &lt;? if  exists("warehous_id") ?>
-       AND (warehous_id=&lt;? value("warehous_id") ?>)
-     &lt;? endif ?>
-        ) 
-ORDER BY cohead_number </sql>
+  <mqlgroup>opensalesorders</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <rpthead>
   <height>173</height>
@@ -306,7 +281,7 @@ ORDER BY cohead_number </sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_orderdate</column>
+     <column>cohead_orderdate</column>
     </data>
    </field>
    <field>
