@@ -3365,19 +3365,19 @@ void salesOrderItem::sRollupPrices()
       if (_metrics->boolean("Routings"))
         ordq.prepare("SELECT SUM(COALESCE(price, 0.0)) AS price "
                      "FROM ( "
-                     "SELECT (womatl_price * womatl_qtyreq) AS price "
-                     "FROM womatl "
+                     "SELECT (womatl_price * womatl_qtyreq / wo_qtyord) AS price "
+                     "FROM womatl JOIN wo ON (wo_id=womatl_wo_id) "
                      "WHERE (womatl_wo_id = :wo_id) "
                      "UNION "
-                     "SELECT ((wooper_price * wo_qtyord)) AS price "
+                     "SELECT wooper_price AS price "
                      "FROM xtmfg.wooper JOIN wo ON (wo_id=wooper_wo_id) "
                      "WHERE (wooper_wo_id = :wo_id) "
                      " ) AS data;");
       else
         ordq.prepare("SELECT SUM(COALESCE(price, 0.0)) AS price "
                      "FROM ( "
-                     "SELECT (womatl_price * womatl_qtyreq) AS price "
-                     "FROM womatl "
+                     "SELECT (womatl_price * womatl_qtyreq / wo_qtyord) AS price "
+                     "FROM womatl JOIN wo ON (wo_id=womatl_wo_id) "
                      "WHERE (womatl_wo_id = :wo_id) "
                      " ) AS data;");
       ordq.bindValue(":wo_id", _supplyOrderId);
