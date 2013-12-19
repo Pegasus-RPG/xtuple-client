@@ -838,9 +838,11 @@ bool salesOrder::save(bool partial)
                    "SELECT quhead_id"
                    "  FROM quhead"
                    " WHERE ((quhead_cust_id=:cohead_cust_id)"
+                   "   AND  (quhead_number<>:fromquote)"
                    "   AND  (quhead_id<>:cohead_id)"
                    "   AND  (UPPER(quhead_custponumber) = UPPER(:cohead_custponumber)) );" );
         saveSales.bindValue(":cohead_cust_id", _cust->id());
+        saveSales.bindValue(":fromquote", _fromQuote->text());
         saveSales.bindValue(":cohead_id", _soheadid);
         saveSales.bindValue(":cohead_custponumber", _custPONumber->text());
         saveSales.exec();
