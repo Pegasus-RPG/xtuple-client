@@ -2729,9 +2729,7 @@ void salesOrder::sFillItemList()
   if (ISORDER(_mode))
     fillSales.prepare( "SELECT COALESCE(getSoSchedDate(:head_id),:ship_date) AS shipdate;" );
   else
-    fillSales.prepare( "SELECT COALESCE(MIN(quitem_scheddate),:ship_date) AS shipdate "
-               "FROM quitem "
-               "WHERE (quitem_quhead_id=:head_id);" );
+    fillSales.prepare( "SELECT COALESCE(getQuoteSchedDate(:head_id),:ship_date) AS shipdate;" );
 
   fillSales.bindValue(":head_id", _soheadid);
   fillSales.bindValue(":ship_date", _shipDate->date());
@@ -2801,39 +2799,11 @@ void salesOrder::sFillItemList()
   }
   else if (ISQUOTE(_mode))
   {
-    XSqlQuery fl;
-    fl.prepare( "SELECT quitem_id,"
-                "       quitem_linenumber AS f_linenumber,"
-                "       0 AS coitem_subnumber, item_type,"
-                "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-                "       warehous_code, '' AS enhanced_status,"
-                "       quitem_scheddate AS coitem_scheddate,"
-                "       quom.uom_name AS qty_uom,"
-                "       quitem_qtyord AS coitem_qtyord,"
-                "       0 AS qtyshipped, 0 AS qtyatshipping, 0 AS balance,"
-                "       puom.uom_name AS price_uom,"
-                "       quitem_price AS coitem_price,"
-                "       ROUND((quitem_qtyord * quitem_qty_invuomratio) *"
-                "             (quitem_price / quitem_price_invuomratio),2) AS extprice,"
-                "       quitem_custprice AS coitem_custprice,"
-                "       CASE WHEN (quitem_custpn != '') THEN quitem_custpn "
-                "       ELSE item_number "
-                "       END AS item_number_cust, "
-                "       'qty' AS coitem_qtyord_xtnumericrole,"
-                "       'qty' AS qtyshipped_xtnumericrole,"
-                "       'qty' AS balance_xtnumericrole,"
-                "       'qty' AS qtyatshipping_xtnumericrole,"
-                "       'salesprice' AS coitem_price_xtnumericrole,"
-                "       'curr' AS extprice_xtnumericrole "
-                "  FROM item, uom AS quom, uom AS puom,"
-                "       quitem LEFT OUTER JOIN (itemsite JOIN whsinfo ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
-                " WHERE ( (quitem_item_id=item_id)"
-                "   AND   (quitem_qty_uom_id=quom.uom_id)"
-                "   AND   (quitem_price_uom_id=puom.uom_id)"
-                "   AND   (quitem_quhead_id=:quhead_id) ) "
-                "ORDER BY quitem_linenumber;" );
-    fl.bindValue(":quhead_id", _soheadid);
-    fl.exec();
+    MetaSQLQuery mql = mqlLoad("quoteItems", "list");
+    
+    ParameterList params;
+    params.append("quhead_id", _soheadid);
+    XSqlQuery fl = mql.toQuery(params);
     _cust->setReadOnly(fl.size() || !ISNEW(_mode));
     _soitem->populate(fl);
     if (fl.lastError().type() != QSqlError::NoError)
