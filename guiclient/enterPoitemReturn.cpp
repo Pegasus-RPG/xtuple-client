@@ -196,7 +196,7 @@ void enterPoitemReturn::sReturn()
   if (_receipts->isVisible())
   {
     QList<XTreeWidgetItem*> items = _receipts->selectedItems();
-    if (_toReturn->toDouble() > items.at(0)->text(3).toDouble())
+    if (_toReturn->toDouble() > items.at(0)->rawValue("returnable").toDouble())
     {
       QMessageBox::critical( this, tr("Cannot Enter Return"),
                             tr("Quantity to return may not be greater than the returnable quantity from the selected receipt.\n") );
