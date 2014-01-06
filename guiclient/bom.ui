@@ -678,7 +678,6 @@ to be bound by its terms.</comment>
    </item>
   </layout>
   <zorder>frame_2</zorder>
-  <zorder></zorder>
   <zorder>_tab</zorder>
  </widget>
  <layoutdefault spacing="5" margin="5"/>
@@ -758,6 +757,22 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>715</x>
      <y>241</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_doRequireQtyPer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_requiredQtyPer</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>598</x>
+     <y>503</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>769</x>
+     <y>503</y>
     </hint>
    </hints>
   </connection>
