@@ -1583,6 +1583,9 @@ void returnAuthorization::sDispositionChanged()
 
 void returnAuthorization::sCreditByChanged()
 {
+  _new->setEnabled(_cust->isValid() ||
+                   (_disposition->currentIndex() == 1 && _creditBy->currentIndex() == 0));
+  
   if (_creditBy->currentIndex() == 0 && _total->localValue() > 0)
   {
     QMessageBox::information(this, tr("Credit By 'None' not allowed"),
