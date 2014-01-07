@@ -299,7 +299,7 @@ int main(int argc, char *argv[])
                "SELECT fetchMetricText('Application') = 'Standard' AND COUNT(*) = 1"
                " FROM pkghead"
                " WHERE pkghead_name IN ('xtmfg');" )
-          << editionDesc( "Standard",       ":/images/splashStdEdition.png",        true,
+          << editionDesc( "Standard",       ":/images/splashDistEdition.png",        true,
                "SELECT fetchMetricText('Application') = 'Standard';" )
           << editionDesc( "PostBooks",      ":/images/splashPostBooks.png",        true,
                "SELECT fetchMetricText('Application') = 'PostBooks';" )
