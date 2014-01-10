@@ -67,6 +67,8 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   QString protocol;
   parseDatabaseURL(omfgThis->databaseURL(), protocol, server, database, port);
   _application->setText(_metrics->value("Application"));
+  if (_metrics->value("Application")== "Standard")
+      _application->setText("Distribution");
   _server->setText(server);
   _name->setText(database);
 
