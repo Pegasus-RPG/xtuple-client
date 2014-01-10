@@ -2552,6 +2552,8 @@ void salesOrder::populate()
       sFillCharacteristic();
       emit populated();
       sFillItemList();
+      // TODO - a partial save is not saving everything
+      save(false);
     }
     else if (so.lastError().type() != QSqlError::NoError)
     {
