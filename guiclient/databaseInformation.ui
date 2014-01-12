@@ -514,6 +514,9 @@ to be bound by its terms.</comment>
   <tabstop>_description</tabstop>
   <tabstop>_interval</tabstop>
   <tabstop>_disallowMismatchClient</tabstop>
+  <tabstop>_checkForUpdates</tabstop>
+  <tabstop>_disableAutoComplete</tabstop>
+  <tabstop>_forceLicense</tabstop>
   <tabstop>_access</tabstop>
   <tabstop>_comments</tabstop>
  </tabstops>
