@@ -506,15 +506,19 @@ int main(int argc, char *argv[])
     if(metric.first() && (metric.value("metric_value").toString() == "t"))
       disallowMismatch = true;
     
-    _splash->hide();
+    metric.exec("SELECT metric_value FROM metric WHERE(metric_name='CheckForUpdates')");
+    if(metric.first() && (metric.value("metric_value").toString() == "t")) {
+    
+      _splash->hide();
 
-    checkForUpdates newdlg(0,"", TRUE);
+      checkForUpdates newdlg(0,"", TRUE);
 
-    int result = newdlg.exec();
-    if (result == QDialog::Rejected)
-        return 0;
+      int result = newdlg.exec();
+      if (result == QDialog::Rejected)
+          return 0;
 
-    _splash->show();
+      _splash->show();
+    }
   }
 
   _splash->showMessage(QObject::tr("Loading Database Metrics"), SplashTextAlignment, SplashTextColor);

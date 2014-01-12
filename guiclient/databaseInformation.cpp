@@ -50,8 +50,9 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   _version->setText(_metrics->value("ServerVersion"));
   _patch->setText(_metrics->value("ServerPatchVersion"));
   _disallowMismatchClient->setChecked(_metrics->boolean("DisallowMismatchClientVersion"));
+  _checkForUpdates->setChecked(_metrics->boolean("CheckForUpdates"));
   _forceLicense->setChecked(_metrics->boolean("ForceLicenseLimit"));
-
+  
   QString access = _metrics->value("AllowedUserLogins");
   if("AdminOnly" == access)
     _access->setCurrentIndex(1);
@@ -107,6 +108,7 @@ bool databaseInformation::sSave()
   _metrics->set("DatabaseName", _description->text().trimmed());
   _metrics->set("DatabaseComments", _comments->toPlainText().trimmed());
   _metrics->set("DisallowMismatchClientVersion", _disallowMismatchClient->isChecked());
+  _metrics->set("CheckForUpdates", _checkForUpdates->isChecked());
   _metrics->set("ForceLicenseLimit", _forceLicense->isChecked());
 
   _metrics->set("updateTickInterval", _interval->value());
