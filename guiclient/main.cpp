@@ -496,31 +496,70 @@ int main(int argc, char *argv[])
     }
   }
 
+  bool disallowMismatch = false;
+  bool shouldCheckForUpdates = false;
   metric.exec("SELECT metric_value"
-           "  FROM metric"
-           " WHERE (metric_name = 'ServerVersion')" );
-  if(!metric.first() || (metric.value("metric_value").toString() != _dbVersion))
-  {
-    bool disallowMismatch = false;
-    metric.exec("SELECT metric_value FROM metric WHERE(metric_name='DisallowMismatchClientVersion')");
-    if(metric.first() && (metric.value("metric_value").toString() == "t"))
-      disallowMismatch = true;
+              " FROM metric"
+              " WHERE (metric_name = 'ServerVersion')");
+  if (!metric.first() || (metric.value("metric_value").toString() != _dbVersion)) {
+	  
+    int result = 0;
     
-    metric.exec("SELECT metric_value FROM metric WHERE(metric_name='CheckForUpdates')");
-    if(metric.first() && (metric.value("metric_value").toString() == "t")) {
+    metric.exec("SELECT metric_value FROM metric WHERE (metric_name = 'DisallowMismatchClientVersion')");
+    if (metric.first() && (metric.value("metric_value").toString() == "t")) {
+      disallowMismatch = true;
+    }
+    
+    metric.exec("SELECT metric_value FROM metric WHERE (metric_name = 'CheckForUpdates')");
+    if (metric.first()) {
+		 shouldCheckForUpdates = (metric.value("metric_value").toString() == "t" ? true : false);
+	 }
+	
+	if (shouldCheckForUpdates) {
     
       _splash->hide();
 
       checkForUpdates newdlg(0,"", TRUE);
 
-      int result = newdlg.exec();
-      if (result == QDialog::Rejected)
+      result = newdlg.exec();
+      if (result == QDialog::Rejected) {
           return 0;
+	  }
 
-      _splash->show();
+      //_splash->show();
+    }
+    else if (!shouldCheckForUpdates && disallowMismatch) {
+      _splash->hide();
+      result = QMessageBox::warning( 0, QObject::tr("Version Mismatch"),
+      QObject::tr("<p>The version of the database you are connecting to is "
+                  "not the version this client was designed to work against. "
+                  "This client was designed to work against the database "
+                  "version %1. The system has been configured to disallow "
+                  "access in this case.<p>Please contact your systems "
+                  "administrator.").arg(_Version),
+                  QMessageBox::Ok | QMessageBox::Escape | QMessageBox::Default );
+      return 0;
+    }
+    else {
+     _splash->hide();
+     result = QMessageBox::warning( 0, QObject::tr("Version Mismatch"),
+     QObject::tr("<p>The version of the database you are connecting to is "
+                 "not the version this client was designed to work against. "
+                 "This client was designed to work against the database "
+                 "version %1. If you continue some or all functionality may "
+                 "not work properly or at all. You may also cause other "
+                 "problems on the database.<p>Do you want to continue "
+                 "anyway?").arg(_Version), QMessageBox::Yes,
+                 QMessageBox::No | QMessageBox::Escape | QMessageBox::Default );
+      if (result != QMessageBox::Yes) {
+        return 0;
+	  } 
+      else {
+        _splash->show();
+      }
     }
   }
-
+  
   _splash->showMessage(QObject::tr("Loading Database Metrics"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
   _metrics = new Metrics();
