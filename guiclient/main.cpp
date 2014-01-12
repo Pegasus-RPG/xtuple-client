@@ -502,21 +502,21 @@ int main(int argc, char *argv[])
               " FROM metric"
               " WHERE (metric_name = 'ServerVersion')");
   if (!metric.first() || (metric.value("metric_value").toString() != _dbVersion)) {
-	  
+
     int result = 0;
-    
+
     metric.exec("SELECT metric_value FROM metric WHERE (metric_name = 'DisallowMismatchClientVersion')");
     if (metric.first() && (metric.value("metric_value").toString() == "t")) {
       disallowMismatch = true;
     }
-    
+
     metric.exec("SELECT metric_value FROM metric WHERE (metric_name = 'CheckForUpdates')");
     if (metric.first()) {
 		 shouldCheckForUpdates = (metric.value("metric_value").toString() == "t" ? true : false);
 	 }
-	
+
 	if (shouldCheckForUpdates) {
-    
+
       _splash->hide();
 
       checkForUpdates newdlg(0,"", TRUE);
@@ -525,8 +525,6 @@ int main(int argc, char *argv[])
       if (result == QDialog::Rejected) {
           return 0;
 	  }
-
-      //_splash->show();
     }
     else if (!shouldCheckForUpdates && disallowMismatch) {
       _splash->hide();
@@ -553,13 +551,13 @@ int main(int argc, char *argv[])
                  QMessageBox::No | QMessageBox::Escape | QMessageBox::Default );
       if (result != QMessageBox::Yes) {
         return 0;
-	  } 
+      }
       else {
         _splash->show();
       }
     }
   }
-  
+
   _splash->showMessage(QObject::tr("Loading Database Metrics"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
   _metrics = new Metrics();
