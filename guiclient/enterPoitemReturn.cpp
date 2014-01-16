@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -196,7 +196,7 @@ void enterPoitemReturn::sReturn()
   if (_receipts->isVisible())
   {
     QList<XTreeWidgetItem*> items = _receipts->selectedItems();
-    if (_toReturn->toDouble() > items.at(0)->text(3).toDouble())
+    if (_toReturn->toDouble() > items.at(0)->rawValue("returnable").toDouble())
     {
       QMessageBox::critical( this, tr("Cannot Enter Return"),
                             tr("Quantity to return may not be greater than the returnable quantity from the selected receipt.\n") );

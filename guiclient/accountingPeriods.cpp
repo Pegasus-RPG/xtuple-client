@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -13,6 +13,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QSqlError>
+#include <QMessageBox>
 
 #include <openreports.h>
 
@@ -33,6 +34,7 @@ accountingPeriods::accountingPeriods(QWidget* parent, const char* name, Qt::WFla
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_closePeriod, SIGNAL(clicked()), this, SLOT(sClosePeriod()));
   connect(_freezePeriod, SIGNAL(clicked()), this, SLOT(sFreezePeriod()));
+  connect(_year, SIGNAL(newID(int)), this, SLOT(sFillList()));
   
   _period->addColumn(tr("Name"),            -1, Qt::AlignLeft,   true, "period_name");
   _period->addColumn(tr("Start"),  _dateColumn, Qt::AlignCenter, true, "period_start");
@@ -314,8 +316,9 @@ void accountingPeriods::sPrint()
 
 void accountingPeriods::sFillList()
 {
-  _period->clear();
-  _period->populate( "SELECT period_id,"
+
+  XSqlQuery periodsList;
+  periodsList.prepare("SELECT period_id,"
                      "       CASE WHEN ( (NOT period_freeze) AND (NOT period_closed) ) THEN 0"
                      "            WHEN ( (period_freeze) AND (NOT period_closed) ) THEN 1"
                      "            WHEN ( (NOT period_freeze) AND (period_closed) ) THEN 2"
@@ -330,6 +333,20 @@ void accountingPeriods::sFillList()
                      "       formatBoolYN(period_freeze) AS frozen "
                      "  FROM period LEFT OUTER JOIN yearperiod "
                      "    ON (period_yearperiod_id=yearperiod_id) "
-                     " ORDER BY period_start;", TRUE );
+		     "  WHERE CASE WHEN (:fiscalYear > 0) THEN  "
+		     "     	     (period_yearperiod_id = :fiscalYear) "
+		     "	 	   ELSE (1=1) END"
+                     " ORDER BY period_start;");
+    periodsList.bindValue(":fiscalYear", _year->id());
+    periodsList.exec();
+    
+    if (periodsList.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, periodsList.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+  _period->clear();
+  _period->populate(periodsList, TRUE );
 }
 

@@ -2,7 +2,7 @@
 <ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
-Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
 It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -13,32 +13,15 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>479</width>
+    <height>465</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>List Accounting Periods</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <layout class="QVBoxLayout">
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="_periodLit">
-       <property name="text">
-        <string>Accounting Periods:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="XTreeWidget" name="_period"/>
-     </item>
-    </layout>
-   </item>
-   <item row="0" column="1">
+   <item row="1" column="1">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QPushButton" name="_close">
@@ -164,10 +147,80 @@ to be bound by its terms.</comment>
      </item>
     </layout>
    </item>
+   <item row="1" column="0">
+    <layout class="QVBoxLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="XLabel" name="_yearLit">
+         <property name="text">
+          <string>Fiscal Year:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="XComboBox" name="_year">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="allowNull">
+          <bool>true</bool>
+         </property>
+         <property name="type">
+          <enum>XComboBox::FiscalYears</enum>
+         </property>
+         <property name="defaultCode">
+          <enum>XComboBox::First</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QLabel" name="_periodLit">
+       <property name="text">
+        <string>Accounting Periods:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="XTreeWidget" name="_period"/>
+     </item>
+    </layout>
+   </item>
   </layout>
  </widget>
  <layoutdefault spacing="5" margin="5"/>
  <customwidgets>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
+  </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>

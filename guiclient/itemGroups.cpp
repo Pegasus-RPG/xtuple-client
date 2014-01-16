@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -27,21 +27,24 @@ itemGroups::itemGroups(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_itemgrp, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
 
-  _itemgrp->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft, true, "itemgrp_name" );
-  _itemgrp->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "itemgrp_descrip" );
+  _itemgrp->setRootIsDecorated(true);
+  _itemgrp->addColumn(tr("Name"),            _itemColumn, Qt::AlignLeft, true, "name" );
+  _itemgrp->addColumn(tr("Description"),     -1,          Qt::AlignLeft, true, "descrip" );
+  _itemgrp->addColumn(tr("Product Catalog"), _itemColumn, Qt::AlignLeft, true, "catalog" );
+  _itemgrp->setIndentation(10);
+  _itemgrp->setPopulateLinear();
   
+  connect(_itemgrp, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
+
   if (_privileges->check("MaintainItemGroups"))
   {
-    connect(_itemgrp, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-    connect(_itemgrp, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    connect(_itemgrp, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+    _new->setEnabled(TRUE);
   }
   else
   {
     _new->setEnabled(FALSE);
-    connect(_itemgrp, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
-
+  
   connect(omfgThis, SIGNAL(itemGroupsUpdated(int, bool)), this, SLOT(sFillList(int)));
 
   sFillList(-1);
@@ -106,8 +109,50 @@ void itemGroups::sView()
 
 void itemGroups::sFillList(int)
 {
-  _itemgrp->populate( "SELECT itemgrp_id, itemgrp_name, itemgrp_descrip "
-                      "FROM itemgrp "
-                      "ORDER BY itemgrp_name;" );
+  _itemgrp->populate("WITH RECURSIVE indentedgroups(id, name, descrip, catalog, depth, path, cycle) AS ( "
+                     "SELECT itemgrp_id AS id, "
+                     "       itemgrp_name AS name, "
+                     "       itemgrp_descrip AS descrip, "
+                     "       itemgrp_catalog AS catalog, "
+                     "       0 AS depth, array[itemgrp_id] AS path, false AS cycle "
+                     "FROM itemgrp "
+                     "UNION ALL "
+                     "SELECT itemgrp_id AS id, "
+                     "       CASE itemgrpitem_item_type WHEN 'I' THEN item_number ELSE itemgrp_name END AS name, "
+                     "       CASE itemgrpitem_item_type WHEN 'I' THEN item_descrip1 ELSE itemgrp_descrip END AS descrip, "
+                     "       NULL AS catalog, "
+                     "       (depth+1) AS depth, (path || itemgrp_id) AS path, (itemgrp_id = any(path)) AS cycle "
+                     "FROM indentedgroups JOIN itemgrpitem ON (itemgrpitem_itemgrp_id=id) "
+                     "  LEFT OUTER JOIN item ON (item_id=itemgrpitem_item_id AND itemgrpitem_item_type='I') "
+                     "  LEFT OUTER JOIN itemgrp ON (itemgrp_id=itemgrpitem_item_id AND itemgrpitem_item_type='G') "
+                     "WHERE (NOT cycle)"
+                     ") "
+                     "SELECT id, name, descrip, catalog, depth AS xtindentrole, path, cycle "
+                     "FROM indentedgroups "
+                     "ORDER BY path, name;");
+}
+
+void itemGroups::sHandleButtons()
+{
+  if (_itemgrp->id() > 0)
+  {
+    _view->setEnabled(TRUE);
+    if (_privileges->check("MaintainItemGroups"))
+    {
+      _edit->setEnabled(TRUE);
+      _delete->setEnabled(TRUE);
+    }
+    else
+    {
+      _edit->setEnabled(FALSE);
+      _delete->setEnabled(FALSE);
+    }
+  }
+  else
+  {
+    _view->setEnabled(FALSE);
+    _edit->setEnabled(FALSE);
+    _delete->setEnabled(FALSE);
+  }
 }
 

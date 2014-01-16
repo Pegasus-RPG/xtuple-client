@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -26,6 +26,7 @@ createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, 
 
   connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
   connect(_lotSerial, SIGNAL(textChanged(QString)), this, SLOT(sHandleLotSerial()));
+  connect(_lotSerial, SIGNAL(editingFinished()), this, SLOT(sHandleCharacteristics()));
 
   _item->setReadOnly(TRUE);
 
@@ -170,24 +171,29 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
 void createLotSerial::sHandleLotSerial()
 {
     _lotSerial->setText(_lotSerial->currentText().toUpper());
+}
 
+void createLotSerial::sHandleCharacteristics()
+{
     if (_lotSerial->currentText().length() == 0)
     {
         return;
     }
 
     int ls_id = -1;
-    XSqlQuery q;
-    q.prepare(QString("SELECT ls_id FROM ls WHERE ls_number='%1'").arg(_lotSerial->currentText()));
-    bool success = q.exec();
+    XSqlQuery lotcharq;
+    lotcharq.prepare(QString("SELECT ls_id FROM ls WHERE ls_item_id=:ls_item_id AND ls_number=:ls_number"));
+    lotcharq.bindValue(":ls_number", _lotSerial->currentText());
+    lotcharq.bindValue(":ls_item_id", _item->id());
+    bool success = lotcharq.exec();
     if (!success)
     {
-        qDebug() << __FUNCTION__ << __LINE__ << q.lastError().text();
+        qDebug() << __FUNCTION__ << __LINE__ << lotcharq.lastError().text();
         return;
     }
-    if( q.first() )
+    if( lotcharq.first() )
     {
-        ls_id = q.value("ls_id").toInt();
+        ls_id = lotcharq.value("ls_id").toInt();
     }
     _lotsFound = ls_id > -1;
     if (_lotsFound)
@@ -201,7 +207,7 @@ void createLotSerial::sHandleLotSerial()
         success = charQuery.exec();
         if (!success)
         {
-            qDebug() << __FUNCTION__ << __LINE__ << q.lastError().text();
+            qDebug() << __FUNCTION__ << __LINE__ << charQuery.lastError().text();
         }
         int i=0;
         while(charQuery.next())

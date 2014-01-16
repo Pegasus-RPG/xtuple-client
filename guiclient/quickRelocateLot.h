@@ -29,6 +29,7 @@ public:
 
 public slots:
     void sPost();
+    void clearFields();
 
 protected slots:
     virtual void languageChange();

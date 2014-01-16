@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -285,9 +285,6 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   {
     _netUnitPrice->setEnabled(false);
   }
-
-  _supplyOverridePrice->hide();
-  _supplyOverridePriceLit->hide();
 
   _supplyOrderType = "";
   _supplyOrderId = -1;
@@ -1451,42 +1448,46 @@ void salesOrderItem::sPopulateItemsiteInfo()
       {
         _supplyOrderType = "W";
         _createSupplyOrder->setTitle(tr("Create Work Order"));
-        _supplyOverridePrice->hide();
-        _supplyOverridePriceLit->hide();
-        _supplyDropShip->hide();
-        _supplyDropShip->setChecked(false);
       }
       else if (itemsite.value("itemsite_createsopo").toBool())
       {
         _supplyOrderType = "P";
         _createSupplyOrder->setTitle(tr("Create Purchase Order"));
-        _supplyOverridePrice->show();
-        _supplyOverridePriceLit->show();
         if (_metrics->boolean("EnableDropShipments"))
         {
-          _supplyDropShip->show();
+          _supplyDropShip->setEnabled(true);
           _supplyDropShip->setChecked(itemsite.value("itemsite_dropship").toBool());
           _supplyOrderDropShipCache = itemsite.value("itemsite_dropship").toBool();
+        }
+        else
+        {
+          _supplyDropShip->setEnabled(false);
+          _supplyDropShip->setChecked(false);
+          _supplyOrderDropShipCache = false;
         }
       }
       else if (itemsite.value("itemsite_createsopr").toBool())
       {
         _supplyOrderType = "R";
         _createSupplyOrder->setTitle(tr("Create Purchase Request"));
-        _supplyOverridePrice->show();
-        _supplyOverridePriceLit->show();
-        _supplyDropShip->hide();
-        _supplyDropShip->setChecked(false);
+        if (_metrics->boolean("EnableDropShipments"))
+        {
+          _supplyDropShip->setEnabled(true);
+          _supplyDropShip->setChecked(itemsite.value("itemsite_dropship").toBool());
+          _supplyOrderDropShipCache = itemsite.value("itemsite_dropship").toBool();
+        }
+        else
+        {
+          _supplyDropShip->setEnabled(false);
+          _supplyDropShip->setChecked(false);
+          _supplyOrderDropShipCache = false;
+        }
       }
       else
       {
         _createSupplyOrder->setEnabled(FALSE);
         _supplyOrderType = "";
         _createSupplyOrder->setTitle(tr("Create Supply Order"));
-        _supplyOverridePrice->hide();
-        _supplyOverridePriceLit->hide();
-        _supplyDropShip->hide();
-        _supplyDropShip->setChecked(false);
       }
     }
     else if (itemsite.lastError().type() != QSqlError::NoError)
@@ -3136,9 +3137,9 @@ void salesOrderItem::sHandleSupplyOrder()
       _supplyOrderQty->clear();
       _supplyOrderDueDateCache = QDate();
       _supplyOrderScheduledDateCache = _scheduledDate->date();
-//      _supplyOrderDropShipCache = false;
+      _supplyOrderDropShipCache = false;
       _supplyOrderDueDate->clear();
-//      _supplyDropShip->setChecked(false);
+      _supplyDropShip->setChecked(false);
       _supplyRollupPrices->setChecked(false);
       _supplyOverridePrice->clear();
       _supplyOverridePriceCache = 0.0;
@@ -3205,18 +3206,15 @@ void salesOrderItem::sPopulateOrderInfo()
       _supplyOrderStatusLit->show();
       _supplyOrderQtyLit->show();
       _supplyOrderDueDateLit->show();
-      _supplyOverridePriceLit->hide();
       _supplyOrder->show();
       _supplyOrderLine->hide();
       _supplyOrderStatus->show();
       _supplyOrderQty->show();
       _supplyOrderDueDate->show();
-      _supplyOverridePrice->hide();
       if (!_item->isConfigured() && (ordq.value("wo_status").toString() == "E"))
-        _supplyRollupPrices->show();
+        _supplyRollupPrices->setEnabled(true);
       else
-        _supplyRollupPrices->hide();
-      _supplyDropShip->hide();
+        _supplyRollupPrices->setEnabled(false);
       if (_metrics->boolean("MultiWhs"))
       {
         _supplyWarehouseLit->show();
@@ -3263,15 +3261,12 @@ void salesOrderItem::sPopulateOrderInfo()
       _supplyOrderQtyLit->show();
       _supplyOrderDueDateLit->show();
       _supplyWarehouseLit->hide();
-      _supplyOverridePriceLit->show();
       _supplyOrder->show();
       _supplyOrderLine->show();
       _supplyOrderStatus->show();
       _supplyOrderQty->show();
       _supplyOrderDueDate->show();
       _supplyWarehouse->hide();
-      _supplyOverridePrice->show();
-      _supplyRollupPrices->hide();
       _supplyDropShip->setVisible(_metrics->boolean("EnableDropShipments"));
       
       _supplyOrderStack->setCurrentWidget(_purchaseOrderPage);
@@ -3308,18 +3303,15 @@ void salesOrderItem::sPopulateOrderInfo()
       _supplyOrderQtyLit->show();
       _supplyOrderDueDateLit->show();
       _supplyWarehouseLit->hide();
-      _supplyOverridePriceLit->show();
       _supplyOrder->show();
       _supplyOrderLine->hide();
       _supplyOrderStatus->show();
       _supplyOrderQty->show();
       _supplyOrderDueDate->show();
       _supplyWarehouse->hide();
-      _supplyOverridePrice->show();
-      _supplyRollupPrices->hide();
-      _supplyDropShip->hide();
       
-      _supplyOrderStack->setCurrentWidget(_purchaseRequestPage);
+//      _supplyOrderStack->setCurrentWidget(_purchaseRequestPage);
+      _supplyOrderStack->setCurrentWidget(_purchaseOrderPage);
     }
     else
     {
@@ -3370,16 +3362,24 @@ void salesOrderItem::sRollupPrices()
     if (_supplyRollupPrices->isChecked())
     {
       XSqlQuery ordq;
-      ordq.prepare("SELECT COALESCE(SUM(price), 0.0) AS price "
-                   "FROM ( "
-                   "SELECT (womatl_price * womatl_qtyreq) AS price "
-                   "FROM womatl "
-                   "WHERE (womatl_wo_id = :wo_id) "
-                   "UNION "
-                   "SELECT ((wooper_price * wo_qtyord)) AS price "
-                   "FROM xtmfg.wooper JOIN wo ON (wo_id=wooper_wo_id) "
-                   "WHERE (wooper_wo_id = :wo_id) "
-                   " ) AS data;");
+      if (_metrics->boolean("Routings"))
+        ordq.prepare("SELECT SUM(COALESCE(price, 0.0)) AS price "
+                     "FROM ( "
+                     "SELECT (womatl_price * womatl_qtyreq / wo_qtyord) AS price "
+                     "FROM womatl JOIN wo ON (wo_id=womatl_wo_id) "
+                     "WHERE (womatl_wo_id = :wo_id) "
+                     "UNION "
+                     "SELECT wooper_price AS price "
+                     "FROM xtmfg.wooper JOIN wo ON (wo_id=wooper_wo_id) "
+                     "WHERE (wooper_wo_id = :wo_id) "
+                     " ) AS data;");
+      else
+        ordq.prepare("SELECT SUM(COALESCE(price, 0.0)) AS price "
+                     "FROM ( "
+                     "SELECT (womatl_price * womatl_qtyreq / wo_qtyord) AS price "
+                     "FROM womatl JOIN wo ON (wo_id=womatl_wo_id) "
+                     "WHERE (womatl_wo_id = :wo_id) "
+                     " ) AS data;");
       ordq.bindValue(":wo_id", _supplyOrderId);
       ordq.exec();
       if (ordq.first())
@@ -3498,9 +3498,6 @@ void salesOrderItem::sPopulateWoMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
         menuItem = pMenu->addAction(tr("New Material..."), this, SLOT(sNewWoMatl()));
         if (!_privileges->check("MaintainWoMaterials"))
           menuItem->setEnabled(false);
-        menuItem = pMenu->addAction(tr("New Operation..."), this, SLOT(sNewWoOper()));
-        if (!_privileges->check("MaintainWoOperations"))
-          menuItem->setEnabled(false);
       }
     }
   }
@@ -3546,7 +3543,9 @@ void salesOrderItem::sNewWoMatl()
   int currentAltId = _woIndentedList->altId();
   omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   sFillWoIndentedList();
-  _woIndentedList->setId(currentId,currentAltId);
+//  _woIndentedList->setId(currentId,currentAltId);
+  if (_supplyRollupPrices->isChecked())
+    sRollupPrices();
 }
 
 void salesOrderItem::sEditWoMatl()
@@ -3565,7 +3564,9 @@ void salesOrderItem::sEditWoMatl()
     int currentAltId = _woIndentedList->altId();
     omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
     sFillWoIndentedList();
-    _woIndentedList->setId(currentId,currentAltId);
+//    _woIndentedList->setId(currentId,currentAltId);
+    if (_supplyRollupPrices->isChecked())
+      sRollupPrices();
   }
 }
 
@@ -3626,6 +3627,8 @@ void salesOrderItem::sDeleteWoMatl()
     
     omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
     sFillWoIndentedList();
+    if (_supplyRollupPrices->isChecked())
+      sRollupPrices();
   }
 }
 
@@ -3825,11 +3828,13 @@ void salesOrderItem::populate()
         _itemsrc = -1;
       _supplyOverridePrice->setLocalValue(item.value("coitem_prcost").toDouble());
     }
-
-    _warranty->setChecked(item.value("coitem_warranty").toBool());
-    _altCosAccnt->setId(item.value("coitem_cos_accnt_id").toInt());
-    _altRevAccnt->setId(item.value("coitem_rev_accnt_id").toInt());
-    _qtyreserved = item.value("coitem_qtyreserved").toDouble();
+    else
+    {
+      _warranty->setChecked(item.value("coitem_warranty").toBool());
+      _altCosAccnt->setId(item.value("coitem_cos_accnt_id").toInt());
+      _altRevAccnt->setId(item.value("coitem_rev_accnt_id").toInt());
+      _qtyreserved = item.value("coitem_qtyreserved").toDouble();
+    }
 
     sCalculateDiscountPrcnt();
     sLookupTax();

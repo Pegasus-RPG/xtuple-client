@@ -2,7 +2,7 @@
 <ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
-Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
 It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>945</width>
-    <height>866</height>
+    <height>856</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1170,6 +1170,33 @@ to be bound by its terms.</comment>
                      <layout class="QVBoxLayout">
                       <item>
                        <layout class="QGridLayout">
+                        <item row="4" column="1">
+                         <layout class="QHBoxLayout">
+                          <item>
+                           <widget class="WComboBox" name="_supplyWarehouse">
+                            <property name="enabled">
+                             <bool>false</bool>
+                            </property>
+                            <property name="type">
+                             <enum>WComboBox::Supply</enum>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer>
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>0</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
+                        </item>
                         <item row="2" column="1">
                          <layout class="QHBoxLayout" name="horizontalLayout_7">
                           <item>
@@ -1333,66 +1360,6 @@ to be bound by its terms.</comment>
                           </property>
                          </widget>
                         </item>
-                        <item row="4" column="1">
-                         <layout class="QHBoxLayout">
-                          <item>
-                           <widget class="WComboBox" name="_supplyWarehouse">
-                            <property name="enabled">
-                             <bool>false</bool>
-                            </property>
-                            <property name="type">
-                             <enum>WComboBox::Supply</enum>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QCheckBox" name="_supplyDropShip">
-                            <property name="text">
-                             <string>Drop Ship</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <spacer>
-                            <property name="orientation">
-                             <enum>Qt::Horizontal</enum>
-                            </property>
-                            <property name="sizeHint" stdset="0">
-                             <size>
-                              <width>0</width>
-                              <height>20</height>
-                             </size>
-                            </property>
-                           </spacer>
-                          </item>
-                         </layout>
-                        </item>
-                        <item row="5" column="0">
-                         <widget class="QLabel" name="_supplyOverridePriceLit">
-                          <property name="text">
-                           <string>Override Price:</string>
-                          </property>
-                          <property name="buddy">
-                           <cstring>_supplyOverridePrice</cstring>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="5" column="1">
-                         <widget class="CurrCluster" name="_supplyOverridePrice">
-                          <property name="format">
-                           <enum>CurrDisplay::Cost</enum>
-                          </property>
-                          <property name="currencyEditable" stdset="0">
-                           <bool>false</bool>
-                          </property>
-                          <property name="currencyVisible">
-                           <bool>false</bool>
-                          </property>
-                          <property name="enabled">
-                           <bool>true</bool>
-                          </property>
-                         </widget>
-                        </item>
                         <item row="2" column="0">
                          <widget class="QLabel" name="_supplyOrderQtyLit">
                           <property name="text">
@@ -1400,13 +1367,6 @@ to be bound by its terms.</comment>
                           </property>
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="6" column="1">
-                         <widget class="QCheckBox" name="_supplyRollupPrices">
-                          <property name="text">
-                           <string>Rollup Prices</string>
                           </property>
                          </widget>
                         </item>
@@ -1498,6 +1458,13 @@ to be bound by its terms.</comment>
                           </widget>
                          </item>
                          <item>
+                          <widget class="QCheckBox" name="_supplyRollupPrices">
+                           <property name="text">
+                            <string>Rollup Prices</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
                           <spacer name="verticalSpacer">
                            <property name="orientation">
                             <enum>Qt::Vertical</enum>
@@ -1518,8 +1485,154 @@ to be bound by its terms.</comment>
                    </item>
                   </layout>
                  </widget>
-                 <widget class="QWidget" name="_purchaseOrderPage"/>
-                 <widget class="QWidget" name="_purchaseRequestPage"/>
+                 <widget class="QWidget" name="_purchaseOrderPage">
+                  <layout class="QHBoxLayout" name="horizontalLayout_13">
+                   <item>
+                    <layout class="QVBoxLayout" name="verticalLayout_8">
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_11">
+                       <item>
+                        <widget class="QLabel" name="_supplyOverridePriceLit">
+                         <property name="text">
+                          <string>Override Price:</string>
+                         </property>
+                         <property name="buddy">
+                          <cstring>_supplyOverridePrice</cstring>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="CurrCluster" name="_supplyOverridePrice">
+                         <property name="format">
+                          <enum>CurrDisplay::Cost</enum>
+                         </property>
+                         <property name="currencyEditable" stdset="0">
+                          <bool>false</bool>
+                         </property>
+                         <property name="currencyVisible">
+                          <bool>false</bool>
+                         </property>
+                         <property name="enabled">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <spacer name="horizontalSpacer_4">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                         <property name="sizeHint" stdset="0">
+                          <size>
+                           <width>40</width>
+                           <height>20</height>
+                          </size>
+                         </property>
+                        </spacer>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_12">
+                       <item>
+                        <widget class="QCheckBox" name="_supplyDropShip">
+                         <property name="text">
+                          <string>Drop Ship</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <spacer name="horizontalSpacer_3">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                         <property name="sizeHint" stdset="0">
+                          <size>
+                           <width>40</width>
+                           <height>20</height>
+                          </size>
+                         </property>
+                        </spacer>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <spacer name="verticalSpacer_2">
+                       <property name="orientation">
+                        <enum>Qt::Vertical</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>20</width>
+                         <height>40</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                    </layout>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="_purchaseRequestPage">
+                  <layout class="QVBoxLayout" name="verticalLayout_9">
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_14">
+                     <item>
+                      <widget class="QLabel" name="_supplyOverridePricePRLit">
+                       <property name="text">
+                        <string>Override Price:</string>
+                       </property>
+                       <property name="buddy">
+                        <cstring>_supplyOverridePrice</cstring>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="CurrCluster" name="_supplyOverridePricePR">
+                       <property name="format">
+                        <enum>CurrDisplay::Cost</enum>
+                       </property>
+                       <property name="currencyEditable" stdset="0">
+                        <bool>false</bool>
+                       </property>
+                       <property name="currencyVisible">
+                        <bool>false</bool>
+                       </property>
+                       <property name="enabled">
+                        <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <spacer name="horizontalSpacer_5">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <spacer name="verticalSpacer_3">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>98</width>
+                       <height>197</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
                  <widget class="QWidget" name="_blankOrderPage"/>
                 </widget>
                </item>
@@ -2189,8 +2302,6 @@ to be bound by its terms.</comment>
   <tabstop>_supplyOrderQty</tabstop>
   <tabstop>_supplyOrderDueDate</tabstop>
   <tabstop>_supplyWarehouse</tabstop>
-  <tabstop>_supplyDropShip</tabstop>
-  <tabstop>_supplyOverridePrice</tabstop>
   <tabstop>_baseUnitPrice</tabstop>
   <tabstop>_itemcharView</tabstop>
   <tabstop>_taxtype</tabstop>

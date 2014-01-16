@@ -15,6 +15,8 @@
 #include <QDesktopWidget>
 #include <QShowEvent>
 #include <QMdiSubWindow>
+#include <QDebug>
+#include <QStyleOptionTitleBar>
 
 #include "xcheckbox.h"
 #include "xtsettings.h"
@@ -22,6 +24,7 @@
 #include "scriptablePrivate.h"
 #include "shortcuts.h"
 
+#define DEBUG false
 //
 // XWidgetPrivate
 //
@@ -90,7 +93,7 @@ void XWidget::closeEvent(QCloseEvent *event)
   if(event->isAccepted())
   {
     QString objName = objectName();
-    //xtsettingsSetValue(objName + "/geometry/size", size());
+    xtsettingsSetValue(objName + "/geometry/size", size());
     if(omfgThis->showTopLevel() || isModal())
       xtsettingsSetValue(objName + "/geometry/pos", pos());
     else
@@ -128,6 +131,25 @@ void XWidget::showEvent(QShowEvent *event)
         QWidget * fw = focusWidget();
         QMdiSubWindow *subwin = omfgThis->workspace()->addSubWindow(this);
         omfgThis->workspace()->setActiveSubWindow(subwin);
+        //begin re-size hack
+        QStyle * wStyle = subwin->style();
+        QStyleOptionTitleBar so;
+        so.titleBarState = 1;
+        so.titleBarFlags = Qt::Window;
+        int titleBarHeight = wStyle->pixelMetric(QStyle::PM_TitleBarHeight, &so, this);
+        titleBarHeight += 4;  //inexplicably off by 4 pixels?!
+        if(DEBUG)
+        {
+        qDebug() << "lsize= " << lsize << "titleBarHeight= " << titleBarHeight; //before pixel tweak
+        }
+        if(lsize.isValid())
+        {
+        lsize.rheight() += titleBarHeight;
+        lsize.rwidth() += 8;  //width compensation happened to be consistently 8 pixels
+        }
+        if(DEBUG)
+        qDebug() << "lsize2= " << lsize << "titleBarHeight= " << titleBarHeight; //after pixel tweak
+        //end re-size hack
         connect(this, SIGNAL(destroyed(QObject*)), subwin, SLOT(close()));
         if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
           subwin->resize(lsize);

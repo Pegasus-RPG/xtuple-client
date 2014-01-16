@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -299,7 +299,7 @@ int main(int argc, char *argv[])
                "SELECT fetchMetricText('Application') = 'Standard' AND COUNT(*) = 1"
                " FROM pkghead"
                " WHERE pkghead_name IN ('xtmfg');" )
-          << editionDesc( "Standard",       ":/images/splashStdEdition.png",        true,
+          << editionDesc( "Distribution",       ":/images/splashDistEdition.png",        true,
                "SELECT fetchMetricText('Application') = 'Standard';" )
           << editionDesc( "PostBooks",      ":/images/splashPostBooks.png",        true,
                "SELECT fetchMetricText('Application') = 'PostBooks';" )
@@ -329,7 +329,7 @@ int main(int argc, char *argv[])
 
     if(checkVersion.first())
     {
-      if(checkVersion.value("compareversion").toInt() <= 0)
+      if(checkVersion.value("compareversion").toInt() > 0)
       {
 	   metric.exec("SELECT count(*) AS registered, (SELECT count(*) FROM pg_stat_activity WHERE datname=current_database()) AS total"
 			"  FROM pg_stat_activity, pg_locks"
@@ -496,25 +496,66 @@ int main(int argc, char *argv[])
     }
   }
 
+  bool disallowMismatch = false;
+  bool shouldCheckForUpdates = false;
   metric.exec("SELECT metric_value"
-           "  FROM metric"
-           " WHERE (metric_name = 'ServerVersion')" );
-  if(!metric.first() || (metric.value("metric_value").toString() != _dbVersion))
-  {
-    bool disallowMismatch = false;
-    metric.exec("SELECT metric_value FROM metric WHERE(metric_name='DisallowMismatchClientVersion')");
-    if(metric.first() && (metric.value("metric_value").toString() == "t"))
+              " FROM metric"
+              " WHERE (metric_name = 'ServerVersion')");
+  if (!metric.first() || (metric.value("metric_value").toString() != _dbVersion)) {
+
+    int result = 0;
+
+    metric.exec("SELECT metric_value FROM metric WHERE (metric_name = 'DisallowMismatchClientVersion')");
+    if (metric.first() && (metric.value("metric_value").toString() == "t")) {
       disallowMismatch = true;
-    
-    _splash->hide();
+    }
 
-    checkForUpdates newdlg(0,"", TRUE);
+    metric.exec("SELECT metric_value FROM metric WHERE (metric_name = 'CheckForUpdates')");
+    if (metric.first()) {
+		 shouldCheckForUpdates = (metric.value("metric_value").toString() == "t" ? true : false);
+	 }
 
-    int result = newdlg.exec();
-    if (result == QDialog::Rejected)
+	if (shouldCheckForUpdates) {
+
+      _splash->hide();
+
+      checkForUpdates newdlg(0,"", TRUE);
+
+      result = newdlg.exec();
+      if (result == QDialog::Rejected) {
+          return 0;
+	  }
+    }
+    else if (!shouldCheckForUpdates && disallowMismatch) {
+      _splash->hide();
+      result = QMessageBox::warning( 0, QObject::tr("Version Mismatch"),
+      QObject::tr("<p>The version of the database you are connecting to is "
+                  "not the version this client was designed to work against. "
+                  "This client was designed to work against the database "
+                  "version %1. The system has been configured to disallow "
+                  "access in this case.<p>Please contact your systems "
+                  "administrator.").arg(_Version),
+                  QMessageBox::Ok | QMessageBox::Escape | QMessageBox::Default );
+      return 0;
+    }
+    else {
+     _splash->hide();
+     result = QMessageBox::warning( 0, QObject::tr("Version Mismatch"),
+     QObject::tr("<p>The version of the database you are connecting to is "
+                 "not the version this client was designed to work against. "
+                 "This client was designed to work against the database "
+                 "version %1. If you continue some or all functionality may "
+                 "not work properly or at all. You may also cause other "
+                 "problems on the database.<p>Do you want to continue "
+                 "anyway?").arg(_Version), QMessageBox::Yes,
+                 QMessageBox::No | QMessageBox::Escape | QMessageBox::Default );
+      if (result != QMessageBox::Yes) {
         return 0;
-
-    _splash->show();
+      }
+      else {
+        _splash->show();
+      }
+    }
   }
 
   _splash->showMessage(QObject::tr("Loading Database Metrics"), SplashTextAlignment, SplashTextColor);

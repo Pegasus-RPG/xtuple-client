@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -182,6 +182,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _CCCVV->setValidator(new QIntValidator(100, 9999, this));
   _weight->setValidator(omfgThis->weightVal());
   _commission->setValidator(omfgThis->percentVal());
+  _marginPercent->setValidator(omfgThis->percentVal());
 
   _applDate->setDate(omfgThis->dbDate(), true);
   _distDate->setDate(omfgThis->dbDate(), true);
@@ -206,6 +207,9 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _soitem->addColumn(tr("Extended"),        _priceColumn,          Qt::AlignRight,  true,  "extprice");
   _soitem->addColumn(tr("Cust. Price"),     _priceColumn,          Qt::AlignRight,  false, "coitem_custprice");
   _soitem->addColumn(tr("Cust. Discount"),  _priceColumn,          Qt::AlignRight,  false, "discountfromcust");
+  _soitem->addColumn(tr("Unit Cost"),       _priceColumn,          Qt::AlignRight,  false, "coitem_unitcost");
+  _soitem->addColumn(tr("Margin"),          _priceColumn,          Qt::AlignRight,  false, "margin");
+  _soitem->addColumn(tr("Margin %"),        _priceColumn,          Qt::AlignRight,  false, "marginpercent");
   _soitem->addColumn(tr("Prod. Weight"),    _qtyColumn,            Qt::AlignRight,  false, "prodweight");
   _soitem->addColumn(tr("Pkg. Weight"),     _qtyColumn,            Qt::AlignRight,  false, "packweight");
   _soitem->addColumn(tr("Supply Type"),     _itemColumn,           Qt::AlignCenter, false, "spplytype");
@@ -240,6 +244,8 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   {
     _margin->hide();
     _marginLit->hide();
+    _marginPercent->hide();
+    _marginPercentLit->hide();
   }
 
   _project->setType(ProjectLineEdit::SalesOrder);
@@ -832,9 +838,11 @@ bool salesOrder::save(bool partial)
                    "SELECT quhead_id"
                    "  FROM quhead"
                    " WHERE ((quhead_cust_id=:cohead_cust_id)"
+                   "   AND  (quhead_number<>:fromquote)"
                    "   AND  (quhead_id<>:cohead_id)"
                    "   AND  (UPPER(quhead_custponumber) = UPPER(:cohead_custponumber)) );" );
         saveSales.bindValue(":cohead_cust_id", _cust->id());
+        saveSales.bindValue(":fromquote", _fromQuote->text());
         saveSales.bindValue(":cohead_id", _soheadid);
         saveSales.bindValue(":cohead_custponumber", _custPONumber->text());
         saveSales.exec();
@@ -909,18 +917,6 @@ bool salesOrder::save(bool partial)
                "WHERE (cohead_id=:id);" );
   else if (_mode == cNew)
   {
-    if (_metrics->boolean("AutoCreateProjectsForOrders"))
-    {
-      XSqlQuery prj;
-      prj.prepare("INSERT INTO prj (prj_number, prj_name, prj_descrip, prj_status, prj_so, prj_wo, prj_po) "
-                  " VALUES (:number, :number, :descrip, 'O', TRUE, TRUE, TRUE) "
-                  "RETURNING prj_id");
-      prj.bindValue(":number", _orderNumber->text());
-      prj.bindValue(":descrip", tr("Auto Generated Project from Sales Order."));
-      prj.exec();
-      if (prj.first())
-        _project->setId(prj.value("prj_id").toInt());
-    }
     saveSales.prepare("INSERT INTO cohead "
               "(cohead_id, cohead_number, cohead_cust_id,"
               "    cohead_custponumber, cohead_shipto_id,"
@@ -1301,6 +1297,18 @@ bool salesOrder::save(bool partial)
 
 void salesOrder::sPopulateMenu(QMenu *pMenu)
 {
+  if (_mode == cView)
+  {
+    QAction *menuItem;
+    bool  didsomething = false;
+    if (_numSelected == 1)
+    {
+      didsomething = true;
+      if (_lineMode == cClosed)
+        pMenu->addAction(tr("Open Line..."), this, SLOT(sAction()));
+    }
+  }
+  
   if ((_mode == cNew) || (_mode == cEdit))
   {
     QAction *menuItem;
@@ -2206,33 +2214,35 @@ void salesOrder::sAction()
   if (_lineMode == cCanceled)
     return;
 
-  if ( (_mode == cNew) || (_mode == cEdit) )
+  if (_lineMode == cClosed)
   {
-    if (_lineMode == cClosed)
-      actionSales.prepare( "UPDATE coitem "
-                 "SET coitem_status='O' "
-                 "WHERE (coitem_id=:coitem_id);" );
-    else
-    {
-      actionSales.prepare( "SELECT qtyAtShipping(:coitem_id) AS atshipping;");
-      actionSales.bindValue(":coitem_id", _soitem->id());
-      actionSales.exec();
-      if (actionSales.first() && actionSales.value("atshipping").toDouble() > 0)
-      {
-        QMessageBox::information(this, tr("Cannot Close Item"),
-                                 tr("The item cannot be Closed at this time as there is inventory at shipping.") );
-        return;
-      }
-      if (_metrics->boolean("EnableSOReservations"))
-        sUnreserveStock();
-      actionSales.prepare( "UPDATE coitem "
-                 "SET coitem_status='C' "
-                 "WHERE (coitem_id=:coitem_id);" );
-    }
+    actionSales.prepare( "UPDATE coitem "
+                        "SET coitem_status='O' "
+                        "WHERE (coitem_id=:coitem_id);" );
     actionSales.bindValue(":coitem_id", _soitem->id());
     actionSales.exec();
-    sFillItemList();
   }
+  else if ( (_mode == cNew) || (_mode == cEdit) )
+  {
+    actionSales.prepare( "SELECT qtyAtShipping(:coitem_id) AS atshipping;");
+    actionSales.bindValue(":coitem_id", _soitem->id());
+    actionSales.exec();
+    if (actionSales.first() && actionSales.value("atshipping").toDouble() > 0)
+    {
+      QMessageBox::information(this, tr("Cannot Close Item"),
+                               tr("The item cannot be Closed at this time as there is inventory at shipping.") );
+      return;
+    }
+    if (_metrics->boolean("EnableSOReservations"))
+      sUnreserveStock();
+    actionSales.prepare( "UPDATE coitem "
+                        "SET coitem_status='C' "
+                        "WHERE (coitem_id=:coitem_id);" );
+    actionSales.bindValue(":coitem_id", _soitem->id());
+    actionSales.exec();
+  }
+  
+  sFillItemList();
 }
 
 void salesOrder::sDelete()
@@ -2542,6 +2552,8 @@ void salesOrder::populate()
       sFillCharacteristic();
       emit populated();
       sFillItemList();
+      // TODO - a partial save is not saving everything
+      save(false);
     }
     else if (so.lastError().type() != QSqlError::NoError)
     {
@@ -2719,9 +2731,7 @@ void salesOrder::sFillItemList()
   if (ISORDER(_mode))
     fillSales.prepare( "SELECT COALESCE(getSoSchedDate(:head_id),:ship_date) AS shipdate;" );
   else
-    fillSales.prepare( "SELECT COALESCE(MIN(quitem_scheddate),:ship_date) AS shipdate "
-               "FROM quitem "
-               "WHERE (quitem_quhead_id=:head_id);" );
+    fillSales.prepare( "SELECT COALESCE(getQuoteSchedDate(:head_id),:ship_date) AS shipdate;" );
 
   fillSales.bindValue(":head_id", _soheadid);
   fillSales.bindValue(":ship_date", _shipDate->date());
@@ -2791,39 +2801,11 @@ void salesOrder::sFillItemList()
   }
   else if (ISQUOTE(_mode))
   {
-    XSqlQuery fl;
-    fl.prepare( "SELECT quitem_id,"
-                "       quitem_linenumber AS f_linenumber,"
-                "       0 AS coitem_subnumber, item_type,"
-                "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-                "       warehous_code, '' AS enhanced_status,"
-                "       quitem_scheddate AS coitem_scheddate,"
-                "       quom.uom_name AS qty_uom,"
-                "       quitem_qtyord AS coitem_qtyord,"
-                "       0 AS qtyshipped, 0 AS qtyatshipping, 0 AS balance,"
-                "       puom.uom_name AS price_uom,"
-                "       quitem_price AS coitem_price,"
-                "       ROUND((quitem_qtyord * quitem_qty_invuomratio) *"
-                "             (quitem_price / quitem_price_invuomratio),2) AS extprice,"
-                "       quitem_custprice AS coitem_custprice,"
-                "       CASE WHEN (quitem_custpn != '') THEN quitem_custpn "
-                "       ELSE item_number "
-                "       END AS item_number_cust, "
-                "       'qty' AS coitem_qtyord_xtnumericrole,"
-                "       'qty' AS qtyshipped_xtnumericrole,"
-                "       'qty' AS balance_xtnumericrole,"
-                "       'qty' AS qtyatshipping_xtnumericrole,"
-                "       'salesprice' AS coitem_price_xtnumericrole,"
-                "       'curr' AS extprice_xtnumericrole "
-                "  FROM item, uom AS quom, uom AS puom,"
-                "       quitem LEFT OUTER JOIN (itemsite JOIN whsinfo ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
-                " WHERE ( (quitem_item_id=item_id)"
-                "   AND   (quitem_qty_uom_id=quom.uom_id)"
-                "   AND   (quitem_price_uom_id=puom.uom_id)"
-                "   AND   (quitem_quhead_id=:quhead_id) ) "
-                "ORDER BY quitem_linenumber;" );
-    fl.bindValue(":quhead_id", _soheadid);
-    fl.exec();
+    MetaSQLQuery mql = mqlLoad("quoteItems", "list");
+    
+    ParameterList params;
+    params.append("quhead_id", _soheadid);
+    XSqlQuery fl = mql.toQuery(params);
     _cust->setReadOnly(fl.size() || !ISNEW(_mode));
     _soitem->populate(fl);
     if (fl.lastError().type() != QSqlError::NoError)
@@ -2851,6 +2833,10 @@ void salesOrder::sFillItemList()
   {
     _subtotal->setLocalValue(fillSales.value("subtotal").toDouble());
     _margin->setLocalValue(fillSales.value("subtotal").toDouble() - fillSales.value("totalcost").toDouble());
+    if (_subtotal->localValue() > 0.0)
+      _marginPercent->setDouble(_margin->localValue() / _subtotal->localValue() * 100.0);
+    else
+      _marginPercent->setDouble(0.0);
   }
   else if (fillSales.lastError().type() != QSqlError::NoError)
   {
@@ -4392,6 +4378,8 @@ void salesOrder::sFreightChanged()
       _freightCache = _freight->localValue();
   }
 
+  save(true);
+  
   sCalculateTax();
 }
 

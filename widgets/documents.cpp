@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -42,11 +42,11 @@ const Documents::DocumentMap Documents::_documentMap[] =
   DocumentMap( BOMItem,           "BMI" ),
   DocumentMap( BOOHead,           "BOH" ),
   DocumentMap( BOOItem,           "BOI" ),
-  DocumentMap( CreditMemo,        "CM",    "cmhead_id",  "creditMemo"    ),
-  DocumentMap( CreditMemoItem,    "CMI" ),
   DocumentMap( CRMAccount,        "CRMA",  "crmacct_id", "crmaccount"    ),
   DocumentMap( Contact,           "T",     "cntct_id",   "contact"       ),
   DocumentMap( Contract,          "CNTR",  "contrct_id", "contrct"       ),
+  DocumentMap( CreditMemo,        "CM",    "cmhead_id",  "creditMemo"    ),
+  DocumentMap( CreditMemoItem,    "CMI" ),
   DocumentMap( Customer,          "C",     "cust_id",    "customer"      ),
   DocumentMap( Employee,          "EMP",   "emp_id",     "employee"      ),
   DocumentMap( Incident,          "INCDT", "incdt_id",   "incident"      ),

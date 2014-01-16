@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -98,7 +98,7 @@ void copyItem::sSaveItem()
   itemsave.exec("BEGIN;");
   
   itemsave.prepare("SELECT copyItem(item_id, 'TEMPCOPY' || :sourceitemnumber) AS result,"
-                   "       item_descrip1 "
+                   "       item_descrip1, item_listprice, item_listcost "
                    "FROM item "
                    "WHERE (item_id=:sourceitemid);");
   itemsave.bindValue(":sourceitemid", _source->id());
@@ -108,6 +108,8 @@ void copyItem::sSaveItem()
   {
     _newitemid = itemsave.value("result").toInt();
     _targetItemDescrip->setText(itemsave.value("item_descrip1").toString());
+    _listPrice->setDouble(itemsave.value("item_listprice").toDouble());
+    _listCost->setDouble(itemsave.value("item_listcost").toDouble());
   }
   if (itemsave.lastError().type() != QSqlError::NoError)
   {

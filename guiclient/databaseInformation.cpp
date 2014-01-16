@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -50,8 +50,9 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   _version->setText(_metrics->value("ServerVersion"));
   _patch->setText(_metrics->value("ServerPatchVersion"));
   _disallowMismatchClient->setChecked(_metrics->boolean("DisallowMismatchClientVersion"));
+  _checkForUpdates->setChecked(_metrics->boolean("CheckForUpdates"));
   _forceLicense->setChecked(_metrics->boolean("ForceLicenseLimit"));
-
+  
   QString access = _metrics->value("AllowedUserLogins");
   if("AdminOnly" == access)
     _access->setCurrentIndex(1);
@@ -67,6 +68,8 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   QString protocol;
   parseDatabaseURL(omfgThis->databaseURL(), protocol, server, database, port);
   _application->setText(_metrics->value("Application"));
+  if (_metrics->value("Application")== "Standard")
+      _application->setText("Distribution");
   _server->setText(server);
   _name->setText(database);
 
@@ -105,6 +108,7 @@ bool databaseInformation::sSave()
   _metrics->set("DatabaseName", _description->text().trimmed());
   _metrics->set("DatabaseComments", _comments->toPlainText().trimmed());
   _metrics->set("DisallowMismatchClientVersion", _disallowMismatchClient->isChecked());
+  _metrics->set("CheckForUpdates", _checkForUpdates->isChecked());
   _metrics->set("ForceLicenseLimit", _forceLicense->isChecked());
 
   _metrics->set("updateTickInterval", _interval->value());

@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -54,16 +54,17 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->appendComboBox(tr("Sales Rep."), "salesrep_id", XComboBox::SalesRepsActive);
   setupCharacteristics(characteristic::SalesOrders);
 
-  list()->addColumn(tr("Order #"),          _orderColumn,  Qt::AlignLeft,  true,  "cohead_number");
-  list()->addColumn(tr("Cust. #"),          _orderColumn,  Qt::AlignLeft,  true,  "cust_number");
-  list()->addColumn(tr("Customer"),         _itemColumn,   Qt::AlignLeft,  true,  "cohead_billtoname");
-  list()->addColumn(tr("Ship-To"),          _itemColumn,   Qt::AlignLeft,  false, "cohead_shiptoname");
-  list()->addColumn(tr("Cust. P/O Number"), _orderColumn,  Qt::AlignLeft,  true,  "cohead_custponumber");
-  list()->addColumn(tr("Ordered"),          _dateColumn,   Qt::AlignCenter,true,  "cohead_orderdate");
-  list()->addColumn(tr("Scheduled"),        _dateColumn,   Qt::AlignCenter,true,  "scheddate");
-  list()->addColumn(tr("Total"),            _moneyColumn,  Qt::AlignRight, true,  "ordertotal");
-  list()->addColumn(tr("Status"),           _statusColumn, Qt::AlignCenter,false, "status");
-  list()->addColumn(tr("Notes"),            -1,            Qt::AlignLeft,  false, "notes");
+  list()->addColumn(tr("Order #"),          _orderColumn,    Qt::AlignLeft,  true,  "cohead_number");
+  list()->addColumn(tr("Cust. #"),          _orderColumn,    Qt::AlignLeft,  true,  "cust_number");
+  list()->addColumn(tr("Customer"),         _itemColumn,     Qt::AlignLeft,  true,  "cohead_billtoname");
+  list()->addColumn(tr("Ship-To"),          _itemColumn,     Qt::AlignLeft,  false, "cohead_shiptoname");
+  list()->addColumn(tr("Cust. P/O Number"), _orderColumn,    Qt::AlignLeft,  true,  "cohead_custponumber");
+  list()->addColumn(tr("Ordered"),          _dateColumn,     Qt::AlignCenter,true,  "cohead_orderdate");
+  list()->addColumn(tr("Scheduled"),        _dateColumn,     Qt::AlignCenter,true,  "scheddate");
+  list()->addColumn(tr("Total"),            _moneyColumn,    Qt::AlignRight, true,  "ordertotal");
+  list()->addColumn(tr("Margin %"),         _prcntColumn,    Qt::AlignRight, true,  "ordermarginpercent");
+  list()->addColumn(tr("Status"),           _statusColumn,   Qt::AlignCenter,false, "status");
+  list()->addColumn(tr("Notes"),            -1,              Qt::AlignLeft,  false, "notes");
   
   if (_privileges->check("MaintainSalesOrders"))
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));

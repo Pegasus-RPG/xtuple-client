@@ -104,6 +104,14 @@ void quickRelocateLot::sPost()
     {
         qDebug() << "Relocate lot failed";
     }
-    accept();
+    //accept();
+    clearFields();
+}
+void quickRelocateLot::clearFields()
+{
+    _lotSerial->clear();
+    _location->clear();
+
+    _lotSerial->setFocus();
 }
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -451,6 +451,7 @@ void item::saveCore()
     // TODO: We can enable certain functionality here that needs a saved record
     _newUOM->setEnabled(true);
     _tab->setEnabled(true);
+    _elements->findChild<ItemCluster*>("_item")->setId(_itemid);
 
     sHandleRightButtons();
   }
