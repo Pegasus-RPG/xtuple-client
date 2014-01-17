@@ -82,6 +82,7 @@ void shipOrder::languageChange()
 enum SetResponse shipOrder::set(const ParameterList &pParams)
 {
   XSqlQuery shipet;
+  XSqlQuery siteq;
   XDialog::set(pParams);
   QString  returnValue;
   QVariant param;
@@ -100,10 +101,32 @@ enum SetResponse shipOrder::set(const ParameterList &pParams)
       _captive = true;	// so order handling can reject if necessary
       if (shipet.value("shiphead_order_type").toString() == "SO")
       {
+        siteq.prepare( "SELECT DISTINCT itemsite_warehous_id "
+                       "FROM shiphead JOIN shipitem ON (shipitem_shiphead_id=shiphead_id)"
+                       "              JOIN coitem ON (coitem_id=shipitem_orderitem_id)"
+                       "              JOIN itemsite ON (itemsite_id=coitem_itemsite_id)"
+                       "WHERE (shiphead_id=:shiphead_id);" );
+        siteq.bindValue(":shiphead_id", param.toInt());
+        siteq.exec();
+        if (siteq.first())
+        {
+          _warehouse->setId(siteq.value("itemsite_warehous_id").toInt());
+        }
         _order->setId(param.toInt(), "SO");
       }
       else if (shipet.value("shiphead_order_type").toString() == "TO")
       {
+        siteq.prepare( "SELECT DISTINCT tohead_src_warehous_id "
+                      "FROM shiphead JOIN shipitem ON (shipitem_shiphead_id=shiphead_id)"
+                      "              JOIN toitem ON (toitem_id=shipitem_orderitem_id)"
+                      "              JOIN tohead ON (tohead_id=toitem_tohead_id)"
+                      "WHERE (shiphead_id=:shiphead_id);" );
+        siteq.bindValue(":shiphead_id", param.toInt());
+        siteq.exec();
+        if (siteq.first())
+        {
+          _warehouse->setId(siteq.value("tohead_src_warehous_id").toInt());
+        }
         _order->setId(param.toInt(), "TO");
       }
     }

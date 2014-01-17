@@ -267,8 +267,9 @@ void packingListBatch::sAddSO()
   int soid;
   if ((soid = newdlg.exec()) != QDialog::Rejected)
   {
-    packingAddSO.prepare("SELECT addToPackingListBatch('SO', :sohead_id) AS result;");
+    packingAddSO.prepare("SELECT addToPackingListBatch(:warehous_id, 'SO', :sohead_id) AS result;");
     packingAddSO.bindValue(":sohead_id", soid);
+    _warehouse->bindValue(packingAddSO);
     packingAddSO.exec();
     if (packingAddSO.first())
       sFillList();

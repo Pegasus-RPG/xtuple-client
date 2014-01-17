@@ -625,14 +625,10 @@ void issueToShipping::sReturnStock()
 void issueToShipping::sShip()
 {
   XSqlQuery issueShip;
-  issueShip.prepare( "SELECT shiphead_id "
-             "FROM shiphead JOIN shipitem ON (shipitem_shiphead_id=shiphead_id) "
-             "WHERE ((NOT shiphead_shipped)"
-             "  AND  (shiphead_order_type=:ordertype)"
-             "  AND  (shiphead_order_id=:order_id) ) "
-             "LIMIT 1;" );
+  issueShip.prepare( "SELECT getOpenShipmentId(:ordertype, :order_id, :warehous_id) AS shiphead_id;" );
   issueShip.bindValue(":order_id",  _order->id());
   issueShip.bindValue(":ordertype", _order->type());
+  issueShip.bindValue(":warehous_id", _warehouse->id());
 
   issueShip.exec();
   if (issueShip.first())
