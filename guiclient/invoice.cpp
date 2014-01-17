@@ -100,6 +100,9 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   _invcitem->addColumn(tr("Price UOM"),     _uomColumn,      Qt::AlignLeft,   true,  "priceuom"   );
   _invcitem->addColumn(tr("Price"),         _moneyColumn,    Qt::AlignRight,  true,  "invcitem_price"  );
   _invcitem->addColumn(tr("Extended"),      _bigMoneyColumn, Qt::AlignRight,  true,  "extprice"  );
+  _invcitem->addColumn(tr("Unit Cost"),     _costColumn,     Qt::AlignRight,  false, "unitcost");
+  _invcitem->addColumn(tr("Margin"),        _priceColumn,    Qt::AlignRight,  false, "margin");
+  _invcitem->addColumn(tr("Margin %"),      _prcntColumn,    Qt::AlignRight,  false, "marginpercent");
 
   _charass->addColumn(tr("Characteristic"), _itemColumn,     Qt::AlignLeft,   true,  "char_name" );
   _charass->addColumn(tr("Value"),          -1,              Qt::AlignLeft,   true,  "charass_value" );
@@ -991,13 +994,23 @@ void invoice::sFillItemList()
              "       round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / "
 	           "            (CASE WHEN(item_id IS NULL) THEN 1 "
 	           "			            ELSE invcitem_price_invuomratio END)), 2) AS extprice,"
+             "       COALESCE(coitem_unitcost, itemCost(itemsite_id), 0.0) AS unitcost,"
+             "       ROUND((invcitem_billed * invcitem_qty_invuomratio) *"
+             "             ((invcitem_price / COALESCE(invcitem_price_invuomratio,1.0)) - "
+             "              COALESCE(coitem_unitcost, itemCost(itemsite_id), 0.0)),2) AS margin,"
+             "       CASE WHEN (invcitem_price = 0.0) THEN 100.0"
+             "            ELSE (((invcitem_price - COALESCE(coitem_unitcost, itemCost(itemsite_id), 0.0)) / invcitem_price) * 100.0)"
+             "       END AS marginpercent,"
              "       'qty' AS invcitem_ordered_xtnumericrole,"
              "       'qty' AS invcitem_billed_xtnumericrole,"
              "       'salesprice' AS invcitem_price_xtnumericrole,"
-             "       'curr' AS extprice_xtnumericrole "
+             "       'curr' AS extprice_xtnumericrole,"
+             "       'cost' AS unitcost_xtnumericrole "
              "FROM invcitem LEFT OUTER JOIN item on (invcitem_item_id=item_id) "
              "  LEFT OUTER JOIN uom AS quom ON (invcitem_qty_uom_id=quom.uom_id)"
              "  LEFT OUTER JOIN uom AS puom ON (invcitem_price_uom_id=puom.uom_id)"
+             "  LEFT OUTER JOIN coitem ON (coitem_id=invcitem_coitem_id)"
+             "  LEFT OUTER JOIN itemsite ON (itemsite_item_id=invcitem_item_id AND itemsite_warehous_id=invcitem_warehous_id)"
              "WHERE (invcitem_invchead_id=:invchead_id) "
              "ORDER BY invcitem_linenumber;" );
   invoiceFillItemList.bindValue(":invchead_id", _invcheadid);
