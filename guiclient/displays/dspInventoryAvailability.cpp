@@ -420,6 +420,7 @@ void dspInventoryAvailability::sEnterAdjustment()
 {
   ParameterList params;
   params.append("itemsite_id", list()->id());
+  params.append("mode", "new");
   
   adjustmentTrans *newdlg = new adjustmentTrans();
   newdlg->set(params);
