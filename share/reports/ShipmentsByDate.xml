@@ -3,6 +3,12 @@
  <title>Shipments By Date</title>
  <name>ShipmentsByDate</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -67,6 +73,9 @@ WHERE ( (shipitem_shiphead_id=shiphead_id)
 &lt;? if exists("startDate") ?>
  AND (shiphead_shipdate BETWEEN &lt;? value("startDate") ?> and &lt;? value("endDate") ?>)
 &lt;? endif ?>
+&lt;? if exists("warehous_id") ?>
+ AND (itemsite_warehous_id = &lt;? value("warehous_id") ?>)
+&lt;? endif ?>
 &lt;? if exists("sohead_id") ?>
  AND (cohead_id = &lt;? value("sohead_id") ?>)
 &lt;? endif ?>
@@ -105,6 +114,9 @@ WHERE ( (shipitem_shiphead_id=shiphead_id)
  AND (shiphead_order_type='TO')
 &lt;? if exists("startDate") ?>
  AND (shiphead_shipdate BETWEEN &lt;? value("startDate") ?> and &lt;? value("endDate") ?>)
+&lt;? endif ?>
+&lt;? if exists("warehous_id") ?>
+ AND (tohead_src_warehous_id = &lt;? value("warehous_id") ?>)
 &lt;? endif ?>
 &lt;? if exists("tohead_id") ?>
  AND (tohead_id = &lt;? value("tohead_id") ?>)

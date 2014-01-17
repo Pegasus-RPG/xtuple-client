@@ -3,44 +3,22 @@
  <title>Packing List Batch Edit List</title>
  <name>PackingListBatchEditList</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
  <bottommargin>50</bottommargin>
  <rightmargin>50</rightmargin>
  <leftmargin>50</leftmargin>
- <querysource>
+ <querysource loadFromDb="true">
   <name>detail</name>
-  <sql>SELECT cohead_number AS order_number, pack_head_type,
-       cohead_shipvia AS shipvia,
-       formatShipmentNumber(pack_shiphead_id) AS shipment_number, 
-       cust_number AS number, cohead_billtoname AS name,
-       CASE WHEN (cohead_holdtype='N') THEN &lt;? value("none") ?>
-            WHEN (cohead_holdtype='C') THEN &lt;? value("credit") ?>
-            WHEN (cohead_holdtype='S') THEN &lt;? value("ship") ?>
-            WHEN (cohead_holdtype='P') THEN &lt;? value("pack") ?>
-            WHEN (cohead_holdtype='R') THEN &lt;? value("return") ?>
-            ELSE &lt;? value("other") ?>
-       END AS f_holdtype,
-       formatBoolYN(pack_printed) AS f_printed
-FROM pack, cohead, custinfo
-WHERE ((pack_head_id=cohead_id)
-  AND  (cohead_cust_id=cust_id)
-  AND  (pack_head_type='SO'))
-&lt;? if exists("MultiWhs") ?>
-  AND  checkSOSitePrivs(cohead_id)
-UNION 
-SELECT tohead_number AS order_number, pack_head_type,
-       tohead_shipvia AS shipvia,
-       formatShipmentNumber(pack_shiphead_id) AS shipment_number, 
-       tohead_destname AS number, tohead_destcntct_name AS name,
-       '' AS f_holdtype,
-       formatBoolYN(pack_printed) AS f_printed
-FROM pack, tohead 
-WHERE ((pack_head_id=tohead_id)
-  AND  (pack_head_type='TO')) 
-&lt;? endif ?>
-ORDER BY order_number;</sql>
+  <mqlgroup>packingListBatch</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <rpthead>
   <height>75</height>
@@ -348,7 +326,7 @@ ORDER BY order_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_printed</column>
+     <column>pack_printed</column>
     </data>
    </field>
    <field>

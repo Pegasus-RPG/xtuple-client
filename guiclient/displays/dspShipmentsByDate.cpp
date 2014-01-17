@@ -64,6 +64,10 @@ enum SetResponse dspShipmentsByDate::set(const ParameterList &pParams)
   if (valid)
     _dates->setEndDate(param.toDate());
   
+  param = pParams.value("warehous_id", &valid);
+  if (valid)
+    _warehouse->setId(param.toInt());
+  
   if (pParams.inList("run"))
   {
     sFillList();
@@ -91,6 +95,7 @@ bool dspShipmentsByDate::setParams(ParameterList & params)
     return false;
   }
 
+  _warehouse->appendValue(params);
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
   _dates->appendValue(params);

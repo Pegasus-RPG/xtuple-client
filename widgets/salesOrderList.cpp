@@ -121,6 +121,10 @@ void salesOrderList::set(const ParameterList &pParams)
   if (valid)
     _custid = param.toInt();
 
+  param = pParams.value("warehous_id", &valid);
+  if (valid)
+    _warehouse->setId(param.toInt());
+  
   sFillList();
 }
 
@@ -138,7 +142,7 @@ void salesOrderList::sFillList()
   {
     sql = "SELECT DISTINCT cohead_id, cohead_number, cust_name, cohead_custponumber,"
           "                cohead_orderdate,"
-          "                MIN(coitem_scheddate) AS duedate "
+          "                getSoSchedDate(cohead_id) AS duedate "
           "FROM shiphead, shipitem, cohead, coitem, itemsite, custinfo "
           "WHERE ((cohead_cust_id=cust_id)"
           " AND (coitem_cohead_id=cohead_id)"
@@ -152,8 +156,6 @@ void salesOrderList::sFillList()
       sql += " AND (itemsite_warehous_id=:warehous_id)";
 
   sql += ") "
-         "GROUP BY cohead_id, cohead_number, cust_name,"
-         "         cohead_custponumber, cohead_orderdate "
          "ORDER BY cohead_number;";
   }
   else
@@ -162,7 +164,7 @@ void salesOrderList::sFillList()
 
     sql = "SELECT DISTINCT cohead_id, cohead_number, cust_name, cohead_custponumber,"
           "                cohead_orderdate,"
-          "                MIN(coitem_scheddate) AS duedate "
+          "                getSoSchedDate(cohead_id) AS duedate "
           "FROM cohead, coitem, itemsite, custinfo "
           "WHERE ((cohead_cust_id=cust_id)"
           " AND (coitem_status <> 'X')"
@@ -204,8 +206,6 @@ void salesOrderList::sFillList()
     }
 
     sql += ")) "
-           "GROUP BY cohead_id, cohead_number, cust_name,"
-           "         cohead_custponumber, cohead_orderdate "
            "ORDER BY cohead_number;";
   }
 

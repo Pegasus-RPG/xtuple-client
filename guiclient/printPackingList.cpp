@@ -88,13 +88,19 @@ enum SetResponse printPackingList::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("warehous_id", &valid);
+  if (valid)
+  {
+    _warehouse->setId(param.toInt());
+  }
+
   param = pParams.value("sohead_id", &valid);
   if (valid)
   {
     _order->setAllowedStatuses(OrderLineEdit::AnyStatus);
     _order->setId(param.toInt(), "SO");
   }
-
+  
   param = pParams.value("tohead_id", &valid);
   if (valid)
   {
@@ -158,6 +164,7 @@ ParameterList printPackingList::getParams(XSqlQuery *docq)
   ParameterList params;
 
   setReportKey(reportKey());
+  _warehouse->appendValue(params);
   params.append("head_id",    _order->id());
   if (_order->isSO())
     params.append("head_type",  "SO");

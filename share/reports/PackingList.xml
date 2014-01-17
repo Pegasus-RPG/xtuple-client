@@ -18,7 +18,7 @@
  <querysource>
   <name>head</name>
   <sql>SELECT COALESCE(shiphead_number::TEXT, 'Not Issued To Shipping') AS shiphead_number,
-	      'S/O #:' AS ordertype,
+       'S/O #:' AS ordertype,
        cohead_number AS ordernumber,
        formatsobarcode(cohead_id) AS order_barcode,
        COALESCE(shiphead_shipvia, cohead_shipvia) AS shipvia,
@@ -27,22 +27,23 @@
        formatDate(cohead_orderdate) AS orderdate,
        cohead_shipcomments AS shipcomments,
        cohead_billtoname AS billtoname,
-       formataddr(cohead_billtoaddress1, cohead_billtoaddress2,
+       formataddr(cohead_billtoaddress1,
+                  cohead_billtoaddress2,
                   cohead_billtoaddress3,
-                  (cohead_billtocity || '  ' ||   cohead_billtostate ||
-                  '  ' || cohead_billtozipcode), cohead_billtocountry) AS billing_address,
+                  (cohead_billtocity || '  ' ||   cohead_billtostate || '  ' || cohead_billtozipcode),
+                  cohead_billtocountry) AS billing_address,
        cohead_shiptoname AS shiptoname,
-       formataddr(cohead_shiptoaddress1, cohead_shiptoaddress2,
+       formataddr(cohead_shiptoaddress1,
+                  cohead_shiptoaddress2,
                   cohead_shiptoaddress3,
-                  (cohead_shiptocity || '  ' ||   cohead_shiptostate ||
-                  '  ' || cohead_shiptozipcode), cohead_shiptocountry) AS shipping_address,           
-
+                  (cohead_shiptocity || '  ' ||   cohead_shiptostate || '  ' || cohead_shiptozipcode),
+                  cohead_shiptocountry) AS shipping_address,           
        cust_number,
        trim(cntct_first_name || ' ' || cntct_last_name) AS cust_contact,
        cntct_phone AS cust_phone,
        terms_descrip
-  FROM custinfo
-  JOIN cohead ON (cohead_cust_id=cust_id)
+  FROM cohead
+  JOIN custinfo ON (cohead_cust_id=cust_id)
   JOIN terms ON (cohead_terms_id=terms_id)
   LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)
 &lt;? if exists("shiphead_id") ?>
@@ -64,7 +65,7 @@ WHERE TRUE
 &lt;? if exists("MultiWhs") ?>
 UNION
 SELECT COALESCE(shiphead_number::TEXT, 'Not Issued To Shipping') AS shiphead_number,
-      'T/O #:' AS ordertype,
+       'T/O #:' AS ordertype,
        tohead_number AS ordernumber,
        formattobarcode(tohead_id) AS order_barcode,
        COALESCE(shiphead_shipvia, tohead_shipvia) AS shipvia,
@@ -73,15 +74,17 @@ SELECT COALESCE(shiphead_number::TEXT, 'Not Issued To Shipping') AS shiphead_num
        formatDate(tohead_orderdate) AS orderdate,
        tohead_shipcomments AS shipcomments,
        tohead_srcname AS billtoname,
-       formataddr(tohead_srcaddress1, tohead_srcaddress2,
-                   tohead_srcaddress3,
-                  (tohead_srccity || ' ' || tohead_srcstate ||
-                   ' ' || tohead_srcpostalcode), tohead_srccountry) AS billing_address,
+       formataddr(tohead_srcaddress1,
+                  tohead_srcaddress2,
+                  tohead_srcaddress3,
+                  (tohead_srccity || ' ' || tohead_srcstate || ' ' || tohead_srcpostalcode),
+                  tohead_srccountry) AS billing_address,
        tohead_destname AS shiptoname,
-       formataddr(tohead_destaddress1, tohead_destaddress2,
-                   tohead_destaddress3,
-                  (tohead_destcity || ' ' || tohead_deststate ||
-                   ' ' || tohead_destpostalcode), tohead_destcountry) AS shipping_address,
+       formataddr(tohead_destaddress1,
+                  tohead_destaddress2,
+                  tohead_destaddress3,
+                  (tohead_destcity || ' ' || tohead_deststate || ' ' || tohead_destpostalcode),
+                  tohead_destcountry) AS shipping_address,
        'Transfer Order' AS cust_number,
        tohead_destcntct_name AS cust_contact,
        tohead_destphone AS cust_phone,
@@ -131,7 +134,7 @@ WHERE TRUE
        END AS item_number,
        formatitemsitebarcode(itemsite_id) AS item_barcode,
        formatsoitembarcode(coitem_id) AS orderitem_barcode,
-       (select uom_name from uom where uom_id = coitem_qty_uom_id) AS uom_name,
+       coitemuom.uom_name AS uom_name,
        itemsellinguom(item_id) AS shipuom,
        CASE WHEN (coitem_custpn != '' AND itemalias_usedescrip=TRUE) THEN itemalias_descrip1
             ELSE item_descrip1
@@ -140,39 +143,13 @@ WHERE TRUE
             ELSE item_descrip2
        END AS item_descrip2,
        formatQty(coitem_qtyord) AS ordered,
-       ( SELECT formatQty(COALESCE(SUM(shipitem_qty), 0))
-         FROM shipitem JOIN shiphead ON (shiphead_id=shipitem_shiphead_id)
-         WHERE ((shipitem_orderitem_id=coitem_id) AND (shiphead_order_type='SO')) ) AS atShipping,
-
-       CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus
-                                           FROM custinfo,cohead
-                                          WHERE (coitem_cohead_id=cohead_id)
-                                            AND (cust_id=cohead_cust_id))='H') THEN 'H'
-            WHEN (coitem_status='O' AND ((SELECT SUM(invcitem_billed)
-                                            FROM cohead, invchead, invcitem
-                                           WHERE ((invchead_ordernumber=cohead_number)
-                                             AND  (invcitem_invchead_id=invchead_id)
-                                             AND  (invcitem_item_id=item_id)
-                                             AND  (invcitem_warehous_id=itemsite_warehous_id)
-                                             AND  (invcitem_linenumber=coitem_linenumber)
-                                             AND  (cohead_id=coitem_cohead_id))) >= coitem_qtyord)) THEN 'I'
-            WHEN (coitem_status='O' AND ((SELECT SUM(invcitem_billed)
-                                            FROM cohead, invchead, invcitem
-                                           WHERE ((invchead_ordernumber=cohead_number)
-                                             AND  (invcitem_invchead_id=invchead_id)
-                                             AND  (invcitem_item_id=item_id)
-                                             AND  (invcitem_warehous_id=itemsite_warehous_id)
-                                             AND  (invcitem_linenumber=coitem_linenumber)
-                                             AND  (cohead_id=coitem_cohead_id))) > 0)) THEN 'P'
-            WHEN (coitem_status='O' AND (itemsite_qtyonhand - qtyAllocated(itemsite_id, CURRENT_DATE)
-                                         + qtyOrdered(itemsite_id, CURRENT_DATE))
-                                          >= (coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) THEN 'R'
-            ELSE coitem_status
-       END AS f_status
+       formatQty(qtyAtShipping('SO', coitem_id)) AS atShipping,
+       getSoitemStatus(coitem_id) AS f_status
   FROM coitem
        JOIN itemsite ON (itemsite_id=coitem_itemsite_id)
        JOIN item ON (item_id=itemsite_item_id)
-       JOIN uom ON (uom_id=item_inv_uom_id)
+       JOIN uom invuom ON (invuom.uom_id = item_inv_uom_id)
+       JOIN uom coitemuom ON (coitemuom.uom_id = coitem_qty_uom_id) 
        LEFT OUTER JOIN itemalias ON (itemalias_item_id=item_id AND itemalias_number=coitem_custpn) 
  WHERE ( (coitem_status &lt;> 'X')
 &lt;? if exists("shiphead_id") ?>
@@ -184,12 +161,10 @@ WHERE TRUE
    AND  (&lt;? value("head_type") ?>='SO')
    AND  (coitem_cohead_id=&lt;? value("head_id") ?>)
 &lt;? endif ?>
+&lt;? if exists("warehous_id") ?>
+   AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
+&lt;? endif ?>
 )
-GROUP BY coitem_qty_uom_id, coitem_linenumber, coitem_id, coitem_memo, item_number, uom_name, shipuom,
-         coitem_custpn, itemalias_usedescrip, itemalias_descrip1, itemalias_descrip2,
-         item_descrip1, item_descrip2, coitem_qtyord, coitem_qty_invuomratio, coitem_qtyshipped,
-         coitem_qtyreturned, coitem_status, coitem_cohead_id,
-         itemsite_id, itemsite_qtyonhand, itemsite_warehous_id, item_id
 &lt;? if exists("MultiWhs") ?>
 UNION
 SELECT 2 AS groupby,
@@ -202,12 +177,8 @@ SELECT 2 AS groupby,
        itemsellinguom(item_id) AS shipuom,
        item_descrip1,
        item_descrip2,
-
        formatQty(toitem_qty_ordered) AS ordered,
-       ( SELECT formatQty(COALESCE(SUM(shipitem_qty), 0))
-         FROM shipitem JOIN shiphead ON (shiphead_id=shipitem_shiphead_id)
-         WHERE ((shipitem_orderitem_id=toitem_id) AND (shiphead_order_type='TO')) ) AS atShipping,
-
+       formatQty(qtyAtShipping('TO', toitem_id)) AS atShipping,
        toitem_status AS f_status
   FROM itemsite, item, toitem, tohead, uom
  WHERE ((toitem_item_id=item_id)
@@ -224,6 +195,9 @@ SELECT 2 AS groupby,
 &lt;? if exists("head_id") ?>
    AND  (&lt;? value("head_type") ?>='TO')
    AND  (toitem_tohead_id=&lt;? value("head_id") ?>)
+&lt;? endif ?>
+&lt;? if exists("warehous_id") ?>
+   AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
 )
 &lt;? endif ?>

@@ -124,6 +124,10 @@ void transferOrderList::set(const ParameterList &pParams)
   if (valid)
     _type = param.toInt();
  
+  param = pParams.value("warehous_id", &valid);
+  if (valid)
+    _srcwhs->setId(param.toInt());
+  
   sFillList();
 }
 
