@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>714</width>
-    <height>661</height>
+    <height>728</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -306,17 +306,46 @@ to be bound by its terms.</comment>
             <layout class="QVBoxLayout" name="verticalLayout">
              <item>
               <layout class="QGridLayout" name="gridLayout_2">
+               <item row="2" column="0">
+                <widget class="QGroupBox" name="groupBox_4">
+                 <property name="title">
+                  <string>Change Log</string>
+                 </property>
+                 <layout class="QGridLayout">
+                  <item row="1" column="0">
+                   <widget class="QCheckBox" name="_salesOrderChangeLog">
+                    <property name="text">
+                     <string>Post Sales Order Changes</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="0">
+                   <widget class="QCheckBox" name="_customerChangeLog">
+                    <property name="text">
+                     <string>Post Customer Changes</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <spacer name="verticalSpacer_4">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
                <item row="0" column="0" colspan="2">
                 <widget class="QCheckBox" name="_printSO">
                  <property name="text">
                   <string>Print Sales Order on Save by Default</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="2">
-                <widget class="QCheckBox" name="_enableReservations">
-                 <property name="text">
-                  <string>Enable Sales Reservations</string>
                  </property>
                 </widget>
                </item>
@@ -326,13 +355,6 @@ to be bound by its terms.</comment>
                   <string>Date Control</string>
                  </property>
                  <layout class="QGridLayout">
-                  <item row="0" column="0">
-                   <widget class="QCheckBox" name="_allowASAP">
-                    <property name="text">
-                     <string>Allow ASAP Schedule Dates</string>
-                    </property>
-                   </widget>
-                  </item>
                   <item row="1" column="0">
                    <widget class="QCheckBox" name="_enablePromiseDate">
                     <property name="text">
@@ -340,83 +362,25 @@ to be bound by its terms.</comment>
                     </property>
                    </widget>
                   </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="1" column="2">
-                <widget class="QGroupBox" name="_locationGroup">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="title">
-                  <string>Reserve by Location</string>
-                 </property>
-                 <property name="checkable">
-                  <bool>true</bool>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                 <layout class="QGridLayout">
-                  <item row="2" column="0">
-                   <widget class="QRadioButton" name="_highest">
-                    <property name="text">
-                     <string>Highest Quantity First</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="3" column="0">
-                   <widget class="QRadioButton" name="_alpha">
-                    <property name="text">
-                     <string>Alpha by Location Name</string>
-                    </property>
-                    <property name="checked">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QRadioButton" name="_lowest">
-                    <property name="text">
-                     <string>Lowest Quantity First</string>
-                    </property>
-                    <property name="checked">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="4" column="0">
-                   <widget class="XCheckBox" name="_manualReservations">
-                    <property name="text">
-                     <string>Allow Manual Reservations</string>
-                    </property>
-                    <property name="forgetful">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QGroupBox" name="groupBox_4">
-                 <property name="title">
-                  <string>Change Log</string>
-                 </property>
-                 <layout class="QGridLayout">
                   <item row="0" column="0">
-                   <widget class="QCheckBox" name="_customerChangeLog">
+                   <widget class="QCheckBox" name="_allowASAP">
                     <property name="text">
-                     <string>Post Customer Changes</string>
+                     <string>Allow ASAP Schedule Dates</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="1" column="0">
-                   <widget class="QCheckBox" name="_salesOrderChangeLog">
-                    <property name="text">
-                     <string>Post Sales Order Changes</string>
+                  <item row="2" column="0">
+                   <spacer name="verticalSpacer_3">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
                     </property>
-                   </widget>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
                   </item>
                  </layout>
                 </widget>
@@ -486,6 +450,106 @@ to be bound by its terms.</comment>
                  <property name="text">
                   <string>Show Quotes After Converted</string>
                  </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QGroupBox" name="_enableReservations">
+                 <property name="title">
+                  <string>Enable Reservations</string>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_5">
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_6">
+                    <item>
+                     <spacer name="horizontalSpacer_4">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeType">
+                       <enum>QSizePolicy::Fixed</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>14</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="XCheckBox" name="_requireReservations">
+                      <property name="text">
+                       <string>Require Reservations</string>
+                      </property>
+                      <property name="forgetful">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="QGroupBox" name="_locationGroup">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="title">
+                     <string>Reserve by Location</string>
+                    </property>
+                    <property name="checkable">
+                     <bool>true</bool>
+                    </property>
+                    <property name="checked">
+                     <bool>false</bool>
+                    </property>
+                    <layout class="QGridLayout" name="_2">
+                     <item row="2" column="0">
+                      <widget class="QRadioButton" name="_highest">
+                       <property name="text">
+                        <string>Highest Quantity First</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="3" column="0">
+                      <widget class="QRadioButton" name="_alpha">
+                       <property name="text">
+                        <string>Alpha by Location Name</string>
+                       </property>
+                       <property name="checked">
+                        <bool>false</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="0">
+                      <widget class="QRadioButton" name="_lowest">
+                       <property name="text">
+                        <string>Lowest Quantity First</string>
+                       </property>
+                       <property name="checked">
+                        <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="4" column="0">
+                      <widget class="XCheckBox" name="_manualReservations">
+                       <property name="text">
+                        <string>Allow Manual Reservations</string>
+                       </property>
+                       <property name="forgetful">
+                        <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
               </layout>
@@ -1360,11 +1424,6 @@ to be bound by its terms.</comment>
   <tabstop>_printSO</tabstop>
   <tabstop>_allowASAP</tabstop>
   <tabstop>_enablePromiseDate</tabstop>
-  <tabstop>_enableReservations</tabstop>
-  <tabstop>_locationGroup</tabstop>
-  <tabstop>_lowest</tabstop>
-  <tabstop>_highest</tabstop>
-  <tabstop>_alpha</tabstop>
   <tabstop>_customerChangeLog</tabstop>
   <tabstop>_salesOrderChangeLog</tabstop>
   <tabstop>_saveAndAdd</tabstop>
@@ -1410,22 +1469,6 @@ to be bound by its terms.</comment>
  <resources/>
  <connections>
   <connection>
-   <sender>_enableReservations</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_locationGroup</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>444</x>
-     <y>195</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>645</x>
-     <y>271</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>_calcFreight</sender>
    <signal>toggled(bool)</signal>
    <receiver>_includePkgWeight</receiver>
@@ -1454,6 +1497,38 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>234</x>
      <y>606</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_enableReservations</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_requireReservations</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>543</x>
+     <y>342</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>554</x>
+     <y>285</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_enableReservations</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_locationGroup</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>543</x>
+     <y>342</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>369</y>
     </hint>
    </hints>
   </connection>

@@ -85,13 +85,17 @@
        item_descrip1,
        item_descrip2,
        formatQty(coitem_qtyord) AS ordered,
+       CASE WHEN (coitem_qtyreserved > 0.0)
+            THEN formatQty(coitem_qtyreserved)
+            ELSE NULL
+       END AS reserved,
        CASE WHEN ((coitem_qtyshipped - coitem_qtyreturned) > 0.0)
             THEN formatQty(coitem_qtyshipped - coitem_qtyreturned)
             ELSE NULL
        END AS shipped,
-       CASE WHEN ((coitem_qtyshipped - coitem_qtyreturned) > 0.0)
-            THEN formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned))
-            ELSE NULL
+       CASE WHEN (fetchMetricBool('RequireSOReservations'))
+            THEN formatQty(coitem_qtyreserved)
+            ELSE formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned - qtyAtShipping('SO', coitem_id)))
        END AS balance,
        CASE WHEN (qtyAtShipping('SO', coitem_id) > 0.0)
             THEN formatQty(qtyAtShipping('SO', coitem_id))
@@ -114,6 +118,8 @@
    AND   (coitem_status &lt;> 'X')
    AND   (coitem_status &lt;> 'C')
    AND   (item_type != 'K')
+   AND   ( (fetchMetricBool('RequireSOReservations') AND (coitem_qtyreserved > 0.0)) OR
+           (NOT fetchMetricBool('RequireSOReservations')) )
 &lt;? if exists("warehous_id") ?>
    AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
@@ -377,7 +383,7 @@ WHERE ((image_name='logo'));</sql>
    <rect>
     <x>233</x>
     <y>444</y>
-    <width>35</width>
+    <width>80</width>
     <height>20</height>
    </rect>
    <font>
@@ -387,7 +393,7 @@ WHERE ((image_name='logo'));</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>UOM</string>
+   <string>Ordered</string>
   </label>
   <field>
    <rect>
@@ -454,7 +460,7 @@ WHERE ((image_name='logo'));</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ordered</string>
+   <string>Reserved</string>
   </label>
   <barcode>
    <rect>
@@ -969,11 +975,11 @@ WHERE ((image_name='logo'));</sql>
       <size>10</size>
       <weight>normal</weight>
      </font>
-     <hcenter/>
+     <right/>
      <vcenter/>
      <data>
       <query>detail</query>
-      <column>uom_name</column>
+      <column>ordered</column>
      </data>
     </field>
     <label>
@@ -1028,8 +1034,8 @@ WHERE ((image_name='logo'));</sql>
     <label>
      <rect>
       <x>320</x>
-      <y>30</y>
-      <width>60</width>
+      <y>63</y>
+      <width>40</width>
       <height>17</height>
      </rect>
      <font>
@@ -1147,7 +1153,7 @@ WHERE ((image_name='logo'));</sql>
     <field>
      <rect>
       <x>365</x>
-      <y>30</y>
+      <y>63</y>
       <width>25</width>
       <height>17</height>
      </rect>
@@ -1212,9 +1218,44 @@ WHERE ((image_name='logo'));</sql>
      <vcenter/>
      <data>
       <query>detail</query>
-      <column>ordered</column>
+      <column>reserved</column>
      </data>
     </field>
+    <field>
+     <rect>
+      <x>365</x>
+      <y>43</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>10</size>
+      <weight>normal</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>uom_name</column>
+     </data>
+    </field>
+    <label>
+     <rect>
+      <x>320</x>
+      <y>43</y>
+      <width>40</width>
+      <height>17</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>10</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <string>UOM:</string>
+    </label>
    </head>
    <foot>
     <height>29</height>
