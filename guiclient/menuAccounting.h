@@ -82,6 +82,7 @@ class menuAccounting : public QObject
     void sReprintInvoices();
     void sPostInvoices();
     void sPurgeInvoices();
+    void sAssessFinanceCharges();
 
     void sEnterCashReceipt();
     void sCashReceiptEditList();

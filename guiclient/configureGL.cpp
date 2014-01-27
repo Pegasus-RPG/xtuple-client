@@ -237,6 +237,36 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
     _useSubaccounts->setChecked(true);
     _cacheuseSubaccounts = true;
   }
+
+  // FC
+  
+  _annualInterestRate->setValidator(omfgThis->percentVal());
+  _financeChargeAccount->setType(GLCluster::cRevenue);
+  
+  _finchargid = -1;
+  XSqlQuery fcquery;
+  fcquery.exec("SELECT * FROM fincharg LIMIT 1;");
+  if(fcquery.first())
+  {
+    _finchargid = fcquery.value("fincharg_id").toInt();
+    _annualInterestRate->setDouble(fcquery.value("fincharg_air").toDouble());
+    _minFinanceCharge->setBaseValue(fcquery.value("fincharg_mincharg").toDouble());
+    _gracePeriod->setValue(fcquery.value("fincharg_graceperiod").toDouble());
+    if (fcquery.value("fincharg_calcfrom").toInt() == 1)
+    {
+      _dueDate->setChecked(true);
+    }
+    else
+    {
+      _invoiceDate->setChecked(true);
+    }
+    _assignOnOverdue->setChecked(fcquery.value("fincharg_assessoverdue").toBool());
+    _financeChargeLabel->setText(fcquery.value("fincharg_markoninvoice").toString());
+    _financeChargeAccount->setId(fcquery.value("fincharg_accnt_id").toInt());
+    _salesCat->setId(fcquery.value("fincharg_salescat_id").toInt());
+  }
+  else if (fcquery.lastError().type() != QSqlError::NoError)
+    systemError(this, fcquery.lastError().databaseText(), __FILE__, __LINE__);
   
   adjustSize();
 }
@@ -792,6 +822,50 @@ bool configureGL::sSave()
                                "not be able to configure electronic "
                                "checking information for Vendors until the "
                                "system is configured to perform encryption."));
+  }
+
+  // FC
+  if (_financeChargeAccount->id() > 0)
+  {
+    XSqlQuery fcSave;
+    if (_finchargid > -1)
+      fcSave.prepare("UPDATE fincharg"
+                     "  SET fincharg_mincharg=:mincharg,"
+                     "      fincharg_graceperiod=:graceperiod,"
+                     "      fincharg_assessoverdue=:assessoverdue,"
+                     "      fincharg_calcfrom=:calcfrom,"
+                     "      fincharg_markoninvoice=:markoninvoice,"
+                     "      fincharg_air=:air,"
+                     "      fincharg_accnt_id=:glaccnt,"
+                     "      fincharg_salescat_id=:salescat "
+                     "WHERE (fincharg_id=:finchargid);");
+    else
+      fcSave.prepare("INSERT INTO fincharg"
+                     "  (fincharg_id, fincharg_mincharg, fincharg_graceperiod,"
+                     "   fincharg_assessoverdue, fincharg_calcfrom, fincharg_markoninvoice,"
+                     "   fincharg_air, fincharg_accnt_id, fincharg_salescat_id) "
+                     "VALUES"
+                     "  (1, :mincharg, :graceperiod,"
+                     "   :assessoverdue, :calcfrom, :markoninvoice,"
+                     "   :air, :glaccnt, :salescat);");
+    fcSave.bindValue(":mincharg", _minFinanceCharge->baseValue());
+    fcSave.bindValue(":graceperiod", _gracePeriod->value());
+    fcSave.bindValue(":assessoverdue", _assignOnOverdue->isChecked());
+    if (_dueDate->isChecked())
+      fcSave.bindValue(":calcfrom", 1);
+    else
+      fcSave.bindValue(":calcfrom", 2);
+    fcSave.bindValue(":markoninvoice", _financeChargeLabel->text());
+    fcSave.bindValue(":air", _annualInterestRate->toDouble());
+    fcSave.bindValue(":glaccnt", _financeChargeAccount->id());
+    fcSave.bindValue(":salescat", _salesCat->id());
+    fcSave.bindValue(":finchargid", _finchargid);
+    fcSave.exec();
+    if (fcSave.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, fcSave.lastError().databaseText(), __FILE__, __LINE__);
+      return false;
+    }
   }
 
   return true;
