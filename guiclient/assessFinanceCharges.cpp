@@ -28,15 +28,17 @@ assessFinanceCharges::assessFinanceCharges(QWidget* parent, const char* name, Qt
   _assessmentDate->setDate(omfgThis->dbDate());
   
   //setup table
-  _invoiceList->addColumn(tr("Cust. #"),         _orderColumn,    Qt::AlignLeft,   true, "cust_number");
-  _invoiceList->addColumn(tr("Cust. Name"),      -1,              Qt::AlignLeft,   true, "cust_name");
-  _invoiceList->addColumn(tr("Invoice #"),       _orderColumn,    Qt::AlignLeft,   true, "aropen_docnumber");
-  _invoiceList->addColumn(tr("Invoice Date"),    _dateColumn,     Qt::AlignCenter, true, "aropen_docdate");
-  _invoiceList->addColumn(tr("Due Date"),        _dateColumn,     Qt::AlignCenter, true, "aropen_duedate");
-  _invoiceList->addColumn(tr("Invoice Amt."),    _bigMoneyColumn, Qt::AlignRight,  true, "aropen_amount");
-  _invoiceList->addColumn(tr("Paid Amt."),       _bigMoneyColumn, Qt::AlignRight,  true, "aropen_paid");
-  _invoiceList->addColumn(tr("Overdue Balance"), _bigMoneyColumn, Qt::AlignRight,  true, "balance");
-  _invoiceList->addColumn(tr("Finance Charge"),  _bigMoneyColumn, Qt::AlignRight,  true, "fincharge");
+  _invoiceList->addColumn(tr("Cust. #"),               _orderColumn,    Qt::AlignLeft,   true, "cust_number");
+  _invoiceList->addColumn(tr("Cust. Name"),            -1,              Qt::AlignLeft,   true, "cust_name");
+  _invoiceList->addColumn(tr("Invoice #"),             _orderColumn,    Qt::AlignLeft,   true, "aropen_docnumber");
+  _invoiceList->addColumn(tr("Invoice Date"),          _dateColumn,     Qt::AlignCenter, true, "aropen_docdate");
+  _invoiceList->addColumn(tr("Due Date"),              _dateColumn,     Qt::AlignCenter, true, "aropen_duedate");
+  _invoiceList->addColumn(tr("Invoice Amt."),          _bigMoneyColumn, Qt::AlignRight,  true, "aropen_amount");
+  _invoiceList->addColumn(tr("Paid Amt."),             _bigMoneyColumn, Qt::AlignRight,  true, "aropen_paid");
+  _invoiceList->addColumn(tr("Overdue Balance"),       _bigMoneyColumn, Qt::AlignRight,  true, "balance");
+  _invoiceList->addColumn(tr("Previous F.C. Date"),    _dateColumn,     Qt::AlignCenter, true, "aropen_fincharg_date");
+  _invoiceList->addColumn(tr("Previous F.C. Amt."),    _bigMoneyColumn, Qt::AlignRight,  true, "aropen_fincharg_amount");
+  _invoiceList->addColumn(tr("Finance Charge"),        _bigMoneyColumn, Qt::AlignRight,  true, "fincharge");
   
   //setup slots
   connect(_customerSelector, SIGNAL(newState(int)), this, SLOT(sFillList()));
@@ -44,6 +46,7 @@ assessFinanceCharges::assessFinanceCharges(QWidget* parent, const char* name, Qt
   connect(_customerSelector, SIGNAL(newCustTypeId(int)), this, SLOT(sFillList()));
   connect(_customerSelector, SIGNAL(newTypePattern(QString)), this, SLOT(sFillList()));
   connect(_customerSelector, SIGNAL(newCustGroupId(int)), this, SLOT(sFillList()));
+  connect(_assessmentDate,   SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
   
   connect(_assessCharges,SIGNAL(clicked()), this, SLOT(sAssessCharges()));
   
@@ -67,6 +70,7 @@ void assessFinanceCharges::sFillList()
   MetaSQLQuery mql = mqlLoad("assessFinanceCharges", "detail");
   ParameterList params;
   _customerSelector->appendValue(params);
+  params.append("assessmentDate", _assessmentDate->date());
   arFillInvoiceList = mql.toQuery(params);
   _invoiceList->populate(arFillInvoiceList);
 }
