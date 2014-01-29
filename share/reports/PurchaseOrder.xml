@@ -143,6 +143,7 @@ WHERE
        wa.addr_postalcode as zip,
        wa.addr_state,
        wa.addr_country,
+       pohead_shiptoname AS shipto_name,
        formatcntctname(pohead_shipto_cntct_id) AS shipto_contact,
        formataddr(pohead_shiptoaddress1, pohead_shiptoaddress2, pohead_shiptoaddress3, (pohead_shiptocity || ' ' || pohead_shiptostate || ' ' || pohead_shiptozipcode), pohead_shiptocountry) as shipto_address,
        pohead_agent_username AS username,
@@ -827,7 +828,7 @@ WHERE
   <text>
    <rect>
     <x>500</x>
-    <y>162</y>
+    <y>172</y>
     <width>300</width>
     <height>17</height>
    </rect>
@@ -862,6 +863,26 @@ WHERE
    <data>
     <query>ShipToAddress</query>
     <column>vend_address</column>
+   </data>
+  </text>
+  <text>
+   <rect>
+    <x>500</x>
+    <y>157</y>
+    <width>300</width>
+    <height>17</height>
+   </rect>
+   <bottompad>10</bottompad>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>ShipToAddress</query>
+    <column>shipto_name</column>
    </data>
   </text>
  </pghead>
