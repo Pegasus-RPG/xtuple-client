@@ -40,6 +40,14 @@ shipTo::shipTo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _commission->setValidator(omfgThis->percentVal());
 
   _shiptoid = -1;
+  _sellingWarehouse->setId(-1);
+  
+  //If not multi-warehouse hide whs control
+  if (!_metrics->boolean("MultiWhs"))
+  {
+    _sellingWarehouseLit->hide();
+    _sellingWarehouse->hide();
+  }
 }
 
 shipTo::~shipTo()
@@ -143,6 +151,7 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
       _shipVia->setEnabled(FALSE);
       _shipform->setEnabled(FALSE);
       _shipchrg->setEnabled(FALSE);
+      _sellingWarehouse->setEnabled(FALSE);
       _comments->setEnabled(FALSE);
       _shippingComments->setEnabled(FALSE);
       _documents->setReadOnly(TRUE);
@@ -219,6 +228,7 @@ void shipTo::sSave()
                  "    shipto_shipzone_id=:shipto_shipzone_id,"
                  "    shipto_shipvia=:shipto_shipvia, shipto_shipform_id=:shipto_shipform_id,"
                  "    shipto_shipchrg_id=:shipto_shipchrg_id,"
+                 "    shipto_preferred_warehous_id=:shipto_preferred_warehous_id,"
                  "    shipto_addr_id=:shipto_addr_id "
                  "WHERE (shipto_id=:shipto_id);" );
 
@@ -246,6 +256,7 @@ void shipTo::sSave()
     saveq.bindValue(":shipto_shipform_id", _shipform->id());
   if (_shipchrg->id() != -1)
     saveq.bindValue(":shipto_shipchrg_id", _shipchrg->id());
+  saveq.bindValue(":shipto_preferred_warehous_id", _sellingWarehouse->id());
   saveq.exec();
   if (saveq.lastError().type() != QSqlError::NoError)
   {
@@ -275,7 +286,7 @@ void shipTo::populate()
                 "       COALESCE(shipto_salesrep_id,-1) AS shipto_salesrep_id,"
                 "       COALESCE(shipto_shipzone_id,-1) AS shipto_shipzone_id,"
                 "       COALESCE(shipto_shipform_id,-1) AS shipto_shipform_id,"
-                "       shipto_addr_id,"
+                "       shipto_preferred_warehous_id, shipto_addr_id,"
                 "       crmacct_id "
                 "FROM shiptoinfo "
                 "  LEFT OUTER JOIN custinfo ON (shipto_cust_id=cust_id) "
@@ -302,6 +313,7 @@ void shipTo::populate()
     _shipZone->setId(popq.value("shipto_shipzone_id").toInt());
     _shipform->setId(popq.value("shipto_shipform_id").toInt());
     _shipchrg->setId(popq.value("shipto_shipchrg_id").toInt());
+    _sellingWarehouse->setId(popq.value("shipto_preferred_warehous_id").toInt());
     _address->setId(popq.value("shipto_addr_id").toInt());
 
     //  Handle the free-form Ship Via
