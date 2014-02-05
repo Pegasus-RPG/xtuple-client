@@ -71,6 +71,7 @@ enum SetResponse terms::set(const ParameterList &pParams)
       _typeGroup->setEnabled(FALSE);
       _ap->setEnabled(FALSE);
       _ar->setEnabled(FALSE);
+      _fincharg->setEnabled(FALSE);
       _dueDays->setEnabled(FALSE);
       _discountDays->setEnabled(FALSE);
       _discountPercent->setEnabled(FALSE);
@@ -140,11 +141,11 @@ void terms::sSave()
 
     termsSave.prepare( "INSERT INTO terms "
                "( terms_id, terms_code, terms_descrip, terms_type,"
-               "  terms_ap, terms_ar,"
+               "  terms_ap, terms_ar, terms_fincharg,"
                "  terms_duedays, terms_discdays, terms_discprcnt, terms_cutoffday ) "
                "VALUES "
                "( :terms_id, :terms_code, :terms_descrip, :terms_type,"
-               "  :terms_ap, :terms_ar,"
+               "  :terms_ap, :terms_ar, :terms_fincharg,"
                "  :terms_duedays, :terms_discdays, :terms_discprcnt, :terms_cutoffday );" );
   }
   else if (_mode == cEdit)
@@ -165,7 +166,7 @@ void terms::sSave()
 
     termsSave.prepare( "UPDATE terms "
                "SET terms_code=:terms_code, terms_descrip=:terms_descrip, terms_type=:terms_type,"
-               "    terms_ap=:terms_ap, terms_ar=:terms_ar,"
+               "    terms_ap=:terms_ap, terms_ar=:terms_ar, terms_fincharg=:terms_fincharg,"
                "    terms_duedays=:terms_duedays, terms_discdays=:terms_discdays,"
                "    terms_discprcnt=:terms_discprcnt, terms_cutoffday=:terms_cutoffday "
                "WHERE (terms_id=:terms_id);" );
@@ -181,6 +182,10 @@ void terms::sSave()
   termsSave.bindValue(":terms_descrip", _description->text().trimmed());
   termsSave.bindValue(":terms_ap", QVariant(_ap->isChecked()));
   termsSave.bindValue(":terms_ar", QVariant(_ar->isChecked()));
+  if (_ar->isChecked())
+    termsSave.bindValue(":terms_fincharg", QVariant(_fincharg->isChecked()));
+  else
+    termsSave.bindValue(":terms_fincharg", false);
   termsSave.bindValue(":terms_duedays", _dueDays->value());
   termsSave.bindValue(":terms_discdays", _discountDays->value());
   termsSave.bindValue(":terms_discprcnt", (_discountPercent->toDouble() / 100.0));
@@ -218,10 +223,7 @@ void terms::sTypeChanged()
 void terms::populate()
 {
   XSqlQuery termspopulate;
-  termspopulate.prepare( "SELECT terms_code, terms_descrip, terms_type,"
-             "       terms_ap, terms_ar,"
-             "       terms_duedays, terms_discdays, terms_cutoffday,"
-             "       terms_discprcnt "
+  termspopulate.prepare( "SELECT * "
              "FROM terms "
              "WHERE (terms_id=:terms_id);" );
   termspopulate.bindValue(":terms_id", _termsid);
@@ -232,6 +234,7 @@ void terms::populate()
     _description->setText(termspopulate.value("terms_descrip").toString());
     _ap->setChecked(termspopulate.value("terms_ap").toBool());
     _ar->setChecked(termspopulate.value("terms_ar").toBool());
+    _fincharg->setChecked(termspopulate.value("terms_fincharg").toBool());
     _dueDays->setValue(termspopulate.value("terms_duedays").toInt());
     _discountPercent->setText(termspopulate.value("terms_discprcnt").toDouble() * 100);
     _discountDays->setValue(termspopulate.value("terms_discdays").toInt());
