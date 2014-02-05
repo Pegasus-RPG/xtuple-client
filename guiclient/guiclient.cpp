@@ -618,11 +618,12 @@ void GUIClient::setWindowTitle()
                                .arg(_Version)
                                .arg(_GetWindowTitle.value("username").toString()) );
     else
-      QMainWindow::setWindowTitle( tr("%1 %2 - %3 on %4/%5 AS %6")
+      QMainWindow::setWindowTitle( tr("%1 %2 - %3 on %4:%5/%6 AS %7")
                                .arg(_Name)
                                .arg(_Version)
                                .arg(name)
                                .arg(server)
+                               .arg(port)
                                .arg(database)
                                .arg(_GetWindowTitle.value("username").toString()) );
   }
