@@ -1400,7 +1400,10 @@ const struct {
                "This transaction cannot be completed as is. Please make "
                "sure there is sufficient Quantity on Hand before proceeding."),
 								0, "" },
-  { "sufficientInventoryToShipItem", -11, 
+  { "sufficientInventoryToShipItem", -4,
+    QT_TRANSLATE_NOOP("storedProcErrorLookup", "There is not enough Inventory Reserved to issue the amount required of "
+                      "Item %1 in Site %2."),			0, "" },
+  { "sufficientInventoryToShipItem", -11,
             QT_TRANSLATE_NOOP("storedProcErrorLookup", "Invalid Order Type.  Only Sales Orders and Transfer Orders "
                "may be shipped from this window."),
 								0, "" },                            
@@ -1413,6 +1416,9 @@ const struct {
                                              "Multiple Location or Lot/Serial "
                                              "controlled Item which is sort on "
                                              "Inventory."),             0, ""},
+  { "sufficientInventoryToShipOrder", -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "There is not enough Inventory Reserved to "
+                                                            "issue the amount required of one "
+                                                            "of the items requested."),0, ""},
   { "sufficientInventoryToShipOrder",-11, "",-11, "sufficientInventoryToShipItem"},
 
   { "thawAccountingPeriod", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot thaw this Accounting Period "

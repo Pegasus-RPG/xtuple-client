@@ -33,11 +33,17 @@ issueLineToShipping::issueLineToShipping(QWidget* parent, const char* name, bool
   _snooze = false;
   _transTS = QDateTime::currentDateTime();
   _item->setReadOnly(TRUE);
+  if(!_metrics->boolean("EnableSOReservations"))
+  {
+    _qtyReservedLit->hide();
+    _qtyReserved->hide();
+  }
 
   _qtyToIssue->setValidator(omfgThis->qtyVal());
   _qtyOrdered->setPrecision(omfgThis->qtyVal());
   _qtyShipped->setPrecision(omfgThis->qtyVal());
   _qtyReturned->setPrecision(omfgThis->qtyVal());
+  _qtyReserved->setPrecision(omfgThis->qtyVal());
   _balance->setPrecision(omfgThis->qtyVal());
   _qtyAtShip->setPrecision(omfgThis->qtyVal());
   
@@ -362,6 +368,7 @@ void issueLineToShipping::populate()
 		"       coitem_qtyord AS qtyordered,"
     "       coitem_qtyshipped AS qtyshipped,"
     "       coitem_qtyreturned AS qtyreturned,"
+    "       coitem_qtyreserved AS qtyreserved,"
 		"       noNeg(coitem_qtyord - coitem_qtyshipped +"
 		"             coitem_qtyreturned) AS balance "
         "FROM cohead, coitem, itemsite, item, whsinfo, uom "
@@ -379,6 +386,7 @@ void issueLineToShipping::populate()
 		"       toitem_qty_ordered AS qtyordered,"
 		"       toitem_qty_shipped AS qtyshipped,"
 		"       0 AS qtyreturned,"
+    "       0 AS qtyreserved,"
 		"       noNeg(toitem_qty_ordered -"
 		"             toitem_qty_shipped) AS balance "
         "FROM tohead, toitem, whsinfo, item "
@@ -400,6 +408,7 @@ void issueLineToShipping::populate()
     _qtyOrdered->setDouble(itemq.value("qtyordered").toDouble());
     _qtyShipped->setDouble(itemq.value("qtyshipped").toDouble());
     _qtyReturned->setDouble(itemq.value("qtyreturned").toDouble());
+    _qtyReserved->setDouble(itemq.value("qtyreserved").toDouble());
     _balance->setDouble(itemq.value("balance").toDouble());
   }
   else if (itemq.lastError().type() != QSqlError::NoError)
@@ -437,5 +446,10 @@ void issueLineToShipping::populate()
   }
 
   if (_qtyAtShip->toDouble() == 0.0)
-    _qtyToIssue->setDouble(itemq.value("balance").toDouble());
+  {
+    if (itemq.value("qtyreserved").toDouble() > 0.0)
+      _qtyToIssue->setDouble(itemq.value("qtyreserved").toDouble());
+    else
+      _qtyToIssue->setDouble(itemq.value("balance").toDouble());
+  }
 }

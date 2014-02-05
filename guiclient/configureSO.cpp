@@ -137,6 +137,8 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
     _enableReturns->setChecked(false);
     _enableReservations->hide();
     _enableReservations->setChecked(false);
+    _requireReservations->hide();
+    _requireReservations->setChecked(false);
     _locationGroup->hide();
     _locationGroup->setChecked(false);
     _lowest->setChecked(false);
@@ -208,6 +210,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
     _printRA->setChecked(_metrics->boolean("DefaultPrintRAOnSave"));
 
     _enableReservations->setChecked(_metrics->boolean("EnableSOReservations"));
+    _requireReservations->setChecked(_metrics->boolean("RequireSOReservations"));
 
     _locationGroup->setChecked(_metrics->boolean("EnableSOReservationsByLocation"));
     _manualReservations->setChecked(_metrics->boolean("SOManualReservations"));
@@ -288,6 +291,7 @@ bool configureSO::sSave()
   _metrics->set("IncludePackageWeight", _includePkgWeight->isChecked());
   _metrics->set("EnableReturnAuth", _enableReturns->isChecked());
   _metrics->set("EnableSOReservations", _enableReservations->isChecked());
+  _metrics->set("RequireSOReservations", _requireReservations->isChecked());
   _metrics->set("ItemPricingPrecedence", _itemPricingPrecedence->isChecked());
   _metrics->set("WholesalePriceCosting", _wholesalePriceCosting->isChecked());
   _metrics->set("Long30Markups", _long30Markups->isChecked());
