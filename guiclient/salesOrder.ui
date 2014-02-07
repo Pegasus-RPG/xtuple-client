@@ -96,6 +96,9 @@ to be bound by its terms.</comment>
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout_3">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
      <item row="1" column="2">
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
@@ -622,46 +625,6 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
-         <item row="2" column="2">
-          <widget class="QLabel" name="_shippingZoneLit">
-           <property name="text">
-            <string>Shipping Zone:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="3">
-          <widget class="XComboBox" name="_shippingZone">
-           <property name="allowNull">
-            <bool>true</bool>
-           </property>
-           <property name="type">
-            <enum>XComboBox::ShippingZones</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="2">
-          <widget class="QLabel" name="_shippingChargesLit">
-           <property name="text">
-            <string>Shipping Chgs.:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="3">
-          <widget class="XComboBox" name="_shippingCharges">
-           <property name="allowNull">
-            <bool>true</bool>
-           </property>
-           <property name="type">
-            <enum>XComboBox::ShippingCharges</enum>
-           </property>
-          </widget>
-         </item>
          <item row="3" column="4">
           <widget class="QLabel" name="_expireLit">
            <property name="text">
@@ -702,7 +665,14 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
-         <item row="0" column="5">
+         <item row="1" column="5">
+          <widget class="QCheckBox" name="_shipComplete">
+           <property name="text">
+            <string>Ship Complete</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="3">
           <widget class="XComboBox" name="_shippingForm">
            <property name="allowNull">
             <bool>true</bool>
@@ -715,17 +685,50 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
-         <item row="1" column="5">
-          <widget class="QCheckBox" name="_shipComplete">
+         <item row="3" column="3">
+          <widget class="XComboBox" name="_shippingCharges">
+           <property name="allowNull">
+            <bool>true</bool>
+           </property>
+           <property name="type">
+            <enum>XComboBox::ShippingCharges</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="5">
+          <widget class="XComboBox" name="_shippingZone">
+           <property name="allowNull">
+            <bool>true</bool>
+           </property>
+           <property name="type">
+            <enum>XComboBox::ShippingZones</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QLabel" name="_shippingFormLit">
            <property name="text">
-            <string>Ship Complete</string>
+            <string>Shipping Form:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="2">
+          <widget class="QLabel" name="_shippingChargesLit">
+           <property name="text">
+            <string>Shipping Chgs.:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
          <item row="0" column="4">
-          <widget class="QLabel" name="_shippingFormLit">
+          <widget class="QLabel" name="_shippingZoneLit">
            <property name="text">
-            <string>Shipping Form:</string>
+            <string>Shipping Zone:</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1855,7 +1858,7 @@ to be bound by its terms.</comment>
        <item>
         <widget class="QTabWidget" name="_paymentInformation">
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="_creditCardPage">
           <attribute name="title">
@@ -2571,12 +2574,31 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_cust</tabstop>
+  <tabstop>_billToName</tabstop>
+  <tabstop>_shipTo</tabstop>
+  <tabstop>_shipToName</tabstop>
+  <tabstop>_orderDate</tabstop>
+  <tabstop>_shipDate</tabstop>
+  <tabstop>_packDate</tabstop>
+  <tabstop>_custPONumber</tabstop>
+  <tabstop>_holdType</tabstop>
+  <tabstop>_warehouse</tabstop>
+  <tabstop>_saleType</tabstop>
+  <tabstop>_salesOrderInformation</tabstop>
   <tabstop>_terms</tabstop>
   <tabstop>_salesRep</tabstop>
   <tabstop>_commission</tabstop>
   <tabstop>_taxZone</tabstop>
+  <tabstop>_fob</tabstop>
+  <tabstop>_shipVia</tabstop>
+  <tabstop>_shippingForm</tabstop>
+  <tabstop>_shippingCharges</tabstop>
+  <tabstop>_shippingZone</tabstop>
+  <tabstop>_shipComplete</tabstop>
+  <tabstop>_quotestaus</tabstop>
+  <tabstop>_expire</tabstop>
   <tabstop>_more</tabstop>
-  <tabstop>_billToName</tabstop>
   <tabstop>_billToAddr</tabstop>
   <tabstop>_billToCntct</tabstop>
   <tabstop>_copyToShipto</tabstop>
@@ -2587,21 +2609,31 @@ to be bound by its terms.</comment>
   <tabstop>_edit</tabstop>
   <tabstop>_requireInventory</tabstop>
   <tabstop>_showCanceled</tabstop>
-  <tabstop>_orderCurrency</tabstop>
-  <tabstop>_margin</tabstop>
   <tabstop>_miscChargeDescription</tabstop>
+  <tabstop>_miscChargeAccount</tabstop>
+  <tabstop>_orderCurrency</tabstop>
   <tabstop>_weight</tabstop>
+  <tabstop>_margin</tabstop>
+  <tabstop>_marginPercent</tabstop>
   <tabstop>_miscCharge</tabstop>
   <tabstop>_freight</tabstop>
   <tabstop>_total</tabstop>
   <tabstop>_balance</tabstop>
   <tabstop>_project</tabstop>
   <tabstop>_opportunity</tabstop>
+  <tabstop>_newCharacteristic</tabstop>
+  <tabstop>_editCharacteristic</tabstop>
+  <tabstop>_deleteCharacteristic</tabstop>
+  <tabstop>_comments</tabstop>
+  <tabstop>_orderComments</tabstop>
   <tabstop>_shippingComments</tabstop>
+  <tabstop>_paymentInformation</tabstop>
   <tabstop>_newCC</tabstop>
   <tabstop>_editCC</tabstop>
   <tabstop>_CCAmount</tabstop>
   <tabstop>_CCCVV</tabstop>
+  <tabstop>_cashTotal</tabstop>
+  <tabstop>_cashBalance</tabstop>
   <tabstop>_cashReceived</tabstop>
   <tabstop>_fundsType</tabstop>
   <tabstop>_docNumber</tabstop>
@@ -2611,11 +2643,13 @@ to be bound by its terms.</comment>
   <tabstop>_applDate</tabstop>
   <tabstop>_altAccnt</tabstop>
   <tabstop>_salescat</tabstop>
+  <tabstop>_postCash</tabstop>
+  <tabstop>_clear</tabstop>
+  <tabstop>_printSO</tabstop>
   <tabstop>_saveAndAdd</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
-  <tabstop>_clear</tabstop>
-  <tabstop>_salesOrderInformation</tabstop>
+  <tabstop>_orderNumber</tabstop>
  </tabstops>
  <resources/>
  <connections>

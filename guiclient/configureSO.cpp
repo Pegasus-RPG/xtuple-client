@@ -84,6 +84,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _hideSOMiscChrg->setChecked(_metrics->boolean("HideSOMiscCharge"));
   _enableSOShipping->setChecked(_metrics->boolean("EnableSOShipping"));
   _printSO->setChecked(_metrics->boolean("DefaultPrintSOOnSave"));
+  _lineItemsSO->setChecked(_metrics->boolean("DefaultSOLineItemsTab"));
   _enablePromiseDate->setChecked(_metrics->boolean("UsePromiseDate"));
   _calcFreight->setChecked(_metrics->boolean("CalculateFreight"));
   _includePkgWeight->setChecked(_metrics->boolean("IncludePackageWeight"));
@@ -283,6 +284,7 @@ bool configureSO::sSave()
   _metrics->set("DefaultBackOrders", _backorders->isChecked());
   _metrics->set("DefaultFreeFormShiptos", _freeFormShiptos->isChecked());
   _metrics->set("DefaultPrintSOOnSave", _printSO->isChecked());
+  _metrics->set("DefaultSOLineItemsTab", _lineItemsSO->isChecked());
   _metrics->set("UsePromiseDate", _enablePromiseDate->isChecked());
   _metrics->set("CalculateFreight", _calcFreight->isChecked());
   _metrics->set("IncludePackageWeight", _includePkgWeight->isChecked());
