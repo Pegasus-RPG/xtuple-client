@@ -531,6 +531,7 @@ void purchaseOrder::setViewMode()
   _vendCntct->setEnabled(FALSE);
   _vendAddr->setEnabled(FALSE);
   _shiptoCntct->setEnabled(FALSE);
+  _shiptoName->setEnabled(FALSE);
   _shiptoAddr->setEnabled(FALSE);
   _shipVia->setEnabled(FALSE);
   _fob->setEnabled(FALSE);
@@ -706,6 +707,8 @@ void purchaseOrder::populate()
     _vendAddr->setCountry(po.value("pohead_vendcountry").toString());
         connect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
 
+    _shiptoName->setText(po.value("pohead_shiptoname").toString());
+
     _shiptoAddr->setId(po.value("pohead_shiptoaddress_id").toInt());
     _shiptoAddr->setLine1(po.value("pohead_shiptoaddress1").toString());
     _shiptoAddr->setLine2(po.value("pohead_shiptoaddress2").toString());
@@ -814,6 +817,7 @@ void purchaseOrder::sSave()
              "    pohead_shipto_cntct_title=:pohead_shipto_cntct_title,"
              "    pohead_shipto_cntct_fax=:pohead_shipto_cntct_fax,"
              "    pohead_shipto_cntct_email=:pohead_shipto_cntct_email,"
+             "    pohead_shiptoname=:pohead_shiptoname,"
              "    pohead_shiptoaddress_id=:pohead_shiptoaddress_id,"
              "    pohead_shiptoaddress1=:pohead_shiptoaddress1,"
              "    pohead_shiptoaddress2=:pohead_shiptoaddress2,"
@@ -867,6 +871,7 @@ void purchaseOrder::sSave()
   purchaseSave.bindValue(":pohead_shipto_cntct_title", _shiptoCntct->title());
   purchaseSave.bindValue(":pohead_shipto_cntct_fax", _shiptoCntct->fax());
   purchaseSave.bindValue(":pohead_shipto_cntct_email", _shiptoCntct->emailAddress());
+  purchaseSave.bindValue(":pohead_shiptoname", _shiptoName->text());
   if (_shiptoAddr->isValid())
     purchaseSave.bindValue(":pohead_shiptoaddress_id", _shiptoAddr->id());
   purchaseSave.bindValue(":pohead_shiptoaddress1", _shiptoAddr->line1());
@@ -940,6 +945,7 @@ void purchaseOrder::sSave()
     _vendCntct->clear();
     _vendAddr->clear();
     _shiptoCntct->clear();
+    _shiptoName->clear();
     _shiptoAddr->clear();
 
     createHeader();

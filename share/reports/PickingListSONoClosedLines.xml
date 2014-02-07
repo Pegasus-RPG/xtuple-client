@@ -71,13 +71,20 @@
        item_descrip1,
        item_descrip2,
        formatQty(coitem_qtyord) AS ordered,
-       CASE WHEN ((coitem_qtyshipped - coitem_qtyreturned) > 0.0) THEN formatQty(coitem_qtyshipped - coitem_qtyreturned)
+       CASE WHEN (coitem_qtyreserved > 0.0)
+            THEN formatQty(coitem_qtyreserved)
+            ELSE NULL
+       END AS reserved,
+       CASE WHEN ((coitem_qtyshipped - coitem_qtyreturned) > 0.0)
+            THEN formatQty(coitem_qtyshipped - coitem_qtyreturned)
             ELSE NULL
        END AS shipped,
-       CASE WHEN ((coitem_qtyshipped - coitem_qtyreturned) > 0.0) THEN formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned))
-            ELSE NULL
+       CASE WHEN (fetchMetricBool('RequireSOReservations'))
+            THEN formatQty(coitem_qtyreserved)
+            ELSE formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned - qtyAtShipping('SO', coitem_id)))
        END AS balance,
-       CASE WHEN (qtyAtShipping('SO', coitem_id) > 0.0) THEN formatQty(qtyAtShipping('SO', coitem_id))
+       CASE WHEN (qtyAtShipping('SO', coitem_id) > 0.0)
+            THEN formatQty(qtyAtShipping('SO', coitem_id))
             ELSE NULL
        END AS atShipping,
        getSoitemStatus(coitem_id) AS f_status
@@ -88,6 +95,8 @@
    AND (coitem_status &lt;> 'X')
    AND (coitem_status &lt;> 'C')
    AND (item_type != 'K')
+   AND   ( (fetchMetricBool('RequireSOReservations') AND (coitem_qtyreserved > 0.0)) OR
+           (NOT fetchMetricBool('RequireSOReservations')) )
 -- 1 REMOVE THIS AND CLOSED LINES WILL NOT DISPLAY ON PACKING LIST  
 &lt;? if exists("hide closed") ?>
    AND (coitem_status &lt;> 'C')
@@ -299,7 +308,7 @@ WHERE ((image_name='logo'));</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ordered</string>
+   <string>Reserved</string>
   </label>
   <field>
    <rect>
@@ -359,7 +368,7 @@ WHERE ((image_name='logo'));</sql>
    <rect>
     <x>253</x>
     <y>425</y>
-    <width>35</width>
+    <width>55</width>
     <height>20</height>
    </rect>
    <font>
@@ -369,7 +378,7 @@ WHERE ((image_name='logo'));</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>UOM</string>
+   <string>Ordered</string>
   </label>
   <field>
    <rect>
@@ -830,7 +839,7 @@ WHERE ((image_name='logo'));</sql>
    <field>
     <rect>
      <x>630</x>
-     <y>95</y>
+     <y>98</y>
      <width>85</width>
      <height>15</height>
     </rect>
@@ -913,7 +922,7 @@ WHERE ((image_name='logo'));</sql>
    <label>
     <rect>
      <x>565</x>
-     <y>95</y>
+     <y>98</y>
      <width>60</width>
      <height>17</height>
     </rect>
@@ -930,7 +939,7 @@ WHERE ((image_name='logo'));</sql>
     <rect>
      <x>100</x>
      <y>120</y>
-     <width>700</width>
+     <width>690</width>
      <height>17</height>
     </rect>
     <bottompad>14</bottompad>
@@ -1105,11 +1114,11 @@ WHERE ((image_name='logo'));</sql>
      <size>10</size>
      <weight>normal</weight>
     </font>
-    <hcenter/>
+    <right/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>ordered</column>
     </data>
    </field>
    <line>
@@ -1128,8 +1137,8 @@ WHERE ((image_name='logo'));</sql>
    </line>
    <barcode>
     <rect>
-     <x>365</x>
-     <y>30</y>
+     <x>325</x>
+     <y>23</y>
      <width>468</width>
      <height>35</height>
     </rect>
@@ -1165,9 +1174,44 @@ WHERE ((image_name='logo'));</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>ordered</column>
+     <column>reserved</column>
     </data>
    </field>
+   <field>
+    <rect>
+     <x>630</x>
+     <y>83</y>
+     <width>85</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_invuom</column>
+    </data>
+   </field>
+   <label>
+    <rect>
+     <x>565</x>
+     <y>83</y>
+     <width>60</width>
+     <height>17</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <top/>
+    <string>UOM:</string>
+   </label>
   </detail>
  </section>
  <pgfoot>

@@ -28,6 +28,7 @@ public:
     ~quickRelocateLot();
 
 public slots:
+    void sFillList();
     void sPost();
     void clearFields();
 

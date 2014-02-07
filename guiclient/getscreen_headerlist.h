@@ -28,6 +28,7 @@
 #include "arCreditMemoApplication.h"
 #include "arOpenItem.h"
 #include "arWorkBench.h"
+#include "assessFinanceCharges.h"
 #include "assignClassCodeToPlannerCode.h"
 #include "assignItemToPlannerCode.h"
 #include "assignLotSerial.h"

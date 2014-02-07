@@ -132,6 +132,7 @@
 #include "vendors.h"
 #include "bankAccounts.h"
 #include "checkFormats.h"
+#include "assessFinanceCharges.h"
 
 #include "customers.h"
 
@@ -289,6 +290,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "ar.listUnpostedInvoices", tr("&List Unposted..."), SLOT(sUnpostedInvoices()), arInvoicesMenu, "SelectBilling", QPixmap(":/images/unpostedInvoices.png"), toolBar, true , tr("List Unposted Invoices") },
     { "separator", NULL, NULL, arInvoicesMenu, "true", NULL, NULL, true, NULL },
     { "ar.postInvoices", tr("&Post..."), SLOT(sPostInvoices()), arInvoicesMenu, "PostMiscInvoices", NULL, NULL, true , NULL },
+    { "ar.assessFinanceCharges", tr("&Assess Finance Charges..."), SLOT(sAssessFinanceCharges()), arInvoicesMenu, "PostMiscInvoices", NULL, NULL, true , NULL },
 
     // Accounting | Accounts Receivable | Memos
     { "menu", tr("&Memos"), (char*)arMemosMenu,	arMenu, "true",	 NULL, NULL, true, NULL },
@@ -1118,6 +1120,10 @@ void menuAccounting::sSyncCompanies()
   omfgThis->handleNewWindow(new syncCompanies());
 }
 
+void menuAccounting::sAssessFinanceCharges()
+{
+  omfgThis->handleNewWindow(new assessFinanceCharges());
+}
 
 void menuAccounting::sSetup()
 {
