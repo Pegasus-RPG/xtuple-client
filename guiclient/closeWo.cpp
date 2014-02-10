@@ -111,75 +111,78 @@ bool closeWo::okToSave()
   {
     if (type.value("itemsite_costmethod").toString() == "J")
     {
-      QMessageBox::critical(this, tr("Invalid Work Order"),
-                            tr("<p>Work Orders for item sites with the Job cost "
-                               "method are posted when shipping the Sales Order "
-                               "they are associated with.") );
-      _wo->setFocus();
-      return false;
-    }
-    else
-    {
-      closeokToSave.prepare("SELECT wo_qtyrcv, womatl_issuemethod, womatl_qtyiss "
-                "  FROM wo "
-                "  JOIN womatl ON (womatl_wo_id = wo_id) "
-                "  JOIN itemsite ON (womatl_itemsite_id = itemsite_id) "
-                "  JOIN item ON ((itemsite_item_id = item_id) AND (NOT item_type = 'T')) "
-                " WHERE (wo_id=:wo_id);" );
-      closeokToSave.bindValue(":wo_id", _wo->id());
-      closeokToSave.exec();
-      if (closeokToSave.first())
+      if (QMessageBox::critical(this, tr("Job Costed Item"),
+                                tr("<p>Work Orders for item sites with the Job cost "
+                                   "method are posted when shipping the Sales Order "
+                                   "they are associated with."
+                                   "<p>Are you sure you want to close this "
+                                   "Work Order?"),
+                                   QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
       {
-        if (closeokToSave.value("wo_qtyrcv").toDouble() == 0.0)
-          QMessageBox::warning(this, tr("No Production Posted"),
-                               tr("<p>There has not been any Production "
-                                  "received from this Work Order. This "
-                                  "probably means Production Postings for "
-                                  "this Work Order have been overlooked." ));
-
-        bool unissuedMaterial = FALSE;
-        bool unpushedMaterial = FALSE;
-        do
-        {
-          if (! unissuedMaterial &&
-              (closeokToSave.value("womatl_issuemethod") == "S") &&
-              (closeokToSave.value("womatl_qtyiss").toDouble() == 0.0) )
-          {
-            QMessageBox::warning(this, tr("Unissued Push Items"),
-                                 tr("<p>The selected Work Order has Material "
-                                    "Requirements that are Push-Issued but "
-                                    "have not had any material issued to them. "
-                                    "This probably means that required manual "
-                                    "material issues have been overlooked."));
-            unissuedMaterial = TRUE;
-          }
-          else if (! unpushedMaterial &&
-                   ( (closeokToSave.value("womatl_issuemethod") == "L") ||
-                     (closeokToSave.value("womatl_issuemethod") == "M") ) &&
-                   (closeokToSave.value("womatl_qtyiss").toDouble() == 0.0) )
-          {
-            QMessageBox::warning(this, tr("Unissued Pull Items"),
-                                 tr("<p>The selected Work Order has Material "
-                                    "Requirements that are Pull-Issued but "
-                                    "have not had any material issued to them. "
-                                    "This probably means that Production was "
-                                    "posted for this Work Order through "
-                                    "posting Operations. The BOM for this Item "
-                                    "should be modified to list Used At "
-                                    "selections for each BOM Item." ) );
-            unpushedMaterial = TRUE;
-          }
-        }
-        while (closeokToSave.next());
-      }
-      else if (closeokToSave.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, closeokToSave.lastError().databaseText(), __FILE__, __LINE__);
+        _wo->setFocus();
         return false;
       }
-
-      return true;      // this is the only successful case
     }
+
+    closeokToSave.prepare("SELECT wo_qtyrcv, womatl_issuemethod, womatl_qtyiss "
+                          "  FROM wo "
+                          "  JOIN womatl ON (womatl_wo_id = wo_id) "
+                          "  JOIN itemsite ON (womatl_itemsite_id = itemsite_id) "
+                          "  JOIN item ON ((itemsite_item_id = item_id) AND (NOT item_type = 'T')) "
+                          " WHERE (wo_id=:wo_id);" );
+    closeokToSave.bindValue(":wo_id", _wo->id());
+    closeokToSave.exec();
+    if (closeokToSave.first())
+    {
+      if (closeokToSave.value("wo_qtyrcv").toDouble() == 0.0)
+        QMessageBox::warning(this, tr("No Production Posted"),
+                             tr("<p>There has not been any Production "
+                                "received from this Work Order. This "
+                                "probably means Production Postings for "
+                                "this Work Order have been overlooked." ));
+      
+      bool unissuedMaterial = FALSE;
+      bool unpushedMaterial = FALSE;
+      do
+      {
+        if (! unissuedMaterial &&
+            (closeokToSave.value("womatl_issuemethod") == "S") &&
+            (closeokToSave.value("womatl_qtyiss").toDouble() == 0.0) )
+        {
+          QMessageBox::warning(this, tr("Unissued Push Items"),
+                               tr("<p>The selected Work Order has Material "
+                                  "Requirements that are Push-Issued but "
+                                  "have not had any material issued to them. "
+                                  "This probably means that required manual "
+                                  "material issues have been overlooked."));
+          unissuedMaterial = TRUE;
+        }
+        else if (! unpushedMaterial &&
+                 ( (closeokToSave.value("womatl_issuemethod") == "L") ||
+                  (closeokToSave.value("womatl_issuemethod") == "M") ) &&
+                 (closeokToSave.value("womatl_qtyiss").toDouble() == 0.0) )
+        {
+          QMessageBox::warning(this, tr("Unissued Pull Items"),
+                               tr("<p>The selected Work Order has Material "
+                                  "Requirements that are Pull-Issued but "
+                                  "have not had any material issued to them. "
+                                  "This probably means that Production was "
+                                  "posted for this Work Order through "
+                                  "posting Operations. The BOM for this Item "
+                                  "should be modified to list Used At "
+                                  "selections for each BOM Item." ) );
+          unpushedMaterial = TRUE;
+        }
+      }
+      while (closeokToSave.next());
+    }
+    else if (closeokToSave.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, closeokToSave.lastError().databaseText(), __FILE__, __LINE__);
+      return false;
+    }
+    
+    return true;      // this is the only successful case
   }
   else if (type.lastError().type() != QSqlError::NoError)
   {
