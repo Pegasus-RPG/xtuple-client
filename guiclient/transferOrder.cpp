@@ -1125,7 +1125,6 @@ void transferOrder::sDelete()
             if (result < 0)
               systemError(this, storedProcErrorLookup("deleteTO", result),
 			  __FILE__, __LINE__);            
-            sReleaseNumber();
           }
           ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Order"),
                                transferDelete, __FILE__, __LINE__);
