@@ -277,6 +277,12 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
     _saveAndAdd->hide();
 
   _more->setChecked(_preferences->boolean("SoShowAll"));
+  
+  if(_metrics->boolean("DefaultSOLineItemsTab"))
+    _salesOrderInformation->setCurrentIndex(1);
+  else
+    _salesOrderInformation->setCurrentIndex(0);
+  
 
   _miscChargeAccount->setType(GLCluster::cRevenue | GLCluster::cExpense);
 
