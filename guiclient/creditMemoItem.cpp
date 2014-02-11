@@ -97,10 +97,7 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
   if (valid)
   {
     _cmheadid = param.toInt();
-    creditet.prepare("SELECT cmhead_cust_id, cmhead_shipto_id, "
-			  "       cmhead_number, COALESCE(cmhead_invcnumber, '-1') AS cmhead_invcnumber, "
-			  "       cmhead_docdate, cmhead_curr_id, "
-			  "       cmhead_taxzone_id, cmhead_rsncode_id "
+    creditet.prepare("SELECT * "
               "FROM cmhead "
               "WHERE (cmhead_id=:cmhead_id);");
     creditet.bindValue(":cmhead_id", _cmheadid);
@@ -110,8 +107,9 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
       _custid = creditet.value("cmhead_cust_id").toInt();
       _shiptoid = creditet.value("cmhead_shipto_id").toInt();
       _orderNumber->setText(creditet.value("cmhead_number").toString());
-	  _invoiceNumber = creditet.value("cmhead_invcnumber").toInt();
-	  if ( (_invoiceNumber != -1) && (_metrics->boolean("RestrictCreditMemos")) )
+      if (! creditet.value("cmhead_invcnumber").toString().isEmpty())
+        _invoiceNumber = creditet.value("cmhead_invcnumber").toInt();
+      if ( (_invoiceNumber != -1) && (_metrics->boolean("RestrictCreditMemos")) )
         vrestrict = TRUE;
       _taxzoneid = creditet.value("cmhead_taxzone_id").toInt();
       _tax->setId(creditet.value("cmhead_curr_id").toInt());
