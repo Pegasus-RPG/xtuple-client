@@ -2247,18 +2247,18 @@ void salesOrder::sAction()
 
 void salesOrder::sDelete()
 {
-  XSqlQuery deleteSales;
-  if ( (_mode == cEdit) || (_mode == cNew) )
+  if (QMessageBox::question(this, tr("Delete Selected Line Item?"),
+                            tr("<p>Are you sure that you want to delete the "
+                               "selected Line Item?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    if (QMessageBox::question(this, tr("Delete Selected Line Item?"),
-                              tr("<p>Are you sure that you want to delete the "
-                                   "selected Line Item?"),
-                              QMessageBox::Yes,
-                              QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+    XSqlQuery deleteSales;
+    if ( (_mode == cEdit) || (_mode == cNew) )
     {
       if (_metrics->boolean("EnableSOReservations"))
         sUnreserveStock();
-
+      
       deleteSales.prepare( "SELECT deleteSOItem(:soitem_id) AS result;");
       deleteSales.bindValue(":soitem_id", _soitem->id());
       deleteSales.exec();
@@ -2272,16 +2272,16 @@ void salesOrder::sDelete()
           systemError(this, storedProcErrorLookup("deleteSOItem", result),  __FILE__, __LINE__);
       }
       else if (deleteSales.lastError().type() != QSqlError::NoError)
-          systemError(this, deleteSales.lastError().databaseText(),                   __FILE__, __LINE__);
-
-          sFillItemList();
-
+        systemError(this, deleteSales.lastError().databaseText(),                   __FILE__, __LINE__);
+      
+      sFillItemList();
+      
       if (_soitem->topLevelItemCount() == 0)
       {
         if (QMessageBox::question(this, tr("Cancel Sales Order?"),
                                   tr("<p>You have deleted all of the Line "
-                                       "Items for this Sales Order. Would you "
-                                       "like to cancel this Sales Order?"),
+                                     "Items for this Sales Order. Would you "
+                                     "like to cancel this Sales Order?"),
                                   QMessageBox::Yes,
                                   QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
         {
@@ -2296,44 +2296,43 @@ void salesOrder::sDelete()
               systemError(this, storedProcErrorLookup("deleteSO", result),  __FILE__, __LINE__);
           }
           else if (deleteSales.lastError().type() != QSqlError::NoError)
-              systemError(this, deleteSales.lastError().databaseText(),               __FILE__, __LINE__);
-
+            systemError(this, deleteSales.lastError().databaseText(),               __FILE__, __LINE__);
+          
           omfgThis->sSalesOrdersUpdated(_soheadid);
           _captive = false;
           clear();
         }
       }
     }
-  }
-  else if ( (_mode == cNewQuote) || (_mode == cEditQuote) )
-  {
-    deleteSales.prepare( "DELETE FROM quitem "
-               "WHERE (quitem_id=:quitem_id);" );
-    deleteSales.bindValue(":quitem_id", _soitem->id());
-    deleteSales.exec();
-    sFillItemList();
-
-    if (_soitem->topLevelItemCount() == 0)
+    else if ( (_mode == cNewQuote) || (_mode == cEditQuote) )
     {
-      if ( QMessageBox::question(this, tr("Cancel Quote?"),
-                                 tr("<p>You have deleted all of the order "
+      deleteSales.prepare( "SELECT deleteQuoteItem(:quitem_id) AS result;");
+      deleteSales.bindValue(":quitem_id", _soitem->id());
+      deleteSales.exec();
+      sFillItemList();
+      
+      if (_soitem->topLevelItemCount() == 0)
+      {
+        if ( QMessageBox::question(this, tr("Cancel Quote?"),
+                                   tr("<p>You have deleted all of the order "
                                       "lines for this Quote. Would you like to "
                                       "cancel this Quote?."),
-                                 QMessageBox::Yes,
-                                 QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
-      {
-        deleteSales.prepare("SELECT deleteQuote(:quhead_id, :quhead_number) AS result;");
-        deleteSales.bindValue(":quhead_id", _soheadid);
-        deleteSales.bindValue(":quhead_number", _orderNumber->text());
-        deleteSales.exec();
-        if (deleteSales.first() && !deleteSales.value("result").toBool())
-          systemError(this, tr("Could not delete Quote."),  __FILE__, __LINE__);
-        else if (deleteSales.lastError().type() != QSqlError::NoError)
-          systemError(this, deleteSales.lastError().databaseText(),   __FILE__, __LINE__);
-
-        omfgThis->sQuotesUpdated(_soheadid);
-        _captive = false;
-        clear();
+                                   QMessageBox::Yes,
+                                   QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+        {
+          deleteSales.prepare("SELECT deleteQuote(:quhead_id, :quhead_number) AS result;");
+          deleteSales.bindValue(":quhead_id", _soheadid);
+          deleteSales.bindValue(":quhead_number", _orderNumber->text());
+          deleteSales.exec();
+          if (deleteSales.first() && (deleteSales.value("result").toInt() < 0))
+            systemError(this, tr("Could not delete Quote."),  __FILE__, __LINE__);
+          else if (deleteSales.lastError().type() != QSqlError::NoError)
+            systemError(this, deleteSales.lastError().databaseText(),   __FILE__, __LINE__);
+          
+          omfgThis->sQuotesUpdated(_soheadid);
+          _captive = false;
+          clear();
+        }
       }
     }
   }
