@@ -3030,7 +3030,7 @@ bool salesOrder::deleteForCancel()
     }
   }
 
-  if (cView != _mode && _locked)
+  if (_locked)
   {
     query.prepare("SELECT pg_advisory_unlock(oid::integer, :sohead_id) AS result "
                   "FROM pg_class "
@@ -3065,7 +3065,7 @@ void salesOrder::sClear()
 void salesOrder::clear()
 {
   XSqlQuery clearSales;
-  if (cView != _mode && _locked)
+  if (_locked)
   {
     clearSales.prepare("SELECT pg_advisory_unlock(oid::integer, :sohead_id) AS result "
               "FROM pg_class "
