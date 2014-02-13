@@ -127,7 +127,7 @@ void copyItem::sCopyBom()
   if (_copyBOM->isChecked())
   {
     XSqlQuery bomitemq;
-    bomitemq.prepare("SELECT copyBom(:sourceitemid, :targetitemid) AS result;");
+    bomitemq.prepare("SELECT copyBom(:sourceitemid, :targetitemid, TRUE) AS result;");
     bomitemq.bindValue(":sourceitemid", _source->id());
     bomitemq.bindValue(":targetitemid", _newitemid);
     bomitemq.exec();

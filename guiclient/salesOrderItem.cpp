@@ -913,9 +913,12 @@ void salesOrderItem::sSave(bool pPartial)
                           tr("<p>You must enter a Substitute Item before saving this Sales Order Item."))
          << GuiErrorCheck(!_scheduledDate->isValid(), _scheduledDate,
                           tr("<p>You must enter a valid Schedule Date before saving this Sales Order Item."))
-         << GuiErrorCheck(_createSupplyOrder->isChecked() && _item->itemType() == "M" && _supplyWarehouse->id() == -1, _supplyWarehouse,
+         << GuiErrorCheck(_createSupplyOrder->isChecked() &&
+                          _item->itemType() == "M" &&
+                          _supplyWarehouse->id() == -1, _supplyWarehouse,
                           tr("<p>Before an Order may be created, a valid Supplied at Site must be selected."))
-         << GuiErrorCheck(!_createSupplyOrder->isChecked() && _costmethod == "J", _createSupplyOrder,
+         << GuiErrorCheck(!_createSupplyOrder->isChecked() &&
+                          _costmethod == "J", _createSupplyOrder,
                           tr("<p>You must create a supply order for this Job Costed Item before saving this Sales Order Item."))
   ;
 
@@ -2382,7 +2385,7 @@ void salesOrderItem::sCheckSupplyOrder()
     if (_createSupplyOrder->isChecked())
       sHandleSupplyOrder();
     else
-      if ((_mode == cNew && !_stocked) || _costmethod == "J" || _supplyOrderId > -1)
+      if (((_mode == cNew || _mode == cNewQuote) && !_stocked) || _costmethod == "J" || _supplyOrderId > -1)
         _createSupplyOrder->setChecked(true);
   }
 }
@@ -2408,7 +2411,7 @@ void salesOrderItem::sHandleSupplyOrder()
     return;
   
   XSqlQuery ordq;
-  if (_createSupplyOrder->isChecked())
+  if (_createSupplyOrder->isChecked() && ISORDER(_mode))
   { // createSupplyOrder is checked
     
     double valqty = 0.0;

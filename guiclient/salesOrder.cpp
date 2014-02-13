@@ -277,6 +277,12 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
     _saveAndAdd->hide();
 
   _more->setChecked(_preferences->boolean("SoShowAll"));
+  
+  if(_metrics->boolean("DefaultSOLineItemsTab"))
+    _salesOrderInformation->setCurrentIndex(1);
+  else
+    _salesOrderInformation->setCurrentIndex(0);
+  
 
   _miscChargeAccount->setType(GLCluster::cRevenue | GLCluster::cExpense);
 
@@ -2214,18 +2220,20 @@ void salesOrder::sAction()
   if (_lineMode == cCanceled)
     return;
 
+  int _soitemid = _soitem->id();
+  
   if (_lineMode == cClosed)
   {
     actionSales.prepare( "UPDATE coitem "
                         "SET coitem_status='O' "
                         "WHERE (coitem_id=:coitem_id);" );
-    actionSales.bindValue(":coitem_id", _soitem->id());
+    actionSales.bindValue(":coitem_id", _soitemid);
     actionSales.exec();
   }
   else if ( (_mode == cNew) || (_mode == cEdit) )
   {
     actionSales.prepare( "SELECT qtyAtShipping(:coitem_id) AS atshipping;");
-    actionSales.bindValue(":coitem_id", _soitem->id());
+    actionSales.bindValue(":coitem_id", _soitemid);
     actionSales.exec();
     if (actionSales.first() && actionSales.value("atshipping").toDouble() > 0)
     {
@@ -2238,7 +2246,7 @@ void salesOrder::sAction()
     actionSales.prepare( "UPDATE coitem "
                         "SET coitem_status='C' "
                         "WHERE (coitem_id=:coitem_id);" );
-    actionSales.bindValue(":coitem_id", _soitem->id());
+    actionSales.bindValue(":coitem_id", _soitemid);
     actionSales.exec();
   }
   
@@ -2253,6 +2261,8 @@ void salesOrder::sDelete()
                             QMessageBox::Yes,
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
+    int _soitemid = _soitem->id();
+    
     XSqlQuery deleteSales;
     if ( (_mode == cEdit) || (_mode == cNew) )
     {
@@ -2260,7 +2270,7 @@ void salesOrder::sDelete()
         sUnreserveStock();
       
       deleteSales.prepare( "SELECT deleteSOItem(:soitem_id) AS result;");
-      deleteSales.bindValue(":soitem_id", _soitem->id());
+      deleteSales.bindValue(":soitem_id", _soitemid);
       deleteSales.exec();
       if (deleteSales.first())
       {
