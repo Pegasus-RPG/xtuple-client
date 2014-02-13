@@ -420,9 +420,7 @@ void project::populate()
   }
 
   XSqlQuery projectType;
-  projectType.prepare( "SELECT -1 AS prjtype_id, 'Undefined' AS prjtype_desc "
-                       "UNION "
-                       "SELECT prjtype_id, prjtype_descr FROM prjtype WHERE prjtype_active "
+  projectType.prepare( "SELECT prjtype_id, prjtype_descr FROM prjtype WHERE prjtype_active "
                        "UNION "
                        "SELECT prjtype_id, prjtype_descr FROM prjtype "
                        "JOIN prj ON (prj_prjtype_id=prjtype_id) "

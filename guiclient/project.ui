@@ -97,7 +97,14 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item>
-        <widget class="XComboBox" name="_projectType"/>
+        <widget class="XComboBox" name="_projectType">
+         <property name="allowNull">
+          <bool>true</bool>
+         </property>
+         <property name="nullStr">
+          <string>Undefined</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
