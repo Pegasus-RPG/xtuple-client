@@ -24,6 +24,7 @@ class BOM : public XWidget, public Ui::BOM
 public:
     BOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~BOM();
+    virtual bool save( bool partial );
 
     Q_INVOKABLE virtual int id()   const;
     Q_INVOKABLE virtual int mode() const;
@@ -50,6 +51,12 @@ public slots:
 protected slots:
     virtual void languageChange();
 
+  signals:
+    void populated();
+    void newId(int);
+    void newMode(int);
+    void saved(int);
+  
 private:
     int _mode;
     int _bomheadid;
