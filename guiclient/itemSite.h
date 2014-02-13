@@ -53,6 +53,7 @@ protected slots:
 private:
     int _mode;
     int _itemsiteid;
+    int _costcatid;
     bool _captive;
     bool _updates;
     double _qohCache;
