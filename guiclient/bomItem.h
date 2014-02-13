@@ -56,6 +56,7 @@ private:
     int _bomitemid;
     int _sourceBomitemid;
     int _parentitemid;
+    int _bomheadid;
     QString _parentitemtype;
     int _revisionid;
     bool _saved;

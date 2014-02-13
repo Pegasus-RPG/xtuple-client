@@ -85,6 +85,7 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   }
 
   _parentitemid=0;
+  _bomheadid=0;
   _saved=FALSE;
   adjustSize();
 }
@@ -113,6 +114,10 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
     populate();
   }
 
+  param = pParams.value("bomhead_id", &valid);
+  if (valid)
+    _bomheadid = param.toInt();
+  
   param = pParams.value("item_id", &valid);
   if (valid)
     _parentitemid = param.toInt();

@@ -132,11 +132,16 @@ enum SetResponse BOM::set(const ParameterList &pParams)
         systemError(this, bomet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
+      
+      emit newMode(_mode);
+      emit newId(_bomheadid);
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
       _item->setReadOnly(TRUE);
+      
+      emit newMode(_mode);
     }
     else if (param.toString() == "view")
     {
@@ -153,6 +158,8 @@ enum SetResponse BOM::set(const ParameterList &pParams)
       _save->setEnabled(FALSE);
       
       connect(_bomitem, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
+      
+      emit newMode(_mode);
     }
 
     param = pParams.value("item_id", &valid);
@@ -180,6 +187,18 @@ int BOM::mode() const
 
 bool BOM::sSave()
 {
+  if (save(false))
+  {
+    emit saved(_bomheadid);
+    close();
+    return true;
+  }
+  else
+    return false;
+}
+
+bool BOM::save(bool partial)
+{
   XSqlQuery BSave;
   if(_item->id() == -1)
   {
@@ -193,12 +212,15 @@ bool BOM::sSave()
   else if(_batchSize->toDouble() == 0.0)
   {
     QMessageBox::warning( this, tr("Batch Size Error"),
-      tr("<p>The Batch Size quantity must be greater than zero.") );
+                         tr("<p>The Batch Size quantity must be greater than zero.") );
     return false;
   }
-
-  if(!sCheckRequiredQtyPer())
-    return false;
+  
+  if (!partial)
+  {
+    if(!sCheckRequiredQtyPer())
+      return false;
+  }
   
   if (_mode == cEdit)
   {   
@@ -232,8 +254,12 @@ bool BOM::sSave()
   if(_doRequireQtyPer->isChecked())
     BSave.bindValue(":bomhead_requiredqtyper", _requiredQtyPer->text().toDouble());
   BSave.exec();
-  
-  close();
+
+  if (_mode == cNew)
+  {
+    _mode=cEdit;
+    emit newMode(_mode);
+  }
 
   return true;
 }
@@ -317,8 +343,15 @@ void BOM::sPopulateMenu(QMenu *menuThis)
 
 void BOM::sNew()
 {
+  if(_mode == cNew)
+  {
+    if(!save(true))
+      return;
+  }
+  
   ParameterList params;
   params.append("mode", "new");
+  params.append("bomhead_id", _bomheadid);
   params.append("item_id", _item->id());
   params.append("revision_id", _revision->id());
   
@@ -432,6 +465,12 @@ void BOM::sFillList(int pItemid, bool)
     if (BFillList.first())
     {
       _bomheadid = BFillList.value("bomhead_id").toInt();
+      if (_mode == cNew)
+      {
+        _mode = cEdit;
+        emit newMode(_mode);
+        emit newId(_bomheadid);
+      }
       _documents->setId(_bomheadid);
       _documentNum->setText(BFillList.value("bomhead_docnum"));
       _revisionDate->setDate(BFillList.value("bomhead_revisiondate").toDate());
@@ -603,6 +642,8 @@ void BOM::sFillList(int pItemid, bool)
         return;
       }
     }
+    
+    emit populated();
   }
   else if (!_item->isValid())
   {
