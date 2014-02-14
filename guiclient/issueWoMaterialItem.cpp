@@ -34,7 +34,7 @@ issueWoMaterialItem::issueWoMaterialItem(QWidget* parent, const char* name, bool
   omfgThis->inputManager()->notify(cBCItem, this, this, SLOT(sCatchItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, this, SLOT(sCatchItemsiteid(int)));
 
-  _wo->setType(cWoExploded | cWoIssued | cWoReleased);
+  _wo->setType(cWoIssued | cWoReleased);
   _qtyToIssue->setValidator(omfgThis->qtyVal());
   _beforeQty->setPrecision(omfgThis->transQtyVal());
   _afterQty->setPrecision(omfgThis->transQtyVal());
