@@ -1829,11 +1829,10 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
     // Populate customer part number if any
     salesPopulateItemInfo.prepare( "SELECT itemalias_number "
               "FROM itemalias"
-              " JOIN item on item_id=itemalias_item_id"
-              " JOIN crmacct on itemalias_crmacct_id=crmacct_id"
-              " JOIN custinfo on crmacct_cust_id=cust_id "
-              "WHERE item_id=:item_id"
-              " AND cust_id=:cust_id;" );
+              " JOIN item ON (item_id=itemalias_item_id)"
+              " LEFT OUTER JOIN crmacct ON (itemalias_crmacct_id=crmacct_id)"
+              "WHERE (item_id=:item_id)"
+              "  AND (crmacct_cust_id=:cust_id OR itemalias_crmacct_id IS NULL);" );
     salesPopulateItemInfo.bindValue(":item_id", _item->id());
     salesPopulateItemInfo.bindValue(":cust_id", _custid);
     salesPopulateItemInfo.exec();
