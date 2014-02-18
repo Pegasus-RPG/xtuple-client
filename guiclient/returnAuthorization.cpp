@@ -486,7 +486,9 @@ bool returnAuthorization::sSave(bool partial)
   // save address info in case someone wants to use 'em again later
   // but don't make any global changes to the data and ignore errors
   _billToAddr->save(AddressCluster::CHANGEONE);
+  _ignoreShiptoSignals = true;
   _shipToAddr->save(AddressCluster::CHANGEONE);
+  _ignoreShiptoSignals = false;
 
   returnSave.prepare( "UPDATE rahead "
              "   SET rahead_cust_id=:rahead_cust_id,rahead_number=:rahead_number,"
