@@ -74,6 +74,7 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   _name->setText(database);
 
   _disableAutoComplete->setChecked(_metrics->boolean("DisableAutoComplete"));
+  _enableGapless->setChecked(_metrics->boolean("EnableGaplessNumbering"));
   
   databasedatabaseInformation.exec( "SELECT numOfDatabaseUsers() AS databaseusers,"
           "       numOfServerUsers() AS serverusers;" );
@@ -121,6 +122,7 @@ bool databaseInformation::sSave()
     _metrics->set("AllowedUserLogins", QString("ActiveOnly"));
 
   _metrics->set("DisableAutoComplete", _disableAutoComplete->isChecked());
+  _metrics->set("EnableGaplessNumbering", _enableGapless->isChecked());
 
   _metrics->load();
 
