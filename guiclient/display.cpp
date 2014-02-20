@@ -278,6 +278,8 @@ void displayPrivate::setupCharacteristics(unsigned int use)
     uses << "char_purchaseorders";
   if (use & characteristic::Vouchers)
     uses << "char_vouchers";
+  if (use & characteristic::Projects)
+    uses << "char_projects";
 
   // Add columns and parameters for characteristics
   QString column;

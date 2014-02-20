@@ -20,6 +20,7 @@
 
 #include <parameter.h>
 
+#include "characteristic.h"
 #include "parameterwidget.h"
 #include "project.h"
 #include "task.h"
@@ -161,6 +162,8 @@ void projects::sBuildList()
     list()->addColumn(tr("Budget Exp."),   _priceColumn,  Qt::AlignRight,  true,  "prjtask_exp_budget");
     list()->addColumn(tr("Actual Exp."),   _priceColumn,  Qt::AlignRight,  true,  "prjtask_exp_actual");
     list()->addColumn(tr("Balance Exp."),  _priceColumn,  Qt::AlignRight,  true,  "prjtask_exp_balance");
+    setupCharacteristics(characteristic::Projects);
+    _showHierarchy->setEnabled(false);
   }
 
   sFillList();
