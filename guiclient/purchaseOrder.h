@@ -86,6 +86,7 @@ private:
     QList<int> _pridList;
     int _mode;
     bool _printed;
+    bool _locked;
     PoitemTableModel* _qeitem;
     int _NumberGen;
     int _projectId;
