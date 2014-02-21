@@ -30,7 +30,12 @@ issueWoMaterialBatch::issueWoMaterialBatch(QWidget* parent, const char* name, bo
   _hasPush = FALSE;
   _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
   _transDate->setDate(omfgThis->dbDate(), true);
-  _wo->setType(cWoExploded | cWoIssued | cWoReleased);
+
+// Issue #22778 - Add hidden metric to allow issuing to Exploded WOs
+  if (_metrics->boolean("IssueToExplodedWO"))
+    _wo->setType(cWoExploded | cWoIssued | cWoReleased);
+  else
+    _wo->setType(cWoIssued | cWoReleased);
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
