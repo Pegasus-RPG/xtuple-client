@@ -167,7 +167,7 @@ void adjustInvValue::sPost()
          << GuiErrorCheck(_newValue->text().length() == 0, _newValue,
                           tr("<p>You must enter a valid New Value before posting this transaction.") )
          << GuiErrorCheck(_altAccnt->isChecked() && ! _accnt->isValid(), _accnt,
-                          tr("<p>You must enter a valid Alternate G/L Account before posting this transaction.") )
+                          tr("<p>You must enter a valid Alternate Ledger Account before posting this transaction.") )
          << GuiErrorCheck(_qtyonhand <= 0.0, _item,
                           tr("You must select an Itemsite with a positive Qty on Hand before posting this transaction.") )
     ;

@@ -733,7 +733,7 @@ void customer::sCheck()
     {
       if (QMessageBox::critical(this, tr("Invalid Number"),
                                 tr("<p>This number is currently "
-                                   "assigned to another CRM account.")))
+                                   "assigned to another Account.")))
       {
         _number->setNumber(_cachedNumber);
         _number->setFocus();
@@ -795,8 +795,8 @@ void customer::sCheck()
     else if ((customerCheck.value("type").toInt() == 3) && (_notice))
     {
       if (QMessageBox::question(this, tr("Convert"),
-                  tr("<p>This number is currently assigned to CRM Account. "
-                     "Do you want to convert the CRM Account to a Customer?"),
+                  tr("<p>This number is currently assigned to Account. "
+                     "Do you want to convert the Account to a Customer?"),
               QMessageBox::Yes,
               QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       {
@@ -851,7 +851,7 @@ void customer::sCrmAccount()
     params.append("mode", "edit");
   else
   {
-    qWarning("tried to open CRM Account window without privilege");
+    qWarning("tried to open Account window without privilege");
     return;
   }
 
@@ -1279,7 +1279,7 @@ void customer::populate()
     _comments->setId(_crmacctid);
     _documents->setId(_crmacctid);
 
-    _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctid, true);
+    _todoList->parameterWidget()->setDefault(tr("Account"), _crmacctid, true);
     _contacts->setCrmacctid(_crmacctid);
 
     _quotes->parameterWidget()->setDefault(tr("Customer"), _custid, true);
@@ -1554,7 +1554,7 @@ void customer::sLoadCrmAcct(int crmacctId)
     _billCntct->setId(getq.value("crmacct_cntct_id_1").toInt());
     _corrCntct->setId(getq.value("crmacct_cntct_id_1").toInt());
   }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting CRM Account"),
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Account"),
                            getq, __FILE__, __LINE__))
     return;
 
@@ -1728,7 +1728,7 @@ void customer::sClear()
     _charass->clear();
     _widgetStack->setCurrentIndex(0);
 
-    _todoList->parameterWidget()->setDefault(tr("CRM Account"), -1, true);
+    _todoList->parameterWidget()->setDefault(tr("Account"), -1, true);
     _contacts->setCrmacctid(_crmacctid);
 
     _quotes->parameterWidget()->setDefault(tr("Customer"), -1, true);

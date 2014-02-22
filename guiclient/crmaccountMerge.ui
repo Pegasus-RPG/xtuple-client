@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Merge CRM Accounts</string>
+   <string>Merge Accounts</string>
   </property>
   <property name="options">
    <set>QWizard::NoBackButtonOnStartPage|QWizard::NoDefaultButton</set>

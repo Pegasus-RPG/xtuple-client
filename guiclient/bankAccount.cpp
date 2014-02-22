@@ -162,7 +162,7 @@ void bankAccount::sSave()
     QWidget    *widget;
   } error[] = {
     { !_assetAccount->isValid(), 
-      tr("<p>Select an G/L Account for this Bank Account before saving it."),
+      tr("<p>Select an Ledger Account for this Bank Account before saving it."),
       _assetAccount
     },
     { _transmitGroup->isChecked() && ! _routing->hasAcceptableInput(),

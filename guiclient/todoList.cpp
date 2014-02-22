@@ -41,7 +41,7 @@ todoList::todoList(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("User"), "username", ParameterWidget::User, omfgThis->username());
   parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User);
   parameterWidget()->append(tr("Assigned To"), "assigned_username", ParameterWidget::User);
-  parameterWidget()->append(tr("CRM Account"), "crmacct_id", ParameterWidget::Crmacct);
+  parameterWidget()->append(tr("Account"), "crmacct_id", ParameterWidget::Crmacct);
   parameterWidget()->append(tr("Start Date on or Before"), "startStartDate", ParameterWidget::Date);
   parameterWidget()->append(tr("Start Date on or After"), "startEndDate", ParameterWidget::Date);
   parameterWidget()->append(tr("Due Date on or Before"), "dueStartDate", ParameterWidget::Date);

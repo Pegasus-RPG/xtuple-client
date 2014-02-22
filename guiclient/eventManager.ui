@@ -53,7 +53,7 @@ to be bound by its terms.</comment>
             <item row="0" column="0" colspan="2" >
              <widget class="QRadioButton" name="_currentUser" >
               <property name="text" >
-               <string>Current &amp;User</string>
+               <string>Current &amp;User Account</string>
               </property>
               <property name="checked" >
                <bool>true</bool>
@@ -63,7 +63,7 @@ to be bound by its terms.</comment>
             <item row="1" column="0" >
              <widget class="QRadioButton" name="_selectedUser" >
               <property name="text" >
-               <string>&amp;Selected User:</string>
+               <string>&amp;Selected User Account:</string>
               </property>
              </widget>
             </item>

@@ -1,6 +1,6 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>View Check Run Edit List</title>
+ <title>View Payment Run Edit List</title>
  <name>ViewAPCheckRunEditList</name>
  <description></description>
  <size>Letter</size>
@@ -172,7 +172,7 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Check Date</string>
+   <string>Payment Date</string>
   </label>
   <field>
    <rect>
@@ -207,7 +207,7 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Check #</string>
+   <string>Payment #</string>
   </label>
   <label>
    <rect>
@@ -271,7 +271,7 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>A/P Check Run Edit List</string>
+   <string>A/P Payment Run Edit List</string>
   </label>
   <label>
    <rect>
@@ -342,7 +342,7 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Check/Voucher #</string>
+   <string>Payment/Voucher #</string>
   </label>
   <line>
    <xstart>5</xstart>
@@ -397,7 +397,7 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Check Date</string>
+   <string>Payment Date</string>
   </label>
   <label>
    <rect>

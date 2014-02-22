@@ -251,7 +251,7 @@ void quotes::sConvert(int pType)
                     QMessageBox::information(this, tr("Quote for Prospect"),
                                 tr("<p>The prospect must be manually "
                                    "converted to customer from either the "
-                                   "CRM Account or Customer windows before "
+                                   "Account or Customer windows before "
                                    "coverting this quote."));
                     notConverted.append(selected[i]);
                     continue;
@@ -262,7 +262,7 @@ void quotes::sConvert(int pType)
                 QMessageBox::information(this, tr("Quote for Prospect"),
                             tr("<p>The prospect must be manually "
                                "converted to customer from either the "
-                               "CRM Account or Customer windows before "
+                               "Account or Customer windows before "
                                "coverting this quote."));
                 notConverted.append(selected[i]);
                 continue;

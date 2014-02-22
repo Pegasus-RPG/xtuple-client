@@ -24,7 +24,7 @@ to be bound by its terms.</comment>
    <string>Purge Completed Merges</string>
   </property>
   <property name="subTitle">
-   <string>The following CRM Accounts have been merged. Pick a parent account and click Purge Selected to remove the obsolete CRM Accounts and merge data. You should do this as soon as you have confirmed that the merge was successful.</string>
+   <string>The following Accounts have been merged. Pick a parent account and click Purge Selected to remove the obsolete Accounts and merge data. You should do this as soon as you have confirmed that the merge was successful.</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">

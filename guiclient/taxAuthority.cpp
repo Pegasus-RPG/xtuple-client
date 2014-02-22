@@ -360,7 +360,7 @@ void taxAuthority::sCrmAccount()
     params.append("mode", "edit");
   else
   {
-    qWarning("tried to open CRM Account window without privilege");
+    qWarning("tried to open Account window without privilege");
     return;
   }
 

@@ -479,7 +479,7 @@ void characteristicAssignment::handleTargetType()
   }
   else if (_targetType == "CRMACCT")
   {
-    setWindowTitle(tr("CRM Account Characteristic"));
+    setWindowTitle(tr("Account Characteristic"));
     boolColumn = "char_crmaccounts";
   }
   else if (_targetType == "LS")

@@ -295,8 +295,8 @@ void taxCode::sSave()
   }
   if (!_account->isValid())
    {
-     QMessageBox::warning( this, tr("Select G/L Accout"),
-                            tr("You must select a G/L Account for this Tax.") );
+     QMessageBox::warning( this, tr("Select Ledger Account"),
+                            tr("You must select a Ledger Account for this Tax.") );
      _account->setFocus();
       return;
    }

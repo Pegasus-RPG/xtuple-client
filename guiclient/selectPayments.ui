@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Select Payments</string>
+   <string>Approve Payments</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0">
@@ -234,7 +234,7 @@ to be bound by its terms.</comment>
                  <bool>false</bool>
                 </property>
                 <property name="text">
-                 <string>Select...</string>
+                 <string>Approve...</string>
                 </property>
                 <property name="autoDefault">
                  <bool>false</bool>
@@ -250,7 +250,7 @@ to be bound by its terms.</comment>
                  <bool>false</bool>
                 </property>
                 <property name="text">
-                 <string>Select Line</string>
+                 <string>Approve Line</string>
                 </property>
                 <property name="autoDefault">
                  <bool>false</bool>
@@ -266,7 +266,7 @@ to be bound by its terms.</comment>
                  <bool>false</bool>
                 </property>
                 <property name="text">
-                 <string>Clear Selection</string>
+                 <string>Clear Approval</string>
                 </property>
                 <property name="autoDefault">
                  <bool>false</bool>
@@ -295,7 +295,7 @@ to be bound by its terms.</comment>
               <item>
                <widget class="QPushButton" name="_selectDue">
                 <property name="text">
-                 <string>Select all Due</string>
+                 <string>Approve all Due</string>
                 </property>
                 <property name="autoDefault">
                  <bool>false</bool>
@@ -308,7 +308,7 @@ to be bound by its terms.</comment>
               <item>
                <widget class="QPushButton" name="_selectDiscount">
                 <property name="text">
-                 <string>Select all Discounts</string>
+                 <string>Approve all Discounts</string>
                 </property>
                 <property name="autoDefault">
                  <bool>false</bool>
@@ -321,7 +321,7 @@ to be bound by its terms.</comment>
               <item>
                <widget class="QPushButton" name="_clearAll">
                 <property name="text">
-                 <string>Clear Selections</string>
+                 <string>Clear Approvals</string>
                 </property>
                 <property name="autoDefault">
                  <bool>false</bool>

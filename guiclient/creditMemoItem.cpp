@@ -211,7 +211,7 @@ void creditMemoItem::sSave()
     QMessageBox::warning(this, tr("Invalid Credit Quantity"),
                          tr("<p>You have not selected a quantity of the "
 			    "selected item to credit. If you wish to return a "
-			    "quantity to stock but not issue a Credit Memo "
+			    "quantity to stock but not issue a Return "
 			    "then you should enter a Return to Stock "
 			    "transaction from the I/M module.  Otherwise, you "
 			    "must enter a quantity to credit." ));

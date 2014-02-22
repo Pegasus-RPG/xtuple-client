@@ -72,7 +72,7 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
 
   parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User);
   parameterWidget()->append(tr("AssignedTo"), "assigned_username", ParameterWidget::User);
-  parameterWidget()->append(tr("CRM Account"), "crmacct_id", ParameterWidget::Crmacct);
+  parameterWidget()->append(tr("Account"), "crmacct_id", ParameterWidget::Crmacct);
   parameterWidget()->append(tr("Contact"), "cntct_id", ParameterWidget::Contact);
   parameterWidget()->appendComboBox(tr("Project Type"), "prjtype_id", qryType);
   parameterWidget()->append(tr("Project"), "prj_id", ParameterWidget::Project);
@@ -108,7 +108,7 @@ void projects::sBuildList()
     list()->addColumn(tr("Project Type"),        _itemColumn,  Qt::AlignCenter, true,  "project_type" );
     list()->addColumn(tr("Owner"),         _userColumn,  Qt::AlignLeft,   false, "prj_owner_username");
     list()->addColumn(tr("Assigned To"),   _userColumn,  Qt::AlignLeft,   true,  "prj_username");
-    list()->addColumn(tr("CRM Account/Customer"),   _userColumn,  Qt::AlignLeft,   true,  "customer");
+    list()->addColumn(tr("Account/Customer"),   _userColumn,  Qt::AlignLeft,   true,  "customer");
     list()->addColumn(tr("Contact"),       _userColumn,  Qt::AlignLeft,   false,  "contact");
     list()->addColumn(tr("City"),       -1,  Qt::AlignLeft,   false,  "city");
     list()->addColumn(tr("State"),       -1,  Qt::AlignLeft,   false,  "state");
@@ -136,7 +136,7 @@ void projects::sBuildList()
     list()->addColumn(tr("Project Type"),        _itemColumn,  Qt::AlignCenter, true,  "project_type" );
     list()->addColumn(tr("Owner"),         _userColumn,  Qt::AlignLeft,   true, "prj_owner_username");
     list()->addColumn(tr("Assigned To"),   _userColumn,  Qt::AlignLeft,   true,  "prj_username");
-    list()->addColumn(tr("CRM Account"),   _userColumn,  Qt::AlignLeft,   true,  "crmacct_name");
+    list()->addColumn(tr("Account"),   _userColumn,  Qt::AlignLeft,   true,  "crmacct_name");
     list()->addColumn(tr("Contact"),       _userColumn,  Qt::AlignLeft,   true,  "cntct_name");
     list()->addColumn(tr("City"),       -1,  Qt::AlignLeft,   true,  "addr_city");
     list()->addColumn(tr("State"),       -1,  Qt::AlignLeft,   true,  "addr_state");

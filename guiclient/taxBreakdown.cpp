@@ -245,9 +245,9 @@ void taxBreakdown::sPopulate()
   }
   else if (_ordertype == "CM")
   {
-    _currencyLit->setText(tr("Credit Memo Currency:"));
-    _header->setText(tr("Tax Breakdown for Credit Memo:"));
-    _totalLit->setText(tr("Credit Memo Total:"));
+    _currencyLit->setText(tr("Return Currency:"));
+    _header->setText(tr("Tax Breakdown for Return:"));
+    _totalLit->setText(tr("Return Total:"));
 
     params.append("cmhead_id", _orderid);
   }

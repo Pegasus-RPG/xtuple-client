@@ -155,7 +155,7 @@
    </font>
    <left/>
    <vcenter/>
-   <string>CRM Account</string>
+   <string>Account</string>
   </label>
   <label>
    <rect>
@@ -278,7 +278,7 @@
    </font>
    <left/>
    <vcenter/>
-   <string>CRM Account</string>
+   <string>Account</string>
   </label>
   <line>
    <xstart>5</xstart>

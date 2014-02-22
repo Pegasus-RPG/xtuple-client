@@ -19,5 +19,5 @@ CmheadCluster::CmheadCluster(QWidget* pParent, const char* pName) :
 CmheadClusterLineEdit::CmheadClusterLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "cmhead", "cmhead_id", "cmhead_number", "cmhead_invcnumber", 0, 0, pName)
 {
-    setTitles(tr("Credit Memo"), tr("Credit Memos"));
+    setTitles(tr("Return"), tr("Returns"));
 }

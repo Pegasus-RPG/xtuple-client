@@ -54,7 +54,7 @@ const struct {
                             "it is already associated with an Opportunity.  You must "
                             "detach this Sales Order before you may attach it."),    0, "" },
 
-  { "changeCMHeadTaxAuth", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Credit Memo was not found."),	0, "" },
+  { "changeCMHeadTaxAuth", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Return was not found."),	0, "" },
   { "changeCMHeadTaxAuth", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Tax Authority was not found."),	0, "" },
 
   { "changeInvoiceTaxZone", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Invoice was not found."),	0, "" },
@@ -246,29 +246,29 @@ const struct {
 				 "Item in its own BOM. You may not create a "
 				 "recursive BOM."),			0, "" },
 
-  { "createCrmAcct",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This CRM Account Number is already in use by "
-			       "an existing CRM Account. Please choose a "
+  { "createCrmAcct",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Account Number is already in use by "
+			       "an existing Account. Please choose a "
 			       "different number and save again."),	0, "" },
-  { "createCrmAcct",	-2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This CRM Account Number is already in use by "
+  { "createCrmAcct",	-2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Account Number is already in use by "
 			       "an existing Customer. Please choose a different"
 			       " number and save again."),		0, "" },
-  { "createCrmAcct",	-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This CRM Account Number is already in use by "
+  { "createCrmAcct",	-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Account Number is already in use by "
 			       "an existing Prospect. Please choose a different"
 			       " number and save again."),		0, "" },
-  { "createCrmAcct",	-6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This CRM Account Number is already in use by "
+  { "createCrmAcct",	-6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Account Number is already in use by "
 			       "an existing Vendor. Please choose a different"
 			       " number and save again."),		0, "" },
-  { "createCrmAcct",	-7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This CRM Account Number is already in use by "
+  { "createCrmAcct",	-7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Account Number is already in use by "
 			       "an existing Tax Authority. Please choose a "
 			       "different number and save again."),	0, "" },
 
   { "createProspect",	 -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot create a Prospect because there is no "
-				"CRM Account to tie it to."),
+				"Account to tie it to."),
 								0, "" },
-  { "createProspect",	 -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot create a Prospect for this CRM Account "
+  { "createProspect",	 -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot create a Prospect for this Account "
 				"because it is already a Customer."),
 								0, "" },
-  { "createProspect",    -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot create a Prospect for this CRM Account "
+  { "createProspect",    -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot create a Prospect for this Account "
 				"because it is already a Prospect."),
 								0, "" },
   { "createPurchaseToSale", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "SO Header Information related to this SO Item not found!"),	0, "" },
@@ -290,61 +290,61 @@ const struct {
   { "createWo",	-2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Work Order can not be exploded because items on "
 			       "the BOM exist without itemsites."),	0, "" }, 
 
-  { "deleteAccount",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected G/L Account cannot be deleted as it "
+  { "deleteAccount",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Ledger Account cannot be deleted as it "
                              "is currently used in one or more Cost Categories."
                              "  You must reassign these Cost Category "
                              "assignments before you may delete the selected "
-                             "G/L Account."),                           0, "" },
-  { "deleteAccount",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected G/L Account cannot be deleted as it "
+                             "Ledger Account."),                           0, "" },
+  { "deleteAccount",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Ledger Account cannot be deleted as it "
                              "is currently used in one or more Sales Account "
                              "Assignment. You must reassign these Sales "
                              "Account Assignments before you may delete "
-                             "the selected G/L Account."),              0, "" },
-  { "deleteAccount",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected G/L Account cannot be deleted as it "
+                             "the selected Ledger Account."),              0, "" },
+  { "deleteAccount",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Ledger Account cannot be deleted as it "
                              "is currently used in one or more Customer A/R "
                              "Account assignments. You must reassign these "
                              "Customer A/R Account assignments before you may "
-                             "delete the selected G/L Account."),       0, "" },
-  { "deleteAccount",  -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected G/L Account cannot be deleted as it "
+                             "delete the selected Ledger Account."),       0, "" },
+  { "deleteAccount",  -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Ledger Account cannot be deleted as it "
                              "is currently used as the default Account one or "
                              "more Sites. You must reassign the default "
                              "Account for these Sites before you may delete "
-                             "the selected G/L Account."),              0, "" },
-  { "deleteAccount",  -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected G/L Account cannot be deleted as it "
+                             "the selected Ledger Account."),              0, "" },
+  { "deleteAccount",  -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Ledger Account cannot be deleted as it "
                              "is currently used in one or more Bank Accounts. "
                              "You must reassign these Bank Accounts before you "
-                             "may delete the selected G/L Account."),   0, "" },
-  { "deleteAccount",  -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected G/L Account cannot be deleted as it "
+                             "may delete the selected Ledger Account."),   0, "" },
+  { "deleteAccount",  -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Ledger Account cannot be deleted as it "
                              "is currently used in one or more Expense "
                              "Categories. You must reassign these Expense "
                              "Categories before you may delete the selected "
-                             "G/L Account."),                           0, "" },
-  { "deleteAccount",  -7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected G/L Account cannot be deleted as it "
+                             "Ledger Account."),                           0, "" },
+  { "deleteAccount",  -7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Ledger Account cannot be deleted as it "
                              "is currently used in one or more Tax Codes. "
                              "You must reassign these Tax Codes before you "
-                             "may delete the selected G/L Account."),   0, "" },
-  { "deleteAccount",  -8, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected G/L Account cannot be deleted as it "
+                             "may delete the selected Ledger Account."),   0, "" },
+  { "deleteAccount",  -8, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Ledger Account cannot be deleted as it "
                              "is currently used in one or more Standard "
                              "Journals. You must reassign these Standard "
                              "Journal Items before you may delete the selected "
-                             "G/L Account."),                           0, "" },
-  { "deleteAccount",  -9, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected G/L Account cannot be deleted as it "
+                             "Ledger Account."),                           0, "" },
+  { "deleteAccount",  -9, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Ledger Account cannot be deleted as it "
                              "is currently used in one or more Customer A/P "
                              "Account assignments. You must reassign these "
                              "Customer A/P Account assignments before you may "
-                             "delete the selected G/L Account."),       0, "" },
-  { "deleteAccount", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected G/L Account cannot be deleted as it "
+                             "delete the selected Ledger Account."),       0, "" },
+  { "deleteAccount", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Ledger Account cannot be deleted as it "
                              "is currently used in one or more Currency "
                              "definition. You must reassign these Currency "
                              "definitions before you may delete the selected "
-                             "G/L Account."),                           0, "" },
-  { "deleteAccount", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected G/L Account cannot be deleted as it "
+                             "Ledger Account."),                           0, "" },
+  { "deleteAccount", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Ledger Account cannot be deleted as it "
                              "is currently used in one or more A/R Open Items. "
                              "You must reassign these Currency definitions "
-                             "before you may delete the selected G/L Account."),
+                             "before you may delete the selected Ledger Account."),
                                                                         0, "" },
-  { "deleteAccount", -99, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected G/L Account cannot be deleted as "
-                             "there have been G/L Transactions posted "
+  { "deleteAccount", -99, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Ledger Account cannot be deleted as "
+                             "there have been Ledger Transactions posted "
                              "against it."),                            0, "" },
 
   { "deleteAccountingPeriod", -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Accounting Period has G/L "
@@ -413,7 +413,7 @@ const struct {
 			       					 0, "" },
   { "deleteCharacteristic",
 			-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Characteristic cannot be deleted "
-			       "because there are CRM Accounts assigned to "
+			       "because there are Accounts assigned to "
 			       "it. You must remove these assignments before "
 			       "you may delete the selected Characteristic."),
 			       					 0, "" },
@@ -430,7 +430,7 @@ const struct {
 			       "you may delete the selected Characteristic."),
 			       					 0, "" },
 
-  { "deleteCheck", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot delete this check because either it has not "
+  { "deleteCheck", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot delete this Payment because either it has not "
                           "been voided, it has already been posted or replaced,"
                           " or it has been transmitted electronically."),
 			           					0, "" },
@@ -447,7 +447,7 @@ const struct {
 
   { "deleteContact",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Contact cannot be deleted as "
 			       "s/he is the primary or secondary Contact "
-			       " for a CRM Account."),		 0, "" },
+			       " for a Account."),		 0, "" },
   { "deleteContact",	-2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Contact cannot be deleted as "
 			       "s/he is the Correspondence or Billing "
 			       "Contact for a Customer."),	 0, "" },
@@ -464,24 +464,24 @@ const struct {
 			       "s/he is the Contact for a Site."),
 								 0, "" },
 
-  { "deleteCRMAccount",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected CRM Account cannot be deleted as "
+  { "deleteCRMAccount",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Account cannot be deleted as "
 			       "it is a Customer."),		 0, "" },
-  { "deleteCRMAccount",	-2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected CRM Account cannot be deleted as "
+  { "deleteCRMAccount",	-2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Account cannot be deleted as "
 			       "it is a Vendor."),		 0, "" },
-  { "deleteCRMAccount",	-3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected CRM Account cannot be deleted as "
+  { "deleteCRMAccount",	-3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Account cannot be deleted as "
 			       "it is a Prospect."),		 0, "" },
-  { "deleteCRMAccount",	-4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected CRM Account cannot be deleted as "
+  { "deleteCRMAccount",	-4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Account cannot be deleted as "
 			       "it has Contacts. You may Detach the Contacts "
-			       "from this CRM Account and try deleting it "
+			       "from this Account and try deleting it "
 			       "again or set its status to inactive"),
 								 0, "" },
-  { "deleteCRMAccount",	-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected CRM Account cannot be deleted as "
+  { "deleteCRMAccount",	-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Account cannot be deleted as "
 			       "it is a Tax Authority."),	 0, "" },
-  { "deleteCRMAccount",	-6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected CRM Account cannot be deleted as "
+  { "deleteCRMAccount",	-6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Account cannot be deleted as "
 			       "it is a Sales Rep."),	        0, "" },
-  { "deleteCRMAccount",	-7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected CRM Account cannot be deleted as "
+  { "deleteCRMAccount",	-7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Account cannot be deleted as "
 			       "it is a Employee."),	        0, "" },
-  { "deleteCRMAccount",	-8, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected CRM Account cannot be deleted as "
+  { "deleteCRMAccount",	-8, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Account cannot be deleted as "
 			       "it is a User."),	        0, "" },
 
   { "deleteCustomer",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Customer cannot be deleted as there "
@@ -493,11 +493,11 @@ const struct {
 			       "for this Customer. You may Edit the "
 			       "selected Customer and set its status to "
 			       "inactive."),			 0, "" }, //Purchase Orders
-  { "deleteCustomer",	-3, "Credit Memos",		-2, "" },
+  { "deleteCustomer",	-3, "Returns",		-2, "" },
   { "deleteCustomer",	-4, "custhist",		-2, "" },
   { "deleteCustomer",	-5, "A/R Open",		-2, "" },
   { "deleteCustomer",	-6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Customer cannot be deleted as "
-			       "Checks have been written to it."),	0, "" },
+			       "Payments have been written to it."),	0, "" },
   { "deleteCustomer",   -7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Customer cannot be deleted as there "
                                "are still Invoices assigned to it. You must "
                                "delete all of the selected Customer's Invoices "
@@ -636,7 +636,7 @@ const struct {
 			       "selected Shipto and set its status to "
 			       "inactive."),			 0, "" },
   { "deleteShipto",	-3, "The selected Shipto cannot be deleted "
-			       "as there has been Credit Memos recorded "
+			       "as there has been Returns recorded "
 			       "for this Shipto. You may Edit the "
 			       "selected Shipto and set its status to "
 			       "inactive.",		-2, "" },
@@ -727,7 +727,7 @@ const struct {
 				 "delete those Tax Selections before deleting "
 				 "this Tax Authority."),		0, "" },
   { "deleteTaxAuthority", -7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Tax Authority cannot be deleted as "
-				 "Checks have been written to it."),	0, "" },
+				 "Payments have been written to it."),	0, "" },
 
   { "deleteTaxClass", -1,	QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Tax Class cannot be deleted as there are "
 			   "Tax Codes that refer to it."),	0, "" },
@@ -771,7 +771,7 @@ const struct {
 			       "You may deactivate this Vendor instead."),
 								 0, "" },
   { "deleteVendor",	-7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Vendor cannot be deleted as there "
-			       "have been Checks posted against it. "
+			       "have been Payments posted against it. "
 			       "You may deactivate this Vendor instead."),
 								 0, "" },
 
@@ -1000,19 +1000,19 @@ const struct {
 				 "is nothing to post."),		0, "" },
 
   { "postBankReconciliation", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Bank Reconciliation could not be "
-				     "posted because the G/L Account could not "
+				     "posted because the Ledger Account could not "
 				     "be verified."),		0, "" },
   { "createInvoice",
-			-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Billing Selection cannot be posted "
+			-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Billing Approval cannot be posted "
 			       "because it has already been posted."),	0, "" },
 
   { "createInvoices",
-                -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The G/L Account Assignments for one or more of the "
-                       "Billing Selections that you are trying to post are not "
+                -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Ledger Account Assignments for one or more of the "
+                       "Billing Approvals that you are trying to post are not "
                        "configured correctly. Therefore, G/L Transactions "
                        "cannot be posted for these. You must contact your "
                        "Systems Administrator to have this corrected before "
-                       "you may post these Billing Selections."),       0, "" },
+                       "you may post these Billing Approvals."),       0, "" },
 
   { "postCashReceipt", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Cash Receipt cannot be posted as "
 			      "the amount distributed is greater than the "
@@ -1057,13 +1057,13 @@ const struct {
                             "credit card payment records is not for a refund."),
                                                                         0, "" },
 
-  { "postCheck",  -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post this Check because it has already "
+  { "postCheck",  -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post this Payment because it has already "
 			 "been posted."),				0, "" },
-  { "postCheck",  -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post this Check because the recipient "
+  { "postCheck",  -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post this Payment because the recipient "
 			 "type is not valid."),				0, "" },
-  { "postCheck",  -12, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post this Check because the Expense "
+  { "postCheck",  -12, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post this Payment because the Expense "
 			 "Category could not be found."),		0, "" },
-  { "postCheck",  -13, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post this Check because the G/L Account "
+  { "postCheck",  -13, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post this Payment because the Ledger Account "
 			 "against which it is to be posted is not valid."),
 			 						0, "" },
   { "postCountTag",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup",
@@ -1088,37 +1088,37 @@ const struct {
   { "postCountTagLocation", -3, "", -3, "postCountTag" },
   { "postCountTagLocation", -4, "", -4, "postCountTag" },
 
-  { "postCreditMemo",	-10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Credit Memo cannot be posted because it "
+  { "postCreditMemo",	-10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Return cannot be posted because it "
 			       "has already been posted."),	 0, "" },
-  { "postCreditMemo",	-11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Credit Memo is on Hold and, thus, cannot "
+  { "postCreditMemo",	-11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Return is on Hold and, thus, cannot "
 			       "be posted."),			 0, "" },
-  { "postCreditMemo",	-12, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Sales Account Assignment for this Credit "
-			       "Memo is not configured correctly. Because of "
+  { "postCreditMemo",	-12, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Sales Account Assignment for this Return "
+			       "is not configured correctly. Because of "
 			       "this, G/L Transactions cannot be posted for "
-			       "this Credit Memo. You must contact your "
+			       "this Return. You must contact your "
 			       "Systems Administrator to have this corrected "
-			       "before you may post this Credit Memo."),
+			       "before you may post this Return."),
 								 0, "" },
-  { "postCreditMemo",	-14, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Misc. Charge Account Assignment for this Credit "
-			       "Memo is not configured correctly. Because of "
+  { "postCreditMemo",	-14, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Misc. Charge Account Assignment for this Return "
+			       "is not configured correctly. Because of "
 			       "this, G/L Transactions cannot be posted for "
-			       "this Credit Memo. You must contact your "
+			       "this Return. You must contact your "
 			       "Systems Administrator to have this corrected "
-			       "before you may post this Credit Memo."),
+			       "before you may post this Return."),
 								 0, "" },
-  { "postCreditMemo",	-16, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Freight Account Assignment for this Credit "
-			       "Memo is not configured correctly. Because of "
+  { "postCreditMemo",	-16, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Freight Account Assignment for this Return "
+			       "is not configured correctly. Because of "
 			       "this, G/L Transactions cannot be posted for "
-			       "this Credit Memo. You must contact your "
+			       "this Return. You must contact your "
 			       "Systems Administrator to have this corrected "
-			       "before you may post this Credit Memo."),
+			       "before you may post this Return."),
 								 0, "" },
-  { "postCreditMemo",	-18, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The A/R Account Assignment for this Credit "
-			       "Memo is not configured correctly. Because of "
+  { "postCreditMemo",	-18, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The A/R Account Assignment for this Return "
+			       "is not configured correctly. Because of "
 			       "this, G/L Transactions cannot be posted for "
-			       "this Credit Memo. You must contact your "
+			       "this Return. You must contact your "
 			       "Systems Administrator to have this corrected "
-			       "before you may post this Credit Memo."),
+			       "before you may post this Return."),
 								 0, "" },
 
   { "postGLSeries", -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not post this G/L Series because the "
@@ -1273,7 +1273,7 @@ const struct {
 
   { "replaceAllVoidedChecks", -1, "", -1, "replaceVoidedCheck" },
 
-  { "replaceVoidedCheck", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot replace this voided check because "
+  { "replaceVoidedCheck", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot replace this voided Payment because "
 				 "either it has not been voided, it has "
 				 "already been posted, or it has already been"
 				 "replaced."), 0, "" },
@@ -1337,7 +1337,7 @@ const struct {
 
   { "saveAlarm", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An alarm for this item already exists."), 0, "" },
 
-  { "selectForBilling",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The quantity you have selected for Billing is "
+  { "selectForBilling",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The quantity you have approved for Billing is "
 			       "less than the quantity shipped. You may not "
 			       "bill for less than the quantity shipped."),
 								0, "" },
@@ -1446,10 +1446,10 @@ const struct {
 			       "an invalid internal ID was supplied ."),
 								 0, "" },
 
-  { "voidCheck", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot void this check because either it has already "
+  { "voidCheck", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot void this Payment because either it has already "
 			"been voided, posted, or replaced, or it has been "
-			"transmitted electronically. If this check has been "
-			"posted, try Void Posted Check with the Check Register "
+			"transmitted electronically. If this Payment has been "
+			"posted, try Void Posted Payment with the Payment Register "
 			"window."),					0, "" },
 
   { "voidCreditMemo",  -1, "", -1, "insertIntoGLSeries" },
@@ -1472,25 +1472,25 @@ const struct {
   { "voidInvoice", -20, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Invoice because there "
                          "A/R Applications posted against this Invoice."), 0, "" },
 
-  { "voidPostedCheck", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot void this check because it has already "
+  { "voidPostedCheck", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot void this Payment because it has already "
 			       "been voided."),				0, "" },
-  { "voidPostedCheck", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot void this check because the recipient "
+  { "voidPostedCheck", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot void this Payment because the recipient "
 			       "type is not valid."),			0, "" },
-  { "voidPostedCheck", -12, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot void this check because the Expense "
+  { "voidPostedCheck", -12, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot void this Payment because the Expense "
 			       "Category could not be found."),		0, "" },
-  { "voidPostedCheck", -13, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot void this check because the G/L account "
+  { "voidPostedCheck", -13, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot void this Payment because the Ledger Account "
 			       "to which the funds should be credited is not "
 			       "valid."),				0, "" },
-  { "voidPostedCheck", -14, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot void this check because the check has "
+  { "voidPostedCheck", -14, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot void this Payment because the Payment has "
 			       "has been reconciled in Bank Reconciliation."),		0, "" },
 
-  { "replaceVoidedCheck", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot replace a check that is not voided "
+  { "replaceVoidedCheck", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot replace a Payment that is not voided "
                                  "or has already been posted or replaced."),
                                                                         0, "" },
-  { "replaceVoidedCheck", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot replace this voided check because "
-                                 "one of its line items has been reselected "
+  { "replaceVoidedCheck", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot replace this voided Payment because "
+                                 "one of its line items has been reapproved "
                                  "for billing and is represented on another "
-                                 "check."),                             0, "" },
+                                 "Payment."),                             0, "" },
 
   { "reserveSoLineBalance", -1, "", -1, "reserveSoLineQty" },
   { "reserveSoLineBalance", -2, "", -2, "reserveSoLineQty" },

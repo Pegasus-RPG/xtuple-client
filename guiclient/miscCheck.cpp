@@ -97,25 +97,25 @@ void miscCheck::sSave()
   XSqlQuery check;
   if (!_date->isValid())
   {
-    QMessageBox::warning( this, tr("Cannot Create Miscellaneous Check"),
-                          tr("<p>You must enter a date for this check.") );
+    QMessageBox::warning( this, tr("Cannot Create Miscellaneous Payment"),
+                          tr("<p>You must enter a date for this payment.") );
     _date->setFocus();
     return;
   }
   
   if (_amount->isZero())
   {
-    QMessageBox::warning( this, tr("Cannot Create Miscellaneous Check"),
-                          tr("<p>You must enter an amount for this check.") );
+    QMessageBox::warning( this, tr("Cannot Create Miscellaneous Payment"),
+                          tr("<p>You must enter an amount for this payment.") );
     _date->setFocus();
     return;
   }
 
   if ( (_applytocm->isChecked()) && (_cmCluster->id() == -1) )
   {
-    QMessageBox::warning( this, tr("Cannot Create Miscellaneous Check"),
+    QMessageBox::warning( this, tr("Cannot Create Miscellaneous Payment"),
                           tr("<p>You must select a Credit Memo for this "
-			     "expensed check.") );
+			     "expensed payment.") );
     _expcat->setFocus();
     return;
   }
@@ -132,9 +132,9 @@ void miscCheck::sSave()
  
   if ( (_expense->isChecked()) && (_expcat->id() == -1) )
   {
-    QMessageBox::warning( this, tr("Cannot Create Miscellaneous Check"),
+    QMessageBox::warning( this, tr("Cannot Create Miscellaneous Payment"),
                           tr("<p>You must select an Expense Category for this "
-			     "expensed check.") );
+			     "expensed payment.") );
     _expcat->setFocus();
     return;
   }

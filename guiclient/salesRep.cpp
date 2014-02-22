@@ -255,9 +255,9 @@ bool salesRep::save()
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Database Error"),
                                 crmq, __FILE__, __LINE__))
     return false;
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("CRM Account Error"),
-                          tr("<p>The Sales Rep should now have a CRM Account, "
-                             "but that CRM Account could not be found. Please "
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Account Error"),
+                          tr("<p>The Sales Rep should now have a Account, "
+                             "but that Account could not be found. Please "
                              "check the database server log for errors.")))
     return false;
 
@@ -299,7 +299,7 @@ void salesRep::sCrmaccount()
     params.append("mode", "edit");
   else
   {
-    qWarning("tried to open CRM Account window without privilege");
+    qWarning("tried to open Account window without privilege");
     return;
   }
   params.append("modal");

@@ -1782,8 +1782,8 @@ void returnAuthorization::sRefund()
     if (ccq.first())
     {
       int ccpayid = ccq.value("ccpay_id").toInt();
-      QMessageBox::information( this, tr("New Credit Memo Created"),
-                                tr("<p>A new CreditMemo has been created and "
+      QMessageBox::information( this, tr("New Return Created"),
+                                tr("<p>A new Return has been created and "
                                    "assigned #%1")
                                    .arg(ccq.value("cmhead_number").toString()));
       CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
@@ -1863,7 +1863,7 @@ void returnAuthorization::sRefund()
   else if (cmq.lastError().type() != QSqlError::NoError)
   {
     XSqlQuery rollback("ROLLBACK;");
-    ErrorReporter::error(QtCriticalMsg, this, tr("Creating R/A Credit Memo"),
+    ErrorReporter::error(QtCriticalMsg, this, tr("Creating R/A Return"),
                          cmq, __FILE__, __LINE__);
     return;
   }

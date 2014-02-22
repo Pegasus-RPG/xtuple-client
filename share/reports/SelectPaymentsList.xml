@@ -1,6 +1,6 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Select Payments List</title>
+ <title>Approve Payments List</title>
  <name>SelectPaymentsList</name>
  <description></description>
  <size>Letter</size>
@@ -147,7 +147,7 @@ ORDER BY apopen_duedate, amount DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Selected</string>
+   <string>Approved</string>
   </label>
   <label>
    <rect>
@@ -269,7 +269,7 @@ ORDER BY apopen_duedate, amount DESC;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Select Payments List</string>
+   <string>Approve Payments List</string>
   </label>
   <label>
    <rect>
@@ -340,7 +340,7 @@ ORDER BY apopen_duedate, amount DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Selected</string>
+   <string>Approved</string>
   </label>
   <label>
    <rect>

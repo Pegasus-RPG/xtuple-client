@@ -1,6 +1,6 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>CRM Accounts Master List</title>
+ <title>Accounts Master List</title>
  <name>CRMAccountMasterList</name>
  <description></description>
  <grid>
@@ -123,7 +123,7 @@
    </font>
    <right/>
    <vcenter/>
-   <string>CRM Accounts</string>
+   <string>Accounts</string>
   </label>
   <label>
    <rect>

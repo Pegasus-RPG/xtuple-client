@@ -28,7 +28,7 @@ to be bound by its terms.</comment>
        <item>
         <widget class="QLabel" name="_glAccountNumbersLit">
          <property name="text">
-          <string>&amp;G/L Account Numbers:</string>
+          <string>&amp;Ledger Account Numbers:</string>
          </property>
          <property name="buddy">
           <cstring>_account</cstring>

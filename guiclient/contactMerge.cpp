@@ -338,7 +338,7 @@ void contactMerge::sPopulateSrcMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int pC
   QString menuStr;
 
   if (pCol == 2 || pCol == 3)
-    col = tr("CRM Account");
+    col = tr("Account");
   else if (pCol == 4)
     col = tr("Honorific");
   else if (pCol == 5)

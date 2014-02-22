@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>User Information</string>
+   <string>User Account Information</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
@@ -78,7 +78,7 @@ to be bound by its terms.</comment>
             <bool>false</bool>
            </property>
            <property name="text">
-            <string>CRM Account...</string>
+            <string>Account...</string>
            </property>
           </widget>
          </item>
@@ -201,7 +201,7 @@ to be bound by its terms.</comment>
          <item>
           <widget class="QCheckBox" name="_createUsers">
            <property name="text">
-            <string>Can Create System Users</string>
+            <string>Can Create System User Accounts</string>
            </property>
           </widget>
          </item>

@@ -316,7 +316,7 @@ bool configureGL::sSave()
     if (configureSave.first())
     {
       QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
-                            "You must assign G/L Accounts to all Cost Categories");
+                            "You must assign Ledger Accounts to all Cost Categories");
       return false;
     }
     if (_metrics->boolean("MultiWhs") && _metrics->boolean("Transforms"))
@@ -329,7 +329,7 @@ bool configureGL::sSave()
       if (configureSave.first())
       {
         QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
-                              "You must assign a Transform Clearing G/L Account to all Cost Categories");
+                              "You must assign a Transform Clearing Ledger Account to all Cost Categories");
         return false;
       }
     }
@@ -343,7 +343,7 @@ bool configureGL::sSave()
       if (configureSave.first())
       {
         QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
-                              "You must assign a Transfer Order Liability Clearing G/L Account to all Cost Categories");
+                              "You must assign a Transfer Order Liability Clearing Ledger Account to all Cost Categories");
         return false;
       }
     }
@@ -357,7 +357,7 @@ bool configureGL::sSave()
       if (configureSave.first())
       {
         QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
-                              "You must assign a Labor and Overhead Costs G/L Account to all Cost Categories");
+                              "You must assign a Labor and Overhead Costs Ledger Account to all Cost Categories");
         return false;
       }
     }
@@ -379,7 +379,7 @@ bool configureGL::sSave()
     if (configureSave.first())
     {
       QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
-                            "You must assign G/L Accounts to all Expense Categories");
+                            "You must assign Ledger Accounts to all Expense Categories");
       return false;
     }
     configureSave.exec("SELECT apaccnt_id "
@@ -394,7 +394,7 @@ bool configureGL::sSave()
     if (configureSave.first())
     {
       QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
-                            "You must assign G/L Accounts to all Payables Assignments");
+                            "You must assign Ledger Accounts to all Payables Assignments");
       return false;
     }
   }
@@ -415,7 +415,7 @@ bool configureGL::sSave()
     if (configureSave.first())
     {
       QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
-                            "You must assign G/L Accounts to all Receivables Assignments");
+                            "You must assign Ledger Accounts to all Receivables Assignments");
       return false;
     }
     if (_metrics->boolean("EnableCustomerDeposits"))
@@ -428,7 +428,7 @@ bool configureGL::sSave()
       if (configureSave.first())
       {
         QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
-                              "You must assign a Deferred Revenue G/L Account to all Receivables Assignments");
+                              "You must assign a Deferred Revenue Ledger Account to all Receivables Assignments");
         return false;
       }
     }
@@ -444,7 +444,7 @@ bool configureGL::sSave()
     if (configureSave.first())
     {
       QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
-                            "You must assign G/L Accounts to all Sales Assignments");
+                            "You must assign Ledger Accounts to all Sales Assignments");
       return false;
     }
     if (_metrics->boolean("EnableReturnAuth"))
@@ -461,7 +461,7 @@ bool configureGL::sSave()
       if (configureSave.first())
       {
         QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
-                              "You must assign a Returns G/L Account to all Sales Assignments");
+                              "You must assign a Returns Ledger Account to all Sales Assignments");
         return false;
       }
     }
@@ -477,7 +477,7 @@ bool configureGL::sSave()
     if (configureSave.first())
     {
       QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
-                            "You must assign G/L Accounts to all Sales Categories");
+                            "You must assign Ledger Accounts to all Sales Categories");
       return false;
     }
   }
@@ -556,7 +556,7 @@ bool configureGL::sSave()
       if (check.first())
       {
         QMessageBox::critical(this, tr("Cannot turn off Profit Centers"),
-                              "Turning off Profit Centers would result in duplicate G/L Accounts.");
+                              "Turning off Profit Centers would result in duplicate Ledger Accounts.");
         return false;
       }
     }
@@ -598,7 +598,7 @@ bool configureGL::sSave()
       if (check.first())
       {
         QMessageBox::critical(this, tr("Cannot turn off Subaccounts"),
-                              "Turning off Subaccounts would result in duplicate G/L Accounts.");
+                              "Turning off Subaccounts would result in duplicate Ledger Accounts.");
         return false;
       }
     }
@@ -619,7 +619,7 @@ bool configureGL::sSave()
     if (check.first())
     {
       QMessageBox::critical(this, tr("Cannot turn off Profit Centers and Subaccounts"),
-                            "Turning off both Profit Centers and Subaccounts would result in duplicate G/L Accounts.");
+                            "Turning off both Profit Centers and Subaccounts would result in duplicate Ledger Accounts.");
       return false;
     }
   }

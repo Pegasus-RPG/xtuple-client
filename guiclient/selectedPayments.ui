@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>List Selected Payments</string>
+   <string>List Approved Payments</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3" >
    <item row="0" column="0" >
@@ -206,7 +206,7 @@ to be bound by its terms.</comment>
           <item>
            <widget class="QLabel" name="_paymentSelectionsLit" >
             <property name="text" >
-             <string>Payment Selections:</string>
+             <string>Payment Approvals:</string>
             </property>
            </widget>
           </item>
@@ -251,7 +251,7 @@ to be bound by its terms.</comment>
                    <bool>false</bool>
                   </property>
                   <property name="text" >
-                   <string>Clear Selection</string>
+                   <string>Clear Approval</string>
                   </property>
                   <property name="autoDefault" >
                    <bool>false</bool>

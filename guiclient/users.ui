@@ -19,7 +19,7 @@ to be bound by its terms.</comment>
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>List Users</string>
+      <string>List User Accounts</string>
     </property>
       <layout class="QHBoxLayout" >
         <item>
@@ -57,7 +57,7 @@ to be bound by its terms.</comment>
                 <item>
                   <widget class="QCheckBox" name="_showInactive" >
                     <property name="text" >
-                      <string>&amp;Show Inactive Users</string>
+                      <string>&amp;Show Inactive User Accounts</string>
                     </property>
                   </widget>
                 </item>
@@ -74,7 +74,7 @@ to be bound by its terms.</comment>
                 <item>
                   <widget class="QLabel" name="_usersLit" >
                     <property name="text" >
-                      <string>Users:</string>
+                      <string>User Accounts:</string>
                     </property>
                   </widget>
                 </item>

@@ -81,6 +81,7 @@ ParameterList printStatementByCustomer::getParams()
   params.append("docid",    _cust->id());
   params.append("cust_id",  _cust->id());
   params.append("invoice",  tr("Invoice"));
+  params.append("return",   tr("Return"));
   params.append("debit",    tr("Debit Memo"));
   params.append("credit",   tr("Credit Memo"));
   params.append("deposit",  tr("Deposit"));

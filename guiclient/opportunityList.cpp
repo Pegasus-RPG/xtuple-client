@@ -64,7 +64,7 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Assigned To"), "assigned_username", ParameterWidget::User);
   parameterWidget()->append(tr("Target Date on or After"), "startDate", ParameterWidget::Date);
   parameterWidget()->append(tr("Target Date on or Before"),   "endDate",   ParameterWidget::Date);
-  parameterWidget()->append(tr("CRM Account"), "crmacct_id",  ParameterWidget::Crmacct);
+  parameterWidget()->append(tr("Account"), "crmacct_id",  ParameterWidget::Crmacct);
   parameterWidget()->appendComboBox(tr("Type"), "optype_id", XComboBox::OpportunityTypes);
   parameterWidget()->append(tr("Type Pattern"), "optype_pattern",    ParameterWidget::Text);
   parameterWidget()->appendComboBox(tr("Source"), "opsource_id", XComboBox::OpportunitySources);

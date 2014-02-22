@@ -218,12 +218,12 @@ void ParameterGroup::setType(enum ParameterGroupTypes pType)
       break;
 
     case User:
-      _all->setText(QObject::tr("All Users"));
+      _all->setText(QObject::tr("All User Accounts"));
       _items->setType(XComboBox::Users);
 	  break;
 
     case ActiveUser:
-      _all->setText(QObject::tr("All Users"));
+      _all->setText(QObject::tr("All User Accounts"));
       _items->setType(XComboBox::ActiveUsers);
 	  break;
 

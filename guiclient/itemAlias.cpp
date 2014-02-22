@@ -118,7 +118,7 @@ void itemAlias::sSave()
   if (itemSave.first())
     errors << GuiErrorCheck(true, _number,
                             tr( "An Item Alias for the selected Item Number has already been defined\n"
-                                "with the selected Alias Item Number and CRM Account.\n"
+                                "with the selected Alias Item Number and Account.\n"
                                 "You may not create duplicate Item Aliases." ) );
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Item Alias"), errors))

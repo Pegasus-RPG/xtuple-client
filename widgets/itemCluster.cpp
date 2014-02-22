@@ -1189,7 +1189,7 @@ itemSearch::itemSearch(QWidget* pParent, Qt::WindowFlags pFlags)
   _listTab->addColumn(tr("Bar Code"),     100,  Qt::AlignLeft,  true, "item_upccode" );
   _listTab->addColumn(tr("Active"),        50,  Qt::AlignLeft,  true, "item_active" );
   _listTab->addColumn(tr("Alias Number"), 100,  Qt::AlignLeft,  true, "itemalias_number" );
-  _listTab->addColumn(tr("CRM Account"),  100,  Qt::AlignLeft,  true, "crmacct_name" );
+  _listTab->addColumn(tr("Account"),      100,  Qt::AlignLeft,  true, "crmacct_name" );
 }
 
 void itemSearch::set(const ParameterList &pParams)

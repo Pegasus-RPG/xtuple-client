@@ -1,8 +1,8 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Credit Memo</title>
+ <title>Return</title>
  <name>CreditMemo</name>
- <description>Sales Module Credit Memo with Logo and CM Currency</description>
+ <description>Sales Module Return with Logo and CM Currency</description>
  <parameter default="" active="true" listtype="dynamic" type="string" name="cmhead_id" >
   <description></description>
   <query>select cmhead_id, cmhead_number from cmhead;</query>
@@ -278,7 +278,7 @@ WHERE ((image_name='logo'));</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Credit Memo Currency</string>
+   <string>Return Currency</string>
   </label>
   <field>
    <rect>
@@ -438,7 +438,7 @@ WHERE ((image_name='logo'));</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Credit Memo #:</string>
+   <string>Return #:</string>
   </label>
   <field>
    <rect>
@@ -646,7 +646,7 @@ WHERE ((image_name='logo'));</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Credit Memo</string>
+   <string>Return</string>
   </label>
   <field>
    <rect>

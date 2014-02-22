@@ -26,7 +26,7 @@ alarmMaint::alarmMaint(QWidget* parent, const char* name, bool modal, Qt::WFlags
   setObjectName(name ? name : "alarmMaint");
   setModal(modal);
 
-  _userLookup = _buttonBox->addButton(tr("&User..."), QDialogButtonBox::ActionRole);
+  _userLookup = _buttonBox->addButton(tr("&User Account..."), QDialogButtonBox::ActionRole);
   _contactLookup = _buttonBox->addButton(tr("&Contact..."), QDialogButtonBox::ActionRole);
 
   // signals and slots connections

@@ -63,7 +63,7 @@ to be bound by its terms.</comment>
          </item>
          <item>
           <property name="text">
-           <string>CRM Account</string>
+           <string>Account</string>
           </property>
          </item>
          <item>
@@ -234,7 +234,7 @@ to be bound by its terms.</comment>
               <item>
                <widget class="CRMAcctCluster" name="_crmacct">
                 <property name="label">
-                 <string>CRM Account:</string>
+                 <string>Account:</string>
                 </property>
                </widget>
               </item>

@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Miscellaneous Check</string>
+   <string>Miscellaneous Payment</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="2">
@@ -64,7 +64,7 @@ to be bound by its terms.</comment>
    <item row="1" column="0">
     <widget class="QGroupBox" name="_recipGroup">
      <property name="title">
-      <string>Write Check To:</string>
+      <string>Write Payment To:</string>
      </property>
      <layout class="QGridLayout">
       <item row="0" column="0">

@@ -102,8 +102,8 @@ void printChecks::sPrint()
       printPrint.exec();
       if (printPrint.first())
       {
-        QMessageBox::information( this, tr("Check Number Already Used"),
-                                 tr("<p>A Check Number has already been used.") );
+        QMessageBox::information( this, tr("Payment Number Already Used"),
+                                 tr("<p>A Payment Number has already been used.") );
         return;
       }
       else if (printPrint.lastError().type() != QSqlError::NoError)
@@ -119,11 +119,11 @@ void printChecks::sPrint()
   
   if (_somerecips_eft_enabled &&
       QMessageBox::question(this, tr("Print Anyway?"),
-                            tr("<p>Some of the recipients of checks in this "
-                               "check run have been configured for EFT "
-                               "transactions. Do you want to print checks "
+                            tr("<p>Some of the recipients of payments in this "
+                               "payment run have been configured for EFT "
+                               "transactions. Do you want to print payments "
                                "for them anyway?<p>If you answer 'Yes' then "
-                               "a check will be printed. If you say 'No' then "
+                               "a payment will be printed. If you say 'No' then "
                                "you should click %1 first and <i>then</i> "
                                "click %2.")
                               .arg(_createEFT->text(), _print->text()),
@@ -289,8 +289,8 @@ void printChecks::sPrint()
 
     QList<int>::iterator it;
 
-    if ( QMessageBox::question(this, tr("All Checks Printed"),
-			       tr("<p>Did all the Checks print successfully?"),
+    if ( QMessageBox::question(this, tr("All Payments Printed"),
+			       tr("<p>Did all the Payments print successfully?"),
 				QMessageBox::Yes,
 				QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
     {
@@ -340,8 +340,8 @@ void printChecks::sPrint()
     }
   }
   else
-    QMessageBox::information( this, tr("No Checks Printed"),
-			     tr("<p>No Checks were printed for the selected "
+    QMessageBox::information( this, tr("No Payments Printed"),
+			     tr("<p>No Payments were printed for the selected "
 				"Bank Account.") );
 
   omfgThis->sChecksUpdated(_bankaccnt->id(), -1, TRUE);
@@ -401,15 +401,15 @@ void printChecks::sCreateEFT()
   XSqlQuery printCreateEFT;
   if (_somerecips_eft_enabled && !_allrecips_eft_enabled &&
       QMessageBox::question(this, tr("Print Anyway?"),
-                            tr("<p>Some but not all of the checks in this run "
+                            tr("<p>Some but not all of the Payments in this run "
                                "are for Vendors configured to receive EFT "
                                "transactions. Do you want to create the EFT "
                                "file anyway?<p>If you answer 'Yes' then an "
                                "EFT file will be created but you will have to "
                                "click Print to get the remainder of the "
-                               "checks in this run. If you say 'No' then you "
+                               "Payments in this run. If you say 'No' then you "
                                "will get a warning when you click Print "
-                               "asking whether you want to print checks for "
+                               "asking whether you want to print Payments for "
                                "EFT recipients."),
                             QMessageBox::Yes | QMessageBox::Default,
                             QMessageBox::No) == QMessageBox::No)

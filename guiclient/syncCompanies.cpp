@@ -808,7 +808,7 @@ void syncCompanies::sSync()
           }
 
           progress.setValue(progress.value()+1);
-        } // for each remote g/l account
+        } // for each remote ledger account
         if (raccnt.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();

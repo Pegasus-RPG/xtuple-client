@@ -111,7 +111,7 @@ Comments::Comments(QWidget *pParent, const char *name) :
   _comment->addColumn(tr("Date/Time"), _timeDateColumn, Qt::AlignCenter,true, "comment_date");
   _comment->addColumn(tr("Type"),    _itemColumn, Qt::AlignCenter,true, "type");
   _comment->addColumn(tr("Source"),  _itemColumn, Qt::AlignCenter,true, "comment_source");
-  _comment->addColumn(tr("User"),    _userColumn, Qt::AlignCenter,true, "comment_user");
+  _comment->addColumn(tr("User Account"),    _userColumn, Qt::AlignCenter,true, "comment_user");
   _comment->addColumn(tr("Comment"), -1,          Qt::AlignLeft,  true, "first");
   _comment->addColumn(tr("Public"),    _ynColumn, Qt::AlignLeft, false, "comment_public");
   hbox->addWidget(_comment);

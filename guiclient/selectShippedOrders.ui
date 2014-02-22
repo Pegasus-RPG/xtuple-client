@@ -17,7 +17,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Select Shipped Orders for Billing</string>
+   <string>Approve Shipped Orders for Billing</string>
   </property>
   <layout class="QGridLayout" name="gridLayout" >
    <item row="0" column="0" >
@@ -99,7 +99,7 @@ to be bound by its terms.</comment>
          <item>
           <widget class="QPushButton" name="_select" >
            <property name="text" >
-            <string>&amp;Select</string>
+            <string>&amp;Approve</string>
            </property>
            <property name="autoDefault" >
             <bool>true</bool>

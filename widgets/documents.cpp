@@ -519,7 +519,7 @@ void Documents::refresh()
   query.bindValue(":project", tr("Project"));
   query.bindValue(":projecttask", tr("Project Task")); 
   query.bindValue(":item", tr("Item"));
-  query.bindValue(":crma", tr("CRM Account"));
+  query.bindValue(":crma", tr("Account"));
   query.bindValue(":cust", tr("Customer"));
   query.bindValue(":vendor", tr("Vendor"));
   query.bindValue(":contact", tr("Contact"));

@@ -98,7 +98,7 @@ to be bound by its terms.</comment>
        <item>
         <widget class="CRMAcctCluster" name="_crmacct">
          <property name="label">
-          <string>Associated CRM Account</string>
+          <string>Associated Account</string>
          </property>
         </widget>
        </item>

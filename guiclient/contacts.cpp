@@ -44,7 +44,7 @@ contacts::contacts(QWidget* parent, const char*, Qt::WFlags fl)
     parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User);
     parameterWidget()->append(tr("Owner Pattern"), "owner_usr_pattern", ParameterWidget::Text);
   }
-  parameterWidget()->append(tr("CRM Account"), "crmacct_id", ParameterWidget::Crmacct);
+  parameterWidget()->append(tr("Account"), "crmacct_id", ParameterWidget::Crmacct);
   parameterWidget()->append(tr("Name Pattern"), "cntct_name_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Phone Pattern"), "cntct_phone_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Email Pattern"), "cntct_email_pattern", ParameterWidget::Text);
@@ -238,8 +238,8 @@ void contacts::sAttach()
     if (attached.crmAcctId() > 0 && attached.crmAcctId() != _crmacctid)
       answer = QMessageBox::question(this, tr("Detach Contact?"),
 			    tr("<p>This Contact is currently attached to a "
-			       "different CRM Account. Are you sure you want "
-			       "to change the CRM Account for this person?"),
+			       "different Account. Are you sure you want "
+			       "to change the Account for this person?"),
 			    QMessageBox::Yes, QMessageBox::No | QMessageBox::Default);
     if (answer == QMessageBox::Yes)
     {
@@ -270,7 +270,7 @@ void contacts::sDetach()
 {
   int answer = QMessageBox::question(this, tr("Detach Contact?"),
 			tr("<p>Are you sure you want to detach this Contact "
-			   "from this CRM Account?"),
+			   "from this Account?"),
 			QMessageBox::Yes, QMessageBox::No | QMessageBox::Default);
   if (answer == QMessageBox::Yes)
   {
@@ -285,7 +285,7 @@ void contacts::sDetach()
       int returnVal = detq.value("returnVal").toInt();
       if (returnVal < 0)
       {
-	systemError(this, tr("Error detaching Contact from CRM Account (%1).")
+	systemError(this, tr("Error detaching Contact from Account (%1).")
 			  .arg(returnVal), __FILE__, __LINE__);
 	return;
       }
@@ -304,13 +304,13 @@ void contacts::setCrmacctid(int crmacctId)
   _crmacctid = crmacctId;
   if (_crmacctid == -1)
   {
-    parameterWidget()->setDefault(tr("CRM Account"), QVariant(), true);
+    parameterWidget()->setDefault(tr("Account"), QVariant(), true);
     _attachAct->setVisible(false);
     _detachAct->setVisible(false);
   }
   else
   {
-    parameterWidget()->setDefault(tr("CRM Account"), _crmacctid, true);
+    parameterWidget()->setDefault(tr("Account"), _crmacctid, true);
     _attachAct->setVisible(true);
     _detachAct->setVisible(true);
   }

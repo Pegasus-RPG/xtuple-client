@@ -747,7 +747,7 @@ void creditMemo::sDelete()
     if (creditDelete.value("cmhead_posted").toBool())
     {
       QMessageBox::information(this, "Line Item cannot be delete",
-                               tr("<p>This Credit Memo has been Posted and "
+                               tr("<p>This Return has been Posted and "
 				"this cannot be modified.") );
       return;
     }

@@ -48,8 +48,8 @@ CrmaccountMergePurgePage::CrmaccountMergePurgePage(QWidget *parent)
   setupUi(this);
   _data = new CrmaccountMergePurgePagePrivate(this);
 
-  _completed->addColumn(tr("CRM Account Number"), _orderColumn, Qt::AlignLeft, true, "crmacct_number");
-  _completed->addColumn(tr("CRM Account Name"),             -1, Qt::AlignLeft, true, "crmacct_name");
+  _completed->addColumn(tr("Account Number"), _orderColumn, Qt::AlignLeft, true, "crmacct_number");
+  _completed->addColumn(tr("Account Name"),             -1, Qt::AlignLeft, true, "crmacct_name");
   _completed->addColumn(tr("Status"),                       -1, Qt::AlignLeft, true, "status");
 
   connect(_completed, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
@@ -78,7 +78,7 @@ void CrmaccountMergePurgePage::sDelete()
   if (QMessageBox::question(this, tr("Delete?"),
                             tr("<p>Are you sure you want to delete the "
                                "selected merge records?</p><p>Note that "
-                               "obsolete CRM Accounts will be deleted "
+                               "obsolete Accounts will be deleted "
                                "when purging completed merges.</p>"),
                             QMessageBox::No | QMessageBox::Default,
                             QMessageBox::Yes) == QMessageBox::No)
@@ -103,7 +103,7 @@ void CrmaccountMergePurgePage::sDeleteAll()
   if (QMessageBox::question(this, tr("Delete?"),
                             tr("<p>Are you sure you want to delete all "
                                "of these merge records?</p><p>Note that "
-                               "obsolete CRM Accounts will be deleted "
+                               "obsolete Accounts will be deleted "
                                "when purging completed merges.</p>"),
                             QMessageBox::No | QMessageBox::Default,
                             QMessageBox::Yes) == QMessageBox::No)

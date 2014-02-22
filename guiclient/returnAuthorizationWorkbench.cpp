@@ -259,8 +259,8 @@ void returnAuthorizationWorkbench::sProcess()
     returnProcess.exec();
     if (returnProcess.first())
     {
-      QMessageBox::information( this, tr("New Credit Memo Created"),
-                                tr("<p>A new CreditMemo has been created and "
+      QMessageBox::information( this, tr("New Return Created"),
+                                tr("<p>A new Return has been created and "
 				                   "assigned #%1")
                                    .arg(returnProcess.value("cmhead_number").toString()));
 	  if (_printmemo->isChecked())
@@ -325,7 +325,7 @@ void returnAuthorizationWorkbench::sProcess()
 	      QMessageBox::information(this, tr("Credit Card Processing Note"),
 				   cardproc->errorMsg());
 	  }
-	  // requery regardless 'cause the new credit memo means nothing's "due"
+	  // requery regardless 'cause the new return means nothing's "due"
 	  sFillListDue();
 	}
 	else if (ccq.lastError().type() != QSqlError::NoError)

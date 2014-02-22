@@ -32,7 +32,7 @@ class CrmaccountMergePickAccountsPagePrivate
       if (!ok)
         ErrorReporter::error(QtCriticalMsg, _parent,
                              QT_TRANSLATE_NOOP("CrmaccountMergePickAccountsPage",
-                                               "Error Getting CRM Accounts"),
+                                               "Error Getting Accounts"),
                              errmsg, __FILE__, __LINE__);
     }
 
@@ -261,7 +261,7 @@ void CrmaccountMergePickAccountsPage::sFillList()
   MetaSQLQuery mql(_data->_mqlstr);
   XSqlQuery qry = mql.toQuery(_filter->parameters());
   _sources->populate(qry);
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting CRM Account"),
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Account"),
                            qry, __FILE__, __LINE__))
     return;
 

@@ -303,7 +303,7 @@ ORDER BY addr_country, addr_state, addr_city,
    </font>
    <left/>
    <top/>
-   <string>CRM Account</string>
+   <string>Account</string>
   </label>
   <label>
    <rect>
@@ -410,7 +410,7 @@ ORDER BY addr_country, addr_state, addr_city,
    </font>
    <left/>
    <top/>
-   <string>CRM Account</string>
+   <string>Account</string>
   </label>
   <label>
    <rect>

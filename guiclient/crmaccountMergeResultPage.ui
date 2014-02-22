@@ -30,7 +30,7 @@ to be bound by its terms.</comment>
    <item row="0" column="0" colspan="2">
     <widget class="XLabel" name="_targetResultLit">
      <property name="text">
-      <string>Result of CRM Account Merge:</string>
+      <string>Result of Account Merge:</string>
      </property>
     </widget>
    </item>
@@ -61,7 +61,7 @@ to be bound by its terms.</comment>
    <item row="2" column="0">
     <widget class="QLabel" name="_sourceLit">
      <property name="text">
-      <string>Source CRM Accounts:</string>
+      <string>Source Accounts:</string>
      </property>
     </widget>
    </item>
