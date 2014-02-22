@@ -63,7 +63,7 @@ class CrmaccountMergePickDataPagePrivate {
       if (!ok)
         ErrorReporter::error(QtCriticalMsg, _parent,
                              QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage",
-                                               "Getting CRM Accounts"),
+                                               "Getting Accounts"),
                              errmsg, __FILE__, __LINE__);
     }
 
@@ -127,7 +127,7 @@ void CrmaccountMergePickDataPage::initializePage()
     _data->_destid     = getq.value("crmacct_id").toInt();
     _data->_destnumber = field("_existingMerge").toString();
   }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting CRM Account"),
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Account"),
                                 getq, __FILE__, __LINE__))
     return;
 
@@ -154,7 +154,7 @@ bool CrmaccountMergePickDataPage::validatePage()
 {
   if (QMessageBox::question(this, tr("Perform this merge?"),
                                 tr("<p>Are you sure you want to merge the "
-                                   "CRM Accounts as described here?</p>"
+                                   "Accounts as described here?</p>"
                                    "<p>If you click YES then the merge will "
                                    "be run immediately. You will have a chance "
                                    "to undo it later.</p>"),
@@ -199,8 +199,8 @@ void CrmaccountMergePickDataPage::sDeselect()
 
 bool CrmaccountMergePickDataPage::sDelete()
 {
-  if (QMessageBox::question(this, tr("Delete CRM Account?"),
-                            tr("Are you sure you want to delete CRM Account %1?")
+  if (QMessageBox::question(this, tr("Delete Account?"),
+                            tr("Are you sure you want to delete Account %1?")
                                .arg(_sources->currentItem()->text("crmacct_number")),
                             QMessageBox::No | QMessageBox::Default,
                             QMessageBox::Yes) == QMessageBox::No)
@@ -228,7 +228,7 @@ bool CrmaccountMergePickDataPage::sDelete()
   if (delq.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting CRM Account"),
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Account"),
                          delq, __FILE__, __LINE__);
     return false;
   }
@@ -262,7 +262,7 @@ void CrmaccountMergePickDataPage::sFillList()
   XSqlQuery getq;
   getq = mql.toQuery(params);
   _sources->populate(getq, true);
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting CRM Account"),
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Account"),
                            getq, __FILE__, __LINE__))
     return;
 }
@@ -279,13 +279,13 @@ void CrmaccountMergePickDataPage::sPopulateMenu(QMenu *pMenu, XTreeWidgetItem *p
   _data->_itemForMenu = pItem;
 
   QAction *menuItem;
-  menuItem = pMenu->addAction(tr("Edit CRM Account"), this, SLOT(sEdit()));
+  menuItem = pMenu->addAction(tr("Edit Account"), this, SLOT(sEdit()));
   menuItem->setEnabled(_privileges->check("MaintainAllCRMAccounts"));
 
-  menuItem = pMenu->addAction(tr("View CRM Account"), this, SLOT(sView()));
+  menuItem = pMenu->addAction(tr("View Account"), this, SLOT(sView()));
   menuItem->setEnabled(_privileges->check("ViewAllCRMAccounts"));
 
-  menuItem = pMenu->addAction(tr("Delete CRM Account"), this, SLOT(sDelete()));
+  menuItem = pMenu->addAction(tr("Delete Account"), this, SLOT(sDelete()));
   menuItem->setEnabled(pItem->id() != _data->_destid &&
                        _privileges->check("MaintainAllCRMAccounts"));
 }

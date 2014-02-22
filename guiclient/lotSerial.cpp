@@ -41,7 +41,7 @@ lotSerial::lotSerial(QWidget* parent, const char* name, bool modal, Qt::WFlags f
     _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value" );
     
     _reg->addColumn(tr("Number")      ,        _orderColumn,  Qt::AlignLeft, true, "lsreg_number" );
-    _reg->addColumn(tr("CRM Account#"),        _itemColumn,  Qt::AlignLeft, true, "crmacct_number" );
+    _reg->addColumn(tr("Account#"),            _itemColumn,  Qt::AlignLeft, true, "crmacct_number" );
     _reg->addColumn(tr("Name"        ),	      -1,   Qt::AlignLeft, true, "crmacct_name" );
     _reg->addColumn(tr("First Name"  ),        80,  Qt::AlignLeft, true, "cntct_first_name" );
     _reg->addColumn(tr("Last Name"   ),        80,  Qt::AlignLeft, true, "cntct_last_name" );

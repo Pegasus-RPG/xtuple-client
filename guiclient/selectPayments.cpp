@@ -63,9 +63,9 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl,
   _apopen->addColumn(tr("Amount"),         _moneyColumn, Qt::AlignRight ,        true, "amount" );
   _apopen->addColumn(tr("Amount (%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight, false, "base_amount"  );
   _apopen->addColumn(tr("Running Amount (%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight,         false, "running_amount" );
-  _apopen->addColumn(tr("Selected"),       _moneyColumn, Qt::AlignRight ,        true, "selected" );
-  _apopen->addColumn(tr("Selected (%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight, false, "base_selected"  );
-  _apopen->addColumn(tr("Running Selected (%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight,       true, "running_selected"  );
+  _apopen->addColumn(tr("Approved"),       _moneyColumn, Qt::AlignRight ,        true, "selected" );
+  _apopen->addColumn(tr("Approved (%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight, false, "base_selected"  );
+  _apopen->addColumn(tr("Running Approved (%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight,       true, "running_selected"  );
   _apopen->addColumn(tr("Discount"),       _moneyColumn, Qt::AlignRight ,        true, "discount" );
   _apopen->addColumn(tr("Discount (%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight, false, "base_discount"  );
   _apopen->addColumn(tr("Currency"),       _currencyColumn, Qt::AlignLeft,       true, "curr_concat" );
@@ -603,7 +603,7 @@ void selectPayments::sOnHold()
   {
     QMessageBox::critical( this, tr("Can not change Status"),
                           tr("<p>You cannot set this item as On Hold. "
-                             "This Item is already selected for payment."));
+                             "This Item is already approved for payment."));
     return;
   }
 

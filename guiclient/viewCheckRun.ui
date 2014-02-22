@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>View Check Run</string>
+   <string>View Payment Run</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_4" >
    <item row="0" column="0" >
@@ -179,7 +179,7 @@ to be bound by its terms.</comment>
           <item>
            <widget class="QLabel" name="_checksLit" >
             <property name="text" >
-             <string>Checks:</string>
+             <string>Payments:</string>
             </property>
            </widget>
           </item>

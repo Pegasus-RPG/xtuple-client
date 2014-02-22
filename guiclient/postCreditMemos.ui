@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Post Credit Memos</string>
+   <string>Post Returns</string>
   </property>
   <layout class="QHBoxLayout" >
    <property name="margin" >
@@ -54,7 +54,7 @@ to be bound by its terms.</comment>
          <item>
           <widget class="XCheckBox" name="_postUnprinted" >
            <property name="text" >
-            <string>Post Unprinted Credit Memos</string>
+            <string>Post Unprinted Returns</string>
            </property>
           </widget>
          </item>
@@ -87,7 +87,7 @@ to be bound by its terms.</comment>
          <item>
           <widget class="XCheckBox" name="_printJournal" >
            <property name="text" >
-            <string>P&amp;rint Credit Memo Journal</string>
+            <string>P&amp;rint Return Journal</string>
            </property>
           </widget>
          </item>

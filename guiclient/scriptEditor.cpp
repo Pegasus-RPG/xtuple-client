@@ -180,7 +180,7 @@ bool scriptEditor::sSave()
   errors << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
                           tr("<p>You must enter a valid name for this Script."))
   ;
-  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save CRM Account"), errors))
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Account"), errors))
     return false;
 
   QScriptEngine engine;

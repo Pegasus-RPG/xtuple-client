@@ -66,7 +66,7 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
   _soitem->addColumn(tr("Shipped"),    _qtyColumn,   Qt::AlignRight , true, "coitem_qtyshipped" );
   _soitem->addColumn(tr("Returned"),   _qtyColumn,   Qt::AlignRight , true, "coitem_qtyreturned" );
   _soitem->addColumn(tr("Uninvoiced"), _qtyColumn,   Qt::AlignRight , true, "qtyatship" );
-  _soitem->addColumn(tr("Selected"),   _qtyColumn,   Qt::AlignRight , true, "qtytobill" );
+  _soitem->addColumn(tr("Approved"),   _qtyColumn,   Qt::AlignRight , true, "qtytobill" );
   _soitem->addColumn(tr("Extended"),   _moneyColumn, Qt::AlignRight , true, "extended" );
   _soitem->addColumn(tr("Close"),      _ynColumn,    Qt::AlignCenter, true, "toclose");
 
@@ -169,7 +169,7 @@ void selectOrderForBilling::sSave()
   {
     QMessageBox::information(this, tr("No Ship Date Entered"),
                              tr("<p>You must enter a Ship Date before "
-				"selecting this order for billing."  ) );
+				"approving this order for billing."  ) );
 
     _shipDate->setFocus();
     return;

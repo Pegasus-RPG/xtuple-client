@@ -678,7 +678,7 @@ AddressList::AddressList(QWidget* pParent, const char* pName, bool, Qt::WFlags)
 
     _listTab->setColumnCount(0);
 
-    _listTab->addColumn(tr("CRM Account"), -1, Qt::AlignLeft, true, "crmacct_name");
+    _listTab->addColumn(tr("Account"), -1, Qt::AlignLeft, true, "crmacct_name");
     _listTab->addColumn(tr("Line 1"),      -1, Qt::AlignLeft, true, "addr_line1");
     _listTab->addColumn(tr("Line 2"),      75, Qt::AlignLeft, true, "addr_line2");
     _listTab->addColumn(tr("Line 3"),      75, Qt::AlignLeft, true, "addr_line3");
@@ -814,7 +814,7 @@ AddressSearch::AddressSearch(QWidget* pParent, Qt::WindowFlags pFlags)
     connect(_searchPostalCode, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     connect(_searchInactive,   SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
-    _listTab->addColumn(tr("CRM Account"), -1, Qt::AlignLeft, true, "crmacct_name");
+    _listTab->addColumn(tr("Account"), -1, Qt::AlignLeft, true, "crmacct_name");
     _listTab->addColumn(tr("Line 1"),      -1, Qt::AlignLeft, true, "addr_line1");
     _listTab->addColumn(tr("Line 2"),      75, Qt::AlignLeft, true, "addr_line2");
     _listTab->addColumn(tr("Line 3"),      75, Qt::AlignLeft, true, "addr_line3");

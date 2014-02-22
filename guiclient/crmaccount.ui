@@ -365,7 +365,7 @@ to be bound by its terms.</comment>
                </sizepolicy>
               </property>
               <property name="text">
-               <string>User...</string>
+               <string>User Account...</string>
               </property>
              </widget>
             </item>

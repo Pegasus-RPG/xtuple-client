@@ -369,8 +369,8 @@ bool userPreferences::save()
 
   if (_newpassword->text().length() == 0)
   {
-    QMessageBox::warning( this, tr("Cannot save User"),
-                          tr( "You must enter a valid Password before you can save this User." ));
+    QMessageBox::warning( this, tr("Cannot save User Account"),
+                          tr( "You must enter a valid Password before you can save this User Account." ));
     _newpassword->setFocus();
     return false;
   }
@@ -381,7 +381,7 @@ bool userPreferences::save()
   // TODO: have to compare this against something usefull
   if(currentpasswd != __password)
   {
-    QMessageBox::warning( this, tr("Cannot save User"),
+    QMessageBox::warning( this, tr("Cannot save User Account"),
                   tr( "Please Verify Current Password." ));
     _currentpassword->setFocus();
     return false;

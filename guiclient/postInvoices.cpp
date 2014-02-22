@@ -133,7 +133,7 @@ void postInvoices::sPost()
     {
       rollback.exec();
       QMessageBox::critical( this, tr("Cannot Post one or more Invoices"),
-                             tr( "The G/L Account Assignments for one or more of the Invoices that you are trying to post are not\n"
+                             tr( "The Ledger Account Assignments for one or more of the Invoices that you are trying to post are not\n"
                                  "configured correctly.  Because of this, G/L Transactions cannot be posted for these Invoices.\n"
                                  "You must contact your Systems Administrator to have this corrected before you may\n"
                                  "post these Invoices." ) );

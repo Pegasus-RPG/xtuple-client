@@ -206,7 +206,7 @@ to be bound by its terms.</comment>
       <item row="2" column="0">
        <widget class="QCheckBox" name="_crmaccounts">
         <property name="text">
-         <string>CRM Account</string>
+         <string>Account</string>
         </property>
        </widget>
       </item>

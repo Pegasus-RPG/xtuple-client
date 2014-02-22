@@ -19,7 +19,7 @@ to be bound by its terms.</comment>
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Credit Memo Edit List</string>
+      <string>Return Edit List</string>
     </property>
       <layout class="QVBoxLayout" >
         <item>

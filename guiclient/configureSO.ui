@@ -106,7 +106,7 @@ to be bound by its terms.</comment>
        <item row="3" column="0">
         <widget class="QLabel" name="_creditMemoNumGenerationLit">
          <property name="text">
-          <string>Credit Memo # Generation:</string>
+          <string>Return # Generation:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -415,7 +415,7 @@ to be bound by its terms.</comment>
                   <item>
                    <widget class="QCheckBox" name="_autoSelectForBilling">
                     <property name="text">
-                     <string>Check 'Select for Billing' option on Ship Order</string>
+                     <string>Check 'Approve for Billing' option on Ship Order</string>
                     </property>
                    </widget>
                   </item>
@@ -431,14 +431,14 @@ to be bound by its terms.</comment>
                   <item row="0" column="0">
                    <widget class="QCheckBox" name="_restrictCreditMemos">
                     <property name="text">
-                     <string>Restrict Credit Memos to Items on their Apply-To Document</string>
+                     <string>Restrict Returns to Items on their Apply-To Document</string>
                     </property>
                    </widget>
                   </item>
                   <item row="1" column="0">
                    <widget class="QCheckBox" name="_autoAllocateCM">
                     <property name="text">
-                     <string>Allocate Credit Memos to New Sales Order on Save</string>
+                     <string>Allocate Returns to New Sales Order on Save</string>
                     </property>
                    </widget>
                   </item>
@@ -882,7 +882,7 @@ to be bound by its terms.</comment>
          <item row="1" column="1">
           <widget class="XDocCopySetter" name="_creditMemoCopies">
            <property name="labelText">
-            <string>Default Credit Memo Copies:</string>
+            <string>Default Return Copies:</string>
            </property>
            <property name="numCopiesMetric">
             <string>CreditMemoCopies</string>
@@ -1317,7 +1317,7 @@ to be bound by its terms.</comment>
               </item>
               <item>
                <property name="text">
-                <string>Credit Memo</string>
+                <string>Return</string>
                </property>
               </item>
               <item>

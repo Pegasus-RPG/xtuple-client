@@ -629,7 +629,7 @@ void vendor::sCheck()
       {
         QMessageBox::critical(this, tr("Invalid Number"),
                               tr("<p>This number is currently "
-                                 "assigned to another CRM account."));
+                                 "assigned to another Account."));
         _number->setText(_cachedNumber);
         _number->setFocus();
         _notice = false;
@@ -638,8 +638,8 @@ void vendor::sCheck()
       else if ((dupq.value("type").toInt() == 2) && (_notice))
       {
         if (QMessageBox::question(this, tr("Convert"),
-                tr("<p>This number is currently assigned to CRM Account. "
-                   "Do you want to convert the CRM Account to a Vendor?"),
+                tr("<p>This number is currently assigned to Account. "
+                   "Do you want to convert the Account to a Vendor?"),
                 QMessageBox::Yes,
                 QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
         {
@@ -691,7 +691,7 @@ void vendor::sLoadCrmAcct(int crmacctId)
       }
     }
   }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting CRM Account"),
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Account"),
                            getq, __FILE__, __LINE__))
     return;
 
@@ -836,7 +836,7 @@ bool vendor::sPopulate()
   {
     ErrorReporter::error(QtCriticalMsg, this, tr("Getting Vendor"),
                          tr("Could not find the Vendor information. Perhaps "
-                            "the Vendor and CRM Account have been disconnected."),
+                            "the Vendor and Account have been disconnected."),
                 __FILE__, __LINE__);
     return false;
   }
@@ -1236,7 +1236,7 @@ void vendor::sCrmAccount()
     params.append("mode", "edit");
   else
   {
-    qWarning("tried to open CRM Account window without privilege");
+    qWarning("tried to open Account window without privilege");
     return;
   }
 

@@ -19,7 +19,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>User List</string>
+   <string>User Account List</string>
   </property>
   <layout class="QHBoxLayout" >
    <property name="margin" >
@@ -39,7 +39,7 @@ to be bound by its terms.</comment>
      <item>
       <widget class="QLabel" name="_userLit" >
        <property name="text" >
-        <string>Users:</string>
+        <string>User Accounts:</string>
        </property>
       </widget>
      </item>

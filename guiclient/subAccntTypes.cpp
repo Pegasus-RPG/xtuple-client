@@ -94,8 +94,8 @@ void subAccntTypes::sDelete()
     {
     case -1:
       QMessageBox::critical( this, tr("Cannot Delete G/L Subaccount Type"),
-          tr( "The selected G/L Subaccount Type cannot be deleted as it is currently used in one or more G/L Accounts.\n"
-              "You must reassign these G/L Accounts before you may delete the selected G/L Subaccount Type." ) );
+          tr( "The selected G/L Subaccount Type cannot be deleted as it is currently used in one or more Ledger Accounts.\n"
+              "You must reassign these Ledger Accounts before you may delete the selected G/L Subaccount Type." ) );
         break;
     default:
       sFillList();

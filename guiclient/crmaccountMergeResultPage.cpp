@@ -35,7 +35,7 @@ class CrmaccountMergeResultPagePrivate
       if (!ok)
         ErrorReporter::error(QtCriticalMsg, _parent,
                              QT_TRANSLATE_NOOP("CrmaccountMergeResultPage",
-                                               "Getting Source CRM Accounts"),
+                                               "Getting Source Accounts"),
                              errmsg, __FILE__, __LINE__);
 
       ParameterList params;
@@ -49,10 +49,10 @@ class CrmaccountMergeResultPagePrivate
       else
         ErrorReporter::error(QtWarningMsg, _parent,
                              QT_TRANSLATE_NOOP("CrmaccountMergeResultPage",
-                                               "Could not draw CRM Account"),
+                                               "Could not draw Account"),
                              QT_TRANSLATE_NOOP("CrmaccountMergeResultPage",
                                 "Could not find the portion of the window "
-                                "in which to draw the target CRM Account."));
+                                "in which to draw the target Account."));
     };
 
     crmaccount *_crmaccount;
@@ -68,8 +68,8 @@ CrmaccountMergeResultPage::CrmaccountMergeResultPage(QWidget *parent)
 
   _data = new CrmaccountMergeResultPagePrivate(this);
 
-  _source->addColumn(tr("CRM Account Number"), -1, Qt::AlignLeft, true, "crmacct_number");
-  _source->addColumn(tr("CRM Account Name"),   -1, Qt::AlignLeft, true, "crmacct_name");
+  _source->addColumn(tr("Account Number"), -1, Qt::AlignLeft, true, "crmacct_number");
+  _source->addColumn(tr("Account Name"),   -1, Qt::AlignLeft, true, "crmacct_name");
 }
 
 CrmaccountMergeResultPage::~CrmaccountMergeResultPage()
@@ -89,13 +89,13 @@ void CrmaccountMergeResultPage::initializePage()
   if (idq.first())
     _data->_crmaccount->setId(idq.value("crmacct_id").toInt());
   else if (ErrorReporter::error(QtCriticalMsg, this,
-                                tr("Error Getting CRM Account"),
+                                tr("Error Getting Account"),
                                 idq, __FILE__, __LINE__))
     return;
   else
   {
-    QMessageBox::warning(this, tr("Could Not Find CRM Account"),
-                         tr("Could not find the merged CRM Account (%1).")
+    QMessageBox::warning(this, tr("Could Not Find Account"),
+                         tr("Could not find the merged Account (%1).")
                          .arg(field("_completedMerge").toString()));
     _data->_crmaccount->setId(-1);
   }
@@ -107,7 +107,7 @@ void CrmaccountMergeResultPage::initializePage()
   XSqlQuery srcq = mql.toQuery(params);
   _source->populate(srcq);
   if (ErrorReporter::error(QtCriticalMsg, this,
-                           tr("Error Getting Obsolete CRM Accounts"),
+                           tr("Error Getting Obsolete Accounts"),
                            srcq, __FILE__, __LINE__))
     return;
 
@@ -135,7 +135,7 @@ bool CrmaccountMergeResultPage::validatePage()
   {
     if (QMessageBox::question(this, tr("Revert?"),
                               tr("<p>Are you sure you want to undo this "
-                                 "CRM Account Merge?</p><p>The CRM Accounts "
+                                 "Account Merge?</p><p>The Accounts "
                                  "will be restored and you will need to "
                                  "start the merge from the beginning.</p>"),
                               QMessageBox::No | QMessageBox::Default,

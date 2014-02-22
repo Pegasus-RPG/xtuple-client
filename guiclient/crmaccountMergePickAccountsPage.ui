@@ -21,10 +21,10 @@ to be bound by its terms.</comment>
    <string>WizardPage</string>
   </property>
   <property name="title">
-   <string>Select the CRM Accounts to Merge</string>
+   <string>Select the Accounts to Merge</string>
   </property>
   <property name="subTitle">
-   <string>Select the CRM Accounts you want to merge together from the list below. Then, at the bottom of the screen, choose which of those Accounts they should be merged into.</string>
+   <string>Select the Accounts you want to merge together from the list below. Then, at the bottom of the screen, choose which of those Accounts they should be merged into.</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" rowspan="3" colspan="2">
@@ -72,7 +72,7 @@ to be bound by its terms.</comment>
       <bool>true</bool>
      </property>
      <property name="nullStr">
-      <string>[ Keep this CRM Account ]</string>
+      <string>[ Keep this Account ]</string>
      </property>
     </widget>
    </item>

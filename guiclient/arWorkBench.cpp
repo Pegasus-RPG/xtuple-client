@@ -155,6 +155,7 @@ bool arWorkBench::setParams(ParameterList &params)
 {
   _customerSelector->appendValue(params);
   params.append("invoice", tr("Invoice"));
+  params.append("return", tr("Return"));
   params.append("creditMemo", tr("Credit Memo"));
   params.append("debitMemo", tr("Debit Memo"));
   params.append("cashdeposit", tr("Customer Deposit"));

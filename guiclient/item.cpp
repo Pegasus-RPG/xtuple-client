@@ -170,7 +170,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _itemsrc->addColumn(tr("Default"),      _dateColumn,   Qt::AlignCenter, true, "default");
 
   _itemalias->addColumn(tr("Alias Number"),    _itemColumn, Qt::AlignLeft,   true, "itemalias_number"  );
-  _itemalias->addColumn(tr("CRM Account"),     _itemColumn, Qt::AlignLeft,   true, "crmacct_name"  );
+  _itemalias->addColumn(tr("Account"),         _itemColumn, Qt::AlignLeft,   true, "crmacct_name"  );
   _itemalias->addColumn(tr("Use Description"), _ynColumn,   Qt::AlignCenter, true, "itemalias_usedescrip"  );
   _itemalias->addColumn(tr("Description"),     -1,          Qt::AlignLeft,   true, "f_descrip"  );
   _itemalias->addColumn(tr("Comments"),        -1,          Qt::AlignLeft,   true, "f_comments" );

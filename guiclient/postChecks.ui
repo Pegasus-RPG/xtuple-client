@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Post Checks</string>
+   <string>Post Payments</string>
   </property>
   <layout class="QHBoxLayout" >
    <property name="spacing" >
@@ -69,7 +69,7 @@ to be bound by its terms.</comment>
            <item>
             <widget class="QLabel" name="_numberOfChecksLit" >
              <property name="text" >
-              <string>Number of Unposted Checks:</string>
+              <string>Number of Unposted Payments:</string>
              </property>
              <property name="alignment" >
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -108,7 +108,7 @@ to be bound by its terms.</comment>
          <item>
           <widget class="XCheckBox" name="_printJournal" >
            <property name="text" >
-            <string>Print Check Journal</string>
+            <string>Print Payment Journal</string>
            </property>
           </widget>
          </item>

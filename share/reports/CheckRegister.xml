@@ -1,6 +1,6 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Check Register</title>
+ <title>Payment Register</title>
  <name>CheckRegister</name>
  <description></description>
  <parameter default="" active="false" type="" name="bankaccnt_id" ></parameter>
@@ -170,7 +170,7 @@ GROUP BY bankaccnt_curr_id;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Check Date</string>
+   <string>Payment Date</string>
   </label>
   <label>
    <rect>
@@ -291,7 +291,7 @@ GROUP BY bankaccnt_curr_id;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Check. #</string>
+   <string>Payment #</string>
   </label>
   <label>
    <rect>
@@ -410,7 +410,7 @@ GROUP BY bankaccnt_curr_id;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Check Register</string>
+   <string>Payment Register</string>
   </label>
  </rpthead>
  <pghead>
@@ -449,7 +449,7 @@ GROUP BY bankaccnt_curr_id;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Check Date</string>
+   <string>Payment Date</string>
   </label>
   <line>
    <xstart>5</xstart>
@@ -504,7 +504,7 @@ GROUP BY bankaccnt_curr_id;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Check. #</string>
+   <string>Payment #</string>
   </label>
   <label>
    <rect>

@@ -44,9 +44,9 @@ viewCheckRun::viewCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
   _check->addColumn(tr("Void"),                _ynColumn,       Qt::AlignCenter,true, "checkhead_void");
   _check->addColumn(tr("Misc."),               _ynColumn,       Qt::AlignCenter,true, "checkhead_misc" );
   _check->addColumn(tr("Prt'd"),               _ynColumn,       Qt::AlignCenter,true, "checkhead_printed" );
-  _check->addColumn(tr("Chk./Document #"),     _itemColumn,     Qt::AlignCenter,true, "number" );
+  _check->addColumn(tr("Document #"),          _itemColumn,     Qt::AlignCenter,true, "number" );
   _check->addColumn(tr("Recipient/Invc./CM #"),-1,              Qt::AlignLeft,  true, "description"   );
-  _check->addColumn(tr("Check Date") ,         _dateColumn,     Qt::AlignCenter,true, "checkdate" );
+  _check->addColumn(tr("Payment Date") ,       _dateColumn,     Qt::AlignCenter,true, "checkdate" );
   _check->addColumn(tr("Amount"),              _moneyColumn,    Qt::AlignRight, true, "amount"  );
   _check->addColumn(tr("Currency"),            _currencyColumn, Qt::AlignLeft,  true, "currAbbr" );
   if (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled"))
@@ -256,18 +256,18 @@ void viewCheckRun::sHandleItemSelection()
   
   QMenu * printMenu = new QMenu;
   if (select)
-    printMenu->addAction(tr("Selected Check..."), this, SLOT(sPrint()));
+    printMenu->addAction(tr("Selected Payment..."), this, SLOT(sPrint()));
   if (_vendorgroup->isAll())
-    printMenu->addAction(tr("Check Run..."), this, SLOT(sPrintCheckRun()));
+    printMenu->addAction(tr("Payment Run..."), this, SLOT(sPrintCheckRun()));
   printMenu->addAction(tr("Edit List"), this, SLOT(sPrintEditList()));
   _print->setMenu(printMenu); 
 
   QMenu * postMenu = new QMenu;
   if (selected->rawValue("checkhead_printed").toBool() &&
       _privileges->check("PostPayments"))
-    postMenu->addAction(tr("Selected Check..."), this, SLOT(sPost()));
+    postMenu->addAction(tr("Selected Payment..."), this, SLOT(sPost()));
   if (_vendorgroup->isAll())
-    postMenu->addAction(tr("All Checks..."), this, SLOT(sPostChecks()));
+    postMenu->addAction(tr("All Payments..."), this, SLOT(sPostChecks()));
   _postCheck->setMenu(postMenu); 
 }
 
@@ -283,7 +283,7 @@ void viewCheckRun::sFillList()
   XSqlQuery viewFillList;
   QMenu * printMenu = new QMenu;
   if (_vendorgroup->isAll())
-    printMenu->addAction(tr("Check Run..."), this, SLOT(sPrintCheckRun()));
+    printMenu->addAction(tr("Payment Run..."), this, SLOT(sPrintCheckRun()));
   printMenu->addAction(tr("Edit List"),   this, SLOT(sPrintEditList()));
   _print->setMenu(printMenu);   
 

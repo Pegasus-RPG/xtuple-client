@@ -346,7 +346,7 @@ to be bound by its terms.</comment>
         <item row="0" column="0">
          <widget class="QCheckBox" name="_select">
           <property name="text">
-           <string>Select for Billing</string>
+           <string>Approve for Billing</string>
           </property>
          </widget>
         </item>

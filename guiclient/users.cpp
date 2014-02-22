@@ -76,7 +76,7 @@ void users::sFillList()
 
   XSqlQuery getq = mql.toQuery(params);
   _usr->populate(getq);
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error getting Users"),
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error getting User Accounts"),
                            getq, __FILE__, __LINE__))
     return;
 }

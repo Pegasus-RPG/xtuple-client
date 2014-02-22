@@ -115,7 +115,7 @@ void crmaccounts::sView()
 void crmaccounts::sDelete()
 {
   if (QMessageBox::question(this, tr("Delete?"),
-                            tr("Are you sure you want to delete this CRM Account?"),
+                            tr("Are you sure you want to delete this Account?"),
                             QMessageBox::Yes,
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
     return;
@@ -124,7 +124,7 @@ void crmaccounts::sDelete()
   delq.prepare("DELETE FROM crmacct WHERE crmacct_id = :crmacct_id;");
   delq.bindValue(":crmacct_id", list()->id());
   delq.exec();
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting CRM Account"),
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting Account"),
                            delq, __FILE__, __LINE__))
     return;
   sFillList();

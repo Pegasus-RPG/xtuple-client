@@ -27,7 +27,7 @@ to be bound by its terms.</comment>
       </sizepolicy>
     </property>
     <property name="windowTitle" >
-      <string>Purge Credit Memos</string>
+      <string>Purge Returns</string>
     </property>
     <layout class="QHBoxLayout" >
       <property name="margin" >

@@ -179,7 +179,7 @@ void ContactWidget::init()
     _honorific->setEditable(true);
     _honorific->setType(XComboBox::Honorifics);
 
-    _crmAcct->setLabel(tr("CRM Account:"));
+    _crmAcct->setLabel(tr("Account:"));
     _owner->setLabel(tr("Owner:"));
 
     layout();
@@ -263,11 +263,11 @@ void ContactWidget::findDuplicates()
     r.first();
     msg = tr("A contact exists with the same first and last name");
     if (_searchAcctId > 0 && r.value("cntct_crmacct_id").toInt() == 0)
-      msg += tr(" not associated with any CRM Account");
+      msg += tr(" not associated with any Account");
     else if (_searchAcctId == r.value("cntct_crmacct_id").toInt())
-      msg += tr(" on the current CRM Account");
+      msg += tr(" on the current Account");
     else if (_searchAcctId > 0)
-      msg += tr(" associated with another CRM Account");
+      msg += tr(" associated with another Account");
     msg += tr(". Would you like to use the existing contact?");
     
     if (QMessageBox::question(this, tr("Existing Contact"), msg,
@@ -295,7 +295,7 @@ void ContactWidget::findDuplicates()
       if (cnt == 1)
       {
          msg = tr("A contact exists with the same first and last name "
-                  "on the current CRM Account. "
+                  "on the current Account. "
                   "Would you like to use the existing contact?");
         if (QMessageBox::question(this, tr("Existing Contact"), msg,
                              QMessageBox::Yes | QMessageBox::Default,
@@ -1101,7 +1101,7 @@ ContactList::ContactList(QWidget* pParent, const char* pName, bool, Qt::WFlags)
 
   _listTab->addColumn(tr("First Name"),   80, Qt::AlignLeft, true, "cntct_first_name");
   _listTab->addColumn(tr("Last Name"),    -1, Qt::AlignLeft, true, "cntct_last_name");
-  _listTab->addColumn(tr("CRM Account"), 100, Qt::AlignLeft, true, "crmacct_name");
+  _listTab->addColumn(tr("Account"), 100, Qt::AlignLeft, true, "crmacct_name");
 }
 
 void ContactList::set(const ParameterList &pParams)
@@ -1212,7 +1212,7 @@ ContactSearch::ContactSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
   _searchFirst	= new XCheckBox(tr("Search First Name"),this);
   _searchLast		= new XCheckBox(tr("Search Last Name"),this);
-  _searchCRMAcct	= new XCheckBox(tr("Search CRM Account"),this);
+  _searchCRMAcct	= new XCheckBox(tr("Search Account"),this);
   _searchTitle	= new XCheckBox(tr("Search Title"),this);
   _searchPhones	= new XCheckBox(tr("Search Phone Numbers"),this);
   _searchEmail	= new XCheckBox(tr("Search Email Address"),this);
@@ -1252,7 +1252,7 @@ ContactSearch::ContactSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
   _listTab->addColumn(tr("First Name"),     80, Qt::AlignLeft, true, "cntct_first_name");
   _listTab->addColumn(tr("Last Name"),      -1, Qt::AlignLeft, true, "cntct_last_name");
-  _listTab->addColumn(tr("CRM Account"),   100, Qt::AlignLeft, true, "crmacct_name");
+  _listTab->addColumn(tr("Account"),   100, Qt::AlignLeft, true, "crmacct_name");
   _listTab->addColumn(tr("Title"),         100, Qt::AlignLeft, true, "cntct_title");
   _listTab->addColumn(tr("Phone"),	      75, Qt::AlignLeft, true, "cntct_phone");
   _listTab->addColumn(tr("Alt. Phone"),     75, Qt::AlignLeft, true, "cntct_phone2");

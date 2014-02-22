@@ -19,7 +19,7 @@ to be bound by its terms.</comment>
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Invoice/Credit Memo Watermark</string>
+      <string>Invoice/Return Watermark</string>
     </property>
     <layout class="QHBoxLayout" >
       <property name="margin" >

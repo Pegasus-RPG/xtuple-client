@@ -50,7 +50,7 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
                         "FROM incdtpriority "
                         "ORDER BY incdtpriority_order, incdtpriority_name ";
 
-  parameterWidget()->append(tr("CRM Account"), "crmAccountId", ParameterWidget::Crmacct);
+  parameterWidget()->append(tr("Account"), "crmAccountId", ParameterWidget::Crmacct);
   parameterWidget()->append(tr("Contact"),"cntct_id", ParameterWidget::Contact);
   parameterWidget()->append(tr("Category"), "categorylist",
                            ParameterWidget::Multiselect, QVariant(), false,

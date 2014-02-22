@@ -1,6 +1,6 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Credit Memo Edit List</title>
+ <title>Return Edit List</title>
  <name>CreditMemoEditList</name>
  <description></description>
  <size>Letter</size>
@@ -47,7 +47,7 @@ ORDER BY ordernumber, linenumber;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Credit Memo Edit List</string>
+   <string>Return Edit List</string>
   </label>
   <label>
    <rect>

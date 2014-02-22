@@ -45,7 +45,7 @@ to be bound by its terms.</comment>
          <item>
           <widget class="XCheckBox" name="_showUnselected" >
            <property name="text" >
-            <string>Only Show Unselected Shipments</string>
+            <string>Only Show Unapproved Shipments</string>
            </property>
           </widget>
          </item>

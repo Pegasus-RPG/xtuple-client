@@ -19,13 +19,13 @@ to be bound by its terms.</comment>
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Review Printed Checks</string>
+      <string>Review Printed Payments</string>
     </property>
     <layout class="QVBoxLayout" >
       <item>
         <widget class="QLabel" name="_label" >
           <property name="text" >
-            <string>Make any necessary adjustments by marking the listed Checks appropriately.</string>
+            <string>Make any necessary adjustments by marking the listed Payments appropriately.</string>
           </property>
         </widget>
       </item>

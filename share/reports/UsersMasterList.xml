@@ -1,6 +1,6 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Users Master List</title>
+ <title>User Accounts Master List</title>
  <name>UsersMasterList</name>
  <description></description>
  <size>Letter</size>
@@ -41,7 +41,7 @@ ORDER BY usr_username;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Users Master List</string>
+   <string>User Accounts Master List</string>
   </label>
   <label>
    <rect>

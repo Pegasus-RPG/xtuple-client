@@ -276,7 +276,7 @@ void crmaccount::sClose()
   {
     if (QMessageBox::question(this, tr("Close without saving?"),
                               tr("<p>Are you sure you want to close this window "
-                                 "without saving the new CRM Account?"),
+                                 "without saving the new Account?"),
                               QMessageBox::Yes,
                               QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       return;
@@ -299,7 +299,7 @@ void crmaccount::sClose()
       {
         rollback.exec();
         ErrorReporter::error(QtCriticalMsg, this,
-                             tr("Error detaching Contact from CRM Account."),
+                             tr("Error detaching Contact from Account."),
                              storedProcErrorLookup("detachContact", returnVal),
                              __FILE__, __LINE__);
         return;
@@ -309,7 +309,7 @@ void crmaccount::sClose()
     {
       rollback.exec();
       ErrorReporter::error(QtCriticalMsg, this,
-                           tr("Error detaching Contact from CRM Account"),
+                           tr("Error detaching Contact from Account"),
                            detachq, __FILE__, __LINE__);
       return;
     }
@@ -354,7 +354,7 @@ void crmaccount::sClose()
     {
       rollback.exec();
       ErrorReporter::error(QtCriticalMsg, this,
-                           tr("Error deleting the initial CRM Account record"),
+                           tr("Error deleting the initial Account record"),
                            deleteq, __FILE__, __LINE__);
       return;
     }
@@ -381,7 +381,7 @@ void crmaccount::sSave()
   if (dupq.first())
     numberIsUsed = true;
   else if (ErrorReporter::error(QtCriticalMsg, this,
-                          tr("Error looking for duplicate CRM Account Number"),
+                          tr("Error looking for duplicate Account Number"),
                           dupq, __FILE__, __LINE__))
     return;
 
@@ -390,20 +390,20 @@ void crmaccount::sSave()
                           " to enter the data or unselect the check box.");
   QList<GuiErrorCheck> errors;
   errors<< GuiErrorCheck(numberIsUsed, _number,
-                         tr("This CRM Account Number is already in use by an "
-                            "existing CRM Account. Please choose a different "
+                         tr("This Account Number is already in use by an "
+                            "existing Account. Please choose a different "
                             "number and save again."))
         << GuiErrorCheck(_number->text().isEmpty(), _number,
-                         tr("You must enter a number for this CRM Account "
+                         tr("You must enter a number for this Account "
                             "before saving it."))
         << GuiErrorCheck(_name->text().isEmpty(), _name,
-                         tr("You must enter a name for this CRM Account before "
+                         tr("You must enter a name for this Account before "
                             "saving it."))
         << GuiErrorCheck(_parentCrmacct->id() == _crmacctId, _parentCrmacct,
-                         tr("This CRM Account cannot be a parent "
+                         tr("This Account cannot be a parent "
                             "to itself."))
         << GuiErrorCheck(_customer->isChecked() && _prospectId > 0, _customerButton,
-                         tr("This CRM Account is a Prospect but it is marked "
+                         tr("This Account is a Prospect but it is marked "
                             "as a Customer. Either mark it as a Prospect or "
                             "click %1 to convert it before saving.")
                          .arg(_customerButton->text()))
@@ -414,7 +414,7 @@ void crmaccount::sSave()
                          incomplete.arg(tr("Employee"),
                                         _employeeButton->text()))
         << GuiErrorCheck(_prospect->isChecked() && _custId > 0, _prospectButton,
-                         tr("This CRM Account is a Customer but it is marked "
+                         tr("This Account is a Customer but it is marked "
                             "as a Prospect. Either mark it as a Customer or "
                             "click %1 to convert it before saving.")
                          .arg(_prospectButton->text()))
@@ -435,7 +435,7 @@ void crmaccount::sSave()
         << GuiErrorCheck(_vendor->isChecked() && _vendId <= 0, _vendorButton,
                          incomplete.arg(tr("Vendor"), _vendorButton->text()))
   ;
-  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save CRM Account"), errors))
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Account"), errors))
     return;
 
   // TODO: handle _username
@@ -500,7 +500,7 @@ void crmaccount::sSave()
   if (err.type() != QSqlError::NoError)
   {
     rollback.exec();
-    ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error saving Account"),
                          err, __FILE__, __LINE__);
     return;
   }
@@ -668,7 +668,7 @@ int crmaccount::id()
 void crmaccount::setId(int id)
 {
   _crmacctId = id;
-  _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
+  _todoList->parameterWidget()->setDefault(tr("Account"), _crmacctId, true);
   _contacts->setCrmacctid(_crmacctId);
   sPopulate();
 
@@ -725,7 +725,7 @@ void crmaccount::sPopulate()
     sHandleChildButtons();
   }
   else if (ErrorReporter::error(QtCriticalMsg, this,
-                                tr("Error reading the CRM Account"),
+                                tr("Error reading the Account"),
                                 getq, __FILE__, __LINE__))
     return;
   else
@@ -768,7 +768,7 @@ void crmaccount::sCustomer()
       _privileges->check("MaintainAllCRMAccounts"))
   {
     QSqlError err = saveNoErrorCheck();
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving Account"),
                              err, __FILE__, __LINE__))
       return;
   }
@@ -858,7 +858,7 @@ void crmaccount::sProspect()
       _privileges->check("MaintainAllCRMAccounts"))
   {
     QSqlError err = saveNoErrorCheck();
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving Account"),
                              err, __FILE__, __LINE__))
       return;
   }
@@ -920,7 +920,7 @@ void crmaccount::sTaxAuth()
       _privileges->check("MaintainAllCRMAccounts"))
   {
     QSqlError err = saveNoErrorCheck();
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving Account"),
                              err, __FILE__, __LINE__))
       return;
   }
@@ -951,7 +951,7 @@ void crmaccount::sEditVendor()
       _privileges->check("MaintainAllCRMAccounts"))
   {
     QSqlError err = saveNoErrorCheck();
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving Account"),
                              err, __FILE__, __LINE__))
       return;
   }
@@ -982,7 +982,7 @@ void crmaccount::sViewVendor()
       _privileges->check("MaintainAllCRMAccounts"))
   {
     QSqlError err = saveNoErrorCheck();
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving Account"),
                              err, __FILE__, __LINE__))
       return;
   }
@@ -1023,7 +1023,7 @@ void crmaccount::sUpdateRelationships()
     _owner->setUsername(getq.value("crmacct_owner_username").toString());
   }
   else if (ErrorReporter::error(QtCriticalMsg, this,
-                                tr("Error reading the CRM Account"),
+                                tr("Error reading the Account"),
                                 getq, __FILE__, __LINE__))
     return;
 
@@ -1160,7 +1160,7 @@ void crmaccount::sCheckNumber()
       query.bindValue(":crmacct_id", _crmacctId);
       query.exec();
       if (ErrorReporter::error(QtCriticalMsg, this,
-                               tr("Error deleting temporary CRM Account"),
+                               tr("Error deleting temporary Account"),
                                query, __FILE__, __LINE__))
         return;
 
@@ -1310,7 +1310,7 @@ void crmaccount::sEmployee()
       _privileges->check("MaintainAllCRMAccounts"))
   {
     QSqlError err = saveNoErrorCheck();
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving Account"),
                              err, __FILE__, __LINE__))
       return;
   }
@@ -1341,7 +1341,7 @@ void crmaccount::sSalesRep()
       _privileges->check("MaintainAllCRMAccounts"))
   {
     QSqlError err = saveNoErrorCheck();
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving Account"),
                              err, __FILE__, __LINE__))
       return;
   }
@@ -1372,7 +1372,7 @@ void crmaccount::sUser()
       _privileges->check("MaintainAllCRMAccounts"))
   {
     QSqlError err = saveNoErrorCheck();
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving Account"),
                              err, __FILE__, __LINE__))
       return;
   }

@@ -157,7 +157,7 @@ CRMAcctLineEdit::CRMAcctLineEdit(QWidget* pParent, const char* pName) :
     CrmClusterLineEdit(pParent, "crmacct", "crmacct_id", "crmacct_number", "crmacct_name", 0, "crmacct_owner_username", 0, 0, pName, "crmacct_active")
 {
   _objtype = "CRMA";
-  setTitles(tr("CRM Account"), tr("CRM Accounts"));
+  setTitles(tr("Account"), tr("Accounts"));
   setUiName("crmaccount");
   setEditPriv("MaintainAllCRMAccounts");
   setViewPriv("ViewAllCRMAccounts");
@@ -338,7 +338,7 @@ void CRMAcctList::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     break;
 
   case CRMAcctLineEdit::User:
-    setWindowTitle(tr("Search For User"));
+    setWindowTitle(tr("Search For User Account"));
     _queryParams->append("user");
     hasContact = false;
     hasAddress = false;
@@ -360,7 +360,7 @@ void CRMAcctList::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
   case CRMAcctLineEdit::Competitor:
   case CRMAcctLineEdit::Partner:
   default:
-    setWindowTitle(tr("Search For CRM Account"));
+    setWindowTitle(tr("Search For Account"));
     _queryParams->append("crmaccount");
     break;
   }
@@ -645,7 +645,7 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     break;
 
   case CRMAcctLineEdit::User:
-    setWindowTitle(tr("Search For User"));
+    setWindowTitle(tr("Search For User Account"));
     _queryParams->append("user");
 
     _searchNumber->setText(tr("Username"));
@@ -684,11 +684,11 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
   case CRMAcctLineEdit::Competitor:
   case CRMAcctLineEdit::Partner:
   default:
-    setWindowTitle(tr("Search For CRM Account"));
+    setWindowTitle(tr("Search For Account"));
     _queryParams->append("crmaccount");
 
-    _searchNumber->setText(tr("CRM Account Number"));
-    _searchName->setText(tr("CRM Account Name"));
+    _searchNumber->setText(tr("Account Number"));
+    _searchName->setText(tr("Account Name"));
     _searchContact->setText(tr("Primary Contact Name"));
     _searchPhone->setText(tr("Primary Contact Phone #"));
     _searchEmail->setText(tr("Primary Contact Email"));

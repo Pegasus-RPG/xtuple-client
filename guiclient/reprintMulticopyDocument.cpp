@@ -275,7 +275,7 @@ void reprintMulticopyDocument::setDoctype(QString doctype)
   if (doctype == "AR")
     _data->_doctypefull = tr("A/R Statement");
   else if (doctype == "CM")
-    _data->_doctypefull = tr("Credit Memo");
+    _data->_doctypefull = tr("Return");
   else if (doctype == "IN")
     _data->_doctypefull = tr("Invoice");
   else if (doctype == "L")

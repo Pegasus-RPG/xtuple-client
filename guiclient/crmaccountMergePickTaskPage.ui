@@ -24,7 +24,7 @@ to be bound by its terms.</comment>
    <string>Pick a Task</string>
   </property>
   <property name="subTitle">
-   <string>This Wizard guides you through the steps of merging CRM Accounts. You can close at any time. The work in progress will be saved for you to come back to later.</string>
+   <string>This Wizard guides you through the steps of merging Accounts. You can close at any time. The work in progress will be saved for you to come back to later.</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">

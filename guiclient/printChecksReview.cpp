@@ -28,7 +28,7 @@ printChecksReview::printChecksReview(QWidget* parent, const char* name, bool mod
   connect(_unmark,    SIGNAL(clicked()), this, SLOT(sUnmark()));
   connect(_voided,    SIGNAL(clicked()), this, SLOT(sMarkVoided()));
 
-  _checks->addColumn(tr("Check Number"),          -1, Qt::AlignLeft );
+  _checks->addColumn(tr("Payment Number"),        -1, Qt::AlignLeft );
   _checks->addColumn(tr("Action"),       _itemColumn, Qt::AlignLeft );
 }
 

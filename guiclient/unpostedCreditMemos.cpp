@@ -39,10 +39,10 @@ unpostedCreditMemos::unpostedCreditMemos(QWidget* parent, const char* name, Qt::
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
 
-    _cmhead->addColumn(tr("C/M #"),         _orderColumn, Qt::AlignLeft,   true,  "cmhead_number"   );
+    _cmhead->addColumn(tr("Return #"),      _orderColumn, Qt::AlignLeft,   true,  "cmhead_number"   );
     _cmhead->addColumn(tr("Prnt'd"),        _orderColumn, Qt::AlignCenter, true,  "printed" );
     _cmhead->addColumn(tr("Customer"),      -1,           Qt::AlignLeft,   true,  "cmhead_billtoname"   );
-    _cmhead->addColumn(tr("Memo Date"),     _dateColumn,  Qt::AlignCenter, true,  "cmhead_docdate" );
+    _cmhead->addColumn(tr("Return Date"),   _dateColumn,  Qt::AlignCenter, true,  "cmhead_docdate" );
     _cmhead->addColumn(tr("Hold"),          _whsColumn,   Qt::AlignCenter, true,  "cmhead_hold" );
     _cmhead->addColumn(tr("G/L Dist Date"), _dateColumn,  Qt::AlignCenter, true,  "distdate" );
 
@@ -172,7 +172,7 @@ void unpostedCreditMemos::sPost()
   if (_privileges->check("ChangeSOMemoPostDate"))
   {
     getGLDistDate newdlg(this, "", TRUE);
-    newdlg.sSetDefaultLit(tr("Credit Memo Date"));
+    newdlg.sSetDefaultLit(tr("Return Date"));
     if (newdlg.exec() == XDialog::Accepted)
     {
       newDate = newdlg.date();
@@ -242,7 +242,7 @@ void unpostedCreditMemos::sPost()
             if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
             {
               rollback.exec();
-              QMessageBox::information( this, tr("Post Credit Memo"), tr("Transaction Canceled") );
+              QMessageBox::information( this, tr("Post Return"), tr("Transaction Canceled") );
               return;
             }
 
@@ -264,7 +264,7 @@ void unpostedCreditMemos::sPost()
         else if (postq.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();
-          systemError(this, tr("A System Error occurred posting Credit Memo#%1.\n%2")
+          systemError(this, tr("A System Error occurred posting Return#%1.\n%2")
                   .arg(selected[i]->text(0))
                   .arg(postq.lastError().databaseText()),
                 __FILE__, __LINE__);
@@ -287,9 +287,9 @@ void unpostedCreditMemos::sPost()
 
 void unpostedCreditMemos::sDelete()
 {
-  if (QMessageBox::question(this, tr("Delete Selected Credit Memos?"),
+  if (QMessageBox::question(this, tr("Delete Selected Returns?"),
                             tr("<p>Are you sure that you want to delete the "
-			       "selected Credit Memos?"),
+			       "selected Returns?"),
                             QMessageBox::Yes, QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
     XSqlQuery delq;
@@ -305,12 +305,12 @@ void unpostedCreditMemos::sDelete()
         if (delq.first())
         {
 	      if (! delq.value("result").toBool())
-	        systemError(this, tr("Could not delete Credit Memo."),
+	        systemError(this, tr("Could not delete Return."),
 		            __FILE__, __LINE__);
         }
         else if (delq.lastError().type() != QSqlError::NoError)
 	      systemError(this,
-		          tr("Error deleting Credit Memo %1\n").arg(selected[i]->text(0)) +
+		          tr("Error deleting Return %1\n").arg(selected[i]->text(0)) +
 		          delq.lastError().databaseText(), __FILE__, __LINE__);
       }
     }
@@ -352,7 +352,7 @@ bool unpostedCreditMemos::checkSitePrivs(int orderid)
     if (!check.value("result").toBool())
       {
         QMessageBox::critical(this, tr("Access Denied"),
-                                       tr("You may not view or edit this Credit Memo as it references "
+                                       tr("You may not view or edit this Return as it references "
                                        "a Site for which you have not been granted privileges.")) ;
         return false;
       }

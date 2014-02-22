@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Void Checks</string>
+   <string>Void Payments</string>
   </property>
   <layout class="QHBoxLayout" >
    <property name="spacing" >
@@ -89,7 +89,7 @@ to be bound by its terms.</comment>
            <item>
             <widget class="XLabel" name="_nextCheckNumLit" >
              <property name="text" >
-              <string>First Check #:</string>
+              <string>First Payment #:</string>
              </property>
              <property name="alignment" >
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -99,7 +99,7 @@ to be bound by its terms.</comment>
            <item>
             <widget class="XLabel" name="_numberOfChecksLit" >
              <property name="text" >
-              <string># of Checks to Void:</string>
+              <string># of Payments to Void:</string>
              </property>
              <property name="alignment" >
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -196,7 +196,7 @@ to be bound by its terms.</comment>
          <item>
           <widget class="QCheckBox" name="_issueReplacements" >
            <property name="text" >
-            <string>Issue Replacement Checks</string>
+            <string>Issue Replacement Payments</string>
            </property>
           </widget>
          </item>

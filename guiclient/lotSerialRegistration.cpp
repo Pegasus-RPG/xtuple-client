@@ -261,7 +261,7 @@ void lotSerialRegistration::sSave()
 
   if (!_crmacct->isValid())
   {
-    QMessageBox::warning(this, windowTitle(), tr("You must provide a CRM Account."));
+    QMessageBox::warning(this, windowTitle(), tr("You must provide a Account."));
     _crmacct->setFocus();
     return;
   }

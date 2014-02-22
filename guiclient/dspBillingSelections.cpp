@@ -123,7 +123,7 @@ void dspBillingSelections::sPost()
 
     if (result == -5)
       QMessageBox::critical( this, tr("Cannot Create one or more Invoices"),
-                             tr( "The G/L Account Assignments for the selected Invoice are not configured correctly.\n"
+                             tr( "The Ledger Account Assignments for the selected Invoice are not configured correctly.\n"
                                  "Because of this, G/L Transactions cannot be created for this Invoices.\n"
                                  "You must contact your Systems Administrator to have this corrected before you may Create this Invoice." ) );
     else if (result < 0)
