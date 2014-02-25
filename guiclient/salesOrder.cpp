@@ -1294,6 +1294,37 @@ bool salesOrder::save(bool partial)
   {
     populateCMInfo();
     populateCCInfo();
+    
+    if (_mode == cNew && _metrics->boolean("AutoCreateProjectsForOrders"))
+    {
+      saveSales.prepare("SELECT cohead_prj_id "
+                        "FROM cohead "
+                        "WHERE cohead_id=:head_id;");
+      saveSales.bindValue(":head_id", _soheadid);
+      saveSales.exec();
+      if (saveSales.first())
+        _project->setId(saveSales.value("cohead_prj_id").toInt());
+      else if (saveSales.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, saveSales.lastError().databaseText(), __FILE__, __LINE__);
+        return false;
+      }
+    }
+    if (_mode == cNewQuote && _metrics->boolean("AutoCreateProjectsForOrders"))
+    {
+      saveSales.prepare("SELECT quhead_prj_id "
+                        "FROM quhead "
+                        "WHERE quhead_id=:head_id;");
+      saveSales.bindValue(":head_id", _soheadid);
+      saveSales.exec();
+      if (saveSales.first())
+        _project->setId(saveSales.value("quhead_prj_id").toInt());
+      else if (saveSales.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, saveSales.lastError().databaseText(), __FILE__, __LINE__);
+        return false;
+      }
+    }
   }
 
   emit saved(_soheadid);
@@ -2598,6 +2629,7 @@ void salesOrder::populate()
                 "       COALESCE(quhead_saletype_id,-1) as quhead_saletype_id,"
                 "       TRUE AS cust_ffshipto, NULL AS cust_blanketpos,"
                 "       COALESCE(quhead_misc_accnt_id, -1) AS quhead_misc_accnt_id, "
+                "       COALESCE(quhead_prj_id,-1) AS quhead_prj_id, "
                 "       COALESCE(quhead_ophead_id,-1) AS quhead_ophead_id, "
                 "       CASE WHEN quhead_status IN ('O','') THEN 'Open' "
                 "         ELSE CASE WHEN quhead_status ='C' THEN 'Converted' "
