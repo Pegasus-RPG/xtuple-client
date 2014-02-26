@@ -528,7 +528,8 @@ bool customer::sSave()
                "       cust_blanketpos=:cust_blanketpos, cust_comments=:cust_comments,"
                "       cust_preferred_warehous_id=:cust_preferred_warehous_id, "
                "       cust_gracedays=:cust_gracedays,"
-               "       cust_curr_id=:cust_curr_id "
+               "       cust_curr_id=:cust_curr_id,"
+               "       cust_financecharge=:cust_financecharge "
                "WHERE (cust_id=:cust_id);" );
   }
   else
@@ -547,7 +548,7 @@ bool customer::sSave()
                "  cust_discntprcnt, cust_taxzone_id, "
                "  cust_active, cust_usespos, cust_blanketpos, cust_comments,"
                "  cust_preferred_warehous_id, "
-               "  cust_gracedays, cust_curr_id ) "
+               "  cust_gracedays, cust_curr_id, cust_financecharge ) "
                "VALUES "
                "( :cust_id, :cust_number,"
                "  :cust_salesrep_id, :cust_name,"
@@ -563,7 +564,7 @@ bool customer::sSave()
                "  :cust_discntprcnt, :cust_taxzone_id,"
                "  :cust_active, :cust_usespos, :cust_blanketpos, :cust_comments,"
                "  :cust_preferred_warehous_id, "
-               "  :cust_gracedays, :cust_curr_id ) " );
+               "  :cust_gracedays, :cust_curr_id, :cust_financecharge ) " );
 
   customerSave.bindValue(":cust_id", _custid);
   customerSave.bindValue(":cust_number", _number->number().trimmed());
@@ -619,6 +620,11 @@ bool customer::sSave()
   if(_warnLate->isChecked())
     customerSave.bindValue(":cust_gracedays", _graceDays->value());
 
+  if(_exemptFinanceCharge->isChecked())
+    customerSave.bindValue(":cust_financecharge", false);
+  else
+    customerSave.bindValue(":cust_financecharge", true);
+    
   customerSave.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving"),
                            customerSave, __FILE__, __LINE__))
@@ -1190,6 +1196,7 @@ void customer::populate()
   cust.prepare( "SELECT custinfo.*, "
                 "       cust_commprcnt, cust_discntprcnt,"
                 "       (cust_gracedays IS NOT NULL) AS hasGraceDays,"
+                "       COALESCE(cust_financecharge, TRUE) AS financecharge,"
                 "       crmacct_id, crmacct_owner_username "
                 "FROM custinfo LEFT OUTER JOIN "
                 "     crmacct ON (cust_id=crmacct_cust_id) "
@@ -1253,6 +1260,8 @@ void customer::populate()
     _shipform->setId(cust.value("cust_shipform_id").toInt());
     _shipchrg->setId(cust.value("cust_shipchrg_id").toInt());
     _shipvia->setText(cust.value("cust_shipvia").toString());
+    if (!cust.value("financecharge").toBool())
+      _exemptFinanceCharge->setChecked(true);
 
     _sellingWarehouse->setId(cust.value("cust_preferred_warehous_id").toInt());
 
@@ -1275,7 +1284,7 @@ void customer::populate()
       _onCreditWarning->setChecked(TRUE);
     else
       _onCreditHold->setChecked(TRUE);
-
+    
     _comments->setId(_crmacctid);
     _documents->setId(_crmacctid);
 
@@ -1693,6 +1702,7 @@ void customer::sClear()
 
     _salesrep->setId(_metrics->value("DefaultSalesRep").toInt());
     _terms->setId(_metrics->value("DefaultTerms").toInt());
+    _exemptFinanceCharge->setChecked(false);
     _taxzone->setCurrentIndex(-1);
     _shipform->setId(_metrics->value("DefaultShipFormId").toInt());
     _shipvia->setId(_metrics->value("DefaultShipViaId").toInt());
