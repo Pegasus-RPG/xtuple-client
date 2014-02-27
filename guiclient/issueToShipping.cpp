@@ -631,7 +631,7 @@ void issueToShipping::sShip()
   issueShip.bindValue(":warehous_id", _warehouse->id());
 
   issueShip.exec();
-  if (issueShip.first())
+  if ( (issueShip.first()) && (issueShip.value("shiphead_id").toInt() > 0) )
   {
     // Reset _order so that lock is released prior to shipping and potentially auto receiving
     // to avoid locking conflicts
