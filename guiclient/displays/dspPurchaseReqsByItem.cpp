@@ -33,11 +33,13 @@ dspPurchaseReqsByItem::dspPurchaseReqsByItem(QWidget* parent, const char*, Qt::W
   list()->addColumn(tr("P/R #"),        _orderColumn,  Qt::AlignLeft,   true,  "pr_number");
   list()->addColumn(tr("Sub #"),        _orderColumn,  Qt::AlignLeft,   true,  "pr_subnumber");
   list()->addColumn(tr("Status"),       _statusColumn, Qt::AlignCenter, true,  "pr_status" );
-  list()->addColumn(tr("Parent Order"), -1,            Qt::AlignLeft,   true,  "parent"   );
-  list()->addColumn(tr("Create Date"),        -1,    Qt::AlignLeft,  true,  "pr_createdate"  );
+  list()->addColumn(tr("Parent Order"), _orderColumn,  Qt::AlignLeft,   true,  "parent"   );
+  list()->addColumn(tr("Create Date"),  _dateColumn,   Qt::AlignCenter, true,  "pr_createdate"  );
   list()->addColumn(tr("Due Date"),     _dateColumn,   Qt::AlignCenter, true,  "pr_duedate" );
   list()->addColumn(tr("Qty."),         _qtyColumn,    Qt::AlignRight,  true,  "pr_qtyreq"  );
-  list()->addColumn(tr("Notes"),        -1,    Qt::AlignLeft,  true,  "pr_releasenote"  );
+  list()->addColumn(tr("QOH"),          _qtyColumn,    Qt::AlignRight,  true,  "itemsite_qtyonhand"  );
+  list()->addColumn(tr("Reorder Lvl."), _qtyColumn,    Qt::AlignRight,  true,  "itemsite_reorderlevel"  );
+  list()->addColumn(tr("Notes"),        -1,            Qt::AlignLeft,   true,  "pr_releasenote"  );
 
   connect(omfgThis, SIGNAL(purchaseRequestsUpdated()), this, SLOT(sFillList()));
 }
