@@ -2612,6 +2612,7 @@ void salesOrder::populate()
                 "       COALESCE(quhead_saletype_id,-1) as quhead_saletype_id,"
                 "       cust_ffshipto, cust_blanketpos,"
                 "       COALESCE(quhead_misc_accnt_id,-1) AS quhead_misc_accnt_id, "
+                "       COALESCE(quhead_prj_id,-1) AS quhead_prj_id, "
                 "       COALESCE(quhead_ophead_id,-1) AS quhead_ophead_id, "
                 "       CASE WHEN quhead_status IN ('O','') THEN 'Open' "
                 "         ELSE CASE WHEN quhead_status ='C' THEN 'Converted' "
