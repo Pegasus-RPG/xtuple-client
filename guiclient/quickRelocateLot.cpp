@@ -115,9 +115,11 @@ void quickRelocateLot::sPost()
     XSqlQuery locationQuery;
     locationQuery.prepare("SELECT location_id FROM location "
                           "WHERE (formatLocationName(location_id)=:location)"
-                          "  AND (location_warehous_id=:warehous);");
+                          "  AND (location_warehous_id=:warehous)"
+                          "  AND (validLocation(location_id, :itemsite_id));");
     locationQuery.bindValue(":location", _location->text());
     locationQuery.bindValue(":warehous", _warehous->id());
+    locationQuery.bindValue(":itemsite_id", itemsite_id);
     locationQuery.exec();
     if (locationQuery.first())
     {
@@ -132,7 +134,7 @@ void quickRelocateLot::sPost()
     if (location_id == -1)
     {
         QMessageBox::warning(this, tr("Invalid Location"),
-                             tr("The specified location does not exist."));
+                             tr("The specified location does not exist or is restricted."));
         return;
     }
 
