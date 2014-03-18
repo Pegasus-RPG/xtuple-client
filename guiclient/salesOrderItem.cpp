@@ -3169,6 +3169,11 @@ void salesOrderItem::sPopulateOrderInfo()
     return;
   }
   
+//  QMessageBox::critical(this, tr("Debug"),
+//                        tr("sPopulateOrderInfo called with _supplyOrderType = %1").arg(_supplyOrderType));
+//  QMessageBox::critical(this, tr("Debug"),
+//                        tr("sPopulateOrderInfo called with _supplyOrderId = %1").arg(_supplyOrderId));
+
   XSqlQuery ordq;
   
   // Populate Supply Order
@@ -3848,6 +3853,8 @@ void salesOrderItem::populate()
     return;
   }
 
+  _supplyOrderType = item.value("coitem_order_type").toString();
+  _supplyOrderId = item.value("coitem_order_id").toInt();
   if (_supplyOrderId != -1)
     _createSupplyOrder->setChecked(true);
 
