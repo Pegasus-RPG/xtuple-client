@@ -58,7 +58,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   connect(_netUnitPrice,      SIGNAL(valueChanged()),               this, SLOT(sCalculateExtendedPrice()));
   connect(_qtyOrdered,        SIGNAL(editingFinished()),            this, SLOT(sDetermineAvailability()));
   connect(_qtyOrdered,        SIGNAL(editingFinished()),            this, SLOT(sDeterminePrice()));
-  connect(_qtyOrdered,        SIGNAL(editingFinished()),            this, SLOT(sCalcWoUnitCost()));
+  connect(_qtyOrdered,        SIGNAL(editingFinished()),            this, SLOT(sCalcUnitCost()));
   connect(_save,              SIGNAL(clicked()),                    this, SLOT(sSaveClicked()));
   connect(_scheduledDate,     SIGNAL(newDate(const QDate &)),       this, SLOT(sHandleScheduleDate()));
   connect(_showAvailability,  SIGNAL(toggled(bool)),                this, SLOT(sDetermineAvailability()));
@@ -4337,19 +4337,47 @@ void salesOrderItem::sPriceUOMChanged()
   sDeterminePrice(true);
 }
 
-void salesOrderItem::sCalcWoUnitCost()
+void salesOrderItem::sCalcUnitCost()
 {
-  XSqlQuery salesCalcWoUnitCost;
+  XSqlQuery salesCalcUnitCost;
   if (_costmethod == "J" && _supplyOrderId > -1 && _qtyOrdered->toDouble() != 0)
   {
-    salesCalcWoUnitCost.prepare("SELECT COALESCE(SUM(wo_postedvalue),0) AS wo_value "
+    salesCalcUnitCost.prepare("SELECT COALESCE(SUM(wo_postedvalue),0) AS wo_value "
               "FROM wo "
               "WHERE ((wo_ordtype='S') "
               "AND (wo_ordid=:soitem_id));");
-    salesCalcWoUnitCost.bindValue(":soitem_id", _soitemid);
-    salesCalcWoUnitCost.exec();
-    if (salesCalcWoUnitCost.first())
-      _unitCost->setBaseValue(salesCalcWoUnitCost.value("wo_value").toDouble() / _qtyOrdered->toDouble() * _qtyinvuomratio);
+    salesCalcUnitCost.bindValue(":soitem_id", _soitemid);
+    salesCalcUnitCost.exec();
+    if (salesCalcUnitCost.first())
+      _unitCost->setBaseValue(salesCalcUnitCost.value("wo_value").toDouble() / _qtyOrdered->toDouble() * _qtyinvuomratio);
+  }
+  else
+  {
+    QDate   asOf;
+    
+    if (_metrics->value("soPriceEffective") == "ScheduleDate")
+      asOf = _scheduledDate->date();
+    else if (_metrics->value("soPriceEffective") == "OrderDate")
+      asOf = _netUnitPrice->effective();
+    else
+      asOf = omfgThis->dbDate();
+    
+    salesCalcUnitCost.prepare( "SELECT * FROM "
+                      "itemCost(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
+                      "         :curr_id, :effective, :asof, :warehouse) AS unitcost;" );
+    salesCalcUnitCost.bindValue(":cust_id", _custid);
+    salesCalcUnitCost.bindValue(":shipto_id", _shiptoid);
+    salesCalcUnitCost.bindValue(":qty", _qtyOrdered->toDouble());
+    salesCalcUnitCost.bindValue(":qtyUOM", _qtyUOM->id());
+    salesCalcUnitCost.bindValue(":priceUOM", _priceUOM->id());
+    salesCalcUnitCost.bindValue(":item_id", _item->id());
+    salesCalcUnitCost.bindValue(":curr_id", _customerPrice->id());
+    salesCalcUnitCost.bindValue(":effective", _customerPrice->effective());
+    salesCalcUnitCost.bindValue(":asof", asOf);
+    salesCalcUnitCost.bindValue(":warehouse", _warehouse->id());
+    salesCalcUnitCost.exec();
+    if (salesCalcUnitCost.first())
+      _unitCost->setLocalValue(salesCalcUnitCost.value("unitcost").toDouble());
   }
 }
 
