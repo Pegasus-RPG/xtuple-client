@@ -3689,8 +3689,9 @@ void salesOrderItem::populate()
           "       item_id, uom_name, iteminvpricerat(item_id) AS invpricerat, item_listprice,"
           "       item_inv_uom_id, item_fractional,"
           "       coitem_status, coitem_cohead_id,"
-          "       coitem_order_type, coitem_order_id, coitem_custpn,"
-          "       coitem_memo, NULL AS quitem_createorder,"
+          "       COALESCE(coitem_order_type, '') AS coitem_order_type,"
+          "       COALESCE(coitem_order_id, -1) AS coitem_order_id,"
+          "       coitem_custpn, coitem_memo, NULL AS quitem_createorder,"
           "       NULL AS quitem_order_warehous_id,"
           "       formatSoLineNumber(coitem_id) AS linenumber,"
           "       coitem_qtyord AS qtyord,"
@@ -3853,8 +3854,10 @@ void salesOrderItem::populate()
     return;
   }
 
-  _supplyOrderType = item.value("coitem_order_type").toString();
-  _supplyOrderId = item.value("coitem_order_id").toInt();
+  if (item.value("coitem_order_type").toString() != "")
+    _supplyOrderType = item.value("coitem_order_type").toString();
+  if (item.value("coitem_order_id").toInt() != -1)
+    _supplyOrderId = item.value("coitem_order_id").toInt();
   if (_supplyOrderId != -1)
     _createSupplyOrder->setChecked(true);
 
