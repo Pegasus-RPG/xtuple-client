@@ -31,6 +31,10 @@ public slots:
     virtual void sPopulateMenu(QMenu *, QTreeWidgetItem*, int);
     virtual bool setParams(ParameterList &);
     virtual void sBuildList();	
+
+private:
+  QStringList _statuses;
+  
 };
 
 #endif // PROJECTS_H
