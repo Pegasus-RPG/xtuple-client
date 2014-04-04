@@ -833,6 +833,22 @@ void salesOrderItem::prepare()
 
 void salesOrderItem::clear()
 {
+  if (_supplyOrderId > -1)
+  {
+    disconnect(_woIndentedList,    SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateWoMenu(QMenu*, QTreeWidgetItem*)));
+    disconnect(_woIndentedList,    SIGNAL(itemSelected(int)),            _supplyWoEdit, SLOT(animateClick()));
+    disconnect(_woIndentedList,    SIGNAL(valid(bool)),                  _supplyWoEdit, SLOT(setEnabled(bool)));
+    disconnect(_woIndentedList,    SIGNAL(valid(bool)),                  _supplyWoDelete, SLOT(setEnabled(bool)));
+    disconnect(_supplyWoNewMatl,   SIGNAL(clicked()),                    this, SLOT(sNewWoMatl()));
+    disconnect(_supplyWoEdit,      SIGNAL(clicked()),                    this, SLOT(sEditWoMatl()));
+    disconnect(_supplyWoDelete,    SIGNAL(clicked()),                    this, SLOT(sDeleteWoMatl()));
+    disconnect(_supplyRollupPrices,SIGNAL(toggled(bool)),                this, SLOT(sRollupPrices()));
+    disconnect(_supplyOrderQty,    SIGNAL(editingFinished()),            this, SLOT(sHandleSupplyOrder()));
+    //  disconnect(_supplyOrderDueDate,SIGNAL(newDate(const QDate &)),       this, SLOT(sHandleSupplyOrder()));
+    disconnect(_supplyOverridePrice,SIGNAL(editingFinished()),           this, SLOT(sHandleSupplyOrder()));
+    disconnect(_supplyDropShip,    SIGNAL(toggled(bool)),                this, SLOT(sHandleSupplyOrder()));
+  }
+
   _supplyOrderType = "";
   _supplyOrderId = -1;
   _createSupplyOrder->setChecked(FALSE);
