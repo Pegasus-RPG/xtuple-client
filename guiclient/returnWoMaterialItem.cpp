@@ -159,8 +159,14 @@ void returnWoMaterialItem::sSetQOH(int pWomatlid)
     if (_wo->method() == "A")
       _qty->setDouble(_womatl->qtyIssued());
     else
-      _qty->setDouble((_womatl->qtyIssued() - _womatl->qtyRequired()));
-      
+    {
+      // depending on how the womatl_id is set, sometimes qtyRequired and qtyIssued are ABS
+      if (_womatl->qtyRequired() < 0.0)
+        _qty->setDouble((_womatl->qtyIssued() - _womatl->qtyRequired()));
+      else
+        _qty->setDouble((_womatl->qtyRequired() - _womatl->qtyIssued()));
+    }
+    
     XSqlQuery qoh;
     qoh.prepare( "SELECT itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, itemsite_qtyonhand) AS qtyonhand,"
                  "       uom_name "
