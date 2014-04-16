@@ -326,6 +326,14 @@ void itemAvailabilityWorkbench::populate()
 
 void itemAvailabilityWorkbench::sFillList()
 {
+  bool _sold = false;
+  XSqlQuery itemq;
+  itemq.prepare("SELECT item_sold FROM item "
+                "WHERE (item_id=:item_id);");
+  itemq.bindValue(":item_id", _item->id());
+  itemq.exec();
+  if (itemq.first())
+    _sold = itemq.value("item_sold").toBool();
   if (_tab->currentIndex() == _tab->indexOf(_availabilityTab))
   {
     if (_availabilityButton->isChecked())
@@ -355,9 +363,9 @@ void itemAvailabilityWorkbench::sFillList()
   {
     if (_purchaseOrderItemsButton->isChecked())
       _dspPoItemsByItem->sFillList();
-    else if (_salesOrderItemsButton->isChecked())
+    else if (_salesOrderItemsButton->isChecked() && _sold)
       _dspSalesOrdersByItem->sFillList();
-    else if (_quoteItemsButton->isChecked())
+    else if (_quoteItemsButton->isChecked() && _sold)
       _dspQuotesByItem->sFillList();
 //    else if (_customerPricesButton->isChecked())
 //      _dspPricesByCustomer->sFillList();
