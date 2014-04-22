@@ -70,6 +70,8 @@ enum SetResponse itemGroup::set(const ParameterList &pParams)
       if (itemet.first())
         _itemgrpid = itemet.value("itemgrp_id").toInt();
 
+      sFillList();
+
       connect(_itemgrpitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
       connect(_itemgrpparent, SIGNAL(valid(bool)), _deleteParent, SLOT(setEnabled(bool)));
     }
