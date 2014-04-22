@@ -21,8 +21,10 @@
 #include "dspRunningAvailability.h"
 #include "dspSubstituteAvailabilityByItem.h"
 #include "inputManager.h"
+#include "printPackingList.h"
 #include "purchaseOrder.h"
 #include "reserveSalesOrderItem.h"
+#include "salesOrder.h"
 #include "storedProcErrorLookup.h"
 #include "workOrder.h"
 
@@ -110,7 +112,23 @@ void dspInventoryAvailabilityByCustomerType::sPopulateMenu(QMenu *pMenu,  QTreeW
   
   if (list()->altId() == -2)
   {
+    menuItem = pMenu->addAction(tr("Edit Order..."), this, SLOT(sEditOrder()));
+    if (!_privileges->check("MaintainSalesOrders"))
+      menuItem->setEnabled(false);
+    
+    menuItem = pMenu->addAction(tr("View Order..."), this, SLOT(sViewOrder()));
+    if ((!_privileges->check("MaintainSalesOrders")) && (!_privileges->check("ViewSalesOrders")))
+      menuItem->setEnabled(false);
+    
+    pMenu->addSeparator();
+    
+    menuItem = pMenu->addAction(tr("Print Packing List..."), this, SLOT(sPrintPackingList()));
+    if (!_privileges->check("PrintPackingLists"))
+      menuItem->setEnabled(false);
+    
     menuItem = pMenu->addAction(tr("Add to Packing List Batch"), this, SLOT(sAddToPackingListBatch()));
+    if (!_privileges->check("MaintainPackingListBatch"))
+      menuItem->setEnabled(false);
   }
   else if (list()->altId() != -1)
   {
@@ -359,6 +377,16 @@ void dspInventoryAvailabilityByCustomerType::sShowReservations()
   omfgThis->handleNewWindow(newdlg);
 }
 
+void dspInventoryAvailabilityByCustomerType::sEditOrder()
+{
+  salesOrder::editSalesOrder(list()->id(), false);
+}
+
+void dspInventoryAvailabilityByCustomerType::sViewOrder()
+{
+  salesOrder::viewSalesOrder(list()->id());
+}
+
 void dspInventoryAvailabilityByCustomerType::sAddToPackingListBatch()
 {
   XSqlQuery qq;
@@ -367,3 +395,18 @@ void dspInventoryAvailabilityByCustomerType::sAddToPackingListBatch()
   qq.exec();
   sFillList();
 }
+
+void dspInventoryAvailabilityByCustomerType::sPrintPackingList()
+{
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    ParameterList params;
+    params.append("sohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    
+    printPackingList newdlg(this, "", true);
+    newdlg.set(params);
+    newdlg.exec();
+  }
+}
+
