@@ -1492,6 +1492,11 @@ void salesOrderItem::sPopulateItemsiteInfo()
         _supplyOrderType = "";
         _createSupplyOrder->setTitle(tr("Create Supply Order"));
       }
+
+      if (_item->isConfigured() && _costmethod == "J" && _supplyOrderType == "W")
+      {
+        _tabs->setCurrentIndex(_tabs->indexOf(_itemCharacteristicsTab));
+      }
     }
     else if (itemsite.lastError().type() != QSqlError::NoError)
     {
@@ -3546,8 +3551,8 @@ void salesOrderItem::sNewWoMatl()
   woMaterialItem newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
-  int currentId = _woIndentedList->id();
-  int currentAltId = _woIndentedList->altId();
+//  int currentId = _woIndentedList->id();
+//  int currentAltId = _woIndentedList->altId();
   omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   sFillWoIndentedList();
 //  _woIndentedList->setId(currentId,currentAltId);
@@ -3567,8 +3572,8 @@ void salesOrderItem::sEditWoMatl()
     woMaterialItem newdlg(this, "", TRUE);
     newdlg.set(params);
     newdlg.exec();
-    int currentId = _woIndentedList->id();
-    int currentAltId = _woIndentedList->altId();
+//    int currentId = _woIndentedList->id();
+//    int currentAltId = _woIndentedList->altId();
     omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
     sFillWoIndentedList();
 //    _woIndentedList->setId(currentId,currentAltId);
