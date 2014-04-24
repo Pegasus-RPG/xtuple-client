@@ -115,6 +115,7 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _hideApplyto->setChecked(_metrics->boolean("HideApplyToBalance"));
   _customerDeposits->setChecked(_metrics->boolean("EnableCustomerDeposits"));
   _discountTax->setChecked(_metrics->boolean("CreditTaxDiscount"));
+  _altCashExchangeRate->setChecked(_metrics->boolean("AltCashExchangeRate"));
 
   _name->setText(_metrics->value("remitto_name"));
   _address->setLine1(_metrics->value("remitto_address1"));
@@ -704,6 +705,7 @@ bool configureGL::sSave()
   _metrics->set("HideApplyToBalance", _hideApplyto->isChecked());
   _metrics->set("EnableCustomerDeposits", _customerDeposits->isChecked());
   _metrics->set("CreditTaxDiscount", _discountTax->isChecked());
+  _metrics->set("AltCashExchangeRate", _altCashExchangeRate->isChecked());
 
   _metrics->set("remitto_name", 	_name->text().trimmed());
   _metrics->set("remitto_address1",	_address->line1().trimmed());

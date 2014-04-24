@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>771</width>
+    <height>749</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -140,7 +140,7 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="1" column="0" rowspan="2">
+     <item row="1" column="0">
       <widget class="QGroupBox" name="_amountGroup">
        <property name="title">
         <string/>
@@ -940,6 +940,64 @@ to be bound by its terms.</comment>
        </widget>
       </widget>
      </item>
+     <item row="2" column="0">
+      <widget class="QGroupBox" name="_altExchRate">
+       <property name="title">
+        <string>Use Alternate Exchange Rate</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="1" column="0">
+         <widget class="QLabel" name="_gainLossLit">
+          <property name="text">
+           <string>Gain/Loss:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="_exchRateLit">
+          <property name="text">
+           <string>Exchange Rate:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="XLineEdit" name="_exchRate">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="1">
+         <widget class="CurrDisplay" name="_gainLoss"/>
+        </item>
+       </layout>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
@@ -1366,6 +1424,38 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>31</x>
      <y>285</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_received</sender>
+   <signal>idChanged(int)</signal>
+   <receiver>_gainLoss</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>263</x>
+     <y>123</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>204</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_received</sender>
+   <signal>effectiveChanged(QDate)</signal>
+   <receiver>_gainLoss</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>263</x>
+     <y>123</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>204</x>
+     <y>421</y>
     </hint>
    </hints>
   </connection>
