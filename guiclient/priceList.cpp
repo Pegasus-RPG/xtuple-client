@@ -90,13 +90,6 @@ enum SetResponse priceList::set(const ParameterList &pParams)
     sNewShipto();
   }
 
-  param = pParams.value("item_id", &valid);
-  if (valid)
-  {
-    _item->setId(param.toInt());
-    _item->setReadOnly(true);
-  }
-
   param = pParams.value("warehouse_id", &valid);
   if (valid)
   {
@@ -133,6 +126,13 @@ enum SetResponse priceList::set(const ParameterList &pParams)
     _qty->setEnabled(false);
   }
 
+  param = pParams.value("item_id", &valid);
+  if (valid)
+  {
+    _item->setId(param.toInt());
+    _item->setReadOnly(true);
+  }
+  
   sFillList();
 
   return NoError;
@@ -191,11 +191,18 @@ void priceList::sNewItem()
   {
     XSqlQuery itemq;
     itemq.prepare("SELECT item_listprice, item_listcost, item_prodcat_id,"
-                  "       itemCost(itemsite_id) AS item_unitcost"
+                  "       itemCost(:item_id, :cust_id, :shipto_id, :qty, item_inv_uom_id, item_price_uom_id,"
+                  "                :curr_id, :effective, :asof, :warehous_id) AS item_unitcost"
                   "  FROM item LEFT OUTER JOIN itemsite ON (itemsite_item_id=item_id AND itemsite_warehous_id=:warehous_id)"
                   " WHERE (item_id=:item_id);");
-    itemq.bindValue(":item_id", _item->id());
-    itemq.bindValue(":warehous_id", _warehouse->id());
+    itemq.bindValue(":item_id",          _item->id());
+    itemq.bindValue(":cust_id",          _cust->id());
+    itemq.bindValue(":shipto_id",        _shiptoid);
+    itemq.bindValue(":qty",              _qty->toDouble());
+    itemq.bindValue(":curr_id",          _curr_id);
+    itemq.bindValue(":effective",        _effective);
+    itemq.bindValue(":asof",             _asOf);
+    itemq.bindValue(":warehous_id",      _warehouse->id());
     itemq.exec();
     if (itemq.first())
     {

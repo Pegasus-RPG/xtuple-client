@@ -40,6 +40,9 @@ public slots:
     virtual void sReserveLineBalance();
     virtual void sUnreserveStock();
     virtual void sShowReservations();
+    virtual void sEditOrder();
+    virtual void sViewOrder();
+    virtual void sPrintPackingList();
     virtual void sAddToPackingListBatch();
     virtual void sFillList();
 

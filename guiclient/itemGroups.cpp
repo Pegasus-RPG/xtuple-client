@@ -66,6 +66,9 @@ void itemGroups::sDelete()
   itemDelete.prepare( "DELETE FROM itemgrpitem "
              "WHERE (itemgrpitem_itemgrp_id=:itemgrp_id);"
 
+             "DELETE FROM itemgrpitem "
+             "WHERE ((itemgrpitem_item_id=:itemgrp_id) AND (itemgrpitem_item_type='G'));"
+                                        
              "DELETE FROM itemgrp "
              "WHERE (itemgrp_id=:itemgrp_id);" );
   itemDelete.bindValue(":itemgrp_id", _itemgrp->id());

@@ -26,7 +26,7 @@ createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, 
 
   connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
   connect(_lotSerial, SIGNAL(textChanged(QString)), this, SLOT(sHandleLotSerial()));
-  connect(_lotSerial, SIGNAL(editingFinished()), this, SLOT(sHandleCharacteristics()));
+  connect(_lotSerial, SIGNAL(newID(int)), this, SLOT(sHandleCharacteristics()));
 
   _item->setReadOnly(TRUE);
 
@@ -97,10 +97,9 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
       //If there is preassigned trace info for an associated order, force user to select from list
       XSqlQuery preassign;
       preassign.prepare("SELECT lsdetail_id,ls_number,ls_number "
-                        "FROM lsdetail,ls "
+                        "FROM lsdetail JOIN ls ON (ls_id=lsdetail_ls_id) "
                         "WHERE ( (lsdetail_source_number=:docnumber) "
                         "AND (lsdetail_source_type=:transtype) "
-                        "AND (lsdetail_ls_id=ls_id) "
                         "AND (lsdetail_qtytoassign > 0) )");
       preassign.bindValue(":transtype", createet.value("invhist_transtype").toString());
       preassign.bindValue(":docnumber", createet.value("invhist_ordnumber").toString());
@@ -110,6 +109,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
         _lotSerial->setAllowNull(true);
         _lotSerial->populate(preassign);
         _preassigned = true;
+        connect(_lotSerial, SIGNAL(newID(int)), this, SLOT(sLotSerialSelected()));
       }
       else if (preassign.lastError().type() != QSqlError::NoError)
       {
@@ -482,8 +482,12 @@ void createLotSerial::sLotSerialSelected()
 
     XSqlQuery itemloc;
     itemloc.prepare("SELECT itemloc_expiration, itemloc_warrpurc "
-            "FROM itemloc "
-            "WHERE itemloc_id=:itemloc_id;");
+                    "FROM itemloc "
+                    "WHERE itemloc_id=:itemloc_id "
+                    "UNION "
+                    "SELECT itemloc_expiration, itemloc_warrpurc "
+                    "FROM lsdetail JOIN itemloc ON (itemloc_itemsite_id=lsdetail_itemsite_id AND itemloc_ls_id=lsdetail_ls_id) "
+                    "WHERE lsdetail_id=:itemloc_id;");
     itemloc.bindValue(":itemloc_id", _lotSerial->id());
     itemloc.exec();
     if (itemloc.first()) {
