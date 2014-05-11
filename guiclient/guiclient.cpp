@@ -419,7 +419,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   // load plugins before building the menus
   // TODO? add a step later to add to the menus from the plugins?
-  QDir pluginsDir(QApplication::applicationDirPath());
+  QDir pluginsDir("/usr/lib/postbooks");
   while (! pluginsDir.exists("plugins") && pluginsDir.cdUp())
     ;
   if (pluginsDir.cd("plugins"))
@@ -1342,6 +1342,7 @@ QString translationFile(QString localestr, const QString component, QString &ver
   QStringList paths;
 //qDebug() << QDesktopServices::storageLocation(QDesktopServices::DataLocation);
   paths << QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+  paths << "/usr/lib/postbooks/dict";
   paths << "dict";
   paths << "";
   paths << "../dict";
@@ -2124,7 +2125,7 @@ void GUIClient::hunspell_initialize()
 {
     _spellReady = false;
     QString langName = QLocale::languageToString(QLocale().language());
-    QString appPath = QApplication::applicationDirPath();
+    QString appPath("/usr/lib/postbooks");
     QString fullPathWithoutExt = appPath + "/" + langName;
     QFile affFile(fullPathWithoutExt + tr(".aff"));
     QFile dicFile(fullPathWithoutExt + tr(".dic"));
