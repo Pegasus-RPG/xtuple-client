@@ -20,7 +20,7 @@ win32-msvc* {
                     ../lib/xtuplescriptapi.lib \
                     ../lib/xtuplewidgets.lib
 } else {
-  PRE_TARGETDEPS += ../lib/libxtuplecommon.a    \
+  PRE_TARGETDEPS += ../lib/libxtuplecommon.so    \
                     ../lib/libxtuplescriptapi.a \
                     ../lib/libxtuplewidgets.a   \
                     $${OPENRPT_BLD}/libMetaSQL.a  \
