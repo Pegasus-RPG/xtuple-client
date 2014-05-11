@@ -85,7 +85,9 @@ suffix = "tar.gz";
     _ok->setEnabled(metric.value("allow").toBool());
   }
   else if (versions.lastError().type() != QSqlError::NoError)
-    systemError(this, versions.lastError().text(), __FILE__, __LINE__);
+    // FIXME: This function is from guiclient and creates a circular dependency
+    //systemError(this, versions.lastError().text(), __FILE__, __LINE__);
+    qDebug() << "systemError: " << versions.lastError().text();
   if (DEBUG)
   {
     qDebug() << "serverVersion= " << serverVersion;
