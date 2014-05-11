@@ -23,16 +23,15 @@ win32-msvc* {
   PRE_TARGETDEPS += ../lib/libxtuplecommon.a    \
                     ../lib/libxtuplescriptapi.a \
                     ../lib/libxtuplewidgets.a   \
-                    ../$${OPENRPT_BLD}/lib/libMetaSQL.a  \
-                    ../$${OPENRPT_BLD}/lib/librenderer.a \
-                    ../$${OPENRPT_BLD}/lib/libwrtembed.a \
-                    ../$${OPENRPT_BLD}/lib/libDmtx_Library.a \
-                    ../$${OPENRPT_BLD}/lib/libcommon.a
+                    $${OPENRPT_BLD}/libMetaSQL.a  \
+                    $${OPENRPT_BLD}/librenderer.a \
+                    $${OPENRPT_BLD}/libwrtembed.a \
+                    $${OPENRPT_BLD}/libcommon.a
 }
 
-LIBS        += -L../lib -L../$${OPENRPT_BLD}/lib \
+LIBS        += -L../lib -L$${OPENRPT_BLD} \
                -lxtuplecommon -lxtuplewidgets -lwrtembed -lcommon -lrenderer \
-               -lxtuplescriptapi -lDmtx_Library -lMetaSQL
+               -lxtuplescriptapi -ldmtx -lMetaSQL
 
 #not the best way to handle this, but it should do
 mac:!static:contains(QT_CONFIG, qt_framework) {
@@ -1841,7 +1840,7 @@ include( hunspell.pri )
 QT += xml sql script scripttools network
 QT += webkit xmlpatterns
 
-RESOURCES += guiclient.qrc ../$${OPENRPT_DIR}/OpenRPT/images/OpenRPTMetaSQL.qrc
+RESOURCES += guiclient.qrc /usr/share/openrpt/OpenRPT/images/OpenRPTMetaSQL.qrc
 
 #CONFIG += debug
 
