@@ -586,6 +586,7 @@
 #include "todoItem.h"
 #include "todoListCalendar.h"
 #include "todoList.h"
+#include "toggleBankrecCleared.h"
 #include "transactionInformation.h"
 #include "transferOrder.h"
 #include "transferOrderItem.h"
