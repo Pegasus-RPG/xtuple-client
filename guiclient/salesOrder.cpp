@@ -3117,7 +3117,10 @@ void salesOrder::clear()
       _locked=false;
   }
 
-  _salesOrderInformation->setCurrentIndex(0);
+  if(_metrics->boolean("DefaultSOLineItemsTab"))
+    _salesOrderInformation->setCurrentIndex(1);
+  else
+    _salesOrderInformation->setCurrentIndex(0);
 
   _orderNumber->setEnabled(TRUE);
   _orderNumberGen = 0;
