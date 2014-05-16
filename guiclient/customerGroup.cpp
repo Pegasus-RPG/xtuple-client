@@ -216,7 +216,7 @@ void customerGroup::sNew()
   XSqlQuery customerNew;
   ParameterList params;
 
-  CRMAcctList *newdlg = new CRMAcctList(this);
+  CRMAcctSearch *newdlg = new CRMAcctSearch(this);
   newdlg->setSubtype(CRMAcctLineEdit::Cust);
 
   int custid;

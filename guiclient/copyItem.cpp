@@ -306,9 +306,11 @@ void copyItem::sCopyItemsite()
   if (_copyItemsite->isChecked())
   {
     XSqlQuery itemsiteq;
-    itemsiteq.prepare("SELECT copyItemsite(itemsite_id, itemsite_warehous_id, :targetitemid) AS result "
-                      "FROM itemsite "
-                      "WHERE (itemsite_item_id=:sourceitemid);");
+    itemsiteq.prepare("SELECT copyItemsite(itemsite_id, itemsite_warehous_id, :targetitemid) AS result FROM "
+                      "(SELECT * "
+                      " FROM itemsite JOIN whsinfo ON (warehous_id=itemsite_warehous_id) "
+                      " WHERE (itemsite_item_id=:sourceitemid) "
+                      " ORDER BY warehous_sequence DESC) AS data;");
     itemsiteq.bindValue(":sourceitemid", _source->id());
     itemsiteq.bindValue(":targetitemid", _newitemid);
     itemsiteq.exec();

@@ -10,6 +10,7 @@
 
 #include "issueWoMaterialBatch.h"
 
+#include <QSqlError>
 #include <QVariant>
 #include <QMessageBox>
 #include <metasql.h>
@@ -173,6 +174,31 @@ void issueWoMaterialBatch::sIssue()
         QMessageBox::information( this, tr("Material Issue"), tr("Transaction Canceled") );
         return;
       }
+
+      if (_metrics->boolean("LotSerialControl"))
+      {
+        // Insert special pre-assign records for the lot/serial#
+        // so they are available when the material is returned
+        XSqlQuery lsdetail;
+        lsdetail.prepare("INSERT INTO lsdetail "
+                         "            (lsdetail_itemsite_id, lsdetail_created, lsdetail_source_type, "
+                         "             lsdetail_source_id, lsdetail_source_number, lsdetail_ls_id, lsdetail_qtytoassign) "
+                         "SELECT invhist_itemsite_id, NOW(), 'IM', "
+                         "       :orderitemid, invhist_ordnumber, invdetail_ls_id, (invdetail_qty * -1.0) "
+                         "FROM invhist JOIN invdetail ON (invdetail_invhist_id=invhist_id) "
+                         "WHERE (invhist_series=:itemlocseries)"
+                         "  AND (COALESCE(invdetail_ls_id, -1) > 0);");
+        lsdetail.bindValue(":orderitemid", items.value("womatl_id").toInt());
+        lsdetail.bindValue(":itemlocseries", issue.value("result").toInt());
+        lsdetail.exec();
+        if (lsdetail.lastError().type() != QSqlError::NoError)
+        {
+          rollback.exec();
+          systemError(this, lsdetail.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
+      }
+      
     }
     else
     {
@@ -182,6 +208,7 @@ void issueWoMaterialBatch::sIssue()
                          .arg(_wo->id()) );
       return;
     }
+
     issue.exec("COMMIT;");
   }
 
