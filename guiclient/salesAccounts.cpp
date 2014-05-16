@@ -38,7 +38,7 @@ salesAccounts::salesAccounts(QWidget* parent, const char* name, Qt::WFlags fl)
   _salesaccnt->addColumn(tr("Sale Type"),                 _itemColumn, Qt::AlignCenter  , true, "saletypecode");
   _salesaccnt->addColumn(tr("Prod. Cat."),                _itemColumn, Qt::AlignCenter  , true, "prodcatcode");
   _salesaccnt->addColumn(tr("Sales Accnt. #"),            _itemColumn, Qt::AlignCenter  , true, "salesaccount");
-  _salesaccnt->addColumn(tr("Credit Accnt. #"),           _itemColumn, Qt::AlignCenter  , true, "creditaccount");
+  _salesaccnt->addColumn(tr("Return Accnt. #"),           _itemColumn, Qt::AlignCenter  , true, "creditaccount");
   _salesaccnt->addColumn(tr("COS Accnt. #"),              _itemColumn, Qt::AlignCenter  , true, "cosaccount");
   _salesaccnt->addColumn(tr("Returns Accnt. #"),          _itemColumn, Qt::AlignCenter  , true, "returnsaccount");
   _salesaccnt->addColumn(tr("Cost of Returns Accnt. #"),  _itemColumn, Qt::AlignCenter  , true, "coraccount" );
