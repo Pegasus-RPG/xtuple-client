@@ -295,7 +295,7 @@ void unpostedPurchaseOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem,
 
 
   menuItem = pMenu->addAction(tr("Print..."), this, SLOT(sPrint()));
-  menuItem->setEnabled(canMaintain);
+  menuItem->setEnabled(_privileges->check("PrintPurchaseOrders"));
 
   pMenu->addSeparator();
 
