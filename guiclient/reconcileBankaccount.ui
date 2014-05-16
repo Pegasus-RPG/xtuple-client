@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>869</width>
     <height>600</height>
    </rect>
   </property>
@@ -87,7 +87,7 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
-          <widget class="XCheckBox" name="_rateEdit">
+          <widget class="XCheckBox" name="_allowEdit">
            <property name="text">
             <string>Exchange Rate Edit</string>
            </property>

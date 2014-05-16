@@ -553,6 +553,7 @@ FORMS =   absoluteCalendarItem.ui               \
           todoItem.ui                           \
           todoList.ui                           \
           todoListCalendar.ui                   \
+          toggleBankrecCleared.ui               \
           transactionInformation.ui             \
           transferOrder.ui                      \
           transferOrderItem.ui                  \
@@ -1147,6 +1148,7 @@ HEADERS = ../common/format.h                    \
           todoItem.h                    \
           todoList.h                    \
           todoListCalendar.h            \
+          toggleBankrecCleared.h        \
           toitemTableModel.h            \
           toitemTableView.h             \
           transactionInformation.h      \
@@ -1755,6 +1757,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           todoItem.cpp                          \
           todoList.cpp                          \
           todoListCalendar.cpp                  \
+          toggleBankrecCleared.cpp              \
           toitemTableModel.cpp                  \
           toitemTableView.cpp                   \
           transactionInformation.cpp            \
