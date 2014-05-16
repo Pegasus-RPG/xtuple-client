@@ -205,8 +205,8 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.printCreditMemos",		     tr("Print &Returns..."),	SLOT(sPrintCreditMemos()), billingFormsMenu, "PrintCreditMemos",	NULL, NULL, true, NULL },
     { "so.reprintCreditMemos",		     tr("Re-Print &Returns..."),	SLOT(sReprintCreditMemos()), billingFormsMenu, "PrintCreditMemos",	NULL, NULL, true, NULL },
 
-    // Sales | Returns
-    { "menu",	tr("&Return"),	(char*)returnsMenu,	mainMenu, "true",	NULL, NULL,  _metrics->boolean("EnableReturnAuth"), NULL },
+    // Sales | Return Authorizations
+    { "menu",	tr("&Return Auth."),	(char*)returnsMenu,	mainMenu, "true",	NULL, NULL,  _metrics->boolean("EnableReturnAuth"), NULL },
     { "so.newReturn", tr("&New..."),	SLOT(sNewReturn()), returnsMenu, "MaintainReturns",	NULL, NULL, true, NULL },
     { "so.openReturns", tr("&List Open..."),	SLOT(sOpenReturns()), returnsMenu, "MaintainReturns ViewReturns",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	returnsMenu,	"true",		NULL, NULL, true , NULL },
