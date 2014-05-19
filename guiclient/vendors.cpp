@@ -46,7 +46,6 @@ vendors::vendors(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("State Pattern"), "addr_state_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Postal Code Pattern"), "addr_postalcode_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Country Pattern"), "addr_country_pattern", ParameterWidget::Text);
-  setupCharacteristics(characteristic::Vendors);
 
   list()->addColumn(tr("Type"),   _itemColumn, Qt::AlignCenter, true, "vendtype_code");
   list()->addColumn(tr("Number"), _itemColumn, Qt::AlignLeft,   true, "vend_number");
@@ -60,6 +59,8 @@ vendors::vendors(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("State"),   50, Qt::AlignLeft  , false, "addr_state" );
   list()->addColumn(tr("Country"), 100, Qt::AlignLeft  , false, "addr_country" );
   list()->addColumn(tr("Postal Code"), 75, Qt::AlignLeft  , false, "addr_postalcode" );
+
+  setupCharacteristics(characteristic::Vendors);
 
   connect(omfgThis, SIGNAL(vendorsUpdated()), SLOT(sFillList()));
 
