@@ -10,7 +10,6 @@
 
 #include "voucherItem.h"
 
-// #include <QCloseEvent>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
@@ -92,14 +91,14 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
   if (valid)
   {
     _freightToVoucher->setId(param.toInt());
-	_tax->setId(param.toInt());
+    _tax->setId(param.toInt());
   }
 
   param = pParams.value("effective", &valid);
   if (valid)
   {
-	_freightToVoucher->setEffective(param.toDate());
-	_tax->setEffective(param.toDate());
+    _freightToVoucher->setEffective(param.toDate());
+    _tax->setEffective(param.toDate());
   }
 
   param = pParams.value("vohead_id", &valid);
@@ -208,7 +207,7 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       _voitemid = setVoucher.value("voitem_id").toInt();
       _closePoitem->setChecked(setVoucher.value("voitem_close").toBool());
       _qtyToVoucher->setText(setVoucher.value("voitem_qty").toDouble());
-      _amtToVoucher->setText(setVoucher.value("voitem_amt").toDouble());
+      _amtToVoucher->setDouble(setVoucher.value("voitem_amt").toDouble());
       _freightToVoucher->setLocalValue(setVoucher.value("voitem_freight").toDouble());
       _taxtype->setId(setVoucher.value("voitem_taxtype_id").toInt());
     }
@@ -432,84 +431,47 @@ void voucherItem::sDelete()
 void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
 {
   XSqlQuery voucherToggleReceiving;
-  double n;
-  double a;
+  double vch = 0;
+  double amt = 0;
+  double rcv = 0;
+  double rej = 0;
+
   QString s;
   XTreeWidgetItem* item = (XTreeWidgetItem*)pItem;
   if(item->id() == -1)
     return;
+
+  // TODO: translation
   if (item->text(4) == "Yes")
-  {
     item->setText(4, "No");
-    if (item->text(0) == "Receiving")
-    {
-      n = _qtyToVoucher->toDouble();
-      a = _amtToVoucher->toDouble();
-      _qtyToVoucher->setText(item->text(2));
-      _amtToVoucher->setText(item->text(3));
-      n = n - _qtyToVoucher->toDouble();
-      a = a - (_qtyToVoucher->toDouble() * _amtToVoucher->toDouble());
-      _qtyToVoucher->setText(s.setNum(n));
-      _amtToVoucher->setText(s.setNum(a));
-
-      n = _uninvoicedReceived->toDouble();
-      _uninvoicedReceived->setText(item->text(2));
-      n = n + _uninvoicedReceived->toDouble();
-      _uninvoicedReceived->setText(s.setNum(n));
-    }
-    else
-    {
-      n = _qtyToVoucher->toDouble();
-      a = _amtToVoucher->toDouble();
-      _qtyToVoucher->setText(item->text(2));
-      _amtToVoucher->setText(item->text(3));
-      n = n - _qtyToVoucher->toDouble();
-      a = a - (_qtyToVoucher->toDouble() * _amtToVoucher->toDouble());
-      _qtyToVoucher->setText(s.setNum(n));
-      _amtToVoucher->setText(s.setNum(a));
-
-      n = _uninvoicedRejected->toDouble();
-      _uninvoicedRejected->setText(item->text(2));
-      n = n + _rejected->toDouble();
-      _uninvoicedRejected->setText(s.setNum(n));
-    }
-  }
-  else 
-  {
+  else
     item->setText(4, "Yes");
-    if (item->text(0) == "Receiving")
-    {
-      n = _qtyToVoucher->toDouble();
-      a = _amtToVoucher->toDouble();
-      _qtyToVoucher->setText(item->text(2));
-      _amtToVoucher->setText(item->text(3));
-      n = n + _qtyToVoucher->toDouble();
-      a = a + (_qtyToVoucher->toDouble() * _amtToVoucher->toDouble());
-      _qtyToVoucher->setText(s.setNum(n));
-      _amtToVoucher->setText(s.setNum(a));
 
-      n = _uninvoicedReceived->toDouble();
-      _uninvoicedReceived->setText(item->text(2));
-      n = n - _uninvoicedReceived->toDouble();
-      _uninvoicedReceived->setText(s.setNum(n));
-    }
-    else
-    {
-      n = _qtyToVoucher->toDouble();
-      a = _amtToVoucher->toDouble();
-      _qtyToVoucher->setText(item->text(2));
-      _amtToVoucher->setText(item->text(3));
-      n = n + _qtyToVoucher->toDouble();
-      a = a + (_qtyToVoucher->toDouble() * _amtToVoucher->toDouble());
-      _qtyToVoucher->setText(s.setNum(n));
-      _amtToVoucher->setText(s.setNum(a));
+  for (int i = 0; i < _uninvoiced->topLevelItemCount(); i++)
+  {
+    XTreeWidgetItem *item = _uninvoiced->topLevelItem(i);
+    double pp  = item->data(3, Xt::RawRole).toDouble();
+    double qty = item->data(2, Xt::RawRole).toDouble();
 
-      n = _uninvoicedRejected->toDouble();
-      _uninvoicedRejected->setText(item->text(2));
-      n = n + _uninvoicedRejected->toDouble();
-      _uninvoicedRejected->setText(s.setNum(n));
+    if (item->text(4) == "Yes")
+    {
+      vch = vch + qty;
+      amt = amt + (qty * pp);
+
+      if (item->text(0) == "Receiving")
+      {
+        rcv = rcv + qty;
+      }
+      else
+      {
+        rej = rej + qty;
+      }
     }
   }
+  _qtyToVoucher->setDouble(vch);
+  _amtToVoucher->setDouble(amt);
+  _uninvoicedReceived->setDouble(rcv);
+  _uninvoicedRejected->setDouble(rej);
 
   // Check PO Close flag
 
