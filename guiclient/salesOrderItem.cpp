@@ -281,6 +281,12 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
     _markupFromUnitCostLit->hide();
   }
 
+  if (!_privileges->check("ShowMarginsOnSalesOrder"))
+  {
+    _margin->hide();
+    _marginLit->hide();
+  }
+  
   if ((_metrics->boolean("DisableSalesOrderPriceOverride")) || (!_privileges->check("OverridePrice")))
   {
     _netUnitPrice->setEnabled(false);
