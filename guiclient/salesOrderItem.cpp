@@ -48,7 +48,6 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
 
   connect(_item,              SIGNAL(privateIdChanged(int)),        this, SLOT(sFindSellingWarehouseItemsites(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemInfo(int)));
-  connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemsiteInfo()));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemSources(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemSubs(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateHistory()));
@@ -63,9 +62,6 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   connect(_scheduledDate,     SIGNAL(newDate(const QDate &)),       this, SLOT(sHandleScheduleDate()));
   connect(_showAvailability,  SIGNAL(toggled(bool)),                this, SLOT(sDetermineAvailability()));
   connect(_showIndented,      SIGNAL(toggled(bool)),                this, SLOT(sDetermineAvailability()));
-  connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemsiteInfo()));
-  connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sDetermineAvailability()));
-  connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemSubs(int)));
   connect(_subs,              SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateSubMenu(QMenu*,QTreeWidgetItem*,int)));
   connect(_next,              SIGNAL(clicked()),                    this, SLOT(sNext()));
   connect(_prev,              SIGNAL(clicked()),                    this, SLOT(sPrev()));
@@ -1451,11 +1447,25 @@ void salesOrderItem::sPopulateItemsiteInfo()
   if (_item->isValid())
   {
     XSqlQuery itemsite;
-    itemsite.prepare( "SELECT *, "
-                      "       itemCost(itemsite_id) AS unitcost "
-                      "FROM itemsite JOIN item ON (item_id=itemsite_item_id) "
-                      "WHERE ( (itemsite_warehous_id=:warehous_id)"
-                      "  AND   (itemsite_item_id=:item_id) );" );
+    itemsite.prepare("SELECT *, "
+                     "       itemCost(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
+                     "                :curr_id, :effective, :asof, :warehouse_id) AS unitcost "
+                     "FROM itemsite JOIN item ON (item_id=itemsite_item_id) "
+                     "WHERE ( (itemsite_warehous_id=:warehous_id)"
+                     "  AND   (itemsite_item_id=:item_id) );" );
+    itemsite.bindValue(":cust_id", _custid);
+    itemsite.bindValue(":shipto_id", _shiptoid);
+    itemsite.bindValue(":qty", _qtyOrdered->toDouble());
+    itemsite.bindValue(":qtyUOM", _qtyUOM->id());
+    itemsite.bindValue(":priceUOM", _priceUOM->id());
+    itemsite.bindValue(":curr_id", _customerPrice->id());
+    itemsite.bindValue(":effective", _customerPrice->effective());
+    if (_metrics->value("soPriceEffective") == "OrderDate")
+      itemsite.bindValue(":asof", _netUnitPrice->effective());
+    else if (_metrics->value("soPriceEffective") == "ScheduleDate" && _scheduledDate->isValid())
+      itemsite.bindValue(":asof", _scheduledDate->date());
+    else
+      itemsite.bindValue(":asof", omfgThis->dbDate());
     itemsite.bindValue(":warehous_id", _warehouse->id());
     itemsite.bindValue(":item_id", _item->id());
     itemsite.exec();
@@ -1464,10 +1474,7 @@ void salesOrderItem::sPopulateItemsiteInfo()
       _leadTime    = itemsite.value("itemsite_leadtime").toInt();
       _stocked     = itemsite.value("itemsite_stocked").toBool();
       _costmethod  = itemsite.value("itemsite_costmethod").toString();
-      if (_metrics->boolean("WholesalePriceCosting"))
-        _unitCost->setBaseValue(itemsite.value("item_listcost").toDouble() * (_priceinvuomratio / _priceRatio));
-      else
-        _unitCost->setBaseValue(itemsite.value("unitcost").toDouble() * (_priceinvuomratio / _priceRatio));
+      _unitCost->setBaseValue(itemsite.value("unitcost").toDouble() * (_priceinvuomratio / _priceRatio));
 
       if (itemsite.value("itemsite_createwo").toBool())
       {
@@ -1840,6 +1847,11 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       _listPrice->setBaseValue(salesPopulateItemInfo.value("item_listprice").toDouble());
       _taxtype->setId(salesPopulateItemInfo.value("taxtype_id").toInt());
 
+      connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemsiteInfo()));
+      connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sDetermineAvailability()));
+      connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemSubs(int)));
+
+      sPopulateItemsiteInfo();
       sCalculateDiscountPrcnt();
 
     }
@@ -4358,19 +4370,30 @@ void salesOrderItem::sPriceUOMChanged()
   }
 
   XSqlQuery item;
-  item.prepare("SELECT item_listprice, item_listcost,"
-               "       itemCost(itemsite_id) AS unitcost"
+  item.prepare("SELECT item_listprice,"
+               "       itemCost(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
+               "                :curr_id, :effective, :asof, :warehouse_id) AS unitcost "
                "  FROM item LEFT OUTER JOIN itemsite ON (itemsite_item_id=item_id AND itemsite_warehous_id=:warehous_id)"
                " WHERE(item_id=:item_id);");
+  item.bindValue(":cust_id", _custid);
+  item.bindValue(":shipto_id", _shiptoid);
+  item.bindValue(":qty", _qtyOrdered->toDouble());
+  item.bindValue(":qtyUOM", _qtyUOM->id());
+  item.bindValue(":priceUOM", _priceUOM->id());
+  item.bindValue(":curr_id", _customerPrice->id());
+  item.bindValue(":effective", _customerPrice->effective());
+  if (_metrics->value("soPriceEffective") == "OrderDate")
+    item.bindValue(":asof", _netUnitPrice->effective());
+  else if (_metrics->value("soPriceEffective") == "ScheduleDate" && _scheduledDate->isValid())
+    item.bindValue(":asof", _scheduledDate->date());
+  else
+    item.bindValue(":asof", omfgThis->dbDate());
   item.bindValue(":item_id", _item->id());
   item.bindValue(":warehous_id", _warehouse->id());
   item.exec();
   item.first();
   _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
-  if (_metrics->boolean("WholesalePriceCosting"))
-    _unitCost->setBaseValue(item.value("item_listcost").toDouble() * (_priceinvuomratio / _priceRatio));
-  else
-    _unitCost->setBaseValue(item.value("unitcost").toDouble() * (_priceinvuomratio / _priceRatio));
+  _unitCost->setBaseValue(item.value("unitcost").toDouble() * (_priceinvuomratio / _priceRatio));
   sDeterminePrice(true);
 }
 
@@ -4390,15 +4413,6 @@ void salesOrderItem::sCalcUnitCost()
   }
   else
   {
-    QDate   asOf;
-    
-    if (_metrics->value("soPriceEffective") == "ScheduleDate")
-      asOf = _scheduledDate->date();
-    else if (_metrics->value("soPriceEffective") == "OrderDate")
-      asOf = _netUnitPrice->effective();
-    else
-      asOf = omfgThis->dbDate();
-    
     salesCalcUnitCost.prepare( "SELECT * FROM "
                       "itemCost(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
                       "         :curr_id, :effective, :asof, :warehouse) AS unitcost;" );
@@ -4410,11 +4424,16 @@ void salesOrderItem::sCalcUnitCost()
     salesCalcUnitCost.bindValue(":item_id", _item->id());
     salesCalcUnitCost.bindValue(":curr_id", _customerPrice->id());
     salesCalcUnitCost.bindValue(":effective", _customerPrice->effective());
-    salesCalcUnitCost.bindValue(":asof", asOf);
+    if (_metrics->value("soPriceEffective") == "OrderDate")
+      salesCalcUnitCost.bindValue(":asof", _netUnitPrice->effective());
+    else if (_metrics->value("soPriceEffective") == "ScheduleDate" && _scheduledDate->isValid())
+      salesCalcUnitCost.bindValue(":asof", _scheduledDate->date());
+    else
+      salesCalcUnitCost.bindValue(":asof", omfgThis->dbDate());
     salesCalcUnitCost.bindValue(":warehouse", _warehouse->id());
     salesCalcUnitCost.exec();
     if (salesCalcUnitCost.first())
-      _unitCost->setLocalValue(salesCalcUnitCost.value("unitcost").toDouble());
+      _unitCost->setBaseValue(salesCalcUnitCost.value("unitcost").toDouble() * (_priceinvuomratio / _priceRatio));
   }
 }
 
