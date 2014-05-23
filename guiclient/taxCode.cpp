@@ -49,6 +49,14 @@ taxCode::taxCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   sFillList(); 
 
   _account->setType(GLCluster::cRevenue | GLCluster::cLiability | GLCluster::cExpense);
+  _distaccount->setType(GLCluster::cRevenue | GLCluster::cLiability | GLCluster::cExpense);
+  if (_metrics->boolean("CashBasedTax"))
+    _accountLit->setText(tr("Clearing Account"));
+  else
+  {
+    _distaccount->hide();
+    _distaccountLit->hide();
+  }
 }
 
 void taxCode::populateBasis()
@@ -269,6 +277,7 @@ enum SetResponse taxCode::set(const ParameterList &pParams)
       _code->setEnabled(FALSE);
       _description->setEnabled(FALSE);
       _account->setReadOnly(TRUE); 
+      _distaccount->setReadOnly(TRUE);
       _taxClass->setEnabled(FALSE);
       _taxauth->setEnabled(FALSE);
       _basis->setEnabled(FALSE);
@@ -300,11 +309,18 @@ void taxCode::sSave()
      _account->setFocus();
       return;
    }
+  if (_metrics->boolean("CashBasedTax") && !_distaccount->isValid())
+  {
+    QMessageBox::warning( this, tr("Select Ledger Account"),
+                         tr("You must select a Distribution Ledger Account for this Tax.") );
+    _distaccount->setFocus();
+    return;
+  }
   taxSave.prepare("SELECT tax_id"
-            "  FROM tax"
-            " WHERE((tax_id!= :tax_id)"
-		    " AND (tax_code=:tax_code));");
-  taxSave.bindValue(":tax_id", _taxid); 
+                  "  FROM tax"
+                  " WHERE((tax_id!= :tax_id)"
+                  "   AND (tax_code=:tax_code));");
+  taxSave.bindValue(":tax_id", _taxid);
   taxSave.bindValue(":tax_code", _code->text().trimmed());
   taxSave.exec();
   if(taxSave.first())
@@ -315,18 +331,21 @@ void taxCode::sSave()
     return;
   }
 
-  taxSave.prepare( "UPDATE tax "
-             "SET tax_code=:tax_code, tax_descrip=:tax_descrip,"
-             "    tax_sales_accnt_id=:tax_sales_accnt_id,"
-             "    tax_taxclass_id=:tax_taxclass_id,"
-             "    tax_taxauth_id=:tax_taxauth_id,"
-             "    tax_basis_tax_id=:tax_basis_tax_id "
-             "WHERE (tax_id=:tax_id);" );
+  taxSave.prepare("UPDATE tax "
+                  "SET tax_code=:tax_code, tax_descrip=:tax_descrip,"
+                  "    tax_sales_accnt_id=:tax_sales_accnt_id,"
+                  "    tax_dist_accnt_id=:tax_dist_accnt_id,"
+                  "    tax_taxclass_id=:tax_taxclass_id,"
+                  "    tax_taxauth_id=:tax_taxauth_id,"
+                  "    tax_basis_tax_id=:tax_basis_tax_id "
+                  "WHERE (tax_id=:tax_id);" );
   
   taxSave.bindValue(":tax_code", _code->text().trimmed());
   taxSave.bindValue(":tax_descrip", _description->text());
   if(_account->isValid())
      taxSave.bindValue(":tax_sales_accnt_id", _account->id());
+  if(_distaccount->isValid())
+    taxSave.bindValue(":tax_dist_accnt_id", _distaccount->id());
   if(_taxauth->isValid())
     taxSave.bindValue(":tax_taxauth_id", _taxauth->id());
   if(_taxClass->isValid())
@@ -376,13 +395,9 @@ void taxCode::populate()
 {
   XSqlQuery taxpopulate;
  
-  taxpopulate.prepare( "SELECT tax_code, tax_descrip,"
-             "       tax_sales_accnt_id,"
-             "       tax_taxclass_id,"
-             "       tax_taxauth_id,"
-             "       tax_basis_tax_id "
-             "FROM tax "
-             "WHERE (tax_id=:tax_id);" );
+  taxpopulate.prepare("SELECT * "
+                      "FROM tax "
+                      "WHERE (tax_id=:tax_id);" );
   taxpopulate.bindValue(":tax_id", _taxid);
   taxpopulate.exec();
   if (taxpopulate.first())
@@ -390,8 +405,9 @@ void taxCode::populate()
     _code->setText(taxpopulate.value("tax_code").toString());
     _description->setText(taxpopulate.value("tax_descrip").toString());
     _account->setId(taxpopulate.value("tax_sales_accnt_id").toInt());
-	_taxClass->setId(taxpopulate.value("tax_taxclass_id").toInt());
-	_taxauth->setId(taxpopulate.value("tax_taxauth_id").toInt()); 
+    _distaccount->setId(taxpopulate.value("tax_dist_accnt_id").toInt());
+    _taxClass->setId(taxpopulate.value("tax_taxclass_id").toInt());
+    _taxauth->setId(taxpopulate.value("tax_taxauth_id").toInt());
     _basis->setId(taxpopulate.value("tax_basis_tax_id").toInt());
   }
   

@@ -115,6 +115,7 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _hideApplyto->setChecked(_metrics->boolean("HideApplyToBalance"));
   _customerDeposits->setChecked(_metrics->boolean("EnableCustomerDeposits"));
   _discountTax->setChecked(_metrics->boolean("CreditTaxDiscount"));
+  _altCashExchangeRate->setChecked(_metrics->boolean("AltCashExchangeRate"));
 
   _name->setText(_metrics->value("remitto_name"));
   _address->setLine1(_metrics->value("remitto_address1"));
@@ -193,9 +194,12 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
 
   _mandatoryNotes->setChecked(_metrics->boolean("MandatoryGLEntryNotes"));
   _manualFwdUpdate->setChecked(_metrics->boolean("ManualForwardUpdate"));
+  
   _taxauth->setId(_metrics->value("DefaultTaxAuthority").toInt());
   // TODO hide default tax authority, not used?
-  _taxGroup->setVisible(FALSE);
+  _taxauthLit->setVisible(FALSE);
+  _taxauth->setVisible(FALSE);
+  _cashBasedTax->setChecked(_metrics->boolean("CashBasedTax"));
 
   _int2gl->setChecked(_metrics->boolean("InterfaceToGL"));
   _cacheint2gl = _int2gl->isChecked();
@@ -701,6 +705,7 @@ bool configureGL::sSave()
   _metrics->set("HideApplyToBalance", _hideApplyto->isChecked());
   _metrics->set("EnableCustomerDeposits", _customerDeposits->isChecked());
   _metrics->set("CreditTaxDiscount", _discountTax->isChecked());
+  _metrics->set("AltCashExchangeRate", _altCashExchangeRate->isChecked());
 
   _metrics->set("remitto_name", 	_name->text().trimmed());
   _metrics->set("remitto_address1",	_address->line1().trimmed());
@@ -793,7 +798,9 @@ bool configureGL::sSave()
 
   _metrics->set("MandatoryGLEntryNotes", _mandatoryNotes->isChecked());
   _metrics->set("ManualForwardUpdate", _manualFwdUpdate->isChecked());
+  
   _metrics->set("DefaultTaxAuthority", _taxauth->id());
+  _metrics->set("CashBasedTax", _cashBasedTax->isChecked());
 
   _metrics->set("InterfaceToGL", _int2gl->isChecked());
   _metrics->set("InterfaceAPToGL", _intap2gl->isChecked());

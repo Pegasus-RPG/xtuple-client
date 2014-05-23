@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Print Check</string>
+   <string>Print Payment</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
@@ -46,7 +46,7 @@ to be bound by its terms.</comment>
      <item row="1" column="0">
       <widget class="QLabel" name="_checkNumLit">
        <property name="text">
-        <string>Check:</string>
+        <string>Payment:</string>
        </property>
        <property name="buddy">
         <cstring>_check</cstring>
@@ -66,7 +66,7 @@ to be bound by its terms.</comment>
      <item row="2" column="0">
       <widget class="QLabel" name="_nextCheckNumLit">
        <property name="text">
-        <string>Next Check #:</string>
+        <string>Next Payment #:</string>
        </property>
        <property name="buddy">
         <cstring>_nextCheckNum</cstring>

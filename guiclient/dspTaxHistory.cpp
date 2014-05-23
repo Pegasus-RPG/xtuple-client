@@ -134,6 +134,9 @@ bool dspTaxHistory::setParams(ParameterList &params)
     return false;
   }
   
+  if (_metrics->boolean("CashBasedTax"))
+    params.append("cashbasedtax", true);
+  
   if (_summary->isChecked())
     params.append("type", "summary");
   else

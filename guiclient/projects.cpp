@@ -88,11 +88,19 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
 
   QString qryType = QString( "SELECT prjtype_id, prjtype_descr FROM prjtype " );
 
+  QString qryStatus = QString( "SELECT  1, '%1' UNION "
+                               "SELECT  2, '%2' UNION "
+                               "SELECT  3, '%3'")
+  .arg(tr("Complete"))
+  .arg(tr("Concept"))
+  .arg(tr("In-Process"));
+  
   parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User);
   parameterWidget()->append(tr("AssignedTo"), "assigned_username", ParameterWidget::User);
   parameterWidget()->append(tr("Account"), "crmacct_id", ParameterWidget::Crmacct);
   parameterWidget()->append(tr("Contact"), "cntct_id", ParameterWidget::Contact);
   parameterWidget()->appendComboBox(tr("Project Type"), "prjtype_id", qryType);
+  parameterWidget()->appendComboBox(tr("Project Status"), "prjstatus_id", qryStatus);
   parameterWidget()->append(tr("Project"), "prj_id", ParameterWidget::Project);
   parameterWidget()->append(tr("Project Task"), "project_task", ParameterWidget::Text);
   parameterWidget()->append(tr("Sales Order"), "cohead_id", ParameterWidget::SalesOrder);
@@ -108,6 +116,8 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Completed End Date"), "completedEndDate", ParameterWidget::Date, QDate::currentDate());
 
   setupCharacteristics(characteristic::Projects);
+          
+  _statuses << "None" << "C" << "P" << "O";
 
 //  sBuildList();
 }
@@ -660,6 +670,13 @@ bool projects::setParams(ParameterList &params)
   if (!display::setParams(params))
     return false;
 
+  bool valid;
+  QVariant param;
+  
+  param = params.value("prjstatus_id", &valid);
+  if (valid)
+    params.append("prjstatus", _statuses.at(param.toInt()));
+  
   if (_showComplete->isChecked())
     params.append("showComplete",true);
 

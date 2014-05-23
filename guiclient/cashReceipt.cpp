@@ -144,6 +144,9 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
    _balCustomerDeposit->hide();
   }
 
+  if(!_metrics->boolean("AltCashExchangeRate"))
+    _altExchRate->hide();
+  
   _overapplied = false;
   _cashrcptid = -1;
   _posted = false;
@@ -657,32 +660,35 @@ bool cashReceipt::save(bool partial)
 
   if (_mode == cNew)
     cashave.prepare( "INSERT INTO cashrcpt "
-               "( cashrcpt_id, cashrcpt_cust_id, cashrcpt_distdate, cashrcpt_amount,"
-               "  cashrcpt_fundstype, cashrcpt_bankaccnt_id, cashrcpt_curr_id, "
-               "  cashrcpt_usecustdeposit, cashrcpt_docnumber, cashrcpt_docdate, "
-               "  cashrcpt_notes, cashrcpt_salescat_id, cashrcpt_number, cashrcpt_applydate, cashrcpt_discount ) "
-               "VALUES "
-               "( :cashrcpt_id, :cashrcpt_cust_id, :cashrcpt_distdate, :cashrcpt_amount,"
-               "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :curr_id, "
-               "  :cashrcpt_usecustdeposit, :cashrcpt_docnumber, :cashrcpt_docdate, "
-               "  :cashrcpt_notes, :cashrcpt_salescat_id, :cashrcpt_number, :cashrcpt_applydate, :cashrcpt_discount );" );
+                    "( cashrcpt_id, cashrcpt_cust_id, cashrcpt_distdate, cashrcpt_amount,"
+                    "  cashrcpt_fundstype, cashrcpt_bankaccnt_id, cashrcpt_curr_id, "
+                    "  cashrcpt_usecustdeposit, cashrcpt_docnumber, cashrcpt_docdate, "
+                    "  cashrcpt_notes, cashrcpt_salescat_id, cashrcpt_number, cashrcpt_applydate, "
+                    "  cashrcpt_discount, cashrcpt_alt_curr_rate ) "
+                    "VALUES "
+                    "( :cashrcpt_id, :cashrcpt_cust_id, :cashrcpt_distdate, :cashrcpt_amount,"
+                    "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :curr_id, "
+                    "  :cashrcpt_usecustdeposit, :cashrcpt_docnumber, :cashrcpt_docdate, "
+                    "  :cashrcpt_notes, :cashrcpt_salescat_id, :cashrcpt_number, :cashrcpt_applydate, "
+                    "  :cashrcpt_discount, :cashrcpt_alt_curr_rate );" );
   else
     cashave.prepare( "UPDATE cashrcpt "
-	       "SET cashrcpt_cust_id=:cashrcpt_cust_id,"
-	       "    cashrcpt_amount=:cashrcpt_amount,"
-	       "    cashrcpt_fundstype=:cashrcpt_fundstype,"
-	       "    cashrcpt_docnumber=:cashrcpt_docnumber,"
-	       "    cashrcpt_docdate=:cashrcpt_docdate,"
-	       "    cashrcpt_bankaccnt_id=:cashrcpt_bankaccnt_id,"
-	       "    cashrcpt_distdate=:cashrcpt_distdate,"
-	       "    cashrcpt_notes=:cashrcpt_notes, "
-	       "    cashrcpt_salescat_id=:cashrcpt_salescat_id, "
-	       "    cashrcpt_curr_id=:curr_id,"
-	       "    cashrcpt_usecustdeposit=:cashrcpt_usecustdeposit,"
-           "    cashrcpt_applydate=:cashrcpt_applydate,"
-           "    cashrcpt_discount=:cashrcpt_discount, "
-           "    cashrcpt_curr_rate=null " // force a curr rate re-evaluation
-           "WHERE (cashrcpt_id=:cashrcpt_id);" );
+                    "SET cashrcpt_cust_id=:cashrcpt_cust_id,"
+                    "    cashrcpt_amount=:cashrcpt_amount,"
+                    "    cashrcpt_fundstype=:cashrcpt_fundstype,"
+                    "    cashrcpt_docnumber=:cashrcpt_docnumber,"
+                    "    cashrcpt_docdate=:cashrcpt_docdate,"
+                    "    cashrcpt_bankaccnt_id=:cashrcpt_bankaccnt_id,"
+                    "    cashrcpt_distdate=:cashrcpt_distdate,"
+                    "    cashrcpt_notes=:cashrcpt_notes, "
+                    "    cashrcpt_salescat_id=:cashrcpt_salescat_id, "
+                    "    cashrcpt_curr_id=:curr_id,"
+                    "    cashrcpt_usecustdeposit=:cashrcpt_usecustdeposit,"
+                    "    cashrcpt_applydate=:cashrcpt_applydate,"
+                    "    cashrcpt_discount=:cashrcpt_discount, "
+                    "    cashrcpt_alt_curr_rate=:cashrcpt_alt_curr_rate, "
+                    "    cashrcpt_curr_rate=null " // force a curr rate re-evaluation
+                    "WHERE (cashrcpt_id=:cashrcpt_id);" );
 
   cashave.bindValue(":cashrcpt_id", _cashrcptid);
   cashave.bindValue(":cashrcpt_number", _number->text());
@@ -702,6 +708,8 @@ bool cashReceipt::save(bool partial)
     cashave.bindValue(":cashrcpt_salescat_id", _salescat->id());
   else
     cashave.bindValue(":cashrcpt_salescat_id", -1);
+  if(_altExchRate->isChecked())
+    cashave.bindValue(":cashrcpt_alt_curr_rate", _exchRate->toDouble());
   cashave.exec();
   if (cashave.lastError().type() != QSqlError::NoError)
   {
@@ -894,6 +902,11 @@ void cashReceipt::populate()
     {
       _altAccnt->setChecked(TRUE);
       _salescat->setId(cashpopulate.value("cashrcpt_salescat_id").toInt());
+    }
+    if(cashpopulate.value("cashrcpt_alt_curr_rate").toDouble() > 0.0)
+    {
+      _altExchRate->setChecked(TRUE);
+      _exchRate->setDouble(cashpopulate.value("cashrcpt_alt_curr_rate").toDouble());
     }
     if(cashpopulate.value("cashrcpt_usecustdeposit").toBool())
       _balCustomerDeposit->setChecked(true);

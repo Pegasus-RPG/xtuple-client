@@ -122,10 +122,10 @@ to be bound by its terms.</comment>
           </sizepolicy>
          </property>
          <property name="automaticText">
-          <string>Automatic, Use C/M #'s</string>
+          <string>Automatic, Use Return #'s</string>
          </property>
          <property name="overrideText">
-          <string>Automatic, Use C/M #'s, Allow Override</string>
+          <string>Automatic, Use Return #'s, Allow Override</string>
          </property>
          <property name="sharedText">
           <string>Automatic, Use S/O #'s</string>
@@ -425,7 +425,7 @@ to be bound by its terms.</comment>
                <item row="3" column="0" colspan="3">
                 <widget class="QGroupBox" name="groupBox_5">
                  <property name="title">
-                  <string>Credit Control</string>
+                  <string>Return Control</string>
                  </property>
                  <layout class="QGridLayout">
                   <item row="0" column="0">
