@@ -32,6 +32,9 @@ openPurchaseOrder::openPurchaseOrder(QWidget* parent, const char* name, bool mod
   _po->addColumn(tr("PO #"),         -1,  Qt::AlignLeft,   true,  "pohead_number");
   _po->addColumn(tr("PO Date"),      -1,  Qt::AlignLeft,   true,  "pohead_orderdate");
   _po->addColumn(tr("Created By"),   -1,  Qt::AlignLeft,   true,  "pohead_agent_username");
+  _po->addColumn(tr("Drop Ship"),    -1,  Qt::AlignLeft,   true,  "pohead_dropship");
+  
+  dropship = false;
 }
 
 openPurchaseOrder::~openPurchaseOrder()
@@ -56,9 +59,17 @@ enum SetResponse openPurchaseOrder::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
   param = pParams.value("vend_name", &valid);
-  vendor_id = pParams.value("vend_id", &valid).toInt();
-  _vend_namelit -> setText(param.toString());
+  if (valid)
+    _vend_namelit->setText(param.toString());
+  
+  param = pParams.value("vend_id", &valid);
+  if (valid)
+    vendor_id = param.toInt();
 
+  param = pParams.value("drop_ship", &valid);
+  if (valid)
+    dropship = param.toBool();
+  
   sFillList();
 
   return NoError;
@@ -68,8 +79,14 @@ void openPurchaseOrder::sFillList()
 {
   XSqlQuery openFillList;
   
-  openFillList.prepare( "SELECT pohead_id, pohead_number, pohead_orderdate, pohead_agent_username from pohead where pohead_vend_id = :vend_id and pohead_status = 'U' order by pohead_id desc ;" );
+  openFillList.prepare( "SELECT * "
+                        "FROM pohead "
+                        "WHERE (pohead_vend_id = :vend_id)"
+                        "  AND (pohead_status = 'U')"
+                        "  AND (pohead_dropship = :dropship) "
+                        "ORDER BY pohead_id DESC;" );
   openFillList.bindValue(":vend_id", vendor_id);
+  openFillList.bindValue(":dropship", dropship);
   openFillList.exec();
   _po->populate(openFillList,TRUE);
   if (openFillList.lastError().type() != QSqlError::NoError)
