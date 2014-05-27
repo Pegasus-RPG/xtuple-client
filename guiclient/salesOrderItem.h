@@ -28,6 +28,8 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void  clear();
     virtual void  setItemExtraClause();
     Q_INVOKABLE virtual int id() { return _soitemid; }
+    Q_INVOKABLE virtual int soheadid() { return _soheadid; }
+    Q_INVOKABLE virtual int custid() { return _custid; }
     Q_INVOKABLE virtual int supplyid() { return _supplyOrderId; }
     Q_INVOKABLE virtual int mode()  { return _mode; }
     Q_INVOKABLE virtual int modeType() const;
