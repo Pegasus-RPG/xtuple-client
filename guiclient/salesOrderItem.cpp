@@ -2595,13 +2595,18 @@ void salesOrderItem::sHandleSupplyOrder()
         { // WO qty change
           if (_qtyOrdered->toDouble() != _supplyOrderQtyOrderedCache)
           { // qty ordered changed
-            if (QMessageBox::question(this, tr("Change Work Order Quantity?"),
-                                      tr("<p>The Quantity Ordered for this Line Item has changed "
-                                         "from %1 to %2."
-                                         "<p>Should the W/O quantity for this Line Item be changed?")
-                                      .arg(_supplyOrderQtyOrderedCache).arg(valqty),
-                                      QMessageBox::No | QMessageBox::Escape,
-                                      QMessageBox::Yes  | QMessageBox::Default) == QMessageBox::Yes)
+            bool applychange = false;
+            if (_mode == cNew)
+              applychange = true;
+            else if (QMessageBox::question(this, tr("Change Work Order Quantity?"),
+                                           tr("<p>The Quantity Ordered for this Line Item has changed "
+                                              "from %1 to %2."
+                                              "<p>Should the W/O quantity for this Line Item be changed?")
+                                           .arg(_supplyOrderQtyOrderedCache).arg(valqty),
+                                           QMessageBox::No | QMessageBox::Escape,
+                                           QMessageBox::Yes  | QMessageBox::Default) == QMessageBox::Yes)
+              applychange = true;
+            if (applychange)
             {
               ordq.prepare("SELECT changeWoQty(:wo_id, :qty, TRUE) AS result;");
               ordq.bindValue(":wo_id", _supplyOrderId);
@@ -2658,13 +2663,18 @@ void salesOrderItem::sHandleSupplyOrder()
           
           if (_qtyOrdered->toDouble() != _supplyOrderQtyOrderedCache)
           { // qty ordered changed
-            if (QMessageBox::question(this, tr("Change P/O Quantity?"),
-                                      tr("<p>The Quantity Ordered for this Line Item has changed "
-                                         "from %1 to %2."
-                                         "<p>Should the P/O quantity for this Line Item be changed?")
-                                      .arg(_supplyOrderQtyOrderedCache).arg(valqty),
-                                      QMessageBox::Yes | QMessageBox::Default,
-                                      QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+            bool applychange = false;
+            if (_mode == cNew)
+              applychange = true;
+            else if (QMessageBox::question(this, tr("Change P/O Quantity?"),
+                                           tr("<p>The Quantity Ordered for this Line Item has changed "
+                                              "from %1 to %2."
+                                              "<p>Should the P/O quantity for this Line Item be changed?")
+                                           .arg(_supplyOrderQtyOrderedCache).arg(valqty),
+                                           QMessageBox::Yes | QMessageBox::Default,
+                                           QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+              applychange = true;
+            if (applychange)
             {
               ordq.prepare("SELECT changePoitemQty(:poitem_id, :qty, true) AS result;");
               ordq.bindValue(":poitem_id", _supplyOrderId);
@@ -2712,13 +2722,18 @@ void salesOrderItem::sHandleSupplyOrder()
         { // PR qty change
           if (_qtyOrdered->toDouble() != _supplyOrderQtyOrderedCache)
           { // qty ordered changed
-            if (QMessageBox::question(this, tr("Change P/R Quantity?"),
-                                      tr("<p>The Supply Order Quantity for this Line Item has changed "
-                                         "from %1 to %2."
-                                         "<p>Should the P/R quantity for this Line Item be changed?")
-                                      .arg(_supplyOrderQtyOrderedCache).arg(valqty),
-                                      QMessageBox::Yes | QMessageBox::Default,
-                                      QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+            bool applychange = false;
+            if (_mode == cNew)
+              applychange = true;
+            else if (QMessageBox::question(this, tr("Change P/R Quantity?"),
+                                           tr("<p>The Supply Order Quantity for this Line Item has changed "
+                                              "from %1 to %2."
+                                              "<p>Should the P/R quantity for this Line Item be changed?")
+                                           .arg(_supplyOrderQtyOrderedCache).arg(valqty),
+                                           QMessageBox::Yes | QMessageBox::Default,
+                                           QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+              applychange = true;
+            if (applychange)
             {
               ordq.prepare("SELECT changePrQty(:pr_id, :qty) AS result;");
               ordq.bindValue(":pr_id", _supplyOrderId);
@@ -2771,11 +2786,16 @@ void salesOrderItem::sHandleSupplyOrder()
         { // WO date change
           if (_scheduledDate->date() != _supplyOrderScheduledDateCache)
           { // scheduled date changed
-            if (QMessageBox::question(this, tr("Reschedule Work Order?"),
-                                      tr("<p>The Scheduled Date for this Line Item has changed."
-                                         "<p>Should the W/O for this Line Item be rescheduled?"),
-                                      QMessageBox::Yes | QMessageBox::Default,
-                                      QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+            bool applychange = false;
+            if (_mode == cNew)
+              applychange = true;
+            else if (QMessageBox::question(this, tr("Reschedule Work Order?"),
+                                           tr("<p>The Scheduled Date for this Line Item has changed."
+                                              "<p>Should the W/O for this Line Item be rescheduled?"),
+                                           QMessageBox::Yes | QMessageBox::Default,
+                                           QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+              applychange = true;
+            if (applychange)
             {
               ordq.prepare("SELECT changeWoDates(:wo_id, wo_startdate + (:dueDate-wo_duedate), :dueDate, TRUE) AS result "
                            "FROM wo "
@@ -2838,11 +2858,16 @@ void salesOrderItem::sHandleSupplyOrder()
             
           if (_scheduledDate->date() != _supplyOrderScheduledDateCache)
           { // scheduled date changed
-            if (QMessageBox::question(this, tr("Reschedule P/O?"),
-                                      tr("<p>The Scheduled Date for this Line Item has changed."
-                                         "<p>Should the P/O for this Line Item be rescheduled?"),
-                                      QMessageBox::Yes | QMessageBox::Default,
-                                      QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+            bool applychange = false;
+            if (_mode == cNew)
+              applychange = true;
+            else if (QMessageBox::question(this, tr("Reschedule P/O?"),
+                                           tr("<p>The Scheduled Date for this Line Item has changed."
+                                              "<p>Should the P/O for this Line Item be rescheduled?"),
+                                           QMessageBox::Yes | QMessageBox::Default,
+                                           QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+              applychange = true;
+            if (applychange)
             {
               ordq.prepare("SELECT changePoitemDueDate(:poitem_id, :dueDate, true) AS result;");
               ordq.bindValue(":poitem_id", _supplyOrderId);
@@ -2890,11 +2915,16 @@ void salesOrderItem::sHandleSupplyOrder()
         { // PR date change
           if (_scheduledDate->date() != _supplyOrderScheduledDateCache)
           { // scheduled date changed
-            if (QMessageBox::question(this, tr("Reschedule P/R?"),
-                                      tr("<p>The Scheduled Date for this Line Item has changed."
-                                         "<p>Should the P/R for this Line Item be rescheduled?"),
-                                      QMessageBox::Yes | QMessageBox::Default,
-                                      QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+            bool applychange = false;
+            if (_mode == cNew)
+              applychange = true;
+            else if (QMessageBox::question(this, tr("Reschedule P/R?"),
+                                           tr("<p>The Scheduled Date for this Line Item has changed."
+                                              "<p>Should the P/R for this Line Item be rescheduled?"),
+                                           QMessageBox::Yes | QMessageBox::Default,
+                                           QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+              applychange = true;
+            if (applychange)
             {
               ordq.prepare("SELECT changePrDate(:pr_id, :dueDate) AS result;");
               ordq.bindValue(":pr_id", _supplyOrderId);
