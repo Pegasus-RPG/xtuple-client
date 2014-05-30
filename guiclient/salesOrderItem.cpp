@@ -18,17 +18,18 @@
 #include <metasql.h>
 #include "mqlutil.h"
 
-#include "guiErrorCheck.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "itemCharacteristicDelegate.h"
+#include "itemSourceList.h"
+#include "maintainItemCosts.h"
+#include "openPurchaseOrder.h"
 #include "priceList.h"
 #include "reserveSalesOrderItem.h"
 #include "storedProcErrorLookup.h"
 #include "taxDetail.h"
-#include "xdoublevalidator.h"
-#include "itemSourceList.h"
-#include "maintainItemCosts.h"
 #include "woMaterialItem.h"
+#include "xdoublevalidator.h"
 
 #define cNewQuote   (0x20 | cNew)
 #define cEditQuote  (0x20 | cEdit)
@@ -2495,6 +2496,7 @@ void salesOrderItem::sHandleSupplyOrder()
       else if (_supplyOrderType == "P")
       {
         int   itemsrcid  = _itemsrc;
+        int   poheadid   = -1;
         
         if (itemsrcid==-1)
         {
@@ -2522,8 +2524,52 @@ void salesOrderItem::sHandleSupplyOrder()
           }
         }
         
+        ordq.prepare( "SELECT itemsrc_vend_id, vend_name  "
+                      "FROM itemsrc LEFT OUTER JOIN vendinfo ON (vend_id = itemsrc_vend_id) "
+                      "WHERE (itemsrc_id=:itemsrc_id);" );
+        ordq.bindValue(":itemsrc_id", itemsrcid);
+        ordq.exec();
+        if (!ordq.first())
+        {
+          systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
+        else
+        {
+          int vendid = ordq.value("itemsrc_vend_id").toInt();
+          QString vendname = ordq.value("vend_name").toString();
+          
+          ordq.prepare( "SELECT pohead_id "
+                        "FROM pohead "
+                        "WHERE ( (pohead_status='U')"
+                        "  AND   (pohead_dropship=:drop_ship)"
+                        "  AND   (pohead_vend_id=:vend_id) );" );
+          ordq.bindValue(":drop_ship", _supplyDropShip->isChecked());
+          ordq.bindValue(":vend_id", vendid);
+          ordq.exec();
+          if (ordq.first())
+          {
+            if(QMessageBox::question( this, tr("Purchase Order Exists"),
+                                     tr("An Unreleased Purchase Order already exists for this Vendor.\n"
+                                        "Click Yes to use an existing Purchase Order\n"
+                                        "otherwise a new one will be created."),
+                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
+            {
+              ParameterList openPurchaseOrderParams;
+              openPurchaseOrderParams.append("vend_id", vendid);
+              openPurchaseOrderParams.append("vend_name", vendname);
+              openPurchaseOrderParams.append("drop_ship", _supplyDropShip->isChecked());
+              openPurchaseOrder newdlg(omfgThis, "", TRUE);
+              newdlg.set(openPurchaseOrderParams);
+              poheadid = newdlg.exec();
+              if (poheadid == XDialog::Rejected)
+                return;
+            }
+          }
+        }
+
         ordq.prepare("SELECT createPurchaseToSale(:soitem_id, :itemsrc_id, :drop_ship,"
-                     "                            :qty, :duedate, :price) AS result;");
+                     "                            :qty, :duedate, :price, :pohead_id) AS result;");
         ordq.bindValue(":soitem_id", _soitemid);
         ordq.bindValue(":itemsrc_id", itemsrcid);
         ordq.bindValue(":drop_ship", _supplyDropShip->isChecked());
@@ -2531,6 +2577,7 @@ void salesOrderItem::sHandleSupplyOrder()
         ordq.bindValue(":duedate", _scheduledDate->date());
         if (_supplyOverridePrice->localValue() > 0.00)
           ordq.bindValue(":price", _supplyOverridePrice->localValue());
+        ordq.bindValue(":pohead_id", poheadid);
         ordq.exec();
       }
       else if (_supplyOrderType == "R")
