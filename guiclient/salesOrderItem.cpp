@@ -1449,7 +1449,7 @@ void salesOrderItem::sPopulateItemsiteInfo()
     XSqlQuery itemsite;
     itemsite.prepare("SELECT *, "
                      "       itemCost(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
-                     "                :curr_id, :effective, :asof, :warehouse_id) AS unitcost "
+                     "                :curr_id, :effective, :asof, :warehous_id) AS unitcost "
                      "FROM itemsite JOIN item ON (item_id=itemsite_item_id) "
                      "WHERE ( (itemsite_warehous_id=:warehous_id)"
                      "  AND   (itemsite_item_id=:item_id) );" );
@@ -4372,7 +4372,7 @@ void salesOrderItem::sPriceUOMChanged()
   XSqlQuery item;
   item.prepare("SELECT item_listprice,"
                "       itemCost(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
-               "                :curr_id, :effective, :asof, :warehouse_id) AS unitcost "
+               "                :curr_id, :effective, :asof, :warehous_id) AS unitcost "
                "  FROM item LEFT OUTER JOIN itemsite ON (itemsite_item_id=item_id AND itemsite_warehous_id=:warehous_id)"
                " WHERE(item_id=:item_id);");
   item.bindValue(":cust_id", _custid);
@@ -4415,7 +4415,7 @@ void salesOrderItem::sCalcUnitCost()
   {
     salesCalcUnitCost.prepare( "SELECT * FROM "
                       "itemCost(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
-                      "         :curr_id, :effective, :asof, :warehouse) AS unitcost;" );
+                      "         :curr_id, :effective, :asof, :warehous_id) AS unitcost;" );
     salesCalcUnitCost.bindValue(":cust_id", _custid);
     salesCalcUnitCost.bindValue(":shipto_id", _shiptoid);
     salesCalcUnitCost.bindValue(":qty", _qtyOrdered->toDouble());
@@ -4430,7 +4430,7 @@ void salesOrderItem::sCalcUnitCost()
       salesCalcUnitCost.bindValue(":asof", _scheduledDate->date());
     else
       salesCalcUnitCost.bindValue(":asof", omfgThis->dbDate());
-    salesCalcUnitCost.bindValue(":warehouse", _warehouse->id());
+    salesCalcUnitCost.bindValue(":warehous_id", _warehouse->id());
     salesCalcUnitCost.exec();
     if (salesCalcUnitCost.first())
       _unitCost->setBaseValue(salesCalcUnitCost.value("unitcost").toDouble() * (_priceinvuomratio / _priceRatio));
