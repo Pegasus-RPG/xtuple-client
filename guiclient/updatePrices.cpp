@@ -107,6 +107,13 @@ void updatePrices::sUpdate()
     return;
   }
 
+  if (!_nominal->isChecked() && !_discount->isChecked() && !_markup->isChecked())
+  {
+    QMessageBox::critical( this, tr("Incomplete Data"),
+                          tr("You must select a least one Price Type to continue.") );
+    return;
+  }
+  
   if (_updateBy->toDouble() == 0.0)
   {
     QMessageBox::critical( this, tr("Incomplete Data"),
@@ -121,6 +128,12 @@ void updatePrices::sUpdate()
     params.append("item_id", _item->id());
   else
     _paramGroup->appendValue(params);
+  if (_nominal->isChecked())
+    params.append("nominal", true);
+  if (_discount->isChecked())
+    params.append("discount", true);
+  if (_markup->isChecked())
+    params.append("markup", true);
   params.append("updateBy", _updateBy->toDouble());
   if (_value->isChecked())
     params.append("updateByValue", true);
