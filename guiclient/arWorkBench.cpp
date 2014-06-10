@@ -19,6 +19,8 @@
 #include "mqlutil.h"
 
 #include "cashReceipt.h"
+#include "errorReporter.h"
+#include "getGLDistDate.h"
 #include "storedProcErrorLookup.h"
 #include "xtreewidget.h"
 
@@ -281,6 +283,21 @@ void arWorkBench::sPostCashrcpt()
 {
   XSqlQuery arPostCashrcpt;
   int journalNumber = -1;
+  bool changeDate = false;
+  QDate newDate = QDate();
+  
+  if (_privileges->check("ChangeCashRecvPostDate"))
+  {
+    getGLDistDate newdlg(this, "", TRUE);
+    newdlg.sSetDefaultLit(tr("Distribution Date"));
+    if (newdlg.exec() == XDialog::Accepted)
+    {
+      newDate = newdlg.date();
+      changeDate = (newDate.isValid());
+    }
+    else
+      return;
+  }
 
   arPostCashrcpt.exec("BEGIN;");
   arPostCashrcpt.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
@@ -292,7 +309,28 @@ void arWorkBench::sPostCashrcpt()
     return;
   }
 
+  XSqlQuery setDate;
+  setDate.prepare("UPDATE cashrcpt SET cashrcpt_distdate=:distdate,"
+                  "                    cashrcpt_applydate=CASE WHEN (cashrcpt_applydate < :distdate) THEN :distdate"
+                  "                                            ELSE cashrcpt_applydate END "
+                  "WHERE cashrcpt_id=:cashrcpt_id;");
+  
   QList<XTreeWidgetItem*> selected = _cashrcpt->selectedItems();
+  
+  for (int i = 0; i < selected.size(); i++)
+  {
+    int id = ((XTreeWidgetItem*)(selected[i]))->id();
+    
+    if (changeDate)
+    {
+      setDate.bindValue(":distdate",    newDate);
+      setDate.bindValue(":cashrcpt_id", id);
+      setDate.exec();
+      ErrorReporter::error(QtCriticalMsg, this, tr("Changing Dist. Date"),
+                           setDate, __FILE__, __LINE__);
+    }
+  }
+  
   for (int i = 0; i < selected.size(); i++)
   {
     arPostCashrcpt.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");

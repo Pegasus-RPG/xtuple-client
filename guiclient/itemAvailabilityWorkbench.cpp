@@ -50,6 +50,8 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _dspInventoryAvailability->list()->hideColumn("itemdescrip");
   _dspInventoryAvailability->list()->hideColumn("uom_name");
   _dspInventoryAvailability->findChild<QWidget*>("_showGroup")->hide();
+  // set asof to Itemsite Lead Time to avoid invalid date prompt
+  _dspInventoryAvailability->findChild<QComboBox*>("_asof")->setCurrentIndex(0);
   
   _dspRunningAvailability = new dspRunningAvailability(this, "dspRunningAvailabilty", Qt::Widget);
   _dspRunningAvailability->setObjectName("dspRunningAvailability");
