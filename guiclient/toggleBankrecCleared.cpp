@@ -10,6 +10,7 @@
 
 #include "toggleBankrecCleared.h"
 
+#include <QMessageBox>
 #include <QVariant>
 #include <QSqlError>
 
@@ -83,6 +84,24 @@ enum SetResponse toggleBankrecCleared::set(const ParameterList &pParams)
 void toggleBankrecCleared::sSave()
 {
   XSqlQuery reconcileToggleCleared;
+  reconcileToggleCleared.prepare("SELECT bankrec_id FROM bankrec WHERE (bankrec_id=:bankrecid)"
+                                 "  AND (:transdate BETWEEN bankrec_opendate AND bankrec_enddate);");
+  reconcileToggleCleared.bindValue(":bankrecid", _bankrecid);
+  reconcileToggleCleared.bindValue(":transdate", _transdate->date());
+  reconcileToggleCleared.exec();
+  if (reconcileToggleCleared.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, reconcileToggleCleared.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  if (!reconcileToggleCleared.first())
+  {
+    QMessageBox::critical( this, tr("Date Outside Range"),
+                          tr("The Effective Date must be in the date range "
+                             "of this Bank Reconciliation period.") );
+    return;
+  }
+
   reconcileToggleCleared.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate, :amount, :transdate) AS cleared");
   reconcileToggleCleared.bindValue(":bankrecid", _bankrecid);
   reconcileToggleCleared.bindValue(":sourceid", _sourceid);
