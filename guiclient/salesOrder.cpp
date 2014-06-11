@@ -1777,7 +1777,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "       0.0 AS commission,"
                 "       NULL AS cust_creditstatus, NULL AS cust_terms_id,"
                 "       prospect_taxzone_id AS cust_taxzone_id, prospect_cntct_id AS cust_cntct_id, "
-                "       TRUE AS cust_ffshipto, NULL AS cust_ffbillto, "
+                "       TRUE AS cust_ffshipto, TRUE AS cust_ffbillto, "
                 "       NULL AS cust_usespos, NULL AS cust_blanketpos,"
                 "       NULL AS cust_shipvia,"
                 "       -1 AS shiptoid,"
