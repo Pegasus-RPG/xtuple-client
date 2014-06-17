@@ -11,6 +11,7 @@
 /* TODO:
    support Visa ECI, MasterCard UCAF for x_authentication_indicator?
    support Visa CAVV or MasterCard UCAF for x_cardholder_authentication_value?
+   switch completely to the API @ http://developer.authorize.net/api/reference/
 */
 /** @ingroup creditcards
     @class   AuthorizeDotNetProcessor
@@ -300,6 +301,7 @@ int  AuthorizeDotNetProcessor::doCharge(const int pccardid, const QString &pcvv,
 
 int AuthorizeDotNetProcessor::doChargePreauthorized(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
+  Q_UNUSED(pcvv);
   if (DEBUG)
     qDebug("AN:doChargePreauthorized(%d, pcvv, %f, %d, %s, %s, %d)",
 	   pccardid, pamount,  pcurrid,
@@ -317,13 +319,45 @@ int AuthorizeDotNetProcessor::doChargePreauthorized(const int pccardid, const QS
       return returnValue;
   }
 
+  // may not have pccardid so we can't buildCommon (e.g. e-commerce integration)
   QString request;
 
-  returnValue = buildCommon(pccardid, pcvv, amount, currid, request, "PRIOR_AUTH_CAPTURE");
-  if (returnValue !=  0)
-    return returnValue;
+  if (! _metrics->value("CCANDelim").isEmpty())
+    APPENDFIELD(request, "x_delim_char", _metrics->value("CCANDelim"));
 
-  APPENDFIELD(request, "x_trans_id", preforder);
+  if (! _metrics->value("CCANEncap").isEmpty())
+    APPENDFIELD(request, "x_encap_char", _metrics->value("CCANEncap"));
+
+  APPENDFIELD(request, "x_version",         _metrics->value("CCANVer"));
+  APPENDFIELD(request, "x_delim_data",      "TRUE");
+  APPENDFIELD(request, "x_login",           _metricsenc->value("CCLogin"));
+  APPENDFIELD(request, "x_tran_key",        _metricsenc->value("CCPassword"));
+  APPENDFIELD(request, "x_type",            "PRIOR_AUTH_CAPTURE");
+  APPENDFIELD(request, "x_trans_id",        isLive() ? preforder : "1");
+  APPENDFIELD(request, "x_amount",          QString::number(amount, 'f', 2));
+  APPENDFIELD(request, "x_method",          "CC");
+  APPENDFIELD(request, "x_test_request",    isLive() ? "FALSE" : "TRUE");
+  APPENDFIELD(request, "x_relay_response",  "FALSE");
+  APPENDFIELD(request, "x_duplicate_window", _metrics->value("CCANDuplicateWindow"));
+
+  XSqlQuery anq;
+  anq.prepare("SELECT curr_abbr FROM curr_symbol WHERE (curr_id=:currid);");
+  anq.bindValue(":currid", currid);
+  anq.exec();
+  if (anq.first())
+  {
+    APPENDFIELD(request, "x_currency_code", anq.value("curr_abbr").toString());
+  }
+  else if (anq.lastError().type() != QSqlError::NoError)
+  {
+    _errorMsg = anq.lastError().databaseText();
+    return -1;
+  }
+  else
+  {
+    _errorMsg = errorMsg(-17).arg(pccardid);
+    return -17;
+  }
 
   QString response;
 
@@ -556,7 +590,9 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
   // fieldValue(responseFields, 37);		// echo x_po_num
 
   returnValue = fieldValue(responseFields, 39, r_cvv); // ccv response code
-  if (returnValue < 0)
+  if (returnValue < 0 && ptype == "CP") // may not get cvv on preauth capture
+    returnValue = 0;
+  else if (returnValue < 0)
     return returnValue;
 
   // fieldValue(responseFields, 40);		// cavv response code
