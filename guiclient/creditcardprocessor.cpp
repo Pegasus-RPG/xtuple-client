@@ -746,6 +746,7 @@ int CreditCardProcessor::chargePreauthorized(const QString &pcvv, const double p
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
   reset();
 
+  int returnVal   = 0;
   int ccValidDays = _metrics->value("CCValidDays").toInt();
   if (ccValidDays < 1)
     ccValidDays = 7;
@@ -829,10 +830,12 @@ int CreditCardProcessor::chargePreauthorized(const QString &pcvv, const double p
     return -1;
   }
 
-  QString ccard_x;
-  int returnVal = checkCreditCard(ccardid, pcvv, ccard_x);
-  if (returnVal < 0)
-    return returnVal;
+  QString ccard_x = tr("[unknown number]");
+  if (ccardid > 0) {
+    returnVal = checkCreditCard(ccardid, pcvv, ccard_x);
+    if (returnVal < 0)
+      return returnVal;
+  }
 
   if (_metrics->boolean("CCConfirmChargePreauth") &&
       QMessageBox::question(0,
