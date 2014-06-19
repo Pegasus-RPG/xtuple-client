@@ -333,7 +333,7 @@ int AuthorizeDotNetProcessor::doChargePreauthorized(const int pccardid, const QS
   APPENDFIELD(request, "x_login",           _metricsenc->value("CCLogin"));
   APPENDFIELD(request, "x_tran_key",        _metricsenc->value("CCPassword"));
   APPENDFIELD(request, "x_type",            "PRIOR_AUTH_CAPTURE");
-  APPENDFIELD(request, "x_trans_id",        isLive() ? preforder : "1");
+  APPENDFIELD(request, "x_trans_id",        preforder);
   APPENDFIELD(request, "x_amount",          QString::number(amount, 'f', 2));
   APPENDFIELD(request, "x_method",          "CC");
   APPENDFIELD(request, "x_test_request",    isLive() ? "FALSE" : "TRUE");
@@ -525,6 +525,8 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
   QString r_ref;
   QString r_shipping;
   QString r_tax;
+  QString r_pantrunc;
+  QString r_cardtype;
 
   QString status;
 
@@ -572,7 +574,7 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
     return returnValue;
 
   // fieldValue(responseFields, 8-10);	// echo invoice_number description amount 
-  // fieldValue(responseFields, 11-13);	// echo method type cust_id
+  // fieldValue(responseFields, 11-13);	// echo method transtype cust_id
   // fieldValue(responseFields, 14-24);	// echo name, company, and address info
   // fieldValue(responseFields, 25-32);	// echo ship_to fields
 
@@ -588,6 +590,7 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
 
   // fieldValue(responseFields, 36);		// echo x_tax_exempt
   // fieldValue(responseFields, 37);		// echo x_po_num
+  // fieldValue(responseFields, 38);		// MD5 hash
 
   returnValue = fieldValue(responseFields, 39, r_cvv); // ccv response code
   if (returnValue < 0 && ptype == "CP") // may not get cvv on preauth capture
@@ -596,7 +599,20 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
     return returnValue;
 
   // fieldValue(responseFields, 40);		// cavv response code
-  // fieldValue(responseFields, 41-68);		// reserved for future use
+  // fieldValue(responseFields, 41-50);		// reserved for future use
+
+  returnValue = fieldValue(responseFields, 51, r_pantrunc);
+  if (returnValue < 0)
+    return returnValue;
+
+  returnValue = fieldValue(responseFields, 52, r_cardtype);
+  if (returnValue < 0)
+    return returnValue;
+
+  // fieldValue(responseFields, 53);            // split tender id
+  // fieldValue(responseFields, 54);            // original authorization amt
+  // fieldValue(responseFields, 55);            // debit/prepaid card balance
+  // fieldValue(responseFields, 56-68);		// reserved for future use
   // fieldValue(responseFields, 69+);		// echo of merchant-defined fields
 
   /* treat heldforreview as approved because the AIM doc says response
@@ -652,6 +668,12 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
     qDebug("AN:%s _passedAvs %d\t%s _passedCvv %d",
 	    qPrintable(r_avs), _passedAvs, qPrintable(r_cvv), _passedCvv);
 
+  if (r_cardtype == "Discover" || r_cardtype == "MasterCard"
+      || r_cardtype == "Visa"  || r_cardtype == "American Express")
+    r_cardtype.remove(1, r_cardtype.length());
+  else
+    r_cardtype = "O";
+
   pparams.append("ccard_id",    pccardid);
   pparams.append("currid",      pcurrid);
   pparams.append("auth_charge", ptype);
@@ -668,6 +690,8 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
   pparams.append("tax",         r_tax);
   pparams.append("ref",         r_ref);
   pparams.append("message",     r_message);
+  pparams.append("pantrunc",    r_pantrunc);
+  pparams.append("cardtype",    r_cardtype);
 
   pparams.append("auth", QVariant(ptype == "A"));
 
