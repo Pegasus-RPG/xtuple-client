@@ -179,7 +179,7 @@ void copyItem::sAddBomitem()
   }
   qtyper = QInputDialog::getDouble(this, tr("Quantity Per"),
                                  uomname,
-                                 qtyper, 1, 10000, 5, &ok);
+                                 qtyper, 0.00001, 999999.99999, 5, &ok);
   if ( !ok )
     return;
   
