@@ -205,6 +205,12 @@ enum SetResponse incident::set(const ParameterList &pParams)
     _cntct->setId(param.toInt());
   }
 
+  param = pParams.value("prj_id", &valid);
+  if (valid)
+  {
+    _project->setId(param.toInt());
+  }
+  
   param = pParams.value("aropen_id", &valid);
   if (valid)
   {
