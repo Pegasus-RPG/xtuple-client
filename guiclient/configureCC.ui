@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>671</width>
+    <width>678</width>
     <height>616</height>
    </rect>
   </property>
@@ -98,7 +98,7 @@ to be bound by its terms.</comment>
      <item row="1" column="0">
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>3</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="_generalPage">
         <attribute name="title">
@@ -283,10 +283,10 @@ to be bound by its terms.</comment>
               </item>
               <item row="0" column="1">
                <widget class="XComboBox" name="_amexBank">
-                <property name="allowNull">
+                <property name="allowNull" stdset="0">
                  <bool>true</bool>
                 </property>
-                <property name="nullStr">
+                <property name="nullStr" stdset="0">
                  <string>[ Don't accept this card ]</string>
                 </property>
                 <property name="type">
@@ -306,10 +306,10 @@ to be bound by its terms.</comment>
               </item>
               <item row="1" column="1">
                <widget class="XComboBox" name="_discoverBank">
-                <property name="allowNull">
+                <property name="allowNull" stdset="0">
                  <bool>true</bool>
                 </property>
-                <property name="nullStr">
+                <property name="nullStr" stdset="0">
                  <string>[ Don't accept this card ]</string>
                 </property>
                 <property name="type">
@@ -329,10 +329,10 @@ to be bound by its terms.</comment>
               </item>
               <item row="2" column="1">
                <widget class="XComboBox" name="_mastercardBank">
-                <property name="allowNull">
+                <property name="allowNull" stdset="0">
                  <bool>true</bool>
                 </property>
-                <property name="nullStr">
+                <property name="nullStr" stdset="0">
                  <string>[ Don't accept this card ]</string>
                 </property>
                 <property name="type">
@@ -352,10 +352,30 @@ to be bound by its terms.</comment>
               </item>
               <item row="3" column="1">
                <widget class="XComboBox" name="_visaBank">
-                <property name="allowNull">
+                <property name="allowNull" stdset="0">
                  <bool>true</bool>
                 </property>
-                <property name="nullStr">
+                <property name="nullStr" stdset="0">
+                 <string>[ Don't accept this card ]</string>
+                </property>
+                <property name="type">
+                 <enum>XComboBox::ARBankAccounts</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="_otherBankLit">
+                <property name="text">
+                 <string>Other:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="XComboBox" name="_otherBank">
+                <property name="allowNull" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="nullStr" stdset="0">
                  <string>[ Don't accept this card ]</string>
                 </property>
                 <property name="type">

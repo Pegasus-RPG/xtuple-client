@@ -126,7 +126,12 @@ int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const QString &pcv
   APPENDFIELD(prequest, "x_amount",   QString::number(pamount, 'f', 2));
   // TODO: if check and not credit card transaction do something else
   APPENDFIELD(prequest, "x_card_num", anq.value("ccard_number").toString());
-  APPENDFIELD(prequest, "x_test_request", isLive() ? "FALSE" : "TRUE");
+
+  if (_metrics->value("CCServer").contains("test.authorize.net")) {
+    APPENDFIELD(prequest, "x_test_request", "FALSE");
+  } else {
+    APPENDFIELD(prequest, "x_test_request", isLive() ? "FALSE" : "TRUE");
+  }
 
   // TODO: if check and not credit card transaction do something else
   QString work_month;
@@ -333,10 +338,16 @@ int AuthorizeDotNetProcessor::doChargePreauthorized(const int pccardid, const QS
   APPENDFIELD(request, "x_login",           _metricsenc->value("CCLogin"));
   APPENDFIELD(request, "x_tran_key",        _metricsenc->value("CCPassword"));
   APPENDFIELD(request, "x_type",            "PRIOR_AUTH_CAPTURE");
-  APPENDFIELD(request, "x_trans_id",        isLive() ? preforder : "1");
+  APPENDFIELD(request, "x_trans_id",        preforder);
   APPENDFIELD(request, "x_amount",          QString::number(amount, 'f', 2));
   APPENDFIELD(request, "x_method",          "CC");
-  APPENDFIELD(request, "x_test_request",    isLive() ? "FALSE" : "TRUE");
+
+  if (_metrics->value("CCServer").contains("test.authorize.net")) {
+    APPENDFIELD(request, "x_test_request", "FALSE");
+  } else {
+    APPENDFIELD(request, "x_test_request", isLive() ? "FALSE" : "TRUE");
+  }
+
   APPENDFIELD(request, "x_relay_response",  "FALSE");
   APPENDFIELD(request, "x_duplicate_window", _metrics->value("CCANDuplicateWindow"));
 
@@ -525,6 +536,8 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
   QString r_ref;
   QString r_shipping;
   QString r_tax;
+  QString r_pantrunc;
+  QString r_cardtype;
 
   QString status;
 
@@ -572,7 +585,7 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
     return returnValue;
 
   // fieldValue(responseFields, 8-10);	// echo invoice_number description amount 
-  // fieldValue(responseFields, 11-13);	// echo method type cust_id
+  // fieldValue(responseFields, 11-13);	// echo method transtype cust_id
   // fieldValue(responseFields, 14-24);	// echo name, company, and address info
   // fieldValue(responseFields, 25-32);	// echo ship_to fields
 
@@ -588,6 +601,7 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
 
   // fieldValue(responseFields, 36);		// echo x_tax_exempt
   // fieldValue(responseFields, 37);		// echo x_po_num
+  // fieldValue(responseFields, 38);		// MD5 hash
 
   returnValue = fieldValue(responseFields, 39, r_cvv); // ccv response code
   if (returnValue < 0 && ptype == "CP") // may not get cvv on preauth capture
@@ -596,7 +610,26 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
     return returnValue;
 
   // fieldValue(responseFields, 40);		// cavv response code
-  // fieldValue(responseFields, 41-68);		// reserved for future use
+  // fieldValue(responseFields, 41-50);		// reserved for future use
+
+  returnValue = fieldValue(responseFields, 51, r_pantrunc);
+  if (returnValue < 0)
+    return returnValue;
+  r_pantrunc = r_pantrunc.right(4);
+
+  returnValue = fieldValue(responseFields, 52, r_cardtype);
+  if (returnValue < 0)
+    return returnValue;
+  if (r_cardtype == "Discover" || r_cardtype == "MasterCard"
+      || r_cardtype == "Visa"  || r_cardtype == "American Express")
+    r_cardtype.remove(1, r_cardtype.length());
+  else
+    r_cardtype = "O";
+
+  // fieldValue(responseFields, 53);            // split tender id
+  // fieldValue(responseFields, 54);            // original authorization amt
+  // fieldValue(responseFields, 55);            // debit/prepaid card balance
+  // fieldValue(responseFields, 56-68);		// reserved for future use
   // fieldValue(responseFields, 69+);		// echo of merchant-defined fields
 
   /* treat heldforreview as approved because the AIM doc says response
@@ -668,6 +701,8 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
   pparams.append("tax",         r_tax);
   pparams.append("ref",         r_ref);
   pparams.append("message",     r_message);
+  pparams.append("pantrunc",    r_pantrunc);
+  pparams.append("cardtype",    r_cardtype);
 
   pparams.append("auth", QVariant(ptype == "A"));
 
