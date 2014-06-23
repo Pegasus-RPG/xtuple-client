@@ -42,7 +42,7 @@ AuthorizeDotNetProcessor::AuthorizeDotNetProcessor() : CreditCardProcessor()
   _defaultLivePort   = 443;
   _defaultLiveServer = "https://secure.authorize.net/gateway/transact.dll";
   _defaultTestPort   = 443;
-  _defaultTestServer = "https://certification.authorize.net/gateway/transact.dll";
+  _defaultTestServer = "https://test.authorize.net/gateway/transact.dll";
 
   _msgHash.insert(-200, tr("A Login is required."));
   _msgHash.insert(-201, tr("The Login must be 20 characters or less."));
@@ -67,6 +67,12 @@ AuthorizeDotNetProcessor::AuthorizeDotNetProcessor() : CreditCardProcessor()
 
 }
 
+/** Build a basic outgoing request for an initial transaction - that is, one
+    that can stand alone and does not depend on the success of a prior
+    transaction.
+
+    @see buildFollowup
+ */
 int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &prequest, QString pordertype)
 {
   // TODO: if check and not credit card transaction do something else
@@ -173,11 +179,6 @@ int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const QString &pcv
     _errorMsg = anq.lastError().databaseText();
     return -1;
   }
-  else
-  {
-    _errorMsg = errorMsg(-17).arg(pccardid);
-    return -17;
-  }
 
   // TODO: if check and not credit card transaction do something else
   APPENDFIELD(prequest, "x_method",     "CC");
@@ -188,6 +189,77 @@ int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const QString &pcv
 
   if (DEBUG)
     qDebug("AN:buildCommon built %s\n", prequest.toAscii().data());
+  return 0;
+}
+
+/** Build an outgoing request for a follow-on transaction - that is, one that
+    requires a previous transaction to be meaningful (e.g. capturing a pre-auth
+    requires a valid pre-auth). These require less data and are slightly more
+    secure than full messages.
+
+    @param pamount may be changed if Authorize.Net is configured to convert currencies
+    @param pcurrid may be changed if Authorize.Net is configured to convert currencies
+    @see buildCommon
+ */
+int AuthorizeDotNetProcessor::buildFollowup(const int pccpayid, const QString &ptransid, double &pamount, int &pcurrid, QString &prequest, QString pordertype)
+{
+  Q_UNUSED(pccpayid);
+  int returnValue = 0;
+  int currid      = pcurrid;
+
+  if (_metrics->value("CCANCurrency") != "TRANS")
+  {
+    currid = _metrics->value("CCANCurrency").toInt();
+    pamount = currToCurr(pcurrid, currid, pamount, &returnValue);
+    pcurrid = currid;
+    if (returnValue < 0)
+      return returnValue;
+  }
+
+  if (! _metrics->value("CCANDelim").isEmpty())
+    APPENDFIELD(prequest, "x_delim_char", _metrics->value("CCANDelim"));
+
+  if (! _metrics->value("CCANEncap").isEmpty())
+    APPENDFIELD(prequest, "x_encap_char", _metrics->value("CCANEncap"));
+
+  APPENDFIELD(prequest, "x_version",      _metrics->value("CCANVer"));
+  APPENDFIELD(prequest, "x_delim_data", "TRUE");
+  APPENDFIELD(prequest, "x_login",    _metricsenc->value("CCLogin"));
+  APPENDFIELD(prequest, "x_tran_key", _metricsenc->value("CCPassword"));
+  APPENDFIELD(prequest, "x_trans_id", ptransid);
+  APPENDFIELD(prequest, "x_amount",   QString::number(pamount, 'f', 2));
+  APPENDFIELD(prequest, "x_method",   "CC");
+
+  if (_metrics->value("CCServer").contains("test.authorize.net")) {
+    APPENDFIELD(prequest, "x_test_request", "FALSE");
+  } else {
+    APPENDFIELD(prequest, "x_test_request", isLive() ? "FALSE" : "TRUE");
+  }
+
+  APPENDFIELD(prequest, "x_relay_response", "FALSE");
+  APPENDFIELD(prequest, "x_duplicate_window",
+			_metrics->value("CCANDuplicateWindow"));
+
+  XSqlQuery anq;
+  anq.prepare("SELECT curr_abbr FROM curr_symbol WHERE (curr_id=:currid);");
+  anq.bindValue(":currid", pcurrid);
+  anq.exec();
+  if (anq.first())
+  {
+    APPENDFIELD(prequest, "x_currency_code", anq.value("curr_abbr").toString());
+  }
+  else if (anq.lastError().type() != QSqlError::NoError)
+  {
+    _errorMsg = anq.lastError().databaseText();
+    return -1;
+  }
+
+  // TODO: if check and not credit card transaction do something else
+  APPENDFIELD(prequest, "x_method",     "CC");
+  APPENDFIELD(prequest, "x_type",       pordertype);
+
+  if (DEBUG)
+    qDebug("AN:buildFollowup built %s\n", prequest.toAscii().data());
   return 0;
 }
 
@@ -316,62 +388,12 @@ int AuthorizeDotNetProcessor::doChargePreauthorized(const int pccardid, const QS
   double amount  = pamount;
   int    currid  = pcurrid;
 
-  if (_metrics->value("CCANCurrency") != "TRANS")
-  {
-    currid = _metrics->value("CCANCurrency").toInt();
-    amount = currToCurr(pcurrid, currid, pamount, &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-  }
-
-  // may not have pccardid so we can't buildCommon (e.g. e-commerce integration)
   QString request;
-
-  if (! _metrics->value("CCANDelim").isEmpty())
-    APPENDFIELD(request, "x_delim_char", _metrics->value("CCANDelim"));
-
-  if (! _metrics->value("CCANEncap").isEmpty())
-    APPENDFIELD(request, "x_encap_char", _metrics->value("CCANEncap"));
-
-  APPENDFIELD(request, "x_version",         _metrics->value("CCANVer"));
-  APPENDFIELD(request, "x_delim_data",      "TRUE");
-  APPENDFIELD(request, "x_login",           _metricsenc->value("CCLogin"));
-  APPENDFIELD(request, "x_tran_key",        _metricsenc->value("CCPassword"));
-  APPENDFIELD(request, "x_type",            "PRIOR_AUTH_CAPTURE");
-  APPENDFIELD(request, "x_trans_id",        preforder);
-  APPENDFIELD(request, "x_amount",          QString::number(amount, 'f', 2));
-  APPENDFIELD(request, "x_method",          "CC");
-
-  if (_metrics->value("CCServer").contains("test.authorize.net")) {
-    APPENDFIELD(request, "x_test_request", "FALSE");
-  } else {
-    APPENDFIELD(request, "x_test_request", isLive() ? "FALSE" : "TRUE");
-  }
-
-  APPENDFIELD(request, "x_relay_response",  "FALSE");
-  APPENDFIELD(request, "x_duplicate_window", _metrics->value("CCANDuplicateWindow"));
-
-  XSqlQuery anq;
-  anq.prepare("SELECT curr_abbr FROM curr_symbol WHERE (curr_id=:currid);");
-  anq.bindValue(":currid", currid);
-  anq.exec();
-  if (anq.first())
-  {
-    APPENDFIELD(request, "x_currency_code", anq.value("curr_abbr").toString());
-  }
-  else if (anq.lastError().type() != QSqlError::NoError)
-  {
-    _errorMsg = anq.lastError().databaseText();
-    return -1;
-  }
-  else
-  {
-    _errorMsg = errorMsg(-17).arg(pccardid);
-    return -17;
-  }
+  returnValue = buildFollowup(pccpayid, preforder, amount, currid, request, "PRIOR_AUTH_CAPTURE");
+  if (returnValue != 0)
+    return returnValue;
 
   QString response;
-
   returnValue = sendViaHTTP(request, response);
   if (returnValue < 0)
     return returnValue;
@@ -384,46 +406,51 @@ int AuthorizeDotNetProcessor::doChargePreauthorized(const int pccardid, const QS
 
 int AuthorizeDotNetProcessor::doCredit(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
+  Q_UNUSED(pcvv);
   if (DEBUG)
     qDebug("AN:doCredit(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
 	   pccardid, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
 
-  int    returnValue = 0;
-  double amount  = pamount;
-  double tax     = ptax;
-  double freight = pfreight;
-  double duty    = pduty;
-  int    currid  = pcurrid;
-
-  if (_metrics->value("CCANCurrency") != "TRANS")
-  {
-    currid = _metrics->value("CCANCurrency").toInt();
-    amount = currToCurr(pcurrid, currid, pamount, &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-    tax = currToCurr(pcurrid, currid, ptax, &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-    freight = currToCurr(pcurrid, currid, pfreight, &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-    duty = currToCurr(pcurrid, currid, pduty, &returnValue);
-    if (returnValue < 0)
-      return returnValue;
-  }
-
+  int     returnValue = 0;
+  double  amount  = pamount;
+  int     currid  = pcurrid;
+  bool    tryVoid = false;
+  QString approvalCode;
   QString request;
 
-  returnValue = buildCommon(pccardid, pcvv, amount, currid, request, "CREDIT");
-  if (returnValue !=  0)
+  returnValue = buildFollowup(pccpayid, preforder, amount, currid, request, "CREDIT");
+  if (returnValue != 0)
     return returnValue;
 
-  APPENDFIELD(request, "x_trans_id",   preforder);
-  APPENDFIELD(request, "x_tax",        QString::number(tax, 'f', 2));
-  APPENDFIELD(request, "x_tax_exempt", ptaxexempt ? "TRUE" : "FALSE");
-  APPENDFIELD(request, "x_freight",    QString::number(freight, 'f', 2));
-  APPENDFIELD(request, "x_duty",       QString::number(duty,    'f', 2));
+  XSqlQuery anq;
+  anq.prepare("SELECT ccpay_card_pan_trunc,"
+              "  (ccpay_transaction_datetime > CURRENT_DATE"
+              "  AND ccpay_amount = :amount) AS tryVoid,"
+              "  ccpay_r_code,"
+              "  formatbytea(decrypt(setbytea(ccard_number),"
+              "              setbytea(:key),'bf')) AS ccard_number"
+              "  FROM ccpay LEFT OUTER JOIN ccard ON (ccpay_ccard_id=ccard_id)"
+              " WHERE (ccpay_id=:ccpayid);");
+  anq.bindValue(":ccpayid", pccpayid);
+  anq.bindValue(":key",     omfgThis->_key);
+  anq.bindValue(":now",     QDateTime::currentDateTime());
+  anq.bindValue(":amount",  amount);
+  anq.exec();
+  if (anq.first())
+  {
+    QString cardnum = anq.value("ccpay_card_pan_trunc").toString();
+    if (cardnum.isEmpty())
+      cardnum = anq.value("ccard_number").toString();
+    APPENDFIELD(request, "x_card_num", cardnum.right(4));
+    tryVoid = anq.value("tryVoid").toBool();
+    approvalCode = anq.value("ccpay_r_code").toString();
+  }
+  else if (anq.lastError().type() != QSqlError::NoError)
+  {
+    _errorMsg = anq.lastError().databaseText();
+    return -1;
+  }
 
   QString response;
   returnValue = sendViaHTTP(request, response);
@@ -433,11 +460,31 @@ int AuthorizeDotNetProcessor::doCredit(const int pccardid, const QString &pcvv, 
   returnValue = handleResponse(response, pccardid, "R", amount, currid,
 			       pneworder, preforder, pccpayid, pparams);
 
+  // TODO: make more precise - look for return code 54
+  if (returnValue < 0 && tryVoid) {
+    int voidResult = 0;
+    QString tmpErrorMsg = _errorMsg;
+    ParameterList voidParams;
+    _errorMsg.clear();
+    voidResult = doVoidPrevious(pccardid,   pcvv,      amount,       currid,
+                                pneworder,  preforder, approvalCode, pccpayid,
+                                voidParams);
+    if (voidResult >= 0) {
+      returnValue = voidResult;
+      pparams.clear();
+      while (! voidParams.isEmpty())
+        pparams.append(voidParams.takeFirst());
+    }
+    else
+      _errorMsg = tmpErrorMsg;
+  }
+
   return returnValue;
 }
 
 int AuthorizeDotNetProcessor::doVoidPrevious(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &pparams)
 {
+  Q_UNUSED(pcvv);
   if (DEBUG)
     qDebug("AN:doVoidPrevious(%d, pcvv, %f, %d, %s, %s, %s, %d)",
 	   pccardid, pamount, pcurrid,
@@ -446,31 +493,14 @@ int AuthorizeDotNetProcessor::doVoidPrevious(const int pccardid, const QString &
 
   QString tmpErrorMsg = _errorMsg;
 
-  int    returnValue = 0;
-  double amount = pamount;
-  int    currid = pcurrid;
-
-  if (_metrics->value("CCANCurrency") != "TRANS")
-  {
-    currid = _metrics->value("CCANCurrency").toInt();
-    amount = currToCurr(pcurrid, currid, pamount, &returnValue);
-    if (returnValue < 0)
-    {
-      _errorMsg = tmpErrorMsg;
-      return returnValue;
-    }
-  }
-
+  int     returnValue = 0;
+  double  amount = pamount;
+  int     currid = pcurrid;
   QString request;
 
-  returnValue = buildCommon(pccardid, pcvv, amount, currid, request, "VOID");
-  if (returnValue != 0)
-    return returnValue;
-
-  APPENDFIELD(request, "x_trans_id", preforder);
+  returnValue = buildFollowup(pccpayid, preforder, amount, currid, request, "VOID");
 
   QString response;
-
   returnValue = sendViaHTTP(request, response);
   _errorMsg = tmpErrorMsg;
   if (returnValue < 0)

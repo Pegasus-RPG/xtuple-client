@@ -25,6 +25,7 @@ class AuthorizeDotNetProcessor : public CreditCardProcessor
 
   protected:
     virtual int  buildCommon(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &prequest, QString pordertype);
+    virtual int  buildFollowup(const int pccpayid, const QString &ptransid, double &pamount, int &pcurrid, QString &prequest, QString pordertype);
     virtual int  doTestConfiguration();
     virtual int  doAuthorize(const int, const QString &pcvv, double&, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);
     virtual int  doCharge(const int, const QString &pcvv, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);
