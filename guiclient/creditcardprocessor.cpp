@@ -1077,11 +1077,12 @@ int CreditCardProcessor::credit(const int pccardid, const QString &pcvv, const d
       return returnVal;
   }
   else if (pccpayid > 0) {
-    ccq.prepare("SELECT ccpay_pan_trunc FROM ccpay WHERE ccpay_id=:ccpayid;");
+    ccq.prepare("SELECT ccpay_card_pan_trunc"
+                "  FROM ccpay WHERE ccpay_id=:ccpayid;");
     ccq.bindValue(":ccpayid", pccpayid);
     ccq.exec();
     if (ccq.first())
-      ccard_x = ccq.value("ccpay_pan_trunc").toString();
+      ccard_x = ccq.value("ccpay_card_pan_trunc").toString();
     else if (ccq.lastError().type() != QSqlError::NoError)
     {
       _errorMsg = ccq.lastError().databaseText();

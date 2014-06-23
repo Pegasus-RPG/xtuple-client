@@ -179,11 +179,6 @@ int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const QString &pcv
     _errorMsg = anq.lastError().databaseText();
     return -1;
   }
-  else
-  {
-    _errorMsg = errorMsg(-17).arg(pccardid);
-    return -17;
-  }
 
   // TODO: if check and not credit card transaction do something else
   APPENDFIELD(prequest, "x_method",     "CC");
@@ -420,6 +415,8 @@ int AuthorizeDotNetProcessor::doCredit(const int pccardid, const QString &pcvv, 
   int     returnValue = 0;
   double  amount  = pamount;
   int     currid  = pcurrid;
+  bool    tryVoid = false;
+  QString approvalCode;
   QString request;
 
   returnValue = buildFollowup(pccpayid, preforder, amount, currid, request, "CREDIT");
@@ -428,12 +425,17 @@ int AuthorizeDotNetProcessor::doCredit(const int pccardid, const QString &pcvv, 
 
   XSqlQuery anq;
   anq.prepare("SELECT ccpay_card_pan_trunc,"
+              "  (ccpay_transaction_datetime > CURRENT_DATE"
+              "  AND ccpay_amount = :amount) AS tryVoid,"
+              "  ccpay_r_code,"
               "  formatbytea(decrypt(setbytea(ccard_number),"
               "              setbytea(:key),'bf')) AS ccard_number"
               "  FROM ccpay LEFT OUTER JOIN ccard ON (ccpay_ccard_id=ccard_id)"
               " WHERE (ccpay_id=:ccpayid);");
   anq.bindValue(":ccpayid", pccpayid);
   anq.bindValue(":key",     omfgThis->_key);
+  anq.bindValue(":now",     QDateTime::currentDateTime());
+  anq.bindValue(":amount",  amount);
   anq.exec();
   if (anq.first())
   {
@@ -441,6 +443,8 @@ int AuthorizeDotNetProcessor::doCredit(const int pccardid, const QString &pcvv, 
     if (cardnum.isEmpty())
       cardnum = anq.value("ccard_number").toString();
     APPENDFIELD(request, "x_card_num", cardnum.right(4));
+    tryVoid = anq.value("tryVoid").toBool();
+    approvalCode = anq.value("ccpay_r_code").toString();
   }
   else if (anq.lastError().type() != QSqlError::NoError)
   {
@@ -455,6 +459,25 @@ int AuthorizeDotNetProcessor::doCredit(const int pccardid, const QString &pcvv, 
 
   returnValue = handleResponse(response, pccardid, "R", amount, currid,
 			       pneworder, preforder, pccpayid, pparams);
+
+  // TODO: make more precise - look for return code 54
+  if (returnValue < 0 && tryVoid) {
+    int voidResult = 0;
+    QString tmpErrorMsg = _errorMsg;
+    ParameterList voidParams;
+    _errorMsg.clear();
+    voidResult = doVoidPrevious(pccardid,   pcvv,      amount,       currid,
+                                pneworder,  preforder, approvalCode, pccpayid,
+                                voidParams);
+    if (voidResult >= 0) {
+      returnValue = voidResult;
+      pparams.clear();
+      while (! voidParams.isEmpty())
+        pparams.append(voidParams.takeFirst());
+    }
+    else
+      _errorMsg = tmpErrorMsg;
+  }
 
   return returnValue;
 }
