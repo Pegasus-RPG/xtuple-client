@@ -41,6 +41,7 @@ public slots:
     virtual void sViewOrder();
     virtual void sDeleteTask();
     virtual void sFillTaskList();
+    virtual void sNewIncident();
     virtual void sNewQuotation();
     virtual void sNewSalesOrder();
     virtual void sNewPurchaseOrder();

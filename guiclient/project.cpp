@@ -110,6 +110,9 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   QAction *menuItem;
   newMenu->addAction(tr("Task..."), this, SLOT(sNewTask()));
   newMenu->addSeparator();
+  menuItem = newMenu->addAction(tr("Incident"), this, SLOT(sNewIncident()));
+  menuItem->setEnabled(_privileges->check("MaintainPersonalIncidents") ||
+                       _privileges->check("MaintainAllIncidents"));
   menuItem = newMenu->addAction(tr("Quote"), this, SLOT(sNewQuotation()));
   menuItem->setEnabled(_privileges->check("MaintainQuotes"));
   menuItem = newMenu->addAction(tr("Sales Order"), this, SLOT(sNewSalesOrder()));
@@ -117,7 +120,7 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   menuItem = newMenu->addAction(tr("Purchase Order"),   this, SLOT(sNewPurchaseOrder()));
   menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
   menuItem = newMenu->addAction(tr("Work Order"),   this, SLOT(sNewWorkOrder()));
-  menuItem->setEnabled(_privileges->check("MaintainWorkOrders"));  _newTask->setMenu(newMenu); 
+  menuItem->setEnabled(_privileges->check("MaintainWorkOrders"));
   _newTask->setMenu(newMenu); 
 
   populate();
@@ -855,6 +858,20 @@ void project::sNumberChanged()
       _mode = cNew;
     }
   }
+}
+
+void project::sNewIncident()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("prj_id",  _prjid);
+  params.append("crmacct_id",  _crmacct->id());
+  params.append("cntct_id",  _cntct->id());
+  
+  incident *newdlg = new incident(this);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+  sFillTaskList();
 }
 
 void project::sNewQuotation()
