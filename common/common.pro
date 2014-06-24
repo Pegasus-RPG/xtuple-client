@@ -2,7 +2,12 @@ include( ../global.pri )
 
 TARGET      = xtuplecommon
 TEMPLATE    = lib
-CONFIG      += qt warn_on staticlib
+CONFIG      += qt warn_on
+xtcommon_shared {
+  CONFIG    += dll
+} else {
+  CONFIG    += staticlib
+}
 DEFINES     += MAKELIB
 
 INCLUDEPATH += $(QTDIR)/src/3rdparty/zlib
