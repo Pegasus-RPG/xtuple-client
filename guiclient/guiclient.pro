@@ -20,19 +20,42 @@ win32-msvc* {
                     ../lib/xtuplescriptapi.lib \
                     ../lib/xtuplewidgets.lib
 } else {
-  PRE_TARGETDEPS += ../lib/libxtuplecommon.a    \
-                    ../lib/libxtuplescriptapi.a \
-                    ../lib/libxtuplewidgets.a   \
-                    ../$${OPENRPT_BLD}/lib/libMetaSQL.a  \
-                    ../$${OPENRPT_BLD}/lib/librenderer.a \
-                    ../$${OPENRPT_BLD}/lib/libwrtembed.a \
-                    ../$${OPENRPT_BLD}/lib/libDmtx_Library.a \
-                    ../$${OPENRPT_BLD}/lib/libcommon.a
+  xtcommon_shared {
+    PRE_TARGETDEPS += ../lib/libxtuplecommon.so
+  } else {
+    PRE_TARGETDEPS += ../lib/libxtuplecommon.a
+  }
+  PRE_TARGETDEPS += ../lib/libxtuplescriptapi.a \
+                    ../lib/libxtuplewidgets.a
+  openrpt_shared {
+    PRE_TARGETDEPS += $${OPENRPT_BLD}/libMetaSQL.so  \
+                      $${OPENRPT_BLD}/librenderer.so \
+                      $${OPENRPT_BLD}/libwrtembed.so \
+                      $${OPENRPT_BLD}/libdmtx.so \
+                      $${OPENRPT_BLD}/libcommon.so
+  } else {
+    PRE_TARGETDEPS += $${OPENRPT_BLD}/lib/libMetaSQL.a  \
+                      $${OPENRPT_BLD}/lib/librenderer.a \
+                      $${OPENRPT_BLD}/lib/libwrtembed.a \
+                      $${OPENRPT_BLD}/lib/libDmtx_Library.a \
+                      $${OPENRPT_BLD}/lib/libcommon.a
+  }
 }
 
-LIBS        += -L../lib -L../$${OPENRPT_BLD}/lib \
-               -lxtuplecommon -lxtuplewidgets -lwrtembed -lcommon -lrenderer \
-               -lxtuplescriptapi -lDmtx_Library -lMetaSQL
+QMAKE_LIBDIR = ../lib $${OPENRPT_BLD}/lib $${OPENRPT_BLD} $$QMAKE_LIBDIR
+LIBS        += -lxtuplecommon -lxtuplewidgets -lwrtembed 
+openrpt_shared {
+  LIBS      += -lopenrptcommon
+} else {
+  LIBS      += -lcommon
+}
+LIBS        += -lrenderer -lxtuplescriptapi 
+openrpt_shared {
+  LIBS      += -ldmtx
+} else {
+  LIBS      += -lDmtx_Library
+}
+LIBS        += -lMetaSQL
 
 #not the best way to handle this, but it should do
 mac:!static:contains(QT_CONFIG, qt_framework) {
@@ -1844,7 +1867,7 @@ include( hunspell.pri )
 QT += xml sql script scripttools network
 QT += webkit xmlpatterns
 
-RESOURCES += guiclient.qrc ../$${OPENRPT_DIR}/OpenRPT/images/OpenRPTMetaSQL.qrc
+RESOURCES += guiclient.qrc $$OPENRPT_IMAGE_DIR/OpenRPTMetaSQL.qrc
 
 #CONFIG += debug
 
