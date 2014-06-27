@@ -118,12 +118,14 @@ enum SetResponse workOrderMaterials::set(const ParameterList &pParams)
 
 void workOrderMaterials::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
+  double qtyiss = _womatl->rawValue("womatl_qtyiss").toDouble();
   QAction *menuItem;
 
   menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
   menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
   
-  menuItem = pMenu->addAction(tr("Delete..."), this, SLOT(sDelete()));
+  if (qtyiss == 0.0)
+    menuItem = pMenu->addAction(tr("Delete..."), this, SLOT(sDelete()));
   
   pMenu->addSeparator();
   
@@ -132,7 +134,8 @@ void workOrderMaterials::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
   pMenu->addSeparator();
   
   menuItem = pMenu->addAction(tr("View Item-Defined Subsitute Availability..."), this, SLOT(sViewSubstituteAvailability()));
-  menuItem = pMenu->addAction(tr("Substitute..."), this, SLOT(sSubstitute()));
+  if (qtyiss == 0.0)
+    menuItem = pMenu->addAction(tr("Substitute..."), this, SLOT(sSubstitute()));
 }
 
 void workOrderMaterials::sNew()
