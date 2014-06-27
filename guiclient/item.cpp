@@ -629,10 +629,13 @@ void item::sSave()
     {
       if(QMessageBox::question( this, tr("Item Costs Exist"),
                                 tr("<p>You have changed the Item Type of this "
-                                   "Item. This Item has Item Costs associated "
-                                   "with it that will be deleted before this "
-                                   "change may occur. Do you wish to continue "
-                                   "saving and delete the Item Costs?"),
+                                   "Item.  Before using the Item in production, "
+                                   "you should review and update your Item costing.  "
+                                   "Changing Item Types can have a negative impact "
+                                   "on Item costing.  Your Item costs may need to "
+                                   "be updated and reposted.  Please contact your "
+                                   "Accounting Department for assistance.  "
+                                   "Do you wish to continue saving?"),
                                 QMessageBox::Ok,
                                 QMessageBox::Cancel | QMessageBox::Escape | QMessageBox::Default ) == QMessageBox::Cancel)
         return;
