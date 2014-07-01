@@ -49,10 +49,7 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_deleteCost, SIGNAL(clicked()), this, SLOT(sDeleteCost()));
   connect(_char, SIGNAL(activated(int)), this, SLOT(sCharIdChanged()));
 
-  if (_metrics->boolean("AllowInactiveBomItems"))
-    _item->setType(ItemLineEdit::cGeneralComponents);
-  else
-    _item->setType(ItemLineEdit::cGeneralComponents | ItemLineEdit::cActive);
+  _item->setType(ItemLineEdit::cGeneralComponents);
 
   _dates->setStartNull(tr("Always"), omfgThis->startOfTime(), TRUE);
   _dates->setStartCaption(tr("Effective"));
@@ -132,6 +129,9 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+
+      if (!_metrics->boolean("AllowInactiveBomItems"))
+        _item->setType(ItemLineEdit::cGeneralComponents | ItemLineEdit::cActive);
 
       QString issueMethod = _metrics->value("DefaultWomatlIssueMethod");
       for (int counter = 0; counter < _issueMethod->count(); counter++)

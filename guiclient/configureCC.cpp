@@ -19,6 +19,7 @@
 #include "configcybersourceprocessor.h"
 #include "configureEncryption.h"
 #include "creditcardprocessor.h"
+#include "errorReporter.h"
 
 bool shownEncryptedMsg = false;
 
@@ -87,6 +88,8 @@ configureCC::configureCC(QWidget* parent, const char* name, bool /*modal*/, Qt::
     */
     else if (ccbankq.value("ccbank_ccard_type").toString() == "V")
       _visaBank->setId(ccbankq.value("ccbank_bankaccnt_id").toInt());
+    else if (ccbankq.value("ccbank_ccard_type").toString() == "O")
+      _otherBank->setId(ccbankq.value("ccbank_bankaccnt_id").toInt());
   }
   if (ccbankq.lastError().type() != QSqlError::NoError)
     systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
@@ -215,71 +218,28 @@ bool configureCC::sSave()
   XSqlQuery ccbankq;
   ccbankq.prepare("SELECT setCCBankAccnt(:cctype, :bankaccnt_id) AS result;");
 
-  ccbankq.bindValue(":cctype", "A");
-  if (_amexBank->isValid())
-    ccbankq.bindValue(":bankaccnt_id", _amexBank->id());
-  else
-    ccbankq.bindValue(":bankaccnt_id", QVariant());
-  ccbankq.exec();
-  if (ccbankq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
-    _amexBank->setFocus();
-    return false;
-  }
+  QList<QPair<QString, XComboBox*> > bankWidgets;
+  bankWidgets << QPair<QString, XComboBox*>("A", _amexBank)
+              << QPair<QString, XComboBox*>("D", _discoverBank)
+              << QPair<QString, XComboBox*>("M", _mastercardBank)
+              << QPair<QString, XComboBox*>("V", _visaBank)
+              << QPair<QString, XComboBox*>("O", _otherBank)
+//            << QPair<QString, XComboBox*>("P", _paypalBank)
+              ;
 
-  ccbankq.bindValue(":cctype", "D");
-  if (_discoverBank->isValid())
-    ccbankq.bindValue(":bankaccnt_id", _discoverBank->id());
-  else
-    ccbankq.bindValue(":bankaccnt_id", QVariant());
-  ccbankq.exec();
-  if (ccbankq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
-    _discoverBank->setFocus();
-    return false;
-  }
-
-  ccbankq.bindValue(":cctype", "M");
-  if (_mastercardBank->isValid())
-    ccbankq.bindValue(":bankaccnt_id", _mastercardBank->id());
-  else
-    ccbankq.bindValue(":bankaccnt_id", QVariant());
-  ccbankq.exec();
-  if (ccbankq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
-    _mastercardBank->setFocus();
-    return false;
-  }
-
-  /*
-  ccbankq.bindValue(":cctype", "P");
-  if (_paypalBank->isValid())
-    ccbankq.bindValue(":bankaccnt_id", _paypalBank->id());
-  else
-    ccbankq.bindValue(":bankaccnt_id", QVariant());
-  ccbankq.exec();
-  if (ccbankq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
-    _paypalBank->setFocus();
-    return false;
-  }
-  */
-
-  ccbankq.bindValue(":cctype", "V");
-  if (_visaBank->isValid())
-    ccbankq.bindValue(":bankaccnt_id", _visaBank->id());
-  else
-    ccbankq.bindValue(":bankaccnt_id", QVariant());
-  ccbankq.exec();
-  if (ccbankq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
-    _visaBank->setFocus();
-    return false;
+  QPair<QString, XComboBox*> bank;
+  foreach(bank, bankWidgets) {
+    ccbankq.bindValue(":cctype", bank.first);
+    ccbankq.bindValue(":bankaccnt_id",
+                      bank.second->isValid() ? bank.second->id() : QVariant());
+    ccbankq.exec();
+    if (ErrorReporter::error(QtCriticalMsg, this,
+                             tr("Setting Credit Card Bank Accounts"),
+                             ccbankq, __FILE__, __LINE__))
+    {
+      bank.second->setFocus();
+      return false;
+    }
   }
 
   _metrics->set("CCYPWinPathPEM",    _ccYPWinPathPEM->text());

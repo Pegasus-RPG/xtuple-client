@@ -20,6 +20,8 @@
 #include <QToolBar>
 #include <QMdiArea>
 #include <QMdiSubWindow>
+#include <QDesktopServices>
+#include <QUrl>
 
 #include "xtsettings.h"
 #include "guiclient.h"
@@ -190,8 +192,9 @@ menuSystem::menuSystem(GUIClient *Pparent) :
 #ifndef Q_WS_MACX
     { "separator",		NULL,				NULL,		helpMenu, "true", NULL, NULL, true	},
 #endif
-    { "help.tableOfContents",	tr("Table of &Contents..."),	SLOT(sTOC()),	helpMenu, "true", NULL, NULL, true	},
-    { "help.download",          tr("Download..."),           SLOT(sDownload()), helpMenu, "true", NULL, NULL, true      }
+//  { "help.tableOfContents",	tr("Table of &Contents..."),	SLOT(sTOC()),	helpMenu, "true", NULL, NULL, true	},
+//  { "help.download",          tr("Download..."),           SLOT(sDownload()), helpMenu, "true", NULL, NULL, true      }
+    { "help.ReferenceGuide",          tr("Reference &Guide..."),           SLOT(sReferenceGuide()), helpMenu, "true", NULL, NULL, true      }
   };
   addActionsToMenu(help, sizeof(help) / sizeof(help[0]));
 
@@ -385,6 +388,10 @@ void menuSystem::sTOC()
 void menuSystem::sDownload()
 {
   omfgThis->handleNewWindow(new helpDownload());
+}
+void menuSystem::sReferenceGuide()
+{
+  QDesktopServices::openUrl(QUrl("http://www.xtuple.org/sites/default/files/refguide/current/index.html"));
 }
 
 void menuSystem::sFixACL()
