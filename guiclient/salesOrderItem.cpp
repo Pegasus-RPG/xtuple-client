@@ -942,9 +942,9 @@ void salesOrderItem::sSave(bool pPartial)
     return;
   
   // Make sure Qty Ordered/Qty UOM does not result in an invalid fractional Inv Qty
-  if (!_invIsFractional)
+  if (!pPartial && !_invIsFractional)
   {
-    if (qAbs((_qtyOrdered->toDouble() * _qtyinvuomratio) - (double)qRound(_qtyOrdered->toDouble() * _qtyinvuomratio)) > 0.01)
+    if (qAbs((_qtyOrdered->toDouble() * _qtyinvuomratio) - (double)qRound(_qtyOrdered->toDouble() * _qtyinvuomratio)) > 0.00001)
     {
       if (QMessageBox::question(this, tr("Change Qty Ordered?"),
                                 tr("This Qty Ordered/Qty UOM will result "
@@ -959,6 +959,7 @@ void salesOrderItem::sSave(bool pPartial)
           _qtyOrdered->setDouble((double)qRound(_qtyOrdered->toDouble() * _qtyinvuomratio + 0.5) / _qtyinvuomratio, 0);
         else
           _qtyOrdered->setDouble((double)qRound(_qtyOrdered->toDouble() * _qtyinvuomratio + 0.5) / _qtyinvuomratio, 2);
+        _qtyOrderedCache = _qtyOrdered->toDouble();
         _qtyOrdered->setFocus();
         return;
       }
@@ -1279,6 +1280,7 @@ void salesOrderItem::sSave(bool pPartial)
     }
   }
 
+  // Update supply order characteristics
   if ( (_mode != cView) && (_mode != cViewQuote) )
   {
     if (_supplyOrderId != -1 && !_item->isConfigured())
@@ -1324,12 +1326,20 @@ void salesOrderItem::sSave(bool pPartial)
           }
         }
         
-        if (changed &&
-            QMessageBox::question(this, tr("Change Characteristics?"),
-                                  tr("<p>Should the characteristics for the "
-                                     "associated supply order be updated?"),
-                                  QMessageBox::Yes | QMessageBox::Default,
-                                  QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+        bool applychange = false;
+        if (changed)
+        {
+          if (_mode == cNew)
+            applychange = true;
+          else if (QMessageBox::question(this, tr("Change Characteristics?"),
+                                         tr("<p>Should the characteristics for the "
+                                            "associated supply order be updated?"),
+                                         QMessageBox::Yes | QMessageBox::Default,
+                                         QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+            applychange = true;
+        }
+        
+        if (applychange)
         {
           salesSave.prepare("SELECT updateCharAssignment(:target_type, :target_id, :char_id, :char_value) AS result;");
           
@@ -2581,7 +2591,7 @@ void salesOrderItem::sHandleSupplyOrder()
                                       tr("<p>The Quantity Ordered for this Line Item has changed "
                                          "from %1 to %2."
                                          "<p>Should the W/O quantity for this Line Item be changed?")
-                                      .arg(_supplyOrderQtyOrderedCache).arg(valqty),
+                                      .arg(_supplyOrderQtyOrderedCache).arg(_qtyOrdered->toDouble()),
                                       QMessageBox::No | QMessageBox::Escape,
                                       QMessageBox::Yes  | QMessageBox::Default) == QMessageBox::Yes)
             {
@@ -2644,7 +2654,7 @@ void salesOrderItem::sHandleSupplyOrder()
                                       tr("<p>The Quantity Ordered for this Line Item has changed "
                                          "from %1 to %2."
                                          "<p>Should the P/O quantity for this Line Item be changed?")
-                                      .arg(_supplyOrderQtyOrderedCache).arg(valqty),
+                                      .arg(_supplyOrderQtyOrderedCache).arg(_qtyOrdered->toDouble()),
                                       QMessageBox::Yes | QMessageBox::Default,
                                       QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
             {
@@ -2698,7 +2708,7 @@ void salesOrderItem::sHandleSupplyOrder()
                                       tr("<p>The Supply Order Quantity for this Line Item has changed "
                                          "from %1 to %2."
                                          "<p>Should the P/R quantity for this Line Item be changed?")
-                                      .arg(_supplyOrderQtyOrderedCache).arg(valqty),
+                                      .arg(_supplyOrderQtyOrderedCache).arg(_qtyOrdered->toDouble()),
                                       QMessageBox::Yes | QMessageBox::Default,
                                       QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
             {
@@ -3805,17 +3815,8 @@ void salesOrderItem::populate()
     _taxtype->setId(item.value("coitem_taxtype_id").toInt());
     _orderNumber->setText(item.value("ordnumber").toString());
     _qtyOrderedCache = item.value("qtyord").toDouble();
+    _qtyOrdered->setDouble(_qtyOrderedCache);
     _supplyOrderQtyOrderedCache = _qtyOrderedCache;
-    if(item.value("item_fractional") == true)
-    {
-        _qtyOrdered->setValidator(omfgThis->qtyVal());
-        _qtyOrdered->setText(_qtyOrderedCache);
-    }
-    else
-    {
-        _qtyOrdered->setValidator(new QIntValidator());
-        _qtyOrdered->setText(qRound(_qtyOrderedCache));
-    }
     _scheduledDateCache = item.value("coitem_scheddate").toDate();
     _supplyOrderScheduledDateCache = _scheduledDateCache;
     _scheduledDate->setDate(_scheduledDateCache);
@@ -3835,7 +3836,6 @@ void salesOrderItem::populate()
     _priceMode = item.value("coitem_pricemode").toString();
     _margin->setLocalValue((_netUnitPrice->localValue() - _unitCost->localValue()) * _qtyOrdered->toDouble());
     _leadTime        = item.value("itemsite_leadtime").toInt();
-    _qtyOrderedCache = _qtyOrdered->toDouble();
     _originalQtyOrd  = _qtyOrdered->toDouble() * _qtyinvuomratio;
     if (!item.value("quitem_order_warehous_id").isNull())
       _supplyWarehouse->setId(item.value("quitem_order_warehous_id").toInt());
@@ -4284,7 +4284,7 @@ void salesOrderItem::sQtyUOMChanged()
   {
     _qtyinvuomratio = 1.0;
     if (_invIsFractional)
-      _qtyOrdered->setValidator(new XDoubleValidator(this));
+      _qtyOrdered->setValidator(omfgThis->qtyVal());
     else
       _qtyOrdered->setValidator(new QIntValidator(this));
   }
@@ -4302,7 +4302,7 @@ void salesOrderItem::sQtyUOMChanged()
     {
       _qtyinvuomratio = invuom.value("ratio").toDouble();
       if (invuom.value("frac").toBool())
-        _qtyOrdered->setValidator(new XDoubleValidator(this));
+        _qtyOrdered->setValidator(omfgThis->qtyVal());
       else
         _qtyOrdered->setValidator(new QIntValidator(this));
     }
