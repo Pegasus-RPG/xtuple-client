@@ -34,9 +34,8 @@ contract::contract(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_close,              SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_close,              SIGNAL(clicked()), this, SLOT(sRejected()));
   connect(_save,               SIGNAL(clicked()), this, SLOT(sSaveClicked()));
-  connect(this,                SIGNAL(rejected()), this, SLOT(sRejected()));
   connect(_newItemSrc,         SIGNAL(clicked()), this, SLOT(sNewItemSrc()));
   connect(_newPo,              SIGNAL(clicked()), this, SLOT(sNewPo()));
   connect(_editPo,             SIGNAL(clicked()), this, SLOT(sEditPo()));
