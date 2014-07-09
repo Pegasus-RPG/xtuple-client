@@ -375,8 +375,15 @@ void arOpenItem::sSave()
 
 void arOpenItem::sClose()
 {
+  XSqlQuery deleteARDocument;
   if (_mode == cNew)
   {
+    if(_aropenid != -1){
+      deleteARDocument.prepare("DELETE FROM aropen WHERE aropen_id = :aropenid;");
+      deleteARDocument.bindValue(":aropenid", _aropenid);
+      deleteARDocument.exec();
+    }
+
     if(_seqiss)
       sReleaseNumber();
 
