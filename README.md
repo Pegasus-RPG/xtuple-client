@@ -1,6 +1,8 @@
 Development for the Qt (C++) xTuple App
 ========
 
+[![Build Status for xtuple/qt-client](https://travis-ci.org/xtuple/qt-client.png)](https://travis-ci.org/xtuple/qt-client)
+
 Download and Install Postgres 9.1 and the xTuple Database
 ------
 
