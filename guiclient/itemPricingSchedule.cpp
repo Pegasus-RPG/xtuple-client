@@ -41,14 +41,14 @@ itemPricingSchedule::itemPricingSchedule(QWidget* parent, const char* name, bool
   _ipsitem->addColumn(tr("Target"),          _ynColumn,    Qt::AlignLeft,   true,  "target"  );
   _ipsitem->addColumn(tr("Item/Prod. Cat."), _itemColumn,  Qt::AlignLeft,   true,  "number"  );
   _ipsitem->addColumn(tr("Description"),     -1,           Qt::AlignLeft,   true,  "descrip"  );
-  _ipsitem->addColumn(tr("UOM"),             _uomColumn,   Qt::AlignCenter, true,  "qtyuom");
+  _ipsitem->addColumn(tr("Qty. UOM"),        _uomColumn,   Qt::AlignCenter, true,  "qtyuom");
   _ipsitem->addColumn(tr("Qty. Break"),      _qtyColumn,   Qt::AlignRight,  true,  "qtybreak" );
-  _ipsitem->addColumn(tr("UOM"),             _uomColumn,   Qt::AlignCenter, true,  "priceuom");
+  _ipsitem->addColumn(tr("Price UOM"),       _uomColumn,   Qt::AlignCenter, true,  "priceuom");
   _ipsitem->addColumn(tr("Price/Percent"),   _priceColumn, Qt::AlignRight,  true,  "price" );
   _ipsitem->addColumn(tr("Fixed Amt."),      _priceColumn, Qt::AlignRight,  true,  "fixedAmt" );
   _ipsitem->addColumn(tr("Net Price"),       _priceColumn, Qt::AlignRight,  true,  "netPrice" );
-  _ipsitem->addColumn(tr("Type"),            -1,           Qt::AlignLeft,   true,  "type" );
-  _ipsitem->addColumn(tr("Method"),          -1,           Qt::AlignLeft,   true,  "method" );
+  _ipsitem->addColumn(tr("Type"),            _uomColumn,   Qt::AlignLeft,   true,  "type" );
+  _ipsitem->addColumn(tr("Method"),          _uomColumn,   Qt::AlignLeft,   true,  "method" );
 
   _currency->setType(XComboBox::Currencies);
   _currency->setLabel(_currencyLit);

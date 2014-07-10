@@ -37,6 +37,7 @@ protected:
     QString _shiptonum;
     int _prodcatid;
     int _custtypeid;
+    double _iteminvpricerat;
     QString _custtypecode;
     QDate _effective;
     QDate _asOf;
