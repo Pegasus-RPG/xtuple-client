@@ -19,7 +19,7 @@ The "demo" databases are set up with a fictional company that seems to have been
 Download and Install Qt 4.8
 ------
 
-There are several ways to do this as well.  Visit www.qt-project.org or www.developer.nokia.com to get started.
+There are several ways to do this as well.  Visit www.qt-project.org or www.developer.nokia.com to get started. Binary packages are fine for development but you may need to build from source for deployment builds.
 
 
 Set up your Forks
