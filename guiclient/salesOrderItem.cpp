@@ -2369,7 +2369,7 @@ void salesOrderItem::sCalculateDiscountPrcnt()
     _baseUnitPrice->setLocalValue(_netUnitPrice->localValue() - charTotal);
   }
 
-  _margin->setLocalValue((_netUnitPrice->localValue() - _unitCost->localValue()) * _qtyOrdered->toDouble() / _priceinvuomratio * _qtyinvuomratio);
+  _margin->setLocalValue(((_netUnitPrice->localValue() - _unitCost->localValue()) / _priceinvuomratio) * (_qtyOrdered->toDouble() * _qtyinvuomratio));
 
   sCalculateExtendedPrice();
 }
@@ -3896,7 +3896,7 @@ void salesOrderItem::populate()
     _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
     _netUnitPrice->setLocalValue(item.value("coitem_price").toDouble());
     _priceMode = item.value("coitem_pricemode").toString();
-    _margin->setLocalValue((_netUnitPrice->localValue() - _unitCost->localValue()) * _qtyOrdered->toDouble() / _priceinvuomratio * _qtyinvuomratio);
+    _margin->setLocalValue(((_netUnitPrice->localValue() - _unitCost->localValue()) / _priceinvuomratio) * (_qtyOrdered->toDouble() * _qtyinvuomratio));
     _leadTime        = item.value("itemsite_leadtime").toInt();
     _qtyOrderedCache = _qtyOrdered->toDouble();
     _originalQtyOrd  = _qtyOrdered->toDouble() * _qtyinvuomratio;
