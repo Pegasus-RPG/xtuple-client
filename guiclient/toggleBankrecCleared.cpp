@@ -89,16 +89,16 @@ void toggleBankrecCleared::sSave()
   reconcileToggleCleared.bindValue(":bankrecid", _bankrecid);
   reconcileToggleCleared.bindValue(":transdate", _transdate->date());
   reconcileToggleCleared.exec();
-  if (reconcileToggleCleared.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, reconcileToggleCleared.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
   if (!reconcileToggleCleared.first())
   {
     QMessageBox::critical( this, tr("Date Outside Range"),
                           tr("The Effective Date must be in the date range "
                              "of this Bank Reconciliation period.") );
+    return;
+  }
+  if (reconcileToggleCleared.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, reconcileToggleCleared.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -136,18 +136,17 @@ void toggleBankrecCleared::populateReceipt()
   params.append("source", _source);
   MetaSQLQuery mrcp = mqlLoad("bankrec", "receipts");
   XSqlQuery rcp = mrcp.toQuery(params);
-  if (rcp.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, rcp.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  
   if (rcp.first())
   {
     _docnumber->setText(rcp.value("docnumber").toString());
     _transdate->setDate(rcp.value("f_date").toDate());
     _exchrate->setDouble(rcp.value("doc_exchrate").toDouble());
     _baseamount = rcp.value("base_amount").toDouble();
+  }
+  if (rcp.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, rcp.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 
@@ -160,17 +159,16 @@ void toggleBankrecCleared::populateCheck()
   params.append("source", _source);
   MetaSQLQuery mchk = mqlLoad("bankrec", "checks");
   XSqlQuery chk = mchk.toQuery(params);
-  if (chk.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, chk.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  
   if (chk.first())
   {
     _docnumber->setText(chk.value("doc_number").toString());
     _transdate->setDate(chk.value("transdate").toDate());
     _exchrate->setDouble(chk.value("doc_exchrate").toDouble());
     _baseamount = chk.value("base_amount").toDouble();
+  }
+  if (chk.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, chk.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }

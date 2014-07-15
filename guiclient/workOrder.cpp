@@ -1820,6 +1820,7 @@ void workOrder::sSubstituteMatl()
 void workOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
 {
   QString  status(selected->text(3));
+  double qtyiss = _woIndentedList->rawValue("qtyiss").toDouble();
   QAction *menuItem;
 
   //Check if row is a work order and id is vaild
@@ -1987,7 +1988,7 @@ void workOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
             menuItem->setEnabled(false);
       }
       
-      if (status == "O" || status == "E")
+      if ((status == "O" || status == "E") && qtyiss == 0.0)
       {
           menuItem = pMenu->addAction(tr("Substitute..."), this, SLOT(sSubstituteMatl()));
           if (!_privileges->check("MaintainWoMaterials"))
