@@ -13,6 +13,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QMessageBox>
+#include <QSqlError>
 #include <QVariant>
 
 #include "guiclient.h"
@@ -48,6 +49,8 @@ dspPurchaseReqsByPlannerCode::dspPurchaseReqsByPlannerCode(QWidget* parent, cons
   list()->addColumn(tr("QOH"),          _qtyColumn,    Qt::AlignRight,  true,  "itemsite_qtyonhand"  );
   list()->addColumn(tr("Reorder Lvl."), _qtyColumn,    Qt::AlignRight,  true,  "itemsite_reorderlevel"  );
   list()->addColumn(tr("Notes"),        -1,            Qt::AlignLeft,   true,  "pr_releasenote"  );
+
+  list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   connect(omfgThis, SIGNAL(purchaseRequestsUpdated()), this, SLOT(sFillList()));
 }
@@ -107,15 +110,52 @@ void dspPurchaseReqsByPlannerCode::sDspRunningAvailability()
 
 void dspPurchaseReqsByPlannerCode::sRelease()
 {
-  ParameterList params;
-  params.append("mode", "releasePr");
-  params.append("pr_id", list()->id());
-
-  purchaseOrder *newdlg = new purchaseOrder();
-  if(newdlg->set(params) == NoError)
-    omfgThis->handleNewWindow(newdlg);
+  XSqlQuery dspRelease;
+  dspRelease.prepare("SELECT releasePr(:pr_id) AS _result;");
+  
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  if (selected.size() == 1)
+  {
+    ParameterList params;
+    params.append("mode", "releasePr");
+    params.append("pr_id", list()->id());
+    
+    purchaseOrder *newdlg = new purchaseOrder();
+    if(newdlg->set(params) == NoError)
+      omfgThis->handleNewWindow(newdlg);
+    else
+      delete newdlg;
+  }
   else
-    delete newdlg;
+  {
+    if (QMessageBox::question(this, tr("Release multiple PRs?"),
+                              tr("<p>Purchase Requests will be released "
+                                 "using default Item Sources and added "
+                                 "to unreleased Purchase Orders."
+                                 "<p>Do you want to continue?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+    {
+      for (int i = 0; i < selected.size(); i++)
+      {
+        dspRelease.bindValue(":pr_id", ((XTreeWidgetItem*)(selected[i]))->id());
+        dspRelease.exec();
+        if (dspRelease.first())
+        {
+          if (dspRelease.value("_result").toInt() < 0)
+            QMessageBox::information(this, tr("Release Error"),
+                                     tr("<p>Purchase Request %1 "
+                                        "could not be released.").arg(selected[i]->rawValue("pr_number").toString()),
+                                     QMessageBox::Ok|QMessageBox::Default);
+        }
+        else if (dspRelease.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, dspRelease.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
+      }
+    }
+  }
 
   sFillList();
   omfgThis->sPurchaseRequestsUpdated();
@@ -125,8 +165,13 @@ void dspPurchaseReqsByPlannerCode::sDelete()
 {
   XSqlQuery dspDelete;
   dspDelete.prepare("SELECT deletePr(:pr_id) AS _result;");
-  dspDelete.bindValue(":pr_id", list()->id());
-  dspDelete.exec();
+
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    dspDelete.bindValue(":pr_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    dspDelete.exec();
+  }
 
   sFillList();
   omfgThis->sPurchaseRequestsUpdated();
