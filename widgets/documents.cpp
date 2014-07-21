@@ -478,7 +478,7 @@ void Documents::refresh()
               " WHEN (target_type='FILE') THEN :file "
               " WHEN (target_type='IMG') THEN :image "
               " WHEN (target_type='INCDT') THEN :incident "
-              " WHEN (target_type='INCDT') THEN :invoice "
+              " WHEN (target_type='INV') THEN :invoice "
               " WHEN (target_type='I') THEN :item "
               " WHEN (target_type='OPP') THEN :opp "
               " WHEN (target_type='J') THEN :project "
