@@ -26,6 +26,8 @@
 #include "bom.h"
 #include "characteristicAssignment.h"
 #include "comment.h"
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "image.h"
 #include "itemAlias.h"
 #include "itemAvailabilityWorkbench.h"
@@ -394,72 +396,65 @@ enum SetResponse item::set(const ParameterList &pParams)
 
 void item::saveCore()
 {
-  XSqlQuery itemaveCore;
   if(cNew != _mode || _inTransaction)
     return;
 
-  if (_inventoryUOM->id() == -1)
+  XSqlQuery itemaveCore;
+
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_inventoryUOM->id() == -1, _inventoryUOM,
+                          tr("You must select an Inventory Unit of Measure for this Item before continuing."))
+         << GuiErrorCheck(_classcode->id() == -1, _classcode,
+                          tr("You must select a Class Code before continuing."))
+  ;
+  
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Item"), errors))
+    return;
+  
+  itemaveCore.exec("BEGIN;");
+  _inTransaction = true;
+  
+  itemaveCore.prepare("INSERT INTO item"
+                      "      (item_id, item_number, item_Descrip1, item_descrip2,"
+                      "       item_classcode_id,"
+                      "       item_picklist, item_sold, item_fractional, item_active,"
+                      "       item_type,"
+                      "       item_prodweight, item_packweight, item_prodcat_id,"
+                      "       item_exclusive, item_listprice, item_listcost, item_maxcost,"
+                      "       item_inv_uom_id, item_price_uom_id)"
+                      "VALUES(:item_id, :item_number, '', '',"
+                      "       :item_classcode_id,"
+                      "       false, false, false, :item_active,"
+                      "       :item_type,"
+                      "       0.0, 0.0, -1,"
+                      "       true, 0.0, 0.0, 0.0,"
+                      "       :item_inv_uom_id, :item_inv_uom_id);");
+  itemaveCore.bindValue(":item_id", _itemid);
+  itemaveCore.bindValue(":item_number", _itemNumber->text().trimmed().toUpper());
+  itemaveCore.bindValue(":item_type", _itemTypes[_itemtype->currentIndex()]);
+  itemaveCore.bindValue(":item_classcode_id", _classcode->id());
+  itemaveCore.bindValue(":item_inv_uom_id", _inventoryUOM->id());
+  itemaveCore.bindValue(":item_active", QVariant(_active->isChecked()));
+  if(!itemaveCore.exec() || itemaveCore.lastError().type() != QSqlError::NoError)
   {
-    QMessageBox::information( this, tr("Cannot Save Item"),
-                              tr("You must select an Inventory Unit of Measure for this Item before continuing.")  );
-    _inventoryUOM->setFocus();
+    itemaveCore.exec("ROLLBACK;");
+    _inTransaction = false;
     return;
   }
   
-  else if (_classcode->id() == -1)
-  {
-    QMessageBox::information( this, tr("Cannot Save Item"),
-                              tr("You must select a Class Code before continuing.")  );
-    _classcode->setFocus();
-    return;
-  }
+  sPopulateUOMs();
+  // TODO: We can enable certain functionality here that needs a saved record
+  _newUOM->setEnabled(true);
+  _tab->setEnabled(true);
+  _elements->findChild<ItemCluster*>("_item")->setId(_itemid);
   
-  else
-  {
-    itemaveCore.exec("BEGIN;");
-    _inTransaction = true;
-
-    itemaveCore.prepare("INSERT INTO item"
-            "      (item_id, item_number, item_Descrip1, item_descrip2,"
-            "       item_classcode_id,"
-            "       item_picklist, item_sold, item_fractional, item_active,"
-            "       item_type,"
-            "       item_prodweight, item_packweight, item_prodcat_id,"
-            "       item_exclusive, item_listprice, item_listcost, item_maxcost,"
-            "       item_inv_uom_id, item_price_uom_id)"
-            "VALUES(:item_id, :item_number, '', '',"
-            "       :item_classcode_id,"
-            "       false, false, false, :item_active,"
-            "       :item_type,"
-            "       0.0, 0.0, -1,"
-            "       true, 0.0, 0.0, 0.0,"
-            "       :item_inv_uom_id, :item_inv_uom_id);");
-    itemaveCore.bindValue(":item_id", _itemid);
-    itemaveCore.bindValue(":item_number", _itemNumber->text().trimmed().toUpper());
-    itemaveCore.bindValue(":item_type", _itemTypes[_itemtype->currentIndex()]);
-    itemaveCore.bindValue(":item_classcode_id", _classcode->id());
-    itemaveCore.bindValue(":item_inv_uom_id", _inventoryUOM->id());
-    itemaveCore.bindValue(":item_active", QVariant(_active->isChecked()));
-    if(!itemaveCore.exec() || itemaveCore.lastError().type() != QSqlError::NoError)
-    {
-      itemaveCore.exec("ROLLBACK;");
-      _inTransaction = false;
-      return;
-    }
-
-    sPopulateUOMs();
-    // TODO: We can enable certain functionality here that needs a saved record
-    _newUOM->setEnabled(true);
-    _tab->setEnabled(true);
-    _elements->findChild<ItemCluster*>("_item")->setId(_itemid);
-
-    sHandleRightButtons();
-  }
-} 
+  sHandleRightButtons();
+}
 
 void item::sSave()
 {
   XSqlQuery itemSave;
+  QList<GuiErrorCheck> errors;
   QString sql;
   QString itemNumber = _itemNumber->text().trimmed().toUpper();
 
@@ -489,19 +484,17 @@ void item::sSave()
     itemSave.exec();
     if (itemSave.first())         
     { 
-      QMessageBox::warning( this, tr("Cannot Save Item"),
-        tr("This Item is used in an active Bill of Materials and must be marked as active. "
-        "Expire the Bill of Material items to allow this Item to not be active.") );
-      return;
+      errors << GuiErrorCheck(true, _active,
+                              tr("This Item is used in an active Bill of Materials and must be marked as active. "
+                                 "Expire the Bill of Material items to allow this Item to not be active."));
     }
 
 
     if (fActive)
     { 
-      QMessageBox::warning( this, tr("Cannot Save Item"),
-        tr("This Item is used in an active Item Site and must be marked as active. "
-        "Deactivate the Item Sites to allow this Item to not be active.") );
-      return;
+      errors << GuiErrorCheck(true, _active,
+                              tr("This Item is used in an active Item Site and must be marked as active. "
+                                 "Deactivate the Item Sites to allow this Item to not be active."));
     }
 
     itemSave.prepare("SELECT itemsrc_id "
@@ -513,147 +506,95 @@ void item::sSave()
     itemSave.exec();
     if (itemSave.first())         
     { 
-      QMessageBox::warning( this, tr("Cannot Save Item"),
-        tr("This Item is used in an active Item Source and must be marked as active. "
-        "Deactivate the Item Sources to allow this Item to not be active.") );
-      return;
+      errors << GuiErrorCheck(true, _active,
+                              tr("This Item is used in an active Item Source and must be marked as active. "
+                                 "Deactivate the Item Sources to allow this Item to not be active."));
     }
   }
 
-  if(_disallowPlanningType && QString(_itemTypes[_itemtype->currentIndex()]) == "L")
-  {
-    QMessageBox::warning( this, tr("Planning Type Disallowed"),
-      tr("This item is part of one or more Bills of Materials and cannot be a Planning Item.") );
-    return;
-  }
-
-  if(QString(_itemTypes[_itemtype->currentIndex()]) == "K" && !_sold->isChecked())
-  {
-    QMessageBox::warning( this, tr("Must be Sold"),
-      tr("Kit item types must be Sold. Please mark this item as sold and set the appropriate options and save again.") );
-    return;
-  }
-  
   if(!_sold->isChecked())
   {
     itemSave.prepare("SELECT bomitem_id "
-              "FROM bomitem, item "
-              "WHERE ((bomitem_parent_item_id=item_id) "
-              "AND (item_active) "
-              "AND (item_type='K') "
-              "AND (bomitem_expires > current_date) "
-              "AND (getActiveRevId('BOM',bomitem_parent_item_id)=bomitem_rev_id) "
-              "AND (bomitem_item_id=:item_id)) "
-              "LIMIT 1; ");
+                     "FROM bomitem, item "
+                     "WHERE ((bomitem_parent_item_id=item_id) "
+                     "AND (item_active) "
+                     "AND (item_type='K') "
+                     "AND (bomitem_expires > current_date) "
+                     "AND (getActiveRevId('BOM',bomitem_parent_item_id)=bomitem_rev_id) "
+                     "AND (bomitem_item_id=:item_id)) "
+                     "LIMIT 1; ");
     itemSave.bindValue(":item_id", _itemid);
     itemSave.exec();
-    if (itemSave.first())         
-    { 
-      QMessageBox::warning( this, tr("Cannot Save Item"),
-        tr("This item is used in an active bill of materials for a kit and must be marked as sold. "
-        "Expire the bill of material items or deactivate the kit items to allow this item to not be sold.") );
-      return;
+    if (itemSave.first())
+    {
+      errors << GuiErrorCheck(true, _sold,
+                              tr("This item is used in an active bill of materials for a kit and must be marked as sold. "
+                                 "Expire the bill of material items or deactivate the kit items to allow this item to not be sold."));
     }
   }
-
+  
   if (cEdit == _mode && _itemtype->currentText() != _originalItemType && QString(_itemTypes[_itemtype->currentIndex()]) == "K")
   {
     itemSave.prepare("SELECT bomitem_id "
-              "FROM bomitem, item "
-              "WHERE ((bomitem_item_id=item_id) "
-              "AND (item_active) "
-              "AND (NOT item_sold) "
-              "AND (bomitem_expires > current_date) "
-              "AND (getActiveRevId('BOM',bomitem_parent_item_id)=bomitem_rev_id) "
-              "AND (bomitem_parent_item_id=:item_id)) "
-              "LIMIT 1; ");
+                     "FROM bomitem, item "
+                     "WHERE ((bomitem_item_id=item_id) "
+                     "AND (item_active) "
+                     "AND (NOT item_sold) "
+                     "AND (bomitem_expires > current_date) "
+                     "AND (getActiveRevId('BOM',bomitem_parent_item_id)=bomitem_rev_id) "
+                     "AND (bomitem_parent_item_id=:item_id)) "
+                     "LIMIT 1; ");
     itemSave.bindValue(":item_id", _itemid);
     itemSave.exec();
-    if (itemSave.first())         
-    { 
+    if (itemSave.first())
+    {
       if(QMessageBox::question( this, tr("BOM Items should be marked as Sold"),
-                                tr("<p>You have changed the Item Type of this "
-                                   "Item to Kit. This Item has BOM Items associated "
-                                   "with it that are not marked as Sold. "
-                                   "Do you wish to continue saving?"),
-                                QMessageBox::Ok,
-                                QMessageBox::Cancel | QMessageBox::Escape | QMessageBox::Default ) == QMessageBox::Cancel)
+                               tr("<p>You have changed the Item Type of this "
+                                  "Item to Kit. This Item has BOM Items associated "
+                                  "with it that are not marked as Sold. "
+                                  "Do you wish to continue saving?"),
+                               QMessageBox::Ok,
+                               QMessageBox::Cancel | QMessageBox::Escape | QMessageBox::Default ) == QMessageBox::Cancel)
         return;
     }
   }
-
+  
   if (_mode == cEdit)
   {
     itemSave.prepare( "SELECT item_id "
-               "FROM item "
-               "WHERE ( (item_number=:item_number)"
-               " AND (item_id <> :item_id) );" );
+                     "FROM item "
+                     "WHERE ( (item_number=:item_number)"
+                     " AND (item_id <> :item_id) );" );
     itemSave.bindValue(":item_number", itemNumber);
     itemSave.bindValue(":item_id", _itemid);
     itemSave.exec();
     if (itemSave.first())
     {
-      QMessageBox::warning( this, tr("Cannot Save Item"),
-                            tr("You may not rename this Item to the entered Item Number as it is in use by another Item.") );
-      _itemNumber->setFocus();
-      return;
+      errors << GuiErrorCheck(true, _itemNumber,
+                              tr("You may not rename this Item to the entered Item Number as it is in use by another Item."));
     }
   }
+  
+  errors << GuiErrorCheck(_disallowPlanningType && QString(_itemTypes[_itemtype->currentIndex()]) == "L", _itemtype,
+                          tr("This item is part of one or more Bills of Materials and cannot be a Planning Item."))
+         << GuiErrorCheck(QString(_itemTypes[_itemtype->currentIndex()]) == "K" && !_sold->isChecked(), _itemtype,
+                          tr("Kit item types must be Sold. Please mark this item as sold and set the appropriate options."))
+         << GuiErrorCheck(_itemNumber->text().length() == 0, _itemNumber,
+                          tr("You must enter a Item Number for this Item before continuing."))
+         << GuiErrorCheck(_itemtype->currentIndex() == -1, _itemtype,
+                          tr("You must select an Item Type for this Item Type before continuing."))
+         << GuiErrorCheck(_classcode->currentIndex() == -1, _classcode,
+                          tr("You must select a Class Code for this Item before continuing."))
+         << GuiErrorCheck(_inventoryUOM->id() == -1, _inventoryUOM,
+                          tr("You must select an Inventory Unit of Measure for this Item before continuing."))
+         << GuiErrorCheck((_sold->isChecked()) && (_prodcat->id() == -1), _prodcat,
+                          tr("You must select a Product Category for this Sold Item before continuing."))
+         << GuiErrorCheck((_sold->isChecked()) && (_priceUOM->id() == -1), _priceUOM,
+                          tr("You must select a Selling UOM for this Sold Item before continuing."))
+         << GuiErrorCheck(_classcode->id() == -1, _classcode,
+                          tr("You must select a Class Code for this Item before continuing."))
+  ;
 
-  if (_itemNumber->text().length() == 0)
-  {
-    QMessageBox::information( this, tr("Cannot Save Item"),
-                              tr("You must enter a Item Number for this Item before continuing.") );
-    _itemNumber->setFocus();
-    return;
-  }
-
-  if (_itemtype->currentIndex() == -1)
-  {
-    QMessageBox::information( this, tr("Cannot Save Item"),
-                              tr("You must select an Item Type for this Item Type before continuing.")  );
-    _itemtype->setFocus();
-    return;
-  }
-
-  if (_classcode->currentIndex() == -1)
-  {
-    QMessageBox::information( this, tr("Cannot Save Item"),
-                              tr("You must select a Class Code for this Item before continuing.") );
-    _classcode->setFocus();
-    return;
-  }
-
-  if (_inventoryUOM->id() == -1)
-  {
-    QMessageBox::information( this, tr("Cannot Save Item"),
-                              tr("You must select an Inventory Unit of Measure for this Item before continuing.")  );
-    _inventoryUOM->setFocus();
-    return;
-  }
-
-  if ((_sold->isChecked()) && (_prodcat->id() == -1))
-  {
-    QMessageBox::information( this, tr("Cannot Save Item"),
-                              tr("You must select a Product Category for this Sold Item before continuing.")  );
-    _prodcat->setFocus();
-    return;
-  }
-
-  if ((_sold->isChecked()) && (_priceUOM->id() == -1))
-  {
-    QMessageBox::information( this, tr("Cannot Save Item"),
-                              tr("You must select a Selling UOM for this Sold Item before continuing.") );
-    return;
-  }
-
-  if (_classcode->id() == -1)
-  {
-    QMessageBox::information( this, tr("Cannot Save Item"),
-                              tr("You must select a Class Code for this Item before continuing.")  );
-    _classcode->setFocus();
-    return;
-  }
 
   if (cEdit == _mode && _itemtype->currentText() != _originalItemType)
   {
@@ -662,46 +603,47 @@ void item::sSave()
         (QString(_itemTypes[_itemtype->currentIndex()]) == "T") ||
         (QString(_itemTypes[_itemtype->currentIndex()]) == "F"))
         {
-      itemSave.prepare( "SELECT itemsite_id "
-                 "  FROM itemsite "
-                 " WHERE ((itemsite_item_id=:item_id) "
-				 " AND (itemsite_qtyonhand + qtyallocated(itemsite_id,startoftime(),endoftime()) +"
-                         "      qtyordered(itemsite_id,startoftime(),endoftime()) != 0 ));" );
+      itemSave.prepare("SELECT itemsite_id "
+                       "  FROM itemsite "
+                       " WHERE ((itemsite_item_id=:item_id) "
+                       " AND (itemsite_qtyonhand + qtyallocated(itemsite_id,startoftime(),endoftime()) +"
+                       "      qtyordered(itemsite_id,startoftime(),endoftime()) != 0 ));" );
       itemSave.bindValue(":item_id", _itemid);
       itemSave.exec();
       if (itemSave.first())
       {
-        QMessageBox::information(this, tr("Cannot Save Item"),
-                                 tr("<p>This Item has Item Sites with either "
-                                    "on hand quantities or pending inventory "
-                                    "activity. This item type does not allow "
-                                    "on hand balances or inventory activity."));
-        _itemtype->setFocus();
-        return;
+        errors << GuiErrorCheck(true, _itemtype,
+                                tr("<p>This Item has Item Sites with either "
+                                   "on hand quantities or pending inventory "
+                                   "activity. This item type does not allow "
+                                   "on hand balances or inventory activity."));
       }
-        }
+    }
 
-    itemSave.prepare( "SELECT itemcost_id "
-               "  FROM itemcost "
-               " WHERE (itemcost_item_id=:item_id);" );
+    itemSave.prepare("SELECT itemcost_id "
+                     "  FROM itemcost "
+                     " WHERE (itemcost_item_id=:item_id);" );
     itemSave.bindValue(":item_id", _itemid);
     itemSave.exec();
     if (itemSave.first())
     {
       if(QMessageBox::question( this, tr("Item Costs Exist"),
                                 tr("<p>You have changed the Item Type of this "
-                                   "Item. This Item has Item Costs associated "
-                                   "with it that will be deleted before this "
-                                   "change may occur. Do you wish to continue "
-                                   "saving and delete the Item Costs?"),
+                                   "Item.  Before using the Item in production, "
+                                   "you should review and update your Item costing.  "
+                                   "Changing Item Types can have a negative impact "
+                                   "on Item costing.  Your Item costs may need to "
+                                   "be updated and reposted.  Please contact your "
+                                   "Accounting Department for assistance.  "
+                                   "Do you wish to continue saving?"),
                                 QMessageBox::Ok,
                                 QMessageBox::Cancel | QMessageBox::Escape | QMessageBox::Default ) == QMessageBox::Cancel)
         return;
-	}
+    }
 
-    itemSave.prepare( "SELECT itemsite_id "
-               "  FROM itemsite "
-               " WHERE (itemsite_item_id=:item_id);" );
+    itemSave.prepare("SELECT itemsite_id "
+                     "  FROM itemsite "
+                     " WHERE (itemsite_item_id=:item_id);" );
     itemSave.bindValue(":item_id", _itemid);
     itemSave.exec();
     if (itemSave.first())
@@ -722,6 +664,10 @@ void item::sSave()
     }
   }
 
+  // Check for errors
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Item"), errors))
+    return;
+  
   // look for all of the uom ids we have associated with this item
   QStringList knownunits;
   itemSave.prepare("SELECT :uom_id AS uom_id "

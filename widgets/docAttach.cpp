@@ -187,41 +187,46 @@ void docAttach::sHandleButtons()
   }
   else if (_docType->currentIndex() == 8)
   {
+    connect(_invoice, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
+    _save->setEnabled(_invoice->isValid());
+  }
+  else if (_docType->currentIndex() == 9)
+  {
     connect(_item, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
     _save->setEnabled(_item->isValid());
   }
-  else if (_docType->currentIndex() == 9)
+  else if (_docType->currentIndex() == 10)
   {
     connect(_opp, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
     _save->setEnabled(_opp->isValid());
   }
-  else if (_docType->currentIndex() == 10)
+  else if (_docType->currentIndex() == 11)
   {
     connect(_proj, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
     _save->setEnabled(_proj->isValid());
   }
-  else if (_docType->currentIndex() == 11)
+  else if (_docType->currentIndex() == 12)
   {
     connect(_po, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
     _save->setEnabled(_po->isValid());
   }
-  else if (_docType->currentIndex() == 12)
+  else if (_docType->currentIndex() == 13)
   {
     connect(_so, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
     _save->setEnabled(_so->isValid());
   }
-  else if (_docType->currentIndex() == 13)
+  else if (_docType->currentIndex() == 14)
   {
     connect(_vend, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
     _save->setEnabled(_vend->isValid());
   }
-  else if (_docType->currentIndex() == 14)
+  else if (_docType->currentIndex() == 15)
   {
     _docAttachPurpose->setEnabled(false);
     _docAttachPurpose->setCurrentIndex(0);
     _save->setEnabled(true);
   }
-  else if (_docType->currentIndex() == 15)
+  else if (_docType->currentIndex() == 16)
   {
     connect(_wo, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
     _save->setEnabled(_wo->isValid());
@@ -296,35 +301,40 @@ void docAttach::sSave()
   }
   else if (_docType->currentIndex() == 8)
   {
+    _targettype = "INV";
+    _targetid = _invoice->id();
+  }
+  else if (_docType->currentIndex() == 9)
+  {
     _targettype = "I";
     _targetid = _item->id();
   }
-  else if (_docType->currentIndex() == 9)
+  else if (_docType->currentIndex() == 10)
   {
     _targettype = "OPP";
     _targetid = _opp->id();
   }
-  else if (_docType->currentIndex() == 10)
+  else if (_docType->currentIndex() == 11)
   {
     _targettype = "J";
     _targetid = _proj->id();
   }
-  else if (_docType->currentIndex() == 11)
+  else if (_docType->currentIndex() == 12)
   {
     _targettype = "P";
     _targetid = _po->id();
   }
-  else if (_docType->currentIndex() == 12)
+  else if (_docType->currentIndex() == 13)
   {
     _targettype = "S";
     _targetid = _so->id();
   }
-  else if (_docType->currentIndex() == 13)
+  else if (_docType->currentIndex() == 14)
   {
     _targettype = "V";
     _targetid = _vend->id();
   }
-  else if (_docType->currentIndex() == 14)
+  else if (_docType->currentIndex() == 15)
   {
     if(_url->text().trimmed().isEmpty())
     {
@@ -339,7 +349,7 @@ void docAttach::sSave()
     if (url.scheme().isEmpty())
       url.setScheme("http");
   }
-  else if (_docType->currentIndex() == 15)
+  else if (_docType->currentIndex() == 16)
   {
     _targettype = "W";
     _targetid = _wo->id();

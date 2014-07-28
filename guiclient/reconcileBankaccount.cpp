@@ -835,6 +835,9 @@ void reconcileBankaccount::sDateChanged()
   }
   else
   {
-	_datesAreOK = true;
+    if (! sSave(false))
+      return;
+    
+    _datesAreOK = true;
   }
 }

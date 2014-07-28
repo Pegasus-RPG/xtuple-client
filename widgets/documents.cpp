@@ -478,6 +478,7 @@ void Documents::refresh()
               " WHEN (target_type='FILE') THEN :file "
               " WHEN (target_type='IMG') THEN :image "
               " WHEN (target_type='INCDT') THEN :incident "
+              " WHEN (target_type='INV') THEN :invoice "
               " WHEN (target_type='I') THEN :item "
               " WHEN (target_type='OPP') THEN :opp "
               " WHEN (target_type='J') THEN :project "
@@ -509,6 +510,7 @@ void Documents::refresh()
 
   query.bindValue(":po", tr("Purchase Order"));
   query.bindValue(":so", tr("Sales Order"));
+  query.bindValue(":invoice", tr("Invoice"));
   query.bindValue(":quote", tr("Quote"));
   query.bindValue(":wo", tr("Work Order"));
   query.bindValue(":image", tr("Image"));
