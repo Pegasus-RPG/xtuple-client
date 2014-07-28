@@ -144,7 +144,12 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
    _balCustomerDeposit->hide();
   }
 
-  if(!_metrics->boolean("AltCashExchangeRate"))
+  if(_metrics->boolean("AltCashExchangeRate"))
+  {
+    connect(_altExchRate, SIGNAL(toggled(bool)), this, SLOT(sHandleAltExchRate()));
+    connect(_exchRate, SIGNAL(editingFinished()), this, SLOT(sUpdateGainLoss()));
+  }
+  else
     _altExchRate->hide();
   
   _overapplied = false;
@@ -670,7 +675,7 @@ bool cashReceipt::save(bool partial)
                     "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :curr_id, "
                     "  :cashrcpt_usecustdeposit, :cashrcpt_docnumber, :cashrcpt_docdate, "
                     "  :cashrcpt_notes, :cashrcpt_salescat_id, :cashrcpt_number, :cashrcpt_applydate, "
-                    "  :cashrcpt_discount, :cashrcpt_alt_curr_rate );" );
+                    "  :cashrcpt_discount, ROUND(:cashrcpt_alt_curr_rate, 8) );" );
   else
     cashave.prepare( "UPDATE cashrcpt "
                     "SET cashrcpt_cust_id=:cashrcpt_cust_id,"
@@ -686,7 +691,7 @@ bool cashReceipt::save(bool partial)
                     "    cashrcpt_usecustdeposit=:cashrcpt_usecustdeposit,"
                     "    cashrcpt_applydate=:cashrcpt_applydate,"
                     "    cashrcpt_discount=:cashrcpt_discount, "
-                    "    cashrcpt_alt_curr_rate=:cashrcpt_alt_curr_rate, "
+                    "    cashrcpt_alt_curr_rate= ROUND(:cashrcpt_alt_curr_rate, 8), "
                     "    cashrcpt_curr_rate=null " // force a curr rate re-evaluation
                     "WHERE (cashrcpt_id=:cashrcpt_id);" );
 
@@ -709,7 +714,12 @@ bool cashReceipt::save(bool partial)
   else
     cashave.bindValue(":cashrcpt_salescat_id", -1);
   if(_altExchRate->isChecked())
-    cashave.bindValue(":cashrcpt_alt_curr_rate", _exchRate->toDouble());
+  {
+    if (_metrics->value("CurrencyExchangeSense").toInt() == 1)
+      cashave.bindValue(":cashrcpt_alt_curr_rate", 1.0 / _exchRate->toDouble());
+    else
+      cashave.bindValue(":cashrcpt_alt_curr_rate", _exchRate->toDouble());
+  }
   cashave.exec();
   if (cashave.lastError().type() != QSqlError::NoError)
   {
@@ -906,7 +916,11 @@ void cashReceipt::populate()
     if(cashpopulate.value("cashrcpt_alt_curr_rate").toDouble() > 0.0)
     {
       _altExchRate->setChecked(TRUE);
-      _exchRate->setDouble(cashpopulate.value("cashrcpt_alt_curr_rate").toDouble());
+      if (_metrics->value("CurrencyExchangeSense").toInt() == 1)
+        _exchRate->setDouble(1.0 / cashpopulate.value("cashrcpt_alt_curr_rate").toDouble());
+      else
+        _exchRate->setDouble(cashpopulate.value("cashrcpt_alt_curr_rate").toDouble());
+      sUpdateGainLoss();
     }
     if(cashpopulate.value("cashrcpt_usecustdeposit").toBool())
       _balCustomerDeposit->setChecked(true);
@@ -1107,4 +1121,69 @@ void cashReceipt::sDateChanged()
     _applyBalLit->setText(tr("Record Receipt as:"));
   else
     _applyBalLit->setText(tr("Apply Balance As:"));
+}
+
+void cashReceipt::sHandleAltExchRate()
+{
+  if (_altExchRate->isChecked())
+  {
+    QString inverter("");
+    if (_metrics->value("CurrencyExchangeSense").toInt() == 1)
+      inverter = "1 / ";
+    XSqlQuery currRate;
+    QString sql = QString("SELECT %1 curr_rate AS _currrate "
+                          "FROM curr_rate "
+                          "WHERE ( (:cashrcpt_curr_id=curr_id)"
+                          "  AND (:cashrcpt_distdate BETWEEN curr_effective AND curr_expires) );")
+                          .arg(inverter);
+    currRate.prepare(sql);
+    currRate.bindValue(":cashrcpt_curr_id", _received->id());
+    currRate.bindValue(":cashrcpt_distdate", _applDate->date());
+    currRate.exec();
+    if (currRate.first())
+    {
+      _exchRate->setDouble(currRate.value("_currrate").toDouble());
+      _gainLoss->setBaseValue(0.0);
+    }
+    else if (currRate.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, currRate.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else
+  {
+    _exchRate->clear();
+    _gainLoss->clear();
+  }
+}
+
+void cashReceipt::sUpdateGainLoss()
+{
+  if (_altExchRate->isChecked())
+  {
+    XSqlQuery gainLoss;
+    QString sql = QString("SELECT ROUND((curr_rate - ROUND(:cashrcpt_alt_curr_rate, 8)) * :cashrcpt_amount_base, 2) AS gainloss "
+                          "FROM curr_rate "
+                          "WHERE ( (:cashrcpt_curr_id=curr_id)"
+                          "  AND (:cashrcpt_distdate BETWEEN curr_effective AND curr_expires) );");
+    gainLoss.prepare(sql);
+    gainLoss.bindValue(":cashrcpt_curr_id", _received->id());
+    gainLoss.bindValue(":cashrcpt_distdate", _applDate->date());
+    gainLoss.bindValue(":cashrcpt_amount_base", _received->baseValue());
+    if (_metrics->value("CurrencyExchangeSense").toInt() == 1)
+      gainLoss.bindValue(":cashrcpt_alt_curr_rate", 1.0 / _exchRate->toDouble());
+    else
+      gainLoss.bindValue(":cashrcpt_alt_curr_rate", _exchRate->toDouble());
+    gainLoss.exec();
+    if (gainLoss.first())
+    {
+      _gainLoss->setBaseValue(gainLoss.value("gainloss").toDouble());
+    }
+    else if (gainLoss.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, gainLoss.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
 }
