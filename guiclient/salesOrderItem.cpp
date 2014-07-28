@@ -893,6 +893,9 @@ void salesOrderItem::clear()
   _subItem->setEnabled(false);
   _subItemList->setEnabled(false);
   _comments->setId(-1);
+  disconnect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemsiteInfo()));
+  disconnect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sDetermineAvailability()));
+  disconnect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemSubs(int)));
   _warehouse->clear();  // are these two _warehouse steps necessary?
   _warehouse->setType(WComboBox::Sold);
   _originalQtyOrd  = 0.0;
