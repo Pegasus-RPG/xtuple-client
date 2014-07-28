@@ -10,28 +10,25 @@
 
 #include "checkForUpdates.h"
 
-#include <QSqlError>
-#include <QUrl>
-#include <QXmlQuery>
-#include <QDesktopServices>
-#include <QMessageBox>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
 #include <QDebug>
-#include <QDir>
 #include <QFile>
 #include <QFileInfo>
-#include <QTranslator>
-#include <QDialog>
+#include <QMessageBox>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #include <QProcess>
+#include <QSqlError>
+#include <QTranslator>
+#include <QUrl>
+
 #ifdef Q_OS_WIN
 #include <windows.h>
 #include <shellapi.h>
 #endif
-#include "../guiclient/guiclient.h"
 #include <parameter.h>
 
+#include "xsqlquery.h"
 
 #define DEBUG false
 #define QT_NO_URL_CAST_FROM_STRING
@@ -39,6 +36,7 @@
 checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, modal ? (fl | Qt::Dialog) : fl)
 {
+  Q_UNUSED(name);
   QString url = "http://updates.xtuple.com/updates";
   //intended http://updates.xtuple.com/updates/xTuple-4.2.0-Linux.tar.gz
 
@@ -63,31 +61,26 @@ OS = "Linux";
 suffix = "tar.gz";
 #endif
 
-  XSqlQuery versions, metric;
-  versions.exec("SELECT metric_value AS dbver"
-                "  FROM metric"
-                " WHERE (metric_name = 'ServerVersion');");
+  XSqlQuery metric;
+  metric.exec("SELECT fetchMetricText('ServerVersion') AS dbver,"
+              "       fetchMetricBool('DisallowMismatchClientVersion') as disallowed,"
+              "       fetchMetricBool('AutoVersionUpdate') as allow;");
 
-  if(versions.first())
+  if(metric.first())
   {
-    serverVersion = versions.value("dbver").toString();
+    serverVersion = metric.value("dbver").toString();
     newurl = url + "/xTuple-" + serverVersion + "-" + OS +"."+ suffix;
     qDebug() <<"newurl=" << newurl;
 
     _label->setText(tr("Your client does not match the server version: %1. Would you like to update?").arg(serverVersion));
-
-    metric.exec("SELECT fetchMetricBool('DisallowMismatchClientVersion') as disallowed;");
-    metric.first();
     _ignore->setEnabled(!metric.value("disallowed").toBool());
-
-    metric.exec("SELECT fetchMetricBool('AutoVersionUpdate') as allow;");
-    metric.first();
     _ok->setEnabled(metric.value("allow").toBool());
   }
-  else if (versions.lastError().type() != QSqlError::NoError)
-    // FIXME: This function is from guiclient and creates a circular dependency
-    //systemError(this, versions.lastError().text(), __FILE__, __LINE__);
-    qDebug() << "systemError: " << versions.lastError().text();
+  else if (metric.lastError().type() != QSqlError::NoError) {
+    QMessageBox::warning(parent, tr("System Error"),
+                         tr("Could not find version information: %1")
+                           .arg(metric.lastError().text()));
+  }
   if (DEBUG)
   {
     qDebug() << "serverVersion= " << serverVersion;
@@ -130,7 +123,7 @@ void checkForUpdates::downloadButtonPressed()
       connect(reply, SIGNAL(readyRead()), this, SLOT(downloadReadyRead()));
       connect(reply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(downloadProgress(qint64,qint64)));
       connect(progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
-      connect(this, SIGNAL(done()), this, SLOT(startUpdate()));
+      connect(this, SIGNAL(done(int)), this, SLOT(startUpdate()));
 
       progressDialog->setLabelText(tr("Downloading %1...").arg(filename));
       _ok->setEnabled(false);
@@ -157,6 +150,7 @@ void checkForUpdates::cancelDownload()
 }
 void checkForUpdates::downloadFinished()
 {
+    int result = QDialog::Accepted;
     if(downloadRequestAborted)
     {
         if(file)
@@ -182,6 +176,7 @@ void checkForUpdates::downloadFinished()
     {
         //Download failed
         QMessageBox::information(this, "Download failed", tr("Failed: %1").arg(reply->errorString()));
+        result = QDialog::Rejected;
     }
 
     reply->deleteLater();
@@ -190,7 +185,7 @@ void checkForUpdates::downloadFinished()
     file = NULL;
 
     if(reply == 0)
-        emit done();
+        emit done(result);
 }
 void checkForUpdates::startUpdate()
 {

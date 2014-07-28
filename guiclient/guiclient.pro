@@ -15,21 +15,27 @@ INCLUDEPATH += ../scriptapi \
 
 DEPENDPATH  += $${INCLUDEPATH}
 
+exists (../lib/libxtuplecommon.so) {
+  LIBXTCOMMON = libxtuplecommon.so
+} else {
+  LIBXTCOMMON = libxtuplecommon.a
+}
+
 win32-msvc* {
   PRE_TARGETDEPS += ../lib/xtuplecommon.lib    \
                     ../lib/xtuplescriptapi.lib \
                     ../lib/xtuplewidgets.lib
 } else {
-  PRE_TARGETDEPS += ../lib/libxtuplecommon.so    \
+  PRE_TARGETDEPS += ../lib/$$LIBXTCOMMON        \
                     ../lib/libxtuplescriptapi.a \
                     ../lib/libxtuplewidgets.a   \
-                    $${OPENRPT_BLD}/libMetaSQL.a  \
-                    $${OPENRPT_BLD}/librenderer.a \
-                    $${OPENRPT_BLD}/libwrtembed.a \
-                    $${OPENRPT_BLD}/libcommon.a
+                    $${OPENRPT_BLD}/lib/libMetaSQL.a  \
+                    $${OPENRPT_BLD}/lib/librenderer.a \
+                    $${OPENRPT_BLD}/lib/libwrtembed.a \
+                    $${OPENRPT_BLD}/lib/libcommon.a
 }
 
-LIBS        += -L../lib -L$${OPENRPT_BLD} \
+LIBS        += -L../lib -L$${OPENRPT_BLD}/lib \
                -lxtuplecommon -lxtuplewidgets -lwrtembed -lcommon -lrenderer \
                -lxtuplescriptapi -ldmtx -lMetaSQL
 
@@ -1840,7 +1846,12 @@ include( hunspell.pri )
 QT += xml sql script scripttools network
 QT += webkit xmlpatterns
 
-RESOURCES += guiclient.qrc /usr/share/openrpt/OpenRPT/images/OpenRPTMetaSQL.qrc
+exists("/usr/share/openrpt") {
+  OPENRPTRSRC = /usr/share/openrpt
+} else {
+  OPENRPTRSRC = $$OPENRPT_DIR
+}
+RESOURCES += guiclient.qrc $${OPENRPTRSRC}/OpenRPT/images/OpenRPTMetaSQL.qrc
 
 #CONFIG += debug
 

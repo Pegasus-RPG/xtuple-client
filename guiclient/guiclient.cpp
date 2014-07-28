@@ -419,13 +419,19 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   // load plugins before building the menus
   // TODO? add a step later to add to the menus from the plugins?
-  QDir pluginsDir("/usr/lib/postbooks");
-  while (! pluginsDir.exists("plugins") && pluginsDir.cdUp())
-    ;
-  if (pluginsDir.cd("plugins"))
+  QStringList checkForPlugins;
+  checkForPlugins << QApplication::applicationDirPath()
+                  << QString("/usr/lib/postbooks");
+  foreach (QString dirname, checkForPlugins)
   {
-    foreach (QString fileName, pluginsDir.entryList(QDir::Files))
-      new QPluginLoader(pluginsDir.absoluteFilePath(fileName), this);
+    QDir pluginsDir(dirname);
+    while (! pluginsDir.exists("plugins") && pluginsDir.cdUp())
+      ;
+    if (pluginsDir.cd("plugins"))
+    {
+      foreach (QString fileName, pluginsDir.entryList(QDir::Files))
+        new QPluginLoader(pluginsDir.absoluteFilePath(fileName), this);
+    }
   }
 
 //  Populate the menu bar
@@ -2126,6 +2132,8 @@ void GUIClient::hunspell_initialize()
     _spellReady = false;
     QString langName = QLocale::languageToString(QLocale().language());
     QString appPath("/usr/lib/postbooks");
+    if (! QFile::exists(appPath))
+      appPath = QApplication::applicationDirPath();
     QString fullPathWithoutExt = appPath + "/" + langName;
     QFile affFile(fullPathWithoutExt + tr(".aff"));
     QFile dicFile(fullPathWithoutExt + tr(".dic"));
