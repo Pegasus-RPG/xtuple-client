@@ -17,6 +17,8 @@
 #include <QValidator>
 #include <metasql.h>
 #include <parameter.h>
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "mqlutil.h"
 #include "guiclient.h"
 #include "xdoublevalidator.h"
@@ -92,45 +94,49 @@ void updatePrices::closeEvent(QCloseEvent * /*pEvent*/)
 void updatePrices::sUpdate()
 {
   XSqlQuery updateUpdate;
-  if (_byItem->isChecked() && !_item->isValid())
-  {
-    QMessageBox::critical( this, tr("Incomplete Data"),
-                           tr("You must select an Item to continue.") );
-    _item->setFocus();
-    return;
-  }
 
-  if (!_sel->topLevelItemCount())
-  {
-    QMessageBox::critical( this, tr("Incomplete Data"),
-                           tr("You must select a Pricing Schedule to continue.") );
-    return;
-  }
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_byItem->isChecked() && !_item->isValid(), _item,
+                          tr("You must select an Item to continue."))
+         << GuiErrorCheck(!_sel->topLevelItemCount(), _sel,
+                          tr("You must select a Pricing Schedule to continue."))
+         << GuiErrorCheck(!_nominal->isChecked() && !_discount->isChecked() && !_markup->isChecked(), _nominal,
+                          tr("You must select a least one Price Type to continue."))
+         << GuiErrorCheck(_updateBy->toDouble() == 0.0, _updateBy,
+                          tr("You must provide a Value to continue."))
+  ;
 
-  if (_updateBy->toDouble() == 0.0)
-  {
-    QMessageBox::critical( this, tr("Incomplete Data"),
-                           tr("You must provide a Value to continue.") );
-    _updateBy->setFocus();
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Update Prices"), errors))
     return;
-  }
-
+  
   ParameterList params;
   
   if (_byItem->isChecked())
     params.append("item_id", _item->id());
   else
     _paramGroup->appendValue(params);
+  if (_nominal->isChecked())
+    params.append("nominal", true);
+  if (_discount->isChecked())
+    params.append("discount", true);
+  if (_markup->isChecked())
+    params.append("markup", true);
   params.append("updateBy", _updateBy->toDouble());
   if (_value->isChecked())
     params.append("updateByValue", true);
   else
     params.append("updateByPercent", true);
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  updateUpdate.exec("BEGIN;");
+
   MetaSQLQuery mql = mqlLoad("updateprices", "update");
   updateUpdate = mql.toQuery(params);
   if (updateUpdate.lastError().type() != QSqlError::NoError)
   {
+    rollback.exec();
     systemError(this, updateUpdate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
@@ -141,11 +147,14 @@ void updatePrices::sUpdate()
     updateUpdate = mql2.toQuery(params);
     if (updateUpdate.lastError().type() != QSqlError::NoError)
     {
+      rollback.exec();
       systemError(this, updateUpdate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
 
+  updateUpdate.exec("COMMIT;");
+  
   QMessageBox::information( this, tr("Success"),
                             tr("Update Completed.") );
   _updateBy->clear();

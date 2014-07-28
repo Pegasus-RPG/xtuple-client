@@ -50,6 +50,8 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _dspInventoryAvailability->list()->hideColumn("itemdescrip");
   _dspInventoryAvailability->list()->hideColumn("uom_name");
   _dspInventoryAvailability->findChild<QWidget*>("_showGroup")->hide();
+  // set asof to Itemsite Lead Time to avoid invalid date prompt
+  _dspInventoryAvailability->findChild<QComboBox*>("_asof")->setCurrentIndex(0);
   
   _dspRunningAvailability = new dspRunningAvailability(this, "dspRunningAvailabilty", Qt::Widget);
   _dspRunningAvailability->setObjectName("dspRunningAvailability");
@@ -85,10 +87,10 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _inventoryHistoryPage->layout()->addWidget(_dspInventoryHistory);
   _dspInventoryHistory->setCloseVisible(false);
   _dspInventoryHistory->setQueryOnStartEnabled(false);
-  _dspInventoryHistory->setParameterWidgetVisible(false);
+//  _dspInventoryHistory->setParameterWidgetVisible(false);
   _dspInventoryHistory->setAutoUpdateEnabled(false);
   _dspInventoryHistory->setStartDate(QDate().currentDate().addDays(-365));
-  _dspInventoryHistory->list()->hideColumn("item_number");
+//  _dspInventoryHistory->list()->hideColumn("item_number");
   
   _dspPoItemReceivingsByItem = new dspPoItemReceivingsByItem(this, "dspPoItemReceivingsByItem", Qt::Widget);
   _dspPoItemReceivingsByItem->setObjectName("dspPoItemReceivingsByItem");
@@ -326,6 +328,14 @@ void itemAvailabilityWorkbench::populate()
 
 void itemAvailabilityWorkbench::sFillList()
 {
+  bool _sold = false;
+  XSqlQuery itemq;
+  itemq.prepare("SELECT item_sold FROM item "
+                "WHERE (item_id=:item_id);");
+  itemq.bindValue(":item_id", _item->id());
+  itemq.exec();
+  if (itemq.first())
+    _sold = itemq.value("item_sold").toBool();
   if (_tab->currentIndex() == _tab->indexOf(_availabilityTab))
   {
     if (_availabilityButton->isChecked())
@@ -355,9 +365,9 @@ void itemAvailabilityWorkbench::sFillList()
   {
     if (_purchaseOrderItemsButton->isChecked())
       _dspPoItemsByItem->sFillList();
-    else if (_salesOrderItemsButton->isChecked())
+    else if (_salesOrderItemsButton->isChecked() && _sold)
       _dspSalesOrdersByItem->sFillList();
-    else if (_quoteItemsButton->isChecked())
+    else if (_quoteItemsButton->isChecked() && _sold)
       _dspQuotesByItem->sFillList();
 //    else if (_customerPricesButton->isChecked())
 //      _dspPricesByCustomer->sFillList();

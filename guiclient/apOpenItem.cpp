@@ -324,8 +324,16 @@ void apOpenItem::sSave()
 
 void apOpenItem::sClose()
 {
-  if (_mode == cNew)
+  XSqlQuery deleteOpenItem;
+  if (_mode == cNew) {
+//  Handle new placeholder documents that get orphaned when document is cancelled (#23873)
+    if (_apopenid != -1){
+      deleteOpenItem.prepare("DELETE FROM apopen WHERE apopen_id = :apopenid;");
+      deleteOpenItem.bindValue(":apopenid", _apopenid);
+      deleteOpenItem.exec();
+    }
     sReleaseNumber();
+  }
 
   reject();
 }

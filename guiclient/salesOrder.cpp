@@ -208,8 +208,11 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _soitem->addColumn(tr("Cust. Price"),     _priceColumn,          Qt::AlignRight,  false, "coitem_custprice");
   _soitem->addColumn(tr("Cust. Discount"),  _priceColumn,          Qt::AlignRight,  false, "discountfromcust");
   _soitem->addColumn(tr("Unit Cost"),       _costColumn,           Qt::AlignRight,  false, "coitem_unitcost");
-  _soitem->addColumn(tr("Margin"),          _priceColumn,          Qt::AlignRight,  false, "margin");
-  _soitem->addColumn(tr("Margin %"),        _prcntColumn,          Qt::AlignRight,  false, "marginpercent");
+  if (_privileges->check("ShowMarginsOnSalesOrder"))
+  {
+    _soitem->addColumn(tr("Margin"),          _priceColumn,          Qt::AlignRight,  false, "margin");
+    _soitem->addColumn(tr("Margin %"),        _prcntColumn,          Qt::AlignRight,  false, "marginpercent");
+  }
   _soitem->addColumn(tr("Prod. Weight"),    _qtyColumn,            Qt::AlignRight,  false, "prodweight");
   _soitem->addColumn(tr("Pkg. Weight"),     _qtyColumn,            Qt::AlignRight,  false, "packweight");
   _soitem->addColumn(tr("Supply Type"),     _itemColumn,           Qt::AlignCenter, false, "spplytype");
@@ -1774,7 +1777,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "       0.0 AS commission,"
                 "       NULL AS cust_creditstatus, NULL AS cust_terms_id,"
                 "       prospect_taxzone_id AS cust_taxzone_id, prospect_cntct_id AS cust_cntct_id, "
-                "       TRUE AS cust_ffshipto, NULL AS cust_ffbillto, "
+                "       TRUE AS cust_ffshipto, TRUE AS cust_ffbillto, "
                 "       NULL AS cust_usespos, NULL AS cust_blanketpos,"
                 "       NULL AS cust_shipvia,"
                 "       -1 AS shiptoid,"
@@ -3517,6 +3520,7 @@ bool salesOrder::deleteSalesOrder(int pId, QWidget *parent)
                                   CreditCardProcessor::errorMsg());
           else
           {
+            // TODO: must we loop and generate a distinct credit for each ccpay?
             XSqlQuery ccq;
             ccq.prepare("SELECT ccpay_id, ccpay_ccard_id, ccpay_curr_id,"
                         "       SUM(ccpay_amount     * sense) AS amount,"
@@ -3530,12 +3534,17 @@ bool salesOrder::deleteSalesOrder(int pId, QWidget *parent)
                         "                  WHEN ccpay_status = 'R' THEN -1"
                         "             END AS sense,"
                         "             ccpay_amount,"
-                        "             COALESCE(ccpay_r_tax::NUMERIC, 0) AS ccpay_r_tax,"
-                        "             COALESCE(ccpay_r_shipping::NUMERIC, 0) AS ccpay_r_shipping "
-                        "      FROM ccpay, payco "
-                        "      WHERE ((ccpay_id=payco_ccpay_id)"
-                        "        AND  (ccpay_status IN ('C', 'R'))"
-                        "        AND  (payco_cohead_id=:coheadid)) "
+                        "             CASE WHEN ccpay_r_tax = ''    THEN 0"
+                        "                  WHEN ccpay_r_tax IS NULL THEN 0"
+                        "                  ELSE CAST(ccpay_r_tax AS NUMERIC)"
+                        "             END AS ccpay_r_tax,"
+                        "             CASE WHEN ccpay_r_shipping = ''    THEN 0"
+                        "                  WHEN ccpay_r_shipping IS NULL THEN 0"
+                        "                  ELSE CAST(ccpay_r_shipping AS NUMERIC)"
+                        "             END AS ccpay_r_shipping"
+                        "      FROM ccpay JOIN payco ON (ccpay_id=payco_ccpay_id)"
+                        "      WHERE ((ccpay_status IN ('C', 'R'))"
+                        "        AND  (payco_cohead_id=:coheadid))"
                         "      ) AS dummy "
                         "GROUP BY ccpay_id, ccpay_ccard_id, ccpay_curr_id;");
             ccq.bindValue(":coheadid", pId);

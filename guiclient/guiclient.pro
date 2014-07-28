@@ -15,29 +15,47 @@ INCLUDEPATH += ../scriptapi \
 
 DEPENDPATH  += $${INCLUDEPATH}
 
-exists (../lib/libxtuplecommon.so) {
-  LIBXTCOMMON = libxtuplecommon.so
-} else {
-  LIBXTCOMMON = libxtuplecommon.a
-}
-
 win32-msvc* {
   PRE_TARGETDEPS += ../lib/xtuplecommon.lib    \
                     ../lib/xtuplescriptapi.lib \
                     ../lib/xtuplewidgets.lib
 } else {
-  PRE_TARGETDEPS += ../lib/$$LIBXTCOMMON        \
-                    ../lib/libxtuplescriptapi.a \
-                    ../lib/libxtuplewidgets.a   \
-                    $${OPENRPT_BLD}/lib/libMetaSQL.a  \
-                    $${OPENRPT_BLD}/lib/librenderer.a \
-                    $${OPENRPT_BLD}/lib/libwrtembed.a \
-                    $${OPENRPT_BLD}/lib/libcommon.a
+  xtcommon_shared {
+    PRE_TARGETDEPS += ../lib/libxtuplecommon.so
+  } else {
+    PRE_TARGETDEPS += ../lib/libxtuplecommon.a
+  }
+  PRE_TARGETDEPS += ../lib/libxtuplescriptapi.a \
+                    ../lib/libxtuplewidgets.a
+  openrpt_shared {
+    PRE_TARGETDEPS += $${OPENRPT_LIBDIR}/libMetaSQL.so  \
+                      $${OPENRPT_LIBDIR}/librenderer.so \
+                      $${OPENRPT_LIBDIR}/libwrtembed.so \
+                      $${OPENRPT_LIBDIR}/libdmtx.so \
+                      $${OPENRPT_LIBDIR}/libcommon.so
+  } else {
+    PRE_TARGETDEPS += $${OPENRPT_LIBDIR}/libMetaSQL.a  \
+                      $${OPENRPT_LIBDIR}/librenderer.a \
+                      $${OPENRPT_LIBDIR}/libwrtembed.a \
+                      $${OPENRPT_LIBDIR}/libDmtx_Library.a \
+                      $${OPENRPT_LIBDIR}/libcommon.a
+  }
 }
 
-LIBS        += -L../lib -L$${OPENRPT_BLD}/lib \
-               -lxtuplecommon -lxtuplewidgets -lwrtembed -lcommon -lrenderer \
-               -lxtuplescriptapi -ldmtx -lMetaSQL
+QMAKE_LIBDIR = ../lib $${OPENRPT_LIBDIR} $$QMAKE_LIBDIR
+LIBS        += -lxtuplecommon -lxtuplewidgets -lwrtembed 
+openrpt_shared {
+  LIBS      += -lopenrptcommon
+} else {
+  LIBS      += -lcommon
+}
+LIBS        += -lrenderer -lxtuplescriptapi 
+openrpt_shared {
+  LIBS      += -ldmtx
+} else {
+  LIBS      += -lDmtx_Library
+}
+LIBS        += -lMetaSQL
 
 #not the best way to handle this, but it should do
 mac:!static:contains(QT_CONFIG, qt_framework) {
@@ -558,6 +576,7 @@ FORMS =   absoluteCalendarItem.ui               \
           todoItem.ui                           \
           todoList.ui                           \
           todoListCalendar.ui                   \
+          toggleBankrecCleared.ui               \
           transactionInformation.ui             \
           transferOrder.ui                      \
           transferOrderItem.ui                  \
@@ -1152,6 +1171,7 @@ HEADERS = ../common/format.h                    \
           todoItem.h                    \
           todoList.h                    \
           todoListCalendar.h            \
+          toggleBankrecCleared.h        \
           toitemTableModel.h            \
           toitemTableView.h             \
           transactionInformation.h      \
@@ -1760,6 +1780,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           todoItem.cpp                          \
           todoList.cpp                          \
           todoListCalendar.cpp                  \
+          toggleBankrecCleared.cpp              \
           toitemTableModel.cpp                  \
           toitemTableView.cpp                   \
           transactionInformation.cpp            \
@@ -1846,12 +1867,7 @@ include( hunspell.pri )
 QT += xml sql script scripttools network
 QT += webkit xmlpatterns
 
-exists("/usr/share/openrpt") {
-  OPENRPTRSRC = /usr/share/openrpt
-} else {
-  OPENRPTRSRC = $$OPENRPT_DIR
-}
-RESOURCES += guiclient.qrc $${OPENRPTRSRC}/OpenRPT/images/OpenRPTMetaSQL.qrc
+RESOURCES += guiclient.qrc $${OPENRPT_IMAGE_DIR}/OpenRPTMetaSQL.qrc
 
 #CONFIG += debug
 

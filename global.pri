@@ -8,61 +8,98 @@
 # to be bound by its terms.
 #
 
-#
-# This file is included by all the other project files
-# and is where options or configurations that affect all
-# of the projects can be place.
-# Note: because this is included by .pro files within /subdirs/ of CWD, paths
-# based on PWD must compensate with an extra '..'.
+# This file is included by all the other project files and is where
+# options or configurations that affect all of the projects can be placed.
 
-OPENRPT_DIR = $$(OPENRPT_DIR)
-isEmpty(OPENRPT_DIR) {
-  exists(openrpt)    { OPENRPT_DIR = $$(PWD)/../openrpt    }
-  exists(../openrpt) { OPENRPT_DIR = $$(PWD)/../../openrpt } # .. takes precedence
+OPENRPT_HEADERS = $$(OPENRPT_HEADERS)
+! isEmpty( OPENRPT_HEADERS ) {
+    OPENRPT_DIR = $$OPENRPT_HEADERS
+} else {
+    exists(openrpt)    { OPENRPT_DIR = openrpt }
+    exists(../openrpt) { OPENRPT_DIR = ../openrpt }
+    OPENRPT_DIR_REL=true
 }
-! exists( $$OPENRPT_DIR ) {
+
+OPENRPT_BLD = $${OPENRPT_DIR}
+exists($${OPENRPT_DIR}-build-desktop) {
+  OPENRPT_BLD = $${OPENRPT_DIR}-build-desktop
+}
+
+OPENRPT_LIBDIR = $$(OPENRPT_LIBDIR)
+isEmpty( OPENRPT_LIBDIR ) {
+  OPENRPT_LIBDIR = $${OPENRPT_BLD}/lib
+  OPENRPT_LIBDIR_REL=true
+}
+
+! exists($${OPENRPT_DIR}) {
   error("Could not set the OPENRPT_DIR qmake variable.")
 }
 
-OPENRPT_BLD = $$(OPENRPT_BLD)
-isEmpty(OPENRPT_BLD) {
-  OPENRPT_BLD = $$OPENRPT_DIR
-  exists($${OPENRPT_DIR}-build-desktop) { OPENRPT_BLD = $${OPENRPT_DIR}-build-desktop }
+! exists($${OPENRPT_LIBDIR}) {
+  error("Could not set the OPENRPT_LIBDIR qmake variable.")
 }
 
-CSVIMP_DIR = $$(CSVIMP_DIR)
-isEmpty(CSVIMP_DIR) {
-  exists(csvimp)    { CSVIMP_DIR = $$(PWD)/../csvimp    }
-  exists(../csvimp) { CSVIMP_DIR = $$(PWD)/../../csvimp }  # .. takes precedence
-}
-! exists( $$CSVIMP_DIR ) {
-    error("Could not set the CSVIMP_DIR qmake variable.")
+CSVIMP_HEADERS = $$(CSVIMP_HEADERS)
+isEmpty( CSVIMP_HEADERS ) {
+  exists(csvimp)    { CSVIMP_DIR = csvimp    }
+  exists(../csvimp) { CSVIMP_DIR = ../csvimp }
+  CSVIMP_HEADERS = $$CSVIMP_DIR/csvimpcommon
+  CSVIMP_HEADERS_REL = true
 }
 
-CSVIMP_BLD = $$(CSVIMP_BLD)
-isEmpty(CSVIMP_BLD) {
-  CSVIMP_BLD = $$CSVIMP_DIR
-  exists($${CSVIMP_DIR}-build-desktop) { CSVIMP_BLD = $${CSVIMP_DIR}-build-desktop }
+! exists($${CSVIMP_HEADERS}) {
+  error("Could not set the CSVIMP_HEADERS qmake variable.")
 }
+
+# global.pri is processed at the top level but the variables are used down 1 level
+! isEmpty( OPENRPT_DIR_REL    ) { OPENRPT_DIR    = ../$${OPENRPT_DIR}
+                                  OPENRPT_BLD    = ../$${OPENRPT_BLD}    }
+! isEmpty( OPENRPT_LIBDIR_REL ) { OPENRPT_LIBDIR = ../$${OPENRPT_LIBDIR} }
+! isEmpty( CSVIMP_HEADERS_REL ) { CSVIMP_HEADERS = ../$${CSVIMP_HEADERS} }
 
 INCLUDEPATH += $${OPENRPT_DIR}/common           $${OPENRPT_BLD}/common \
 	       $${OPENRPT_DIR}/OpenRPT/renderer $${OPENRPT_BLD}/OpenRPT/renderer \
 	       $${OPENRPT_DIR}/OpenRPT/wrtembed $${OPENRPT_BLD}/OpenRPT/wrtembed \
 	       $${OPENRPT_DIR}/MetaSQL          $${OPENRPT_BLD}/MetaSQL \
 	       $${OPENRPT_DIR}/MetaSQL/tmp      $${OPENRPT_BLD}/MetaSQL/tmp \
-	       $${CSVIMP_DIR}/csvimpcommon      $${CSVIMP_BLD}/csvimpcommon
+	       $${CSVIMP_HEADERS}
 INCLUDEPATH =  $$unique(INCLUDEPATH)
 
-XTUPLE_DIR = ../
-XTUPLE_BLD = $${XTUPLE_DIR}
-exists(../xtuple-build-desktop) {
-  XTUPLE_BLD = ../../xtuple-build-desktop
+XTUPLE_DIR=..
+XTUPLE_BLD=$${XTUPLE_DIR}
+exists(../qt-client-build-desktop) {
+  XTUPLE_BLD=../../qt-client-build-desktop
 }
 
 DEPENDPATH  += $${INCLUDEPATH}
 
 CONFIG += release thread
-#CONFIG += debug
+
+# Use a shared library version of openrpt library dependency
+USE_SHARED_OPENRPT = $$(USE_SHARED_OPENRPT)
+! isEmpty( USE_SHARED_OPENRPT ) {
+  CONFIG += openrpt_shared
+}
+
+# The packaged version of OpenRPT installs the images to
+# /usr/share/openrpt/OpenRPT/images
+# Set this variable in the environment to use that location
+OPENRPT_IMAGE_DIR = $$(OPENRPT_IMAGE_DIR)
+isEmpty( OPENRPT_IMAGE_DIR ) {
+  exists("/usr/share/openrpt") {
+    OPENRPT_IMAGE_DIR = /usr/share/openrpt/OpenRPT/images
+  } else {
+    OPENRPT_IMAGE_DIR = $${OPENRPT_DIR}/OpenRPT/images
+  }
+}
+
+# If this environment variable is set, libxtuplecommon is built
+# as a shared object.
+BUILD_XTCOMMON_SHARED = $$(BUILD_XTCOMMON_SHARED)
+! isEmpty( BUILD_XTCOMMON_SHARED ) {
+  CONFIG += xtcommon_shared
+}
+
 
 macx:exists(macx.pri) {
   include(macx.pri)
@@ -75,4 +112,3 @@ win32:exists(win32.pri) {
 unix:exists(unix.pri) {
   include(unix.pri)
 }
-

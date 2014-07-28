@@ -500,16 +500,6 @@ int CreditCardProcessor::authorize(const int pccardid, const QString &pcvv, cons
     {
       if (prefid <= 0)
       {
-	cashq.exec("SELECT NEXTVAL('cashrcpt_cashrcpt_id_seq') AS cashrcpt_id;");
-	if (cashq.first())
-	  prefid = cashq.value("cashrcpt_id").toInt();
-	else if (cashq.lastError().type() != QSqlError::NoError)
-	{
-	  _errorMsg = errorMsg(4).arg(cashq.lastError().databaseText());
-	  // TODO: log an event?
-	  return 1;
-	}
-
 	cashq.prepare("INSERT INTO cashrcpt (cashrcpt_id,"
 		  "  cashrcpt_cust_id, cashrcpt_amount, cashrcpt_curr_id,"
 		  "  cashrcpt_fundstype, cashrcpt_docnumber,"
@@ -518,8 +508,10 @@ int CreditCardProcessor::authorize(const int pccardid, const QString &pcvv, cons
 		  "       ccpay_cust_id, :amount, :curr_id,"
 		  "       ccard_type, ccpay_r_ordernum,"
 		  "       ccbank_bankaccnt_id, :notes, current_date, :custdeposit"
-		  "  FROM ccpay, ccard LEFT OUTER JOIN ccbank ON (ccard_type=ccbank_ccard_type)"
-		  " WHERE (ccpay_ccard_id=ccard_id);");
+		  "  FROM ccpay"
+                  "  JOIN ccard ON (ccpay_ccard_id=ccard_id)"
+                  "  LEFT OUTER JOIN ccbank ON (ccard_type=ccbank_ccard_type)"
+		  " RETURNING cashrcpt_id;");
       }
       else
 	cashq.prepare( "UPDATE cashrcpt "
@@ -542,7 +534,9 @@ int CreditCardProcessor::authorize(const int pccardid, const QString &pcvv, cons
       cashq.bindValue(":notes",        "Credit Card Pre-Authorization");
       cashq.bindValue(":custdeposit",  _metrics->boolean("EnableCustomerDeposits"));
       cashq.exec();
-      if (cashq.lastError().type() != QSqlError::NoError)
+      if (cashq.first() && prefid <= 0)
+        prefid = cashq.value("cashrcpt_id").toInt();
+      else if (cashq.lastError().type() != QSqlError::NoError)
       {
 	_errorMsg = errorMsg(4).arg(cashq.lastError().databaseText());
 	// TODO: log an event?
@@ -746,6 +740,7 @@ int CreditCardProcessor::chargePreauthorized(const QString &pcvv, const double p
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
   reset();
 
+  int returnVal   = 0;
   int ccValidDays = _metrics->value("CCValidDays").toInt();
   if (ccValidDays < 1)
     ccValidDays = 7;
@@ -798,6 +793,7 @@ int CreditCardProcessor::chargePreauthorized(const QString &pcvv, const double p
   }
 
   int ccardid = ccq.value("ccpay_ccard_id").toInt();
+  QString ccard_x = ccq.value("ccpay_card_pan_trunc").toString();
   preforder = ccq.value("ccpay_r_ordernum").toString();
 
   QString doctype  = "cashrcpt";
@@ -829,10 +825,11 @@ int CreditCardProcessor::chargePreauthorized(const QString &pcvv, const double p
     return -1;
   }
 
-  QString ccard_x;
-  int returnVal = checkCreditCard(ccardid, pcvv, ccard_x);
-  if (returnVal < 0)
-    return returnVal;
+  if (ccardid > 0) {
+    returnVal = checkCreditCard(ccardid, pcvv, ccard_x);
+    if (returnVal < 0)
+      return returnVal;
+  }
 
   if (_metrics->boolean("CCConfirmChargePreauth") &&
       QMessageBox::question(0,
@@ -1070,10 +1067,30 @@ int CreditCardProcessor::credit(const int pccardid, const QString &pcvv, const d
     return -40;
   }
 
+  XSqlQuery ccq;
   QString ccard_x;
-  int returnVal = checkCreditCard(pccardid, pcvv,  ccard_x);
-  if (returnVal < 0)
-    return returnVal;
+  int returnVal = 0;
+
+  if (pccardid > 0) {
+    returnVal = checkCreditCard(pccardid, pcvv,  ccard_x);
+    if (returnVal < 0)
+      return returnVal;
+  }
+  else if (pccpayid > 0) {
+    ccq.prepare("SELECT ccpay_card_pan_trunc"
+                "  FROM ccpay WHERE ccpay_id=:ccpayid;");
+    ccq.bindValue(":ccpayid", pccpayid);
+    ccq.exec();
+    if (ccq.first())
+      ccard_x = ccq.value("ccpay_card_pan_trunc").toString();
+    else if (ccq.lastError().type() != QSqlError::NoError)
+    {
+      _errorMsg = ccq.lastError().databaseText();
+      return -1;
+    }
+  }
+  else
+    ccard_x = "[unknown]";
 
   if (_metrics->boolean("CCConfirmCredit") &&
       QMessageBox::question(0,
@@ -1092,22 +1109,6 @@ int CreditCardProcessor::credit(const int pccardid, const QString &pcvv, const d
   if (pccpayid > 0)
   {
     int oldccpayid = pccpayid;
-
-    XSqlQuery ccq;
-    ccq.exec("SELECT NEXTVAL('ccpay_ccpay_id_seq') AS ccpay_id;");
-    if (ccq.first())
-      pccpayid = ccq.value("ccpay_id").toInt();
-    else if (ccq.lastError().type() != QSqlError::NoError)
-    {
-      _errorMsg = ccq.lastError().databaseText();
-      return -1;
-    }
-    else // no rows found is fatal because we haven't processed the credit yet
-    {
-      _errorMsg = errorMsg(2);
-      return -1;
-    }
-
     int next_seq = -1;
     ccq.prepare("SELECT MAX(COALESCE(ccpay_order_number_seq, -1)) + 1"
 		"       AS next_seq "
@@ -1124,27 +1125,30 @@ int CreditCardProcessor::credit(const int pccardid, const QString &pcvv, const d
     }
 
     ccq.prepare( "INSERT INTO ccpay ("
-		 "    ccpay_id, ccpay_ccard_id, ccpay_cust_id,"
+		 "    ccpay_ccard_id, ccpay_cust_id,"
 		 "    ccpay_auth_charge, ccpay_auth,"
 		 "    ccpay_amount,"
 		 "    ccpay_curr_id, ccpay_type, ccpay_status,"
                  "    ccpay_order_number, ccpay_order_number_seq, "
-                 "    ccpay_ccpay_id "
+                 "    ccpay_ccpay_id, ccpay_card_type, "
+                 "    ccpay_card_pan_trunc"
 		 ") SELECT "
-		 "    :newccpayid, ccpay_ccard_id, ccpay_cust_id,"
+		 "    ccpay_ccard_id, ccpay_cust_id,"
 		 "    ccpay_auth_charge, ccpay_auth,"
 		 "    :amount, :currid, 'R', 'X',"
-                 "    ccpay_order_number, :nextseq, ccpay_id "
-		 "FROM ccpay "
-		 "WHERE (ccpay_id=:oldccpayid);");
-
-    ccq.bindValue(":newccpayid", pccpayid);
+                 "    ccpay_order_number, :nextseq, ccpay_id, ccpay_card_type,"
+                 "    ccpay_card_pan_trunc"
+		 "  FROM ccpay "
+		 " WHERE (ccpay_id=:oldccpayid)"
+                 " RETURNING ccpay_id;");
     ccq.bindValue(":currid",     pcurrid);
     ccq.bindValue(":amount",     pamount);
     ccq.bindValue(":nextseq",    next_seq);
     ccq.bindValue(":oldccpayid", oldccpayid);
     ccq.exec();
-    if (ccq.lastError().type() != QSqlError::NoError)
+    if (ccq.first())
+      pccpayid = ccq.value("ccpay_id").toInt();
+    else if (ccq.lastError().type() != QSqlError::NoError)
     {
       _errorMsg = ccq.lastError().databaseText();
       return -1;
@@ -1319,21 +1323,22 @@ int CreditCardProcessor::reversePreauthorized(const double pamount, const int pc
   if (preftype == "cashrcpt")
   {
     cashq.prepare( "UPDATE cashrcpt "
-                   "SET cashrcpt_cust_id=ccard_cust_id,"
+                   "SET cashrcpt_cust_id=ccpay_cust_id,"
                    "    cashrcpt_amount=:amount,"
-                   "    cashrcpt_fundstype=ccard_type,"
+                   "    cashrcpt_fundstype=ccpay_cardtype,"
                    "    cashrcpt_bankaccnt_id=ccbank_bankaccnt_id,"
                    "    cashrcpt_distdate=CURRENT_DATE,"
                    "    cashrcpt_notes=cashrcpt || E'\\n' || :notes, "
                    "    cashrcpt_curr_id=:curr_id,"
                    "    cashrcpt_usecustdeposit=:custdeposit "
-                   "FROM ccard LEFT OUTER JOIN ccbank ON (ccard_type=ccbank_ccard_type) "
+                   "  FROM ccpay"
+                   "  LEFT OUTER JOIN ccbank ON (ccard_type=ccbank_ccard_type) "
                    "WHERE ((cashrcpt_id=:cashrcptid)"
-                   "  AND  (ccard_id=:ccardid)"
+                   "  AND  (ccpay_id=:ccpayid)"
                    "  AND NOT cashrcpt_posted);" );
 
     cashq.bindValue(":cashrcptid",   prefid);
-    cashq.bindValue(":ccardid",      ccardid);
+    cashq.bindValue(":ccpayid",      pccpayid);
     cashq.bindValue(":amount",       newamount);
     cashq.bindValue(":curr_id",      pcurrid);
     cashq.bindValue(":notes",        tr("Credit Card Pre-Authorization %1 reversed")
@@ -1947,7 +1952,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
 
  */
 int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
-{
+{ 
   if (DEBUG)
     qDebug("updateCCPay(%d, %d params)", pccpayid, pparams.size());
 
@@ -1974,17 +1979,35 @@ int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
                   "    ccpay_ccard_id, ccpay_cust_id, ccpay_amount,"
                   "    ccpay_status, ccpay_type, ccpay_auth_charge,"
                   "    ccpay_order_number, ccpay_order_number_seq,"
-                  "    ccpay_by_username, ccpay_curr_id, ccpay_r_ordernum "
+                  "    ccpay_by_username, ccpay_curr_id, ccpay_r_ordernum,"
+                  "    ccpay_ccpay_id, ccpay_card_type, "
+                  "    ccpay_card_pan_trunc"
                   ") SELECT "
                   "    ccpay_ccard_id, ccpay_cust_id, ccpay_amount,"
                   "    ccpay_status, ccpay_type, ccpay_auth_charge,"
                   "    ccpay_order_number, ccpay_order_number_seq + 1,"
-                  "    ccpay_by_username, ccpay_curr_id, ccpay_r_ordernum "
+                  "    ccpay_by_username, ccpay_curr_id, ccpay_r_ordernum,"
+                  "    ccpay_id, ccpay_card_type,"
+                  "    ccpay_card_pan_trunc"
                   "  FROM ccpay"
                   "  WHERE ((ccpay_id=:id)"
-                  "     AND (ccpay_type='A'));");
+                  "     AND (ccpay_type='A'))"
+                  " RETURNING ccpay_id;");
       ccq.bindValue(":id", pccpayid);
       ccq.exec();
+      if (ccq.first()) {
+        // if a preauth capture fails, attach the payco to the replacement ccpay
+        int newccpayid = ccq.value("ccpay_id").toInt();
+        ccq.prepare("UPDATE payco SET payco_ccpay_id = :newccpayid"
+                    " WHERE (payco_ccpay_id=:oldccpayid);");
+        ccq.bindValue(":newccpayid", newccpayid);
+        ccq.bindValue(":oldccpayid", pccpayid);
+        ccq.exec();
+      }
+      if (ccq.lastError().type() != QSqlError::NoError) { // NOT elseif
+        _errorMsg = errorMsg(4).arg(ccq.lastError().databaseText());
+        return 1;
+      }
     }
 
     sql =  "UPDATE ccpay SET"
@@ -2004,7 +2027,7 @@ int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
 	   "       ccpay_r_code=<? value('code') ?>,"
 	   "       ccpay_r_error=<? value('error') ?>,"
 	   "       ccpay_r_message=<? value('message') ?>,"
-	   "       ccpay_r_ordernum=<? value('ordernum') ?>,"
+	   "       ccpay_r_ordernum=<? value('xactionid') ?>,"
 	   "       ccpay_r_ref=<? value('ref') ?>,"
 	   "<? if exists('shipping') ?>"
 	   "       ccpay_r_shipping=<? value('shipping') ?>,"
@@ -2021,11 +2044,20 @@ int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
 	   "<? if exists('time') ?>"
 	   "       ccpay_yp_r_time=<? value('time')?>,"
 	   "<? endif ?>"
+           "<? if exists('pantrunc') ?>"
+           "       ccpay_card_pan_trunc=CASE WHEN ccpay_ccard_id > 0 THEN NULL"
+           "                                 WHEN <? value('pantrunc') ?> = '' THEN ccpay_card_pan_trunc"
+           "                                 ELSE <? value('pantrunc') ?> END,"
+	   "<? endif ?>"
+           "<? if exists('cardtype') ?>"
+           "       ccpay_card_type=<? value('cardtype') ?>,"
+	   "<? endif ?>"
 	   "       ccpay_status=<? value('status') ?>"
 	   " WHERE (ccpay_id=<? value('ccpay_id') ?>);" ;
   }
   else
   {
+    // get new ccpay_id so we can bind _before_ exec'ing either insert or update
     ccq.exec("SELECT NEXTVAL('ccpay_ccpay_id_seq') AS ccpay_id;");
     if (ccq.first())
       pccpayid = ccq.value("ccpay_id").toInt();
@@ -2061,6 +2093,7 @@ int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
     else
 	pparams.append("next_seq", 0);
 
+    // not INSERT () SELECT FROM CCARD because external preauths have no ccard
     sql =  "INSERT INTO ccpay ("
 	   "    ccpay_id, ccpay_ccard_id, ccpay_cust_id,"
 	   "    ccpay_type,"
@@ -2078,8 +2111,13 @@ int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
 	   "<? if exists('tax') ?>      ccpay_r_tax,   <? endif ?>"
 	   "<? if exists('tdate') ?>    ccpay_yp_r_tdate, <? endif ?>"
 	   "<? if exists('time') ?>     ccpay_yp_r_time,  <? endif ?>"
+           "<? if exists('pantrunc') ?> ccpay_card_pan_trunc,<? endif ?>"
+           "    ccpay_card_type,"
 	   "    ccpay_status"
-	   ") SELECT <? value('ccpay_id') ?>, ccard_id, cust_id,"
+	   ") VALUES ( <? value('ccpay_id') ?>,"
+           "    CASE WHEN <? value('ccard_id') ?> > 0 THEN <? value('ccard_id') ?>"
+           "         ELSE NULL END,"
+           "    (SELECT ccard_cust_id FROM ccard WHERE ccard_id=<? value('ccard_id') ?>),"
 	   "    <? value('type') ?>,"
 	   "<? if exists('fromcurr') ?>"
 	   "    ROUND(currToCurr(<? value('fromcurr') ?>,"
@@ -2102,10 +2140,15 @@ int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
 	   "<? if exists('tax') ?>      <? value('tax') ?>,     <? endif ?>"
 	   "<? if exists('tdate') ?>    <? value('tdate') ?>,   <? endif ?>"
 	   "<? if exists('time') ?>     <? value('time') ?>,    <? endif ?>"
+           "<? if exists('pantrunc') ?>"
+           "  CASE WHEN <? value('ccard_id') ?> > 0 THEN NULL"
+           "       ELSE <? value('pantrunc') ?> END,"
+           "<? endif ?>"
+           "<? if exists('cardtype') ?> <? value('cardtype') ?><? else ?>"
+           "  (SELECT ccard_type FROM ccard WHERE ccard_id=<? value('ccard_id') ?>)"
+           "<? endif ?>,"
 	   "    <? value('status') ?>"
-	   "  FROM ccard, custinfo"
-	   "  WHERE ((ccard_cust_id=cust_id)"
-	   "    AND  (ccard_id=<? value('ccard_id') ?>));";
+           ");";
   }
 
   pparams.append("ccpay_id", pccpayid);

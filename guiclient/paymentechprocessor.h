@@ -9,7 +9,7 @@
  */
 
 #ifndef PAYMENTECGPROCESSOR_H
-#define PATNEBTECHPROCESSOR_H
+#define PAYMENTECGPROCESSOR_H
 
 #include <QObject>
 #include <QString>

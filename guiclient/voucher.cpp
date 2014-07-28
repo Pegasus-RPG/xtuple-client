@@ -687,7 +687,7 @@ void voucher::sFillList()
                "       'qty' AS qtyrejected_xtnumericrole,"
                "       'qty' AS invoiceqty_xtnumericrole,"
                "       'curr' AS invoiceamount_xtnumericrole,"
-               "       'curr' AS poitem_unitprice_xtnumericrole,"
+               "       'purchprice' AS poitem_unitprice_xtnumericrole,"
                "       'curr' AS extprice_xtnumericrole,"
                "       'curr' AS poitem_freight_xtnumericrole "
                "FROM poitem JOIN pohead ON (pohead_id=poitem_pohead_id)"

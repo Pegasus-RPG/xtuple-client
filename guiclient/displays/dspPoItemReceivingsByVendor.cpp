@@ -117,7 +117,9 @@ void dspPoItemReceivingsByVendor::sPopulateMenu(QMenu *menu, QTreeWidgetItem *, 
       markInvoiced->setEnabled(_privileges->check("MaintainUninvoicedReceipts")
                                && ! list()->currentItem()->rawValue("invoiced").isNull()
                                && ! list()->currentItem()->rawValue("invoiced").toBool());
-      correctReceipt->setEnabled(_privileges->check("MaintainUninvoicedReceipts"));
+      correctReceipt->setEnabled(_privileges->check("MaintainUninvoicedReceipts")
+                               && ! list()->currentItem()->rawValue("invoiced").isNull()
+                               && ! list()->currentItem()->rawValue("invoiced").toBool());
       connect(markInvoiced, SIGNAL(triggered()), this, SLOT(sMarkAsInvoiced()));
       connect(correctReceipt, SIGNAL(triggered()), this, SLOT(sCorrectReceiving()));
 

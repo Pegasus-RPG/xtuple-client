@@ -22,6 +22,7 @@
 
 #include "mqlutil.h"
 #include "bankAdjustment.h"
+#include "toggleBankrecCleared.h"
 #include "storedProcErrorLookup.h"
 
 reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -81,6 +82,11 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
     if (!_privileges->check("MaintainBankAdjustments"))
       _addAdjustment->setEnabled(FALSE);
 
+    if (_metrics->boolean("CashBasedTax"))
+    {
+      _allowEdit->setText(tr("Exchange Rate/Effective Date Edit"));
+    }
+  
     connect(omfgThis, SIGNAL(bankAdjustmentsUpdated(int, bool)), this, SLOT(populate()));
     connect(omfgThis, SIGNAL(checksUpdated(int, int, bool)), this, SLOT(populate()));
     connect(omfgThis, SIGNAL(cashReceiptsUpdated(int, bool)), this, SLOT(populate()));
@@ -511,91 +517,111 @@ void reconcileBankaccount::sReceiptsToggleCleared()
         double baseamount = QLocale().toDouble(child->text(7));
         double amount = QLocale().toDouble(child->text(8));
 
-        if (_rateEdit->isChecked() && child->text(0) != tr("Yes"))
+        if (_allowEdit->isChecked() && child->text(0) != tr("Yes"))
         {
-          bool ok;
-          rate = QInputDialog::getDouble(this, tr("Currency Exchange Rate"),
-                                       tr("New Rate:"),
-                                       rate, 0, 100, 5, &ok);
-          if ( !ok )
-            return;
-          amount = rate * baseamount;
+          ParameterList params;
+          params.append("transtype", "receipt");
+          params.append("bankaccntid", _bankaccnt->id());
+          params.append("bankrecid", _bankrecid);
+          params.append("sourceid", child->id());
+          if(child->altId()==1)
+            params.append("source", "GL");
+          else if(child->altId()==2)
+            params.append("source", "SL");
+          else if(child->altId()==3)
+            params.append("source", "AD");
+          toggleBankrecCleared newdlg(this, "", TRUE);
+          newdlg.set(params);
+          newdlg.exec();
         }
-
-        reconcileReceiptsToggleCleared.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate, :amount) AS cleared");
-        reconcileReceiptsToggleCleared.bindValue(":bankrecid", _bankrecid);
-        reconcileReceiptsToggleCleared.bindValue(":sourceid", child->id());
-        if(child->altId()==1)
-          reconcileReceiptsToggleCleared.bindValue(":source", "GL");
-        else if(child->altId()==2)
-          reconcileReceiptsToggleCleared.bindValue(":source", "SL");
-        else if(child->altId()==3)
-          reconcileReceiptsToggleCleared.bindValue(":source", "AD");
-        reconcileReceiptsToggleCleared.bindValue(":currrate", rate);
-        reconcileReceiptsToggleCleared.bindValue(":amount", amount);
-        reconcileReceiptsToggleCleared.exec();
-        if(reconcileReceiptsToggleCleared.first())
-          child->setText(0, (reconcileReceiptsToggleCleared.value("cleared").toBool() ? tr("Yes") : tr("No") ));
-	else if (reconcileReceiptsToggleCleared.lastError().type() != QSqlError::NoError)
-	{
-	  systemError(this, reconcileReceiptsToggleCleared.lastError().databaseText(), __FILE__, __LINE__);
-	  return;
-	}
+        else
+        {
+          reconcileReceiptsToggleCleared.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate, :amount) AS cleared");
+          reconcileReceiptsToggleCleared.bindValue(":bankrecid", _bankrecid);
+          reconcileReceiptsToggleCleared.bindValue(":sourceid", child->id());
+          if(child->altId()==1)
+            reconcileReceiptsToggleCleared.bindValue(":source", "GL");
+          else if(child->altId()==2)
+            reconcileReceiptsToggleCleared.bindValue(":source", "SL");
+          else if(child->altId()==3)
+            reconcileReceiptsToggleCleared.bindValue(":source", "AD");
+          reconcileReceiptsToggleCleared.bindValue(":currrate", rate);
+          reconcileReceiptsToggleCleared.bindValue(":amount", amount);
+          reconcileReceiptsToggleCleared.exec();
+          if(reconcileReceiptsToggleCleared.first())
+            child->setText(0, (reconcileReceiptsToggleCleared.value("cleared").toBool() ? tr("Yes") : tr("No") ));
+          else if (reconcileReceiptsToggleCleared.lastError().type() != QSqlError::NoError)
+          {
+            systemError(this, reconcileReceiptsToggleCleared.lastError().databaseText(), __FILE__, __LINE__);
+            return;
+          }
+        }
       }
     }
     item->setText(0, (setto ? tr("Yes") : tr("No")));
+    populate();
   }
   else
   {
     double rate = QLocale().toDouble(item->text(6));
     double baseamount = QLocale().toDouble(item->text(7));
     double amount = QLocale().toDouble(item->text(8));
-
-    if (_rateEdit->isChecked() && item->text(0) != tr("Yes"))
+    
+    if (_allowEdit->isChecked() && item->text(0) != tr("Yes"))
     {
-      bool ok;
-      rate = QInputDialog::getDouble(this, tr("Currency Exchange Rate"),
-                                   tr("New Rate:"),
-                                   rate, 0, 100, 5, &ok);
-      if ( !ok )
-        return;
-      amount = rate * baseamount;
-    }
-
-    reconcileReceiptsToggleCleared.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate, :amount) AS cleared");
-    reconcileReceiptsToggleCleared.bindValue(":bankrecid", _bankrecid);
-    reconcileReceiptsToggleCleared.bindValue(":sourceid", item->id());
-    if(item->altId()==1)
-      reconcileReceiptsToggleCleared.bindValue(":source", "GL");
-    else if(item->altId()==2)
-      reconcileReceiptsToggleCleared.bindValue(":source", "SL");
-    else if(item->altId()==3)
-      reconcileReceiptsToggleCleared.bindValue(":source", "AD");
-    reconcileReceiptsToggleCleared.bindValue(":currrate", rate);
-    reconcileReceiptsToggleCleared.bindValue(":amount", amount);
-    reconcileReceiptsToggleCleared.exec();
-    if(reconcileReceiptsToggleCleared.first())
-    {
-      item->setText(0, (reconcileReceiptsToggleCleared.value("cleared").toBool() ? tr("Yes") : tr("No") ));
-
-      item = (XTreeWidgetItem*)item->QTreeWidgetItem::parent();
-      if(item != 0 && item->altId() == 9)
-      {
-        setto = true;
-	for (int i = 0; i < item->childCount(); i++)
-        {
-          setto = (setto && (item->child(i)->text(0) == tr("Yes")));
-        }
-        item->setText(0, (setto ? tr("Yes") : tr("No")));
-      }
+      ParameterList params;
+      params.append("transtype", "receipt");
+      params.append("bankaccntid", _bankaccnt->id());
+      params.append("bankrecid", _bankrecid);
+      params.append("sourceid", item->id());
+      if(item->altId()==1)
+        params.append("source", "GL");
+      else if(item->altId()==2)
+        params.append("source", "SL");
+      else if(item->altId()==3)
+        params.append("source", "AD");
+      toggleBankrecCleared newdlg(this, "", TRUE);
+      newdlg.set(params);
+      newdlg.exec();
+      populate();
     }
     else
     {
-      populate();
-      if (reconcileReceiptsToggleCleared.lastError().type() != QSqlError::NoError)
+      reconcileReceiptsToggleCleared.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate, :amount) AS cleared");
+      reconcileReceiptsToggleCleared.bindValue(":bankrecid", _bankrecid);
+      reconcileReceiptsToggleCleared.bindValue(":sourceid", item->id());
+      if(item->altId()==1)
+        reconcileReceiptsToggleCleared.bindValue(":source", "GL");
+      else if(item->altId()==2)
+        reconcileReceiptsToggleCleared.bindValue(":source", "SL");
+      else if(item->altId()==3)
+        reconcileReceiptsToggleCleared.bindValue(":source", "AD");
+      reconcileReceiptsToggleCleared.bindValue(":currrate", rate);
+      reconcileReceiptsToggleCleared.bindValue(":amount", amount);
+      reconcileReceiptsToggleCleared.exec();
+      if(reconcileReceiptsToggleCleared.first())
       {
-	systemError(this, reconcileReceiptsToggleCleared.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+        item->setText(0, (reconcileReceiptsToggleCleared.value("cleared").toBool() ? tr("Yes") : tr("No") ));
+
+        item = (XTreeWidgetItem*)item->QTreeWidgetItem::parent();
+        if(item != 0 && item->altId() == 9)
+        {
+          setto = true;
+          for (int i = 0; i < item->childCount(); i++)
+          {
+            setto = (setto && (item->child(i)->text(0) == tr("Yes")));
+          }
+          item->setText(0, (setto ? tr("Yes") : tr("No")));
+        }
+      }
+      else
+      {
+        populate();
+        if (reconcileReceiptsToggleCleared.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, reconcileReceiptsToggleCleared.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
       }
     }
   }
@@ -614,39 +640,49 @@ void reconcileBankaccount::sChecksToggleCleared()
   double rate = item->rawValue("doc_exchrate").toDouble();
   double baseamount = item->rawValue("base_amount").toDouble();
   double amount = item->rawValue("amount").toDouble();
-
-  if (_rateEdit->isChecked() && item->text(0) != tr("Yes"))
+  
+  if (_allowEdit->isChecked() && item->text(0) != tr("Yes"))
   {
-    bool ok;
-    rate = QInputDialog::getDouble(this, tr("Currency Exchange Rate"),
-                                 tr("New Rate:"),
-                                 rate, 0, 100, 5, &ok);
-    if ( !ok )
-      return;
-    amount = rate * baseamount;
+    ParameterList params;
+    params.append("transtype", "check");
+    params.append("bankaccntid", _bankaccnt->id());
+    params.append("bankrecid", _bankrecid);
+    params.append("sourceid", item->id());
+    if(item->altId()==1)
+      params.append("source", "GL");
+    else if(item->altId()==2)
+      params.append("source", "SL");
+    else if(item->altId()==3)
+      params.append("source", "AD");
+    toggleBankrecCleared newdlg(this, "", TRUE);
+    newdlg.set(params);
+    newdlg.exec();
+    populate();
   }
-
-  reconcileChecksToggleCleared.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate, :amount) AS cleared");
-  reconcileChecksToggleCleared.bindValue(":bankrecid", _bankrecid);
-  reconcileChecksToggleCleared.bindValue(":sourceid", item->id());
-  if(item->altId()==1)
-    reconcileChecksToggleCleared.bindValue(":source", "GL");
-  else if(item->altId()==2)
-    reconcileChecksToggleCleared.bindValue(":source", "SL");
-  else if(item->altId()==3)
-    reconcileChecksToggleCleared.bindValue(":source", "AD");
-  reconcileChecksToggleCleared.bindValue(":currrate", rate);
-  reconcileChecksToggleCleared.bindValue(":amount", amount);
-  reconcileChecksToggleCleared.exec();
-  if(reconcileChecksToggleCleared.first())
-    item->setText(0, (reconcileChecksToggleCleared.value("cleared").toBool() ? tr("Yes") : tr("No") ));
   else
   {
-    populate();
-    if (reconcileChecksToggleCleared.lastError().type() != QSqlError::NoError)
+    reconcileChecksToggleCleared.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate, :amount) AS cleared");
+    reconcileChecksToggleCleared.bindValue(":bankrecid", _bankrecid);
+    reconcileChecksToggleCleared.bindValue(":sourceid", item->id());
+    if(item->altId()==1)
+      reconcileChecksToggleCleared.bindValue(":source", "GL");
+    else if(item->altId()==2)
+      reconcileChecksToggleCleared.bindValue(":source", "SL");
+    else if(item->altId()==3)
+      reconcileChecksToggleCleared.bindValue(":source", "AD");
+    reconcileChecksToggleCleared.bindValue(":currrate", rate);
+    reconcileChecksToggleCleared.bindValue(":amount", amount);
+    reconcileChecksToggleCleared.exec();
+    if(reconcileChecksToggleCleared.first())
+      item->setText(0, (reconcileChecksToggleCleared.value("cleared").toBool() ? tr("Yes") : tr("No") ));
+    else
     {
-      systemError(this, reconcileChecksToggleCleared.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      populate();
+      if (reconcileChecksToggleCleared.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, reconcileChecksToggleCleared.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
     }
   }
 }
@@ -799,6 +835,9 @@ void reconcileBankaccount::sDateChanged()
   }
   else
   {
-	_datesAreOK = true;
+    if (! sSave(false))
+      return;
+    
+    _datesAreOK = true;
   }
 }

@@ -11,6 +11,12 @@ isEmpty( BUILD_SHARED_LIBS ) {
   CONFIG += dll
 }
 
+CONFIG      += qt warn_on
+xtcommon_shared {
+  CONFIG    += dll
+} else {
+  CONFIG    += staticlib
+}
 DEFINES     += MAKELIB
 
 INCLUDEPATH += $(QTDIR)/src/3rdparty/zlib

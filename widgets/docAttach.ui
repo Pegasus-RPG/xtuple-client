@@ -93,6 +93,11 @@ to be bound by its terms.</comment>
          </item>
          <item>
           <property name="text">
+           <string>Invoice</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
            <string>Item</string>
           </property>
          </item>
@@ -490,6 +495,51 @@ to be bound by its terms.</comment>
             </item>
             <item>
              <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="_invoicePage">
+         <layout class="QGridLayout" name="gridLayout_invoice">
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_invoice">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_invoice">
+              <item>
+               <widget class="InvoiceCluster" name="_invoice">
+                <property name="label">
+                 <string>Invoice:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_invoice">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>0</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_invoice">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -908,6 +958,11 @@ to be bound by its terms.</comment>
    <class>IncidentCluster</class>
    <extends>QWidget</extends>
    <header>incidentcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>InvoiceCluster</class>
+   <extends>QWidget</extends>
+   <header>invoiceCluster.h</header>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>

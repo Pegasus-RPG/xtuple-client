@@ -1,7 +1,8 @@
 *.DS_Store
-.*.swp
+*.swp
 
 # C++ objects and libs
+
 *.slo
 *.lo
 *.o
@@ -13,6 +14,7 @@
 *.dylib
 
 # Qt-es
+
 *.pro.user
 *.pro.user.*
 moc_*.cpp
