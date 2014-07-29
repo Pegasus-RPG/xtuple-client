@@ -25,12 +25,34 @@ salesHistoryInformation::salesHistoryInformation(QWidget* parent, const char* na
   _orderNumber->setValidator(omfgThis->orderVal());
   _invoiceNumber->setValidator(omfgThis->orderVal());
   _shipped->setValidator(omfgThis->qtyVal());
-  _unitPrice->setValidator(omfgThis->priceVal());
-  _unitCost->setValidator(omfgThis->priceVal());
-  _commission->setValidator(omfgThis->negMoneyVal());
+  
+  if (_privileges->check("ViewCustomerPrices"))
+  {
+    _unitPrice->setValidator(omfgThis->priceVal());
+    _extendedPrice->setPrecision(omfgThis->moneyVal());
+  }
+  else
+  {
+    _unitPriceLit->hide();
+    _unitPrice->hide();
+    _extPriceLit->hide();
+    _extendedPrice->hide();
+  }
 
-  _extendedPrice->setPrecision(omfgThis->moneyVal());
-  _extendedCost->setPrecision(omfgThis->moneyVal());
+  if (_privileges->check("ViewCosts"))
+  {
+    _unitCost->setValidator(omfgThis->priceVal());
+    _extendedCost->setPrecision(omfgThis->moneyVal());
+  }
+  else
+  {
+    _unitCostLit->hide();
+    _unitCost->hide();
+    _extCostLit->hide();
+    _extendedCost->hide();
+  }
+
+  _commission->setValidator(omfgThis->negMoneyVal());
 
   _salesrep->setType(XComboBox::SalesReps);
 
