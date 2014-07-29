@@ -57,7 +57,7 @@ dspSalesHistory::dspSalesHistory(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Invc. Date"),          _dateColumn,     Qt::AlignCenter, true,  "cohist_invcdate" );
   list()->addColumn(tr("Sale Type"),           _orderColumn,    Qt::AlignLeft,   true,  "saletype_code"   );
   list()->addColumn(tr("Shipping Zone"),       _orderColumn,    Qt::AlignLeft,   true,  "shipzone_name"   );
-  list()->addColumn(tr("Item Number"),         _itemColumn,     Qt::AlignLeft,   true,  "item_number"   );
+  list()->addColumn(tr("Item Number"),         _itemColumn,     Qt::AlignLeft,   true,  "itemnumber"   );
   list()->addColumn(tr("Description"),         -1,              Qt::AlignLeft,   true,  "itemdescription"   );
   list()->addColumn(tr("Shipped"),             _qtyColumn,      Qt::AlignRight,  true,  "cohist_qtyshipped"  );
   if (_privileges->check("ViewCustomerPrices"))
@@ -72,6 +72,11 @@ dspSalesHistory::dspSalesHistory(QWidget* parent, const char*, Qt::WFlags fl)
   {
     list()->addColumn(tr("Unit Cost"),         _costColumn,     Qt::AlignRight,  true,  "cohist_unitcost" );
     list()->addColumn(tr("Ext. Cost"),         _bigMoneyColumn, Qt::AlignRight,  true,  "extcost" );
+  }
+  if (_privileges->check("ViewCustomerPrices") && _privileges->check("ViewCosts"))
+  {
+    list()->addColumn(tr("Margin"),            _bigMoneyColumn, Qt::AlignRight,  false, "margin" );
+    list()->addColumn(tr("Margin %"),          _prcntColumn,    Qt::AlignRight,  false, "marginpercent" );
   }
 }
 
@@ -172,6 +177,7 @@ bool dspSalesHistory::setParams(ParameterList & params)
     return false;
   if (_privileges->check("ViewCustomerPrices"))
     params.append("showPrices");
+  params.append("credit", "Credit");
 
   return true;
 }
