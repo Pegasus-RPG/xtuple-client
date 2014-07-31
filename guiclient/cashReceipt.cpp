@@ -1131,10 +1131,7 @@ void cashReceipt::sHandleAltExchRate()
     if (_metrics->value("CurrencyExchangeSense").toInt() == 1)
       inverter = "1 / ";
     XSqlQuery currRate;
-    QString sql = QString("SELECT %1 curr_rate AS _currrate "
-                          "FROM curr_rate "
-                          "WHERE ( (:cashrcpt_curr_id=curr_id)"
-                          "  AND (:cashrcpt_distdate BETWEEN curr_effective AND curr_expires) );")
+    QString sql = QString("SELECT %1 currRate(:cashrcpt_curr_id, :cashrcpt_distdate) AS _currrate;")
                           .arg(inverter);
     currRate.prepare(sql);
     currRate.bindValue(":cashrcpt_curr_id", _received->id());
