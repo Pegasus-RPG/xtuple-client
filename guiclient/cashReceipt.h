@@ -50,6 +50,8 @@ public slots:
     virtual void sViewCreditCard();
     virtual void setCreditCard();
     virtual void sDateChanged();
+    virtual void sHandleAltExchRate();
+    virtual void sUpdateGainLoss();
 
 protected slots:
     virtual void languageChange();
