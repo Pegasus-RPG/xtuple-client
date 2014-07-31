@@ -1485,7 +1485,7 @@ void salesOrderItem::sPopulateItemsiteInfo()
       _leadTime    = itemsite.value("itemsite_leadtime").toInt();
       _stocked     = itemsite.value("itemsite_stocked").toBool();
       _costmethod  = itemsite.value("itemsite_costmethod").toString();
-      _unitCost->setBaseValue(itemsite.value("unitcost").toDouble() * (_priceinvuomratio / _priceRatio));
+      _unitCost->setBaseValue(itemsite.value("unitcost").toDouble() * _priceinvuomratio);
 
       if (itemsite.value("itemsite_createwo").toBool())
       {
@@ -2341,63 +2341,31 @@ void salesOrderItem::sCalculateDiscountPrcnt()
   double  netUnitPrice = _netUnitPrice->baseValue();
   double  charTotal    = 0;
 
-//  if (_priceMode == "M")  // markup
-//  {
-//    _discountFromCustLit->setText(tr("Cust. Markup %:"));
-//    if (netUnitPrice == 0.0)
-//    {
-//      _discountFromListPrice->setDouble(100.0);
-//      _markupFromUnitCost->setDouble(100.0);
-//      _discountFromCust->setDouble(100.0);
-//    }
-//    else
-//    {
-//      if (_listPrice->isZero())
-//        _discountFromListPrice->setText(tr("N/A"));
-//      else
-//        _discountFromListPrice->setDouble((1.0 - (netUnitPrice / _listPrice->baseValue())) * 100.0);
-//
-//      if (_unitCost->isZero())
-//        _markupFromUnitCost->setText(tr("N/A"));
-//      else
-//        _markupFromUnitCost->setDouble(((netUnitPrice / _unitCost->baseValue()) - 1.0) * 100.0);
-//
-//      if (_customerPrice->isZero())
-//        _discountFromCust->setText(tr("N/A"));
-//      else
-//        _discountFromCust->setDouble(((netUnitPrice / _customerPrice->baseValue()) - 1.0) * 100.0);
-//    }
-//  }
-//  else  // discount
-//  {
-//    _discountFromCustLit->setText(tr("Cust. Discount %:"));
-    if (netUnitPrice == 0.0)
-    {
-      _discountFromListPrice->setDouble(100.0);
-      _markupFromUnitCost->setDouble(100.0);
-      _discountFromCust->setDouble(100.0);
-    }
+  if (netUnitPrice == 0.0)
+  {
+    _discountFromListPrice->setDouble(100.0);
+    _markupFromUnitCost->setDouble(100.0);
+    _discountFromCust->setDouble(100.0);
+  }
+  else
+  {
+    if (_listPrice->isZero())
+      _discountFromListPrice->setText(tr("N/A"));
     else
-    {
-      if (_listPrice->isZero())
-        _discountFromListPrice->setText(tr("N/A"));
-      else
-        _discountFromListPrice->setDouble((1.0 - (netUnitPrice / _listPrice->baseValue())) * 100.0);
-
-      if (_unitCost->isZero())
-        _markupFromUnitCost->setText(tr("N/A"));
-      else if (_metrics->boolean("Long30Markups"))
-        _markupFromUnitCost->setDouble((1.0 - (_unitCost->baseValue() / netUnitPrice)) * 100.0);
-      else
-        _markupFromUnitCost->setDouble(((netUnitPrice / _unitCost->baseValue()) - 1.0) * 100.0);
-
-      if (_customerPrice->isZero())
-        _discountFromCust->setText(tr("N/A"));
-      else
-        _discountFromCust->setDouble((1.0 - (netUnitPrice / _customerPrice->baseValue())) * 100.0);
-    }
-//  }
-
+      _discountFromListPrice->setDouble((1.0 - (netUnitPrice / _listPrice->baseValue())) * 100.0);
+    
+    if (_unitCost->isZero())
+      _markupFromUnitCost->setText(tr("N/A"));
+    else if (_metrics->boolean("Long30Markups"))
+      _markupFromUnitCost->setDouble((1.0 - (_unitCost->baseValue() / netUnitPrice)) * 100.0);
+    else
+      _markupFromUnitCost->setDouble(((netUnitPrice / _unitCost->baseValue()) - 1.0) * 100.0);
+    
+    if (_customerPrice->isZero())
+      _discountFromCust->setText(tr("N/A"));
+    else
+      _discountFromCust->setDouble((1.0 - (netUnitPrice / _customerPrice->baseValue())) * 100.0);
+  }
 
   if (_item->isConfigured())  // Total up price for configured item characteristics
   {
@@ -2411,7 +2379,7 @@ void salesOrderItem::sCalculateDiscountPrcnt()
     _baseUnitPrice->setLocalValue(_netUnitPrice->localValue() - charTotal);
   }
 
-  _margin->setLocalValue((_netUnitPrice->localValue() - _unitCost->localValue()) * _qtyOrdered->toDouble() * _qtyinvuomratio / _priceinvuomratio);
+  _margin->setLocalValue(((_netUnitPrice->localValue() - _unitCost->localValue()) / _priceinvuomratio) * (_qtyOrdered->toDouble() * _qtyinvuomratio));
 
   sCalculateExtendedPrice();
 }
@@ -3792,7 +3760,7 @@ void salesOrderItem::sCalculateFromMarkup()
     {
         if (_updatePrice)
         {
-            if (_markupFromUnitCost->toDouble() <= 50.0 && _metrics->boolean("Long30Markups"))
+            if (_metrics->boolean("Long30Markups"))
                 _netUnitPrice->setLocalValue(_unitCost->localValue() /
                                              (1.0 - (_markupFromUnitCost->toDouble() / 100.0)));
             else
@@ -3929,7 +3897,7 @@ void salesOrderItem::populate()
     _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
     _netUnitPrice->setLocalValue(item.value("coitem_price").toDouble());
     _priceMode = item.value("coitem_pricemode").toString();
-    _margin->setLocalValue((_netUnitPrice->localValue() - _unitCost->localValue()) * _qtyOrdered->toDouble());
+    _margin->setLocalValue(((_netUnitPrice->localValue() - _unitCost->localValue()) / _priceinvuomratio) * (_qtyOrdered->toDouble() * _qtyinvuomratio));
     _leadTime        = item.value("itemsite_leadtime").toInt();
     _originalQtyOrd  = _qtyOrdered->toDouble() * _qtyinvuomratio;
     if (!item.value("quitem_order_warehous_id").isNull())
@@ -4410,7 +4378,8 @@ void salesOrderItem::sQtyUOMChanged()
   else
     _priceUOM->setEnabled(true);
   _priceUOM->setId(_qtyUOM->id());
-  sCalculateExtendedPrice();
+//  sCalculateExtendedPrice();
+  sDeterminePrice(true);
 
   if (_qtyOrdered->toDouble() != (double)qRound(_qtyOrdered->toDouble()) &&
       _qtyOrdered->validator()->inherits("QIntValidator"))
@@ -4470,7 +4439,7 @@ void salesOrderItem::sPriceUOMChanged()
   item.exec();
   item.first();
   _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
-  _unitCost->setBaseValue(item.value("unitcost").toDouble() * (_priceinvuomratio / _priceRatio));
+  _unitCost->setBaseValue(item.value("unitcost").toDouble() * _priceinvuomratio);
   sDeterminePrice(true);
 }
 
@@ -4510,7 +4479,7 @@ void salesOrderItem::sCalcUnitCost()
     salesCalcUnitCost.bindValue(":warehous_id", _warehouse->id());
     salesCalcUnitCost.exec();
     if (salesCalcUnitCost.first())
-      _unitCost->setBaseValue(salesCalcUnitCost.value("unitcost").toDouble() * (_priceinvuomratio / _priceRatio));
+      _unitCost->setBaseValue(salesCalcUnitCost.value("unitcost").toDouble() * _priceinvuomratio);
   }
 }
 
