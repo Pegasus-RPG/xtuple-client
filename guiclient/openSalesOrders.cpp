@@ -63,10 +63,7 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Scheduled"),        _dateColumn,     Qt::AlignCenter,true,  "scheddate");
   list()->addColumn(tr("Total"),            _moneyColumn,    Qt::AlignRight, true,  "ordertotal");
   if (_privileges->check("ShowMarginsOnSalesOrder"))
-  {
-    list()->addColumn(tr("Margin"),         _moneyColumn,    Qt::AlignRight, true,  "ordermargin");
-    list()->addColumn(tr("Margin %"),       _prcntColumn,    Qt::AlignRight, true,  "ordermarginpercent");
-  }
+    list()->addColumn(tr("Margin %"),         _prcntColumn,    Qt::AlignRight, true,  "ordermarginpercent");
   list()->addColumn(tr("Status"),           _statusColumn,   Qt::AlignCenter,false, "status");
   list()->addColumn(tr("Notes"),            -1,              Qt::AlignLeft,  false, "notes");
   

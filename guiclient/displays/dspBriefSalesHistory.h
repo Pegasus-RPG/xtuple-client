@@ -20,8 +20,6 @@ class dspBriefSalesHistory : public display
   public:
     dspBriefSalesHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
-    Q_INVOKABLE virtual bool setParams(ParameterList &);
-
   public slots:
     virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int);
     virtual void sViewHistory();
