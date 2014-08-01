@@ -42,39 +42,14 @@ dspBriefSalesHistory::dspBriefSalesHistory(QWidget* parent, const char*, Qt::WFl
 
   parameterWidget()->applyDefaultFilterSet();
 
-  list()->addColumn(tr("Cust. #"),             _itemColumn,     Qt::AlignLeft,   true,  "cust_number"   );
-  list()->addColumn(tr("Name"),                -1,              Qt::AlignLeft,   true,  "cust_name"   );
-  list()->addColumn(tr("Cust. Type"),          _orderColumn,    Qt::AlignLeft,   true,  "custtype_code"   );
-  list()->addColumn(tr("Doc. #"),              _orderColumn,    Qt::AlignLeft,   true,  "cohist_ordernumber"   );
-  list()->addColumn(tr("Invoice #"),           _orderColumn,    Qt::AlignLeft,   true,  "invoicenumber"   );
-  list()->addColumn(tr("Ord. Date"),           _dateColumn,     Qt::AlignCenter, true,  "cohist_orderdate" );
-  list()->addColumn(tr("Invc. Date"),          _dateColumn,     Qt::AlignCenter, true,  "cohist_invcdate" );
-  if (_privileges->check("ViewCustomerPrices"))
-  {
-    list()->addColumn(tr("Ext. Price"),        _bigMoneyColumn, Qt::AlignRight,  true,  "extprice" );
-    list()->addColumn(tr("Currency"),          _currencyColumn, Qt::AlignRight,  true,  "currAbbr" );
-    list()->addColumn(tr("Base Ext. Price"),   _bigMoneyColumn, Qt::AlignRight,  true,  "baseextprice" );
-  }
-  if (_privileges->check("ViewCosts"))
-  {
-    list()->addColumn(tr("Ext. Cost"),         _bigMoneyColumn, Qt::AlignRight,  true,  "extcost" );
-  }
-  if (_privileges->check("ViewCustomerPrices") && _privileges->check("ViewCosts"))
-  {
-    list()->addColumn(tr("Margin"),            _bigMoneyColumn, Qt::AlignRight,  false, "margin" );
-    list()->addColumn(tr("Margin %"),          _prcntColumn,    Qt::AlignRight,  false, "marginpercent" );
-  }
-}
-
-bool dspBriefSalesHistory::setParams(ParameterList & params)
-{
-  if (!display::setParams(params))
-    return false;
-  if (_privileges->check("ViewCustomerPrices"))
-    params.append("showPrices");
-  params.append("credit", "Credit");
-  
-  return true;
+  list()->addColumn(tr("Cust. #"),     _itemColumn,     Qt::AlignLeft,   true,  "cust_number"   );
+  list()->addColumn(tr("Name"),        -1,              Qt::AlignLeft,   true,  "cust_name"   );
+  list()->addColumn(tr("Cust. Type"),  _orderColumn,    Qt::AlignLeft,   true,  "custtype_code"   );
+  list()->addColumn(tr("Doc. #"),      _orderColumn,    Qt::AlignLeft,   true,  "cohist_ordernumber"   );
+  list()->addColumn(tr("Invoice #"),   _orderColumn,    Qt::AlignLeft,   true,  "invoicenumber"   );
+  list()->addColumn(tr("Ord. Date"),   _dateColumn,     Qt::AlignCenter, true,  "cohist_orderdate" );
+  list()->addColumn(tr("Invc. Date"),  _dateColumn,     Qt::AlignCenter, true,  "cohist_invcdate" );
+  list()->addColumn(tr("Total"),       _bigMoneyColumn, Qt::AlignRight,  true,  "extended"  );
 }
 
 void dspBriefSalesHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
