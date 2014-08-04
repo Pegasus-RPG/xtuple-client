@@ -51,6 +51,21 @@ isEmpty( CSVIMP_HEADERS ) {
   error("Could not set the CSVIMP_HEADERS qmake variable.")
 }
 
+# Use a shared library version of openrpt library dependency
+USE_SHARED_OPENRPT = $$(USE_SHARED_OPENRPT)
+! isEmpty( USE_SHARED_OPENRPT ) { CONFIG += openrpt_shared }
+
+exists($${OPENRPT_LIBDIR}/libdmtx.$${QMAKE_EXTENSION_SHLIB}) {
+  DMTXLIB = -ldmtx
+}
+exists($${OPENRPT_LIBDIR}/libDmtx_Library.$${QMAKE_EXTENSION_SHLIB}) {
+  DMTXLIB = -lDmtx_Library
+}
+exists($${OPENRPT_LIBDIR}/libdmtx.a)           { DMTXLIB = -ldmtx }
+exists($${OPENRPT_LIBDIR}/libDmtx_Library.a)   { DMTXLIB = -lDmtx_Library }
+exists($${OPENRPT_LIBDIR}/libdmtx.lib)         { DMTXLIB = -ldmtx }
+exists($${OPENRPT_LIBDIR}/libDmtx_Library.lib) { DMTXLIB = -lDmtx_Library }
+
 # global.pri is processed at the top level but the variables are used down 1 level
 ! isEmpty( OPENRPT_DIR_REL    ) { OPENRPT_DIR    = ../$${OPENRPT_DIR}
                                   OPENRPT_BLD    = ../$${OPENRPT_BLD}    }
@@ -75,12 +90,6 @@ DEPENDPATH  += $${INCLUDEPATH}
 
 CONFIG += release thread
 
-# Use a shared library version of openrpt library dependency
-USE_SHARED_OPENRPT = $$(USE_SHARED_OPENRPT)
-! isEmpty( USE_SHARED_OPENRPT ) {
-  CONFIG += openrpt_shared
-}
-
 # The packaged version of OpenRPT installs the images to
 # /usr/share/openrpt/OpenRPT/images
 # Set this variable in the environment to use that location
@@ -98,6 +107,26 @@ isEmpty( OPENRPT_IMAGE_DIR ) {
 BUILD_XTCOMMON_SHARED = $$(BUILD_XTCOMMON_SHARED)
 ! isEmpty( BUILD_XTCOMMON_SHARED ) {
   CONFIG += xtcommon_shared
+}
+
+openrpt_shared {
+  OPENRPTLIBEXT = $${QMAKE_EXTENSION_SHLIB}
+} else {
+  win32-msvc* {
+    OPENRPTLIBEXT = lib
+  } else {
+    OPENRPTLIBEXT = a
+  }
+}
+
+xtcommon_shared {
+  XTLIBEXT = $${QMAKE_EXTENSION_SHLIB}
+} else {
+  win32-msvc* {
+    XTLIBEXT = lib
+  } else {
+    XTLIBEXT = a
+  }
 }
 
 

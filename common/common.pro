@@ -27,6 +27,9 @@ OBJECTS_DIR = tmp
 MOC_DIR     = tmp
 UI_DIR      = tmp
 
+QMAKE_LIBDIR += $${OPENRPT_LIBDIR}
+LIBS += -lopenrptcommon -lMetaSQL $${LIBDMTX} -lz
+
 SOURCES = calendarcontrol.cpp \
           calendargraphicsitem.cpp \
           errorReporter.cpp        \

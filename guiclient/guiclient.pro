@@ -15,47 +15,28 @@ INCLUDEPATH += ../scriptapi \
 
 DEPENDPATH  += $${INCLUDEPATH}
 
+
 win32-msvc* {
-  PRE_TARGETDEPS += ../lib/xtuplecommon.lib    \
-                    ../lib/xtuplescriptapi.lib \
-                    ../lib/xtuplewidgets.lib
+  PRE_TARGETDEPS += ../lib/xtuplecommon.$${XTLIBEXT}    \
+                    ../lib/xtuplescriptapi.lib          \
+                    ../lib/xtuplewidgets.lib            \
+                    $${OPENRPT_LIBDIR}/MetaSQL.$${OPENRPTLIBEXT}  \
+                    $${OPENRPT_LIBDIR}/renderer.$${OPENRPTLIBEXT} \
+                    $${OPENRPT_LIBDIR}/wrtembed.$${OPENRPTLIBEXT} \
+                    $${OPENRPT_LIBDIR}/openrptcommon.$${OPENRPTLIBEXT}
 } else {
-  xtcommon_shared {
-    PRE_TARGETDEPS += ../lib/libxtuplecommon.so
-  } else {
-    PRE_TARGETDEPS += ../lib/libxtuplecommon.a
-  }
-  PRE_TARGETDEPS += ../lib/libxtuplescriptapi.a \
-                    ../lib/libxtuplewidgets.a
-  openrpt_shared {
-    PRE_TARGETDEPS += $${OPENRPT_LIBDIR}/libMetaSQL.so  \
-                      $${OPENRPT_LIBDIR}/librenderer.so \
-                      $${OPENRPT_LIBDIR}/libwrtembed.so \
-                      $${OPENRPT_LIBDIR}/libdmtx.so \
-                      $${OPENRPT_LIBDIR}/libcommon.so
-  } else {
-    PRE_TARGETDEPS += $${OPENRPT_LIBDIR}/libMetaSQL.a  \
-                      $${OPENRPT_LIBDIR}/librenderer.a \
-                      $${OPENRPT_LIBDIR}/libwrtembed.a \
-                      $${OPENRPT_LIBDIR}/libDmtx_Library.a \
-                      $${OPENRPT_LIBDIR}/libcommon.a
-  }
+  PRE_TARGETDEPS += ../lib/libxtuplecommon.$${XTLIBEXT} \
+                    ../lib/libxtuplescriptapi.a         \
+                    ../lib/libxtuplewidgets.a           \
+                    $${OPENRPT_LIBDIR}/libMetaSQL.$${OPENRPTLIBEXT}  \
+                    $${OPENRPT_LIBDIR}/librenderer.$${OPENRPTLIBEXT} \
+                    $${OPENRPT_LIBDIR}/libwrtembed.$${OPENRPTLIBEXT} \
+                    $${OPENRPT_LIBDIR}/libopenrptcommon.$${OPENRPTLIBEXT}
 }
 
 QMAKE_LIBDIR = ../lib $${OPENRPT_LIBDIR} $$QMAKE_LIBDIR
-LIBS        += -lxtuplecommon -lxtuplewidgets -lwrtembed 
-openrpt_shared {
-  LIBS      += -lopenrptcommon
-} else {
-  LIBS      += -lcommon
-}
-LIBS        += -lrenderer -lxtuplescriptapi 
-openrpt_shared {
-  LIBS      += -ldmtx
-} else {
-  LIBS      += -lDmtx_Library
-}
-LIBS        += -lMetaSQL
+LIBS        += -lxtuplecommon -lxtuplewidgets -lwrtembed -lopenrptcommon
+LIBS        += -lrenderer -lxtuplescriptapi $${DMTXLIB} -lMetaSQL
 
 #not the best way to handle this, but it should do
 mac:!static:contains(QT_CONFIG, qt_framework) {
