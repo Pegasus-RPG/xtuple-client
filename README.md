@@ -16,7 +16,8 @@ To learn more about:
 
 ## Development Quickstart
 
-We are updating our Development Environment Setup docs and building a Linux virtual machine you can use for development. Here's the summary of what you need to do:
+We are updating our full Development Environment Setup docs. We're also building a Linux virtual machine in which this is already done.
+Meanwhile, here's a brief description of how to set up a development environment:
 
 * Install Postgres 9.1, including libraries and header files. We strongly suggest that you build from source.
   * Start [here](http://www.postgresql.org/download/) and use the *File Browser* to get a source bundle for 9.1.x.
