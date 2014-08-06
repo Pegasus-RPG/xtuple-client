@@ -53,9 +53,11 @@ priceList::priceList(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _prodcatid = -1;
   _custtypeid = -1;
   _custtypecode = "";
+  _iteminvpricerat = 1.0;
 
   _qty->setValidator(omfgThis->qtyVal());
   _listPrice->setPrecision(omfgThis->priceVal());
+  _listCost->setPrecision(omfgThis->priceVal());
   _unitCost->setPrecision(omfgThis->costVal());
 }
 
@@ -186,11 +188,13 @@ void priceList::sNewShipto()
 void priceList::sNewItem()
 {
   _listPrice->clear();
+  _listCost->clear();
   _unitCost->clear();
   if (_item->isValid())
   {
     XSqlQuery itemq;
     itemq.prepare("SELECT item_listprice, item_listcost, item_prodcat_id,"
+                  "       itemuomtouomratio(item_id, item_inv_uom_id, item_price_uom_id) AS iteminvpricerat,"
                   "       itemCost(:item_id, :cust_id, :shipto_id, :qty, item_inv_uom_id, item_price_uom_id,"
                   "                :curr_id, :effective, :asof, :warehous_id) AS item_unitcost"
                   "  FROM item LEFT OUTER JOIN itemsite ON (itemsite_item_id=item_id AND itemsite_warehous_id=:warehous_id)"
@@ -207,10 +211,9 @@ void priceList::sNewItem()
     if (itemq.first())
     {
       _listPrice->setDouble(itemq.value("item_listprice").toDouble());
-      if (_metrics->boolean("WholesalePriceCosting"))
-        _unitCost->setDouble(itemq.value("item_listcost").toDouble());
-      else
-        _unitCost->setDouble(itemq.value("item_unitcost").toDouble());
+      _listCost->setDouble(itemq.value("item_listcost").toDouble());
+      _unitCost->setDouble(itemq.value("item_unitcost").toDouble());
+      _iteminvpricerat = itemq.value("iteminvpricerat").toDouble();
       _prodcatid = itemq.value("item_prodcat_id").toInt();
     }
     else if (itemq.lastError().type() != QSqlError::NoError)
@@ -263,7 +266,8 @@ void priceList::sFillList()
   pricelistp.append("effective",        _effective);
   pricelistp.append("asof",             _asOf);
   pricelistp.append("item_listprice",   _listPrice->toDouble());
-  pricelistp.append("item_unitcost",    _unitCost->toDouble());
+  pricelistp.append("item_listcost",    _listCost->toDouble());
+  pricelistp.append("item_unitcost",    (_unitCost->toDouble() / _iteminvpricerat));
 
   XSqlQuery pricelistq = pricelistm.toQuery(pricelistp);
   _price->populate(pricelistq, true);
