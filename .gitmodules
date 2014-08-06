@@ -4,6 +4,3 @@
 [submodule "csvimp"]
 	path = csvimp
 	url = https://github.com/xtuple/csvimp
-[submodule "xtlib"]
-	path = xtlib
-	url = https://github.com/xtuple/xtlib

@@ -16,23 +16,39 @@ To learn more about:
 
 ## Development Quickstart
 
-We're working on updating our [Development Environment Setup docs](http://www.xtuple.org/sites/default/files/dev/370/devGuide370/ch01.html) and building a Linux virtual machine you can use for development. Until that's done, here's the summary of what you need to do:
+We are updating our full Development Environment Setup docs. We're also building a Linux virtual machine in which this is already done.
+Meanwhile, here's a brief description of how to set up a development environment:
 
-* Install Postgres 9.1, including libraries and header files. Start [here](http://www.postgresql.org/download/) and use the *File Browser*.
-* Download the latest PostBooks _demo_ database from http://sourceforge.net/projects/postbooks/files/03%20PostBooks-databases/ and `pg_restore` it so you have some data to test with.
-* Install Qt 4.8. For a development environment, using a Qt installer will probably suffice. If you plan to work with credit cards and use a Mac, you'll have to build Qt from source and [patch the SSL sources](https://bugreports.qt-project.org/browse/QTBUG-15344).
-* Get the source code. See our [Git Usage](https://github.com/xtuple/xtuple/wiki/Basic-Git-Usage) guidelines for more information. The desktop client requires OpenRPT and CSVImp, which are included as git submodules, so don't forget
+* Install Postgres 9.1, including libraries and header files. We strongly suggest that you build from source.
+  * Start [here](http://www.postgresql.org/download/) and use the *File Browser* to get a source bundle for 9.1.x.
+  * Follow the instructions for [installing from source code](http://www.postgresql.org/docs/9.1/static/installation.html).
+  * We recommend the following configuration options:
+
+```Shell
+        $ ./configure --prefix=/usr/local/pgsql/09.1.14 --with-perl --with-openssl --with-readline --with-libxml --with-libxslt
 ```
-$ git submodule update --init --recursive
+
+* Get a Postgres server instance up and running
+* [Download](http://sourceforge.net/projects/postbooks/files/03%20PostBooks-databases/) the latest PostBooks _demo_ database and `pg_restore` it so you have some data to test with.
+* Install Qt 4.8 (not Qt 5!). We strongly recommend that you build from source. If you plan to work with credit cards and use a Mac, you **must** build Qt from source and [patch the SSL sources](https://bugreports.qt-project.org/browse/QTBUG-15344).
+  * [Download Qt](http://qt-project.org/downloads). If you don't see version 4.8 listed, click on the **Show Downloads** button and scroll down.
+  * [Install Qt](http://qt-project.org/doc/qt-4.8/installation.html)
+  * We recommend the following configuration options (the `-I` and `-L` options must match the `--prefix` option used when configuring Postgres):
+
+```Shell
+        $ ./configure -qt-zlib -qt-libtiff -qt-libpng -qt-libmng -qt-libjpeg -plugin-sql-psql -plugin-sql-odbc -plugin-sql-sqlite -I /usr/local/pgsql/09.1.14 -L /usr/local/pgsql/09.1.14 -lkrb5 -webkit -fontconfig -continue -nomake examples -nomake demos -prefix $HOME/Qt/Qt4.8.6
+```
+
+* Get the source code for the desktop client from xtuple's qt-client repository. See our [Git Usage](https://github.com/xtuple/xtuple/wiki/Basic-Git-Usage) guidelines for more information. The desktop client requires OpenRPT and CSVImp, which are included as git submodules, so don't forget
+```Shell
+        $ git submodule update --init --recursive
 ```
 * Build:
-```
-$ cd openrpt && qmake && make
-$ cd ../csvimp && qmake && make
-$ cd .. && qmake && make
+```Shell
+        $ cd openrpt && qmake && make
+        $ cd ../csvimp && qmake && make
+        $ cd .. && qmake && make
 ```
 
-*Warnings*:
-
-* This environment may not be suitable for building distributable versions of the client.
-* If you open Qt Designer to view or edit a `.ui` user interface file, check the widget palette _before you do anything else_. If there is no section for xTuple widgets, *quit immediately* without saving any changes. Otherwise you risk losing important information about the user interface definition.
+**Warning**:
+If you open Qt Designer to view or edit a `.ui` user interface file, check the widget palette _before you do anything else_. If there is no section for xTuple widgets, _quit immediately_ without saving any changes. Otherwise you risk losing important information about the user interface definition.
