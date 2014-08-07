@@ -1,8 +1,8 @@
 language: cpp
 
 env:
- - BUILD_SHARED_LIBS=true       # for openrpt builds
- - USE_SHARED_OPENRPT=true      # for csvimp to use openrpt shared libs
+# build openrpt .so,        then csvimp and qt-client use the result
+ - BUILD_SHARED_LIBS=true   USE_SHARED_OPENRPT=true
 
 before_install:
  - sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ trusty main universe"
