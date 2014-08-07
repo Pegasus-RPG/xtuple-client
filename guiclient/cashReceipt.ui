@@ -1427,37 +1427,5 @@ to be bound by its terms.</comment>
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>_received</sender>
-   <signal>idChanged(int)</signal>
-   <receiver>_gainLoss</receiver>
-   <slot>setId(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>263</x>
-     <y>123</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>204</x>
-     <y>421</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_received</sender>
-   <signal>effectiveChanged(QDate)</signal>
-   <receiver>_gainLoss</receiver>
-   <slot>setEffective(QDate)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>263</x>
-     <y>123</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>204</x>
-     <y>421</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>
