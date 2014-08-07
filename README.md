@@ -5,6 +5,8 @@
 for the xTuple ERP desktop client. xTuple ERP is a collection of programs
 designed to help you run your business.
 
+_Note to haxTuple participants_: Please read [this](https://github.com/xtuple/xtuple/wiki/haxTuple-2014) before you start and remember to use `haxtuple` as the base of your branches and as the destination of pull requests.
+
 ## Getting Help
 
 To learn more about:
@@ -16,8 +18,9 @@ To learn more about:
 
 ## Development Quickstart
 
-We are updating our full Development Environment Setup docs. We're also building a Linux virtual machine in which this is already done.
-Meanwhile, here's a brief description of how to set up a development environment:
+We are updating our full Development Environment Setup docs. We've also built a [Linux virtual machine](https://github.com/xtuple/xtuple-vagrant/blob/master/xtuple-desktop/README.md) you can use.
+
+Here's a brief description of how to get started:
 
 * Install Postgres 9.1, including libraries and header files. We strongly suggest that you build from source.
   * Start [here](http://www.postgresql.org/download/) and use the *File Browser* to get a source bundle for 9.1.x.
