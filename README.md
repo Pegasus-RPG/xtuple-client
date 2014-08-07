@@ -18,9 +18,7 @@ To learn more about:
 
 ## Development Quickstart
 
-We are updating our full Development Environment Setup docs. We've also built a [Linux virtual machine](https://github.com/xtuple/xtuple-vagrant/blob/master/xtuple-desktop/README.md) you can use.
-
-Here's a brief description of how to get started:
+We built a [Linux virtual machine](https://github.com/xtuple/xtuple-vagrant/blob/master/xtuple-desktop/README.md) you can use for desktop client development. If you want to set things up on your own, here's how:
 
 * Install Postgres 9.1, including libraries and header files. We strongly suggest that you build from source.
   * Start [here](http://www.postgresql.org/download/) and use the *File Browser* to get a source bundle for 9.1.x.
