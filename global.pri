@@ -51,10 +51,6 @@ isEmpty( CSVIMP_HEADERS ) {
   error("Could not set the CSVIMP_HEADERS qmake variable.")
 }
 
-# Use a shared library version of openrpt library dependency
-USE_SHARED_OPENRPT = $$(USE_SHARED_OPENRPT)
-! isEmpty( USE_SHARED_OPENRPT ) { CONFIG += openrpt_shared }
-
 exists($${OPENRPT_LIBDIR}/libdmtx.$${QMAKE_EXTENSION_SHLIB}) {
   DMTXLIB = -ldmtx
 }
@@ -102,33 +98,10 @@ isEmpty( OPENRPT_IMAGE_DIR ) {
   }
 }
 
-# If this environment variable is set, libxtuplecommon is built
-# as a shared object.
-BUILD_XTCOMMON_SHARED = $$(BUILD_XTCOMMON_SHARED)
-! isEmpty( BUILD_XTCOMMON_SHARED ) {
-  CONFIG += xtcommon_shared
-}
-
-openrpt_shared {
-  OPENRPTLIBEXT = $${QMAKE_EXTENSION_SHLIB}
-} else {
-  win32-msvc* {
-    OPENRPTLIBEXT = lib
-  } else {
-    OPENRPTLIBEXT = a
-  }
-}
-
-xtcommon_shared {
-  XTLIBEXT = $${QMAKE_EXTENSION_SHLIB}
-} else {
-  win32-msvc* {
-    XTLIBEXT = lib
-  } else {
-    XTLIBEXT = a
-  }
-}
-
+OPENRPTLIBEXT = $${QMAKE_EXTENSION_SHLIB}
+XTLIBEXT      = $${QMAKE_EXTENSION_SHLIB}
+isEmpty( OPENRPTLIBEXT ) { OPENRPTLIBEXT = .so }
+isEmpty( XTLIBEXT      ) { XTLIBEXT      = .so }
 
 macx:exists(macx.pri) {
   include(macx.pri)

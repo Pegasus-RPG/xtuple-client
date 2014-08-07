@@ -15,7 +15,6 @@ INCLUDEPATH += ../scriptapi \
 
 DEPENDPATH  += $${INCLUDEPATH}
 
-
 win32-msvc* {
   PRE_TARGETDEPS += ../lib/xtuplecommon.$${XTLIBEXT}    \
                     ../lib/xtuplescriptapi.lib          \
