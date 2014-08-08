@@ -871,6 +871,14 @@ void ItemLineEdit::sParse()
         setId(item.value("item_id").toInt());
         return;
       }
+      // nothing found, start search
+      ParameterList params;
+      params.append("search", text().trimmed().toUpper());
+      params.append("searchNumber");
+      params.append("searchUpc");
+      params.append("searchAlias");
+      sSearch(params);
+      return;
     }
     setId(-1);
   }
@@ -1244,6 +1252,10 @@ void itemSearch::set(const ParameterList &pParams)
   if (valid)
     _searchUpc->setChecked(true);
 
+  param = pParams.value("searchAlias", &valid);
+  if (valid)
+    _searchAlias->setChecked(true);
+  
   sFillList();
 }
 
