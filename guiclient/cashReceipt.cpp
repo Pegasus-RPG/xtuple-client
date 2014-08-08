@@ -1160,14 +1160,13 @@ void cashReceipt::sUpdateGainLoss()
   if (_altExchRate->isChecked())
   {
     XSqlQuery gainLoss;
-    QString sql = QString("SELECT ROUND((curr_rate - ROUND(:cashrcpt_alt_curr_rate, 8)) * :cashrcpt_amount_base, 2) AS gainloss "
-                          "FROM curr_rate "
-                          "WHERE ( (:cashrcpt_curr_id=curr_id)"
-                          "  AND (:cashrcpt_distdate BETWEEN curr_effective AND curr_expires) );");
+    QString sql = QString("SELECT ROUND((:cashrcpt_amount / ROUND(:cashrcpt_alt_curr_rate, 8)) - "
+                          "             (:cashrcpt_amount / currRate(:cashrcpt_curr_id, :cashrcpt_distdate))"
+                          "             , 2) AS gainloss;");
     gainLoss.prepare(sql);
     gainLoss.bindValue(":cashrcpt_curr_id", _received->id());
     gainLoss.bindValue(":cashrcpt_distdate", _applDate->date());
-    gainLoss.bindValue(":cashrcpt_amount_base", _received->baseValue());
+    gainLoss.bindValue(":cashrcpt_amount", _received->localValue());
     if (_metrics->value("CurrencyExchangeSense").toInt() == 1)
       gainLoss.bindValue(":cashrcpt_alt_curr_rate", 1.0 / _exchRate->toDouble());
     else
