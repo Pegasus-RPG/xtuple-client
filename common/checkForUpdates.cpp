@@ -41,6 +41,26 @@
 
 #define DEBUG false
 
+class Sudoable : public QProcess {
+  public:
+    void start(const QString password, const QString &program, OpenMode mode = ReadWrite)
+    {
+      if (DEBUG)
+        qDebug() << "starting" << QString(password.isEmpty() ? "" : "sudo")
+                 << program;
+      if (password.isEmpty())
+        QProcess::start(program, mode);
+      else
+      {
+        QProcess::start("sudo -S " + program, mode);
+        waitForStarted();
+        write(password.toLocal8Bit());
+        write("\n");
+      }
+      if (DEBUG) qDebug() << "started";
+    };
+};
+
 class checkForUpdatesPrivate {
   public:
     checkForUpdatesPrivate(checkForUpdates *parent) { Q_UNUSED(parent); };
@@ -240,12 +260,10 @@ void checkForUpdates::startUpdate()
                      + "/xtuple";
 #endif
     QFileInfo destdirinfo(QDir::currentPath() + QDir::separator() + destdir);
-    QString sudo;
     QString password;
-    QProcess sh;
-    bool ok    = false;
+    Sudoable sh;
+    bool ok = false;
     if (! destdirinfo.isWritable()) {
-      sudo = "sudo -S";
       bool retry = false;
       do {
         password = QInputDialog::getText(0, tr("Need Password to Install"),
@@ -259,44 +277,24 @@ void checkForUpdates::startUpdate()
           reject();
           return;
         }
-        if (DEBUG) qDebug() << "checking password";
-        sh.start("sudo -S echo testing");
-        sh.waitForStarted();
-        sh.write(password.toLocal8Bit());
-        sh.write("\n");
+        sh.start(password, "echo testing");
         if (! sh.waitForFinished(1000))
           sh.terminate();
         retry = QString(sh.readAllStandardError()).contains(tr("Password:"));
       } while (retry);
     }
 
-    QString unpack = QString("%1 tar -xf %2 -C %3")
-                            .arg(sudo)
+    QString unpack = QString("tar -xf %1 -C %2")
                             .arg(downloadinfo.absoluteFilePath())
                             .arg(destdirinfo.absoluteFilePath());
-    if (DEBUG) qDebug() << "about to start" << unpack;
-    sh.start(unpack);
-    sh.waitForStarted();
-    if (! password.isEmpty()) {
-      sh.write(password.toLocal8Bit());
-      sh.write("\n");
-    }
-    if (DEBUG) qDebug() << "started";
-
+    sh.start(password, unpack);
     ok = sh.waitForFinished();
     if (ok) {
       if (DEBUG) qDebug() << "tar finished";
       sh.close();
       QFileInfo path(filename);
       QString filepath = path.absoluteFilePath();
-      if (DEBUG) qDebug() << "setting permissions on " << filepath;
-      sh.start(QString("%1 chmod a+x %2").arg(sudo).arg(filepath));
-      sh.waitForStarted();
-      if (! password.isEmpty()) {
-        sh.write(password.toLocal8Bit());
-        sh.write("\n");
-      }
-      if (DEBUG) qDebug() << "started";
+      sh.start(password, QString("chmod a+x %1").arg(filepath));
       if (! sh.waitForFinished(1000))
       {
         sh.terminate();
