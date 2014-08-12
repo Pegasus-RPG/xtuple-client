@@ -25,12 +25,15 @@ public:
     reconcileBankaccount(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~reconcileBankaccount();
 
+    Q_INVOKABLE static void   openReconcileBankaccount( int pBankaccntid, QWidget *parent = 0 );
+
 public slots:
     virtual void populate();
     virtual void sAddAdjustment();
     virtual void sBankaccntChanged();
     virtual void sCancel();
     virtual void sChecksToggleCleared();
+    virtual void sImport();
     virtual void sReceiptsToggleCleared();
     virtual void sReconcile();
     virtual bool sSave(bool = true);
