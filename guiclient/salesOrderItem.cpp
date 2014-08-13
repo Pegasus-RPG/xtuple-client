@@ -293,6 +293,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _supplyOrderId = -1;
   _supplyOrderQtyCache = 0.0;
   _supplyOrderQtyOrderedCache = 0.0;
+  _supplyOrderQtyOrderedInvCache = 0.0;
   _supplyOrderDueDateCache = QDate();
   _supplyOrderScheduledDateCache = QDate();
   _supplyOrderDropShipCache = false;
@@ -2613,12 +2614,14 @@ void salesOrderItem::sHandleSupplyOrder()
     else
     {  // supply order exists
       // first process any potential changes
-      if ( (_qtyOrdered->toDouble() != _supplyOrderQtyOrderedCache) ||
+      
+      double qtyordinv = (_qtyOrdered->toDouble() * _qtyinvuomratio);
+      if ( (qtyordinv != _supplyOrderQtyOrderedInvCache) ||
            (_supplyOrderQty->toDouble() != _supplyOrderQtyCache) )
       { // Qty ordered change
         if (_supplyOrderType == "W")
         { // WO qty change
-          if (_qtyOrdered->toDouble() != _supplyOrderQtyOrderedCache)
+          if (qtyordinv != _supplyOrderQtyOrderedInvCache)
           { // qty ordered changed
             bool applychange = false;
             if (_mode == cNew)
@@ -2627,7 +2630,7 @@ void salesOrderItem::sHandleSupplyOrder()
                                            tr("<p>The Quantity Ordered for this Line Item has changed "
                                               "from %1 to %2."
                                               "<p>Should the W/O quantity for this Line Item be changed?")
-                                           .arg(_supplyOrderQtyOrderedCache).arg(_qtyOrdered->toDouble()),
+                                           .arg(_supplyOrderQtyOrderedInvCache).arg(qtyordinv),
                                            QMessageBox::No | QMessageBox::Escape,
                                            QMessageBox::Yes  | QMessageBox::Default) == QMessageBox::Yes)
               applychange = true;
@@ -2686,7 +2689,7 @@ void salesOrderItem::sHandleSupplyOrder()
             return;
           }
           
-          if (_qtyOrdered->toDouble() != _supplyOrderQtyOrderedCache)
+          if (qtyordinv != _supplyOrderQtyOrderedInvCache)
           { // qty ordered changed
             bool applychange = false;
             if (_mode == cNew)
@@ -2695,7 +2698,7 @@ void salesOrderItem::sHandleSupplyOrder()
                                            tr("<p>The Quantity Ordered for this Line Item has changed "
                                               "from %1 to %2."
                                               "<p>Should the P/O quantity for this Line Item be changed?")
-                                           .arg(_supplyOrderQtyOrderedCache).arg(_qtyOrdered->toDouble()),
+                                           .arg(_supplyOrderQtyOrderedInvCache).arg(qtyordinv),
                                            QMessageBox::Yes | QMessageBox::Default,
                                            QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
               applychange = true;
@@ -2745,7 +2748,7 @@ void salesOrderItem::sHandleSupplyOrder()
         } // end PO qty change
         else if (_supplyOrderType == "R")
         { // PR qty change
-          if (_qtyOrdered->toDouble() != _supplyOrderQtyOrderedCache)
+          if (qtyordinv != _supplyOrderQtyOrderedInvCache)
           { // qty ordered changed
             bool applychange = false;
             if (_mode == cNew)
@@ -2754,7 +2757,7 @@ void salesOrderItem::sHandleSupplyOrder()
                                            tr("<p>The Supply Order Quantity for this Line Item has changed "
                                               "from %1 to %2."
                                               "<p>Should the P/R quantity for this Line Item be changed?")
-                                           .arg(_supplyOrderQtyOrderedCache).arg(_qtyOrdered->toDouble()),
+                                           .arg(_supplyOrderQtyOrderedInvCache).arg(qtyordinv),
                                            QMessageBox::Yes | QMessageBox::Default,
                                            QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
               applychange = true;
@@ -3230,6 +3233,7 @@ void salesOrderItem::sHandleSupplyOrder()
       _supplyOrderStatus->clear();
       _supplyOrderQtyCache = 0.0;
       _supplyOrderQtyOrderedCache = 0.0;
+      _supplyOrderQtyOrderedInvCache = 0.0;
       _supplyOrderQty->clear();
       _supplyOrderDueDateCache = QDate();
       _supplyOrderScheduledDateCache = _scheduledDate->date();
@@ -3429,6 +3433,7 @@ void salesOrderItem::sPopulateOrderInfo()
   _supplyOrderDropShipCache = _supplyDropShip->isChecked();
   _supplyOverridePriceCache = _supplyOverridePrice->localValue();
   _supplyOrderQtyOrderedCache = _qtyOrdered->toDouble();
+  _supplyOrderQtyOrderedInvCache = _qtyOrdered->toDouble() * _qtyinvuomratio;
   _supplyOrderScheduledDateCache = _scheduledDate->date();
 
   if (_mode == cNew || _mode == cEdit)
@@ -3880,6 +3885,7 @@ void salesOrderItem::populate()
     _qtyOrderedCache = item.value("qtyord").toDouble();
     _qtyOrdered->setDouble(_qtyOrderedCache);
     _supplyOrderQtyOrderedCache = _qtyOrderedCache;
+    _supplyOrderQtyOrderedInvCache = _qtyOrderedCache * _qtyinvuomratio;
     _scheduledDateCache = item.value("coitem_scheddate").toDate();
     _supplyOrderScheduledDateCache = _scheduledDateCache;
     _scheduledDate->setDate(_scheduledDateCache);
