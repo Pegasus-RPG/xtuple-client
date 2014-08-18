@@ -91,6 +91,7 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
   _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   _order->setFromSitePrivsEnforced(TRUE);
+  _order->setFocus();
 
   _bcQty->setValidator(omfgThis->qtyVal());
 
