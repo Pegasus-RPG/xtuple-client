@@ -127,7 +127,8 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
 	    systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
 	    return UndefinedError;
       }
-      _save->setEnabled(false);
+      sPopulateNumber();
+      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {
