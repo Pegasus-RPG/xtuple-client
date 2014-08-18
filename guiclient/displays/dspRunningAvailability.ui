@@ -147,7 +147,7 @@ to be bound by its terms.</comment>
            <item>
             <widget class="QLabel" name="_qohLit">
              <property name="text">
-              <string>QOH:</string>
+              <string>Netable QOH:</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

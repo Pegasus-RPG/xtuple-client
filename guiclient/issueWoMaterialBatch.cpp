@@ -46,7 +46,7 @@ issueWoMaterialBatch::issueWoMaterialBatch(QWidget* parent, const char* name, bo
   _womatl->addColumn(tr("Issue Method"), _itemColumn, Qt::AlignCenter, true,  "issuemethod" );
   _womatl->addColumn(tr("Picklist"),     _itemColumn, Qt::AlignCenter, true,  "picklist" );
   _womatl->addColumn(tr("Required"),     _qtyColumn,  Qt::AlignRight,  true,  "required"  );
-  _womatl->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight,  true,  "itemsite_qtyonhand"  );
+  _womatl->addColumn(tr("Netable QOH"),  _qtyColumn,  Qt::AlignRight,  true,  "netableqoh"  );
   _womatl->addColumn(tr("Short"),        _qtyColumn,  Qt::AlignRight,  true,  "short"  );
 }
 
@@ -252,14 +252,14 @@ void issueWoMaterialBatch::sFillList()
                     "   ELSE "
                     "     (womatl_qtyiss * -1) "
                     "   END AS required,"
-                    " itemsite_qtyonhand,"
-                    " abs(noneg((itemsite_qtyonhand - womatl_qtyreq) * -1)) AS short,"
+                    " qtyNetable(itemsite_id) AS netableqoh,"
+                    " abs(noneg((qtyNetable(itemsite_id) - womatl_qtyreq) * -1)) AS short,"
                     " 'qty' AS required_xtnumericrole,"
-                    " 'qty' AS itemsite_qtyonhand_xtnumericrole,"
+                    " 'qty' AS netableqoh_xtnumericrole,"
                     " 'qty' AS short_xtnumericrole,"
                     " CASE WHEN (womatl_issuemethod = 'L') THEN 'blue'"
                     " END AS issuemethod_qtforegroundrole, "
-                    " CASE WHEN (abs(noneg((itemsite_qtyonhand - womatl_qtyreq) * -1)) > 0.0) THEN 'red'"
+                    " CASE WHEN (abs(noneg((qtyNetable(itemsite_id) - womatl_qtyreq) * -1)) > 0.0) THEN 'red'"
                     " END AS short_qtforegroundrole "
                     "FROM womatl, itemsite, item, uom "
                     "WHERE ((womatl_itemsite_id=itemsite_id)"

@@ -350,7 +350,7 @@ void dspRunningAvailability::sFillList()
   ParameterList params;
   if (setParams(params) && _ready)
   {
-    dspFillList.prepare( "SELECT itemsite_qtyonhand,"
+    dspFillList.prepare( "SELECT qtyNetable(itemsite_id) AS netqoh,"
                "       CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
                "       CASE WHEN(itemsite_useparams) THEN itemsite_ordertoqty   ELSE 0.0 END AS ordertoqty,"
                "       CASE WHEN(itemsite_useparams) THEN itemsite_multordqty   ELSE 0.0 END AS multorderqty "
@@ -363,7 +363,7 @@ void dspRunningAvailability::sFillList()
     dspFillList.exec();
     if (dspFillList.first())
     {
-      _qoh->setDouble(dspFillList.value("itemsite_qtyonhand").toDouble());
+      _qoh->setDouble(dspFillList.value("netqoh").toDouble());
       _reorderLevel->setDouble(dspFillList.value("reorderlevel").toDouble());
       _orderMultiple->setDouble(dspFillList.value("multorderqty").toDouble());
       _orderToQty->setDouble(dspFillList.value("ordertoqty").toDouble());

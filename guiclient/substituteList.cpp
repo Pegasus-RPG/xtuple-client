@@ -36,7 +36,7 @@ substituteList::substituteList(QWidget* parent, const char* name, bool modal, Qt
 
   _subs->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,   true,  "item_number"  );
   _subs->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true,  "itemdescrip"  );
-  _subs->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight,  true,  "qoh" );
+  _subs->addColumn(tr("Netable QOH"),  _qtyColumn,  Qt::AlignRight,  true,  "netableqoh" );
   _subs->addColumn(tr("Norm. QOH"),    _qtyColumn,  Qt::AlignRight,  true,  "normqoh" );
   _subs->addColumn(tr("Availability"), _qtyColumn,  Qt::AlignRight,  true,  "available" );
   _subs->addColumn(tr("Norm. Avail."), _qtyColumn,  Qt::AlignRight,  true,  "normavailable" );
@@ -146,17 +146,17 @@ void substituteList::sFillList()
   if (_source == "I")
   {
     sql = "SELECT item_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-          "       (itemsite_qtyonhand) AS qoh,"
-          "       (itemsite_qtyonhand * uomratio) AS normqoh,"
+          "       netableqoh,"
+          "       (netableqoh * uomratio) AS normqoh,"
           "       (available) AS available,"
           "       (available * uomratio) AS normavailable,"
           "       uomratio,"
-          "       'qty' AS qoh_xtnumericrole,"
+          "       'qty' AS netableqoh_xtnumericrole,"
           "       'qty' AS normqoh_xtnumericrole,"
           "       'qty' AS available_xtnumericrole,"
           "       'qty' AS normavailable_xtnumericrole "
           "FROM ( SELECT item_id, item_number, item_descrip1, item_descrip2,"
-          "       itemsite_qtyonhand, itemsub_uomratio AS uomratio, itemsub_rank AS rank,";
+          "       qtyNetable(itemsite_id) AS netableqoh, itemsub_uomratio AS uomratio, itemsub_rank AS rank,";
 
     if (_byLeadTime->isChecked())
       sql += " qtyAvailable(itemsite_id, itemsite_leadtime) AS available ";
@@ -175,17 +175,17 @@ void substituteList::sFillList()
   else if (_source == "B")
   {
     sql = "SELECT item_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-          "       (itemsite_qtyonhand) AS qoh,"
-          "       (itemsite_qtyonhand * uomratio) AS normqoh,"
+          "       netableqoh,"
+          "       (netableqoh * uomratio) AS normqoh,"
           "       (available) AS available,"
           "       (available * uomratio) AS normavailable,"
           "       uomratio,"
-          "       'qty' AS qoh_xtnumericrole,"
+          "       'qty' AS netableqoh_xtnumericrole,"
           "       'qty' AS normqoh_xtnumericrole,"
           "       'qty' AS available_xtnumericrole,"
           "       'qty' AS normavailable_xtnumericrole "
           "FROM ( SELECT item_id, item_number, item_descrip1, item_descrip2,"
-          "       itemsite_qtyonhand, bomitemsub_uomratio AS uomratio, bomitemsub_rank AS rank,";
+          "       qtyNetable(itemsite_id) AS netableqoh, bomitemsub_uomratio AS uomratio, bomitemsub_rank AS rank,";
 
     if (_byLeadTime->isChecked())
       sql += " qtyAvailable(itemsite_id, itemsite_leadtime) AS available ";
@@ -202,7 +202,7 @@ void substituteList::sFillList()
            " AND (itemsite_id<>:itemsite_id) ) "
            "UNION "
            "SELECT item_id, item_number, item_descrip1, item_descrip2,"
-           "       si.itemsite_qtyonhand, 1/bomitemsub_uomratio AS uomratio, 0 AS rank,";
+           "       qtyNetable(si.itemsite_id) AS netableqoh, 1/bomitemsub_uomratio AS uomratio, 0 AS rank,";
 
     if (_byLeadTime->isChecked())
       sql += " qtyAvailable(si.itemsite_id, si.itemsite_leadtime) AS available ";

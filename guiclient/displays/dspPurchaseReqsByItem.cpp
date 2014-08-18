@@ -37,7 +37,7 @@ dspPurchaseReqsByItem::dspPurchaseReqsByItem(QWidget* parent, const char*, Qt::W
   list()->addColumn(tr("Create Date"),  _dateColumn,   Qt::AlignCenter, true,  "pr_createdate"  );
   list()->addColumn(tr("Due Date"),     _dateColumn,   Qt::AlignCenter, true,  "pr_duedate" );
   list()->addColumn(tr("Qty."),         _qtyColumn,    Qt::AlignRight,  true,  "pr_qtyreq"  );
-  list()->addColumn(tr("QOH"),          _qtyColumn,    Qt::AlignRight,  true,  "itemsite_qtyonhand"  );
+  list()->addColumn(tr("Netable QOH"),  _qtyColumn,    Qt::AlignRight,  true,  "netableqoh"  );
   list()->addColumn(tr("Reorder Lvl."), _qtyColumn,    Qt::AlignRight,  true,  "itemsite_reorderlevel"  );
   list()->addColumn(tr("Notes"),        -1,            Qt::AlignLeft,   true,  "pr_releasenote"  );
 

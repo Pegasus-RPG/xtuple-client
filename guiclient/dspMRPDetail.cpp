@@ -270,7 +270,7 @@ void dspMRPDetail::sFillMRPDetail()
       if (counter == 1)
       {
         runningFirmed = dspFillMRPDetail.value("firmedorders1").toDouble();
-        runningAvailability = (dspFillMRPDetail.value("itemsite_qtyonhand").toDouble() - dspFillMRPDetail.value("allocations1").toDouble() + dspFillMRPDetail.value("orders1").toDouble());
+        runningAvailability = (dspFillMRPDetail.value("qoh").toDouble() - dspFillMRPDetail.value("allocations1").toDouble() + dspFillMRPDetail.value("orders1").toDouble());
 
         qoh                = new XTreeWidgetItem(_mrp, 0, QVariant(tr("Projected QOH")), dspFillMRPDetail.value("f_qoh"));
         allocations        = new XTreeWidgetItem(_mrp, qoh, 0, QVariant(tr("Allocations")), formatQty(dspFillMRPDetail.value("allocations1").toDouble()));

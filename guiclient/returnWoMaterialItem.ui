@@ -192,7 +192,7 @@ to be bound by its terms.</comment>
              </size>
             </property>
             <property name="text">
-             <string>QOH Before:</string>
+             <string>Netable QOH Before:</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -221,7 +221,7 @@ to be bound by its terms.</comment>
              </size>
             </property>
             <property name="text">
-             <string>QOH After:</string>
+             <string>Netable QOH After:</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
