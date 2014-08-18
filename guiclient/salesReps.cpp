@@ -17,6 +17,8 @@
 
 #include <parameter.h>
 #include <openreports.h>
+#include <metasql.h>
+#include <mqlutil.h>
 
 #include "errorReporter.h"
 #include "guiclient.h"
@@ -33,6 +35,7 @@ salesReps::salesReps(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(omfgThis, SIGNAL(salesRepUpdated(int)), this, SLOT(sFillList()));
+  connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_salesrep, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
@@ -119,8 +122,18 @@ void salesReps::sView()
 
 void salesReps::sFillList()
 {
-  XSqlQuery getq;
-  getq.exec("SELECT * FROM salesrep ORDER BY salesrep_number;" );
+  ParameterList params;
+  if (_showInactive->isChecked())
+    params.append("showInactive");
+
+  QString sql("SELECT * FROM salesrep "
+              "<? if not exists(\"showInactive\") ?>"
+              "WHERE (salesrep_active) "
+              "<? endif ?>"
+              "ORDER BY salesrep_number;" );
+
+  MetaSQLQuery mql(sql);
+  XSqlQuery getq = mql.toQuery(params);
   _salesrep->populate(getq);
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error getting Sales Reps"),
                            getq, __FILE__, __LINE__))
