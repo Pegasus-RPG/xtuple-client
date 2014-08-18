@@ -35,16 +35,12 @@
 #include <shellapi.h>
 #endif
 
-#ifdef Q_OS_MAC
-#include <DiskArbitration/DADisk.h>
-#endif
-
 #include "../guiclient/guiclient.h"
 #include <parameter.h>
 
 #define QT_NO_URL_CAST_FROM_STRING
 
-#define DEBUG true
+#define DEBUG false
 
 class Sudoable : public QProcess {
   public:
@@ -134,30 +130,6 @@ class checkForUpdatesPrivate {
       }
       return true;
     }
-
-#ifdef Q_OS_MAC
-    DADiskMountCallback mountCallback(DADiskRef disk,
-                                      DADissenterRef dissenter,
-                                      void *context)
-    {
-      QString dmgpath(DADiskGetBSDName(disk));
-      QFileInfo destdirinfo(QDir::currentPath() + QDir::separator() + _destdir);
-      Sudoable cp;
-      cp.start(_password,
-               QString("cp -R ") + dmgpath + " "
-             + destdirinfo.absoluteFilePath() + QDir::separator()
-             + "xTuple-" + _serverVersion + ".app");
-      DADiskUnmount(disk, kDADiskUnmountOptionDefault, 0, 0);
-      QString errmsg;
-      if (! makeExecutable(_newExePath, errmsg)) {
-        QMessageBox::critical(this, tr("Permissions Error"),
-                              tr("Couldn't set execute permissions on %1: %2")
-                                .arg(filepath).arg(errmsg));
-        reject();
-      }
-      QProcess::startDetached(filepath, options);
-    }
-#endif
 
     QString _destdir;
     QString _downloadFile;
@@ -339,18 +311,40 @@ void checkForUpdates::startUpdate()
     if (DEBUG) qDebug() << "empty pw?" << _private->_password.isEmpty();
 
 #ifdef Q_OS_MAC
-    CFAllocatorRef allocator = kCFAllocatorDefault;
-    DASessionRef   session   = DASessionCreate(allocator);
-    const char    *name      = downloadinfo.absoluteFilePath().toLatin1.data();
-    DADiskRef      dmg       = DADiskCreateFromBSDName(allocator, session, name);
-    DASessionScheduleWithRunLoop(session, CSRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-    DADiskMount(dmg, 0, kDADiskMountOptionDefault, _private->mountCallback, 0);
+    // mount(2) gave errors trying to mount .dmg as block device
+    sh.start(_private->_password,
+             QString("hdiutil attach ") + downloadinfo.absoluteFilePath());
+    if (! sh.waitForFinished())
+    {
+      QMessageBox::critical(this, tr("Mounting Error"),
+                            tr("<p>Please open %1 and copy xtuple.app to %2.</p>"
+                              "<p>Could not mount .dmg: %3</p>")
+                              .arg(downloadinfo.absoluteFilePath())
+                              .arg(destdirinfo.absoluteFilePath())
+                              .arg(QString(sh.readAllStandardError())));
+      reject();
+      return;
+    }
+
+    QString output = sh.readAllStandardOutput();
+    QRegExp regexp("(/dev/\\S+)\\s+Apple_HFS\\s+(\\S+)");
+    if (DEBUG) qDebug() << regexp.capturedTexts();
+    if (regexp.indexIn(output) == -1) {
+      QMessageBox::critical(this, tr("Unpacking Error"),
+                            tr("Could not find the .dmg mount point.dmg."));
+      reject();
+      return;
+    }
+    QString unpack = QString("cp -R ") + regexp.cap(2) + "/xtuple.app "
+                   + destdirinfo.absoluteFilePath()
+                   + "/xTuple-" + _private->_serverVersion + ".app";
 #endif  // MAC
 #ifdef Q_OS_LINUX
-    QString filename = _private->_newExePath;
     QString unpack = QString("tar -xf %1 -C %2")
                             .arg(downloadinfo.absoluteFilePath())
                             .arg(destdirinfo.absoluteFilePath());
+#endif // LINUX
+    QString filename = _private->_newExePath;
     sh.start(_private->_password, unpack);
     if (! sh.waitForFinished())
     {
@@ -363,8 +357,14 @@ void checkForUpdates::startUpdate()
       reject();
       return;
     }
-    if (DEBUG) qDebug() << "tar finished";
+    if (DEBUG) qDebug() << "finished unpacking";
     sh.close();
+
+#ifdef Q_OS_MAC
+    sh.start(_private->_password, QString("hdiutil detach ") + regexp.cap(2));
+    (void)waitForFinished();
+#endif
+
     QString errmsg;
     if (! _private->makeExecutable(filename, errmsg)) {
       QMessageBox::critical(this, tr("Permissions Error"),
@@ -375,7 +375,6 @@ void checkForUpdates::startUpdate()
     }
     if (QProcess::startDetached(filename, options))
       reject();
-#endif // LINUX
 #endif  // both MAC & LINUX
 #ifdef Q_OS_WIN
     int result = (int)::ShellExecuteA(0, "open", filename.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
