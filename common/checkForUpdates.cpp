@@ -34,15 +34,21 @@
 #include <windows.h>
 #include <shellapi.h>
 #endif
+
+#ifdef Q_OS_MAC
+#include <DiskArbitration/DADisk.h>
+#endif
+
 #include "../guiclient/guiclient.h"
 #include <parameter.h>
 
 #define QT_NO_URL_CAST_FROM_STRING
 
-#define DEBUG false
+#define DEBUG true
 
 class Sudoable : public QProcess {
   public:
+    // TODO: try sudo without -S and feed it password if it asks?
     void start(const QString password, const QString &program, OpenMode mode = ReadWrite)
     {
       if (DEBUG)
@@ -58,45 +64,111 @@ class Sudoable : public QProcess {
         write("\n");
       }
       if (DEBUG) qDebug() << "started";
-    };
+    }
+
+    QString getPassword(bool *ok)
+    {
+      QString password;
+      bool retry = false;
+      do {
+        password = QInputDialog::getText(0, tr("Need Password to Install"),
+                                          tr("Password:"),
+                                          QLineEdit::Password, password, ok);
+        start(password, "echo testing");
+        if (! waitForFinished(1000))
+          terminate();
+        retry = QString(readAllStandardError()).contains(tr("Password:"));
+      } while (retry);
+      return password;
+    }
 };
 
 class checkForUpdatesPrivate {
   public:
-    checkForUpdatesPrivate(checkForUpdates *parent) { Q_UNUSED(parent); };
+    checkForUpdatesPrivate(checkForUpdates *parent, QString serverVersion)
+      : _serverVersion(serverVersion)
+    {
+      Q_UNUSED(parent);
 
-    QString filename() {
 #ifdef Q_OS_MACX
-      QString OS     = "OSX";
-      QString suffix = "tar.gz";
+      _newExePath   = "xTuple-" + _serverVersion + ".app/Contents/MacOS/xtuple";
+      _downloadFile = "xTuple-" + _serverVersion + "-MACi386.dmg";
+      _destdir = ".";
 #endif
 #ifdef Q_OS_WIN
-      QString OS     = "Windows";
-      QString suffix = "exe";
+      _downloadFile = "xTuple-" + _serverVersion + "-Windows.zip";
 #endif
 #ifdef Q_OS_LINUX
-      QString OS     = "Linux";
-      QString suffix = "tar.gz";
+      _newExePath   = "../xTuple-" + _serverVersion + "-Linux/xtuple";
+      _downloadFile = "xTuple-"    + _serverVersion + "-Linux.tar.bz2";
+      _destdir = "..";
 #endif
-      return "xTuple-" + _serverVersion + "-" + OS + "." + suffix;
-    };
+    }
 
     bool ensureWritePriv(QFileInfo dirinfo) {
       if (dirinfo.isWritable())
         return true;
       return false;
-    };
+    }
 
+    /* TODO: QNetworkAccessManager gets RemoteHostClosedError from SF during
+             download redirects. must(?) use QTcpSocket to switch.
+    return QString("http://sourceforge.net/projects/postbooks/files/")
+         + "02%20PostBooks-GUIclient-only/"
+         + _serverVersion + "/" + _downloadFile + "?use_mirror=autoselect";
+     */
     QString urlString() {
-      return "http://updates.xtuple.com/updates/" + filename();
-    };
+      return "http://updates.xtuple.com/updates/" + _downloadFile;
+    }
 
-    QString               _serverVersion;
+    bool makeExecutable(QString filename, QString &errmsg)
+    {
+      QString filepath = QFileInfo(filename).absoluteFilePath();
+      Sudoable proc;
+      proc.start(_password, QString("chmod a+x %1").arg(filepath));
+      if (! proc.waitForFinished(1000))
+      {
+        proc.terminate();
+        errmsg = proc.readAllStandardError();
+        return false;
+      }
+      return true;
+    }
+
+#ifdef Q_OS_MAC
+    DADiskMountCallback mountCallback(DADiskRef disk,
+                                      DADissenterRef dissenter,
+                                      void *context)
+    {
+      QString dmgpath(DADiskGetBSDName(disk));
+      QFileInfo destdirinfo(QDir::currentPath() + QDir::separator() + _destdir);
+      Sudoable cp;
+      cp.start(_password,
+               QString("cp -R ") + dmgpath + " "
+             + destdirinfo.absoluteFilePath() + QDir::separator()
+             + "xTuple-" + _serverVersion + ".app");
+      DADiskUnmount(disk, kDADiskUnmountOptionDefault, 0, 0);
+      QString errmsg;
+      if (! makeExecutable(_newExePath, errmsg)) {
+        QMessageBox::critical(this, tr("Permissions Error"),
+                              tr("Couldn't set execute permissions on %1: %2")
+                                .arg(filepath).arg(errmsg));
+        reject();
+      }
+      QProcess::startDetached(filepath, options);
+    }
+#endif
+
+    QString _destdir;
+    QString _downloadFile;
+    QString _newExePath;
+    QString _password;
+    QString _serverVersion;
 };
 
 checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, modal ? (fl | Qt::Dialog) : fl),
-      reply(NULL)
+      reply(0)
 {
   Q_UNUSED(name);
 
@@ -108,18 +180,17 @@ checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, 
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_ignore,    SIGNAL(clicked()),  this, SLOT(accept()));
 
-  _private = new checkForUpdatesPrivate(this);
-
   XSqlQuery versions, metric;
   versions.exec("SELECT metric_value AS dbver"
                 "  FROM metric"
                 " WHERE (metric_name = 'ServerVersion');");
 
+  QString serverVersion;
   if(versions.first())
   {
-    _private->_serverVersion = versions.value("dbver").toString();
+    serverVersion = versions.value("dbver").toString();
 
-    _label->setText(tr("Your client does not match the server version: %1. Would you like to update?").arg(_private->_serverVersion));
+    _label->setText(tr("Your client does not match the server version: %1. Would you like to update?").arg(serverVersion));
 
     metric.exec("SELECT fetchMetricBool('DisallowMismatchClientVersion') as disallowed;");
     metric.first();
@@ -131,13 +202,15 @@ checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, 
   }
   else if (versions.lastError().type() != QSqlError::NoError)
     systemError(this, versions.lastError().text(), __FILE__, __LINE__);
+
+  _private = new checkForUpdatesPrivate(this, serverVersion);
 }
 
 void checkForUpdates::downloadButtonPressed()
 {
   // TODO: http://qt-project.org/doc/qt-5/qstandardpaths.html
   QUrl url(_private->urlString());
-  QString filename = _private->filename();
+  QString filename = _private->_downloadFile;
   QString tempfile = QDir::tempPath() + QDir::separator() + filename;
 
   if (QFile::exists(tempfile))
@@ -157,7 +230,7 @@ void checkForUpdates::downloadButtonPressed()
                              tr("Unable to save the file %1: %2.")
                                .arg(filename, file->errorString()));
     delete file;
-    file = NULL;
+    file = 0;
     return;
   }
 
@@ -206,7 +279,7 @@ void checkForUpdates::downloadFinished()
             file->close();
             file->remove();
             delete file;
-            file = NULL;
+            file = 0;
         }
         reply->deleteLater();
         progressDialog->hide();
@@ -230,12 +303,11 @@ void checkForUpdates::downloadFinished()
     }
 
     reply->deleteLater();
-    reply = NULL;
+    reply = 0;
 
     delete file;
-    file = NULL;
+    file = 0;
 
-// this->close(); // TODO: is this necessary?
   if (DEBUG) qDebug() << "downloadFinished() returning";
 }
 
@@ -250,66 +322,37 @@ void checkForUpdates::startUpdate()
     QString     subpath;
 
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
-#ifdef Q_OS_MAC
-    QString destdir = ".";
-    QString filename = "xTuple-" + _private->_serverVersion + ".app"
-                     + "/Contents/MacOS/xtuple";
-#else // Q_OS_LINUX
-    QString destdir = "..";
-    QString filename = "../xTuple-" + _private->_serverVersion + "-" + OS
-                     + "/xtuple";
-#endif
-    QFileInfo destdirinfo(QDir::currentPath() + QDir::separator() + destdir);
-    QString password;
+    QFileInfo destdirinfo(QDir::currentPath() + QDir::separator() + _private->_destdir);
     Sudoable sh;
-    bool ok = false;
-    if (! destdirinfo.isWritable()) {
-      bool retry = false;
-      do {
-        password = QInputDialog::getText(0, tr("Need Password to Install"),
-                                         tr("Password:"),
-                                         QLineEdit::Password, password, &ok);
-        if (! ok) {
-          QMessageBox::information(this, tr("Download Saved"),
-                                   tr("The new version has been saved to %1. "
-                                      "Install it manually or delete it.")
-                                   .arg(downloadinfo.absoluteFilePath()));
-          reject();
-          return;
-        }
-        sh.start(password, "echo testing");
-        if (! sh.waitForFinished(1000))
-          sh.terminate();
-        retry = QString(sh.readAllStandardError()).contains(tr("Password:"));
-      } while (retry);
+    if (! destdirinfo.isWritable())
+    {
+      bool ok;
+      _private->_password = sh.getPassword(&ok);
+      if (! ok) {
+        QMessageBox::information(this, tr("Download Saved"),
+                                 tr("The new version has been saved to %1. "
+                                    "Install it manually or delete it.")
+                                 .arg(downloadinfo.absoluteFilePath()));
+        reject();
+      }
     }
+    if (DEBUG) qDebug() << "empty pw?" << _private->_password.isEmpty();
 
+#ifdef Q_OS_MAC
+    CFAllocatorRef allocator = kCFAllocatorDefault;
+    DASessionRef   session   = DASessionCreate(allocator);
+    const char    *name      = downloadinfo.absoluteFilePath().toLatin1.data();
+    DADiskRef      dmg       = DADiskCreateFromBSDName(allocator, session, name);
+    DASessionScheduleWithRunLoop(session, CSRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+    DADiskMount(dmg, 0, kDADiskMountOptionDefault, _private->mountCallback, 0);
+#endif  // MAC
+#ifdef Q_OS_LINUX
+    QString filename = _private->_newExePath;
     QString unpack = QString("tar -xf %1 -C %2")
                             .arg(downloadinfo.absoluteFilePath())
                             .arg(destdirinfo.absoluteFilePath());
-    sh.start(password, unpack);
-    ok = sh.waitForFinished();
-    if (ok) {
-      if (DEBUG) qDebug() << "tar finished";
-      sh.close();
-      QFileInfo path(filename);
-      QString filepath = path.absoluteFilePath();
-      sh.start(password, QString("chmod a+x %1").arg(filepath));
-      if (! sh.waitForFinished(1000))
-      {
-        sh.terminate();
-        QMessageBox::critical(this, tr("Permissions Error"),
-                              tr("Couldn't set execute permissions on %1: %2")
-                                .arg(downloadinfo.absoluteFilePath())
-                                .arg(sh.exitCode())
-                                .arg(QString(sh.readAllStandardError())));
-        reject();
-      }
-      QProcess *newver = new QProcess(this);
-      if (newver->startDetached(filepath, options))
-        reject();
-    }
-    else
+    sh.start(_private->_password, unpack);
+    if (! sh.waitForFinished())
     {
       sh.terminate();
       QMessageBox::critical(this, tr("Unpacking error"),
@@ -320,7 +363,20 @@ void checkForUpdates::startUpdate()
       reject();
       return;
     }
-#endif
+    if (DEBUG) qDebug() << "tar finished";
+    sh.close();
+    QString errmsg;
+    if (! _private->makeExecutable(filename, errmsg)) {
+      QMessageBox::critical(this, tr("Permissions Error"),
+                            tr("Couldn't set execute permissions on %1: %2")
+                              .arg(filename)
+                              .arg(errmsg));
+      reject();
+    }
+    if (QProcess::startDetached(filename, options))
+      reject();
+#endif // LINUX
+#endif  // both MAC & LINUX
 #ifdef Q_OS_WIN
     int result = (int)::ShellExecuteA(0, "open", filename.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
     qDebug() << "result= " << result;
@@ -339,11 +395,11 @@ checkForUpdates::~checkForUpdates()
 {
   if (progressDialog) {
     delete progressDialog;
-    progressDialog = NULL;
+    progressDialog = 0;
   }
   if (_private) {
     delete _private;
-    _private = NULL;
+    _private = 0;
   }
 }
 
