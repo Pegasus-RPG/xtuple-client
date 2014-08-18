@@ -871,14 +871,17 @@ void ItemLineEdit::sParse()
         setId(item.value("item_id").toInt());
         return;
       }
-      // nothing found, start search
-      ParameterList params;
-      params.append("search", text().trimmed().toUpper());
-      params.append("searchNumber");
-      params.append("searchUpc");
-      params.append("searchAlias");
-      sSearch(params);
-      return;
+      if (_x_metrics->boolean("AutoItemSearch"))
+      {
+        // nothing found, start search
+        ParameterList params;
+        params.append("search", text().trimmed().toUpper());
+        params.append("searchNumber");
+        params.append("searchUpc");
+        params.append("searchAlias");
+        sSearch(params);
+        return;
+      }
     }
     setId(-1);
   }
