@@ -79,6 +79,7 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char*, Qt::WFlags fl)
   }
 
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList()));
+  connect(_showClosed, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 }
 
 enum SetResponse openSalesOrders::set(const ParameterList& pParams)
