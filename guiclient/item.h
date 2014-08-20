@@ -34,6 +34,7 @@ public:
     static void viewItem( int pId );
     virtual bool checkSitePrivs( int itemsiteid );
     Q_INVOKABLE virtual int id() { return _itemid; }
+    Q_INVOKABLE virtual int mode() { return _mode; }
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
@@ -95,7 +96,9 @@ protected slots:
     virtual void languageChange();
 
 signals:
+    void populated();
     void newId(int);
+    void newMode(int);
     void saved(int);
 
 private:
