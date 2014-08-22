@@ -32,7 +32,7 @@ dspReservations::dspReservations(QWidget* parent, const char*, Qt::WFlags fl)
   setMetaSQLOptions("reservations", "detail");
 
   _qoh->setPrecision(omfgThis->qtyVal());
-  _netableqoh->setPrecision(omfgThis->qtyVal());
+  _availableqoh->setPrecision(omfgThis->qtyVal());
   _available->setPrecision(omfgThis->qtyVal());
 
   list()->setRootIsDecorated(true);
@@ -207,7 +207,7 @@ void dspReservations::sFillList()
     display::sFillList();
 
     QString avails("SELECT itemsite_qtyonhand,"
-                   "       qtynetable(itemsite_id) AS netableqoh, "
+                   "       qtyavailable(itemsite_id) AS availableqoh, "
                    "       qtyunreserved(itemsite_id) AS unreserved "
                    "FROM itemsite "
                    "WHERE ((itemsite_item_id=<? value(\"item_id\") ?>)"
@@ -217,7 +217,7 @@ void dspReservations::sFillList()
     if (dspFillList.first())
     {
       _qoh->setDouble(dspFillList.value("itemsite_qtyonhand").toDouble());
-      _netableqoh->setDouble(dspFillList.value("netableqoh").toDouble());
+      _availableqoh->setDouble(dspFillList.value("availableqoh").toDouble());
       _available->setDouble(dspFillList.value("unreserved").toDouble());
     }
     else if (dspFillList.lastError().type() != QSqlError::NoError)

@@ -44,7 +44,7 @@ dspInventoryAvailabilityByCustomerType::dspInventoryAvailabilityByCustomerType(Q
   list()->addColumn(tr("Item Number"),     _itemColumn, Qt::AlignLeft,  true, "item_number");
   list()->addColumn(tr("Description"),              -1, Qt::AlignLeft,  true, "descrip");
   list()->addColumn(tr("UOM"),              _uomColumn, Qt::AlignCenter,true, "uom_name");
-  list()->addColumn(tr("Netable QOH"),      _qtyColumn, Qt::AlignRight, true, "qoh");
+  list()->addColumn(tr("Available QOH"),    _qtyColumn, Qt::AlignRight, true, "qoh");
   list()->addColumn(tr("This Alloc."),      _qtyColumn, Qt::AlignRight, true, "sobalance");
   list()->addColumn(tr("Total Alloc."),     _qtyColumn, Qt::AlignRight, true, "allocated");
   list()->addColumn(tr("Orders"),           _qtyColumn, Qt::AlignRight, true, "ordered");

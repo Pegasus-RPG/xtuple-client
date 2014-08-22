@@ -139,7 +139,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _woIndentedList->addColumn(tr("Issued"),          _qtyColumn,     Qt::AlignRight     , true,   "qtyiss");
   _woIndentedList->addColumn(tr("Scrap"),           _prcntColumn,   Qt::AlignRight     , false,  "scrap");
   _woIndentedList->addColumn(tr("Received"),        _qtyColumn,     Qt::AlignRight     , true,   "qtyrcv");
-  _woIndentedList->addColumn(tr("Netable QOH"),     _qtyColumn,     Qt::AlignRight     , false,  "qoh");
+  _woIndentedList->addColumn(tr("Available QOH"),   _qtyColumn,     Qt::AlignRight     , false,  "qoh");
   _woIndentedList->addColumn(tr("Short"),           _qtyColumn,     Qt::AlignRight     , false,  "short");
   if (_metrics->boolean("Routings"))
   {

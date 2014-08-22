@@ -42,18 +42,18 @@ dspInventoryAvailabilityBySalesOrder::dspInventoryAvailabilityBySalesOrder(QWidg
 
   omfgThis->inputManager()->notify(cBCSalesOrder, this, _so, SLOT(setId(int)));
 
-  list()->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft,  true, "item_number");
-  list()->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "descrip");
-  list()->addColumn(tr("UOM"),         _uomColumn, Qt::AlignCenter,true, "uom_name");
-  list()->addColumn(tr("Netable QOH"), _qtyColumn, Qt::AlignRight, true, "qoh");
-  list()->addColumn(tr("This Alloc."), _qtyColumn, Qt::AlignRight, true, "sobalance");
-  list()->addColumn(tr("Total Alloc."),_qtyColumn, Qt::AlignRight, true, "allocated");
-  list()->addColumn(tr("Orders"),      _qtyColumn, Qt::AlignRight, true, "ordered");
-  list()->addColumn(tr("This Avail."), _qtyColumn, Qt::AlignRight, true, "orderavail");
-  list()->addColumn(tr("Total Avail."),_qtyColumn, Qt::AlignRight, true, "totalavail");
-  list()->addColumn(tr("At Shipping"), _qtyColumn, Qt::AlignRight, true, "atshipping");
-  list()->addColumn(tr("Start Date"), _dateColumn, Qt::AlignCenter,true, "orderdate");
-  list()->addColumn(tr("Sched. Date"),_dateColumn, Qt::AlignCenter,true, "duedate");
+  list()->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,  true, "item_number");
+  list()->addColumn(tr("Description"),           -1, Qt::AlignLeft,  true, "descrip");
+  list()->addColumn(tr("UOM"),           _uomColumn, Qt::AlignCenter,true, "uom_name");
+  list()->addColumn(tr("Available QOH"), _qtyColumn, Qt::AlignRight, true, "qoh");
+  list()->addColumn(tr("This Alloc."),   _qtyColumn, Qt::AlignRight, true, "sobalance");
+  list()->addColumn(tr("Total Alloc."),  _qtyColumn, Qt::AlignRight, true, "allocated");
+  list()->addColumn(tr("Orders"),        _qtyColumn, Qt::AlignRight, true, "ordered");
+  list()->addColumn(tr("This Avail."),   _qtyColumn, Qt::AlignRight, true, "orderavail");
+  list()->addColumn(tr("Total Avail."),  _qtyColumn, Qt::AlignRight, true, "totalavail");
+  list()->addColumn(tr("At Shipping"),   _qtyColumn, Qt::AlignRight, true, "atshipping");
+  list()->addColumn(tr("Start Date"),   _dateColumn, Qt::AlignCenter,true, "orderdate");
+  list()->addColumn(tr("Sched. Date"),  _dateColumn, Qt::AlignCenter,true, "duedate");
   list()->setIndentation(10);
 
   if(!_metrics->boolean("EnableSOReservations"))

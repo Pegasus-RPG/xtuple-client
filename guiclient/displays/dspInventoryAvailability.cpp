@@ -451,7 +451,7 @@ void dspInventoryAvailability::sByVendorChanged()
   list()->addColumn(tr("Description"),  -1,          Qt::AlignLeft,  true, "itemdescrip");
   list()->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter,true, "uom_name");
   list()->addColumn(tr("LT"),           _whsColumn,  Qt::AlignCenter,true, "itemsite_leadtime");
-  list()->addColumn(tr("Netable QOH"),  _qtyColumn,  Qt::AlignRight, true, "qoh");
+  list()->addColumn(tr("Available QOH"),_qtyColumn,  Qt::AlignRight, true, "qoh");
   list()->addColumn(tr("Allocated"),    _qtyColumn,  Qt::AlignRight, true, "allocated");
   list()->addColumn(tr("Unallocated"),  _qtyColumn,  Qt::AlignRight, true, "unallocated");
   list()->addColumn(tr("On Order"),     _qtyColumn,  Qt::AlignRight, true, "ordered");

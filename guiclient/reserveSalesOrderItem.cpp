@@ -232,7 +232,7 @@ void reserveSalesOrderItem::populate()
   QString sql = "SELECT cohead_number AS order_number,"
                 "       coitem_linenumber,"
                 "       item_id, warehous_code, uom_name,"
-                "       itemsite_id, qtyNetable(itemsite_id) AS netableqoh,"
+                "       itemsite_id, qtyAvailable(itemsite_id) AS availableqoh,"
                 "       qtyReserved(itemsite_id) AS totreserved,"
                 "       qtyUnreserved(itemsite_id) AS totunreserved,"
                 "       coitem_qtyord AS ordered,"
@@ -265,7 +265,7 @@ void reserveSalesOrderItem::populate()
     _shipped->setDouble(itemq.value("shipped").toDouble());
     _atShipping->setDouble(itemq.value("atShipping").toDouble());
     _reserved->setDouble(itemq.value("reserved").toDouble());
-    _onHand->setDouble(itemq.value("netableqoh").toDouble());
+    _onHand->setDouble(itemq.value("availableqoh").toDouble());
     _allocated->setDouble(itemq.value("totreserved").toDouble());
     _unreserved->setDouble(itemq.value("totunreserved").toDouble());
   }

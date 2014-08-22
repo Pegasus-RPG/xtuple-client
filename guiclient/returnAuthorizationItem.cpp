@@ -1637,13 +1637,13 @@ void returnAuthorizationItem::sDetermineAvailability()
   {
     XSqlQuery availability;
     availability.prepare( "SELECT itemsite_id,"
-                          "       netableqoh,"
+                          "       availableqoh,"
                           "       allocated,"
-                          "       noNeg(netableqoh - allocated) AS unallocated,"
+                          "       noNeg(availableqoh - allocated) AS unallocated,"
                           "       ordered,"
-                          "       (netableqoh - allocated + ordered) AS available,"
+                          "       (availableqoh - allocated + ordered) AS available,"
                           "       itemsite_leadtime "
-                          "FROM ( SELECT itemsite_id, qtyNetable(itemsite_id) AS netableqoh,"
+                          "FROM ( SELECT itemsite_id, qtyAvailable(itemsite_id) AS availableqoh,"
                           "              qtyAllocated(itemsite_id, DATE(:date)) AS allocated,"
                           "              qtyOrdered(itemsite_id, DATE(:date)) AS ordered, "
                           "              itemsite_leadtime "
@@ -1657,7 +1657,7 @@ void returnAuthorizationItem::sDetermineAvailability()
     availability.exec();
     if (availability.first())
     {
-      _onHand->setDouble(availability.value("netableqoh").toDouble());
+      _onHand->setDouble(availability.value("availableqoh").toDouble());
       _allocated->setDouble(availability.value("allocated").toDouble());
       _unallocated->setDouble(availability.value("unallocated").toDouble());
       _onOrder->setDouble(availability.value("ordered").toDouble());

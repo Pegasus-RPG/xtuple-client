@@ -37,6 +37,7 @@ locations::locations(QWidget* parent, const char* name, Qt::WFlags fl)
   _location->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft,   true,  "name"   );
   _location->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "locationname"   );
   _location->addColumn(tr("Netable"),     80,          Qt::AlignCenter, true,  "netable" );
+  _location->addColumn(tr("Usable"),      80,          Qt::AlignCenter, true,  "usable" );
   _location->addColumn(tr("Restricted"),  80,          Qt::AlignCenter, true,  "restricted" );
 
   if (_privileges->check("MaintainLocations"))
@@ -168,6 +169,7 @@ void locations::sFillList()
   QString sql( "SELECT location_id, warehous_code, formatLocationName(location_id) AS name,"
                "       firstLine(location_descrip) AS locationname,"
                "       formatBoolYN(location_netable) AS netable,"
+               "       formatBoolYN(location_usable) AS usable,"
                "       formatBoolYN(location_restrict) AS restricted "
                "FROM location, whsinfo "
                "WHERE ( (location_warehous_id=warehous_id)" );

@@ -43,16 +43,16 @@ dspInventoryAvailabilityByWorkOrder::dspInventoryAvailabilityByWorkOrder(QWidget
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
-  list()->addColumn(tr("WO/Item#"),    120, Qt::AlignLeft,  true, "woinvav_item_wo_number");
-  list()->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "woinvav_descrip");
-  list()->addColumn(tr("UOM"),         _uomColumn, Qt::AlignCenter,true, "woinvav_uomname");
-  list()->addColumn(tr("Netable QOH"), _qtyColumn, Qt::AlignRight, true, "woinvav_qoh");
-  list()->addColumn(tr("This Alloc."), _qtyColumn, Qt::AlignRight, true, "woinvav_balance");
-  list()->addColumn(tr("Total Alloc."),_qtyColumn, Qt::AlignRight, true, "woinvav_allocated");
-  list()->addColumn(tr("Orders"),      _qtyColumn, Qt::AlignRight, true, "woinvav_ordered");
-  list()->addColumn(tr("This Avail."), _qtyColumn, Qt::AlignRight, true, "woinvav_woavail");
-  list()->addColumn(tr("Total Avail."),_qtyColumn, Qt::AlignRight, true, "woinvav_totalavail");
-  list()->addColumn(tr("Type"),                 0, Qt::AlignLeft, false, "woinvav_type");
+  list()->addColumn(tr("WO/Item#"),             120, Qt::AlignLeft,  true, "woinvav_item_wo_number");
+  list()->addColumn(tr("Description"),           -1, Qt::AlignLeft,  true, "woinvav_descrip");
+  list()->addColumn(tr("UOM"),           _uomColumn, Qt::AlignCenter,true, "woinvav_uomname");
+  list()->addColumn(tr("Available QOH"), _qtyColumn, Qt::AlignRight, true, "woinvav_qoh");
+  list()->addColumn(tr("This Alloc."),   _qtyColumn, Qt::AlignRight, true, "woinvav_balance");
+  list()->addColumn(tr("Total Alloc."),  _qtyColumn, Qt::AlignRight, true, "woinvav_allocated");
+  list()->addColumn(tr("Orders"),        _qtyColumn, Qt::AlignRight, true, "woinvav_ordered");
+  list()->addColumn(tr("This Avail."),   _qtyColumn, Qt::AlignRight, true, "woinvav_woavail");
+  list()->addColumn(tr("Total Avail."),  _qtyColumn, Qt::AlignRight, true, "woinvav_totalavail");
+  list()->addColumn(tr("Type"),                   0, Qt::AlignLeft, false, "woinvav_type");
 
 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));

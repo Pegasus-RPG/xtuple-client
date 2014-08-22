@@ -40,14 +40,14 @@ issueWoMaterialBatch::issueWoMaterialBatch(QWidget* parent, const char* name, bo
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
-  _womatl->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
-  _womatl->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
-  _womatl->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
-  _womatl->addColumn(tr("Issue Method"), _itemColumn, Qt::AlignCenter, true,  "issuemethod" );
-  _womatl->addColumn(tr("Picklist"),     _itemColumn, Qt::AlignCenter, true,  "picklist" );
-  _womatl->addColumn(tr("Required"),     _qtyColumn,  Qt::AlignRight,  true,  "required"  );
-  _womatl->addColumn(tr("Netable QOH"),  _qtyColumn,  Qt::AlignRight,  true,  "netableqoh"  );
-  _womatl->addColumn(tr("Short"),        _qtyColumn,  Qt::AlignRight,  true,  "short"  );
+  _womatl->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  _womatl->addColumn(tr("Description"),    -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
+  _womatl->addColumn(tr("UOM"),            _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
+  _womatl->addColumn(tr("Issue Method"),   _itemColumn, Qt::AlignCenter, true,  "issuemethod" );
+  _womatl->addColumn(tr("Picklist"),       _itemColumn, Qt::AlignCenter, true,  "picklist" );
+  _womatl->addColumn(tr("Required"),       _qtyColumn,  Qt::AlignRight,  true,  "required"  );
+  _womatl->addColumn(tr("Available QOH"),  _qtyColumn,  Qt::AlignRight,  true,  "availableqoh"  );
+  _womatl->addColumn(tr("Short"),          _qtyColumn,  Qt::AlignRight,  true,  "short"  );
 }
 
 issueWoMaterialBatch::~issueWoMaterialBatch()
@@ -252,14 +252,14 @@ void issueWoMaterialBatch::sFillList()
                     "   ELSE "
                     "     (womatl_qtyiss * -1) "
                     "   END AS required,"
-                    " qtyNetable(itemsite_id) AS netableqoh,"
-                    " abs(noneg((qtyNetable(itemsite_id) - womatl_qtyreq) * -1)) AS short,"
+                    " qtyAvailable(itemsite_id) AS availableqoh,"
+                    " abs(noneg((qtyAvailable(itemsite_id) - womatl_qtyreq) * -1)) AS short,"
                     " 'qty' AS required_xtnumericrole,"
-                    " 'qty' AS netableqoh_xtnumericrole,"
+                    " 'qty' AS availableqoh_xtnumericrole,"
                     " 'qty' AS short_xtnumericrole,"
                     " CASE WHEN (womatl_issuemethod = 'L') THEN 'blue'"
                     " END AS issuemethod_qtforegroundrole, "
-                    " CASE WHEN (abs(noneg((qtyNetable(itemsite_id) - womatl_qtyreq) * -1)) > 0.0) THEN 'red'"
+                    " CASE WHEN (abs(noneg((qtyAvailable(itemsite_id) - womatl_qtyreq) * -1)) > 0.0) THEN 'red'"
                     " END AS short_qtforegroundrole "
                     "FROM womatl, itemsite, item, uom "
                     "WHERE ((womatl_itemsite_id=itemsite_id)"
