@@ -92,7 +92,9 @@ class checkForUpdatesPrivate {
       _destdir = ".";
 #endif
 #ifdef Q_OS_WIN
+      _newExePath   = "xTuple-" + _serverVersion + "-Windows/xtuple.exe";
       _downloadFile = "xTuple-" + _serverVersion + "-Windows.zip";
+      _destdir      = ".";
 #endif
 #ifdef Q_OS_LINUX
       _newExePath   = "../xTuple-" + _serverVersion + "-Linux/xtuple";
@@ -187,7 +189,16 @@ void checkForUpdates::downloadButtonPressed()
 
   if (QFile::exists(tempfile))
   {
-    QString newname = tempfile + "-%1";
+    QRegExp splitname("^(.*)\\.([^.]*$)");
+    if (DEBUG) qDebug() << splitname.capturedTexts();
+    if (splitname.indexIn(filename) == -1) {
+      QMessageBox::information(this, tr("Download Failed"),
+                               tr("Could not find extension on %1.")
+                                 .arg(filename));
+      return;
+    }
+    QString newname  = QDir::tempPath() + QDir::separator()
+                     + splitname.cap(1) + "-%1." + splitname.cap(2);
     int i = 1;
     while (QFile::exists(newname.arg(i)))
       i++;
@@ -291,7 +302,6 @@ void checkForUpdates::startUpdate()
   {
     QFileInfo   downloadinfo(*file);
     QStringList options;
-    QString     subpath;
 
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     QFileInfo destdirinfo(QDir::currentPath() + QDir::separator() + _private->_destdir);
@@ -344,7 +354,6 @@ void checkForUpdates::startUpdate()
                             .arg(downloadinfo.absoluteFilePath())
                             .arg(destdirinfo.absoluteFilePath());
 #endif // LINUX
-    QString filename = _private->_newExePath;
     sh.start(_private->_password, unpack);
     if (! sh.waitForFinished())
     {
@@ -366,27 +375,64 @@ void checkForUpdates::startUpdate()
 #endif
 
     QString errmsg;
-    if (! _private->makeExecutable(filename, errmsg)) {
+    if (! _private->makeExecutable(_private->_newExePath, errmsg)) {
       QMessageBox::critical(this, tr("Permissions Error"),
                             tr("Couldn't set execute permissions on %1: %2")
-                              .arg(filename)
+                              .arg(_private->_newExePath)
                               .arg(errmsg));
       reject();
     }
-    if (QProcess::startDetached(filename, options))
-      reject();
 #endif  // both MAC & LINUX
 #ifdef Q_OS_WIN
-    int result = (int)::ShellExecuteA(0, "open", filename.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
-    qDebug() << "result= " << result;
-    if (SE_ERR_ACCESSDENIED == result)
+    QString script("zipFile = \"%1\"\n"
+                   "destDir = \"%2\"\n"
+                   "set fs  = CreateObject(\"Scripting.FileSystemObject\")\n"
+                   "set app = CreateObject(\"Shell.Application\")\n"
+                   "set zipAsDir = app.NameSpace(zipFile)\n"
+                   "if (zipAsDir is nothing) then\n"
+                   "  WScript.echo(\"Could not open \" & zipFile)\n"
+                   "else\n"
+                   "  set destAsDir = app.NameSpace(destDir)\n"
+                   "  if (destAsDir is nothing) then\n"
+                   "    WScript.echo(\"Could not open \" & destDir)\n"
+                   "  else\n"
+                   "    destAsDir.CopyHere zipAsDir.Items(), 256\n"
+                   "  end if\n"
+                   "end if\n"
+                  ); // copyHere: 256 => show progress dialog
+    script = script.arg(QDir::toNativeSeparators(downloadinfo.absoluteFilePath()))
+                   .arg(QDir::toNativeSeparators(QFileInfo(_private->_destdir).absoluteFilePath()));
+
+    QString scriptName = QDir::tempPath() + QDir::separator() + "unzip.vbs";
+    QFile   scriptFile(scriptName);
+    if (DEBUG) qDebug() << scriptName << ":" << script;
+    if (scriptFile.open(QIODevice::WriteOnly))
     {
-      result = (int)::ShellExecuteA(0, "runas", filename.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
+      if (DEBUG) qDebug() << "writing to" << scriptName;
+      scriptFile.write(script.toLatin1().data());
+      scriptFile.close();
+
+      QProcess scriptProc;
+      if (DEBUG) qDebug() << "starting" << scriptName;
+      scriptProc.start(QString("cscript %1").arg(scriptName));
+      (void)scriptProc.waitForFinished();
+      scriptFile.remove();
+    }
+
+    QString newExePath = QFileInfo(_private->_destdir).absoluteFilePath() +
+                         "/" + _private->_newExePath;
+    if (DEBUG) qDebug() << "looking for" << newExePath;
+    if (! QFile::exists(newExePath))
+    {
+      QMessageBox::critical(this, tr("Could Not Unpack"),
+                            tr("The file was downloaded but could not be "
+                               "unpacked. Try installing %1 manually.")
+                            .arg(downloadinfo.absoluteFilePath()));
       reject();
     }
-    if (result <= 32)
-      QMessageBox::information(this, "Download failed", tr("Failed: %1").arg(result));
 #endif
+    if (QProcess::startDetached(_private->_newExePath, options))
+      reject();
   }
 }
 
