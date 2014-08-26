@@ -371,7 +371,7 @@ void checkForUpdates::startUpdate()
 
 #ifdef Q_OS_MAC
     sh.start(_private->_password, QString("hdiutil detach ") + regexp.cap(2));
-    (void)waitForFinished();
+    (void)sh.waitForFinished();
 #endif
 
     QString errmsg;
