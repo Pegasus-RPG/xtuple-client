@@ -53,6 +53,9 @@
 			accountcomment		|
 			address			|
 			addresschar		|
+			cashreceipt		|
+			cashreceiptapply	|
+			cashreceiptapplymisc	|
 			contact			|
 			contactchar		|
 			custchar		|
@@ -127,6 +130,49 @@
 
 <!ELEMENT addresscomment (address_number, type, date?, username?, text) >
 <!ATTLIST addresscomment	ignore 	(true|false)	'false' >
+
+<!ELEMENT cashreceipt ( customer_number?,
+                        funds_type?,
+                        check_document_number?,
+                        customer_name?,
+                        customer_address?,
+                        currency?,
+                        amount_received?,
+                        post_to?,
+                        distribution_date?,
+                        apply_balance_as?,
+                        sales_category?,
+                        notes?) >
+<!ATTLIST cashreceipt ignore (true|false) 'false' >                        
+                        
+<!ELEMENT cashreceiptapply ( customer_number?, 
+                             funds_type?, 
+                             check_document_number?, 
+                             doc_type?,
+                             doc_number?, 
+                             customer_name?, 
+                             customer_address?, 
+                             doc_date?, 
+                             due_date?, 
+                             currency?, 
+                             open_amount?, 
+                             amount_to_apply?, 
+                             cashrcptitem_discount?) >
+
+<!ATTLIST cashreceiptapply ignore (true|false) 'false' >
+
+<!ELEMENT cashreceiptapplymisc (customer_number?, 
+                                funds_type?, 
+                                check_document_number?, 
+                                account?, 
+                                customer_name?, 
+                                customer_address?, 
+                                account_description?, 
+                                currency?, 
+                                amount_to_distribute?, 
+                                notes?) >
+
+<!ATTLIST cashreceiptapplymisc ignore (true|false) 'false' >
 
 <!ELEMENT contact ( contact_number?,
 		    honorific?,
