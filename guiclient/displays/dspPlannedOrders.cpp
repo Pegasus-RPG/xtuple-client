@@ -12,6 +12,7 @@
 
 #include <QAction>
 #include <QMenu>
+#include <QMessageBox>
 #include <QSqlError>
 
 #include "guiclient.h"
@@ -173,7 +174,11 @@ void dspPlannedOrders::sNew()
 void dspPlannedOrders::sEditOrder()
 {
   if (list()->currentItem()->rawValue("planord_firm") == true)
+  {
+    QMessageBox::warning( this, tr("Planned Order Firm"),
+                         tr("This Planned Order is firm and must be softened before editing."));
     return;
+  }
   ParameterList params;
   params.append("mode", "edit");
   params.append("planord_id", list()->id());
