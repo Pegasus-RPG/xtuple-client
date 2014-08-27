@@ -94,7 +94,7 @@ class checkForUpdatesPrivate {
 #ifdef Q_OS_WIN
       _newExePath   = "xTuple-" + _serverVersion + "-Windows/xtuple.exe";
       _downloadFile = "xTuple-" + _serverVersion + "-Windows.zip";
-      _destdir      = ".";
+      _destdir      = "..";
 #endif
 #ifdef Q_OS_LINUX
       _newExePath   = "../xTuple-" + _serverVersion + "-Linux/xtuple";
