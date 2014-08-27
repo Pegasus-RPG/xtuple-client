@@ -47,7 +47,6 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
 {
   setupUi(this);
 
-  connect(_item,              SIGNAL(privateIdChanged(int)),        this, SLOT(sFindSellingWarehouseItemsites(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemInfo(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemSources(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemSubs(int)));
@@ -63,6 +62,9 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   connect(_scheduledDate,     SIGNAL(newDate(const QDate &)),       this, SLOT(sHandleScheduleDate()));
   connect(_showAvailability,  SIGNAL(toggled(bool)),                this, SLOT(sDetermineAvailability()));
   connect(_showIndented,      SIGNAL(toggled(bool)),                this, SLOT(sDetermineAvailability()));
+  connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemsiteInfo()));
+  connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sDetermineAvailability()));
+  connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemSubs(int)));
   connect(_subs,              SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateSubMenu(QMenu*,QTreeWidgetItem*,int)));
   connect(_next,              SIGNAL(clicked()),                    this, SLOT(sNext()));
   connect(_prev,              SIGNAL(clicked()),                    this, SLOT(sPrev()));
@@ -893,9 +895,6 @@ void salesOrderItem::clear()
   _subItem->setEnabled(false);
   _subItemList->setEnabled(false);
   _comments->setId(-1);
-  disconnect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemsiteInfo()));
-  disconnect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sDetermineAvailability()));
-  disconnect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemSubs(int)));
   _warehouse->clear();  // are these two _warehouse steps necessary?
   _warehouse->setType(WComboBox::Sold);
   _originalQtyOrd  = 0.0;
@@ -1458,7 +1457,7 @@ void salesOrderItem::sSave(bool pPartial)
 
 void salesOrderItem::sPopulateItemsiteInfo()
 {
-  if (_item->isValid())
+  if (_item->isValid() && _warehouse->isValid())
   {
     XSqlQuery itemsite;
     itemsite.prepare("SELECT *, "
@@ -1861,10 +1860,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       _listPrice->setBaseValue(salesPopulateItemInfo.value("item_listprice").toDouble());
       _taxtype->setId(salesPopulateItemInfo.value("taxtype_id").toInt());
 
-      connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemsiteInfo()));
-      connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sDetermineAvailability()));
-      connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemSubs(int)));
-
+      sFindSellingWarehouseItemsites(_item->id());
       sPopulateItemsiteInfo();
       sCalculateDiscountPrcnt();
 
@@ -2015,7 +2011,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
 
   _availability->clear();
 
-  if ((_item->isValid()) && (_scheduledDate->isValid()) && (_showAvailability->isChecked()) )
+  if (_item->isValid() && _warehouse->isValid() && _scheduledDate->isValid() && _showAvailability->isChecked())
   {
     XSqlQuery availability;
     QString sql = "SELECT itemsite_id,"
@@ -2266,19 +2262,22 @@ void salesOrderItem::sPopulateItemSources(int pItemid)
 
 void salesOrderItem::sPopulateItemSubs(int pItemid)
 {
-  XSqlQuery subq;
-  MetaSQLQuery mql = mqlLoad("substituteAvailability", "detail");
-  ParameterList params;
-  params.append("item_id", pItemid);
-  params.append("warehous_id", _warehouse->id());
-  params.append("byDate", true);
-  if (_scheduledDate->isValid())
-    params.append("date", _scheduledDate->date());
-  else
-    params.append("date", omfgThis->dbDate());
-
-  subq = mql.toQuery(params);
-  _subs->populate(subq);
+  if (_item->isValid() && _warehouse->isValid())
+  {
+    XSqlQuery subq;
+    MetaSQLQuery mql = mqlLoad("substituteAvailability", "detail");
+    ParameterList params;
+    params.append("item_id", pItemid);
+    params.append("warehous_id", _warehouse->id());
+    params.append("byDate", true);
+    if (_scheduledDate->isValid())
+      params.append("date", _scheduledDate->date());
+    else
+      params.append("date", omfgThis->dbDate());
+    
+    subq = mql.toQuery(params);
+    _subs->populate(subq);
+  }
 }
 
 void salesOrderItem::sPopulateSubMenu(QMenu *menu, QTreeWidgetItem*, int)
