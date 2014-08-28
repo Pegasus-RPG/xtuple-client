@@ -1287,7 +1287,8 @@ void salesOrderItem::sSave(bool pPartial)
   // Update supply order characteristics
   if ( (_mode != cView) && (_mode != cViewQuote) )
   {
-    if (_supplyOrderId != -1 && !_item->isConfigured())
+//    if (_supplyOrderId != -1 && !_item->isConfigured())
+    if (_supplyOrderId != -1)
     {
       // Update Supply Order Characteristics
       if (_itemchar->rowCount() > 0)
@@ -1415,6 +1416,13 @@ void salesOrderItem::sSave(bool pPartial)
           systemError(this, storedProcErrorLookup("updateCharAssignment", result),
                       __FILE__, __LINE__);
           return;
+        }
+        if ( (_supplyOrderType == "W") && (_supplyOrderStatus->text() == "O") && _item->isConfigured() )
+        {
+          XSqlQuery explodeq;
+          explodeq.prepare( "SELECT explodeWo(:wo_id, true) AS result;" );
+          explodeq.bindValue(":wo_id", _supplyOrderId);
+          explodeq.exec();
         }
       }
       else if (salesSave.lastError().type() != QSqlError::NoError)
@@ -2471,6 +2479,22 @@ void salesOrderItem::sHandleSupplyOrder()
         ordq.bindValue(":parent_type", QString("S"));
         ordq.bindValue(":parent_id", _soitemid);
         ordq.exec();
+        if (ordq.first())
+        {
+          int _woid = ordq.value("result").toInt();
+          if ((_woid > 0) && _item->isConfigured())
+          {
+            XSqlQuery implodeq;
+            implodeq.prepare( "SELECT implodeWo(:wo_id, true) AS result;" );
+            implodeq.bindValue(":wo_id", _woid);
+            implodeq.exec();
+          }
+        }
+        else if (ordq.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
       }
       else if (_supplyOrderType == "P")
       {
