@@ -20,7 +20,14 @@
 moc_*.cpp
 qrc_*.cpp
 Makefile
+widgets/Makefile.dll.Debug
+widgets/Makefile.dll.Release
+Makefile.Debug
+Makefile.Release
+object_script.*.Debug
+object_script.*.Release
 *-build-*
+wmsg.*.qm
 
 macx.pri
 
@@ -31,3 +38,4 @@ guiclient/ui/*.*
 widgets/tmp/*.*
 widgets/tmp
 
+*~

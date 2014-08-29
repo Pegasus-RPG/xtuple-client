@@ -10,69 +10,159 @@
 
 #include "checkForUpdates.h"
 
-#include <QSqlError>
-#include <QUrl>
-#include <QXmlQuery>
-#include <QDesktopServices>
-#include <QMessageBox>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
 #include <QDebug>
+#include <QDesktopServices>
+#include <QDialog>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
-#include <QTranslator>
-#include <QDialog>
+#include <QInputDialog>
+#include <QLineEdit>
+#include <QMessageBox>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #include <QProcess>
+#include <QProgressDialog>
+#include <QPushButton>
+#include <QSqlError>
+#include <QTranslator>
+#include <QUrl>
+#include <QXmlQuery>
+
 #ifdef Q_OS_WIN
 #include <windows.h>
 #include <shellapi.h>
 #endif
+
 #include "../guiclient/guiclient.h"
 #include <parameter.h>
 
-
-#define DEBUG false
 #define QT_NO_URL_CAST_FROM_STRING
 
+#define DEBUG false
+
+class Sudoable : public QProcess {
+  public:
+    // TODO: try sudo without -S and feed it password if it asks?
+    void start(const QString password, const QString &program, OpenMode mode = ReadWrite)
+    {
+      if (DEBUG)
+        qDebug() << "starting" << QString(password.isEmpty() ? "" : "sudo")
+                 << program;
+      if (password.isEmpty())
+        QProcess::start(program, mode);
+      else
+      {
+        QProcess::start("sudo -S " + program, mode);
+        waitForStarted();
+        write(password.toLocal8Bit());
+        write("\n");
+      }
+      if (DEBUG) qDebug() << "started";
+    }
+
+    QString getPassword(bool *ok)
+    {
+      QString password;
+      bool retry = false;
+      do {
+        password = QInputDialog::getText(0, tr("Need Password to Install"),
+                                          tr("Password:"),
+                                          QLineEdit::Password, password, ok);
+        start(password, "echo testing");
+        if (! waitForFinished(1000))
+          terminate();
+        retry = QString(readAllStandardError()).contains(tr("Password:"));
+      } while (retry);
+      return password;
+    }
+};
+
+class checkForUpdatesPrivate {
+  public:
+    checkForUpdatesPrivate(checkForUpdates *parent, QString serverVersion)
+      : _serverVersion(serverVersion)
+    {
+      Q_UNUSED(parent);
+
+#ifdef Q_OS_MACX
+      _newExePath   = "xTuple-" + _serverVersion + ".app/Contents/MacOS/xtuple";
+      _downloadFile = "xTuple-" + _serverVersion + "-MACi386.dmg";
+      _destdir = ".";
+#endif
+#ifdef Q_OS_WIN
+      _newExePath   = "xTuple-" + _serverVersion + "-Windows/xtuple.exe";
+      _downloadFile = "xTuple-" + _serverVersion + "-Windows.zip";
+      _destdir      = "..";
+#endif
+#ifdef Q_OS_LINUX
+      _newExePath   = "../xTuple-" + _serverVersion + "-Linux/xtuple";
+      _downloadFile = "xTuple-"    + _serverVersion + "-Linux.tar.bz2";
+      _destdir = "..";
+#endif
+    }
+
+    bool ensureWritePriv(QFileInfo dirinfo) {
+      if (dirinfo.isWritable())
+        return true;
+      return false;
+    }
+
+    /* TODO: QNetworkAccessManager gets RemoteHostClosedError from SF during
+             download redirects. must(?) use QTcpSocket to switch.
+    return QString("http://sourceforge.net/projects/postbooks/files/")
+         + "02%20PostBooks-GUIclient-only/"
+         + _serverVersion + "/" + _downloadFile + "?use_mirror=autoselect";
+     */
+    QString urlString() {
+      return "http://updates.xtuple.com/updates/" + _downloadFile;
+    }
+
+    bool makeExecutable(QString filename, QString &errmsg)
+    {
+      QString filepath = QFileInfo(filename).absoluteFilePath();
+      Sudoable proc;
+      proc.start(_password, QString("chmod a+x %1").arg(filepath));
+      if (! proc.waitForFinished(1000))
+      {
+        proc.terminate();
+        errmsg = proc.readAllStandardError();
+        return false;
+      }
+      return true;
+    }
+
+    QString _destdir;
+    QString _downloadFile;
+    QString _newExePath;
+    QString _password;
+    QString _serverVersion;
+};
+
 checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : QDialog(parent, modal ? (fl | Qt::Dialog) : fl)
+    : QDialog(parent, modal ? (fl | Qt::Dialog) : fl),
+      reply(0)
 {
-  QString url = "http://updates.xtuple.com/updates";
-  //intended http://updates.xtuple.com/updates/xTuple-4.2.0-Linux.tar.gz
+  Q_UNUSED(name);
 
   setupUi(this);
   progressDialog = new QProgressDialog(this);
-  _ok = _buttonBox->button(QDialogButtonBox::Ok);
+  _ok     = _buttonBox->button(QDialogButtonBox::Ok);
   _ignore = _buttonBox->button(QDialogButtonBox::Ignore);
-  connect(_ok, SIGNAL(clicked()), this, SLOT(downloadButtonPressed()));
+  connect(_ok,        SIGNAL(clicked()),  this, SLOT(downloadButtonPressed()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-  connect(_ignore, SIGNAL(clicked()), this, SLOT (accept()));
-
-#ifdef Q_OS_MACX
-OS = "OSX";
-suffix = "tar.gz";
-#endif
-#ifdef Q_OS_WIN
-OS = "Windows";
-suffix = "exe";
-#endif
-#ifdef Q_OS_LINUX
-OS = "Linux";
-suffix = "tar.gz";
-#endif
+  connect(_ignore,    SIGNAL(clicked()),  this, SLOT(accept()));
 
   XSqlQuery versions, metric;
   versions.exec("SELECT metric_value AS dbver"
                 "  FROM metric"
                 " WHERE (metric_name = 'ServerVersion');");
 
+  QString serverVersion;
   if(versions.first())
   {
     serverVersion = versions.value("dbver").toString();
-    newurl = url + "/xTuple-" + serverVersion + "-" + OS +"."+ suffix;
-    qDebug() <<"newurl=" << newurl;
 
     _label->setText(tr("Your client does not match the server version: %1. Would you like to update?").arg(serverVersion));
 
@@ -86,54 +176,59 @@ suffix = "tar.gz";
   }
   else if (versions.lastError().type() != QSqlError::NoError)
     systemError(this, versions.lastError().text(), __FILE__, __LINE__);
-  if (DEBUG)
-  {
-    qDebug() << "serverVersion= " << serverVersion;
-    qDebug() << "newurl= " << newurl;
-  }
+
+  _private = new checkForUpdatesPrivate(this, serverVersion);
 }
+
 void checkForUpdates::downloadButtonPressed()
 {
-     // this->close();
-      QUrl url(newurl);
-      reply = NULL;
-      filename = "xTuple-" + serverVersion + "-" + OS + "." + suffix;
-      //xTuple-4.2.0-Linux.tar.gz
+  // TODO: http://qt-project.org/doc/qt-5/qstandardpaths.html
+  QUrl url(_private->urlString());
+  QString filename = _private->_downloadFile;
+  QString tempfile = QDir::tempPath() + QDir::separator() + filename;
 
-      if(QFile::exists(filename))
-      {
-          if(QMessageBox::question(this, tr("Update"),
-              tr("There already exists a file called %1 in "
-                  "the current directory. Overwrite?").arg(filename),
-                  QMessageBox::Yes|QMessageBox::No, QMessageBox::No)
-                  == QMessageBox::No)
-                  return;
-          QFile::remove(filename);
-      }
+  if (QFile::exists(tempfile))
+  {
+    QRegExp splitname("^(.*)\\.([^.]*$)");
+    if (DEBUG) qDebug() << splitname.capturedTexts();
+    if (splitname.indexIn(filename) == -1) {
+      QMessageBox::information(this, tr("Download Failed"),
+                               tr("Could not find extension on %1.")
+                                 .arg(filename));
+      return;
+    }
+    QString newname  = QDir::tempPath() + QDir::separator()
+                     + splitname.cap(1) + "-%1." + splitname.cap(2);
+    int i = 1;
+    while (QFile::exists(newname.arg(i)))
+      i++;
+    tempfile = newname.arg(i);
+  }
+  if (DEBUG) qDebug() << "downloading to" << tempfile;
 
-      file = new QFile(filename);
-      if(!file->open(QIODevice::WriteOnly))
-      {
-          QMessageBox::information(this, "Update",
-              tr("Unable to save the file %1: %2.")
-              .arg(filename).arg(file->errorString()));
-          delete file;
-          file = NULL;
-          return;
-      }
+  file = new QFile(tempfile);
+  if (!file->open(QIODevice::WriteOnly))
+  {
+    QMessageBox::information(this, tr("Download Failed"),
+                             tr("Unable to save the file %1: %2.")
+                               .arg(filename, file->errorString()));
+    delete file;
+    file = 0;
+    return;
+  }
 
-      downloadRequestAborted = false;
-      reply = manager.get(QNetworkRequest(url));
-      connect(reply, SIGNAL(finished()), this, SLOT(downloadFinished()));
-      connect(reply, SIGNAL(readyRead()), this, SLOT(downloadReadyRead()));
-      connect(reply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(downloadProgress(qint64,qint64)));
-      connect(progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
-      connect(this, SIGNAL(done()), this, SLOT(startUpdate()));
+  downloadRequestAborted = false;
+  reply = manager.get(QNetworkRequest(url));
+  connect(reply, SIGNAL(finished()),  this, SLOT(downloadFinished()));
+  connect(reply, SIGNAL(readyRead()), this, SLOT(downloadReadyRead()));
+  connect(reply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(downloadProgress(qint64,qint64)));
+  connect(progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
 
-      progressDialog->setLabelText(tr("Downloading %1...").arg(filename));
-      _ok->setEnabled(false);
-      progressDialog->exec();
+  progressDialog->setLabelText(tr("Downloading %1...").arg(filename));
+  _ok->setEnabled(false);
+  progressDialog->exec();
 }
+
 void checkForUpdates::downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 {
     if(downloadRequestAborted)
@@ -142,19 +237,24 @@ void checkForUpdates::downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
     filesize = bytesTotal;
     progressDialog->setValue(bytesReceived);
 }
+
 void checkForUpdates::downloadReadyRead()
 {
     if(file)
         file->write(reply->readAll());
 }
+
 void checkForUpdates::cancelDownload()
 {
     downloadRequestAborted = true;
     reply->abort();
     _ok->setEnabled(true);
 }
+
 void checkForUpdates::downloadFinished()
 {
+  if (DEBUG) qDebug() << "downloadFinished() entered";
+
     if(downloadRequestAborted)
     {
         if(file)
@@ -162,7 +262,7 @@ void checkForUpdates::downloadFinished()
             file->close();
             file->remove();
             delete file;
-            file = NULL;
+            file = 0;
         }
         reply->deleteLater();
         progressDialog->hide();
@@ -178,73 +278,174 @@ void checkForUpdates::downloadFinished()
 
     if(reply->error())
     {
-        //Download failed
-        QMessageBox::information(this, "Download failed", tr("Failed: %1").arg(reply->errorString()));
+      QMessageBox::information(this, tr("Download Failed"),
+                               tr("Failed: %1").arg(reply->errorString()));
+    }
+    else {
+      startUpdate();
     }
 
     reply->deleteLater();
-    reply = NULL;
-    delete file;
-    file = NULL;
+    reply = 0;
 
-    if(reply == 0)
-        emit done();
+    delete file;
+    file = 0;
+
+  if (DEBUG) qDebug() << "downloadFinished() returning";
 }
+
 void checkForUpdates::startUpdate()
 {
-    this->close();
-    qDebug() <<"filename= " << filename;
-    QFile *updater = new QFile(filename);
-    if(updater->exists())
+  if (DEBUG) qDebug() << "startUpdate() entered";
+
+  if (file->exists())
+  {
+    QFileInfo   downloadinfo(*file);
+    QStringList options;
+
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+    QFileInfo destdirinfo(QDir::currentPath() + QDir::separator() + _private->_destdir);
+    Sudoable sh;
+    if (! destdirinfo.isWritable())
     {
-        QStringList options;
-        QProcess *installer = new QProcess(this);
-        #ifdef Q_OS_MAC
-        QProcess sh;
-        sh.start("tar -xvf " + filename);
-        if(sh.waitForFinished())
-        {
-        sh.close();
-        filename = "xTuple-" + serverVersion + ".app";
-        QFileInfo *path2 = new QFileInfo(filename);
-        QString filepath = path2->absoluteFilePath() + "/Contents/MacOS/xtuple";
-        QFile osxUpdate(filepath);
-        osxUpdate.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner|QFile::ReadGroup|QFile::WriteGroup|QFile::ExeGroup|QFile::ReadOther|QFile::WriteOther|QFile::ExeOther);
-        if(installer->startDetached(filepath, options))
-            reject();
-        }
-        #endif
-        #ifdef Q_OS_LINUX
-        QProcess sh2;
-        sh2.start("tar -xvf " + filename + " -C ../");
-        if(sh2.waitForFinished())
-        {
-        sh2.close();
-        filename = "../xTuple-" + serverVersion + "-" + OS + "/xtuple";
-        QFile launch(filename);
-        launch.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner|QFile::ReadGroup|QFile::WriteGroup|QFile::ExeGroup|QFile::ReadOther|QFile::WriteOther|QFile::ExeOther);
-        QFileInfo *path = new QFileInfo(filename);
-        if(installer->startDetached(path->absoluteFilePath(), options))
-             reject();
-        }
-        #endif
-        #ifdef Q_OS_WIN
-        int result = (int)::ShellExecuteA(0, "open", filename.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
-        qDebug() << "result= " << result;
-        if (SE_ERR_ACCESSDENIED== result)
-        {
-            result = (int)::ShellExecuteA(0, "runas", filename.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
-            reject();
-        }
-        if (result <= 32)
-            QMessageBox::information(this, "Download failed", tr("Failed: %1").arg(result));
-        #endif
+      bool ok;
+      _private->_password = sh.getPassword(&ok);
+      if (! ok) {
+        QMessageBox::information(this, tr("Download Saved"),
+                                 tr("The new version has been saved to %1. "
+                                    "Install it manually or delete it.")
+                                 .arg(downloadinfo.absoluteFilePath()));
+        reject();
+      }
     }
+    if (DEBUG) qDebug() << "empty pw?" << _private->_password.isEmpty();
+
+#ifdef Q_OS_MAC
+    // mount(2) gave errors trying to mount .dmg as block device
+    sh.start(_private->_password,
+             QString("hdiutil attach ") + downloadinfo.absoluteFilePath());
+    if (! sh.waitForFinished())
+    {
+      QMessageBox::critical(this, tr("Mounting Error"),
+                            tr("<p>Please open %1 and copy xtuple.app to %2.</p>"
+                              "<p>Could not mount .dmg: %3</p>")
+                              .arg(downloadinfo.absoluteFilePath())
+                              .arg(destdirinfo.absoluteFilePath())
+                              .arg(QString(sh.readAllStandardError())));
+      reject();
+      return;
+    }
+
+    QString output = sh.readAllStandardOutput();
+    QRegExp regexp("(/dev/\\S+)\\s+Apple_HFS\\s+(\\S+)");
+    if (DEBUG) qDebug() << regexp.capturedTexts();
+    if (regexp.indexIn(output) == -1) {
+      QMessageBox::critical(this, tr("Unpacking Error"),
+                            tr("Could not find the .dmg mount point.dmg."));
+      reject();
+      return;
+    }
+    QString unpack = QString("cp -R ") + regexp.cap(2) + "/xtuple.app "
+                   + destdirinfo.absoluteFilePath()
+                   + "/xTuple-" + _private->_serverVersion + ".app";
+#endif  // MAC
+#ifdef Q_OS_LINUX
+    QString unpack = QString("tar -xf %1 -C %2")
+                            .arg(downloadinfo.absoluteFilePath())
+                            .arg(destdirinfo.absoluteFilePath());
+#endif // LINUX
+    sh.start(_private->_password, unpack);
+    if (! sh.waitForFinished())
+    {
+      sh.terminate();
+      QMessageBox::critical(this, tr("Unpacking error"),
+                            tr("Could not unpack %1 (%2): %3")
+                              .arg(downloadinfo.absoluteFilePath())
+                              .arg(sh.exitCode())
+                              .arg(QString(sh.readAllStandardError())));
+      reject();
+      return;
+    }
+    if (DEBUG) qDebug() << "finished unpacking";
+    sh.close();
+
+#ifdef Q_OS_MAC
+    sh.start(_private->_password, QString("hdiutil detach ") + regexp.cap(2));
+    (void)sh.waitForFinished();
+#endif
+
+    QString errmsg;
+    if (! _private->makeExecutable(_private->_newExePath, errmsg)) {
+      QMessageBox::critical(this, tr("Permissions Error"),
+                            tr("Couldn't set execute permissions on %1: %2")
+                              .arg(_private->_newExePath)
+                              .arg(errmsg));
+      reject();
+    }
+#endif  // both MAC & LINUX
+#ifdef Q_OS_WIN
+    QString script("zipFile = \"%1\"\n"
+                   "destDir = \"%2\"\n"
+                   "set fs  = CreateObject(\"Scripting.FileSystemObject\")\n"
+                   "set app = CreateObject(\"Shell.Application\")\n"
+                   "set zipAsDir = app.NameSpace(zipFile)\n"
+                   "if (zipAsDir is nothing) then\n"
+                   "  WScript.echo(\"Could not open \" & zipFile)\n"
+                   "else\n"
+                   "  set destAsDir = app.NameSpace(destDir)\n"
+                   "  if (destAsDir is nothing) then\n"
+                   "    WScript.echo(\"Could not open \" & destDir)\n"
+                   "  else\n"
+                   "    destAsDir.CopyHere zipAsDir.Items(), 256\n"
+                   "  end if\n"
+                   "end if\n"
+                  ); // copyHere: 256 => show progress dialog
+    script = script.arg(QDir::toNativeSeparators(downloadinfo.absoluteFilePath()))
+                   .arg(QDir::toNativeSeparators(QFileInfo(_private->_destdir).absoluteFilePath()));
+
+    QString scriptName = QDir::tempPath() + QDir::separator() + "unzip.vbs";
+    QFile   scriptFile(scriptName);
+    if (DEBUG) qDebug() << scriptName << ":" << script;
+    if (scriptFile.open(QIODevice::WriteOnly))
+    {
+      if (DEBUG) qDebug() << "writing to" << scriptName;
+      scriptFile.write(script.toLatin1().data());
+      scriptFile.close();
+
+      QProcess scriptProc;
+      if (DEBUG) qDebug() << "starting" << scriptName;
+      scriptProc.start(QString("cscript %1").arg(scriptName));
+      (void)scriptProc.waitForFinished();
+      scriptFile.remove();
+    }
+
+    QString newExePath = QFileInfo(_private->_destdir).absoluteFilePath() +
+                         "/" + _private->_newExePath;
+    if (DEBUG) qDebug() << "looking for" << newExePath;
+    if (! QFile::exists(newExePath))
+    {
+      QMessageBox::critical(this, tr("Could Not Unpack"),
+                            tr("The file was downloaded but could not be "
+                               "unpacked. Try installing %1 manually.")
+                            .arg(downloadinfo.absoluteFilePath()));
+      reject();
+    }
+#endif
+    if (QProcess::startDetached(_private->_newExePath, options))
+      reject();
+  }
 }
 
 checkForUpdates::~checkForUpdates()
 {
-  // no need to delete child widgets, Qt does it all for us
+  if (progressDialog) {
+    delete progressDialog;
+    progressDialog = 0;
+  }
+  if (_private) {
+    delete _private;
+    _private = 0;
+  }
 }
 
 void checkForUpdates::languageChange()
