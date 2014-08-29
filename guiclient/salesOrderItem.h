@@ -119,6 +119,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     double  _qtyOrderedCache;
     double  _supplyOrderQtyCache;
     double  _supplyOrderQtyOrderedCache;
+    double  _supplyOrderQtyOrderedInvCache;
     QDate   _supplyOrderDueDateCache;
     QDate   _supplyOrderScheduledDateCache;
     bool    _supplyOrderDropShipCache;

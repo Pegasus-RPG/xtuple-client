@@ -161,6 +161,8 @@ void prospect::sSave()
   QList<GuiErrorCheck> errors;
   errors << GuiErrorCheck(_number->text().trimmed().isEmpty(), _number,
                           tr("You must enter a number for this Prospect"))
+         << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                          tr("You must enter a name for this Prospect"))
     ;
   // disallow overlap of prospect and customer numbers
   if (_number->text().trimmed() != _cachedNumber)

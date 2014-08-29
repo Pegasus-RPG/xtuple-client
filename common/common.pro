@@ -19,6 +19,7 @@ LIBS += -lopenrptcommon -lMetaSQL $${LIBDMTX} -lz
 
 SOURCES = calendarcontrol.cpp \
           calendargraphicsitem.cpp \
+	  checkForUpdates.cpp      \
           errorReporter.cpp        \
           exporthelper.cpp \
           importhelper.cpp \
@@ -36,10 +37,10 @@ SOURCES = calendarcontrol.cpp \
           tarfile.cpp \
           xbase32.cpp \
           xtupleproductkey.cpp \
-          xtsettings.cpp \
-	  checkForUpdates.cpp
+          xtsettings.cpp
 HEADERS = calendarcontrol.h \
           calendargraphicsitem.h \
+          checkForUpdates.h      \
           errorReporter.h        \
           exporthelper.h \
           importhelper.h \
@@ -57,8 +58,8 @@ HEADERS = calendarcontrol.h \
           tarfile.h \
           xbase32.h \
           xtupleproductkey.h \
-          xtsettings.h \
-	  checkForUpdates.h
+          xtsettings.h
+
 FORMS = login2.ui login2Options.ui checkForUpdates.ui
 
 QT +=  script sql xml xmlpatterns network
