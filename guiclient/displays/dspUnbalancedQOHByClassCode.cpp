@@ -36,8 +36,6 @@ dspUnbalancedQOHByClassCode::dspUnbalancedQOHByClassCode(QWidget* parent, const 
   list()->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
   list()->addColumn(tr("QOH"),         _qtyColumn,   Qt::AlignRight,  true,  "itemsite_qtyonhand"  );
   list()->addColumn(tr("QOH Detail."), _qtyColumn,   Qt::AlignRight,  true,  "detailedqoh"  );
-  list()->addColumn(tr("NN QOH"),      _qtyColumn,   Qt::AlignRight,  true,  "itemsite_nnqoh"  );
-  list()->addColumn(tr("NN Detail."),  _qtyColumn,   Qt::AlignRight,  true,  "detailednnqoh"  );
 }
 
 void dspUnbalancedQOHByClassCode::languageChange()

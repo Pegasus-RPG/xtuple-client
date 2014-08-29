@@ -133,15 +133,15 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
 
   _taxtype->setEnabled(_privileges->check("OverrideTax"));
 
-  _availability->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter,true, "seqnumber");
-  _availability->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft,  true, "item_number");
-  _availability->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "item_descrip");
-  _availability->addColumn(tr("UOM"),         _uomColumn, Qt::AlignCenter,true, "uom_name");
-  _availability->addColumn(tr("Pend. Alloc."),_qtyColumn, Qt::AlignRight, true, "pendalloc");
-  _availability->addColumn(tr("Total Alloc."),_qtyColumn, Qt::AlignRight, true, "totalalloc");
-  _availability->addColumn(tr("On Order"),    _qtyColumn, Qt::AlignRight, true, "ordered");
-  _availability->addColumn(tr("QOH"),         _qtyColumn, Qt::AlignRight, true, "qoh");
-  _availability->addColumn(tr("Availability"),_qtyColumn, Qt::AlignRight, true, "totalavail");
+  _availability->addColumn(tr("#"),             _seqColumn, Qt::AlignCenter,true, "seqnumber");
+  _availability->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _availability->addColumn(tr("Description"),           -1, Qt::AlignLeft,  true, "item_descrip");
+  _availability->addColumn(tr("UOM"),           _uomColumn, Qt::AlignCenter,true, "uom_name");
+  _availability->addColumn(tr("Pend. Alloc."),  _qtyColumn, Qt::AlignRight, true, "pendalloc");
+  _availability->addColumn(tr("Total Alloc."),  _qtyColumn, Qt::AlignRight, true, "totalalloc");
+  _availability->addColumn(tr("On Order"),      _qtyColumn, Qt::AlignRight, true, "ordered");
+  _availability->addColumn(tr("Available QOH"), _qtyColumn, Qt::AlignRight, true, "availableqoh");
+  _availability->addColumn(tr("Availability"),  _qtyColumn, Qt::AlignRight, true, "totalavail");
 
   _itemsrcp->addColumn(tr("Vendor #"),    _itemColumn, Qt::AlignLeft, true, "vend_number");
   _itemsrcp->addColumn(tr("Vendor Name"),          -1, Qt::AlignLeft, true, "vend_name");
@@ -149,15 +149,15 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _itemsrcp->addColumn(tr("Qty Break"),    _qtyColumn, Qt::AlignRight,true, "itemsrcp_qtybreak");
   _itemsrcp->addColumn(tr("Base Price"), _moneyColumn, Qt::AlignRight,true, "price_base");
 
-  _subs->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
-  _subs->addColumn(tr("Item Number"),   _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
-  _subs->addColumn(tr("Description"),   -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
-  _subs->addColumn(tr("LT"),            _whsColumn,  Qt::AlignCenter, true,  "leadtime" );
-  _subs->addColumn(tr("QOH"),           _qtyColumn,  Qt::AlignRight,  true,  "qtyonhand"  );
-  _subs->addColumn(tr("Allocated"),     _qtyColumn,  Qt::AlignRight,  true,  "allocated"  );
-  _subs->addColumn(tr("On Order"),      _qtyColumn,  Qt::AlignRight,  true,  "ordered"  );
-  _subs->addColumn(tr("Reorder Lvl."),  _qtyColumn,  Qt::AlignRight,  true,  "reorderlevel"  );
-  _subs->addColumn(tr("Available"),     _qtyColumn,  Qt::AlignRight,  true,  "available"  );
+  _subs->addColumn(tr("Site"),             _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  _subs->addColumn(tr("Item Number"),     _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  _subs->addColumn(tr("Description"),              -1,  Qt::AlignLeft,   true,  "itemdescrip"   );
+  _subs->addColumn(tr("LT"),               _whsColumn,  Qt::AlignCenter, true,  "leadtime" );
+  _subs->addColumn(tr("Available QOH"),    _qtyColumn,  Qt::AlignRight,  true,  "availableqoh"  );
+  _subs->addColumn(tr("Allocated"),        _qtyColumn,  Qt::AlignRight,  true,  "allocated"  );
+  _subs->addColumn(tr("On Order"),         _qtyColumn,  Qt::AlignRight,  true,  "ordered"  );
+  _subs->addColumn(tr("Reorder Lvl."),     _qtyColumn,  Qt::AlignRight,  true,  "reorderlevel"  );
+  _subs->addColumn(tr("Available"),        _qtyColumn,  Qt::AlignRight,  true,  "available"  );
 
   _historyDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _historyDates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
@@ -2017,22 +2017,22 @@ void salesOrderItem::sDetermineAvailability( bool p )
   {
     XSqlQuery availability;
     QString sql = "SELECT itemsite_id,"
-                  "       qoh,"
+                  "       availableqoh,"
                   "       allocated,"
-                  "       (noNeg(qoh - allocated)) AS unallocated,"
+                  "       (noNeg(availableqoh - allocated)) AS unallocated,"
                   "       ordered,"
-                  "       (qoh - allocated + ordered) AS available,"
+                  "       (availableqoh - allocated + ordered) AS available,"
                   "       reserved,"
                   "       reservable,"
                   "       itemsite_leadtime "
-                  "FROM ( SELECT itemsite_id, itemsite_qtyonhand AS qoh,"
+                  "FROM ( SELECT itemsite_id, qtyAvailable(itemsite_id) AS availableqoh,"
                   "              qtyAllocated(itemsite_id, DATE(<? value('date') ?>)) AS allocated,"
                   "              qtyOrdered(itemsite_id, DATE(<? value('date') ?>)) AS ordered, "
                   "<? if exists('includeReservations') ?>"
                   "              COALESCE((SELECT coitem_qtyreserved"
                   "                        FROM coitem"
                   "                        WHERE coitem_id=<? value('soitem_id') ?>), 0.0) AS reserved,"
-                  "              (itemsite_qtyonhand - qtyreserved(itemsite_id)) AS reservable,"
+                  "              (qtyAvailable(itemsite_id) - qtyreserved(itemsite_id)) AS reservable,"
                   "<? else ?>"
                   "              0.0 AS reserved,"
                   "              0.0 AS reservable,"
@@ -2052,7 +2052,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
     availability = mql.toQuery(params);
     if (availability.first())
     {
-      _onHand->setDouble(availability.value("qoh").toDouble());
+      _onHand->setDouble(availability.value("availableqoh").toDouble());
       _allocated->setDouble(availability.value("allocated").toDouble());
       _unallocated->setDouble(availability.value("unallocated").toDouble());
       _onOrder->setDouble(availability.value("ordered").toDouble());
@@ -2081,17 +2081,17 @@ void salesOrderItem::sDetermineAvailability( bool p )
             "       bomdata_uom_name AS uom_name,"
             "       pendalloc,"
             "       ordered,"
-            "       qoh, "
+            "       availableqoh, "
             "       (totalalloc + pendalloc) AS totalalloc,"
-            "       (qoh + ordered - (totalalloc + pendalloc)) AS totalavail,"
+            "       (availableqoh + ordered - (totalalloc + pendalloc)) AS totalavail,"
             "       'qty' AS pendalloc_xtnumericrole,"
             "       'qty' AS ordered_xtnumericrole,"
-            "       'qty' AS qoh_xtnumericrole,"
+            "       'qty' AS availableqoh_xtnumericrole,"
             "       'qty' AS totalalloc_xtnumericrole,"
             "       'qty' AS totalavail_xtnumericrole,"
-            "       CASE WHEN qoh < pendalloc THEN 'error'"
-            "            WHEN (qoh + ordered - (totalalloc + pendalloc)) < 0  THEN 'error'"
-            "            WHEN (qoh + ordered - (totalalloc + pendalloc)) < reorderlevel THEN 'warning'"
+            "       CASE WHEN availableqoh < pendalloc THEN 'error'"
+            "            WHEN (availableqoh + ordered - (totalalloc + pendalloc)) < 0  THEN 'error'"
+            "            WHEN (availableqoh + ordered - (totalalloc + pendalloc)) < reorderlevel THEN 'warning'"
             "       END AS qtforegroundrole,"
             "       bomdata_bomwork_level - 1 AS xtindentrole "
             "  FROM ( SELECT itemsite_id,"
@@ -2106,7 +2106,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
             "                             ((bomdata_qtyfxd::NUMERIC + bomdata_qtyper::NUMERIC * :origQtyOrd) *"
             "                              (1 + bomdata_scrap::NUMERIC)))"
             "                                       AS totalalloc,"
-            "                itemsite_qtyonhand AS qoh,"
+            "                qtyAvailable(itemsite_id) AS availableqoh,"
             "                qtyOrdered(itemsite_id, DATE(:schedDate))"
             "                                                AS ordered"
             "           FROM indentedBOM(:item_id, "
@@ -2161,17 +2161,17 @@ void salesOrderItem::sDetermineAvailability( bool p )
                       "       item_descrip, uom_name,"
                       "       pendalloc, "
                       "       ordered, "
-                      "       qoh, "
+                      "       availableqoh, "
                       "       (totalalloc + pendalloc) AS totalalloc,"
-                      "       (qoh + ordered - (totalalloc + pendalloc)) AS totalavail,"
+                      "       (availableqoh + ordered - (totalalloc + pendalloc)) AS totalavail,"
                       "       'qty' AS pendalloc_xtnumericrole,"
                       "       'qty' AS ordered_xtnumericrole,"
-                      "       'qty' AS qoh_xtnumericrole,"
+                      "       'qty' AS availableqoh_xtnumericrole,"
                       "       'qty' AS totalalloc_xtnumericrole,"
                       "       'qty' AS totalavail_xtnumericrole,"
-                      "       CASE WHEN qoh < pendalloc THEN 'error'"
-                      "            WHEN (qoh + ordered - (totalalloc + pendalloc)) < 0  THEN 'error'"
-                      "            WHEN (qoh + ordered - (totalalloc + pendalloc)) < reorderlevel THEN 'warning'"
+                      "       CASE WHEN availableqoh < pendalloc THEN 'error'"
+                      "            WHEN (availableqoh + ordered - (totalalloc + pendalloc)) < 0  THEN 'error'"
+                      "            WHEN (availableqoh + ordered - (totalalloc + pendalloc)) < reorderlevel THEN 'warning'"
                       "       END AS qtforegroundrole "
                       "FROM ( SELECT cs.itemsite_id AS itemsiteid,"
                       "              CASE WHEN(cs.itemsite_useparams) THEN cs.itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
@@ -2179,7 +2179,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
                       "              (item_descrip1 || ' ' || item_descrip2) AS item_descrip, uom_name,"
                       "              itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, (bomitem_qtyfxd + bomitem_qtyper * :qty) * (1 + bomitem_scrap)) AS pendalloc,"
                       "              (qtyAllocated(cs.itemsite_id, DATE(:schedDate)) - itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, (bomitem_qtyfxd + bomitem_qtyper * :origQtyOrd) * (1 + bomitem_scrap))) AS totalalloc,"
-                      "              cs.itemsite_qtyonhand AS qoh,"
+                      "              qtyAvailable(cs.itemsite_id) AS availableqoh,"
                       "              qtyOrdered(cs.itemsite_id, DATE(:schedDate)) AS ordered "
                       "       FROM item, bomitem LEFT OUTER JOIN"
                       "            itemsite AS cs ON ((cs.itemsite_warehous_id=:warehous_id)"
