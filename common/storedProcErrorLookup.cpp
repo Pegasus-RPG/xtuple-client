@@ -167,6 +167,10 @@ const struct {
 			   "convert this Quote."),		   0, "" },
   { "convertQuote", -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Quote #%1 has expired and can not be converted."),
 								   0, "" },
+  { "convertQuote", -7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer PO required."),
+    0, "" },
+  { "convertQuote", -8, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Duplicate Customer PO."),
+    0, "" },
 
   { "copyItemSite",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not copy the Item Site because it "
 			    "does not appear to exist."),		0, "" },
