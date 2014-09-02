@@ -44,7 +44,6 @@ transferOrder::transferOrder(QWidget* parent, const char* name, Qt::WFlags fl)
       _captive(false),
       _ignoreSignals(false),
       _lineMode(0),
-      _locked(false),
       _mode(cView),
       _orderNumberGen(0),
       _qeitem(0),
@@ -128,33 +127,22 @@ void transferOrder::setToheadid(const int pId)
   _comments->setId(_toheadid);
   _documents->setId(_toheadid);
        
-  if(_mode == cEdit && !_locked)
+  if (_mode == cEdit
+      && ! _lock.acquire("tohead", _toheadid))
   {
-     XSqlQuery to;
-     to.prepare("SELECT tryLock(oid::integer, :tohead_id) AS locked "
-                "FROM pg_class "
-                "WHERE relname='tohead';");
-     to.bindValue(":tohead_id", _toheadid);
-     to.exec();
-     if(to.first())
-     {
-       if(to.value("locked").toBool() != true)
-       {
-          QMessageBox::critical( this, tr("Record Currently Being Edited"),
-               tr("<p>The record you are trying to edit is currently being edited "
-               "by another user. Continue in View Mode.") );
-          setViewMode();
-       }
-       else
-         _locked=true;
-     }
-     else
-     {
-       QMessageBox::critical( this, tr("Cannot Lock Record for Editing"),
-             tr("<p>There was an unexpected error while trying to lock the record "
-             "for editing. Please report this to your administator.") );
-       setViewMode();
-     }
+    if (_lock.isLockedOut())
+    {
+      QMessageBox::critical(this, tr("Record Currently Being Edited"),
+                            tr("<p>The record you are trying to edit is "
+                               "currently being edited by another user. "
+                               "Continue in View Mode."));
+      setViewMode();
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                                  _lock.lastError(), __FILE__, __LINE__))
+    {
+      setViewMode();
+    }
   }
 }
 
@@ -678,25 +666,14 @@ bool transferOrder::save(bool partial)
     return false;
   }
 
-  // if this is a new to record and we haven't saved already
-  // then we need to lock this record.
-  if((cNew == _mode) && (!_saved))
+  // TODO: should this be done before saving the t/o?
+  if ((cNew == _mode) && (!_saved)
+      && ! _lock.acquire("tohead", _toheadid))
   {
-    // should I bother to check because no one should have this but us?
-    transferave.prepare("SELECT tryLock(oid::integer, :head_id) AS locked "
-              "FROM pg_class "
-              "WHERE relname='tohead';");
-    transferave.bindValue(":head_id", _toheadid);
-    transferave.exec();
-    if (transferave.first())
-      _locked = transferave.value("locked").toBool();
-    else if (transferave.lastError().type() != QSqlError::NoError)
-    {
-      rollback.exec();
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Transfer Order"),
-                           transferave, __FILE__, __LINE__);
-      return false;
-    }
+    rollback.exec();
+    (void)ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                               _lock.lastError(), __FILE__, __LINE__);
+    return false;
   }
 
   // keep the status of toitems in synch with tohead
@@ -1559,7 +1536,7 @@ void transferOrder::closeEvent(QCloseEvent *pEvent)
 
 void transferOrder::sHandleShipchrg(int pShipchrgid)
 {
-  if ( (_mode == cView) )
+  if (_mode == cView)
     _freight->setEnabled(FALSE);
   else
   {
@@ -2094,23 +2071,9 @@ void transferOrder::sHandleTrnsWhs(const int pid)
 
 void transferOrder::sReleaseTohead()
 {
-  if (!_locked)
-    return;
-
-  XSqlQuery query;
-  query.prepare("SELECT pg_advisory_unlock(oid::integer, :tohead_id) AS result "
-                "FROM pg_class "
-                "WHERE relname='tohead';");
-  query.bindValue(":tohead_id", _toheadid);
-  query.exec();
-  if (query.first() && ! query.value("result").toBool())
-    systemError(this, tr("Could not release this Transfer Order record."),
-                __FILE__, __LINE__);
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Line"),
-                                query, __FILE__, __LINE__))
-    return;
-  else
-    _locked = false;
+  if (! _lock.release())
+    (void)ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                               _lock.lastError(), __FILE__, __LINE__);
 }
 
 void transferOrder::sReleaseNumber()

@@ -18,7 +18,8 @@ OBJECTS_DIR = tmp
 MOC_DIR     = tmp
 UI_DIR      = tmp
 
-SOURCES = calendarcontrol.cpp \
+SOURCES = applock.cpp              \
+          calendarcontrol.cpp      \
           calendargraphicsitem.cpp \
           errorReporter.cpp        \
           exporthelper.cpp \
@@ -39,7 +40,8 @@ SOURCES = calendarcontrol.cpp \
           xtupleproductkey.cpp \
           xtsettings.cpp \
 	  checkForUpdates.cpp
-HEADERS = calendarcontrol.h \
+HEADERS = applock.h              \
+          calendarcontrol.h      \
           calendargraphicsitem.h \
           errorReporter.h        \
           exporthelper.h \

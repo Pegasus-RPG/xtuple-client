@@ -11,6 +11,7 @@
 #ifndef SALESORDER_H
 #define SALESORDER_H
 
+#include "applock.h"
 #include "guiclient.h"
 #include "xwidget.h"
 #include <parameter.h>
@@ -139,6 +140,7 @@ class salesOrder : public XWidget, public Ui::salesOrder
     bool    _captive;
     int     _soheadid;
     int     _lineMode;
+    AppLock _lock;
     int     _mode;
     int     _numSelected;
     int     _originalPrjid;
@@ -147,7 +149,6 @@ class salesOrder : public XWidget, public Ui::salesOrder
     int     _crmacctid;
     QDate   _orderDateCache;
     QDate   _shipDateCache;
-    bool    _locked;
 };
 
 #endif  // SALESORDER_H
