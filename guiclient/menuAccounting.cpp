@@ -988,8 +988,10 @@ void menuAccounting::sAccountingYearPeriods()
 void menuAccounting::sReconcileBankaccount()
 {
 //  omfgThis->handleNewWindow(new reconcileBankaccount());
-  reconcileBankaccount *newdlg = new reconcileBankaccount();
-  omfgThis->handleNewWindow(newdlg, Qt::ApplicationModal);
+// Open Application Modal
+//  reconcileBankaccount *newdlg = new reconcileBankaccount();
+//  omfgThis->handleNewWindow(newdlg, Qt::ApplicationModal);
+  reconcileBankaccount::openReconcileBankaccount(-1);
 }
 
 void menuAccounting::sEnterAdjustment()

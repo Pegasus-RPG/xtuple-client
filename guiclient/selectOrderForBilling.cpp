@@ -601,8 +601,7 @@ void selectOrderForBilling::sTaxZoneChanged()
   {
     XSqlQuery taxq;
     taxq.prepare("UPDATE cobmisc SET "
-      "  cobmisc_taxzone_id=:taxzone_id, "
-      "  cobmisc_freight=:freight "
+      "  cobmisc_taxzone_id=:taxzone_id "
       "WHERE (cobmisc_id=:cobmisc_id) ");
     if (_taxZone->id() != -1)
       taxq.bindValue(":taxzone_id", _taxZone->id());

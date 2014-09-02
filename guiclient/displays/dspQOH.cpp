@@ -55,20 +55,26 @@ dspQOH::dspQOH(QWidget* parent, const char*, Qt::WFlags fl)
 
   connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
 
-  list()->addColumn(tr("Site"),             _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
-  list()->addColumn(tr("Item Number"),      _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
-  list()->addColumn(tr("Description"),      -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
-  list()->addColumn(tr("Class Code"),       _itemColumn, Qt::AlignLeft,   true,  "classcode_code"   );
-  list()->addColumn(tr("Cost Category"),    _itemColumn, Qt::AlignLeft,   false, "costcat_code"   );
-  list()->addColumn(tr("UOM"),              _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
-  list()->addColumn(tr("Default Location"), _itemColumn, Qt::AlignLeft,   true,  "defaultlocation"   );
-  list()->addColumn(tr("Reorder Lvl."),     _qtyColumn,  Qt::AlignRight,  true,  "reorderlevel"  );
-  list()->addColumn(tr("QOH"),              _qtyColumn,  Qt::AlignRight,  true,  "qoh"  );
-  list()->addColumn(tr("Non-Netable"),      _qtyColumn,  Qt::AlignRight,  true,  "nnqoh"  );
-  list()->addColumn(tr("Unit Cost"),        _costColumn, Qt::AlignRight,  true,  "cost"  );
-  list()->addColumn(tr("Value"),            _costColumn, Qt::AlignRight,  true,  "value"  );
-  list()->addColumn(tr("NN Value"),         _costColumn, Qt::AlignRight,  true,  "nnvalue"  );
-  list()->addColumn(tr("Cost Method"),      _costColumn, Qt::AlignCenter, true,  "costmethod" );
+  list()->addColumn(tr("Site"),               _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  list()->addColumn(tr("Item Number"),        _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  list()->addColumn(tr("Description"),        -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
+  list()->addColumn(tr("Class Code"),         _itemColumn, Qt::AlignLeft,   true,  "classcode_code"   );
+  list()->addColumn(tr("Cost Category"),      _itemColumn, Qt::AlignLeft,   false, "costcat_code"   );
+  list()->addColumn(tr("UOM"),                _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
+  list()->addColumn(tr("Default Location"),   _itemColumn, Qt::AlignLeft,   true,  "defaultlocation"   );
+  list()->addColumn(tr("Reorder Lvl."),       _qtyColumn,  Qt::AlignRight,  true,  "reorderlevel"  );
+  list()->addColumn(tr("QOH"),                _qtyColumn,  Qt::AlignRight,  true,  "qoh"  );
+  list()->addColumn(tr("Usable"),             _qtyColumn,  Qt::AlignRight,  true,  "availqoh"  );
+  list()->addColumn(tr("NonUsable"),          _qtyColumn,  Qt::AlignRight,  true,  "nonavailqoh"  );
+  list()->addColumn(tr("Netable"),            _qtyColumn,  Qt::AlignRight,  true,  "netqoh"  );
+  list()->addColumn(tr("NonNetable"),         _qtyColumn,  Qt::AlignRight,  true,  "nonnetqoh"  );
+  list()->addColumn(tr("Unit Cost"),          _costColumn, Qt::AlignRight,  true,  "cost"  );
+  list()->addColumn(tr("Value"),              _costColumn, Qt::AlignRight,  true,  "value"  );
+  list()->addColumn(tr("Usable Value"),       _costColumn, Qt::AlignRight,  true,  "availvalue"  );
+  list()->addColumn(tr("NonUsable Value"),    _costColumn, Qt::AlignRight,  true,  "nonavailvalue"  );
+  list()->addColumn(tr("Netable Value"),      _costColumn, Qt::AlignRight,  true,  "netvalue"  );
+  list()->addColumn(tr("NonNetable Value"),   _costColumn, Qt::AlignRight,  true,  "nonnetvalue"  );
+  list()->addColumn(tr("Cost Method"),        _costColumn, Qt::AlignCenter, true,  "costmethod" );
 
   sHandleValue(_showValue->isChecked());
 
@@ -152,7 +158,7 @@ void dspQOH::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int)
     if (!_privileges->check("CreateAdjustmentTrans"))
       menuItem->setEnabled(false);
 
-    menuItem = pMenu->addAction(tr("Reset this Quanity to 0..."), this, SLOT(sReset()));;
+    menuItem = pMenu->addAction(tr("Reset this Quantity to 0..."), this, SLOT(sReset()));;
     if (!_privileges->check("CreateAdjustmentTrans"))
       menuItem->setEnabled(false);
 
@@ -240,7 +246,8 @@ void dspQOH::sHandleValue(bool pShowValue)
 {
   list()->setColumnHidden(list()->column("cost"),         !pShowValue);
   list()->setColumnHidden(list()->column("value"),        !pShowValue);
-  list()->setColumnHidden(list()->column("nnvalue"),      !pShowValue);
+  list()->setColumnHidden(list()->column("netvalue"),     !pShowValue);
+  list()->setColumnHidden(list()->column("nonnetvalue"),  !pShowValue);
   list()->setColumnHidden(list()->column("costmethod"),   !pShowValue);
 }
 
