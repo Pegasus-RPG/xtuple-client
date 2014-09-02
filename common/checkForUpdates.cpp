@@ -35,8 +35,9 @@
 #include <shellapi.h>
 #endif
 
-#include "../guiclient/guiclient.h"
 #include <parameter.h>
+
+#include "xsqlquery.h"
 
 #define QT_NO_URL_CAST_FROM_STRING
 
@@ -154,28 +155,26 @@ checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, 
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_ignore,    SIGNAL(clicked()),  this, SLOT(accept()));
 
-  XSqlQuery versions, metric;
-  versions.exec("SELECT metric_value AS dbver"
-                "  FROM metric"
-                " WHERE (metric_name = 'ServerVersion');");
+  XSqlQuery metric;
+  metric.exec("SELECT fetchMetricText('ServerVersion') AS dbver,"
+              "       fetchMetricBool('DisallowMismatchClientVersion') as disallowed,"
+              "       fetchMetricBool('AutoVersionUpdate') as allow;");
 
   QString serverVersion;
-  if(versions.first())
+  if(metric.first())
   {
-    serverVersion = versions.value("dbver").toString();
+    serverVersion = metric.value("dbver").toString();
 
-    _label->setText(tr("Your client does not match the server version: %1. Would you like to update?").arg(serverVersion));
-
-    metric.exec("SELECT fetchMetricBool('DisallowMismatchClientVersion') as disallowed;");
-    metric.first();
+    _label->setText(tr("Your client does not match the server version: %1. "
+                       "Would you like to update?").arg(serverVersion));
     _ignore->setEnabled(!metric.value("disallowed").toBool());
-
-    metric.exec("SELECT fetchMetricBool('AutoVersionUpdate') as allow;");
-    metric.first();
     _ok->setEnabled(metric.value("allow").toBool());
   }
-  else if (versions.lastError().type() != QSqlError::NoError)
-    systemError(this, versions.lastError().text(), __FILE__, __LINE__);
+  else if (metric.lastError().type() != QSqlError::NoError) {
+    QMessageBox::warning(parent, tr("System Error"),
+                         tr("Could not find version information: %1")
+                           .arg(metric.lastError().text()));
+  }
 
   _private = new checkForUpdatesPrivate(this, serverVersion);
 }
@@ -253,6 +252,7 @@ void checkForUpdates::cancelDownload()
 
 void checkForUpdates::downloadFinished()
 {
+  int result = QDialog::Accepted;
   if (DEBUG) qDebug() << "downloadFinished() entered";
 
     if(downloadRequestAborted)
