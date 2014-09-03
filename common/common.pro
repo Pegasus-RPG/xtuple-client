@@ -2,8 +2,12 @@ include( ../global.pri )
 
 TARGET      = xtuplecommon
 TEMPLATE    = lib
-CONFIG      += qt warn_on dll
-
+CONFIG      += qt warn_on
+xtcommon_shared {
+  CONFIG    += dll
+} else {
+  CONFIG    += staticlib
+}
 DEFINES     += MAKELIB
 
 INCLUDEPATH += $(QTDIR)/src/3rdparty/zlib
@@ -13,9 +17,6 @@ DESTDIR = ../lib
 OBJECTS_DIR = tmp
 MOC_DIR     = tmp
 UI_DIR      = tmp
-
-QMAKE_LIBDIR += $${OPENRPT_LIBDIR}
-LIBS += -lopenrptcommon -lMetaSQL $${LIBDMTX} -lz
 
 SOURCES = calendarcontrol.cpp \
           calendargraphicsitem.cpp \

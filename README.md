@@ -52,19 +52,3 @@ Meanwhile, here's a brief description of how to set up a development environment
 
 **Warning**:
 If you open Qt Designer to view or edit a `.ui` user interface file, check the widget palette _before you do anything else_. If there is no section for xTuple widgets, _quit immediately_ without saving any changes. Otherwise you risk losing important information about the user interface definition.
-
-*Note*:
-
-On some Linux distributions you can build the desktop client using OpenRPT
-and CSVImp development packages instead of compiling in the `openrpt` and
-`csvimp` directories. In these cases, set the following environment variables:
-- `OPENRPT_HEADERS` names the directory where the OpenRPT header files are
-  installed
-- `OPENRPT_LIBDIR` names the directory where the OpenRPT libraries are
-  installed
-- `OPENRPT_IMAGE_DIR` names the directory where the OpenRPT images are
-  installed
-- `CSVIMP_HEADERS` names the directory where the CSVImp header files are
-  installed
-- `OPENRPT_LIBDIR` names the directory where the OpenRPT libraries are
-  installed
