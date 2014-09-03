@@ -1,9 +1,5 @@
 language: cpp
 
-env:
-# build openrpt .so,        then csvimp and qt-client use the result
- - BUILD_SHARED_LIBS=true   USE_SHARED_OPENRPT=true
-
 before_install:
  - sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ trusty main universe"
  - sudo apt-get update -qq
@@ -15,15 +11,11 @@ compiler:
 
 before_script:
   - git submodule update --init --recursive
-  - cd openrpt
-  - git pull origin master && echo "Remove after openrpt submodule is updated"
-  - qmake && make -j4
-  - cd ../csvimp
-  - git pull origin master && echo "Remove after csvimp submodule is updated"
-  - qmake && make -j2
+  - cd openrpt && qmake && make
+  - cd ../csvimp && qmake && make
   - cd ..
 
 script:
   - qmake
-  - make -j4
+  - make -j2
 
