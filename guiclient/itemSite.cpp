@@ -19,6 +19,8 @@
 #include <metasql.h>
 #include "mqlutil.h"
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "storedProcErrorLookup.h"
 
 itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -158,6 +160,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
   {
     _captive = TRUE;
     _itemsiteid = param.toInt();
+    emit newId(_itemsiteid);
 	
     _item->setReadOnly(TRUE);
 
@@ -205,6 +208,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
           _mode = cEdit;
           
           _itemsiteid = itemsiteid.value("itemsite_id").toInt();
+          emit newId(_itemsiteid);
           populate();
           
           _item->setReadOnly(TRUE);
@@ -238,74 +242,87 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
         _leadTime->setValue(0);
         _eventFence->setValue(_metrics->value("DefaultEventFence").toInt());
         _tab->setTabEnabled(_tab->indexOf(_expirationTab),FALSE);
-      } 
+      }
+      if (_mode == cNew)
+      {
+        XSqlQuery newItemsiteid("SELECT NEXTVAL('itemsite_itemsite_id_seq') AS _itemsite_id");
+        if (newItemsiteid.first())
+        {
+          _itemsiteid = newItemsiteid.value("_itemsite_id").toInt();
+          emit newId(_itemsiteid);
+        }
+        else if (newItemsiteid.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, newItemsiteid.lastError().databaseText(), __FILE__, __LINE__);
+        }
+      }
     }
     else if (param.toString() == "edit")
     {
-	_mode = cEdit;
-	
-	_item->setReadOnly(TRUE);
+      _mode = cEdit;
+      _item->setReadOnly(TRUE);
     }
     else if (param.toString() == "view")
     {
-	_mode = cView;
-
-	_item->setReadOnly(TRUE);
-	_warehouse->setEnabled(FALSE);
-	_useParameters->setEnabled(FALSE);
-	_useParametersOnManual->setEnabled(FALSE);
-	_reorderLevel->setEnabled(FALSE);
-	_orderUpToQty->setEnabled(FALSE);
-	_minimumOrder->setEnabled(FALSE);
-	_maximumOrder->setEnabled(FALSE);
-	_orderMultiple->setEnabled(FALSE);
-	_safetyStock->setEnabled(FALSE);
-	_abcClass->setEnabled(FALSE);
-	_autoUpdateABCClass->setEnabled(FALSE);
-	_cycleCountFreq->setEnabled(FALSE);
-	_leadTime->setEnabled(FALSE);
-	_eventFence->setEnabled(FALSE);
-	_active->setEnabled(FALSE);
-	_poSupply->setEnabled(FALSE);
-	_woSupply->setEnabled(FALSE);
-	_createPr->setEnabled(FALSE);
-	_createSoPr->setEnabled(FALSE);
-	_createPo->setEnabled(FALSE);
-	_dropShip->setEnabled(FALSE);
-	_createWo->setEnabled(FALSE);
-	_sold->setEnabled(FALSE);
-	_soldRanking->setEnabled(FALSE);
-	_stocked->setEnabled(FALSE);
-	_controlMethod->setEnabled(FALSE);
-	_perishable->setEnabled(FALSE);
-	_locationControl->setEnabled(FALSE);
-	_disallowBlankWIP->setEnabled(FALSE);
-	_useDefaultLocation->setEnabled(FALSE);
-	_location->setEnabled(FALSE);
-	_locations->setEnabled(FALSE);
-        _recvlocations->setEnabled(FALSE);
-        _issuelocations->setEnabled(FALSE);
-        _locations_dist->setEnabled(FALSE);
-        _recvlocations_dist->setEnabled(FALSE);
-        _issuelocations_dist->setEnabled(FALSE);
-        _miscLocation->setEnabled(FALSE);
-	_miscLocationName->setEnabled(FALSE);
-	_locationComments->setEnabled(FALSE);
-	_plannerCode->setEnabled(FALSE);
-	_costcat->setEnabled(FALSE);
-	_eventFence->setEnabled(FALSE);
-	_notes->setReadOnly(TRUE);
-	_orderGroup->setEnabled(FALSE);
-	_orderGroupFirst->setEnabled(FALSE);
-	_mpsTimeFence->setEnabled(FALSE);
-        _planningType->setEnabled(FALSE);
-        _createPlannedTransfers->setEnabled(FALSE);
-        _woCostGroup->setEnabled(FALSE);
-        _costing->setEnabled(FALSE);
-	_close->setText(tr("&Close"));
-	_save->hide();
-	_comments->setReadOnly(TRUE);
+      _mode = cView;
+      
+      _item->setReadOnly(TRUE);
+      _warehouse->setEnabled(FALSE);
+      _useParameters->setEnabled(FALSE);
+      _useParametersOnManual->setEnabled(FALSE);
+      _reorderLevel->setEnabled(FALSE);
+      _orderUpToQty->setEnabled(FALSE);
+      _minimumOrder->setEnabled(FALSE);
+      _maximumOrder->setEnabled(FALSE);
+      _orderMultiple->setEnabled(FALSE);
+      _safetyStock->setEnabled(FALSE);
+      _abcClass->setEnabled(FALSE);
+      _autoUpdateABCClass->setEnabled(FALSE);
+      _cycleCountFreq->setEnabled(FALSE);
+      _leadTime->setEnabled(FALSE);
+      _eventFence->setEnabled(FALSE);
+      _active->setEnabled(FALSE);
+      _poSupply->setEnabled(FALSE);
+      _woSupply->setEnabled(FALSE);
+      _createPr->setEnabled(FALSE);
+      _createSoPr->setEnabled(FALSE);
+      _createPo->setEnabled(FALSE);
+      _dropShip->setEnabled(FALSE);
+      _createWo->setEnabled(FALSE);
+      _sold->setEnabled(FALSE);
+      _soldRanking->setEnabled(FALSE);
+      _stocked->setEnabled(FALSE);
+      _controlMethod->setEnabled(FALSE);
+      _perishable->setEnabled(FALSE);
+      _locationControl->setEnabled(FALSE);
+      _disallowBlankWIP->setEnabled(FALSE);
+      _useDefaultLocation->setEnabled(FALSE);
+      _location->setEnabled(FALSE);
+      _locations->setEnabled(FALSE);
+      _recvlocations->setEnabled(FALSE);
+      _issuelocations->setEnabled(FALSE);
+      _locations_dist->setEnabled(FALSE);
+      _recvlocations_dist->setEnabled(FALSE);
+      _issuelocations_dist->setEnabled(FALSE);
+      _miscLocation->setEnabled(FALSE);
+      _miscLocationName->setEnabled(FALSE);
+      _locationComments->setEnabled(FALSE);
+      _plannerCode->setEnabled(FALSE);
+      _costcat->setEnabled(FALSE);
+      _eventFence->setEnabled(FALSE);
+      _notes->setReadOnly(TRUE);
+      _orderGroup->setEnabled(FALSE);
+      _orderGroupFirst->setEnabled(FALSE);
+      _mpsTimeFence->setEnabled(FALSE);
+      _planningType->setEnabled(FALSE);
+      _createPlannedTransfers->setEnabled(FALSE);
+      _woCostGroup->setEnabled(FALSE);
+      _costing->setEnabled(FALSE);
+      _close->setText(tr("&Close"));
+      _save->hide();
+      _comments->setReadOnly(TRUE);
     }
+    emit newMode(_mode);
   }
 
   return NoError;
@@ -314,58 +331,33 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
 bool itemSite::sSave()
 {
   XSqlQuery itemSave;
-  if (_warehouse->id() == -1)
-  {
-    QMessageBox::critical( this, tr("Cannot Save Item Site"),
-                           tr( "<p>You must select a Site for this "
-			      "Item Site before creating it." ) );
-    _warehouse->setFocus();
-    return false;
-  }
-
-  if(!_costNone->isChecked() && !_costAvg->isChecked()
-   && !_costStd->isChecked() && !_costJob->isChecked())
-  {
-    QMessageBox::critical(this, tr("Cannot Save Item Site"),
-                          tr("<p>You must select a Cost Method for this "
-                             "Item Site before you may save it.") );
-    return false;
-  }
-
-  if(_costAvg->isChecked() && _qohCache < 0)
-  {
-    QMessageBox::critical(this, tr("Cannot Save Item Site"), 
-                          tr("<p>You can not change an Item Site to "
-                             "Average Costing when it has a negative Qty. On Hand.") );
-    return false;
-  }
-
-  if (_costcat->id() == -1)
-  {
-    QMessageBox::critical( this, tr("Cannot Save Item Site"),
-                           tr("<p>You must select a Cost Category for this "
-			      "Item Site before you may save it.") );
-    _costcat->setFocus();
-    return false;
-  } 
-    
-  if (_plannerCode->id() == -1)
-  {
-    QMessageBox::critical( this, tr("Cannot Save Item Site"),
-                           tr("<p>You must select a Planner Code for this "
-			      "Item Site before you may save it.") );
-    _plannerCode->setFocus();
-    return false;
-  } 
   
-  if (_stocked->isChecked() && _reorderLevel->toDouble() == 0)
-  {
-    QMessageBox::critical( this, tr("Cannot Save Item Site"),
-                           tr("<p>You must set a reorder level "
-			      "for a stocked item before you may save it.") );
-    _reorderLevel->setFocus();
-    return false;
-  }
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_warehouse->id() == -1, _warehouse,
+                          tr("<p>You must select a Site for this "
+                             "Item Site before creating it."))
+         << GuiErrorCheck(!_costNone->isChecked() && !_costAvg->isChecked() &&
+                          !_costStd->isChecked() && !_costJob->isChecked(), _costNone,
+                          tr("<p>You must select a Cost Method for this "
+                             "Item Site before you may save it."))
+         << GuiErrorCheck(_costAvg->isChecked() && _qohCache < 0, _costAvg,
+                          tr("<p>You can not change an Item Site to "
+                             "Average Costing when it has a negative Qty. On Hand."))
+         << GuiErrorCheck(_costcat->id() == -1, _costcat,
+                          tr("<p>You must select a Cost Category for this "
+                             "Item Site before you may save it."))
+         << GuiErrorCheck(_plannerCode->id() == -1, _plannerCode,
+                          tr("<p>You must select a Planner Code for this "
+                             "Item Site before you may save it."))
+         << GuiErrorCheck(_plannerCode->id() == -1, _plannerCode,
+                          tr("<p>You must select a Planner Code for this "
+                             "Item Site before you may save it."))
+         << GuiErrorCheck(_mode == cEdit && _costcat->id() != _costcatid && _qohCache != 0, _costcat,
+                          tr("This Item Site has a quantity on hand and Cost Category cannot be changed."))
+         << GuiErrorCheck(!_active->isChecked() && _qohCache != 0, _active,
+                          tr("This Item Site has a quantity on hand and must be marked as active."))
+  ;
+  
 
   bool isLocationControl = _locationControl->isChecked();
   bool isLotSerial = ((_controlMethod->currentIndex() == 2) || (_controlMethod->currentIndex() == 3));
@@ -387,58 +379,49 @@ bool itemSite::sSave()
     locationid.exec();
     if (!locationid.first())
     {
-      QMessageBox::critical( this, tr("Cannot Save Item Site"),
-                             tr( "<p>You have indicated that this Item Site "
+      errors << GuiErrorCheck(true, _locationControl,
+                              tr("<p>You have indicated that this Item Site "
                                  "should be Multiple Location Controlled "
                                  "but there are no non-restrictive Locations "
                                  "in the selected Site nor restrictive Locations "
                                  "that will accept the selected Item."
-				 "<p>You must first create at least one valid "
-				 "Location for this Item Site before it may be "
-                                 "Multiple Location Controlled." ) );
-      return false;
+                                 "<p>You must first create at least one valid "
+                                 "Location for this Item Site before it may be "
+                                 "Multiple Location Controlled."));
     }
   }
     
-  if ( (_mode == cEdit) && (_costcat->id() != _costcatid) && (_qohCache != 0) )
-  {
-    QMessageBox::warning( this, tr("Cannot Save Item Site"),
-                         tr("This Item Site has a quantity on hand and Cost Category cannot be changed.") );
-    return false;
-  }
-  
   if(_active->isChecked())
   {
     itemSave.prepare("SELECT item_id "
-              "FROM item "
-              "WHERE ((item_id=:item_id)"
-              "  AND  (item_active)) "
-              "LIMIT 1; ");
+                     "FROM item "
+                     "WHERE ((item_id=:item_id)"
+                     "  AND  (item_active)) "
+                     "LIMIT 1; ");
     itemSave.bindValue(":item_id", _item->id());
     itemSave.exec();
     if (!itemSave.first())         
-    { 
-      QMessageBox::warning( this, tr("Cannot Save Item Site"),
-        tr("This Item Site refers to an inactive Item and must be marked as inactive.") );
-      return false;
+    {
+      errors << GuiErrorCheck(true, _active,
+                              tr("This Item Site refers to an inactive Item and must be marked as inactive."));
     }
   }
 
   if (_locationControl->isChecked() && _disallowBlankWIP->isChecked())
   {
     itemSave.prepare("SELECT EXISTS(SELECT boohead_id"
-              "              FROM boohead"
-              "              WHERE ((COALESCE(boohead_final_location_id, -1) = -1)"
-              "                 AND (boohead_rev_id=getActiveRevId('BOO', :item_id))"
-              "                 AND (boohead_item_id=:item_id))"
-              "        UNION SELECT booitem_id"
-              "              FROM booitem JOIN"
-              "                   boohead ON (booitem_item_id=boohead_item_id"
-              "                           AND booitem_rev_id=boohead_rev_id)"
-              "              WHERE ((COALESCE(booitem_wip_location_id, -1) = -1)"
-              "                 AND (boohead_rev_id=getActiveRevId('BOO', :item_id))"
-              "                 AND (boohead_item_id=:item_id))"
-              "       ) AS isBlank;");
+                     "              FROM boohead"
+                     "              WHERE ((COALESCE(boohead_final_location_id, -1) = -1)"
+                     "                 AND (boohead_rev_id=getActiveRevId('BOO', :item_id))"
+                     "                 AND (boohead_item_id=:item_id))"
+                     "        UNION SELECT booitem_id"
+                     "              FROM booitem JOIN"
+                     "                   boohead ON (booitem_item_id=boohead_item_id"
+                     "                           AND booitem_rev_id=boohead_rev_id)"
+                     "              WHERE ((COALESCE(booitem_wip_location_id, -1) = -1)"
+                     "                 AND (boohead_rev_id=getActiveRevId('BOO', :item_id))"
+                     "                 AND (boohead_item_id=:item_id))"
+                     "       ) AS isBlank;");
     itemSave.bindValue(":item_id", _item->id());
     itemSave.exec();
     if (itemSave.first())
@@ -465,65 +448,56 @@ bool itemSite::sSave()
     
   if(!_active->isChecked())
   {
-    if (_qohCache != 0)         
-    { 
-      QMessageBox::warning( this, tr("Cannot Save Item Site"),
-        tr("This Item Site has a quantity on hand and must be marked as active.") );
-      return false;
-    }
-
     itemSave.prepare("SELECT coitem_id "
-              "FROM coitem "
-              "WHERE ((coitem_itemsite_id=:itemsite_id)"
-              "  AND  (coitem_status NOT IN ('X','C'))) "
-              "UNION "
-              "SELECT wo_id "
-              "FROM wo "
-              "WHERE ((wo_itemsite_id=:itemsite_id)"
-              "  AND  (wo_status<>'C')) "
-              "UNION "
-              "SELECT womatl_id "
-              "FROM womatl, wo "
-              "WHERE ((womatl_itemsite_id=:itemsite_id)"
-              "  AND  (wo_id=womatl_wo_id)"
-              "  AND  (wo_status<>'C')) "
-              "UNION "
-              "SELECT poitem_id "
-              "FROM poitem "
-              "WHERE ((poitem_itemsite_id=:itemsite_id)"
-              "  AND  (poitem_status<>'C')) "
-              "LIMIT 1; ");
+                     "FROM coitem "
+                     "WHERE ((coitem_itemsite_id=:itemsite_id)"
+                     "  AND  (coitem_status NOT IN ('X','C'))) "
+                     "UNION "
+                     "SELECT wo_id "
+                     "FROM wo "
+                     "WHERE ((wo_itemsite_id=:itemsite_id)"
+                     "  AND  (wo_status<>'C')) "
+                     "UNION "
+                     "SELECT womatl_id "
+                     "FROM womatl, wo "
+                     "WHERE ((womatl_itemsite_id=:itemsite_id)"
+                     "  AND  (wo_id=womatl_wo_id)"
+                     "  AND  (wo_status<>'C')) "
+                     "UNION "
+                     "SELECT poitem_id "
+                     "FROM poitem "
+                     "WHERE ((poitem_itemsite_id=:itemsite_id)"
+                     "  AND  (poitem_status<>'C')) "
+                     "LIMIT 1; ");
     itemSave.bindValue(":itemsite_id", _itemsiteid);
     itemSave.exec();
     if (itemSave.first())         
     { 
-      QMessageBox::warning( this, tr("Cannot Save Item Site"),
-        tr("This Item Site is used in an active order and must be marked as active.") );
-      return false;
+      errors << GuiErrorCheck(true, _active,
+                              tr("This Item Site is used in an active order and must be marked as active."));
     }
     
     if (_metrics->boolean("MultiWhs"))
     {
       itemSave.prepare("SELECT raitem_id "
-                "FROM raitem "
-                "WHERE ((raitem_itemsite_id=:itemsite_id)"
-                "  AND  (raitem_status<>'C')) "
-                "UNION "
-                "SELECT planord_id "
-                "FROM planord "
-                "WHERE (planord_itemsite_id=:itemsite_id)"
-                "UNION "
-                "SELECT planreq_id "
-                "FROM planreq "
-                "WHERE (planreq_itemsite_id=:itemsite_id)"
-                "LIMIT 1; ");
+                       "FROM raitem "
+                       "WHERE ((raitem_itemsite_id=:itemsite_id)"
+                       "  AND  (raitem_status<>'C')) "
+                       "UNION "
+                       "SELECT planord_id "
+                       "FROM planord "
+                       "WHERE (planord_itemsite_id=:itemsite_id)"
+                       "UNION "
+                       "SELECT planreq_id "
+                       "FROM planreq "
+                       "WHERE (planreq_itemsite_id=:itemsite_id)"
+                       "LIMIT 1; ");
       itemSave.bindValue(":itemsite_id", _itemsiteid);
       itemSave.exec();
       if (itemSave.first())         
       { 
-        QMessageBox::warning( this, tr("Cannot Save Item Site"),
-          tr("This Item Site is used in an active order and must be marked as active.") );
-        return false;
+        errors << GuiErrorCheck(true, _active,
+                                tr("This Item Site is used in an active order and must be marked as active."));
       }
     }
   }
@@ -532,9 +506,9 @@ bool itemSite::sSave()
   if (_createPlannedTransfers->isChecked())
   {
     itemSave.prepare("SELECT itemsite_id "
-              "FROM itemsite "
-              "WHERE ( (itemsite_item_id=:item_id)"
-              "  AND   (itemsite_warehous_id=:warehous_id) ); ");
+                     "FROM itemsite "
+                     "WHERE ( (itemsite_item_id=:item_id)"
+                     "  AND   (itemsite_warehous_id=:warehous_id) ); ");
     itemSave.bindValue(":item_id", _item->id());
     itemSave.bindValue(":warehous_id", _suppliedFromSite->id());
     itemSave.exec();
@@ -542,34 +516,26 @@ bool itemSite::sSave()
     {
       if (itemSave.value("itemsite_id").toInt() == _itemsiteid)
       { 
-        QMessageBox::warning( this, tr("Cannot Save Item Site"),
-          tr("The Supplied From Site must be different from this Site.") );
-        return false;
+        errors << GuiErrorCheck(true, _suppliedFromSite,
+                                tr("The Supplied From Site must be different from this Site."));
       }
       else
         _supplyItemsiteId = itemSave.value("itemsite_id").toInt();
     }
     else
     { 
-      QMessageBox::warning( this, tr("Cannot Save Item Site"),
-        tr("Cannot find Supplied From Item Site.") );
-      return false;
+      errors << GuiErrorCheck(true, _suppliedFromSite,
+                              tr("Cannot find Supplied From Item Site."));
     }
   }
 
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Item Site"), errors))
+    return false;
+  
   XSqlQuery newItemSite;
     
   if (_mode == cNew)
   {
-    XSqlQuery newItemsiteid("SELECT NEXTVAL('itemsite_itemsite_id_seq') AS _itemsite_id");
-    if (newItemsiteid.first())
-      _itemsiteid = newItemsiteid.value("_itemsite_id").toInt();
-    else if (newItemsiteid.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, newItemsiteid.lastError().databaseText(), __FILE__, __LINE__);
-      return false;
-    }
-	
     newItemSite.prepare( "INSERT INTO itemsite "
                          "( itemsite_id, itemsite_item_id, itemsite_warehous_id, itemsite_qtyonhand,"
                          "  itemsite_useparams, itemsite_useparamsmanual, itemsite_reorderlevel,"
@@ -824,7 +790,8 @@ bool itemSite::sSave()
   }
     
   omfgThis->sItemsitesUpdated();
-    
+  emit saved(_itemsiteid);
+  
   if ((_captive) || (!_metrics->boolean("MultiWhs")))
     accept();
   else
@@ -856,6 +823,8 @@ void itemSite::sCheckItemsite()
     {
       _mode = cEdit;
       _itemsiteid = query.value("itemsite_id").toInt();
+      emit newMode(_mode);
+      emit newId(_itemsiteid);
       whsCache=_warehouse->id();
       disconnect(_warehouse, SIGNAL(newID(int)), this, SLOT(sCheckItemsite()));
       populate();
@@ -869,6 +838,7 @@ void itemSite::sCheckItemsite()
     else
     { 
       _mode = cNew;
+      emit newMode(_mode);
       clear();
     }
 
@@ -1503,6 +1473,7 @@ void itemSite::populate()
     systemError(this, itemsite.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  emit populated();
 }
 
 void itemSite::clear()
