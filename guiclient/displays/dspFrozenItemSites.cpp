@@ -12,6 +12,7 @@
 
 #include <QAction>
 #include <QMenu>
+#include <QSqlError>
 
 #include "xtreewidget.h"
 
@@ -52,6 +53,11 @@ void dspFrozenItemSites::sThaw()
   qq.prepare("SELECT thawItemsite(:itemsite_id) AS result;");
   qq.bindValue(":itemsite_id", list()->id());
   qq.exec();
+  if (qq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, qq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sFillList();
 }
