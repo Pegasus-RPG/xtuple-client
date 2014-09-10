@@ -40,7 +40,6 @@ shipTo::shipTo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _commission->setValidator(omfgThis->percentVal());
 
   _shiptoid = -1;
-  _sellingWarehouse->setId(-1);
   
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
@@ -48,6 +47,8 @@ shipTo::shipTo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _sellingWarehouseLit->hide();
     _sellingWarehouse->hide();
   }
+  else
+    _sellingWarehouse->setId(_preferences->value("PreferredWarehouse").toInt());
 }
 
 shipTo::~shipTo()
@@ -127,7 +128,8 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
 	    systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
 	    return UndefinedError;
       }
-      _save->setEnabled(false);
+      sPopulateNumber();
+      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {

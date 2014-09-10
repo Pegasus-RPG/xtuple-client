@@ -26,22 +26,22 @@ miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_amountDistributed,        SIGNAL(valueChanged()),                            this,          SLOT(sPopulateBalanceDue()));
-  connect(_amountToDistribute,       SIGNAL(valueChanged()),                            this,          SLOT(sPopulateBalanceDue()));
-  connect(_amountToDistribute,       SIGNAL(effectiveChanged(const QDate&)),            this,          SLOT(sFillMiscList()));
-  connect(_amountToDistribute,       SIGNAL(idChanged(int)),                            this,          SLOT(sFillMiscList()));
-  connect(_amountToDistribute,       SIGNAL(valueChanged()),                            this,          SLOT(sPopulateBalanceDue()));
-  connect(_delete,                   SIGNAL(clicked()),                                 this,          SLOT(sDeleteMiscDistribution()));
-  connect(_edit,                     SIGNAL(clicked()),                                 this,          SLOT(sEditMiscDistribution()));
-  connect(_invoiceDate,              SIGNAL(newDate(const QDate&)),                     this,          SLOT(sPopulateDistDate()));
-  connect(_invoiceDate,              SIGNAL(newDate(const QDate&)),                     this,          SLOT(sPopulateDueDate()));
-  connect(_terms,                    SIGNAL(newID(int)),                                this,          SLOT(sPopulateDueDate()));
-  connect(_new,                      SIGNAL(clicked()),                                 this,          SLOT(sNewMiscDistribution()));
-  connect(_save,                     SIGNAL(clicked()),                                 this,          SLOT(sSave()));
-  connect(_voucherNumber,            SIGNAL(editingFinished()),                         this,          SLOT(sHandleVoucherNumber()));
-  connect(_newCharacteristic,        SIGNAL(clicked()),                                 this,          SLOT(sNewCharacteristic()));
-  connect(_editCharacteristic,       SIGNAL(clicked()),                                 this,          SLOT(sEditCharacteristic()));
-  connect(_deleteCharacteristic,     SIGNAL(clicked()),                                 this,          SLOT(sDeleteCharacteristic()));
+  connect(_amountDistributed,    SIGNAL(valueChanged()),                 this, SLOT(sPopulateBalanceDue()));
+  connect(_amountToDistribute,   SIGNAL(valueChanged()),                 this, SLOT(sPopulateBalanceDue()));
+  connect(_amountToDistribute,   SIGNAL(effectiveChanged(const QDate&)), this, SLOT(sFillMiscList()));
+  connect(_amountToDistribute,   SIGNAL(idChanged(int)),                 this, SLOT(sFillMiscList()));
+  connect(_amountToDistribute,   SIGNAL(valueChanged()),                 this, SLOT(sPopulateBalanceDue()));
+  connect(_delete,               SIGNAL(clicked()),                      this, SLOT(sDeleteMiscDistribution()));
+  connect(_edit,                 SIGNAL(clicked()),                      this, SLOT(sEditMiscDistribution()));
+  connect(_invoiceDate,          SIGNAL(newDate(const QDate&)),          this, SLOT(sPopulateDistDate()));
+  connect(_invoiceDate,          SIGNAL(newDate(const QDate&)),          this, SLOT(sPopulateDueDate()));
+  connect(_terms,                SIGNAL(newID(int)),                     this, SLOT(sPopulateDueDate()));
+  connect(_new,                  SIGNAL(clicked()),                      this, SLOT(sNewMiscDistribution()));
+  connect(_save,                 SIGNAL(clicked()),                      this, SLOT(sSave()));
+  connect(_voucherNumber,        SIGNAL(editingFinished()),              this, SLOT(sHandleVoucherNumber()));
+  connect(_newCharacteristic,    SIGNAL(clicked()),                      this, SLOT(sNewCharacteristic()));
+  connect(_editCharacteristic,   SIGNAL(clicked()),                      this, SLOT(sEditCharacteristic()));
+  connect(_deleteCharacteristic, SIGNAL(clicked()),                      this, SLOT(sDeleteCharacteristic()));
 
   _terms->setType(XComboBox::APTerms);
 
@@ -51,6 +51,7 @@ miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _miscDistrib->addColumn(tr("Account"),    -1,           Qt::AlignLeft,   true,  "account"  );
   _miscDistrib->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight,  true,  "vodist_amount" );
+  _miscDistrib->addColumn(tr("Notes"),      -1,           Qt::AlignLeft,   true,  "vodist_notes"  );
 
   _charass->addColumn(tr("Characteristic"), _itemColumn,  Qt::AlignLeft,   true,  "char_name" );
   _charass->addColumn(tr("Value"),          -1,           Qt::AlignLeft,   true,  "charass_value" );
@@ -136,7 +137,7 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
       _new->setEnabled(false);
       _flagFor1099->setEnabled(false);
       _notes->setEnabled(false);
-//      _documents->setReadOnly(true);
+//    _documents->setReadOnly(true);
       _newCharacteristic->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
@@ -508,6 +509,7 @@ void miscVoucher::sFillMiscList()
   XSqlQuery getq;
   getq.prepare("SELECT vodist_id,"
              " (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
+             "       vodist_notes,"
              "       vodist_amount, 'curr' AS vodist_amount_xtnumericrole "
              "FROM vodist, accnt "
              "WHERE ( (vodist_poitem_id=-1)"
@@ -515,6 +517,7 @@ void miscVoucher::sFillMiscList()
              " AND (vodist_vohead_id=:vohead_id) ) "
              "UNION ALL "
              "SELECT vodist_id, (expcat_code || ' - ' || expcat_descrip) AS account,"
+             "       vodist_notes,"
              "       vodist_amount, 'curr' AS vodist_amount_xtnumericrole "
              "  FROM vodist, expcat "
              " WHERE ( (vodist_poitem_id=-1)"
@@ -522,6 +525,7 @@ void miscVoucher::sFillMiscList()
              "   AND   (vodist_vohead_id=:vohead_id) ) "
              "UNION ALL "
              "SELECT vodist_id, (tax_code || ' - ' || tax_descrip) AS account,"
+             "       vodist_notes,"
              "       vodist_amount, 'curr' AS vodist_amount_xtnumericrole "
              "  FROM vodist, tax "
              " WHERE ( (vodist_poitem_id=-1)"

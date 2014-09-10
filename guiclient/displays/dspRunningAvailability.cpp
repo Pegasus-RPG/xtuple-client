@@ -39,18 +39,20 @@ dspRunningAvailability::dspRunningAvailability(QWidget* parent, const char*, Qt:
   connect(list(),       SIGNAL(populated()), this, SLOT(sHandleResort()));
   connect(list(),       SIGNAL(resorted()), this, SLOT(sHandleResort()));
 
-  list()->addColumn(tr("Order Type"),    _itemColumn, Qt::AlignLeft,  true, "ordertype");
-  list()->addColumn(tr("Order #"),       _itemColumn, Qt::AlignLeft,  true, "ordernumber");
-  list()->addColumn(tr("Source/Destination"),     -1, Qt::AlignLeft,  true, "item_number");
-  list()->addColumn(tr("Due Date"),      _dateColumn, Qt::AlignLeft,  true, "duedate");
-  list()->addColumn(tr("Amount"),       _moneyColumn, Qt::AlignRight, true, "amount");
-  list()->addColumn(tr("Ordered"),        _qtyColumn, Qt::AlignRight, true, "qtyordered");
-  list()->addColumn(tr("Received"),       _qtyColumn, Qt::AlignRight, true, "qtyreceived");
-  list()->addColumn(tr("Balance"),        _qtyColumn, Qt::AlignRight, true, "balance");
-  list()->addColumn(tr("Running Avail."), _qtyColumn, Qt::AlignRight, true, "runningavail");
-  list()->addColumn(tr("Notes"),          _itemColumn, Qt::AlignLeft, true, "notes");
+  list()->addColumn(tr("Order Type"),             _itemColumn,  Qt::AlignLeft,  true, "ordertype");
+  list()->addColumn(tr("Order #"),                _itemColumn,  Qt::AlignLeft,  true, "ordernumber");
+  list()->addColumn(tr("Source/Destination"),     -1,           Qt::AlignLeft,  true, "item_number");
+  list()->addColumn(tr("Due Date"),               _dateColumn,  Qt::AlignLeft,  true, "duedate");
+  list()->addColumn(tr("Amount"),                 _moneyColumn, Qt::AlignRight, true, "amount");
+  list()->addColumn(tr("Ordered"),                _qtyColumn,   Qt::AlignRight, true, "qtyordered");
+  list()->addColumn(tr("Received"),               _qtyColumn,   Qt::AlignRight, true, "qtyreceived");
+  list()->addColumn(tr("Balance"),                _qtyColumn,   Qt::AlignRight, true, "balance");
+  list()->addColumn(tr("Running Avail."),         _qtyColumn,   Qt::AlignRight, true, "runningavail");
+  list()->addColumn(tr("Running Netable"),        _qtyColumn,   Qt::AlignRight, true, "runningnetable");
+  list()->addColumn(tr("Notes"),                  _itemColumn,  Qt::AlignLeft,  true, "notes");
 
   _qoh->setValidator(omfgThis->qtyVal());
+  _netableqoh->setValidator(omfgThis->qtyVal());
   _reorderLevel->setValidator(omfgThis->qtyVal());
   _orderMultiple->setValidator(omfgThis->qtyVal());
   _orderToQty->setValidator(omfgThis->qtyVal());
@@ -129,6 +131,7 @@ bool dspRunningAvailability::setParams(ParameterList & params)
   }
 
   params.append("qoh", _qoh->toDouble()); // metasql only?
+  params.append("netableqoh", _netableqoh->toDouble()); // metasql only?
 
   return true;
 }
@@ -350,7 +353,8 @@ void dspRunningAvailability::sFillList()
   ParameterList params;
   if (setParams(params) && _ready)
   {
-    dspFillList.prepare( "SELECT itemsite_qtyonhand,"
+    dspFillList.prepare( "SELECT qtyAvailable(itemsite_id) AS availqoh,"
+               "       qtyNetable(itemsite_id) AS netableqoh,"
                "       CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
                "       CASE WHEN(itemsite_useparams) THEN itemsite_ordertoqty   ELSE 0.0 END AS ordertoqty,"
                "       CASE WHEN(itemsite_useparams) THEN itemsite_multordqty   ELSE 0.0 END AS multorderqty "
@@ -363,7 +367,8 @@ void dspRunningAvailability::sFillList()
     dspFillList.exec();
     if (dspFillList.first())
     {
-      _qoh->setDouble(dspFillList.value("itemsite_qtyonhand").toDouble());
+      _qoh->setDouble(dspFillList.value("availqoh").toDouble());
+      _netableqoh->setDouble(dspFillList.value("netableqoh").toDouble());
       _reorderLevel->setDouble(dspFillList.value("reorderlevel").toDouble());
       _orderMultiple->setDouble(dspFillList.value("multorderqty").toDouble());
       _orderToQty->setDouble(dspFillList.value("ordertoqty").toDouble());
@@ -401,5 +406,12 @@ void dspRunningAvailability::sHandleResort()
       item->setTextColor(list()->column("runningavail"), namedColor("warning"));
     else
       item->setTextColor(list()->column("runningavail"), namedColor(""));
+
+    if (item->data(list()->column("runningnetable"), Qt::DisplayRole).toDouble() < 0)
+      item->setTextColor(list()->column("runningnetable"), namedColor("error"));
+    else if (item->data(list()->column("runningnetable"), Qt::DisplayRole).toDouble() < _reorderLevel->toDouble())
+      item->setTextColor(list()->column("runningnetable"), namedColor("warning"));
+    else
+      item->setTextColor(list()->column("runningnetable"), namedColor(""));
   }
 }

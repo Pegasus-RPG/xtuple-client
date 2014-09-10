@@ -22,6 +22,7 @@
 
 #include "mqlutil.h"
 #include "bankAdjustment.h"
+#include "importData.h"
 #include "toggleBankrecCleared.h"
 #include "storedProcErrorLookup.h"
 
@@ -39,6 +40,7 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
     connect(_receipts,	SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(sReceiptsToggleCleared()));
     connect(_reconcile,	SIGNAL(clicked()),      this, SLOT(sReconcile()));
     connect(_save,	    SIGNAL(clicked()),      this, SLOT(sSave()));
+    connect(_import,	    SIGNAL(clicked()),      this, SLOT(sImport()));
     connect(_update,	SIGNAL(clicked()),      this, SLOT(populate()));
     connect(_startDate, SIGNAL(newDate(QDate)), this, SLOT(sDateChanged()));
     connect(_endDate,   SIGNAL(newDate(QDate)), this, SLOT(sDateChanged()));
@@ -79,13 +81,14 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
 			 "ORDER BY bankaccnt_name;");
     _currency->setLabel(_currencyLit);
 
-    if (!_privileges->check("MaintainBankAdjustments"))
-      _addAdjustment->setEnabled(FALSE);
+    _addAdjustment->setEnabled(_privileges->check("MaintainBankAdjustments"));
 
     if (_metrics->boolean("CashBasedTax"))
     {
       _allowEdit->setText(tr("Exchange Rate/Effective Date Edit"));
     }
+  
+    _import->setVisible(_metrics->boolean("ImportBankReconciliation"));
   
     connect(omfgThis, SIGNAL(bankAdjustmentsUpdated(int, bool)), this, SLOT(populate()));
     connect(omfgThis, SIGNAL(checksUpdated(int, int, bool)), this, SLOT(populate()));
@@ -480,6 +483,26 @@ void reconcileBankaccount::populate()
   qApp->restoreOverrideCursor();
 }
 
+void reconcileBankaccount::sImport()
+{
+  XSqlQuery reconcileImport;
+
+  // set the metric
+  reconcileImport.prepare("SELECT setMetric('ImportBankRecId', :bankrecid::TEXT) AS result; ");
+  reconcileImport.bindValue(":bankrecid", _bankrecid);
+  reconcileImport.exec();
+  if (reconcileImport.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, reconcileImport.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  // import the reconciliation file
+  importData *newdlg = new importData();
+  newdlg->setWindowModality(Qt::WindowModal);
+  omfgThis->handleNewWindow(newdlg);
+}
+
 void reconcileBankaccount::sAddAdjustment()
 {
   ParameterList params;
@@ -514,7 +537,6 @@ void reconcileBankaccount::sReceiptsToggleCleared()
       if(child->text(0) != (setto ? tr("Yes") : tr("No")))
       {
         double rate = QLocale().toDouble(child->text(6));
-        double baseamount = QLocale().toDouble(child->text(7));
         double amount = QLocale().toDouble(child->text(8));
 
         if (_allowEdit->isChecked() && child->text(0) != tr("Yes"))
@@ -564,7 +586,6 @@ void reconcileBankaccount::sReceiptsToggleCleared()
   else
   {
     double rate = QLocale().toDouble(item->text(6));
-    double baseamount = QLocale().toDouble(item->text(7));
     double amount = QLocale().toDouble(item->text(8));
     
     if (_allowEdit->isChecked() && item->text(0) != tr("Yes"))
@@ -638,7 +659,6 @@ void reconcileBankaccount::sChecksToggleCleared()
   _checks->scrollToItem(item);
 
   double rate = item->rawValue("doc_exchrate").toDouble();
-  double baseamount = item->rawValue("base_amount").toDouble();
   double amount = item->rawValue("amount").toDouble();
   
   if (_allowEdit->isChecked() && item->text(0) != tr("Yes"))
@@ -841,3 +861,36 @@ void reconcileBankaccount::sDateChanged()
     _datesAreOK = true;
   }
 }
+
+void reconcileBankaccount::openReconcileBankaccount(int pBankaccntid, QWidget *parent)
+{
+  // Check for a window.
+  if (pBankaccntid == -1)
+  {
+    QWidgetList list = omfgThis->windowList();
+    for (int i = 0; i < list.size(); i++)
+    {
+      QWidget *w = list.at(i);
+      if (QString::compare(w->objectName(), "reconcileBankaccount")==0)
+      {
+        w->setFocus();
+        if (omfgThis->showTopLevel())
+        {
+          w->raise();
+          w->activateWindow();
+        }
+        return;
+      }
+    }
+  }
+  
+  // If none found then create one.
+  ParameterList params;
+  if (pBankaccntid != -1)
+    params.append("bankaccnt_id", pBankaccntid);
+  
+  reconcileBankaccount *newdlg = new reconcileBankaccount(parent);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+

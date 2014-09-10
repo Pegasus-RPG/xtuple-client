@@ -2,12 +2,8 @@ include( ../global.pri )
 
 TARGET      = xtuplecommon
 TEMPLATE    = lib
-CONFIG      += qt warn_on
-xtcommon_shared {
-  CONFIG    += dll
-} else {
-  CONFIG    += staticlib
-}
+CONFIG      += qt warn_on dll
+
 DEFINES     += MAKELIB
 
 INCLUDEPATH += $(QTDIR)/src/3rdparty/zlib
@@ -18,8 +14,12 @@ OBJECTS_DIR = tmp
 MOC_DIR     = tmp
 UI_DIR      = tmp
 
+QMAKE_LIBDIR += $${OPENRPT_LIBDIR}
+LIBS += -lopenrptcommon -lMetaSQL $${LIBDMTX} -lz
+
 SOURCES = calendarcontrol.cpp \
           calendargraphicsitem.cpp \
+	  checkForUpdates.cpp      \
           errorReporter.cpp        \
           exporthelper.cpp \
           importhelper.cpp \
@@ -37,10 +37,10 @@ SOURCES = calendarcontrol.cpp \
           tarfile.cpp \
           xbase32.cpp \
           xtupleproductkey.cpp \
-          xtsettings.cpp \
-	  checkForUpdates.cpp
+          xtsettings.cpp
 HEADERS = calendarcontrol.h \
           calendargraphicsitem.h \
+          checkForUpdates.h      \
           errorReporter.h        \
           exporthelper.h \
           importhelper.h \
@@ -58,8 +58,8 @@ HEADERS = calendarcontrol.h \
           tarfile.h \
           xbase32.h \
           xtupleproductkey.h \
-          xtsettings.h \
-	  checkForUpdates.h
+          xtsettings.h
+
 FORMS = login2.ui login2Options.ui checkForUpdates.ui
 
 QT +=  script sql xml xmlpatterns network
