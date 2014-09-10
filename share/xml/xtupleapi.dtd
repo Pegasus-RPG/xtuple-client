@@ -145,7 +145,8 @@
                         notes?) >
 <!ATTLIST cashreceipt ignore (true|false) 'false' >                        
                         
-<!ELEMENT cashreceiptapply ( customer_number?, 
+<!ELEMENT cashreceiptapply ( cashreceipt_number?,
+                             customer_number?, 
                              funds_type?, 
                              check_document_number?, 
                              doc_type?,
