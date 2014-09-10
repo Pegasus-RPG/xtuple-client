@@ -12,8 +12,8 @@
 
 #include <QAction>
 #include <QMenu>
-#include <QSqlError>
 
+#include "errorReporter.h"
 #include "xtreewidget.h"
 
 dspFrozenItemSites::dspFrozenItemSites(QWidget* parent, const char*, Qt::WFlags fl)
@@ -53,11 +53,9 @@ void dspFrozenItemSites::sThaw()
   qq.prepare("SELECT thawItemsite(:itemsite_id) AS result;");
   qq.bindValue(":itemsite_id", list()->id());
   qq.exec();
-  if (qq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, qq.lastError().databaseText(), __FILE__, __LINE__);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Thaw Item Site"),
+                           qq, __FILE__, __LINE__))
     return;
-  }
 
   sFillList();
 }

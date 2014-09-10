@@ -8,9 +8,9 @@
  * to be bound by its terms.
  */
 
-#include <QSqlError>
-
 #include "thawItemSitesByClassCode.h"
+
+#include "errorReporter.h"
 
 thawItemSitesByClassCode::thawItemSitesByClassCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -61,11 +61,9 @@ void thawItemSitesByClassCode::sThaw()
   thawThaw.bindValue(":warehous_id", _warehouse->id());
   _classCode->bindValue(thawThaw);
   thawThaw.exec();
-  if (thawThaw.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, thawThaw.lastError().databaseText(), __FILE__, __LINE__);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Thaw Item Site"),
+                           thawThaw, __FILE__, __LINE__))
     return;
-  }
 
   accept();
 }
