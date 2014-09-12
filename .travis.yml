@@ -16,10 +16,8 @@ compiler:
 before_script:
   - git submodule update --init --recursive
   - cd openrpt
-  - git pull origin master && echo "Remove after openrpt submodule is updated"
   - qmake && make -j4
   - cd ../csvimp
-  - git pull origin master && echo "Remove after csvimp submodule is updated"
   - qmake && make -j2
   - cd ..
 
