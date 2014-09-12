@@ -20,6 +20,7 @@ before_script:
   - cd ../csvimp
   - qmake && make -j2
   - cd ..
+  - ls openrpt/lib
 
 script:
   - qmake
