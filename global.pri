@@ -100,8 +100,8 @@ isEmpty( OPENRPT_IMAGE_DIR ) {
 
 OPENRPTLIBEXT = $${QMAKE_EXTENSION_SHLIB}
 XTLIBEXT      = $${QMAKE_EXTENSION_SHLIB}
-isEmpty( OPENRPTLIBEXT ) { OPENRPTLIBEXT = .so }
-isEmpty( XTLIBEXT      ) { XTLIBEXT      = .so }
+isEmpty( OPENRPTLIBEXT ) { OPENRPTLIBEXT = so }
+isEmpty( XTLIBEXT      ) { XTLIBEXT      = so }
 
 macx:exists(macx.pri) {
   include(macx.pri)
