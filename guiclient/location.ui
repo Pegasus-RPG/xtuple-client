@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>446</width>
-    <height>404</height>
+    <width>447</width>
+    <height>415</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -97,6 +97,16 @@ to be bound by its terms.</comment>
         <widget class="QCheckBox" name="_netable">
          <property name="text">
           <string>Ne&amp;table</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="_usable">
+         <property name="text">
+          <string>Usable</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -432,8 +442,9 @@ to be bound by its terms.</comment>
  <tabstops>
   <tabstop>_warehouse</tabstop>
   <tabstop>_whsezone</tabstop>
-  <tabstop>_restricted</tabstop>
   <tabstop>_netable</tabstop>
+  <tabstop>_usable</tabstop>
+  <tabstop>_restricted</tabstop>
   <tabstop>_aisle</tabstop>
   <tabstop>_rack</tabstop>
   <tabstop>_bin</tabstop>
@@ -442,8 +453,8 @@ to be bound by its terms.</comment>
   <tabstop>_locitem</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_delete</tabstop>
-  <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_save</tabstop>
  </tabstops>
  <resources/>
  <connections>

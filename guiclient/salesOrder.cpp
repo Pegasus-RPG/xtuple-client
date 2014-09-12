@@ -217,7 +217,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _soitem->addColumn(tr("Pkg. Weight"),     _qtyColumn,            Qt::AlignRight,  false, "packweight");
   _soitem->addColumn(tr("Supply Type"),     _itemColumn,           Qt::AlignCenter, false, "spplytype");
   _soitem->addColumn(tr("Order Number"),    _itemColumn,           Qt::AlignCenter, false, "ordrnumbr");
-  _soitem->addColumn(tr("On Hand"),         _qtyColumn,            Qt::AlignCenter, true,  "itemsite_qtyonhand");
+  _soitem->addColumn(tr("Available QOH"),   _qtyColumn,            Qt::AlignCenter, true,  "availableqoh");
   if (_metrics->boolean("EnableSOReservations"))
   {
     _soitem->addColumn(tr("Reserved"),      _qtyColumn,            Qt::AlignCenter, true,  "reserved");

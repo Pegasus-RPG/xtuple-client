@@ -61,6 +61,7 @@ shipOrder::shipOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   _order->setAllowedTypes(OrderLineEdit::Sales |
                           OrderLineEdit::Transfer);
   _order->setFromSitePrivsEnforced(TRUE);
+  _order->setFocus();
 
   _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
   _transDate->setDate(omfgThis->dbDate(), true);

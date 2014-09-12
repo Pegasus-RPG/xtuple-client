@@ -454,11 +454,13 @@ void creditMemoItem::populate()
     {
       _updateInv->setChecked(false);
       _updateInv->setEnabled(false);
+      _qtyReturned->setEnabled(false);
     }
     else
     {
       _updateInv->setChecked(cmitem.value("cmitem_updateinv").toBool());
       _updateInv->setEnabled(true);
+      _qtyReturned->setEnabled(true);
     }
     _qtyUOM->setId(cmitem.value("cmitem_qty_uom_id").toInt());
     _ratio=cmitem.value("cmitem_qty_invuomratio").toDouble();

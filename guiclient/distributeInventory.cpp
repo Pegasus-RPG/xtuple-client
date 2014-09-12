@@ -50,6 +50,7 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
   _itemloc->addColumn(tr("Location"),     _itemColumn, Qt::AlignLeft,  true, "locationname");
   _itemloc->addColumn(tr("Default"),      _ynColumn,   Qt::AlignLeft,  true, "defaultlocation");
   _itemloc->addColumn(tr("Netable"),      _ynColumn,   Qt::AlignCenter,true, "location_netable");
+  _itemloc->addColumn(tr("Usable"),       _ynColumn,   Qt::AlignCenter,true, "location_usable");
   _itemloc->addColumn(tr("Lot/Serial #"), -1,          Qt::AlignLeft,  true, "lotserial");
   _itemloc->addColumn(tr("Expiration"),   _dateColumn, Qt::AlignCenter,true, "f_expiration");
   _itemloc->addColumn(tr("Qty. Before"),  _qtyColumn,  Qt::AlignRight, true, "qty");
@@ -108,6 +109,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
                      "       COALESCE(itemlocdist_source_id,-1) AS itemlocdist_source_id,"
                      "       CASE WHEN (invhist_transtype IN ('RM','RP','RR','RX')) THEN 'R'"
                      "            WHEN (invhist_transtype = 'IM') THEN 'I'"
+                     "            WHEN (invhist_transtype = 'SH' AND invhist_ordtype='SO') THEN 'I'"
                      "            ELSE 'O'"
                      "       END AS trans_type,"
                      "       CASE WHEN (invhist_transtype IN ('RM','RP','RR','RX')"
