@@ -51,12 +51,8 @@ isEmpty( CSVIMP_HEADERS ) {
   error("Could not set the CSVIMP_HEADERS qmake variable.")
 }
 
-exists($${OPENRPT_LIBDIR}/libdmtx.$${QMAKE_EXTENSION_SHLIB}) {
-  DMTXLIB = -ldmtx
-}
-exists($${OPENRPT_LIBDIR}/libDmtx_Library.$${QMAKE_EXTENSION_SHLIB}) {
-  DMTXLIB = -lDmtx_Library
-}
+DMTXLIB = -ldmtx
+
 exists($${OPENRPT_LIBDIR}/libdmtx.a)           { DMTXLIB = -ldmtx }
 exists($${OPENRPT_LIBDIR}/libDmtx_Library.a)   { DMTXLIB = -lDmtx_Library }
 exists($${OPENRPT_LIBDIR}/libdmtx.lib)         { DMTXLIB = -ldmtx }
