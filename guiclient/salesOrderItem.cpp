@@ -1417,18 +1417,24 @@ void salesOrderItem::sSave(bool pPartial)
                       __FILE__, __LINE__);
           return;
         }
-        if ( (_supplyOrderType == "W") && (_supplyOrderStatus->text() == "O") && _item->isConfigured() )
-        {
-          XSqlQuery explodeq;
-          explodeq.prepare( "SELECT explodeWo(:wo_id, true) AS result;" );
-          explodeq.bindValue(":wo_id", _supplyOrderId);
-          explodeq.exec();
-        }
       }
       else if (salesSave.lastError().type() != QSqlError::NoError)
       {
         rollback.exec();
           systemError(this, salesSave.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+    }
+    if ( (_supplyOrderType == "W") && (_supplyOrderStatus->text() == "O") && _item->isConfigured() )
+    {
+      XSqlQuery explodeq;
+      explodeq.prepare( "SELECT explodeWo(:wo_id, true) AS result;" );
+      explodeq.bindValue(":wo_id", _supplyOrderId);
+      explodeq.exec();
+      if (explodeq.lastError().type() != QSqlError::NoError)
+      {
+        rollback.exec();
+        systemError(this, explodeq.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
