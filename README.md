@@ -16,8 +16,8 @@ To learn more about:
 
 ## Development Quickstart
 
-We are updating our full Development Environment Setup docs. We're also building a Linux virtual machine in which this is already done.
-Meanwhile, here's a brief description of how to set up a development environment:
+If you prefer to use an automated system like vagrant go [here](https://github.com/xtuple/xtuple-vagrant/tree/master/xtuple-desktop)
+If you're old school or prefer to tackle this on your own, here's a brief description of how to set up a development environment:
 
 * Install Postgres 9.1, including libraries and header files. We strongly suggest that you build from source.
   * Start [here](http://www.postgresql.org/download/) and use the *File Browser* to get a source bundle for 9.1.x.
