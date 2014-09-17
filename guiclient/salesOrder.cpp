@@ -1974,6 +1974,7 @@ void salesOrder::populateShipto(int pShiptoid)
   else
   {
     _shipTo->setId(-1);
+    _shipTo->setCustid(_cust->id());
     _shipToName->clear();
     _shipToAddr->clear();
     _shipToCntct->clear();
@@ -2046,6 +2047,7 @@ void salesOrder::sNew()
 void salesOrder::sCopyToShipto()
 {
   _shipTo->setId(-1);
+  _shipTo->setCustid(_cust->id());
   _shipToName->setText(_billToName->text());
   _shipToAddr->setId(_billToAddr->id());
   if (_billToAddr->id() <= 0)
@@ -2531,6 +2533,7 @@ void salesOrder::populate()
       }
 
       _shipTo->setId(so.value("cohead_shipto_id").toInt());
+      _shipTo->setCustid(_cust->id());
       _ignoreSignals=false;
 
       if (_mode == cView)
@@ -2724,6 +2727,7 @@ void salesOrder::populate()
       }
 
       _shipTo->setId(qu.value("quhead_shipto_id").toInt());
+      _shipTo->setCustid(_cust->id());
       _ignoreSignals=false;
 
       if (_mode == cViewQuote)
