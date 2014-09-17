@@ -51,12 +51,8 @@ isEmpty( CSVIMP_HEADERS ) {
   error("Could not set the CSVIMP_HEADERS qmake variable.")
 }
 
-exists($${OPENRPT_LIBDIR}/libdmtx.$${QMAKE_EXTENSION_SHLIB}) {
-  DMTXLIB = -ldmtx
-}
-exists($${OPENRPT_LIBDIR}/libDmtx_Library.$${QMAKE_EXTENSION_SHLIB}) {
-  DMTXLIB = -lDmtx_Library
-}
+DMTXLIB = -ldmtx
+
 exists($${OPENRPT_LIBDIR}/libdmtx.a)           { DMTXLIB = -ldmtx }
 exists($${OPENRPT_LIBDIR}/libDmtx_Library.a)   { DMTXLIB = -lDmtx_Library }
 exists($${OPENRPT_LIBDIR}/libdmtx.lib)         { DMTXLIB = -ldmtx }
@@ -100,8 +96,8 @@ isEmpty( OPENRPT_IMAGE_DIR ) {
 
 OPENRPTLIBEXT = $${QMAKE_EXTENSION_SHLIB}
 XTLIBEXT      = $${QMAKE_EXTENSION_SHLIB}
-isEmpty( OPENRPTLIBEXT ) { OPENRPTLIBEXT = .so }
-isEmpty( XTLIBEXT      ) { XTLIBEXT      = .so }
+isEmpty( OPENRPTLIBEXT ) { OPENRPTLIBEXT = so }
+isEmpty( XTLIBEXT      ) { XTLIBEXT      = so }
 
 macx:exists(macx.pri) {
   include(macx.pri)
