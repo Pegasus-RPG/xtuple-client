@@ -21,6 +21,7 @@
 
 #include "characteristic.h"
 #include "customer.h"
+#include "errorReporter.h"
 #include "failedPostList.h"
 #include "parameterwidget.h"
 #include "printQuote.h"
@@ -287,10 +288,10 @@ void quotes::sConvert(int pType)
             else
               omfgThis->sQuotesUpdated(soheadid);
           }
-          else if (convert.lastError().type() != QSqlError::NoError)
+          else if (ErrorReporter::error(QtCriticalMsg, this, tr("Convert Quote"),
+                                        convert, __FILE__, __LINE__))
           {
             notConverted.append(selected[i]);
-            systemError(this, convert.lastError().databaseText(), __FILE__, __LINE__);
             continue;
           }
         }
