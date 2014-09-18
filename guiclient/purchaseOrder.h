@@ -60,8 +60,9 @@ public slots:
     virtual void sViewWo();
     virtual void sEditSo();
     virtual void sEditWo();
-	virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
-	virtual void sHandleShipTo();
+  	virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
+	  virtual void sHandleShipTo();
+	  virtual void sHandleShipToName();
     virtual void sReleaseNumber();
 
 protected slots:
