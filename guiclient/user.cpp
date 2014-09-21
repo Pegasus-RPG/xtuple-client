@@ -662,7 +662,7 @@ bool user::sPopulate()
     _crmacctid = usrq.value("crmacct_id").toInt();
     _crmowner = usrq.value("crmacct_owner_username").toString();
     
-    cUsername = _username->text().trimmed();
+    _cUsername = _username->text().trimmed();
     sCheck();
 
     _passwd->setText("        ");
