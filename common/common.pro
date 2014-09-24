@@ -18,7 +18,8 @@ UI_DIR      = tmp
 QMAKE_LIBDIR += $${OPENRPT_LIBDIR}
 LIBS += -lopenrptcommon -lMetaSQL $${LIBDMTX} -lz
 
-SOURCES = calendarcontrol.cpp \
+SOURCES = applock.cpp              \
+          calendarcontrol.cpp      \
           calendargraphicsitem.cpp \
 	  checkForUpdates.cpp      \
           errorReporter.cpp        \
@@ -39,7 +40,8 @@ SOURCES = calendarcontrol.cpp \
           xbase32.cpp \
           xtupleproductkey.cpp \
           xtsettings.cpp
-HEADERS = calendarcontrol.h \
+HEADERS = applock.h              \
+          calendarcontrol.h      \
           calendargraphicsitem.h \
           checkForUpdates.h      \
           errorReporter.h        \
