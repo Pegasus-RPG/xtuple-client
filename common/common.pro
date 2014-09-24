@@ -8,6 +8,7 @@ DEFINES     += MAKELIB
 
 INCLUDEPATH += $(QTDIR)/src/3rdparty/zlib
 INCLUDEPATH += $(QTSRC)/src/3rdparty/zlib
+INCLUDEPATH += $(CSVIMP_HEADERS)/csvimpcommon $(CSVIMP_HEADERS)/plugin
 
 DESTDIR = ../lib
 OBJECTS_DIR = tmp
