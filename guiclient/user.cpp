@@ -553,6 +553,9 @@ void user::sCheck()
       _username->setFocus();
       return;
   }
+  
+  if (_mode == cNew)
+    return;
 
   if (_cUsername.length() > 0)
   {
@@ -658,6 +661,9 @@ bool user::sPopulate()
     _employee->setId(usrq.value("crmacct_emp_id").toInt());
     _crmacctid = usrq.value("crmacct_id").toInt();
     _crmowner = usrq.value("crmacct_owner_username").toString();
+    
+    _cUsername = _username->text().trimmed();
+    sCheck();
 
     _passwd->setText("        ");
     _verify->setText("        ");
