@@ -99,6 +99,17 @@ void postProduction::sHandleWoid(int pWoid)
 {
   if(!_privileges->check("CloseWorkOrders"))
     _closeWo->setChecked(false);
+    
+  XSqlQuery itemfrac;
+  itemfrac.prepare( "SELECT item_fractional "
+                "FROM wo,itemsite,item "
+                "WHERE ((wo_id=:wo_id) "
+                "AND (wo_itemsite_id=itemsite_id) "
+                "AND (itemsite_item_id = item_id)); ");
+  itemfrac.bindValue(":wo_id", pWoid);
+  itemfrac.exec();
+  if (itemfrac.first() && itemfrac.value("item_fractional").toBool() == false)
+      _qty->setValidator(new QIntValidator(this));  
 
   XSqlQuery postHandleWoid;
   if (DEBUG)
