@@ -318,7 +318,7 @@ void reserveSalesOrderItem::sFillList()
 void reserveSalesOrderItem::sReserveLocation()
 {
   XTreeWidgetItem *item = (XTreeWidgetItem*)_itemloc->currentItem();
-  double locreserve = QLocale().toDouble(item->text(6));
+  double locreserve = QLocale().toDouble(item->text(5));
   if (locreserve > _qtyToReserve->toDouble())
     locreserve = _qtyToReserve->toDouble();
   bool ok;
@@ -357,7 +357,7 @@ void reserveSalesOrderItem::sReserveLocation()
 void reserveSalesOrderItem::sUnreserveLocation()
 {
   XTreeWidgetItem *item = (XTreeWidgetItem*)_itemloc->currentItem();
-  double locreserve = QLocale().toDouble(item->text(4));
+  double locreserve = QLocale().toDouble(item->text(3));
   bool ok;
   locreserve = QInputDialog::getDouble(this, tr("Qty. to Unreserve"),
                                        tr("Qty:"),
@@ -450,8 +450,9 @@ void reserveSalesOrderItem::sBcReserve()
     systemError(this, reserveq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  double _savebcQty = _bcQty->text().toDouble();
   populate();
-  _qtyToReserve->setDouble(_qtyToReserve->toDouble() - _bcQty->text().toDouble());
+  _qtyToReserve->setDouble(_qtyToReserve->toDouble() - _savebcQty);
   
   _bc->clear();
   if (_controlMethod == "S")
