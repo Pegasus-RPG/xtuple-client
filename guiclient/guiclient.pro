@@ -11,7 +11,8 @@ INCLUDEPATH += ../scriptapi \
                ../../xtuple-build-desktop/common \
                ../../xtuple-build-desktop/widgets \
                ../../xtuple-build-desktop/widgets/tmp/lib \
-               ../../xtuple-build-desktop/guiclient .
+               ../../xtuple-build-desktop/guiclient . \
+               $(CSVIMP_HEADERS)/csvimpcommon $(CSVIMP_HEADERS)/plugin
 
 DEPENDPATH  += $${INCLUDEPATH}
 
