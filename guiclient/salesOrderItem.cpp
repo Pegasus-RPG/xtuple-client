@@ -2549,14 +2549,15 @@ void salesOrderItem::sHandleSupplyOrder()
         {
           int vendid = ordq.value("itemsrc_vend_id").toInt();
           QString vendname = ordq.value("vend_name").toString();
-          
           ordq.prepare( "SELECT pohead_id "
                         "FROM pohead "
-                        "WHERE ( (pohead_status='U')"
-                        "  AND   (pohead_dropship=:drop_ship)"
-                        "  AND   (pohead_vend_id=:vend_id) );" );
+                        "WHERE (pohead_vend_id = :vend_id)"
+                        "  AND (pohead_status = 'U')"
+                        "  AND (pohead_dropship = :dropship) "
+                        "  AND (NOT pohead_dropship OR (pohead_cohead_id = :cohead_id));" );
           ordq.bindValue(":drop_ship", _supplyDropShip->isChecked());
           ordq.bindValue(":vend_id", vendid);
+          ordq.bindValue(":sohead_id", _soheadid);
           ordq.exec();
           if (ordq.first())
           {
@@ -2570,6 +2571,7 @@ void salesOrderItem::sHandleSupplyOrder()
               openPurchaseOrderParams.append("vend_id", vendid);
               openPurchaseOrderParams.append("vend_name", vendname);
               openPurchaseOrderParams.append("drop_ship", _supplyDropShip->isChecked());
+              openPurchaseOrderParams.append("sohead_id", _soheadid);
               openPurchaseOrder newdlg(omfgThis, "", TRUE);
               newdlg.set(openPurchaseOrderParams);
               poheadid = newdlg.exec();
