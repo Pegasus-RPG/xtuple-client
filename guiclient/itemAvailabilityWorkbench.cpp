@@ -89,7 +89,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _dspInventoryHistory->setQueryOnStartEnabled(false);
 //  _dspInventoryHistory->setParameterWidgetVisible(false);
   _dspInventoryHistory->setAutoUpdateEnabled(false);
-  _dspInventoryHistory->setStartDate(QDate().currentDate().addDays(-365));
+//  _dspInventoryHistory->setStartDate(QDate().currentDate().addDays(-365));
 //  _dspInventoryHistory->list()->hideColumn("item_number");
   
   _dspPoItemReceivingsByItem = new dspPoItemReceivingsByItem(this, "dspPoItemReceivingsByItem", Qt::Widget);
