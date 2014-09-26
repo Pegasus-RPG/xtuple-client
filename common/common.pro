@@ -3,6 +3,11 @@ include( ../global.pri )
 TARGET      = xtuplecommon
 TEMPLATE    = lib
 CONFIG      += qt warn_on dll
+# TEMPORARY HACK
+win32 {
+  CONFIG -= dll
+  CONFIG += staticlib
+}
 
 DEFINES     += MAKELIB
 
