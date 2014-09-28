@@ -785,7 +785,7 @@ bool salesOrder::save(bool partial)
                           tr("You must select a Sales Rep. for this order before you may save it.") )
          << GuiErrorCheck(!_terms->isValid(), _terms,
                           tr("You must select the Terms for this order before you may save it.") )
-         << GuiErrorCheck((_shipTo->id() == -1) && (!_shipToAddr->isEnabled()), _shipTo,
+         << GuiErrorCheck((_shipTo->id() == -1) && (!_shipToName->isEnabled()), _shipTo,
                           tr("You must select a Ship-To for this order before you may save it.") )
          << GuiErrorCheck(_total->localValue() < 0, _cust,
                           tr("<p>The Total must be a positive value.") )
