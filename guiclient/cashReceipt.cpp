@@ -986,13 +986,23 @@ void cashReceipt::setCreditCard()
     return;
 
   XSqlQuery bankq;
-  bankq.prepare("SELECT ccbank_bankaccnt_id"
+  bankq.prepare("SELECT COALESCE(ccbank_bankaccnt_id, -1) AS ccbank_bankaccnt_id"
                 "  FROM ccbank"
                 " WHERE (ccbank_ccard_type=:cardtype);");
   bankq.bindValue(":cardtype", _fundsType->code());
   bankq.exec();
   if (bankq.first())
-    _bankaccnt->setId(bankq.value("ccbank_bankaccnt_id").toInt());
+    if (bankq.value("ccbank_bankaccnt_id").toInt() > 0)
+      _bankaccnt->setId(bankq.value("ccbank_bankaccnt_id").toInt());
+    else
+    {
+      QMessageBox::warning(this, tr("No Bank Account"),
+                           tr("<p>Cannot find the Bank Account to post this "
+                              "transaction against. Either this card type is not "
+                              "accepted or the Credit Card configuration is not "
+                              "complete."));
+      return;
+    }
   else if (bankq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, bankq.lastError().text(), __FILE__, __LINE__);
