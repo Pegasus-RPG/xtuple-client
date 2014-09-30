@@ -2568,7 +2568,8 @@ void salesOrder::populate()
       emit populated();
       sFillItemList();
       // TODO - a partial save is not saving everything
-      save(false);
+      if (! ISVIEW(_mode))
+        save(false);
     }
     else if (so.lastError().type() != QSqlError::NoError)
     {
@@ -2733,7 +2734,8 @@ void salesOrder::populate()
       sFillItemList();
       emit populated();
       // TODO - a partial save is not saving everything
-      save(false);
+      if (! ISVIEW(_mode))
+        save(false);
     }
     else if (qu.lastError().type() != QSqlError::NoError)
     {
@@ -4553,7 +4555,7 @@ void salesOrder::sEnterCashPayment()
   }
   
   QString _cashrcptnumber;
-  int _cashrcptid;
+  int _cashrcptid = -1;
 
   cashsave.exec("SELECT fetchCashRcptNumber() AS number, NEXTVAL('cashrcpt_cashrcpt_id_seq') AS cashrcpt_id;");
   if (cashsave.first())
