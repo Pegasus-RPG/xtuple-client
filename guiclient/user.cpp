@@ -512,6 +512,12 @@ void user::sRevokeAll()
 
 void user::sAddGroup()
 {
+  if (_availableGroup->id() == -1)
+  {
+      QMessageBox::critical(this, tr("Error"), tr("Please select an Available Role."));
+      return;
+  }
+
   XSqlQuery grpq;
   grpq.prepare("SELECT grantGroup(:username, :grp_id) AS result;");
   grpq.bindValue(":username", _cUsername);
@@ -527,6 +533,12 @@ void user::sAddGroup()
 
 void user::sRevokeGroup()
 {
+  if (_grantedGroup->id() == -1)
+  {
+      QMessageBox::critical(this, tr("Error"), tr("Please select a Granted Role."));
+      return;
+  }
+
   XSqlQuery grpq;
   grpq.prepare("SELECT revokeGroup(:username, :grp_id) AS result;");
   grpq.bindValue(":username", _cUsername);
