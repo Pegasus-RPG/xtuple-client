@@ -2553,8 +2553,8 @@ void salesOrderItem::sHandleSupplyOrder()
                         "FROM pohead "
                         "WHERE (pohead_vend_id = :vend_id)"
                         "  AND (pohead_status = 'U')"
-                        "  AND (pohead_dropship = :dropship) "
-                        "  AND (NOT pohead_dropship OR (pohead_cohead_id = :cohead_id));" );
+                        "  AND (pohead_dropship = :drop_ship) "
+                        "  AND (NOT pohead_dropship OR (pohead_cohead_id = :sohead_id));" );
           ordq.bindValue(":drop_ship", _supplyDropShip->isChecked());
           ordq.bindValue(":vend_id", vendid);
           ordq.bindValue(":sohead_id", _soheadid);
