@@ -160,7 +160,7 @@ void copyItem::sAddBomitem()
   XSqlQuery bomitemq;
   int uomid;
   QString uomname;
-  double qtyper;
+  double qtyper = 1.0;
   bool ok;
   
   bomitemq.prepare("SELECT item_inv_uom_id, uom_name "
@@ -307,8 +307,8 @@ void copyItem::sCopyItemsite()
   {
     XSqlQuery itemsiteq;
     itemsiteq.prepare("SELECT copyItemsite(itemsite_id, itemsite_warehous_id, :targetitemid) AS result FROM "
-                      "(SELECT * "
-                      " FROM itemsite JOIN whsinfo ON (warehous_id=itemsite_warehous_id) "
+                      "(SELECT itemsite_id, itemsite_warehous_id"
+                      "  FROM itemsite JOIN whsinfo ON (warehous_id=itemsite_warehous_id) "
                       " WHERE (itemsite_item_id=:sourceitemid) "
                       " ORDER BY warehous_sequence DESC) AS data;");
     itemsiteq.bindValue(":sourceitemid", _source->id());

@@ -24,10 +24,8 @@ Makefile
 
 macx.pri
 
-bin
-bin/*.*
-common/tmp/*.*
-guiclient/ui/*.*
-widgets/tmp/*.*
-widgets/tmp
-
+bin/
+common/tmp/
+guiclient/ui/
+widgets/tmp/
+guiclient/osx_obj/
