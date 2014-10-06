@@ -217,6 +217,7 @@ void viewCheckRun::sHandleItemSelection()
 {
   XTreeWidgetItem *selected = _check->currentItem();
   bool select = false;
+  bool checkPrint = true;
 
   if (! selected)
   {
@@ -253,17 +254,26 @@ void viewCheckRun::sHandleItemSelection()
     _edit->setEnabled(selected->rawValue("checkhead_misc").toBool() &&
                       ! selected->rawValue("checkhead_printed").toBool());
   }
+
+  // Based on Bank Account settings allow/disallow posting of payment without
+  // having printed the payment
+  XSqlQuery bankRequiresPrint;
+  bankRequiresPrint.prepare("SELECT bankaccnt_prnt_check AS result FROM bankaccnt WHERE bankaccnt_id =:bankaccnt_id;");
+  bankRequiresPrint.bindValue(":bankaccnt_id", _bankaccnt->id());
+  bankRequiresPrint.exec();
+  if (bankRequiresPrint.first())
+    checkPrint = bankRequiresPrint.value("result").toBool();
   
   QMenu * printMenu = new QMenu;
-  if (select)
+  if (select && checkPrint)
     printMenu->addAction(tr("Selected Payment..."), this, SLOT(sPrint()));
-  if (_vendorgroup->isAll())
+  if (_vendorgroup->isAll()  && checkPrint)
     printMenu->addAction(tr("Payment Run..."), this, SLOT(sPrintCheckRun()));
   printMenu->addAction(tr("Edit List"), this, SLOT(sPrintEditList()));
   _print->setMenu(printMenu); 
 
   QMenu * postMenu = new QMenu;
-  if (selected->rawValue("checkhead_printed").toBool() &&
+  if ((selected->rawValue("checkhead_printed").toBool() || !checkPrint) &&
       _privileges->check("PostPayments"))
     postMenu->addAction(tr("Selected Payment..."), this, SLOT(sPost()));
   if (_vendorgroup->isAll())
@@ -280,9 +290,19 @@ void viewCheckRun::sFillList(int pBankaccntid)
 
 void viewCheckRun::sFillList()
 {
+  bool checkPrint;
+  // Based on Bank Account settings allow/disallow posting of payment without
+  // having printed the payment
+  XSqlQuery bankRequiresPrint;
+  bankRequiresPrint.prepare("SELECT bankaccnt_prnt_check AS result FROM bankaccnt WHERE bankaccnt_id =:bankaccnt_id;");
+  bankRequiresPrint.bindValue(":bankaccnt_id", _bankaccnt->id());
+  bankRequiresPrint.exec();
+  if (bankRequiresPrint.first())
+    checkPrint = bankRequiresPrint.value("result").toBool();
+
   XSqlQuery viewFillList;
   QMenu * printMenu = new QMenu;
-  if (_vendorgroup->isAll())
+  if (_vendorgroup->isAll() && checkPrint)
     printMenu->addAction(tr("Payment Run..."), this, SLOT(sPrintCheckRun()));
   printMenu->addAction(tr("Edit List"),   this, SLOT(sPrintEditList()));
   _print->setMenu(printMenu);   
