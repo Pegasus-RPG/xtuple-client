@@ -68,6 +68,7 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_vendor,                   SIGNAL(newId(int)),                                this,          SLOT(sHandleVendor(int)));
   connect(_vendAddr,                 SIGNAL(changed()),                                 _vendaddrCode, SLOT(clear()));
   connect(_warehouse,                SIGNAL(newID(int)),                                this,          SLOT(sHandleShipTo()));
+  connect(_shiptoAddr,               SIGNAL(newId(int)),                                this,          SLOT(sHandleShipToName()));
   connect(_newCharacteristic,        SIGNAL(clicked()),                                 this,          SLOT(sNewCharacteristic()));
   connect(_editCharacteristic,       SIGNAL(clicked()),                                 this,          SLOT(sEditCharacteristic()));
   connect(_deleteCharacteristic,     SIGNAL(clicked()),                                 this,          SLOT(sDeleteCharacteristic()));
@@ -1893,4 +1894,18 @@ void purchaseOrder::sHandleShipTo()
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Site Info"),
                                 purchaseHandleShipTo, __FILE__, __LINE__))
     return;
+}
+
+void purchaseOrder::sHandleShipToName()
+{
+  XSqlQuery purchaseHandleShipTo;
+  purchaseHandleShipTo.prepare( "SELECT * "
+                               "FROM address "
+                               "WHERE (addr_id=:addr_id);" );
+  purchaseHandleShipTo.bindValue(":addr_id", _shiptoAddr->id());
+  purchaseHandleShipTo.exec();
+  if (purchaseHandleShipTo.first())
+  {
+    _shiptoName->setText(purchaseHandleShipTo.value("crmacct_name").toString());
+  }
 }

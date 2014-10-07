@@ -53,12 +53,13 @@ void ShiptoEdit::setId(int pId)
       emit nameChanged(_name);
       emit address1Changed(_description);
   }
-  else
-  {
-    _custid = -1;
-    _extraClause = " (false) ";
-    emit newCustid(_custid);
-  }
+// Incident #24595
+//  else
+//  {
+//    _custid = -1;
+//    _extraClause = " (false) ";
+//    emit newCustid(_custid);
+//  }
 }
 
 void ShiptoEdit::setCustid(int pCustid)

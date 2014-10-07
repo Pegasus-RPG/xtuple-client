@@ -171,6 +171,18 @@ void salesAccount::sSave()
   }
   else
   {
+    XSqlQuery regexCheck;
+    regexCheck.prepare("SELECT custtype_id "
+                       "FROM custtype "
+                       "WHERE (custtype_code ~ :pattern);");
+    regexCheck.bindValue(":pattern", _customerTypes->pattern());
+    regexCheck.exec();
+    if (regexCheck.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, regexCheck.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    
     salesSave.bindValue(":salesaccnt_custtype", _customerTypes->pattern());
     salesSave.bindValue(":salesaccnt_custtype_id", -1);
   }
@@ -187,6 +199,18 @@ void salesAccount::sSave()
   }
   else
   {
+    XSqlQuery regexCheck;
+    regexCheck.prepare("SELECT prodcat_id "
+                       "FROM prodcat "
+                       "WHERE (prodcat_code ~ :pattern);");
+    regexCheck.bindValue(":pattern", _productCategories->pattern());
+    regexCheck.exec();
+    if (regexCheck.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, regexCheck.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    
     salesSave.bindValue(":salesaccnt_prodcat", _productCategories->pattern());
     salesSave.bindValue(":salesaccnt_prodcat_id", -1);
   }
@@ -195,6 +219,11 @@ void salesAccount::sSave()
   {
     errors << GuiErrorCheck(true, _warehouse,
                            tr("<p>You cannot specify a duplicate Warehouse/Customer Type/Product Category for the Sales Account Assignment."));
+  }
+  else if (salesSave.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, salesSave.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Sales Account Assignment"), errors))

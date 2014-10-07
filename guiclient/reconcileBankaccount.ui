@@ -159,6 +159,13 @@ to be bound by its terms.</comment>
         </spacer>
        </item>
        <item>
+        <widget class="QPushButton" name="_import">
+         <property name="text">
+          <string>Import</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="_update">
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>

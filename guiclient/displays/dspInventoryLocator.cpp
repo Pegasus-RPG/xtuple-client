@@ -34,6 +34,7 @@ dspInventoryLocator::dspInventoryLocator(QWidget* parent, const char*, Qt::WFlag
   list()->addColumn(tr("Site"),       _whsColumn, Qt::AlignCenter,true, "warehous_code");
   list()->addColumn(tr("Location"),          200, Qt::AlignLeft,  true, "locationname");
   list()->addColumn(tr("Netable"),  _orderColumn, Qt::AlignCenter,true, "netable");
+  list()->addColumn(tr("Usable"),   _orderColumn, Qt::AlignCenter,true, "usable");
   list()->addColumn(tr("Lot/Serial #"),       -1, Qt::AlignLeft,  true, "lotserial");
   list()->addColumn(tr("Expiration"),_dateColumn, Qt::AlignCenter,true, "expiration");
   list()->addColumn(tr("Warranty"),  _dateColumn, Qt::AlignCenter,true, "warranty");

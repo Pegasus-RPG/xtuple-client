@@ -200,6 +200,19 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _taxauthLit->setVisible(FALSE);
   _taxauth->setVisible(FALSE);
   _cashBasedTax->setChecked(_metrics->boolean("CashBasedTax"));
+  _importBankRecon->setChecked(_metrics->boolean("ImportBankReconciliation"));
+  _debitBankadjtype->populate("SELECT bankadjtype_id,"
+                              "       (bankadjtype_name || '-' || bankadjtype_descrip),"
+                              "       bankadjtype_name "
+                              "FROM bankadjtype "
+                              "ORDER BY bankadjtype_name;");
+  _debitBankadjtype->setId(_metrics->value("ImportBankRecDebitAdj").toInt());
+  _creditBankadjtype->populate("SELECT bankadjtype_id,"
+                               "       (bankadjtype_name || '-' || bankadjtype_descrip),"
+                               "       bankadjtype_name "
+                               "FROM bankadjtype "
+                               "ORDER BY bankadjtype_name;");
+  _creditBankadjtype->setId(_metrics->value("ImportBankRecCreditAdj").toInt());
 
   _int2gl->setChecked(_metrics->boolean("InterfaceToGL"));
   _cacheint2gl = _int2gl->isChecked();
@@ -801,7 +814,10 @@ bool configureGL::sSave()
   
   _metrics->set("DefaultTaxAuthority", _taxauth->id());
   _metrics->set("CashBasedTax", _cashBasedTax->isChecked());
-
+  _metrics->set("ImportBankReconciliation", _importBankRecon->isChecked());
+  _metrics->set("ImportBankRecDebitAdj", _debitBankadjtype->id());
+  _metrics->set("ImportBankRecCreditAdj", _creditBankadjtype->id());
+  
   _metrics->set("InterfaceToGL", _int2gl->isChecked());
   _metrics->set("InterfaceAPToGL", _intap2gl->isChecked());
   _metrics->set("InterfaceARToGL", _intar2gl->isChecked());

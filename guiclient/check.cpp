@@ -85,9 +85,9 @@ void check::sPopulate()
     _bankaccnt->setId(checkPopulate.value("checkhead_bankaccnt_id").toInt());
     _recipNumber->setText(checkPopulate.value("checkrecip_number").toString());
     _recipName->setText(checkPopulate.value("checkrecip_name").toString());
-    _amount->set(checkPopulate.value("checkhead_amount").toDouble(),
-                 checkPopulate.value("checkhead_curr_id").toInt(),
-                 checkPopulate.value("checkhead_checkdate").toDate());
+    _amount->setId(checkPopulate.value("checkhead_curr_id").toInt());
+    _amount->setEffective(checkPopulate.value("checkhead_checkdate").toDate());
+    _amount->setLocalValue(checkPopulate.value("checkhead_amount").toDouble());
     _checkdate->setDate(checkPopulate.value("checkhead_checkdate").toDate());
     _achBatchNumber->setText(checkPopulate.value("checkhead_ach_batch").toString());
     _recipType->setText(checkPopulate.value("checkrecip_type").toString());

@@ -168,7 +168,7 @@ void returnWoMaterialItem::sSetQOH(int pWomatlid)
     }
     
     XSqlQuery qoh;
-    qoh.prepare( "SELECT itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, itemsite_qtyonhand) AS qtyonhand,"
+    qoh.prepare( "SELECT itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, qtyAvailable(itemsite_id)) AS availableqoh,"
                  "       uom_name "
                  "  FROM womatl, itemsite, uom"
                  " WHERE((womatl_itemsite_id=itemsite_id)"
@@ -179,7 +179,7 @@ void returnWoMaterialItem::sSetQOH(int pWomatlid)
     if (qoh.first())
     {
       _uom->setText(qoh.value("uom_name").toString());
-      _cachedQOH = qoh.value("qtyonhand").toDouble();
+      _cachedQOH = qoh.value("availableqoh").toDouble();
       _beforeQty->setDouble(_cachedQOH);
     }
     else

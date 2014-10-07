@@ -217,7 +217,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _soitem->addColumn(tr("Pkg. Weight"),     _qtyColumn,            Qt::AlignRight,  false, "packweight");
   _soitem->addColumn(tr("Supply Type"),     _itemColumn,           Qt::AlignCenter, false, "spplytype");
   _soitem->addColumn(tr("Order Number"),    _itemColumn,           Qt::AlignCenter, false, "ordrnumbr");
-  _soitem->addColumn(tr("On Hand"),         _qtyColumn,            Qt::AlignCenter, true,  "itemsite_qtyonhand");
+  _soitem->addColumn(tr("Available QOH"),   _qtyColumn,            Qt::AlignCenter, true,  "availableqoh");
   if (_metrics->boolean("EnableSOReservations"))
   {
     _soitem->addColumn(tr("Reserved"),      _qtyColumn,            Qt::AlignCenter, true,  "reserved");
@@ -1974,6 +1974,7 @@ void salesOrder::populateShipto(int pShiptoid)
   else
   {
     _shipTo->setId(-1);
+    _shipTo->setCustid(_cust->id());
     _shipToName->clear();
     _shipToAddr->clear();
     _shipToCntct->clear();
@@ -2046,6 +2047,7 @@ void salesOrder::sNew()
 void salesOrder::sCopyToShipto()
 {
   _shipTo->setId(-1);
+  _shipTo->setCustid(_cust->id());
   _shipToName->setText(_billToName->text());
   _shipToAddr->setId(_billToAddr->id());
   if (_billToAddr->id() <= 0)
@@ -2531,6 +2533,7 @@ void salesOrder::populate()
       }
 
       _shipTo->setId(so.value("cohead_shipto_id").toInt());
+      _shipTo->setCustid(_cust->id());
       _ignoreSignals=false;
 
       if (_mode == cView)
@@ -2724,6 +2727,7 @@ void salesOrder::populate()
       }
 
       _shipTo->setId(qu.value("quhead_shipto_id").toInt());
+      _shipTo->setCustid(_cust->id());
       _ignoreSignals=false;
 
       if (_mode == cViewQuote)

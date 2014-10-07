@@ -36,10 +36,10 @@ const struct {
   { QT_TRANSLATE_NOOP("cashReceipt", "Visa"),             "V", true  },
   { QT_TRANSLATE_NOOP("cashReceipt", "American Express"), "A", true  },
   { QT_TRANSLATE_NOOP("cashReceipt", "Discover Card"),    "D", true  },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Other Credit Card"),"R", true  },
+  { QT_TRANSLATE_NOOP("cashReceipt", "Other Credit Card"),"O", true  },
   { QT_TRANSLATE_NOOP("cashReceipt", "Cash"),             "K", false },
   { QT_TRANSLATE_NOOP("cashReceipt", "Wire Transfer"),    "W", false },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Other"),            "O", false }
+  { QT_TRANSLATE_NOOP("cashReceipt", "Other"),            "R", false }
 };
 
 cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
