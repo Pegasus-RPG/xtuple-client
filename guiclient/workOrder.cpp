@@ -1882,9 +1882,12 @@ void workOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
           if (!_privileges->check("MaintainWoMaterials"))
             menuItem->setEnabled(false);
               
-          menuItem = pMenu->addAction(tr("Issue Batch..."), this, SLOT(sIssueMatlBatch()));
-          if (!_privileges->check("IssueWoMaterials"))
-            menuItem->setEnabled(false);
+          if ((_metrics->boolean("IssueToExplodedWO") && status == "E") || status == "R" || status == "I")
+          {
+            menuItem = pMenu->addAction(tr("Issue Batch..."), this, SLOT(sIssueMatlBatch()));
+            if (!_privileges->check("IssueWoMaterials"))
+              menuItem->setEnabled(false);
+          }
 
           if (status == "I")
           {
@@ -1971,7 +1974,7 @@ void workOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
       
       pMenu->addSeparator();
 
-      if (status == "O" || status == "E" || status == "R" || status == "I")
+      if ((_metrics->boolean("IssueToExplodedWO") && status == "E") || status == "R" || status == "I")
       {
         menuItem = pMenu->addAction(tr("Issue..."), this, SLOT(sIssueMatl()));
         if (!_privileges->check("IssueWoMaterials"))
