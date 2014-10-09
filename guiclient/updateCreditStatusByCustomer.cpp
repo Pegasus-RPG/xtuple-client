@@ -10,7 +10,6 @@
 
 #include "updateCreditStatusByCustomer.h"
 
-#include <QMessageBox>
 #include <QVariant>
 
 updateCreditStatusByCustomer::updateCreditStatusByCustomer(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -35,30 +34,22 @@ void updateCreditStatusByCustomer::languageChange()
 
 void updateCreditStatusByCustomer::sUpdate()
 {
-  if (_privileges->check("UpdateCustomerCreditStatus"))
-  {
-    XSqlQuery updateUpdate;
-    updateUpdate.prepare( "UPDATE custinfo "
-               "SET cust_creditstatus=:cust_creditstatus "
-               "WHERE (cust_id=:cust_id);" );
-    updateUpdate.bindValue(":cust_id", _cust->id());
+  XSqlQuery updateUpdate;
+  updateUpdate.prepare( "UPDATE custinfo "
+             "SET cust_creditstatus=:cust_creditstatus "
+             "WHERE (cust_id=:cust_id);" );
+  updateUpdate.bindValue(":cust_id", _cust->id());
 
-    if (_inGoodStanding->isChecked())
-      updateUpdate.bindValue(":cust_creditstatus", "G");
-    else if (_onCreditWarning->isChecked())
-      updateUpdate.bindValue(":cust_creditstatus", "W");
-    if (_onCreditHold->isChecked())
-      updateUpdate.bindValue(":cust_creditstatus", "H");
+  if (_inGoodStanding->isChecked())
+    updateUpdate.bindValue(":cust_creditstatus", "G");
+  else if (_onCreditWarning->isChecked())
+    updateUpdate.bindValue(":cust_creditstatus", "W");
+  if (_onCreditHold->isChecked())
+    updateUpdate.bindValue(":cust_creditstatus", "H");
 
-    updateUpdate.exec();
+  updateUpdate.exec();
 
-    accept();
-  }
-  else
-  {
-    QMessageBox::critical( this, tr("Cannot Update Credit Status"),
-                                 tr( "You don't have privileges to update customer credit status." ) );
-  }
+  accept();
 }
 
 
