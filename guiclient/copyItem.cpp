@@ -90,11 +90,15 @@ enum SetResponse copyItem::set(const ParameterList &pParams)
 
 void copyItem::sSaveItem()
 {
+  if(_source->id() == -1)
+    return;
+
   XSqlQuery itemsave;
   if(_inTransaction)
-    return;
-  
-  _inTransaction = true;
+    itemsave.exec("ROLLBACK;");
+  else
+    _inTransaction = true;
+
   itemsave.exec("BEGIN;");
   
   itemsave.prepare("SELECT copyItem(item_id, 'TEMPCOPY' || :sourceitemnumber) AS result,"
