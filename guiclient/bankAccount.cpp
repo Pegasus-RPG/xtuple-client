@@ -18,7 +18,6 @@
 bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-  XSqlQuery bankbankAccount;
   setupUi(this);
 
   connect(_bankName,SIGNAL(textChanged(QString)), this, SLOT(sNameChanged(QString)));
@@ -47,13 +46,17 @@ bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   if (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled"))
   {
-    bankbankAccount.prepare("SELECT fetchMetricText('ACHCompanyName') AS name,"
-              "       formatACHCompanyId() AS number;");
+    XSqlQuery bankbankAccount;
+    bankbankAccount.prepare("SELECT fetchMetricText('ACHCompanyName') AS name, "
+                                   "fetchMetricText('ACHCompanyId') AS number;" );
     bankbankAccount.exec();
     if (bankbankAccount.first())
     {
       _useCompanyIdOrigin->setText(bankbankAccount.value("name").toString());
-      _defaultOrigin->setText(bankbankAccount.value("number").toString());
+
+      QString defaultOriginValue = bankbankAccount.value("number").toString();
+      defaultOriginValue.remove("-");
+      _defaultOrigin->setText(defaultOriginValue);
     }
     else if (bankbankAccount.lastError().type() != QSqlError::NoError)
       systemError(this, bankbankAccount.lastError().databaseText(), __FILE__, __LINE__);
@@ -115,6 +118,7 @@ enum SetResponse bankAccount::set(const ParameterList &pParams)
       _currency->setEnabled(FALSE);
       _ap->setEnabled(FALSE);
       _nextCheckNum->setEnabled(FALSE);
+      _printCheck->setEnabled(FALSE);
       _form->setEnabled(FALSE);
       _ar->setEnabled(FALSE);
       _assetAccount->setReadOnly(TRUE);
@@ -301,7 +305,8 @@ void bankAccount::sSave()
                "  bankaccnt_ach_originname, bankaccnt_ach_origin,"
                "  bankaccnt_ach_desttype, bankaccnt_ach_fed_dest,"
                "  bankaccnt_ach_destname, bankaccnt_ach_dest,"
-               "  bankaccnt_ach_genchecknum, bankaccnt_ach_leadtime)"
+               "  bankaccnt_ach_genchecknum, bankaccnt_ach_leadtime,"
+               "  bankaccnt_prnt_check)"
                "VALUES "
                "( :bankaccnt_id, :bankaccnt_name, :bankaccnt_descrip,"
                "  :bankaccnt_bankname, :bankaccnt_accntnumber,"
@@ -313,7 +318,8 @@ void bankAccount::sSave()
                "  :bankaccnt_ach_originname, :bankaccnt_ach_origin,"
                "  :bankaccnt_ach_desttype, :bankaccnt_ach_fed_dest,"
                "  :bankaccnt_ach_destname, :bankaccnt_ach_dest,"
-               "  :bankaccnt_ach_genchecknum, :bankaccnt_ach_leadtime);" );
+               "  :bankaccnt_ach_genchecknum, :bankaccnt_ach_leadtime,"
+               "  :bankaccnt_prnt_check);" );
   }
   else if (_mode == cEdit)
     bankSave.prepare( "UPDATE bankaccnt "
@@ -339,7 +345,8 @@ void bankAccount::sSave()
                "    bankaccnt_ach_destname=:bankaccnt_ach_destname,"
                "    bankaccnt_ach_dest=:bankaccnt_ach_dest,"
                "    bankaccnt_ach_genchecknum=:bankaccnt_ach_genchecknum,"
-               "    bankaccnt_ach_leadtime=:bankaccnt_ach_leadtime "
+               "    bankaccnt_ach_leadtime=:bankaccnt_ach_leadtime, "
+               "    bankaccnt_prnt_check=:bankaccnt_prnt_check "
                "WHERE (bankaccnt_id=:bankaccnt_id);" );
   
   bankSave.bindValue(":bankaccnt_id",          _bankaccntid);
@@ -348,6 +355,7 @@ void bankAccount::sSave()
   bankSave.bindValue(":bankaccnt_bankname",    _bankName->text());
   bankSave.bindValue(":bankaccnt_accntnumber", _accountNumber->text());
   bankSave.bindValue(":bankaccnt_ap",          QVariant(_ap->isChecked()));
+  bankSave.bindValue(":bankaccnt_prnt_check",  QVariant(_printCheck->isChecked()));
   bankSave.bindValue(":bankaccnt_ar",          QVariant(_ar->isChecked()));
   bankSave.bindValue(":bankaccnt_accnt_id",    _assetAccount->id());
   bankSave.bindValue(":bankaccnt_curr_id",     _currency->id());
@@ -412,6 +420,7 @@ void bankAccount::populate()
     _bankName->setText(bankpopulate.value("bankaccnt_bankname"));
     _accountNumber->setText(bankpopulate.value("bankaccnt_accntnumber"));
     _ap->setChecked(bankpopulate.value("bankaccnt_ap").toBool());
+    _printCheck->setChecked(bankpopulate.value("bankaccnt_prnt_check").toBool());
     _ar->setChecked(bankpopulate.value("bankaccnt_ar").toBool());
     _nextCheckNum->setText(bankpopulate.value("bankaccnt_nextchknum"));
     _form->setId(bankpopulate.value("bankaccnt_check_form_id").toInt());
