@@ -459,9 +459,11 @@ void dspWoSchedule::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected, int)
 
     pMenu->addSeparator();
 
-    menuItem = pMenu->addAction(tr("Issue Material Item..."), this, SLOT(sIssueWoMaterialItem()));
-    menuItem->setEnabled(_privileges->check("IssueWoMaterials"));
-
+    if ((_metrics->boolean("IssueToExplodedWO") && status == "E") || status == "R" || status == "I")
+    {
+      menuItem = pMenu->addAction(tr("Issue Material Item..."), this, SLOT(sIssueWoMaterialItem()));
+      menuItem->setEnabled(_privileges->check("IssueWoMaterials"));
+    }
 
     menuItem = pMenu->addAction(tr("Post Production..."), this, SLOT(sPostProduction()));
     menuItem->setEnabled(_privileges->check("PostProduction"));
