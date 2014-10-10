@@ -18,7 +18,6 @@
 bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-  XSqlQuery bankbankAccount;
   setupUi(this);
 
   connect(_bankName,SIGNAL(textChanged(QString)), this, SLOT(sNameChanged(QString)));
@@ -47,13 +46,17 @@ bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   if (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled"))
   {
-    bankbankAccount.prepare("SELECT fetchMetricText('ACHCompanyName') AS name,"
-              "       formatACHCompanyId() AS number;");
+    XSqlQuery bankbankAccount;
+    bankbankAccount.prepare("SELECT fetchMetricText('ACHCompanyName') AS name, "
+                                   "fetchMetricText('ACHCompanyId') AS number;" );
     bankbankAccount.exec();
     if (bankbankAccount.first())
     {
       _useCompanyIdOrigin->setText(bankbankAccount.value("name").toString());
-      _defaultOrigin->setText(bankbankAccount.value("number").toString());
+
+      QString defaultOriginValue = bankbankAccount.value("number").toString();
+      defaultOriginValue.remove("-");
+      _defaultOrigin->setText(defaultOriginValue);
     }
     else if (bankbankAccount.lastError().type() != QSqlError::NoError)
       systemError(this, bankbankAccount.lastError().databaseText(), __FILE__, __LINE__);

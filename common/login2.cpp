@@ -310,7 +310,7 @@ void login2::sLogin()
 
   if(isCloud || isXtuple)
   {
-    salt = "private";
+    salt = "j3H44uadEI#8#kSmkh#H%JSLAKDOHImklhdfsn3#432?%^kjasdjla3uy989apa3uipoweurw-03235##+=-lhkhdNOHA?%@mxncvbwoiwerNKLJHwe278NH28shNeGc";
   }
   else
   {

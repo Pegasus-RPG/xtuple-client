@@ -24,6 +24,7 @@ public:
     openPurchaseOrder(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~openPurchaseOrder();
     int vendor_id;
+    int sohead_id;
     bool dropship;
 
 public slots:

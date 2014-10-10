@@ -12,13 +12,15 @@
 #define CHECKFORUPDATES_H
 
 #include <QDialog>
+#include <QNetworkAccessManager>
 
 #include "tmp/ui_checkForUpdates.h"
-#include <QProgressDialog>
-#include <QFile>
-#include <QtNetwork>
-#include <QMessageBox>
-#include <QPushButton>
+
+class QFile;
+class QNetworkReply;
+class QProgressDialog;
+class QPushButton;
+class checkForUpdatesPrivate;
 
 class checkForUpdates : public QDialog, public Ui::checkForUpdates
 {
@@ -43,21 +45,14 @@ public slots:
 protected slots:
     virtual void languageChange();
 
-signals:
-    void done();
-
 private:
-    QNetworkAccessManager manager;
-    QFile *file;
-    QProgressDialog *progressDialog;
-    QNetworkReply *reply;
-    bool downloadRequestAborted;
-    QString serverVersion;
-    QString OS;
-    QString suffix;
-    QString newurl;
-    QString filename;
-    qint64 filesize;
+    checkForUpdatesPrivate *_private;
+    QNetworkAccessManager   manager;
+    QFile                *file;
+    QProgressDialog      *progressDialog;
+    QNetworkReply        *reply;
+    bool                  downloadRequestAborted;
+    qint64                filesize;
 };
 
 #endif // CHECKFORUPDATES_H

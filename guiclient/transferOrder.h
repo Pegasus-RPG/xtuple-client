@@ -11,6 +11,7 @@
 #ifndef TRANSFERORDER_H
 #define TRANSFERORDER_H
 
+#include "applock.h"
 #include "guiclient.h"
 #include "xwidget.h"
 #include <parameter.h>
@@ -92,7 +93,7 @@ private:
     bool		_captive;
     bool		_ignoreSignals;
     int			_lineMode;
-    bool                _locked;
+    AppLock             _lock;
     int			_mode;
     int			_orderNumberGen;
     ToitemTableModel*	_qeitem;

@@ -18,7 +18,8 @@ To learn more about:
 
 ## Development Quickstart
 
-We built a [Linux virtual machine](https://github.com/xtuple/xtuple-vagrant/blob/master/xtuple-desktop/README.md) you can use for desktop client development. If you want to set things up on your own, here's how:
+Our supported development environment using vagrant can be found [here](https://github.com/xtuple/xtuple-vagrant/tree/master/xtuple-desktop).
+If you prefer a different flavor of linux or a native build environment, here's a brief description of how to set up a development environment:
 
 * Install Postgres 9.1, including libraries and header files. We strongly suggest that you build from source.
   * Start [here](http://www.postgresql.org/download/) and use the *File Browser* to get a source bundle for 9.1.x.
@@ -53,3 +54,19 @@ We built a [Linux virtual machine](https://github.com/xtuple/xtuple-vagrant/blob
 
 **Warning**:
 If you open Qt Designer to view or edit a `.ui` user interface file, check the widget palette _before you do anything else_. If there is no section for xTuple widgets, _quit immediately_ without saving any changes. Otherwise you risk losing important information about the user interface definition.
+
+*Note*:
+
+On some Linux distributions you can build the desktop client using OpenRPT
+and CSVImp development packages instead of compiling in the `openrpt` and
+`csvimp` directories. In these cases, set the following environment variables:
+- `OPENRPT_HEADERS` names the directory where the OpenRPT header files are
+  installed
+- `OPENRPT_LIBDIR` names the directory where the OpenRPT libraries are
+  installed
+- `OPENRPT_IMAGE_DIR` names the directory where the OpenRPT images are
+  installed
+- `CSVIMP_HEADERS` names the directory where the CSVImp header files are
+  installed
+- `OPENRPT_LIBDIR` names the directory where the OpenRPT libraries are
+  installed

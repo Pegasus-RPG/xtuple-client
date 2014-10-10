@@ -305,6 +305,9 @@ enum SetResponse item::set(const ParameterList &pParams)
       connect(_itemtrans, SIGNAL(valid(bool)), _deleteTransform, SLOT(setEnabled(bool)));
       connect(_itemtax, SIGNAL(valid(bool)), _itemtaxEdit, SLOT(setEnabled(bool)));
       connect(_itemtax, SIGNAL(valid(bool)), _itemtaxDelete, SLOT(setEnabled(bool)));
+      
+      emit newMode(_mode);
+      emit newId(_itemid);
     }
     else if (param.toString() == "edit")
     {
@@ -339,6 +342,8 @@ enum SetResponse item::set(const ParameterList &pParams)
         connect(_itemSite, SIGNAL(valid(bool)), _deleteItemSite, SLOT(setEnabled(bool)));
 
       _itemNumber->setEnabled(FALSE);
+      
+      emit newMode(_mode);
     }
     else if (param.toString() == "view")
     {
@@ -386,6 +391,8 @@ enum SetResponse item::set(const ParameterList &pParams)
       disconnect(_itemtrans, SIGNAL(valid(bool)), _deleteTransform, SLOT(setEnabled(bool)));
 
       _save->hide();
+      
+      emit newMode(_mode);
     }
   }
 
@@ -449,6 +456,8 @@ void item::saveCore()
   _elements->findChild<ItemCluster*>("_item")->setId(_itemid);
   
   sHandleRightButtons();
+  
+  emit saved(_itemid);
 }
 
 void item::sSave()
@@ -735,7 +744,10 @@ void item::sSave()
   {
     itemSave.exec("SELECT NEXTVAL('item_item_id_seq') AS _item_id");
     if (itemSave.first())
-       _itemid = itemSave.value("_item_id").toInt();
+    {
+      _itemid = itemSave.value("_item_id").toInt();
+      emit newId(_itemid);
+    }
 // ToDo
   }
 
@@ -977,6 +989,7 @@ void item::sFormatItemNumber()
     {
       _itemNumber->setEnabled(FALSE);
       _mode = cNew;
+      emit newMode(_mode);
     }
   }
 }
@@ -1059,6 +1072,8 @@ void item::populate()
     sFillListItemtax();
     _comments->setId(_itemid);
     _documents->setId(_itemid);
+    
+    emit populated();
   }
 //  ToDo
 }
@@ -1101,6 +1116,8 @@ void item::clear()
   _itemalias->clear();
   _itemsub->clear();
   _itemtax->clear();
+  
+  emit newId(_itemid);
 }
 
 void item::sPopulateUOMs()

@@ -56,7 +56,6 @@ reserveSalesOrderItem::reserveSalesOrderItem(QWidget* parent, const char* name, 
     omfgThis->inputManager()->notify(cBCLotSerialNumber, this, this, SLOT(sCatchLotSerialNumber(QString)));
     
     _itemloc->addColumn(tr("Location"),       _itemColumn, Qt::AlignLeft,  true, "location");
-    _itemloc->addColumn(tr("Netable"),        _ynColumn,   Qt::AlignCenter,true, "location_netable");
     _itemloc->addColumn(tr("Lot/Serial #"),   -1,          Qt::AlignLeft,  true, "lotserial");
     _itemloc->addColumn(tr("Expiration"),     _dateColumn, Qt::AlignCenter,true, "f_expiration");
     _itemloc->addColumn(tr("This Reserved"),  _qtyColumn,  Qt::AlignRight, true, "reserved");
@@ -233,7 +232,7 @@ void reserveSalesOrderItem::populate()
   QString sql = "SELECT cohead_number AS order_number,"
                 "       coitem_linenumber,"
                 "       item_id, warehous_code, uom_name,"
-                "       itemsite_id, itemsite_qtyonhand,"
+                "       itemsite_id, qtyAvailable(itemsite_id) AS availableqoh,"
                 "       qtyReserved(itemsite_id) AS totreserved,"
                 "       qtyUnreserved(itemsite_id) AS totunreserved,"
                 "       coitem_qtyord AS ordered,"
@@ -266,7 +265,7 @@ void reserveSalesOrderItem::populate()
     _shipped->setDouble(itemq.value("shipped").toDouble());
     _atShipping->setDouble(itemq.value("atShipping").toDouble());
     _reserved->setDouble(itemq.value("reserved").toDouble());
-    _onHand->setDouble(itemq.value("itemsite_qtyonhand").toDouble());
+    _onHand->setDouble(itemq.value("availableqoh").toDouble());
     _allocated->setDouble(itemq.value("totreserved").toDouble());
     _unreserved->setDouble(itemq.value("totunreserved").toDouble());
   }
@@ -319,7 +318,7 @@ void reserveSalesOrderItem::sFillList()
 void reserveSalesOrderItem::sReserveLocation()
 {
   XTreeWidgetItem *item = (XTreeWidgetItem*)_itemloc->currentItem();
-  double locreserve = QLocale().toDouble(item->text(6));
+  double locreserve = QLocale().toDouble(item->text(5));
   if (locreserve > _qtyToReserve->toDouble())
     locreserve = _qtyToReserve->toDouble();
   bool ok;
@@ -358,7 +357,7 @@ void reserveSalesOrderItem::sReserveLocation()
 void reserveSalesOrderItem::sUnreserveLocation()
 {
   XTreeWidgetItem *item = (XTreeWidgetItem*)_itemloc->currentItem();
-  double locreserve = QLocale().toDouble(item->text(4));
+  double locreserve = QLocale().toDouble(item->text(3));
   bool ok;
   locreserve = QInputDialog::getDouble(this, tr("Qty. to Unreserve"),
                                        tr("Qty:"),
@@ -451,8 +450,9 @@ void reserveSalesOrderItem::sBcReserve()
     systemError(this, reserveq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  double _savebcQty = _bcQty->text().toDouble();
   populate();
-  _qtyToReserve->setDouble(_qtyToReserve->toDouble() - _bcQty->text().toDouble());
+  _qtyToReserve->setDouble(_qtyToReserve->toDouble() - _savebcQty);
   
   _bc->clear();
   if (_controlMethod == "S")

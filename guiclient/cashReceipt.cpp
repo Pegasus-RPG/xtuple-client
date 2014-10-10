@@ -36,10 +36,10 @@ const struct {
   { QT_TRANSLATE_NOOP("cashReceipt", "Visa"),             "V", true  },
   { QT_TRANSLATE_NOOP("cashReceipt", "American Express"), "A", true  },
   { QT_TRANSLATE_NOOP("cashReceipt", "Discover Card"),    "D", true  },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Other Credit Card"),"R", true  },
+  { QT_TRANSLATE_NOOP("cashReceipt", "Other Credit Card"),"O", true  },
   { QT_TRANSLATE_NOOP("cashReceipt", "Cash"),             "K", false },
   { QT_TRANSLATE_NOOP("cashReceipt", "Wire Transfer"),    "W", false },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Other"),            "O", false }
+  { QT_TRANSLATE_NOOP("cashReceipt", "Other"),            "R", false }
 };
 
 cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -986,13 +986,23 @@ void cashReceipt::setCreditCard()
     return;
 
   XSqlQuery bankq;
-  bankq.prepare("SELECT ccbank_bankaccnt_id"
+  bankq.prepare("SELECT COALESCE(ccbank_bankaccnt_id, -1) AS ccbank_bankaccnt_id"
                 "  FROM ccbank"
                 " WHERE (ccbank_ccard_type=:cardtype);");
   bankq.bindValue(":cardtype", _fundsType->code());
   bankq.exec();
   if (bankq.first())
-    _bankaccnt->setId(bankq.value("ccbank_bankaccnt_id").toInt());
+    if (bankq.value("ccbank_bankaccnt_id").toInt() > 0)
+      _bankaccnt->setId(bankq.value("ccbank_bankaccnt_id").toInt());
+    else
+    {
+      QMessageBox::warning(this, tr("No Bank Account"),
+                           tr("<p>Cannot find the Bank Account to post this "
+                              "transaction against. Either this card type is not "
+                              "accepted or the Credit Card configuration is not "
+                              "complete."));
+      return;
+    }
   else if (bankq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, bankq.lastError().text(), __FILE__, __LINE__);
@@ -1160,14 +1170,13 @@ void cashReceipt::sUpdateGainLoss()
   if (_altExchRate->isChecked())
   {
     XSqlQuery gainLoss;
-    QString sql = QString("SELECT ROUND((curr_rate - ROUND(:cashrcpt_alt_curr_rate, 8)) * :cashrcpt_amount_base, 2) AS gainloss "
-                          "FROM curr_rate "
-                          "WHERE ( (:cashrcpt_curr_id=curr_id)"
-                          "  AND (:cashrcpt_distdate BETWEEN curr_effective AND curr_expires) );");
+    QString sql = QString("SELECT ROUND((:cashrcpt_amount / ROUND(:cashrcpt_alt_curr_rate, 8)) - "
+                          "             (:cashrcpt_amount / currRate(:cashrcpt_curr_id, :cashrcpt_distdate))"
+                          "             , 2) AS gainloss;");
     gainLoss.prepare(sql);
     gainLoss.bindValue(":cashrcpt_curr_id", _received->id());
     gainLoss.bindValue(":cashrcpt_distdate", _applDate->date());
-    gainLoss.bindValue(":cashrcpt_amount_base", _received->baseValue());
+    gainLoss.bindValue(":cashrcpt_amount", _received->localValue());
     if (_metrics->value("CurrencyExchangeSense").toInt() == 1)
       gainLoss.bindValue(":cashrcpt_alt_curr_rate", 1.0 / _exchRate->toDouble());
     else

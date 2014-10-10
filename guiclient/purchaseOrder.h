@@ -13,6 +13,7 @@
 
 #include "guiclient.h"
 #include "xwidget.h"
+#include "applock.h"
 
 #include <parameter.h>
 
@@ -60,8 +61,9 @@ public slots:
     virtual void sViewWo();
     virtual void sEditSo();
     virtual void sEditWo();
-	virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
-	virtual void sHandleShipTo();
+  	virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
+	  virtual void sHandleShipTo();
+	  virtual void sHandleShipToName();
     virtual void sReleaseNumber();
 
 protected slots:
@@ -85,9 +87,9 @@ private:
     int _poheadid;
     QList<int> _pridList;
     int _mode;
+    AppLock           _lock;
     bool _printed;
-    bool _locked;
-    PoitemTableModel* _qeitem;
+    PoitemTableModel *_qeitem;
     int _NumberGen;
     int _projectId;
 };

@@ -25,6 +25,8 @@ public:
     itemSite(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~itemSite();
     static int		createItemSite(QWidget*, int, int, bool);
+    Q_INVOKABLE virtual int id() { return _itemsiteid; }
+    Q_INVOKABLE virtual int mode() { return _mode; }
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
@@ -50,6 +52,12 @@ public slots:
 protected slots:
     virtual void languageChange();
 
+signals:
+    void populated();
+    void newId(int);
+    void newMode(int);
+    void saved(int);
+  
 private:
     int _mode;
     int _itemsiteid;

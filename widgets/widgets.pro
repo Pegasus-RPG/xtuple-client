@@ -15,17 +15,8 @@ DEPENDPATH += ../common
 dynamic { 
     CONFIG += dll # this is technically redundant as plugin implies dll however it fixes a cross-compile problem
     DESTDIR = $$[QT_INSTALL_PLUGINS]/designer
-    QMAKE_LIBDIR = ../lib $$OPENRPT_BLD/lib $$OPENRPT_BLD $$QMAKE_LIBDIR
-    LIBS += \
-        -lxtuplecommon \
-        -lwrtembed \
-        -lrenderer \
-        -lMetaSQL
-    openrpt_shared {
-        LIBS += -lopenrptcommon
-    } else {
-        LIBS += -lcommon
-    }
+    QMAKE_LIBDIR = ../lib $$OPENRPT_LIBDIR $$QMAKE_LIBDIR
+    LIBS += -lxtuplecommon -lwrtembed -lrenderer -lMetaSQL -lopenrptcommon
     DEFINES += MAKEDLL
     MOC_DIR = tmp/dll
     OBJECTS_DIR = tmp/dll

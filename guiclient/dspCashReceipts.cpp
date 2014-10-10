@@ -16,6 +16,7 @@
 
 #include <datecluster.h>
 #include <openreports.h>
+#include <parameterwidget.h>
 #include "arOpenItem.h"
 #include "cashReceipt.h"
 #include "storedProcErrorLookup.h"
@@ -30,6 +31,30 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char*, Qt::WFlags fl)
   setMetaSQLOptions("cashReceipts", "detail");
   setNewVisible(true);
   setUseAltId(true);
+  setParameterWidgetVisible(true);
+  
+  QString qryType = QString("SELECT  1, '%1' UNION "
+                            "SELECT  2, '%2' UNION "
+                            "SELECT  3, '%3' UNION "
+                            "SELECT  4, '%4' UNION "
+                            "SELECT  5, '%5' UNION "
+                            "SELECT  6, '%6' UNION "
+                            "SELECT  7, '%7' UNION "
+                            "SELECT  8, '%8' UNION "
+                            "SELECT  9, '%9' UNION "
+                            "SELECT  10, '%10'")
+  .arg(tr("Cash"))
+  .arg(tr("Check"))
+  .arg(tr("Cert. Check"))
+  .arg(tr("Master Card"))
+  .arg(tr("Visa"))
+  .arg(tr("AmEx"))
+  .arg(tr("Discover"))
+  .arg(tr("Other C/C"))
+  .arg(tr("Wire Trans."))
+  .arg(tr("Other"));
+
+  parameterWidget()->appendComboBox(tr("Funds Type"), "fundstype_id", qryType);
 
   connect(_applications, SIGNAL(toggled(bool)), list(), SLOT(clear()));
 
@@ -54,6 +79,9 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char*, Qt::WFlags fl)
 
 bool dspCashReceipts::setParams(ParameterList &pParams)
 {
+  if (!display::setParams(pParams))
+    return false;
+  
   if (!_dates->startDate().isValid())
   {
     QMessageBox::critical( this, tr("Enter Start Date"),
@@ -98,6 +126,40 @@ bool dspCashReceipts::setParams(ParameterList &pParams)
   else
     list()->showColumn("cashrcpt_number");
   pParams.append("includeFormatted");
+
+  bool valid;
+  QVariant param;
+  
+  param = pParams.value("fundstype_id", &valid);
+  if (valid)
+  {
+    int typid = param.toInt();
+    QString type;
+    
+    if (typid == 1)
+      type = "K";
+    else if (typid ==2)
+      type = "C";
+    else if (typid ==3)
+      type = "T";
+    else if (typid ==4)
+      type = "M";
+    else if (typid ==5)
+      type = "V";
+    else if (typid ==6)
+      type = "A";
+    else if (typid ==7)
+      type = "D";
+    else if (typid ==8)
+      type = "R";
+    else if (typid ==9)
+      type = "W";
+    else if (typid ==10)
+      type = "O";
+    
+    pParams.append("fundstype", type);
+  }
+  
   return true;
 }
 
