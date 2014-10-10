@@ -181,8 +181,6 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _charfilled = false;
   _mode       = -1;
 
-  _sellingWarehouse->setId(-1);
-
   _currency->setLabel(_currencyLit);
 
   _balanceMethod->append(0, tr("Balance Forward"), "B");
@@ -228,6 +226,8 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     _sellingWarehouseLit->hide();
     _sellingWarehouse->hide();
   }
+  else
+    _sellingWarehouse->setId(_preferences->value("PreferredWarehouse").toInt());
 
   if(!_metrics->boolean("AutoCreditWarnLateCustomers"))
     _warnLate->hide();
@@ -1724,7 +1724,8 @@ void customer::sClear()
 
     _defaultCommissionPrcnt->setDouble(0);
     _shipchrg->setId(-1);
-    _sellingWarehouse->setId(-1);
+    if (_metrics->boolean("MultiWhs"))
+      _sellingWarehouse->setId(_preferences->value("PreferredWarehouse").toInt());
     _active->setChecked(true);
     _allowFFBillto->setChecked(false);
     _usesPOs->setChecked(false);

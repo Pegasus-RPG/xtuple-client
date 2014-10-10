@@ -167,6 +167,10 @@ const struct {
 			   "convert this Quote."),		   0, "" },
   { "convertQuote", -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Quote #%1 has expired and can not be converted."),
 								   0, "" },
+  { "convertQuote", -7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer PO required."),
+    0, "" },
+  { "convertQuote", -8, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Duplicate Customer PO."),
+    0, "" },
 
   { "copyItemSite",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not copy the Item Site because it "
 			    "does not appear to exist."),		0, "" },
@@ -1445,6 +1449,14 @@ const struct {
   { "updateTodoItem",  -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The To-Do List Item cannot be updated as "
 			       "an invalid internal ID was supplied ."),
 								 0, "" },
+
+  { "voidAPOpenVoucher", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot Void Voucher Id % as apopen not found. "),				0, "" },
+  { "voidAPOpenVoucher", -20, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot Void Voucher #% as vohead not found. "),				0, "" },
+  { "voidAPOpenVoucher", -30, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot Void Voucher #% as applications exist. "),				0, "" },
+  { "voidAPOpenVoucher", -40, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot Void Voucher #% due to unassigned G/L Accounts. "),				0, "" },
+  { "voidAPOpenVoucher", -50, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot Void Voucher #% due to unassigned G/L Accounts. "),				0, "" },
+  { "voidAPOpenVoucher", -60, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot Void Voucher #% due to an unassigned A/P Account. "),				0, "" },
+  { "voidAPOpenVoucher", -70, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Credit application failed with result %. "),				0, "" },
 
   { "voidCheck", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot void this Payment because either it has already "
 			"been voided, posted, or replaced, or it has been "

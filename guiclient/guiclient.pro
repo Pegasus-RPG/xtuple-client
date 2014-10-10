@@ -11,51 +11,32 @@ INCLUDEPATH += ../scriptapi \
                ../../xtuple-build-desktop/common \
                ../../xtuple-build-desktop/widgets \
                ../../xtuple-build-desktop/widgets/tmp/lib \
-               ../../xtuple-build-desktop/guiclient .
+               ../../xtuple-build-desktop/guiclient . \
+               $(CSVIMP_HEADERS)/csvimpcommon $(CSVIMP_HEADERS)/plugin
 
 DEPENDPATH  += $${INCLUDEPATH}
 
 win32-msvc* {
-  PRE_TARGETDEPS += ../lib/xtuplecommon.lib    \
-                    ../lib/xtuplescriptapi.lib \
-                    ../lib/xtuplewidgets.lib
+  PRE_TARGETDEPS += ../lib/xtuplecommon.$${XTLIBEXT}    \
+                    ../lib/xtuplescriptapi.lib          \
+                    ../lib/xtuplewidgets.lib            \
+                    $${OPENRPT_LIBDIR}/MetaSQL.$${OPENRPTLIBEXT}  \
+                    $${OPENRPT_LIBDIR}/renderer.$${OPENRPTLIBEXT} \
+                    $${OPENRPT_LIBDIR}/wrtembed.$${OPENRPTLIBEXT} \
+                    $${OPENRPT_LIBDIR}/openrptcommon.$${OPENRPTLIBEXT}
 } else {
-  xtcommon_shared {
-    PRE_TARGETDEPS += ../lib/libxtuplecommon.so
-  } else {
-    PRE_TARGETDEPS += ../lib/libxtuplecommon.a
-  }
-  PRE_TARGETDEPS += ../lib/libxtuplescriptapi.a \
-                    ../lib/libxtuplewidgets.a
-  openrpt_shared {
-    PRE_TARGETDEPS += $${OPENRPT_BLD}/libMetaSQL.so  \
-                      $${OPENRPT_BLD}/librenderer.so \
-                      $${OPENRPT_BLD}/libwrtembed.so \
-                      $${OPENRPT_BLD}/libdmtx.so \
-                      $${OPENRPT_BLD}/libcommon.so
-  } else {
-    PRE_TARGETDEPS += $${OPENRPT_BLD}/lib/libMetaSQL.a  \
-                      $${OPENRPT_BLD}/lib/librenderer.a \
-                      $${OPENRPT_BLD}/lib/libwrtembed.a \
-                      $${OPENRPT_BLD}/lib/libDmtx_Library.a \
-                      $${OPENRPT_BLD}/lib/libcommon.a
-  }
+  PRE_TARGETDEPS += ../lib/libxtuplecommon.$${XTLIBEXT} \
+                    ../lib/libxtuplescriptapi.a         \
+                    ../lib/libxtuplewidgets.a           \
+                    $${OPENRPT_LIBDIR}/libMetaSQL.$${OPENRPTLIBEXT}  \
+                    $${OPENRPT_LIBDIR}/librenderer.$${OPENRPTLIBEXT} \
+                    $${OPENRPT_LIBDIR}/libwrtembed.$${OPENRPTLIBEXT} \
+                    $${OPENRPT_LIBDIR}/libopenrptcommon.$${OPENRPTLIBEXT}
 }
 
-QMAKE_LIBDIR = ../lib $${OPENRPT_BLD}/lib $${OPENRPT_BLD} $$QMAKE_LIBDIR
-LIBS        += -lxtuplecommon -lxtuplewidgets -lwrtembed 
-openrpt_shared {
-  LIBS      += -lopenrptcommon
-} else {
-  LIBS      += -lcommon
-}
-LIBS        += -lrenderer -lxtuplescriptapi 
-openrpt_shared {
-  LIBS      += -ldmtx
-} else {
-  LIBS      += -lDmtx_Library
-}
-LIBS        += -lMetaSQL
+QMAKE_LIBDIR = ../lib $${OPENRPT_LIBDIR} $$QMAKE_LIBDIR
+LIBS        += -lxtuplecommon -lxtuplewidgets -lwrtembed -lopenrptcommon
+LIBS        += -lrenderer -lxtuplescriptapi $${DMTXLIB} -lMetaSQL
 
 #not the best way to handle this, but it should do
 mac:!static:contains(QT_CONFIG, qt_framework) {
@@ -1867,7 +1848,7 @@ include( hunspell.pri )
 QT += xml sql script scripttools network
 QT += webkit xmlpatterns
 
-RESOURCES += guiclient.qrc $$OPENRPT_IMAGE_DIR/OpenRPTMetaSQL.qrc
+RESOURCES += guiclient.qrc $${OPENRPT_IMAGE_DIR}/OpenRPTMetaSQL.qrc
 
 #CONFIG += debug
 

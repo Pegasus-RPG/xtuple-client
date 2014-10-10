@@ -246,7 +246,7 @@ bool user::save()
 
       if(isCloud || isXtuple)
       {
-        salt = "private";
+        salt = "j3H44uadEI#8#kSmkh#H%JSLAKDOHImklhdfsn3#432?%^kjasdjla3uy989apa3uipoweurw-03235##+=-lhkhdNOHA?%@mxncvbwoiwerNKLJHwe278NH28shNeGc";
       }
       else
       {
@@ -545,7 +545,7 @@ void user::sCheck()
   //This regexp checks to make sure the user name starts with a letter.
   QRegExp re("^\\d"); // just digits
   QRegExp re2("^\\w"); // this includes all letters & numbers of all alphabets
-  _cUsername = _username->text().trimmed();
+  _cUsername = _username->text().trimmed().toLower();
   if (((re.indexIn(_cUsername) != -1) || (re2.indexIn(_cUsername) == -1)) && _username->text() != "")
   {
       QMessageBox::critical(this, tr("Error"), tr("User names must begin with a letter."));
@@ -574,7 +574,8 @@ void user::sCheck()
     XSqlQuery dupq;
     dupq.prepare("SELECT crmacct_id"
                  "  FROM crmacct "
-                 " WHERE (UPPER(crmacct_number)=UPPER(:username));");
+                 " WHERE (UPPER(crmacct_number)=UPPER(:username))"
+                 "   AND crmacct_usr_username IS NULL;");
     dupq.bindValue(":username", _cUsername);
     dupq.exec();
     if (dupq.first())
@@ -658,6 +659,7 @@ bool user::sPopulate()
     _employee->setId(usrq.value("crmacct_emp_id").toInt());
     _crmacctid = usrq.value("crmacct_id").toInt();
     _crmowner = usrq.value("crmacct_owner_username").toString();
+    _cUsername = _username->text().trimmed().toLower();
 
     _passwd->setText("        ");
     _verify->setText("        ");

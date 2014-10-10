@@ -102,6 +102,7 @@ enum SetResponse location::set(const ParameterList &pParams)
       _bin->setEnabled(FALSE);
       _location->setEnabled(FALSE);
       _netable->setEnabled(FALSE);
+      _usable->setEnabled(FALSE);
       _restricted->setEnabled(FALSE);
       _description->setEnabled(FALSE);
       _locitem->setEnabled(FALSE);
@@ -173,6 +174,14 @@ void location::sSave()
     return;
   }
 
+  if ( (!_netable->isChecked()) && (_usable->isChecked()) )
+  {
+    QMessageBox::critical( this, tr("Invalid Status"),
+                          tr( "<p>Non Nettable inventory cannot be Usable inventory." ) );
+    _netable->setFocus();
+    return;
+  }
+  
   locationSave.prepare("SELECT location_id"
             "  FROM location"
             " WHERE((location_id != :location_id)"
@@ -203,19 +212,24 @@ void location::sSave()
                "( location_id, location_warehous_id,"
                "  location_aisle, location_rack, location_bin,  location_name,"
                "  location_whsezone_id, location_descrip,"
-               "  location_netable, location_restrict ) "
+               "  location_netable, location_usable, location_restrict ) "
                "VALUES "
                "( :location_id, :location_warehous_id,"
                "  :location_aisle, :location_rack, :location_bin, :location_name,"
                "  :location_whsezone_id, :location_descrip,"
-               "  :location_netable, :location_restrict );" );
+               "  :location_netable, :location_usable, :location_restrict );" );
   else if (_mode == cEdit)
     locationSave.prepare( "UPDATE location "
                "SET location_warehous_id=:location_warehous_id,"
-               "    location_aisle=:location_aisle, location_rack=:location_rack,"
-               "    location_bin=:location_bin, location_name=:location_name,"
-               "    location_whsezone_id=:location_whsezone_id, location_descrip=:location_descrip,"
-               "    location_netable=:location_netable, location_restrict=:location_restrict "
+               "    location_aisle=:location_aisle,"
+               "    location_rack=:location_rack,"
+               "    location_bin=:location_bin,"
+               "    location_name=:location_name,"
+               "    location_whsezone_id=:location_whsezone_id,"
+               "    location_descrip=:location_descrip,"
+               "    location_netable=:location_netable,"
+               "    location_usable=:location_usable,"
+               "    location_restrict=:location_restrict "
                "WHERE (location_id=:location_id);" );
 
   locationSave.bindValue(":location_id", _locationid);
@@ -227,6 +241,7 @@ void location::sSave()
   locationSave.bindValue(":location_whsezone_id", _whsezone->id());
   locationSave.bindValue(":location_descrip", _description->toPlainText().trimmed());
   locationSave.bindValue(":location_netable", QVariant(_netable->isChecked()));
+  locationSave.bindValue(":location_usable", QVariant(_usable->isChecked()));
   locationSave.bindValue(":location_restrict", QVariant(_restricted->isChecked()));
   locationSave.exec();
 
@@ -447,6 +462,7 @@ void location::populate()
     _location->setText(locationpopulate.value("location_name").toString());
     _description->setText(locationpopulate.value("location_descrip").toString());
     _netable->setChecked(locationpopulate.value("location_netable").toBool());
+    _usable->setChecked(locationpopulate.value("location_usable").toBool());
     _restricted->setChecked(locationpopulate.value("location_restrict").toBool());
 
     int whsezoneid = locationpopulate.value("location_whsezone_id").toInt();

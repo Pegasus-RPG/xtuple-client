@@ -239,12 +239,16 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
       if (sSave())
       {
         itemet.prepare("INSERT INTO itemsrcp ( "
-                  "itemsrcp_itemsrc_id, itemsrcp_qtybreak, "
-                  "itemsrcp_price, itemsrcp_updated, itemsrcp_curr_id) "
-                  "SELECT :itemsrcid, itemsrcp_qtybreak, "
-                  "itemsrcp_price, current_date, itemsrcp_curr_id "
-                  "FROM itemsrcp "
-                  "WHERE (itemsrcp_itemsrc_id=:itemsrcidold); ");
+                       "itemsrcp_itemsrc_id, itemsrcp_qtybreak, itemsrcp_price, "
+                       "itemsrcp_updated, itemsrcp_curr_id, itemsrcp_dropship, "
+                       "itemsrcp_warehous_id, itemsrcp_type, itemsrcp_discntprcnt, "
+                       "itemsrcp_fixedamtdiscount) "
+                       "SELECT :itemsrcid, itemsrcp_qtybreak, itemsrcp_price, "
+                       "current_date, itemsrcp_curr_id, itemsrcp_dropship, "
+                       "itemsrcp_warehous_id, itemsrcp_type, itemsrcp_discntprcnt, "
+                       "itemsrcp_fixedamtdiscount "
+                       "FROM itemsrcp "
+                       "WHERE (itemsrcp_itemsrc_id=:itemsrcidold); ");
         itemet.bindValue(":itemsrcid", _itemsrcid);
         itemet.bindValue(":itemsrcidold", itemsrcidold);
         itemet.exec();

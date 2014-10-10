@@ -167,7 +167,6 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _custtaxzoneid     = -1;
   _amountOutstanding = 0.0;
   _crmacctid         =-1;
-  _locked            =false;
 
   _captive       = FALSE;
 
@@ -217,7 +216,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _soitem->addColumn(tr("Pkg. Weight"),     _qtyColumn,            Qt::AlignRight,  false, "packweight");
   _soitem->addColumn(tr("Supply Type"),     _itemColumn,           Qt::AlignCenter, false, "spplytype");
   _soitem->addColumn(tr("Order Number"),    _itemColumn,           Qt::AlignCenter, false, "ordrnumbr");
-  _soitem->addColumn(tr("On Hand"),         _qtyColumn,            Qt::AlignCenter, true,  "itemsite_qtyonhand");
+  _soitem->addColumn(tr("Available QOH"),   _qtyColumn,            Qt::AlignCenter, true,  "availableqoh");
   if (_metrics->boolean("EnableSOReservations"))
   {
     _soitem->addColumn(tr("Reserved"),      _qtyColumn,            Qt::AlignCenter, true,  "reserved");
@@ -785,7 +784,7 @@ bool salesOrder::save(bool partial)
                           tr("You must select a Sales Rep. for this order before you may save it.") )
          << GuiErrorCheck(!_terms->isValid(), _terms,
                           tr("You must select the Terms for this order before you may save it.") )
-         << GuiErrorCheck((_shipTo->id() == -1) && (!_shipToAddr->isEnabled()), _shipTo,
+         << GuiErrorCheck((_shipTo->id() == -1) && (!_shipToName->isEnabled()), _shipTo,
                           tr("You must select a Ship-To for this order before you may save it.") )
          << GuiErrorCheck(_total->localValue() < 0, _cust,
                           tr("<p>The Total must be a positive value.") )
@@ -1247,33 +1246,19 @@ bool salesOrder::save(bool partial)
   saveSales.bindValue(":quhead_status", "O");
 
   saveSales.exec();
-  if (saveSales.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Saving Order"),
+                           saveSales, __FILE__, __LINE__))
   {
-      systemError(this, saveSales.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
-  // if this is a new so record and we haven't saved already
-  // then we need to lock this record.
-  if ((cNew == _mode) && (!_saved) && !_locked)
+  // TODO: should this be done before saveSales.exec()?
+  if ((cNew == _mode) && (!_saved)
+      && ! _lock.acquire(ISORDER(_mode) ? "cohead" : "quhead", _soheadid))
   {
-    // should I bother to check because no one should have this but us?
-    saveSales.prepare("SELECT tryLock(oid::integer, :head_id) AS locked "
-              "FROM pg_class "
-              "WHERE relname=:table;");
-    saveSales.bindValue(":head_id", _soheadid);
-    if (ISORDER(_mode))
-      saveSales.bindValue(":table", "cohead");
-    else
-      saveSales.bindValue(":table", "quhead");
-    saveSales.exec();
-    if (saveSales.first())
-      _locked = saveSales.value("locked").toBool();
-    else if (saveSales.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, saveSales.lastError().databaseText(), __FILE__, __LINE__);
-      return false;
-    }
+    ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                         _lock.lastError(), __FILE__, __LINE__);
+    return false;
   }
 
   _saved = true;
@@ -1339,7 +1324,6 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
 {
   if (_mode == cView)
   {
-    QAction *menuItem;
     bool  didsomething = false;
     if (_numSelected == 1)
     {
@@ -1974,6 +1958,7 @@ void salesOrder::populateShipto(int pShiptoid)
   else
   {
     _shipTo->setId(-1);
+    _shipTo->setCustid(_cust->id());
     _shipToName->clear();
     _shipToAddr->clear();
     _shipToCntct->clear();
@@ -2046,6 +2031,7 @@ void salesOrder::sNew()
 void salesOrder::sCopyToShipto()
 {
   _shipTo->setId(-1);
+  _shipTo->setCustid(_cust->id());
   _shipToName->setText(_billToName->text());
   _shipToAddr->setId(_billToAddr->id());
   if (_billToAddr->id() <= 0)
@@ -2183,7 +2169,7 @@ void salesOrder::sHandleButtons()
           }
         }
 
-        if (!selected->rawValue("coitem_subnumber").toInt() == 0)
+        if (selected->rawValue("coitem_subnumber").toInt() != 0)
         {
           _edit->setText(tr("View"));
           _delete->setEnabled(FALSE);
@@ -2387,35 +2373,20 @@ void salesOrder::populate()
   if ( (_mode == cNew) || (_mode == cEdit) || (_mode == cView) )
   {
     XSqlQuery so;
-    if (_mode == cEdit && !_locked)
+    if (_mode == cEdit
+        && !_lock.acquire(ISORDER(_mode) ? "cohead" : "quhead", _soheadid))
     {
-      // Lock the record
-      so.prepare("SELECT tryLock(oid::integer, :sohead_id) AS locked "
-                 "FROM pg_class "
-                 "WHERE relname=:table;");
-      so.bindValue(":sohead_id", _soheadid);
-      if (ISORDER(_mode))
-        so.bindValue(":table", "cohead");
-      else
-        so.bindValue(":table", "quhead");
-      so.exec();
-      if (so.first())
+      if (_lock.isLockedOut())
       {
-        if (so.value("locked").toBool() != true)
-        {
-          QMessageBox::critical( this, tr("Record Currently Being Edited"),
-                                 tr("<p>The record you are trying to edit is currently being edited "
-                                      "by another user. Continue in View Mode.") );
-          setViewMode();
-        }
-        else
-          _locked = true;
+        QMessageBox::critical(this, tr("Record Currently Being Edited"),
+                              tr("<p>The record you are trying to edit is "
+                                 "currently being edited by another user. "
+                                 "Continue in View Mode.") );
+        setViewMode();
       }
-      else
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                                    _lock.lastError(), __FILE__, __LINE__))
       {
-        QMessageBox::critical( this, tr("Cannot Lock Record for Editing"),
-                               tr("<p>There was an unexpected error while trying to lock the record "
-                                    "for editing. Please report this to your administator.") );
         setViewMode();
       }
     }
@@ -2531,6 +2502,7 @@ void salesOrder::populate()
       }
 
       _shipTo->setId(so.value("cohead_shipto_id").toInt());
+      _shipTo->setCustid(_cust->id());
       _ignoreSignals=false;
 
       if (_mode == cView)
@@ -2596,7 +2568,8 @@ void salesOrder::populate()
       emit populated();
       sFillItemList();
       // TODO - a partial save is not saving everything
-      save(false);
+      if (! ISVIEW(_mode))
+        save(false);
     }
     else if (so.lastError().type() != QSqlError::NoError)
     {
@@ -2724,6 +2697,7 @@ void salesOrder::populate()
       }
 
       _shipTo->setId(qu.value("quhead_shipto_id").toInt());
+      _shipTo->setCustid(_cust->id());
       _ignoreSignals=false;
 
       if (_mode == cViewQuote)
@@ -2760,7 +2734,8 @@ void salesOrder::populate()
       sFillItemList();
       emit populated();
       // TODO - a partial save is not saving everything
-      save(false);
+      if (! ISVIEW(_mode))
+        save(false);
     }
     else if (qu.lastError().type() != QSqlError::NoError)
     {
@@ -3065,25 +3040,9 @@ bool salesOrder::deleteForCancel()
     }
   }
 
-  if (_locked)
-  {
-    query.prepare("SELECT pg_advisory_unlock(oid::integer, :sohead_id) AS result "
-                  "FROM pg_class "
-                  "WHERE relname=:table;");
-    query.bindValue(":sohead_id", _soheadid);
-    if (ISORDER(_mode))
-      query.bindValue(":table", "cohead");
-    else
-      query.bindValue(":table", "quhead");
-    query.exec();
-    if (query.first() && !query.value("result").toBool())
-        systemError(this, tr("Could not release this Sales Order record."),
-                  __FILE__, __LINE__);
-    else if (query.lastError().type() != QSqlError::NoError)
-        systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
-    else
-      _locked=false;
-  }
+  if (! _lock.release())
+    ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                         _lock.lastError(), __FILE__, __LINE__);
 
   return true;
 }
@@ -3100,25 +3059,9 @@ void salesOrder::sClear()
 void salesOrder::clear()
 {
   XSqlQuery clearSales;
-  if (_locked)
-  {
-    clearSales.prepare("SELECT pg_advisory_unlock(oid::integer, :sohead_id) AS result "
-              "FROM pg_class "
-              "WHERE relname=:table;");
-    clearSales.bindValue(":sohead_id", _soheadid);
-    if (ISORDER(_mode))
-      clearSales.bindValue(":table", "cohead");
-    else
-      clearSales.bindValue(":table", "quhead");
-    clearSales.exec();
-    if (clearSales.first() && !clearSales.value("result").toBool())
-      systemError(this, tr("Could not release this Sales Order record."),
-                  __FILE__, __LINE__);
-    else if (clearSales.lastError().type() != QSqlError::NoError)
-      systemError(this, clearSales.lastError().databaseText(), __FILE__, __LINE__);
-    else
-      _locked=false;
-  }
+  if (! _lock.release())
+    ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                         _lock.lastError(), __FILE__, __LINE__);
 
   if(_metrics->boolean("DefaultSOLineItemsTab"))
     _salesOrderInformation->setCurrentIndex(1);
@@ -4612,7 +4555,7 @@ void salesOrder::sEnterCashPayment()
   }
   
   QString _cashrcptnumber;
-  int _cashrcptid;
+  int _cashrcptid = -1;
 
   cashsave.exec("SELECT fetchCashRcptNumber() AS number, NEXTVAL('cashrcpt_cashrcpt_id_seq') AS cashrcpt_id;");
   if (cashsave.first())

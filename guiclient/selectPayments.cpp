@@ -671,7 +671,8 @@ void selectPayments::sVoidVoucher()
       sFillList();
   }
   else
-    systemError( this, dspVoidVoucher.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Voiding Voucher"),
+                         dspVoidVoucher, __FILE__, __LINE__);
   
 }
 

@@ -34,6 +34,8 @@ openPurchaseOrder::openPurchaseOrder(QWidget* parent, const char* name, bool mod
   _po->addColumn(tr("Created By"),   -1,  Qt::AlignLeft,   true,  "pohead_agent_username");
   _po->addColumn(tr("Drop Ship"),    -1,  Qt::AlignLeft,   true,  "pohead_dropship");
   
+  vendor_id = -1;
+  sohead_id = -1;
   dropship = false;
 }
 
@@ -66,6 +68,10 @@ enum SetResponse openPurchaseOrder::set(const ParameterList &pParams)
   if (valid)
     vendor_id = param.toInt();
 
+  param = pParams.value("sohead_id", &valid);
+  if (valid)
+    sohead_id = param.toInt();
+  
   param = pParams.value("drop_ship", &valid);
   if (valid)
     dropship = param.toBool();
@@ -84,8 +90,10 @@ void openPurchaseOrder::sFillList()
                         "WHERE (pohead_vend_id = :vend_id)"
                         "  AND (pohead_status = 'U')"
                         "  AND (pohead_dropship = :dropship) "
+                        "  AND (NOT pohead_dropship OR (pohead_cohead_id = :cohead_id)) "
                         "ORDER BY pohead_id DESC;" );
   openFillList.bindValue(":vend_id", vendor_id);
+  openFillList.bindValue(":cohead_id", sohead_id);
   openFillList.bindValue(":dropship", dropship);
   openFillList.exec();
   _po->populate(openFillList,TRUE);

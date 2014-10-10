@@ -39,19 +39,20 @@ unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags
   setMetaSQLOptions("invoices", "detail");
   setNewVisible(true);
 
-  list()->addColumn(tr("Invoice #"),  _orderColumn, Qt::AlignLeft,   true,  "invchead_invcnumber" );
-  list()->addColumn(tr("Prnt'd"),     _orderColumn, Qt::AlignCenter, true,  "invchead_printed" );
-  list()->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignLeft,   true,  "invchead_ordernumber" );
-  list()->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,   true,  "cust_name" );
-  list()->addColumn(tr("Ship-to"),   100,          Qt::AlignLeft,   false,  "invchead_shipto_name" );
-  list()->addColumn(tr("Invc. Date"), _dateColumn,  Qt::AlignCenter, true,  "invchead_invcdate" );
-  list()->addColumn(tr("Ship Date"),  _dateColumn,  Qt::AlignCenter, true,  "invchead_shipdate" );
-  list()->addColumn(tr("G/L Dist Date"),_dateColumn,Qt::AlignCenter, true,  "gldistdate" );
-  list()->addColumn(tr("Recurring"),  _ynColumn,    Qt::AlignCenter, false, "isRecurring" );
-  list()->addColumn(tr("Ship Date"),  _dateColumn,  Qt::AlignCenter, false, "invchead_shipdate" );
-  list()->addColumn(tr("P/O #"),      _orderColumn, Qt::AlignCenter, false, "invchead_ponumber" );
-  list()->addColumn(tr("Total Amount"), _bigMoneyColumn, Qt::AlignRight, true, "extprice" );
-  list()->addColumn(tr("Margin %"),   _prcntColumn, Qt::AlignRight,  true,  "marginpercent");
+  list()->addColumn(tr("Invoice #"),     _orderColumn,    Qt::AlignLeft,   true,  "invchead_invcnumber" );
+  list()->addColumn(tr("Prnt'd"),        _orderColumn,    Qt::AlignCenter, true,  "invchead_printed" );
+  list()->addColumn(tr("S/O #"),         _orderColumn,    Qt::AlignLeft,   true,  "invchead_ordernumber" );
+  list()->addColumn(tr("Customer"),      -1,              Qt::AlignLeft,   true,  "cust_name" );
+  list()->addColumn(tr("Ship-to"),       100,             Qt::AlignLeft,   false, "invchead_shipto_name" );
+  list()->addColumn(tr("Invc. Date"),    _dateColumn,     Qt::AlignCenter, true,  "invchead_invcdate" );
+  list()->addColumn(tr("Ship Date"),     _dateColumn,     Qt::AlignCenter, true,  "invchead_shipdate" );
+  list()->addColumn(tr("G/L Dist Date"), _dateColumn,     Qt::AlignCenter, true,  "gldistdate" );
+  list()->addColumn(tr("Recurring"),     _ynColumn,       Qt::AlignCenter, false, "isRecurring" );
+  list()->addColumn(tr("Ship Date"),     _dateColumn,     Qt::AlignCenter, false, "invchead_shipdate" );
+  list()->addColumn(tr("P/O #"),         _orderColumn,    Qt::AlignCenter, false, "invchead_ponumber" );
+  list()->addColumn(tr("Total Amount"),  _bigMoneyColumn, Qt::AlignRight,  true,  "extprice" );
+  list()->addColumn(tr("Margin"),        _bigMoneyColumn, Qt::AlignRight,  true,  "margin" );
+  list()->addColumn(tr("Margin %"),      _prcntColumn,    Qt::AlignRight,  true,  "marginpercent");
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   if (! _privileges->check("ChangeARInvcDistDate"))
