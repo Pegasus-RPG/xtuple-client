@@ -1239,6 +1239,52 @@ void GUIClient::sUserUpdated(QString username)
   emit userUpdated(username);
 }
 
+/*! \fn void GUIClient::sEmitSignal(QString source, QString message) 
+ *  \brief A generic slot for scripted code to fire their own signal with a QString payload.
+ *  \param source the script-defined source of this signal.
+ *  \param message the QString message payload sent with the signal.
+ *
+ * Example Usage:
+ * // connection and signal handler
+ * mainwindow["emitSignal(QString, QString)"].connect(emitTest); 
+ *
+ * function emitTest(source, message) {
+ *   if (source == "myCustomScript") {
+ *     QMessageBox.information(mywindow, source, message);
+ *   }
+ * }
+ *
+ * // sample function for emitting the signal via script
+ * function sendTestSignal() {
+ *   mainwindow.sEmitSignal("myCustomScript", "my custom message");
+ * }
+ *
+ */
+void GUIClient::sEmitSignal(QString source, QString message)
+{
+  emit emitSignal(source, message);
+}
+
+/*! \fn void GUIClient::sEmitSignal(QString source, int id) 
+ *  \brief A generic slot for scripted code to fire their own signal with an integer payload.
+ *  \param source the script-defined source of this signal.
+ *  \param id the integer payload sent with the signal.
+ */
+void GUIClient::sEmitSignal(QString source, int id)
+{
+  emit emitSignal(source, id);
+}
+
+/*! \fn void GUIClient::sEmitSignal(QString source, bool value) 
+ *  \brief A generic slot for scripted code to fire their own signal with a boolean payload.
+ *  \param source the script-defined source of this signal.
+ *  \param value the boolean payload sent with the signal.
+ */
+void GUIClient::sEmitSignal(QString source, bool value)
+{
+  emit emitSignal(source, value);
+}
+
 void GUIClient::sIdleTimeout()
 {
  // so we don't accidentally get called again waiting

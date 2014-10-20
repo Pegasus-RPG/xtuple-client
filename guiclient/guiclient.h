@@ -269,6 +269,9 @@ class GUIClient : public QMainWindow
     void sCustomCommand();
     void sCustomersUpdated(int, bool);
     void sEmitNotifyHeard(const QString &note);
+    void sEmitSignal(QString, QString);
+    void sEmitSignal(QString, int);
+    void sEmitSignal(QString, bool);
     void sEmployeeUpdated(int);
     void sGlSeriesUpdated();
     void initMenuBar();
@@ -329,6 +332,9 @@ class GUIClient : public QMainWindow
     void creditMemosUpdated();
     void crmAccountsUpdated(int);
     void customersUpdated(int, bool);
+    void emitSignal(QString, QString);
+    void emitSignal(QString, int);
+    void emitSignal(QString, bool);
     void employeeUpdated(int);
     void glSeriesUpdated();
     void invoicesUpdated(int, bool);
