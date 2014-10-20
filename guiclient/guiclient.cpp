@@ -1239,6 +1239,21 @@ void GUIClient::sUserUpdated(QString username)
   emit userUpdated(username);
 }
 
+void GUIClient::sEmitSignal(QString source, QString message)
+{
+  emit emitSignal(source, message);
+}
+
+void GUIClient::sEmitSignal(QString source, int id)
+{
+  emit emitSignal(source, id);
+}
+
+void GUIClient::sEmitSignal(QString source, bool value)
+{
+  emit emitSignal(source, value);
+}
+
 void GUIClient::sIdleTimeout()
 {
  // so we don't accidentally get called again waiting
