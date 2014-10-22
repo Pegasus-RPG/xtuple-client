@@ -47,7 +47,6 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
 {
   setupUi(this);
 
-  connect(_item,              SIGNAL(privateIdChanged(int)),        this, SLOT(sFindSellingWarehouseItemsites(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemInfo(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemSources(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemSubs(int)));
@@ -63,6 +62,9 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   connect(_scheduledDate,     SIGNAL(newDate(const QDate &)),       this, SLOT(sHandleScheduleDate()));
   connect(_showAvailability,  SIGNAL(toggled(bool)),                this, SLOT(sDetermineAvailability()));
   connect(_showIndented,      SIGNAL(toggled(bool)),                this, SLOT(sDetermineAvailability()));
+  connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemsiteInfo()));
+  connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sDetermineAvailability()));
+  connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemSubs(int)));
   connect(_subs,              SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateSubMenu(QMenu*,QTreeWidgetItem*,int)));
   connect(_next,              SIGNAL(clicked()),                    this, SLOT(sNext()));
   connect(_prev,              SIGNAL(clicked()),                    this, SLOT(sPrev()));
@@ -1470,7 +1472,7 @@ void salesOrderItem::sSave(bool pPartial)
 
 void salesOrderItem::sPopulateItemsiteInfo()
 {
-  if (_item->isValid())
+  if (_item->isValid() && _warehouse->isValid())
   {
     XSqlQuery itemsite;
     itemsite.prepare("SELECT *, "
@@ -1873,10 +1875,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       _listPrice->setBaseValue(salesPopulateItemInfo.value("item_listprice").toDouble());
       _taxtype->setId(salesPopulateItemInfo.value("taxtype_id").toInt());
 
-      connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemsiteInfo()));
-      connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sDetermineAvailability()));
-      connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemSubs(int)));
-
+      sFindSellingWarehouseItemsites(_item->id());
       sPopulateItemsiteInfo();
       sCalculateDiscountPrcnt();
 
@@ -2027,7 +2026,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
 
   _availability->clear();
 
-  if ((_item->isValid()) && (_scheduledDate->isValid()) && (_showAvailability->isChecked()) )
+  if (_item->isValid() && _warehouse->isValid() && _scheduledDate->isValid() && _showAvailability->isChecked())
   {
     XSqlQuery availability;
     QString sql = "SELECT itemsite_id,"
@@ -2278,19 +2277,22 @@ void salesOrderItem::sPopulateItemSources(int pItemid)
 
 void salesOrderItem::sPopulateItemSubs(int pItemid)
 {
-  XSqlQuery subq;
-  MetaSQLQuery mql = mqlLoad("substituteAvailability", "detail");
-  ParameterList params;
-  params.append("item_id", pItemid);
-  params.append("warehous_id", _warehouse->id());
-  params.append("byDate", true);
-  if (_scheduledDate->isValid())
-    params.append("date", _scheduledDate->date());
-  else
-    params.append("date", omfgThis->dbDate());
-
-  subq = mql.toQuery(params);
-  _subs->populate(subq);
+  if (_item->isValid() && _warehouse->isValid())
+  {
+    XSqlQuery subq;
+    MetaSQLQuery mql = mqlLoad("substituteAvailability", "detail");
+    ParameterList params;
+    params.append("item_id", pItemid);
+    params.append("warehous_id", _warehouse->id());
+    params.append("byDate", true);
+    if (_scheduledDate->isValid())
+      params.append("date", _scheduledDate->date());
+    else
+      params.append("date", omfgThis->dbDate());
+    
+    subq = mql.toQuery(params);
+    _subs->populate(subq);
+  }
 }
 
 void salesOrderItem::sPopulateSubMenu(QMenu *menu, QTreeWidgetItem*, int)
@@ -2547,14 +2549,15 @@ void salesOrderItem::sHandleSupplyOrder()
         {
           int vendid = ordq.value("itemsrc_vend_id").toInt();
           QString vendname = ordq.value("vend_name").toString();
-          
           ordq.prepare( "SELECT pohead_id "
                         "FROM pohead "
-                        "WHERE ( (pohead_status='U')"
-                        "  AND   (pohead_dropship=:drop_ship)"
-                        "  AND   (pohead_vend_id=:vend_id) );" );
+                        "WHERE (pohead_vend_id = :vend_id)"
+                        "  AND (pohead_status = 'U')"
+                        "  AND (pohead_dropship = :drop_ship) "
+                        "  AND (NOT pohead_dropship OR (pohead_cohead_id = :sohead_id));" );
           ordq.bindValue(":drop_ship", _supplyDropShip->isChecked());
           ordq.bindValue(":vend_id", vendid);
+          ordq.bindValue(":sohead_id", _soheadid);
           ordq.exec();
           if (ordq.first())
           {
@@ -2568,6 +2571,7 @@ void salesOrderItem::sHandleSupplyOrder()
               openPurchaseOrderParams.append("vend_id", vendid);
               openPurchaseOrderParams.append("vend_name", vendname);
               openPurchaseOrderParams.append("drop_ship", _supplyDropShip->isChecked());
+              openPurchaseOrderParams.append("sohead_id", _soheadid);
               openPurchaseOrder newdlg(omfgThis, "", TRUE);
               newdlg.set(openPurchaseOrderParams);
               poheadid = newdlg.exec();
@@ -4077,6 +4081,7 @@ void salesOrderItem::sNext()
     salesNext.prepare("SELECT a.coitem_id AS id, a.coitem_subnumber AS sub"
               "  FROM coitem AS a, coitem AS b"
               " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
+	      "   AND  (a.coitem_status <> 'X')"
               "   AND ((a.coitem_linenumber > b.coitem_linenumber)"
               "    OR ((a.coitem_linenumber = b.coitem_linenumber)"
               "   AND  (a.coitem_subnumber > b.coitem_subnumber)))"
@@ -4188,6 +4193,7 @@ void salesOrderItem::sPrev()
       salesPrev.prepare("SELECT a.coitem_id AS id, a.coitem_subnumber AS sub"
                 "  FROM coitem AS a, coitem AS b"
                 " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
+		"   AND  (a.coitem_status <> 'X')"
                 "   AND ((a.coitem_linenumber < b.coitem_linenumber)"
                 "    OR ((a.coitem_linenumber = b.coitem_linenumber)"
                 "   AND  (a.coitem_subnumber < b.coitem_subnumber)))"

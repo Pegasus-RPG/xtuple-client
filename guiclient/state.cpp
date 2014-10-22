@@ -120,7 +120,7 @@ void state::sSave()
                  "WHERE ((state_country_id=:country_id)"
                  "   AND ((UPPER(state_abbr)=UPPER(:state_abbr) AND :state_abbr != '')"
                  "        OR (UPPER(state_name)=UPPER(:state_name) AND :state_name != ''))"
-                 "   AND (state_id!=:state_id));");
+                 "   AND (state_id != :state_id));");
   stateq.bindValue(":country_id", _country->id());
   stateq.bindValue(":state_abbr", _abbr->text());
   stateq.bindValue(":state_name", _name->text());

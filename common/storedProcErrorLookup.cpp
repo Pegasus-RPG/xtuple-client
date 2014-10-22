@@ -1450,6 +1450,14 @@ const struct {
 			       "an invalid internal ID was supplied ."),
 								 0, "" },
 
+  { "voidAPOpenVoucher", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot Void Voucher Id % as apopen not found. "),				0, "" },
+  { "voidAPOpenVoucher", -20, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot Void Voucher #% as vohead not found. "),				0, "" },
+  { "voidAPOpenVoucher", -30, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot Void Voucher #% as applications exist. "),				0, "" },
+  { "voidAPOpenVoucher", -40, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot Void Voucher #% due to unassigned G/L Accounts. "),				0, "" },
+  { "voidAPOpenVoucher", -50, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot Void Voucher #% due to unassigned G/L Accounts. "),				0, "" },
+  { "voidAPOpenVoucher", -60, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot Void Voucher #% due to an unassigned A/P Account. "),				0, "" },
+  { "voidAPOpenVoucher", -70, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Credit application failed with result %. "),				0, "" },
+
   { "voidCheck", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot void this Payment because either it has already "
 			"been voided, posted, or replaced, or it has been "
 			"transmitted electronically. If this Payment has been "

@@ -3,11 +3,17 @@ include( ../global.pri )
 TARGET      = xtuplecommon
 TEMPLATE    = lib
 CONFIG      += qt warn_on dll
+# TEMPORARY HACK
+win32 {
+  CONFIG -= dll
+  CONFIG += staticlib
+}
 
 DEFINES     += MAKELIB
 
 INCLUDEPATH += $(QTDIR)/src/3rdparty/zlib
 INCLUDEPATH += $(QTSRC)/src/3rdparty/zlib
+INCLUDEPATH += $(CSVIMP_HEADERS)/csvimpcommon $(CSVIMP_HEADERS)/plugin
 
 DESTDIR = ../lib
 OBJECTS_DIR = tmp
@@ -17,7 +23,8 @@ UI_DIR      = tmp
 QMAKE_LIBDIR += $${OPENRPT_LIBDIR}
 LIBS += -lopenrptcommon -lMetaSQL $${LIBDMTX} -lz
 
-SOURCES = calendarcontrol.cpp \
+SOURCES = applock.cpp              \
+          calendarcontrol.cpp      \
           calendargraphicsitem.cpp \
 	  checkForUpdates.cpp      \
           errorReporter.cpp        \
@@ -38,7 +45,8 @@ SOURCES = calendarcontrol.cpp \
           xbase32.cpp \
           xtupleproductkey.cpp \
           xtsettings.cpp
-HEADERS = calendarcontrol.h \
+HEADERS = applock.h              \
+          calendarcontrol.h      \
           calendargraphicsitem.h \
           checkForUpdates.h      \
           errorReporter.h        \

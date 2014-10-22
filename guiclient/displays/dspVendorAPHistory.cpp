@@ -20,6 +20,7 @@
 #include "voucher.h"
 #include "miscVoucher.h"
 #include "dspGLSeries.h"
+#include "errorReporter.h"
 
 dspVendorAPHistory::dspVendorAPHistory(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspVendorAPHistory", fl)
@@ -235,7 +236,8 @@ void dspVendorAPHistory::sVoidVoucher()
       sFillList();
   }
   else
-    systemError( this, dspVoidVoucher.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Voiding Voucher"),
+                         dspVoidVoucher, __FILE__, __LINE__);
 
 }
 

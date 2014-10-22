@@ -5,6 +5,8 @@
 for the xTuple ERP desktop client. xTuple ERP is a collection of programs
 designed to help you run your business.
 
+_Note to haxTuple participants_: Please read [this](https://github.com/xtuple/xtuple/wiki/haxTuple-2014) before you start and remember to use `haxtuple` as the base of your branches and as the destination of pull requests.
+
 ## Getting Help
 
 To learn more about:

@@ -1478,6 +1478,16 @@ void itemSite::populate()
 
 void itemSite::clear()
 {
+  XSqlQuery newItemsiteid("SELECT NEXTVAL('itemsite_itemsite_id_seq') AS _itemsite_id");
+  if (newItemsiteid.first())
+  {
+    _itemsiteid = newItemsiteid.value("_itemsite_id").toInt();
+    emit newId(_itemsiteid);
+  }
+  else if (newItemsiteid.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, newItemsiteid.lastError().databaseText(), __FILE__, __LINE__);
+  }
   if (_item->id() != -1)
     _item->setFocus();
   else
