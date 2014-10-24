@@ -167,7 +167,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
   if (valid)
   {
     _raheadid = param.toInt();
-    returnet.prepare("SELECT *, "
+    returnet.prepare("SELECT rahead.*,"
               "       COALESCE(cust_preferred_warehous_id,-1) AS prefwhs, "
               "       COALESCE(rahead_orig_cohead_id,-1) AS cohead_id, "
               "       crmacct_id "

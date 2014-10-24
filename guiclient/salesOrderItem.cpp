@@ -1475,12 +1475,16 @@ void salesOrderItem::sPopulateItemsiteInfo()
   if (_item->isValid() && _warehouse->isValid())
   {
     XSqlQuery itemsite;
-    itemsite.prepare("SELECT *, "
+    itemsite.prepare("SELECT itemsite_leadtime, itemsite_costmethod,"
+                     "       itemsite_createsopo, itemsite_createsopr,"
+                     "       itemsite_createwo, itemsite_dropship,"
+                     "       itemsite_stocked,"
                      "       itemCost(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
                      "                :curr_id, :effective, :asof, :warehous_id) AS unitcost "
                      "FROM itemsite JOIN item ON (item_id=itemsite_item_id) "
                      "WHERE ( (itemsite_warehous_id=:warehous_id)"
                      "  AND   (itemsite_item_id=:item_id) );" );
+    // TODO: why JOIN item if we don't use any of its fields?
     itemsite.bindValue(":cust_id", _custid);
     itemsite.bindValue(":shipto_id", _shiptoid);
     itemsite.bindValue(":qty", _qtyOrdered->toDouble());
@@ -1555,9 +1559,9 @@ void salesOrderItem::sPopulateItemsiteInfo()
         _tabs->setCurrentIndex(_tabs->indexOf(_itemCharacteristicsTab));
       }
     }
-    else if (itemsite.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Itemsite"),
+                                  itemsite, __FILE__, __LINE__))
     {
-      systemError(this, itemsite.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -3376,9 +3380,9 @@ void salesOrderItem::sPopulateOrderInfo()
   }
   else if (_supplyOrderType == "P")
   {
-    ordq.prepare("SELECT * "
-                 "FROM poitem JOIN pohead ON (pohead_id = poitem_pohead_id) "
-                 "WHERE (poitem_id = :poitem_id);");
+    ordq.prepare("SELECT pohead_number, pohead_dropship, poitem.*"
+                 "  FROM poitem JOIN pohead ON (pohead_id = poitem_pohead_id)"
+                 " WHERE (poitem_id = :poitem_id);");
     ordq.bindValue(":poitem_id", _supplyOrderId);
     ordq.exec();
     if (ordq.first())
@@ -3412,6 +3416,9 @@ void salesOrderItem::sPopulateOrderInfo()
     }
     else
     {
+      // report an error if one occurred, but always reset supply order info
+      ErrorReporter::error(QtCriticalMsg, this, tr("Getting P/O Items"),
+                                  ordq, __FILE__, __LINE__);
       _supplyOrderId = -1;
       _createSupplyOrder->setChecked(FALSE);
     }
@@ -4302,9 +4309,10 @@ void salesOrderItem::sCancel()
   if ( (_mode == cEdit) || (_mode == cNew) )
   {
     XSqlQuery existpo;
-    existpo.prepare("SELECT * FROM poitem JOIN coitem ON (coitem_order_id = poitem_id) "
-                    "WHERE ((coitem_id = :soitem_id) "
-                    "  AND  (coitem_order_type='P'));" );
+    existpo.prepare("SELECT 1"  // cheaper than EXISTS?
+                    " FROM poitem JOIN coitem ON (coitem_order_id = poitem_id)"
+                    " WHERE ((coitem_id = :soitem_id)"
+                    "   AND  (coitem_order_type='P'));" );
     existpo.bindValue(":soitem_id", _soitemid);
     existpo.exec();
     if (existpo.first())
@@ -4314,9 +4322,9 @@ void salesOrderItem::sCancel()
                               "Item will not be affected. The Purchase Order "
                               "should be closed or deleted manually if necessary."));
     }
-    else if (existpo.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Linked P/O"),
+                                  existpo, __FILE__, __LINE__))
     {
-      systemError(this, existpo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

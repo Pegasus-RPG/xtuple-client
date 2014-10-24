@@ -614,7 +614,9 @@ bool user::sPopulate()
   XSqlQuery usrq;
   if (! _cUsername.isEmpty())
   {
-    usrq.prepare("SELECT *, userCanCreateUsers(usr_username) AS createusers,"
+    usrq.prepare("SELECT usr_username, usr_active, usr_propername, usr_initials,"
+                 "       usr_email, usr_locale_id, usr_agent,"
+                 "       userCanCreateUsers(usr_username) AS createusers,"
                  "       userCanCreateUsers(getEffectiveXtUser()) AS enablecreateusers,"
                  "       crmacct_id, crmacct_emp_id, crmacct_owner_username"
                  "  FROM usr"
