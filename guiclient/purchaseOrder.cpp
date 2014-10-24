@@ -772,6 +772,8 @@ void purchaseOrder::sSave()
                           tr("You may not save this Purchase Order until you have selected a Vendor." ))
          << GuiErrorCheck(_metrics->boolean("RequirePOTax") && !_taxZone->isValid(), _taxZone,
                           tr("You may not save this Purchase Order until you have selected a Tax Zone." ))
+         << GuiErrorCheck(!_orderDate->isValid(), _orderDate,
+                          tr("You may not save this Purchase Order until you have entered a valid Purchase Order Date."))
      ;
 
   if (_qeitem->isDirty() && ! sQESave())
@@ -1666,7 +1668,10 @@ bool purchaseOrder::saveDetail()
 
   QList<GuiErrorCheck> errors;
   errors << GuiErrorCheck(_metrics->boolean("RequirePOTax") && !_taxZone->isValid(), _taxZone,
-                          tr("You may not save this Purchase Order until you have selected a Tax Zone." ));
+                          tr("You may not save this Purchase Order until you have selected a Tax Zone." ))
+         << GuiErrorCheck(!_orderDate->isValid(), _orderDate,
+                          tr("You may not save this Purchase Order until you have entered a valid Purchase Order Date."))
+  ;
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Purchase Order"), errors))
     return false;
