@@ -155,6 +155,12 @@ void copyItem::sCopyBom()
 
 void copyItem::sAddBomitem()
 {
+  if (_newitemid == -1)
+  {
+    QMessageBox::critical(this, tr("Error"), tr("Please enter a Source Item."));
+    return;
+  }
+  
   if (_availablebomitems->id() == -1)
   {
     QMessageBox::critical(this, tr("Error"), tr("Please select an Available BOM Item."));
@@ -221,6 +227,12 @@ void copyItem::sAddBomitem()
 
 void copyItem::sEditBomitem()
 {
+  if (_addedbomitems->id() == -1)
+  {
+    QMessageBox::critical(this, tr("Error"), tr("Please select a Component Item."));
+    return;
+  }
+  
   ParameterList params;
   params.append("mode", "edit");
   params.append("bomitem_id", _addedbomitems->id());
