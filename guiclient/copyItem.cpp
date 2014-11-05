@@ -315,6 +315,19 @@ void copyItem::sFillBomitem()
       _listCost->setDouble(bomitemq.value("listcost").toDouble());
     }
   }
+  else
+  {
+    bomitemq.prepare("SELECT item_listprice, item_listcost "
+                     "FROM item "
+                     "WHERE (item_id=:sourceitemid);");
+    bomitemq.bindValue(":sourceitemid", _source->id());
+    bomitemq.exec();
+    if(bomitemq.first())
+    {
+      _listPrice->setDouble(bomitemq.value("item_listprice").toDouble());
+      _listCost->setDouble(bomitemq.value("item_listcost").toDouble());
+    }
+  }
 }
 
 void copyItem::sCopyItemsite()
@@ -610,6 +623,8 @@ void copyItem::clear()
   _source->setId(-1);
   _targetItemNumber->clear();
   _targetItemDescrip->clear();
+  _listCost->clear();
+  _listPrice->clear();
   _availablebomitems->clear();
   _addedbomitems->clear();
   _addeditemsites->clear();
