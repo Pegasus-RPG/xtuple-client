@@ -503,7 +503,7 @@ void workOrder::sCreate()
 
     if (_woid > 0)
     {
-      if (_mode == cNew)
+      if ((_mode == cNew) || (_mode == cRelease))
       {
         disconnect(_woNumber, SIGNAL(editingFinished()), this, SLOT(sCreate()));
         disconnect(_item, SIGNAL(privateIdChanged(int)), this, SLOT(sCreate()));
