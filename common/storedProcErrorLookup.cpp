@@ -810,6 +810,11 @@ const struct {
   { "distributeVoucherLine", -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Item has multiple cost elements. "
                                     "Please distribute manually."),     0, "" },
 
+  { "distributetodefault", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "There was an error distributing to default location. "
+                                                 "There is no default location defined for this Item Site."),     0, "" },
+  { "distributetodefault", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "There was an error distributing to default location. "
+                                                 "There is no quantity to distribute for this Item Site."),     0, "" },
+
 
   { "editccnumber",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "You must select Master Card, Visa, American "
 			       "Express or Discover as the credit card type."),
