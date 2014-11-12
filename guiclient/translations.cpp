@@ -12,11 +12,12 @@
 
 #include <QDebug>
 #include <QDesktopServices>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
 #include <QDir>
 #include <QFile>
+#include <QMenu>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #include <QTranslator>
 
 #include <parameter.h>

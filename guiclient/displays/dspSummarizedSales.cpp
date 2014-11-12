@@ -14,8 +14,9 @@
 #include "xtreewidget.h"
 #include "xtsettings.h"
 
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
+#include <QVariant>
 
 dspSummarizedSales::dspSummarizedSales(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspSummarizedSales", fl)
