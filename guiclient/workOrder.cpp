@@ -650,7 +650,7 @@ bool workOrder::sSave()
 
 void workOrder::sUpdateStartDate()
 {
-  if (!_warehouse->isValid() || !_dueDate->isValid())
+  if ((_warehouse->id() <= 0) || !_dueDate->isValid())
     return;
 
   if (_leadTime == 0)
