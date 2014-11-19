@@ -83,6 +83,7 @@
     @see XMainWindow
     @see XWidget
  */
+/** @example dspBacklog.js */
 
 QWidget *ScriptToolbox::_lastWindow = 0;
 
@@ -415,9 +416,9 @@ QObject * ScriptToolbox::createGridLayout()
   that contains the given widget. This lets a %script create a new
   QWidget and insert it into the %user interface near another widget.
 
-  @dontinclude addButton.js
-  @skip var
-  @until widgetGetLayout
+  @dontinclude dspBacklog.js
+  @skip createWidget
+  @until addWidget(_collapse
 
   @param w The widget whose layout you want to find
 
@@ -438,7 +439,6 @@ QObject * ScriptToolbox::widgetGetLayout(QWidget * w)
   }
   return NULL;
 }
-/** @example addButton.js */
 
 /** @brief Insert a QGridLayout into an existing QGridLayout.
     @deprecated Use QGridLayout::addLayout instead
@@ -716,8 +716,9 @@ QString ScriptToolbox::tabtabText(QWidget * tab, int idx)
   This is a wrapper around XUiLoader::createWidget.
 
   The following example creates a new QPushButton:
-  @dontinclude addButton.js
-  @skipline newbutton
+  @dontinclude dspBacklog.js
+  @skip  _expand
+  @until _collapse
 
   @param className The name of the class of the desired widget
   @param parent    The widget that should be set as the parent of the new widget
