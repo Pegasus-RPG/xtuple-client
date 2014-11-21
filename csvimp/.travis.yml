@@ -1,0 +1,30 @@
+language: cpp
+compiler:
+  - gcc
+# - clang
+
+env:
+  - BUILD_SHARED_LIBS=true      # for openrpt build
+# matrix:
+#   - QTVER=4
+#   - QTVER=5
+
+before_install:
+  - sudo apt-get update  -qq
+  - sudo apt-get install -y  libqt4-dev
+
+install:
+  - cd ..
+  - git clone http://github.com/xtuple/openrpt.git
+  - cd openrpt
+  - qmake && make
+  - cd ..
+
+script:
+  - cd csvimp
+  - qmake && make
+  - cd ..
+
+os:
+  - linux
+#  - osx

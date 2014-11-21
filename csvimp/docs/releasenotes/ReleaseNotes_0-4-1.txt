@@ -1,0 +1,24 @@
+Release Notes
+xTuple CSV Import
+Version 0.4.1
+June 9, 2010
+==================================
+
+This is a release of xTuple's CSV Import tool (CSVImp) including
+internal architectural changes, bug fixes, and new features.
+
+The following features and bug fixes have been added to the
+applications since the release of 0.3.0. Additional detail for each
+item listed below may be found on our community website (www.xtuple.org).
+Simply go to the Issue Tracker, choose the CSVImp project, and
+select the "Changelog" option.
+
+
+New Features:
+
+* Add ability to print error log
+* CSVImp can be integrated with other applications as a Qt plugin
+
+Bug Fixes:
+
+* Give access to all schemas except system schemas (pg_* and information_schema)
