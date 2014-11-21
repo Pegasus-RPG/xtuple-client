@@ -73,7 +73,7 @@ int atlasMap::exec()
   }
 }
 
-atlasMap::atlasMap(QWidget* parent, const char * name, Qt::WFlags fl)
+atlasMap::atlasMap(QWidget* parent, const char * name, Qt::WindowFlags fl)
     : XDialog(parent, name, fl)
 {
   setupUi(this);

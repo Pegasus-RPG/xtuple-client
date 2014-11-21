@@ -21,7 +21,7 @@
 #include "distributeInventory.h"
 #include "storedProcErrorLookup.h"
 
-issueLineToShipping::issueLineToShipping(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+issueLineToShipping::issueLineToShipping(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -32,7 +32,7 @@ issueLineToShipping::issueLineToShipping(QWidget* parent, const char* name, bool
   _requireInventory = false;
   _snooze = false;
   _transTS = QDateTime::currentDateTime();
-  _item->setReadOnly(TRUE);
+  _item->setReadOnly(true);
   if(!_metrics->boolean("EnableSOReservations"))
   {
     _qtyReservedLit->hide();

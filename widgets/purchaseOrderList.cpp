@@ -26,7 +26,7 @@
 
 #include "pocluster.h"
 
-purchaseOrderList::purchaseOrderList(QWidget* parent, const char* name, bool modal, Qt::WFlags fl) :
+purchaseOrderList::purchaseOrderList(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl) :
   QDialog(parent, fl)
 {
   setObjectName(name ? name : "purchaseOrderList");

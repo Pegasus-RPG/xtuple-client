@@ -19,7 +19,7 @@ class docAttach : public QDialog, public Ui::docAttach
     Q_OBJECT
 
 public:
-    docAttach(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    docAttach(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WindowFlags fl = 0);
     ~docAttach();
 
     QPushButton* _save;

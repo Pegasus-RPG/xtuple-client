@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -14,6 +14,7 @@
 #include <QFont>
 #include <QObject>
 #include <QtScript>
+#include <QPaintDevice>
 
 class QString;
 
@@ -50,7 +51,7 @@ class QFontProto : public QObject, public QScriptable
     Q_INVOKABLE QString lastResortFont()        const;
     Q_INVOKABLE qreal   letterSpacing() const;
     Q_INVOKABLE int     letterSpacingType()    const;
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     Q_INVOKABLE quint32 macFontID()     const;
 #endif
     Q_INVOKABLE bool    overline()      const;

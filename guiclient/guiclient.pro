@@ -1,8 +1,9 @@
 include( ../global.pri )
 
 TARGET   = xtuple
-CONFIG   += qt warn_on uitools designer help
+CONFIG   += qt warn_on
 TEMPLATE = app
+QT += designer help uitools
 
 INCLUDEPATH += ../scriptapi \
                ../common \
@@ -36,14 +37,15 @@ win32-msvc* {
 
 QMAKE_LIBDIR = ../lib $${OPENRPT_LIBDIR} $$QMAKE_LIBDIR
 LIBS        += -lxtuplecommon -lxtuplewidgets -lwrtembed -lopenrptcommon
-LIBS        += -lrenderer -lxtuplescriptapi $${DMTXLIB} -lMetaSQL
+LIBS        += -lrenderer -lxtuplescriptapi $${DMTXLIB} -lMetaSQL -lQt5DesignerComponents
 
 #not the best way to handle this, but it should do
-mac:!static:contains(QT_CONFIG, qt_framework) {
-  LIBS += -framework QtDesignerComponents
-} else {
-  LIBS += -lQtDesignerComponents
-}
+#mac:!static:contains(QT_CONFIG, qt_framework) {
+#  LIBS += -framework
+#}
+# else {
+#  LIBS += -lQtDesignerComponents
+#}
 
 win32 {
   win32-msvc*:LIBS += -lshell32
@@ -1845,8 +1847,8 @@ SOURCES = absoluteCalendarItem.cpp              \
 include( displays/displays.pri )
 include( hunspell.pri )
 
-QT += xml sql script scripttools network
-QT += webkit xmlpatterns
+QT += xml sql script scripttools network quick
+QT += webkit xmlpatterns printsupport webkitwidgets
 
 RESOURCES += guiclient.qrc $${OPENRPT_IMAGE_DIR}/OpenRPTMetaSQL.qrc
 

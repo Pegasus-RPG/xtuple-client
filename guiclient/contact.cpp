@@ -200,7 +200,7 @@ class contactPrivate
     };
 };
 
-contact::contact(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+contact::contact(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -358,14 +358,14 @@ enum SetResponse contact::set(const ParameterList &pParams)
 
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
 
-      _contact->setEnabled(FALSE);
-      _notes->setEnabled(FALSE);
+      _contact->setEnabled(false);
+      _notes->setEnabled(false);
       _comments->setReadOnly(true);
       _documents->setReadOnly(true);
-      _newCharacteristic->setEnabled(FALSE);
-      _editCharacteristic->setEnabled(FALSE);
-      _deleteCharacteristic->setEnabled(FALSE);
-      _charass->setEnabled(FALSE);
+      _newCharacteristic->setEnabled(false);
+      _editCharacteristic->setEnabled(false);
+      _deleteCharacteristic->setEnabled(false);
+      _charass->setEnabled(false);
     }
   }
 
@@ -604,7 +604,7 @@ void contact::sNewCharass()
   params.append("mode", "new");
   params.append("cntct_id", _contact->id());
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -617,7 +617,7 @@ void contact::sEditCharass()
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)

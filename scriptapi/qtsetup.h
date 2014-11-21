@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -18,7 +18,8 @@
 void setupQt(QScriptEngine *engine);
 
 QScriptValue AlignmentFlagtoScriptValue(QScriptEngine *engine, const enum Qt::AlignmentFlag &p);
-QScriptValue AnchorAttributetoScriptValue(QScriptEngine *engine, const enum Qt::AnchorAttribute &p);
+//AnchorAttribute removed with Qt5
+//QScriptValue AnchorAttributetoScriptValue(QScriptEngine *engine, const enum Qt::AnchorAttribute &p);
 QScriptValue ApplicationAttributetoScriptValue(QScriptEngine *engine, const enum Qt::ApplicationAttribute &p);
 QScriptValue ArrowTypetoScriptValue(QScriptEngine *engine, const enum Qt::ArrowType &p);
 QScriptValue AspectRatioModetoScriptValue(QScriptEngine *engine, const enum Qt::AspectRatioMode &p);
@@ -81,7 +82,8 @@ QScriptValue WindowStatetoScriptValue(QScriptEngine *engine, const enum Qt::Wind
 QScriptValue WindowTypetoScriptValue(QScriptEngine *engine, const enum Qt::WindowType &p);
 
 void AlignmentFlagfromScriptValue(const QScriptValue &obj, enum Qt::AlignmentFlag &p);
-void AnchorAttributefromScriptValue(const QScriptValue &obj, enum Qt::AnchorAttribute &p);
+//AnchorAttribute removed with Qt5
+//void AnchorAttributefromScriptValue(const QScriptValue &obj, enum Qt::AnchorAttribute &p);
 void ApplicationAttributefromScriptValue(const QScriptValue &obj, enum Qt::ApplicationAttribute &p);
 void ArrowTypefromScriptValue(const QScriptValue &obj, enum Qt::ArrowType &p);
 void AspectRatioModefromScriptValue(const QScriptValue &obj, enum Qt::AspectRatioMode &p);

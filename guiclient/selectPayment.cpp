@@ -16,7 +16,7 @@
 
 #include "applyDiscount.h"
 
-selectPayment::selectPayment(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+selectPayment::selectPayment(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -25,10 +25,10 @@ selectPayment::selectPayment(QWidget* parent, const char* name, bool modal, Qt::
   connect(_save,     SIGNAL(clicked()),      this, SLOT(sSave()));
   connect(_selected, SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
 
-  _bankaccnt->setAllowNull(TRUE);
+  _bankaccnt->setAllowNull(true);
   _bankaccnt->setType(XComboBox::APBankAccounts);
 
-  _vendor->setReadOnly(TRUE);
+  _vendor->setReadOnly(true);
   sPriceGroup();
 }
 
@@ -189,7 +189,7 @@ void selectPayment::sSave()
     return;
   }
 
-  omfgThis->sPaymentsUpdated(_bankaccnt->id(), _apselectid, TRUE);
+  omfgThis->sPaymentsUpdated(_bankaccnt->id(), _apselectid, true);
 
   done (_apselectid);
 }
@@ -260,7 +260,7 @@ void selectPayment::sDiscount()
   if(_discountAmount->localValue() != 0.0)
     params.append("amount", _discountAmount->localValue());
 
-  applyDiscount newdlg(this, "", TRUE);
+  applyDiscount newdlg(this, "", true);
   newdlg.set(params);
 
   if(newdlg.exec() != XDialog::Rejected)

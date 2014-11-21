@@ -12,12 +12,12 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QWorkspace>
+//#include <QWorkspace>
 #include <openreports.h>
 #include <parameter.h>
 #include "location.h"
 
-locations::locations(QWidget* parent, const char* name, Qt::WFlags fl)
+locations::locations(QWidget* parent, const char* name, Qt::WindowFlags fl)
   : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -48,7 +48,7 @@ locations::locations(QWidget* parent, const char* name, Qt::WFlags fl)
   }
   else
   {
-    _new->setEnabled(FALSE);
+    _new->setEnabled(false);
     connect(_location, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
@@ -73,7 +73,7 @@ void locations::sNew()
   if (_warehouse->isSelected())
     params.append("warehous_id", _warehouse->id());
 
-  location newdlg(this, "", TRUE);
+  location newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -86,7 +86,7 @@ void locations::sEdit()
   params.append("mode", "edit");
   params.append("location_id", _location->id());
 
-  location newdlg(this, "", TRUE);
+  location newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -99,7 +99,7 @@ void locations::sView()
   params.append("mode", "view");
   params.append("location_id", _location->id());
 
-  location newdlg(this, "", TRUE);
+  location newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

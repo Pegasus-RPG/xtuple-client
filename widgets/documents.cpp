@@ -184,7 +184,7 @@ void Documents::sNewImage()
   params.append("sourceType", _source);
   params.append("source_id", _sourceid);
 
-  imageAssignment newdlg(this, "", TRUE);
+  imageAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != QDialog::Rejected)
@@ -258,7 +258,7 @@ void Documents::sOpenDoc(QString mode)
       return;
 
     params.append("image_id", img.value("imageass_image_id").toInt());
-    imageview newdlg(this, "", TRUE);
+    imageview newdlg(this, "", true);
     newdlg.set(params);
 
     if (newdlg.exec() != QDialog::Rejected)
@@ -274,7 +274,7 @@ void Documents::sOpenDoc(QString mode)
       ParameterList params;
       params.append("url_id", targetid);
 
-      docAttach newdlg(this, "", TRUE);
+      docAttach newdlg(this, "", true);
       newdlg.set(params);
       newdlg.exec();
 
@@ -401,7 +401,7 @@ void Documents::sAttachDoc()
   params.append("sourceType", _source);
   params.append("source_id", _sourceid);
 
-  docAttach newdlg(this, "", TRUE);
+  docAttach newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 
@@ -534,7 +534,7 @@ void Documents::refresh()
   query.bindValue(":source", _documentMap[_source].ident);
   query.bindValue(":sourceid", _sourceid);
   query.exec();
-  _doc->populate(query,TRUE);
+  _doc->populate(query,true);
   ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Documents"),
                        query, __FILE__, __LINE__);
 }

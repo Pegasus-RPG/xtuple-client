@@ -35,7 +35,7 @@ xtHelp* xtHelp::getInstance(QWidget *parent)
 {
   if(QHC_PATH.isEmpty())
   {
-    QFile hf(QDesktopServices::storageLocation(QDesktopServices::DataLocation)+"/XTupleGUIClient.qhc");
+    QFile hf(QStandardPaths::writableLocation(QStandardPaths::DataLocation)+"/XTupleGUIClient.qhc");
     if(hf.exists())
       QHC_PATH = hf.fileName();
     else

@@ -25,7 +25,7 @@
 #include "shipOrder.h"
 #include "storedProcErrorLookup.h"
 
-issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags fl)
+issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl),
       _captive(false)
 {
@@ -90,7 +90,7 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
 
   _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-  _order->setFromSitePrivsEnforced(TRUE);
+  _order->setFromSitePrivsEnforced(true);
   _order->setFocus();
 
   _bcQty->setValidator(omfgThis->qtyVal());
@@ -310,7 +310,7 @@ void issueToShipping::sPopulateMenu(QMenu *pMenu)
 
 void issueToShipping::sIssueStock()
 {
-  bool update  = FALSE;
+  bool update  = false;
   QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
@@ -322,9 +322,9 @@ void issueToShipping::sIssueStock()
     if(_requireInventory->isChecked())
       params.append("requireInventory");
     
-    issueLineToShipping newdlg(this, "", TRUE);
+    issueLineToShipping newdlg(this, "", true);
     if (newdlg.set(params) == NoError && newdlg.exec() != XDialog::Rejected)
-      update = TRUE;
+      update = true;
   }
 
   if (update)
@@ -643,7 +643,7 @@ void issueToShipping::sShip()
     ParameterList params;
     params.append("shiphead_id", issueShip.value("shiphead_id").toInt());
 
-    shipOrder newdlg(this, "", TRUE);
+    shipOrder newdlg(this, "", true);
     if (newdlg.set(params) == NoError && newdlg.exec() != XDialog::Rejected)
     {
       //_transDate->setDate(omfgThis->dbDate());
@@ -926,7 +926,7 @@ void issueToShipping::sBcFind()
   params.append("issue");
   params.append("snooze");
 
-  issueLineToShipping newdlg(this, "", TRUE);
+  issueLineToShipping newdlg(this, "", true);
   if (newdlg.set(params) != NoError)
     return;
   sFillList();

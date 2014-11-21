@@ -20,7 +20,7 @@
 #include "arOpenItem.h"
 #include "errorReporter.h"
 
-unappliedARCreditMemos::unappliedARCreditMemos(QWidget* parent, const char* name, Qt::WFlags fl)
+unappliedARCreditMemos::unappliedARCreditMemos(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -89,7 +89,7 @@ void unappliedARCreditMemos::sNew()
   params.append("mode", "new");
   params.append("docType", "creditMemo");
 
-  arOpenItem newdlg(this, "", TRUE);
+  arOpenItem newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -102,7 +102,7 @@ void unappliedARCreditMemos::sView()
   params.append("mode", "view");
   params.append("aropen_id", _aropen->id());
 
-  arOpenItem newdlg(this, "", TRUE);
+  arOpenItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -156,7 +156,7 @@ void unappliedARCreditMemos::sApply()
   ParameterList params;
   params.append("aropen_id", _aropen->id());
 
-  applyARCreditMemo newdlg(this, "", TRUE);
+  applyARCreditMemo newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)

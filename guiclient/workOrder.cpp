@@ -45,7 +45,7 @@
 
 #define DEBUG false
 
-workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
+workOrder::workOrder(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   XSqlQuery workOrder;
@@ -69,7 +69,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _booRevision->setMode(RevisionLineEdit::Use);
   _booRevision->setType("BOO");
 
-  _captive = FALSE;
+  _captive = false;
   _planordid = -1;
   _woid = -1;
   _sense = 1;
@@ -78,8 +78,8 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _lastWarehousid = _warehouse->id();
   _lastItemid = -1;
-  _comments->setReadOnly(TRUE);
-//  _documents->setReadOnly(TRUE);
+  _comments->setReadOnly(true);
+//  _documents->setReadOnly(true);
   _woNumber->setValidator(omfgThis->orderVal());
   _qty->setValidator(omfgThis->qtyVal());
   _qtyReceived->setPrecision(omfgThis->qtyVal());
@@ -127,7 +127,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   }
 
   if (_metrics->value("JobItemCosDefault") == "P")
-    _proportional->setChecked(TRUE);
+    _proportional->setChecked(true);
 
   _woIndentedList->addColumn(tr("Order#"),          _orderColumn,   Qt::AlignLeft      , true,   "wonumber");
   _woIndentedList->addColumn(tr("Item#"),           _itemColumn,    Qt::AlignLeft      , true,   "wodata_itemnumber" );
@@ -166,7 +166,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
 {
   XSqlQuery setWork;
   XWidget::set(pParams);
-  _captive = TRUE;
+  _captive = true;
 
   QVariant param;
   bool     valid;
@@ -175,8 +175,8 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
   if (valid)
   {
     _item->setItemsiteid(param.toInt());
-    _item->setEnabled(FALSE);
-    _warehouse->setEnabled(FALSE);
+    _item->setEnabled(false);
+    _warehouse->setEnabled(false);
   }
 
   param = pParams.value("qty", &valid);
@@ -240,16 +240,16 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
                       "FROM item JOIN uom ON (item_inv_uom_id=uom_id) ");
       populate();
 
-      _woNumber->setEnabled(FALSE);
-      _item->setReadOnly(TRUE);
-      _bomRevision->setEnabled(FALSE);
-      _booRevision->setEnabled(FALSE);
-      _warehouse->setEnabled(FALSE);
-      _priority->setEnabled(FALSE);
-      _qty->setEnabled(FALSE);
-      _startDate->setEnabled(FALSE);
-      _dueDate->setEnabled(FALSE);
-      _productionNotes->setReadOnly(TRUE);
+      _woNumber->setEnabled(false);
+      _item->setReadOnly(true);
+      _bomRevision->setEnabled(false);
+      _booRevision->setEnabled(false);
+      _warehouse->setEnabled(false);
+      _priority->setEnabled(false);
+      _qty->setEnabled(false);
+      _startDate->setEnabled(false);
+      _dueDate->setEnabled(false);
+      _productionNotes->setReadOnly(true);
       _save->hide();
       _leadTimeLit->hide();
       _leadTime->hide();
@@ -257,9 +257,9 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
       _printTraveler->hide();
       _bottomSpacer->hide();
       _close->setText(tr("&Close"));
-      _project->setEnabled(FALSE);
+      _project->setEnabled(false);
       _itemcharView->setEnabled(false);
-      _jobCosGroup->setEnabled(FALSE);
+      _jobCosGroup->setEnabled(false);
     }
 
     else if (param.toString() == "release")
@@ -281,8 +281,8 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
       setWork.exec();
       if (setWork.first())
       {
-        _item->setReadOnly(TRUE);
-        _warehouse->setEnabled(FALSE);
+        _item->setReadOnly(true);
+        _warehouse->setEnabled(false);
 
         _planordtype=setWork.value("sourcetype").toString();
         _sourceid=setWork.value("sourceid").toInt();
@@ -295,10 +295,10 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         sUpdateStartDate();
         populateWoNumber();
 
-        _qty->setEnabled(FALSE);
+        _qty->setEnabled(false);
         _qtyReceivedLit->clear();
-        _startDate->setEnabled(FALSE);
-        _dueDate->setEnabled(FALSE);
+        _startDate->setEnabled(false);
+        _dueDate->setEnabled(false);
         _wipValueLit->hide();
         _wipValue->hide();
         _leadTimeLit->hide();
@@ -379,7 +379,7 @@ void workOrder::sCreate()
   
     if (_assembly->isChecked())
     {
-      workCreate.prepare("SELECT validateOrderQty(:itemsite_id, :qty, TRUE) AS qty;");
+      workCreate.prepare("SELECT validateOrderQty(:itemsite_id, :qty, true) AS qty;");
       workCreate.bindValue(":itemsite_id", itemsiteid);
       workCreate.bindValue(":qty", _qty->toDouble());
       workCreate.exec();
@@ -517,7 +517,7 @@ void workOrder::sCreate()
       }
 
       populate();
-      omfgThis->sWorkOrdersUpdated(_woid, TRUE);
+      omfgThis->sWorkOrdersUpdated(_woid, true);
     }
   }
 }
@@ -530,12 +530,12 @@ void workOrder::sSaveClicked()
   XSqlQuery workSave;
   if (_mode == cRelease)
   {
-    workSave.prepare("SELECT releasePlannedOrder(:planord_id, FALSE) AS result;");
+    workSave.prepare("SELECT releasePlannedOrder(:planord_id, false) AS result;");
     workSave.bindValue(":planord_id", _planordid);
     workSave.exec();
   }
 
-  omfgThis->sWorkOrdersUpdated(_woid, TRUE);
+  omfgThis->sWorkOrdersUpdated(_woid, true);
 
   if (_printTraveler->isChecked() &&
       _printTraveler->isVisible())
@@ -543,7 +543,7 @@ void workOrder::sSaveClicked()
     ParameterList params;
     params.append("wo_id", _woid);
 
-    printWoTraveler newdlg(this, "", TRUE);
+    printWoTraveler newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }
@@ -735,9 +735,9 @@ void workOrder::sPopulateLeadTime(int pWarehousid)
   {
     _leadTime->setValue(workPopulateLeadTime.value("itemsite_leadtime").toInt());
     if (workPopulateLeadTime.value("itemsite_cosdefault").toString() == "D")
-	  _todate->setChecked(TRUE);
+	  _todate->setChecked(true);
     if (workPopulateLeadTime.value("itemsite_cosdefault").toString() == "P")
-	  _proportional->setChecked(TRUE);
+	  _proportional->setChecked(true);
   }
   else
   {
@@ -745,7 +745,7 @@ void workOrder::sPopulateLeadTime(int pWarehousid)
         tr("<p>The selected Site for this Work Order is not "
            "a \"Supplied At\" Site. You must select a different "
            "Site before creating the Work Order.") );
-    _warehouse->setEnabled(TRUE);
+    _warehouse->setEnabled(true);
   }
 }
 
@@ -776,15 +776,15 @@ void workOrder::populateWoNumber()
 
   if (generationMethod == "M")
   {
-    _woNumber->setEnabled(TRUE);
+    _woNumber->setEnabled(true);
   }
   else if (generationMethod == "O")
   {
-    _woNumber->setEnabled(TRUE);
+    _woNumber->setEnabled(true);
   }
   else if (generationMethod == "A")
   {
-    _woNumber->setEnabled(FALSE);
+    _woNumber->setEnabled(false);
   } 
 }
 
@@ -798,7 +798,7 @@ void workOrder::sClose()
       workClose.prepare("SELECT deleteWo(:wo_id,true);");
       workClose.bindValue(":wo_id", _woid);
       workClose.exec();
-      omfgThis->sWorkOrdersUpdated(_woid, TRUE);
+      omfgThis->sWorkOrdersUpdated(_woid, true);
     }
   }
   if (_wonumber > 0)
@@ -922,12 +922,12 @@ void workOrder::sPostProduction()
   ParameterList params;
   params.append("wo_id", _woIndentedList->id());
 
-  postProduction newdlg(this, "", TRUE);
+  postProduction newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -939,12 +939,12 @@ void workOrder::sCorrectProductionPosting()
   ParameterList params;
   params.append("wo_id", _woIndentedList->id());
 
-  correctProductionPosting newdlg(this, "", TRUE);
+  correctProductionPosting newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
   populate();
   _woIndentedList->setId(currentId,currentAltId);}
 
@@ -953,13 +953,13 @@ void workOrder::sReleaseWO()
   if (!sSave())
     return;
   XSqlQuery workReleaseWO;
-  workReleaseWO.prepare("SELECT releaseWo(:wo_id, FALSE);");
+  workReleaseWO.prepare("SELECT releaseWo(:wo_id, false);");
   workReleaseWO.bindValue(":wo_id", _woIndentedList->id());
   workReleaseWO.exec();
 
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -969,13 +969,13 @@ void workOrder::sRecallWO()
   if (!sSave())
     return;
   XSqlQuery workRecallWO;
-  workRecallWO.prepare("SELECT recallWo(:wo_id, FALSE);");
+  workRecallWO.prepare("SELECT recallWo(:wo_id, false);");
   workRecallWO.bindValue(":wo_id", _woIndentedList->id());
   workRecallWO.exec();
 
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -987,12 +987,12 @@ void workOrder::sExplodeWO()
   ParameterList params;
   params.append("wo_id", _woIndentedList->id());
 
-  explodeWo newdlg(this, "", TRUE);
+  explodeWo newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1004,12 +1004,12 @@ void workOrder::sImplodeWO()
   ParameterList params;
   params.append("wo_id", _woIndentedList->id());
 
-  implodeWo newdlg(this, "", TRUE);
+  implodeWo newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1049,7 +1049,7 @@ void workOrder::sDeleteWO()
       return;
     }
 
-    workDeleteWO.prepare("SELECT deleteWo(:wo_id, TRUE) AS returnVal;");
+    workDeleteWO.prepare("SELECT deleteWo(:wo_id, true) AS returnVal;");
     workDeleteWO.bindValue(":wo_id", _woIndentedList->id());
     workDeleteWO.exec();
 
@@ -1061,7 +1061,7 @@ void workOrder::sDeleteWO()
 	systemError(this, storedProcErrorLookup("deleteWo", result));
 	return;
       }
-      omfgThis->sWorkOrdersUpdated(-1, TRUE);
+      omfgThis->sWorkOrdersUpdated(-1, true);
     }
     else if (workDeleteWO.lastError().type() != QSqlError::NoError)
       systemError(this, workDeleteWO.lastError().databaseText(), __FILE__, __LINE__);
@@ -1082,12 +1082,12 @@ void workOrder::sCloseWO()
   ParameterList params;
   params.append("wo_id", _woIndentedList->id());
 
-  closeWo newdlg(this, "", TRUE);
+  closeWo newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1099,12 +1099,12 @@ void workOrder::sPrintTraveler()
   ParameterList params;
   params.append("wo_id", _woIndentedList->id());
 
-  printWoTraveler newdlg(this, "", TRUE);
+  printWoTraveler newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1151,7 +1151,7 @@ void workOrder::sReprioritizeParent()
     else
       _oldPriority=_priority->value();
     populate();
-    omfgThis->sWorkOrdersUpdated(_woid, TRUE);
+    omfgThis->sWorkOrdersUpdated(_woid, true);
   }
 }
 
@@ -1193,7 +1193,7 @@ void workOrder::sRescheduleParent()
     }
   }
   populate();
-  omfgThis->sWorkOrdersUpdated(_woid, TRUE);
+  omfgThis->sWorkOrdersUpdated(_woid, true);
 }
 
 void workOrder::sChangeParentQty()
@@ -1204,7 +1204,7 @@ void workOrder::sChangeParentQty()
   if(_qty->text().toDouble() != _oldQty)
   {
     double newQty = _qty->toDouble();
-    workChangeParentQty.prepare( "SELECT validateOrderQty(wo_itemsite_id, :qty, TRUE) AS qty "
+    workChangeParentQty.prepare( "SELECT validateOrderQty(wo_itemsite_id, :qty, true) AS qty "
                "FROM wo "
                "WHERE (wo_id=:wo_id);" );
     workChangeParentQty.bindValue(":wo_id", _woid);
@@ -1246,7 +1246,7 @@ void workOrder::sChangeParentQty()
         return;
       }
 
-      workChangeParentQty.prepare("SELECT changeWoQty(:wo_id, :qty * :sense, TRUE);");
+      workChangeParentQty.prepare("SELECT changeWoQty(:wo_id, :qty * :sense, true);");
       workChangeParentQty.bindValue(":wo_id", _woid);
       workChangeParentQty.bindValue(":qty", newQty);
       workChangeParentQty.bindValue(":sense", _sense);
@@ -1260,7 +1260,7 @@ void workOrder::sChangeParentQty()
         _oldQty=(_qty->text().toDouble() * _sense);
     }
     populate();
-    omfgThis->sWorkOrdersUpdated(_woid, TRUE);
+    omfgThis->sWorkOrdersUpdated(_woid, true);
   }
 }
 
@@ -1271,11 +1271,11 @@ void workOrder::sReprioritizeWo()
   ParameterList params;
   params.append("wo_id", _woIndentedList->id());
 
-  reprioritizeWo newdlg(this, "", TRUE);
+  reprioritizeWo newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
   populate();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
 }
 
 void workOrder::sRescheduleWO()
@@ -1285,11 +1285,11 @@ void workOrder::sRescheduleWO()
   ParameterList params;
   params.append("wo_id", _woIndentedList->id());
 
-  rescheduleWo newdlg(this, "", TRUE);
+  rescheduleWo newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
   populate();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
 }
 
 void workOrder::sChangeWOQty()
@@ -1299,11 +1299,11 @@ void workOrder::sChangeWOQty()
   ParameterList params;
   params.append("wo_id", _woIndentedList->id());
 
-  changeWoQty newdlg(this, "", TRUE);
+  changeWoQty newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
   populate();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
 }
 
 void workOrder::sDspRunningAvailability()
@@ -1376,7 +1376,7 @@ void workOrder::sReturnMatlBatch()
         }
 
         workReturnMatlBatch.exec("COMMIT;");
-        omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+        omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
       }
       else
       {
@@ -1457,7 +1457,7 @@ void workOrder::sIssueMatlBatch()
       }
 
       issue.exec("COMMIT;");
-      omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+      omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
     }
   }
   else
@@ -1489,7 +1489,7 @@ void workOrder::sIssueMatl()
     newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1505,7 +1505,7 @@ void workOrder::sReturnMatl()
     newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1521,7 +1521,7 @@ void workOrder::sScrapMatl()
     newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1534,12 +1534,12 @@ void workOrder::sNewMatl()
   params.append("mode", "new");
   params.append("wo_id", _woIndentedList->id());
 
-  woMaterialItem newdlg(this, "", TRUE);
+  woMaterialItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1552,12 +1552,12 @@ void workOrder::sEditMatl()
   params.append("mode", "edit");
   params.append("womatl_id", _woIndentedList->id());
 
-  woMaterialItem newdlg(this, "", TRUE);
+  woMaterialItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
   populate();
   _woIndentedList->setId(currentId,currentAltId);
 }
@@ -1567,7 +1567,7 @@ void workOrder::sViewMatl()
   ParameterList params;
   params.append("mode", "view");
   params.append("womatl_id", _woIndentedList->id());
-  woMaterialItem newdlg(this, "", TRUE);
+  woMaterialItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -1595,7 +1595,7 @@ void workOrder::sDeleteMatl()
         ParameterList params;
         params.append("womatl_id", womatlid);
 
-        returnWoMaterialItem newdlg(omfgThis, "", TRUE);
+        returnWoMaterialItem newdlg(omfgThis, "", true);
         newdlg.set(params);
 
         newdlg.exec();
@@ -1641,7 +1641,7 @@ void workOrder::sDeleteMatl()
                               QMessageBox::Yes,
                               QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
     {
-      workDeleteMatl.prepare("SELECT deleteWo(:wo_id, TRUE) AS result;");
+      workDeleteMatl.prepare("SELECT deleteWo(:wo_id, true) AS result;");
       workDeleteMatl.bindValue(":wo_id", woid);
       workDeleteMatl.exec();
       if (workDeleteMatl.first())
@@ -1685,9 +1685,9 @@ void workOrder::sDeleteMatl()
   workDeleteMatl.bindValue(":womatl_id", womatlid);
   workDeleteMatl.exec();
   if (workDeleteMatl.first())
-     omfgThis->sWorkOrderMaterialsUpdated(workDeleteMatl.value("woid").toInt(), womatlid, TRUE);
+     omfgThis->sWorkOrderMaterialsUpdated(workDeleteMatl.value("woid").toInt(), womatlid, true);
            
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
   populate();
 }
 
@@ -1766,7 +1766,7 @@ void workOrder::sSubstituteMatl()
     params.append("byDate", sub.value("womatl_duedate"));
     params.append("run");
 
-    substituteList substitute(this, "", TRUE);
+    substituteList substitute(this, "", true);
     substitute.set(params);
     int result = substitute.exec();
     if (result != XDialog::Rejected)
@@ -1789,7 +1789,7 @@ void workOrder::sSubstituteMatl()
       else if (sub.value("womatl_issuemethod").toString() == "M")
         params.append("issueMethod", "mixed");
 
-      woMaterialItem newdlg(this, "", TRUE);
+      woMaterialItem newdlg(this, "", true);
       newdlg.set(params);
       if (newdlg.exec() != XDialog::Rejected)
       {
@@ -1804,7 +1804,7 @@ void workOrder::sSubstituteMatl()
         workSubstituteMatl.bindValue(":womatl_id", womatlid);
         workSubstituteMatl.exec();
         if (workSubstituteMatl.first())
-           omfgThis->sWorkOrderMaterialsUpdated(workSubstituteMatl.value("woid").toInt(), womatlid, TRUE);
+           omfgThis->sWorkOrderMaterialsUpdated(workSubstituteMatl.value("woid").toInt(), womatlid, true);
       }
     }
   }
@@ -1813,7 +1813,7 @@ void workOrder::sSubstituteMatl()
     systemError(this, workSubstituteMatl.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
   populate();
 }
 
@@ -2060,9 +2060,9 @@ void workOrder::populate()
     _booRevision->setId(wo.value("wo_boo_rev_id").toInt());
 
     if (wo.value("wo_cosmethod").toString() == "D")
-      _todate->setChecked(TRUE);
+      _todate->setChecked(true);
     else if (wo.value("wo_cosmethod").toString() == "P")
-      _proportional->setChecked(TRUE);
+      _proportional->setChecked(true);
     else
       _jobCosGroup->hide();
 
@@ -2092,7 +2092,7 @@ void workOrder::populate()
     {
       if (_mode == cRelease)
       {
-        workpopulate.prepare("SELECT releasePlannedOrder(:planord_id, FALSE) AS result;");
+        workpopulate.prepare("SELECT releasePlannedOrder(:planord_id, false) AS result;");
         workpopulate.bindValue(":planord_id", _planordid);
         workpopulate.exec();
       }

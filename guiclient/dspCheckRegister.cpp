@@ -25,7 +25,7 @@
 #include "mqlutil.h"
 #include "storedProcErrorLookup.h"
 
-dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::WFlags fl)
+dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -231,7 +231,7 @@ void dspCheckRegister::sVoidPosted()
   XSqlQuery dspVoidPosted;
   ParameterList params;
 
-  XDateInputDialog newdlg(this, "", TRUE);
+  XDateInputDialog newdlg(this, "", true);
   params.append("label", tr("On what date did you void this check?"));
   newdlg.set(params);
   int returnVal = newdlg.exec();

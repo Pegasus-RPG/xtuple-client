@@ -21,7 +21,7 @@
 #include "returnAuthorization.h"
 #include "salesOrder.h"
 
-dspSalesOrdersByParameterList::dspSalesOrdersByParameterList(QWidget* parent, const char*, Qt::WFlags fl)
+dspSalesOrdersByParameterList::dspSalesOrdersByParameterList(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspSalesOrdersByParameterList", fl)
 {
   setupUi(optionsWidget());

@@ -22,7 +22,7 @@ class opportunity : public XDialog, public Ui::opportunity
     Q_OBJECT
 
 public:
-    opportunity(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    opportunity(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WindowFlags fl = 0);
     ~opportunity();
 
 public slots:

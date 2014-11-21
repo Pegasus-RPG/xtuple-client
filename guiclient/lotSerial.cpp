@@ -19,7 +19,7 @@
 #include <openreports.h>
 #include <comments.h>
 
-lotSerial::lotSerial(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+lotSerial::lotSerial(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
     setupUi(this);
@@ -134,7 +134,7 @@ void lotSerial::sNewCharass()
   params.append("mode", "new");
   params.append("ls_id", _lotSerial->id());
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -147,7 +147,7 @@ void lotSerial::sEditCharass()
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -177,7 +177,7 @@ void lotSerial::sNewReg()
   params.append("item_id", _item->id());
   params.append("ls_id", _lotSerial->id());
 
-  lotSerialRegistration newdlg(this, "", TRUE);
+  lotSerialRegistration newdlg(this, "", true);
   newdlg.set(params);
   
   newdlg.exec();
@@ -190,7 +190,7 @@ void lotSerial::sEditReg()
   params.append("mode", "edit");
   params.append("lsreg_id", _reg->id());
 
-  lotSerialRegistration newdlg(this, "", TRUE);
+  lotSerialRegistration newdlg(this, "", true);
   newdlg.set(params);
   
   newdlg.exec();

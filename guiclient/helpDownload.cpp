@@ -26,7 +26,7 @@
 #include <tarfile.h>
 #include <xtHelp.h>
 
-helpDownload::helpDownload(QWidget* parent, const char* name, Qt::WFlags fl)
+helpDownload::helpDownload(QWidget* parent, const char* name, Qt::WindowFlags fl)
   : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -100,10 +100,10 @@ void helpDownload::finished(QNetworkReply * nwrep)
         }
         else
         {
-          QDir dir(QDesktopServices::storageLocation(QDesktopServices::DataLocation));
+          QDir dir(QStandardPaths::writableLocation(QStandardPaths::DataLocation));
           if(!dir.exists())
-            dir.mkpath(QDesktopServices::storageLocation(QDesktopServices::DataLocation));
-          QFile file(QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/helpXTupleGUIClient-" + ver + ".tar.gz");
+            dir.mkpath(QStandardPaths::writableLocation(QStandardPaths::DataLocation));
+          QFile file(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/helpXTupleGUIClient-" + ver + ".tar.gz");
           if(file.open(QIODevice::WriteOnly | QIODevice::Truncate))
           {
             file.write(ba);
@@ -120,7 +120,7 @@ void helpDownload::finished(QNetworkReply * nwrep)
                 {
                   i.next();
                   //cout << i.key() << ": " << i.value() << endl;
-                  QFile ff(QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/" + i.key());
+                  QFile ff(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + i.key());
                   if(ff.open(QIODevice::WriteOnly | QIODevice::Truncate))
                   {
                     ff.write(i.value());

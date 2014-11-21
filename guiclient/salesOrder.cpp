@@ -80,7 +80,7 @@ const struct {
     { QT_TRANSLATE_NOOP("cashReceipt", "Other"),            "O", false }
 };
 
-salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
+salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
   : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -168,9 +168,9 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _amountOutstanding = 0.0;
   _crmacctid         =-1;
 
-  _captive       = FALSE;
+  _captive       = false;
 
-  _ignoreSignals = TRUE;
+  _ignoreSignals = true;
 
   _orderCurrency->setLabel(_orderCurrencyLit);
 
@@ -240,7 +240,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
 
   sPopulateFOB(_warehouse->id());
 
-  _ignoreSignals = FALSE;
+  _ignoreSignals = false;
 
   if (!_privileges->check("ShowMarginsOnSalesOrder"))
   {
@@ -391,7 +391,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       emit newModeState(2);
 
       _cust->setType(CLineEdit::AllCustomersAndProspects);
-      _action->setEnabled(FALSE);
+      _action->setEnabled(false);
       _action->hide();
 
       _CCAmount->hide();
@@ -430,34 +430,34 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       emit newModeType(1);
       emit newModeState(3);
 
-      _orderNumber->setEnabled(FALSE);
-      _packDate->setEnabled(FALSE);
-      _cust->setReadOnly(TRUE);
-      _warehouse->setEnabled(FALSE);
-      _salesRep->setEnabled(FALSE);
-      _commission->setEnabled(FALSE);
-      _taxZone->setEnabled(FALSE);
-      _terms->setEnabled(FALSE);
+      _orderNumber->setEnabled(false);
+      _packDate->setEnabled(false);
+      _cust->setReadOnly(true);
+      _warehouse->setEnabled(false);
+      _salesRep->setEnabled(false);
+      _commission->setEnabled(false);
+      _taxZone->setEnabled(false);
+      _terms->setEnabled(false);
       _terms->setType(XComboBox::Terms);
-      _fob->setEnabled(FALSE);
-      _shipVia->setEnabled(FALSE);
-      _shippingCharges->setEnabled(FALSE);
-      _shippingForm->setEnabled(FALSE);
-      _miscCharge->setEnabled(FALSE);
-      _miscChargeDescription->setEnabled(FALSE);
-      _miscChargeAccount->setReadOnly(TRUE);
-      _freight->setEnabled(FALSE);
-      _orderComments->setEnabled(FALSE);
-      _shippingComments->setEnabled(FALSE);
-      _custPONumber->setEnabled(FALSE);
-      _holdType->setEnabled(FALSE);
+      _fob->setEnabled(false);
+      _shipVia->setEnabled(false);
+      _shippingCharges->setEnabled(false);
+      _shippingForm->setEnabled(false);
+      _miscCharge->setEnabled(false);
+      _miscChargeDescription->setEnabled(false);
+      _miscChargeAccount->setReadOnly(true);
+      _freight->setEnabled(false);
+      _orderComments->setEnabled(false);
+      _shippingComments->setEnabled(false);
+      _custPONumber->setEnabled(false);
+      _holdType->setEnabled(false);
       _edit->setText(tr("View"));
       _cust->setType(CLineEdit::AllCustomersAndProspects);
       _comments->setReadOnly(true);
 //      _documents->setReadOnly(true);
-      _copyToShipto->setEnabled(FALSE);
-      _orderCurrency->setEnabled(FALSE);
-      _newCharacteristic->setEnabled(FALSE);
+      _copyToShipto->setEnabled(false);
+      _orderCurrency->setEnabled(false);
+      _newCharacteristic->setEnabled(false);
       _paymentInformation->removeTab(_paymentInformation->indexOf(_cashPage));
       _save->hide();
       _clear->hide();
@@ -479,7 +479,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
 
   if (ISNEW(_mode))
   {
-    _ignoreSignals = TRUE;
+    _ignoreSignals = true;
 
     populateOrderNumber();
     if (_orderNumber->text().isEmpty())
@@ -487,7 +487,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     else
       _cust->setFocus();
 
-    _ignoreSignals = FALSE;
+    _ignoreSignals = false;
 
     if (ISORDER(_mode))
       setSales.exec("SELECT NEXTVAL('cohead_cohead_id_seq') AS head_id;");
@@ -515,20 +515,20 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       sFillCcardList();
     }
 
-    _captive = FALSE;
-    _edit->setEnabled(FALSE);
-    _action->setEnabled(FALSE);
-    _delete->setEnabled(FALSE);
+    _captive = false;
+    _edit->setEnabled(false);
+    _action->setEnabled(false);
+    _delete->setEnabled(false);
     _close->setText("&Cancel");
 
     connect(_cust, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
   }
   else if (ISEDIT(_mode))
   {
-    _captive = TRUE;
-    _orderNumber->setEnabled(FALSE);
-    _cust->setReadOnly(TRUE);
-    _orderCurrency->setEnabled(FALSE);
+    _captive = true;
+    _orderNumber->setEnabled(false);
+    _cust->setReadOnly(true);
+    _orderCurrency->setEnabled(false);
 
     connect(_cust, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
 
@@ -660,8 +660,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
   }
   else
   {
-    _orderDate->setEnabled(FALSE);
-    _packDate->setEnabled(FALSE);
+    _orderDate->setEnabled(false);
+    _packDate->setEnabled(false);
   }
 
   param = pParams.value("captive", &valid);
@@ -821,7 +821,7 @@ bool salesOrder::save(bool partial)
     else if (saveSales.lastError().type() != QSqlError::NoError)
     {
       systemError(this, saveSales.lastError().databaseText(), __FILE__, __LINE__);
-      return FALSE;
+      return false;
     }
   }
 
@@ -867,7 +867,7 @@ bool salesOrder::save(bool partial)
         else if (saveSales.lastError().type() != QSqlError::NoError)
         {
           systemError(this, saveSales.lastError().databaseText(), __FILE__, __LINE__);
-          return FALSE;
+          return false;
         }
       }
     }
@@ -1317,7 +1317,7 @@ bool salesOrder::save(bool partial)
 
   emit saved(_soheadid);
 
-  return TRUE;
+  return true;
 }
 
 void salesOrder::sPopulateMenu(QMenu *pMenu)
@@ -1505,10 +1505,10 @@ void salesOrder::populateOrderNumber()
       {
         _orderNumber->setText(populateSales.value("sonumber").toString());
         _orderNumberGen = populateSales.value("sonumber").toInt();
-        _userEnteredOrderNumber = FALSE;
+        _userEnteredOrderNumber = false;
 
         if (_metrics->value("CONumberGeneration") == "A")
-          _orderNumber->setEnabled(FALSE);
+          _orderNumber->setEnabled(false);
       }
       else if (populateSales.lastError().type() != QSqlError::NoError)
       {
@@ -1516,7 +1516,7 @@ void salesOrder::populateOrderNumber()
         return;
       }
     }
-    _userEnteredOrderNumber = FALSE;
+    _userEnteredOrderNumber = false;
   }
   else if (_mode == cNewQuote)
   {
@@ -1534,25 +1534,25 @@ void salesOrder::populateOrderNumber()
       {
         _orderNumber->setText(populateSales.value("qunumber").toString());
         _orderNumberGen = populateSales.value("qunumber").toInt();
-        _userEnteredOrderNumber = FALSE;
+        _userEnteredOrderNumber = false;
 
         if ( (_metrics->value("QUNumberGeneration") == "A") ||
              (_metrics->value("QUNumberGeneration") == "S") )
-          _orderNumber->setEnabled(FALSE);
+          _orderNumber->setEnabled(false);
       }
       else if (populateSales.lastError().type() != QSqlError::NoError)
       {
             systemError(this, populateSales.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
-      _userEnteredOrderNumber = FALSE;
+      _userEnteredOrderNumber = false;
     }
   }
 }
 
 void salesOrder::sSetUserEnteredOrderNumber()
 {
-  _userEnteredOrderNumber = TRUE;
+  _userEnteredOrderNumber = true;
 }
 
 void salesOrder::sHandleOrderNumber()
@@ -1626,8 +1626,8 @@ void salesOrder::sHandleOrderNumber()
         emit newModeState(2);
         _soheadid  = query.value("cohead_id").toInt();
         populate();
-        _orderNumber->setEnabled(FALSE);
-        _cust->setReadOnly(TRUE);
+        _orderNumber->setEnabled(false);
+        _cust->setReadOnly(true);
         populateCMInfo();
         populateCCInfo();
         sFillCcardList();
@@ -1641,13 +1641,13 @@ void salesOrder::sHandleOrderNumber()
           query.bindValue(":orderNumber", _orderNumberGen);
           query.exec();
           _orderNumber->setText(orderNumber);
-          _userEnteredOrderNumber = FALSE;
-          _orderNumber->setEnabled(FALSE);
+          _userEnteredOrderNumber = false;
+          _orderNumber->setEnabled(false);
         }
         else
         {
           _orderNumber->setText(orderNumber);
-          _orderNumber->setEnabled(FALSE);
+          _orderNumber->setEnabled(false);
         }
       }
     }
@@ -1700,8 +1700,8 @@ void salesOrder::sHandleOrderNumber()
           query.bindValue(":orderNumber", _orderNumberGen);
           query.exec();
           _orderNumber->setText(orderNumber);
-          _userEnteredOrderNumber = FALSE;
-          _orderNumber->setEnabled(FALSE);
+          _userEnteredOrderNumber = false;
+          _orderNumber->setEnabled(false);
         }
         else
         {
@@ -1709,7 +1709,7 @@ void salesOrder::sHandleOrderNumber()
           _mode = cNewQuote;
           emit newModeType(1);
           emit newModeState(1);
-          _orderNumber->setEnabled(FALSE);
+          _orderNumber->setEnabled(false);
         }
       }
     }
@@ -1761,7 +1761,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "       0.0 AS commission,"
                 "       NULL AS cust_creditstatus, NULL AS cust_terms_id,"
                 "       prospect_taxzone_id AS cust_taxzone_id, prospect_cntct_id AS cust_cntct_id, "
-                "       TRUE AS cust_ffshipto, TRUE AS cust_ffbillto, "
+                "       true AS cust_ffshipto, true AS cust_ffbillto, "
                 "       NULL AS cust_usespos, NULL AS cust_blanketpos,"
                 "       NULL AS cust_shipvia,"
                 "       -1 AS shiptoid,"
@@ -2099,15 +2099,15 @@ void salesOrder::sHandleButtons()
 
     if ( (_numSelected == 1) && (!selected->rawValue("coitem_firm").toBool()) )
     {
-      _edit->setEnabled(TRUE);
-      _delete->setEnabled(TRUE);
+      _edit->setEnabled(true);
+      _delete->setEnabled(true);
       int lineMode = selected->altId();
 
       if (ISQUOTE(_mode))
       {
         _action->setText(tr("Close"));
-        _action->setEnabled(FALSE);
-        _delete->setEnabled(TRUE);
+        _action->setEnabled(false);
+        _delete->setEnabled(true);
       }
       else
       {
@@ -2116,36 +2116,36 @@ void salesOrder::sHandleButtons()
           _lineMode = cClosed;
 
           _action->setText(tr("Open"));
-          _action->setEnabled(TRUE);
-          _delete->setEnabled(FALSE);
+          _action->setEnabled(true);
+          _delete->setEnabled(false);
         }
         else if (lineMode == 2)
         {
           _lineMode = cActiveOpen;
 
           _action->setText(tr("Close"));
-          _action->setEnabled(TRUE);
-          _delete->setEnabled(FALSE);
+          _action->setEnabled(true);
+          _delete->setEnabled(false);
         }
         else if (lineMode == 3)
         {
           _lineMode = cInactiveOpen;
 
           _action->setText(tr("Close"));
-          _action->setEnabled(TRUE);
-          _delete->setEnabled(TRUE);
+          _action->setEnabled(true);
+          _delete->setEnabled(true);
         }
         else if (lineMode == 4)
         {
           _lineMode = cCanceled;
 
-          _action->setEnabled(FALSE);
-          _delete->setEnabled(FALSE);
+          _action->setEnabled(false);
+          _delete->setEnabled(false);
         }
         else
         {
-          _action->setEnabled(FALSE);
-          _delete->setEnabled(FALSE);
+          _action->setEnabled(false);
+          _delete->setEnabled(false);
         }
 
         if (1 == lineMode ||                                  // closed
@@ -2153,17 +2153,17 @@ void salesOrder::sHandleButtons()
             selected->rawValue("item_type").toString() == "K" // kit item
             )
         {
-          _issueStock->setEnabled(FALSE);
-          _issueLineBalance->setEnabled(FALSE);
-          _reserveStock->setEnabled(FALSE);
-          _reserveLineBalance->setEnabled(FALSE);
+          _issueStock->setEnabled(false);
+          _issueLineBalance->setEnabled(false);
+          _reserveStock->setEnabled(false);
+          _reserveLineBalance->setEnabled(false);
           for (int i = 0; i < selected->childCount(); i++)
           {
             if (selected->child(i)->altId() == 1 ||
                 selected->child(i)->altId() == 2 ||
                 selected->child(i)->altId() == 4)
             {
-              _delete->setEnabled(FALSE);
+              _delete->setEnabled(false);
               break;
             }
           }
@@ -2172,7 +2172,7 @@ void salesOrder::sHandleButtons()
         if (selected->rawValue("coitem_subnumber").toInt() != 0)
         {
           _edit->setText(tr("View"));
-          _delete->setEnabled(FALSE);
+          _delete->setEnabled(false);
         }
         else if (cNew == _mode || cEdit == _mode || cNewQuote == _mode || cEditQuote == _mode)
         {
@@ -2183,20 +2183,20 @@ void salesOrder::sHandleButtons()
     else
     {
       _lineMode = 0;
-      _edit->setEnabled(FALSE);
-      _action->setEnabled(FALSE);
-      _delete->setEnabled(FALSE);
+      _edit->setEnabled(false);
+      _action->setEnabled(false);
+      _delete->setEnabled(false);
     }
   }
   else
   {
-    _edit->setEnabled(FALSE);
-    _action->setEnabled(FALSE);
-    _delete->setEnabled(FALSE);
-    _issueStock->setEnabled(FALSE);
-    _issueLineBalance->setEnabled(FALSE);
-    _reserveStock->setEnabled(FALSE);
-    _reserveLineBalance->setEnabled(FALSE);
+    _edit->setEnabled(false);
+    _action->setEnabled(false);
+    _delete->setEnabled(false);
+    _issueStock->setEnabled(false);
+    _issueLineBalance->setEnabled(false);
+    _reserveStock->setEnabled(false);
+    _reserveLineBalance->setEnabled(false);
   }
 }
 
@@ -2415,7 +2415,7 @@ void salesOrder::populate()
         setViewMode();
       
       _orderNumber->setText(so.value("cohead_number").toString());
-      _orderNumber->setEnabled(FALSE);
+      _orderNumber->setEnabled(false);
 
       _orderDateCache = so.value("cohead_orderdate").toDate();
       _orderDate->setDate(_orderDateCache, true);
@@ -2506,7 +2506,7 @@ void salesOrder::populate()
       _ignoreSignals=false;
 
       if (_mode == cView)
-        _shipTo->setEnabled(FALSE);
+        _shipTo->setEnabled(false);
 
       _custPONumber->setText(so.value("cohead_custponumber"));
       _shipVia->setText(so.value("cohead_shipvia"));
@@ -2604,7 +2604,7 @@ void salesOrder::populate()
                 "       COALESCE(quhead_taxzone_id, -1) AS quhead_taxzone_id,"
                 "       COALESCE(quhead_shipzone_id,-1) as quhead_shipzone_id,"
                 "       COALESCE(quhead_saletype_id,-1) as quhead_saletype_id,"
-                "       TRUE AS cust_ffshipto, NULL AS cust_blanketpos,"
+                "       true AS cust_ffshipto, NULL AS cust_blanketpos,"
                 "       COALESCE(quhead_misc_accnt_id, -1) AS quhead_misc_accnt_id, "
                 "       COALESCE(quhead_prj_id,-1) AS quhead_prj_id, "
                 "       COALESCE(quhead_ophead_id,-1) AS quhead_ophead_id, "
@@ -2621,7 +2621,7 @@ void salesOrder::populate()
     if (qu.first())
     {
       _orderNumber->setText(qu.value("quhead_number").toString());
-      _orderNumber->setEnabled(FALSE);
+      _orderNumber->setEnabled(false);
 
       _orderDateCache = qu.value("quhead_quotedate").toDate();
       _orderDate->setDate(_orderDateCache, true);
@@ -2701,7 +2701,7 @@ void salesOrder::populate()
       _ignoreSignals=false;
 
       if (_mode == cViewQuote)
-        _shipTo->setEnabled(FALSE);
+        _shipTo->setEnabled(false);
 
       _custPONumber->setText(qu.value("quhead_custponumber"));
       _shipVia->setText(qu.value("quhead_shipvia"));
@@ -3068,7 +3068,7 @@ void salesOrder::clear()
   else
     _salesOrderInformation->setCurrentIndex(0);
 
-  _orderNumber->setEnabled(TRUE);
+  _orderNumber->setEnabled(true);
   _orderNumberGen = 0;
   _orderNumber->clear();
 
@@ -3171,7 +3171,7 @@ void salesOrder::clear()
     systemError(this, headid.lastError().databaseText(), __FILE__, __LINE__);
 
   _soitem->clear();
-  _cust->setReadOnly(FALSE);
+  _cust->setReadOnly(false);
 
   _saved = false;
 }
@@ -3199,7 +3199,7 @@ void salesOrder::closeEvent(QCloseEvent *pEvent)
 void salesOrder::sHandleShipchrg(int pShipchrgid)
 {
   if ( (_mode == cView) || (_mode == cViewQuote) )
-    _freight->setEnabled(FALSE);
+    _freight->setEnabled(false);
   else
   {
     XSqlQuery query;
@@ -3213,14 +3213,14 @@ void salesOrder::sHandleShipchrg(int pShipchrgid)
       if (query.value("shipchrg_custfreight").toBool())
       {
         _calcfreight = _metrics->boolean("CalculateFreight");
-        _freight->setEnabled(TRUE);
+        _freight->setEnabled(true);
         sFillItemList();
       }
       else
       {
-        _calcfreight   = FALSE;
+        _calcfreight   = false;
         _freightCache  = 0;
-        _freight->setEnabled(FALSE);
+        _freight->setEnabled(false);
         disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
         _freight->clear();
         connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
@@ -3274,7 +3274,7 @@ void salesOrder::sTaxDetail()
   // mode => view since there are no fields to hold modified tax data
   params.append("mode", "view");
 
-  taxBreakdown newdlg(this, "", TRUE);
+  taxBreakdown newdlg(this, "", true);
   if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
   {
     populate();
@@ -3300,7 +3300,7 @@ void salesOrder::sFreightDetail()
   // mode => view since there are no fields to hold modified freight data
   params.append("mode", "view");
 
-  freightBreakdown newdlg(this, "", TRUE);
+  freightBreakdown newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
   if (_saved)
@@ -3341,29 +3341,29 @@ void salesOrder::setViewMode()
   emit newModeState(3);
   setObjectName(QString("salesOrder view %1").arg(_soheadid));
 
-  _orderNumber->setEnabled(FALSE);
-  _packDate->setEnabled(FALSE);
-  _shipDate->setEnabled(FALSE);
-  _opportunity->setEnabled(FALSE);
-  _cust->setReadOnly(TRUE);
-  _warehouse->setEnabled(FALSE);
-  _salesRep->setEnabled(FALSE);
-  _commission->setEnabled(FALSE);
-  _taxZone->setEnabled(FALSE);
-  _terms->setEnabled(FALSE);
-  _fob->setEnabled(FALSE);
-  _shipVia->setEnabled(FALSE);
-  _shippingCharges->setEnabled(FALSE);
-  _shippingForm->setEnabled(FALSE);
-  _miscCharge->setEnabled(FALSE);
-  _miscChargeDescription->setEnabled(FALSE);
-  _miscChargeAccount->setReadOnly(TRUE);
-  _miscChargeAccount->setEnabled(FALSE);
-  _freight->setEnabled(FALSE);
-  _orderComments->setEnabled(FALSE);
-  _shippingComments->setEnabled(FALSE);
-  _custPONumber->setEnabled(FALSE);
-  _holdType->setEnabled(FALSE);
+  _orderNumber->setEnabled(false);
+  _packDate->setEnabled(false);
+  _shipDate->setEnabled(false);
+  _opportunity->setEnabled(false);
+  _cust->setReadOnly(true);
+  _warehouse->setEnabled(false);
+  _salesRep->setEnabled(false);
+  _commission->setEnabled(false);
+  _taxZone->setEnabled(false);
+  _terms->setEnabled(false);
+  _fob->setEnabled(false);
+  _shipVia->setEnabled(false);
+  _shippingCharges->setEnabled(false);
+  _shippingForm->setEnabled(false);
+  _miscCharge->setEnabled(false);
+  _miscChargeDescription->setEnabled(false);
+  _miscChargeAccount->setReadOnly(true);
+  _miscChargeAccount->setEnabled(false);
+  _freight->setEnabled(false);
+  _orderComments->setEnabled(false);
+  _shippingComments->setEnabled(false);
+  _custPONumber->setEnabled(false);
+  _holdType->setEnabled(false);
   _edit->setText(tr("View"));
   _comments->setType(Comments::SalesOrder);
   _comments->setReadOnly(true);
@@ -3371,11 +3371,11 @@ void salesOrder::setViewMode()
 //  _documents->setReadOnly(true);
   _shipComplete->setEnabled(false);
   setFreeFormShipto(false);
-  _orderCurrency->setEnabled(FALSE);
-  _printSO->setEnabled(FALSE);
-  _shippingZone->setEnabled(FALSE);
-  _saleType->setEnabled(FALSE);
-  _newCharacteristic->setEnabled(FALSE);
+  _orderCurrency->setEnabled(false);
+  _printSO->setEnabled(false);
+  _shippingZone->setEnabled(false);
+  _saleType->setEnabled(false);
+  _newCharacteristic->setEnabled(false);
   _save->hide();
   _clear->hide();
   _project->setReadOnly(true);
@@ -3698,7 +3698,7 @@ void salesOrder::sNewCharacteristic()
   else
     params.append("cohead_id", _soheadid);
   
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
   
   if (newdlg.exec() != XDialog::Rejected)
@@ -3711,7 +3711,7 @@ void salesOrder::sEditCharacteristic()
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
   
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
   
   if (newdlg.exec() != XDialog::Rejected)
@@ -3829,7 +3829,7 @@ void salesOrder::sNewCreditCard()
   params.append("mode", "new");
   params.append("cust_id", _cust->id());
 
-  creditCard newdlg(this, "", TRUE);
+  creditCard newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -3843,7 +3843,7 @@ void salesOrder::sEditCreditCard()
   params.append("cust_id", _cust->id());
   params.append("ccard_id", _cc->id());
 
-  creditCard newdlg(this, "", TRUE);
+  creditCard newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -3857,7 +3857,7 @@ void salesOrder::sViewCreditCard()
   params.append("cust_id", _cust->id());
   params.append("ccard_id", _cc->id());
 
-  creditCard newdlg(this, "", TRUE);
+  creditCard newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -4117,7 +4117,7 @@ void salesOrder::sReturnStock()
 
 void salesOrder::sIssueStock()
 {
-  bool update = FALSE;
+  bool update = false;
   QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
@@ -4130,10 +4130,10 @@ void salesOrder::sIssueStock()
       if (_requireInventory->isChecked())
         params.append("requireInventory");
 
-      issueLineToShipping newdlg(this, "", TRUE);
+      issueLineToShipping newdlg(this, "", true);
       newdlg.set(params);
       if (newdlg.exec() != XDialog::Rejected)
-        update = TRUE;
+        update = true;
     }
   }
 
@@ -4683,7 +4683,7 @@ void salesOrder::sCreditAllocate()
     params.append("curr_id",   _balance->id());
     params.append("effective", _balance->effective());
     
-    allocateARCreditMemo newdlg(this, "", TRUE);
+    allocateARCreditMemo newdlg(this, "", true);
     if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
     {
         populateCMInfo();
@@ -5113,7 +5113,7 @@ void salesOrder::sShipDateChanged()
           sql = sql +
                 "SELECT changeWoDates(wo_id, "
                 "                     wo_startdate + (<? value(\"newDate\") ?> - wo_duedate),"
-                "                     <? value(\"newDate\") ?>, TRUE) AS result "
+                "                     <? value(\"newDate\") ?>, true) AS result "
                 "FROM cohead JOIN coitem ON (coitem_cohead_id=cohead_id AND coitem_order_type='W') "
                 "            JOIN wo ON (wo_id=coitem_order_id) "
                 "            JOIN itemsite ON (itemsite_id=coitem_itemsite_id) "
@@ -5149,7 +5149,7 @@ void salesOrder::sShipDateChanged()
         {
           sql = sql +
           "SELECT changePoitemDueDate(poitem_id, "
-          "                     <? value(\"newDate\") ?>, TRUE) AS result "
+          "                     <? value(\"newDate\") ?>, true) AS result "
           "FROM cohead JOIN coitem ON (coitem_cohead_id=cohead_id AND coitem_order_type='P') "
           "            JOIN poitem ON (poitem_id=coitem_order_id) "
           "            JOIN itemsite ON (itemsite_id=coitem_itemsite_id) "

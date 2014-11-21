@@ -14,7 +14,8 @@
 #include <QHash>
 #include <QObject>
 #include <QString>
-#include <QHttp>
+//#include <QHttp>
+#include <QNetworkAccessManager>
 
 #include <parameter.h>
 
@@ -103,6 +104,7 @@ class CreditCardProcessor : public QObject
     virtual int     fraudChecks();
     virtual int     sendViaHTTP(const QString&, QString&);
     virtual int     updateCCPay(int &, ParameterList &);
+    virtual bool    waitForHTTP();
 
     QList<FraudCheckResult*> _avsCodes;
     QList<FraudCheckResult*> _cvvCodes;
@@ -120,11 +122,13 @@ class CreditCardProcessor : public QObject
     QString		_ppassword;
     QString		_pport;
     QString		_pserver;
-    QHttp             * _http;
+    //QHttp             * _http;
+    QNetworkAccessManager *_manager;
     QList<QPair<QString, QString> > _extraHeaders;
 
     protected slots:
-      void sslErrors(const QList<QSslError> &errors);
+      //void sslErrors(const QList<QSslError> &errors);
+      void sslErrors(QNetworkReply *reply, const QList<QSslError> &errors);
 
 };
 

@@ -26,7 +26,7 @@
 #include "storedProcErrorLookup.h"
 #include "parameterwidget.h"
 
-unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char*, Qt::WFlags fl)
+unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "unpostedPurchaseOrders", fl)
 {
   setupUi(optionsWidget());
@@ -107,7 +107,7 @@ void unpostedPurchaseOrders::sEdit()
     }
   }
   if (done)
-    omfgThis->sPurchaseOrdersUpdated(-1, TRUE);
+    omfgThis->sPurchaseOrdersUpdated(-1, true);
   else
     QMessageBox::information(this, tr("Nothing To Edit"),
 			     tr("<p>There were no selected Purchase Orders "
@@ -183,7 +183,7 @@ void unpostedPurchaseOrders::sDelete()
       }
     }
     if (done)
-      omfgThis->sPurchaseOrdersUpdated(-1, TRUE);
+      omfgThis->sPurchaseOrdersUpdated(-1, true);
     else
       QMessageBox::information(this, tr("Nothing To Delete"),
 			       tr("<p>There were no selected Purchase Orders "
@@ -202,7 +202,7 @@ void unpostedPurchaseOrders::sPrint()
       ParameterList params;
       params.append("pohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
 
-      printPurchaseOrder newdlg(this, "", TRUE);
+      printPurchaseOrder newdlg(this, "", true);
       newdlg.set(params);
       newdlg.exec();
       break;
@@ -240,7 +240,7 @@ void unpostedPurchaseOrders::sRelease()
     }
   }
   if (done)
-    omfgThis->sPurchaseOrdersUpdated(-1, TRUE);
+    omfgThis->sPurchaseOrdersUpdated(-1, true);
   else
     QMessageBox::information(this, tr("Nothing To Release"),
                              tr("<p>There were no selected Purchase Orders "
@@ -277,7 +277,7 @@ void unpostedPurchaseOrders::sUnrelease()
     }
   }
   if (done)
-    omfgThis->sPurchaseOrdersUpdated(-1, TRUE);
+    omfgThis->sPurchaseOrdersUpdated(-1, true);
   else
     QMessageBox::information(this, tr("Nothing To Unrelease"),
                              tr("<p>There were no selected Purchase Orders "

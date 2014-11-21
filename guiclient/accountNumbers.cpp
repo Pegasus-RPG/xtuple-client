@@ -21,7 +21,7 @@
 #include "accountNumber.h"
 #include "storedProcErrorLookup.h"
 
-accountNumbers::accountNumbers(QWidget* parent, const char* name, Qt::WFlags fl)
+accountNumbers::accountNumbers(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -83,7 +83,7 @@ void accountNumbers::sNew()
   ParameterList params;
   params.append("mode", "new");
 
-  accountNumber newdlg(this, "", TRUE);
+  accountNumber newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -101,7 +101,7 @@ void accountNumbers::sEdit()
     params.append("mode", "edit");
   params.append("accnt_id", _account->id());
 
-  accountNumber newdlg(this, "", TRUE);
+  accountNumber newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)

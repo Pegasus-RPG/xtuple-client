@@ -123,13 +123,13 @@ class Action : public QAction
     Action( QWidget *, const char *, const QString &,
             QObject *, const char *,
             QWidget *, bool,
-            const QPixmap &, QWidget *);  
+            const QPixmap *, QWidget *);
             
     Action( QWidget *, const char *, const QString &,
             QObject *, const char *,
             QWidget *, bool,
-            const QPixmap &, QWidget *,
-            const QString &); 
+            const QPixmap *, QWidget *,
+            const QString &);
 
     Action( QWidget *, const char *, const QString &,
             QObject *, const char *,
@@ -138,12 +138,12 @@ class Action : public QAction
     Action( QWidget *, const char *, const QString &,
             QObject *, const char *,
             QWidget *, const QString &,
-            const QPixmap &, QWidget *);  
+            const QPixmap *, QWidget *);
             
     Action( QWidget *, const char *, const QString &,
             QObject *, const char *,
             QWidget *, const QString &,
-            const QPixmap &, QWidget *,
+            const QPixmap *, QWidget *,
             const QString &); 
 
   private:

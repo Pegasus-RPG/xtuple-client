@@ -24,7 +24,7 @@ class item : public XWidget, public Ui::item
     Q_OBJECT
 
 public:
-    item(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    item(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
     ~item();
 
     virtual void populate();

@@ -43,6 +43,7 @@ CSVIMP_HEADERS = $$(CSVIMP_HEADERS)
 isEmpty( CSVIMP_HEADERS ) {
   exists(csvimp)    { CSVIMP_DIR = csvimp    }
   exists(../csvimp) { CSVIMP_DIR = ../csvimp }
+  exists(../../csvimp) { CSVIMP_DIR = ../../csvimp }
   CSVIMP_HEADERS = $$CSVIMP_DIR/csvimpcommon
   CSVIMP_HEADERS_REL = true
 }

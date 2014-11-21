@@ -13,7 +13,7 @@
 #include <QMessageBox>
 #include <QVariant>
 
-printArOpenItem::printArOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+printArOpenItem::printArOpenItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : printSinglecopyDocument(parent, name, modal, fl)
 {
   setupUi(optionsWidget());
@@ -61,7 +61,7 @@ ParameterList printArOpenItem::getParams(XSqlQuery *docq)
 {
   ParameterList params;
   params.append("aropen_id", docq->value("aropen_id").toInt());
-  switch (docq->value("aropen_doctype").toChar().toAscii())
+  switch (docq->value("aropen_doctype").toChar().toLatin1())
   {
     case 'I':
     case 'D':

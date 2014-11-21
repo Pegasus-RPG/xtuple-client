@@ -14,14 +14,14 @@
 #include <QSqlError>
 #include <QVariant>
 
-transactionInformation::transactionInformation(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+transactionInformation::transactionInformation(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
-  _item->setReadOnly(TRUE);
+  _item->setReadOnly(true);
 
   _transactionQty->setPrecision(omfgThis->qtyVal());
   _qohBefore->setPrecision(omfgThis->qtyVal());
@@ -93,7 +93,7 @@ enum SetResponse transactionInformation::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      _analyze->setEnabled(FALSE);
+      _analyze->setEnabled(false);
 
       _save->hide();
       _close->setText(tr("&Close"));

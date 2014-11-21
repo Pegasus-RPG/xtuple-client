@@ -22,7 +22,7 @@ class characteristicAssignment : public XDialog, public Ui::characteristicAssign
     Q_OBJECT
 
 public:
-    characteristicAssignment(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    characteristicAssignment(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WindowFlags fl = 0);
     ~characteristicAssignment();
 
 public slots:

@@ -19,7 +19,7 @@
 #include "returnAuthorization.h"
 #include "salesOrder.h"
 
-dspSalesOrdersByCustomerPO::dspSalesOrdersByCustomerPO(QWidget* parent, const char*, Qt::WFlags fl)
+dspSalesOrdersByCustomerPO::dspSalesOrdersByCustomerPO(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspSalesOrdersByCustomerPO", fl)
 {
   setupUi(optionsWidget());

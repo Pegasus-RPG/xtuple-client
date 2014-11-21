@@ -1,7 +1,7 @@
 /*
  *This file is part of the xTuple ERP: PostBooks Edition, a free and
  *open source Enterprise Resource Planning software suite,
- *Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ *Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
  *It is licensed to you under the Common Public Attribution License
  *version 1.0, the full text of which(including xTuple-specific Exhibits)
  *is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -82,7 +82,7 @@ class QPrinterProto : public QObject, public QScriptable
     Q_INVOKABLE QString         printProgram() const;
     Q_INVOKABLE QPrinter::PrintRange      printRange() const;
     Q_INVOKABLE QString         printerName() const;
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN
     Q_INVOKABLE QString         printerSelectionOption() const;
 #endif
     Q_INVOKABLE QPrinter::PrinterState    printerState() const;
@@ -109,11 +109,11 @@ class QPrinterProto : public QObject, public QScriptable
     Q_INVOKABLE void            setPrintProgram(const QString & printProg);
     Q_INVOKABLE void            setPrintRange(QPrinter::PrintRange range);
     Q_INVOKABLE void            setPrinterName(const QString & name);
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN
     Q_INVOKABLE void            setPrinterSelectionOption(const QString & option);
 #endif
     Q_INVOKABLE void            setResolution(int dpi);
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     Q_INVOKABLE void            setWinPageSize(int pageSize);
     Q_INVOKABLE QList<QPrinter::PaperSource> supportedPaperSources() const;
 #endif
@@ -121,7 +121,7 @@ class QPrinterProto : public QObject, public QScriptable
     Q_INVOKABLE int             toPage() const;
     Q_INVOKABLE int             width() const;
     Q_INVOKABLE int             widthMM() const;
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     Q_INVOKABLE int             winPageSize() const;
 #endif
 

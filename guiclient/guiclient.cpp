@@ -182,25 +182,25 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
 Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
                 QObject *pTarget, const char *pActivateSlot,
                 QWidget *pAddTo, bool pEnabled,
-                const QPixmap &pIcon, QWidget *pToolBar ) :
+                const QPixmap *pIcon, QWidget *pToolBar ) :
  QAction(pDisplayName, pParent)
 {
   init(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, (pEnabled?"true":"false"));
 
-  setIcon(QIcon(pIcon));
+  setIcon(QIcon(*pIcon));
   pToolBar->addAction(this);
 }
 
 Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
                 QObject *pTarget, const char *pActivateSlot,
                 QWidget *pAddTo, bool pEnabled,
-                const QPixmap &pIcon, QWidget *pToolBar,
+                const QPixmap *pIcon, QWidget *pToolBar,
                 const QString &pToolTip ) :
  QAction(pDisplayName, pParent)
 {
   init(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, (pEnabled?"true":"false"));
 
-  setIcon(QIcon(pIcon));
+  setIcon(QIcon(*pIcon));
   pToolBar->addAction(this);
   setToolTip(pToolTip);
 }
@@ -216,25 +216,25 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
 Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
                 QObject *pTarget, const char *pActivateSlot,
                 QWidget *pAddTo, const QString & pEnabled,
-                const QPixmap &pIcon, QWidget *pToolBar ) :
+                const QPixmap *pIcon, QWidget *pToolBar ) :
  QAction(pDisplayName, pParent)
 {
   init(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, pEnabled);
 
-  setIcon(QIcon(pIcon));
+  setIcon(QIcon(*pIcon));
   pToolBar->addAction(this);
 }
 
 Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
                 QObject *pTarget, const char *pActivateSlot,
                 QWidget *pAddTo, const QString & pEnabled,
-                const QPixmap &pIcon, QWidget *pToolBar,
+                const QPixmap *pIcon, QWidget *pToolBar,
                 const QString &pToolTip ) :
  QAction(pDisplayName, pParent)
 {
   init(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, pEnabled);
 
-  setIcon(QIcon(pIcon));
+  setIcon(QIcon(*pIcon));
   pToolBar->addAction(this);
   setToolTip(pToolTip);
 }
@@ -662,7 +662,7 @@ void GUIClient::initMenuBar()
     menuBar()->clear();
     _hotkeyList.clear();
 
-    QList<QToolBar *> toolbars = qFindChildren<QToolBar *>(this);
+    QList<QToolBar *> toolbars = this->findChildren<QToolBar *>();
     while(!toolbars.isEmpty())
       delete toolbars.takeFirst();
 
@@ -1003,7 +1003,7 @@ void GUIClient::sSystemMessageAdded()
             ParameterList params;
             params.append("mode", "acknowledge");
 
-            systemMessage newdlg(this, "", TRUE);
+            systemMessage newdlg(this, "", true);
             newdlg.set(params);
 
             do
@@ -1075,7 +1075,7 @@ void GUIClient::sStandardPeriodsUpdated()
 
 void GUIClient::sSalesOrdersUpdated(int pSoheadid)
 {
-  emit salesOrdersUpdated(pSoheadid, TRUE);
+  emit salesOrdersUpdated(pSoheadid, true);
 }
 
 void GUIClient::sSalesRepUpdated(int id)
@@ -1090,7 +1090,7 @@ void GUIClient::sCreditMemosUpdated()
 
 void GUIClient::sQuotesUpdated(int pQuheadid)
 {
-  emit quotesUpdated(pQuheadid, TRUE);
+  emit quotesUpdated(pQuheadid, true);
 }
 
 void GUIClient::sWorkOrderMaterialsUpdated(int pWoid, int pWomatlid, bool pLocalUpdate)
@@ -1293,7 +1293,7 @@ void GUIClient::sIdleTimeout()
   ParameterList params;
   params.append("minutes", _timeoutHandler->idleMinutes());
 
-  idleShutdown newdlg(this, "", TRUE);
+  idleShutdown newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() == XDialog::Accepted)
@@ -1393,7 +1393,7 @@ QString translationFile(QString localestr, const QString component, QString &ver
 {
   QStringList paths;
 //qDebug() << QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-  paths << QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+  paths << QStandardPaths::writableLocation(QStandardPaths::DataLocation);
   paths << "/usr/lib/postbooks/dict";
   paths << "dict";
   paths << "";
@@ -1401,7 +1401,7 @@ QString translationFile(QString localestr, const QString component, QString &ver
   paths << QApplication::applicationDirPath() + "/dict";
   paths << QApplication::applicationDirPath();
   paths << QApplication::applicationDirPath() + "/../dict";
-#if defined Q_WS_MACX
+#if defined Q_OS_MAC
   paths << QApplication::applicationDirPath() + "/../../../dict";
   paths << QApplication::applicationDirPath() + "/../../..";
 #endif
@@ -1413,7 +1413,7 @@ QString translationFile(QString localestr, const QString component, QString &ver
     if (translator.load(filename))
     {
       if (! version.isNull())
-        version = translator.translate(component.toAscii().data(), "Version");
+        version = translator.translate(component.toLatin1().data(), "Version");
 
       return filename;
     }
@@ -1447,7 +1447,7 @@ void GUIClient::populateCustomMenu(QMenu * menu, const QString & module)
       allowed = "Custom"+privname;
 
     QString cmdname = QString("custom." + qry.value("cmd_name").toString());
-    Action *action = new Action(this, cmdname.toAscii().data(), qry.value("cmd_title").toString(),
+    Action *action = new Action(this, cmdname.toLatin1().data(), qry.value("cmd_title").toString(),
                                 this, SLOT(sCustomCommand()), customMenu, allowed);
 
     _customCommands.insert(action, qry.value("cmd_id").toInt());

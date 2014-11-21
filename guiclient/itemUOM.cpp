@@ -16,7 +16,7 @@
 #include <parameter.h>
 #include "storedProcErrorLookup.h"
 
-itemUOM::itemUOM(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+itemUOM::itemUOM(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);

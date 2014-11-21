@@ -13,7 +13,7 @@
 #include <QSqlError>
 #include <QMessageBox>
 
-configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
+configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::WindowFlags fl)
     : XAbstractConfigure(parent, fl)
 {
   XSqlQuery configureconfigureSO;

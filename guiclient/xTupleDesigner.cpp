@@ -27,7 +27,7 @@
 
 // TODO: can we live without this?
 // copied from .../qt-mac-commercial-src-4.4.3/tools/designer/src/lib/shared/qdesigner_integration_p.h
-#include "qdesigner_integration_p.h"
+//#include "qdesigner_integration_p.h"
 
 // TODO: (re)move the following when the UI gets sorted out
 #include <QHBoxLayout>
@@ -124,7 +124,7 @@ SignalSlotEditorWindow::SignalSlotEditorWindow(xTupleDesigner *parent)
   setWindowTitle(xTupleDesigner::tr("Signal/Slot Editor"));
 }
 
-xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
+xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XMainWindow(parent, name, fl)
 {
   _formEnabled = true;
@@ -199,7 +199,7 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   _toolmenu->addAction(_slotedwindow->action());
 
   _formeditor->setTopLevel(_widgetwindow);
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   _widgetwindow->setMenuBar(_menubar);
   _widgetwindow->action()->setVisible(false);
 #endif
@@ -227,7 +227,7 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   // resource editor;
   // action editor;
 
-  _integration = new qdesigner_internal::QDesignerIntegration(_formeditor, this);
+  _integration = new QDesignerIntegration(_formeditor, this);
   _formeditor->setIntegration(_integration);
 
   // toolbar creation

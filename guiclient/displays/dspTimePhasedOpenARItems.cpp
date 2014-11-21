@@ -24,7 +24,7 @@
 #include "printStatementByCustomer.h"
 #include "dspAROpenItems.h"
 
-dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char*, Qt::WFlags fl)
+dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspTimePhasedOpenARItems", fl)
 {
   setupUi(optionsWidget());
@@ -140,7 +140,7 @@ void dspTimePhasedOpenARItems::sPrintStatement()
   params.append("asofDate", _asOf->date());
   params.append("print");
 
-  printStatementByCustomer newdlg(this, "", TRUE);
+  printStatementByCustomer newdlg(this, "", true);
   newdlg.set(params);
 }
 
@@ -259,12 +259,12 @@ void dspTimePhasedOpenARItems::sToggleCustom()
   if (_custom->isChecked())
   {
     setReportName("TimePhasedOpenARItems");
-    _calendarLit->setHidden(FALSE);
-    _calendar->setHidden(FALSE);
-    _periods->setHidden(FALSE);
+    _calendarLit->setHidden(false);
+    _calendar->setHidden(false);
+    _periods->setHidden(false);
     _asOf->setDate(omfgThis->dbDate(), true);
-    _asOf->setEnabled(FALSE);
-    _useGroup->setHidden(TRUE);
+    _asOf->setEnabled(false);
+    _useGroup->setHidden(true);
 
     list()->setColumnCount(0);
     list()->addColumn(tr("Cust. #"), _orderColumn, Qt::AlignLeft, true, "cust_number");
@@ -273,11 +273,11 @@ void dspTimePhasedOpenARItems::sToggleCustom()
   else
   {
     setReportName("ARAging");
-    _calendarLit->setHidden(TRUE);
-    _calendar->setHidden(TRUE);
-    _periods->setHidden(TRUE);
-    _asOf->setEnabled(TRUE);
-    _useGroup->setHidden(FALSE);
+    _calendarLit->setHidden(true);
+    _calendar->setHidden(true);
+    _periods->setHidden(true);
+    _asOf->setEnabled(true);
+    _useGroup->setHidden(false);
 
     list()->setColumnCount(0);
     list()->addColumn(tr("Cust. #"),       _orderColumn, Qt::AlignLeft,  true, "araging_cust_number");

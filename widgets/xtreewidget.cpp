@@ -127,7 +127,7 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   setContextMenuPolicy(Qt::CustomContextMenu);
   setSelectionBehavior(QAbstractItemView::SelectRows);
   header()->setStretchLastSection(false);
-  header()->setClickable(true);
+  header()->setSectionsClickable(true);
   if (_x_preferences)
     setAlternatingRowColors(!_x_preferences->boolean("NoAlternatingRowColors"));
 
@@ -143,7 +143,7 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   connect(this,           SIGNAL(itemClicked(QTreeWidgetItem*, int)),                       SLOT(sItemClicked(QTreeWidgetItem*, int)));
   connect(&_workingTimer, SIGNAL(timeout()), this, SLOT(populateWorker()));
 
-  emit valid(FALSE);
+  emit valid(false);
   setColumnCount(0);
 
   header()->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -900,11 +900,11 @@ void XTreeWidget::addColumn(const QString &pString, int pWidth, int pAlignment, 
   if (pWidth >= 0)
   {
     header()->resizeSection(column, pWidth);
-    header()->setResizeMode(column, QHeaderView::Interactive);
+    header()->setSectionResizeMode(column, QHeaderView::Interactive);
   }
   else
   {
-    header()->setResizeMode(column, QHeaderView::Interactive);
+    header()->setSectionResizeMode(column, QHeaderView::Interactive);
     _stretch.append(column);
   }
   bool forgetCache = _forgetful;
@@ -1419,7 +1419,7 @@ void XTreeWidget::clear()
     delete _subtotals;
     _subtotals = 0;
   }
-  emit valid(FALSE);
+  emit valid(false);
   _savedId = false; // was -1;
 
   QTreeWidget::clear();
@@ -1480,7 +1480,7 @@ void XTreeWidget::sShowMenu(const QPoint &pntThis)
       emit  populateMenu(_menu, item, logicalColumn);
     }
 
-    bool disableExport = FALSE;
+    bool disableExport = false;
     if (_x_preferences)
       disableExport = (_x_preferences->value("DisableExportContents")=="t");
     if (!disableExport)

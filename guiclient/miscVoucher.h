@@ -22,7 +22,7 @@ class miscVoucher : public XWidget, public Ui::miscVoucher
     Q_OBJECT
 
 public:
-    miscVoucher(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    miscVoucher(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
     ~miscVoucher();
 
     Q_INVOKABLE virtual int id()   const;

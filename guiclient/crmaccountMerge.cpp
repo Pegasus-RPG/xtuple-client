@@ -36,7 +36,7 @@ class crmaccountMergePrivate {
     int         _selectCol;
 };
 
-crmaccountMerge::crmaccountMerge(QWidget* parent, const char* name, Qt::WFlags fl)
+crmaccountMerge::crmaccountMerge(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : QWizard(parent, fl)
 {
   setupUi(this);

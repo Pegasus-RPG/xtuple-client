@@ -21,7 +21,7 @@
 #include "errorReporter.h"
 #include "voucherMiscDistrib.h"
 
-miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WFlags fl)
+miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -138,7 +138,7 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
       _flagFor1099->setEnabled(false);
       _notes->setEnabled(false);
 //    _documents->setReadOnly(true);
-      _newCharacteristic->setEnabled(FALSE);
+      _newCharacteristic->setEnabled(false);
       _close->setText(tr("&Close"));
       _save->hide();
 
@@ -399,7 +399,7 @@ void miscVoucher::sNewCharacteristic()
   params.append("mode", "new");
   params.append("vohead_id", _voheadid);
   
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
   
   if (newdlg.exec() != XDialog::Rejected)
@@ -412,7 +412,7 @@ void miscVoucher::sEditCharacteristic()
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
   
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
   
   if (newdlg.exec() != XDialog::Rejected)
@@ -462,7 +462,7 @@ void miscVoucher::sNewMiscDistribution()
   if (_taxzone->isValid())
    params.append("taxzone_id", _taxzone->id());
 
-  voucherMiscDistrib newdlg(this, "", TRUE);
+  voucherMiscDistrib newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
   {
@@ -483,7 +483,7 @@ void miscVoucher::sEditMiscDistribution()
   if (_taxzone->isValid())
    params.append("taxzone_id", _taxzone->id());
 
-  voucherMiscDistrib newdlg(this, "", TRUE);
+  voucherMiscDistrib newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
   {
@@ -576,7 +576,7 @@ void miscVoucher::populateNumber()
   if (numq.first())
   {
     _voucherNumber->setText(numq.value("vouchernumber").toString());
-    _voucherNumber->setEnabled(FALSE);
+    _voucherNumber->setEnabled(false);
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Number"),
                                 numq, __FILE__, __LINE__))

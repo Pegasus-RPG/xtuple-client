@@ -26,7 +26,7 @@ class purchaseOrder : public XWidget, public Ui::purchaseOrder
     Q_OBJECT
 
 public:
-    purchaseOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    purchaseOrder(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
     ~purchaseOrder();
 
     virtual void createHeader();

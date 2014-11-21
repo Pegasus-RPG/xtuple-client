@@ -25,7 +25,7 @@
 #include "storedProcErrorLookup.h"
 #include "parameterwidget.h"
 
-addresses::addresses(QWidget* parent, const char*, Qt::WFlags fl)
+addresses::addresses(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "addresses", fl)
 {
   setReportName("AddressesMasterList");
@@ -77,7 +77,7 @@ void addresses::sNew()
   ParameterList params;
   params.append("mode", "new");
 
-  address newdlg(this, "", TRUE);
+  address newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -90,7 +90,7 @@ void addresses::sEdit()
   params.append("mode", "edit");
   params.append("addr_id", list()->id());
 
-  address newdlg(this, "", TRUE);
+  address newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -103,7 +103,7 @@ void addresses::sView()
   params.append("mode", "view");
   params.append("addr_id", list()->id());
 
-  address newdlg(this, "", TRUE);
+  address newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

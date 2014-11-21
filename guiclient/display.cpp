@@ -314,8 +314,8 @@ void displayPrivate::setupCharacteristics(unsigned int use)
     else if (chartype == characteristic::Date)
     {
       _charidsdate.append(chars.value("char_id").toInt());
-      QString start = QApplication::translate("display", "Start Date", 0, QApplication::UnicodeUTF8);
-      QString end = QApplication::translate("display", "End Date", 0, QApplication::UnicodeUTF8);
+      QString start = QApplication::translate("display", "Start Date", 0);
+      QString end = QApplication::translate("display", "End Date", 0);
       _parameterWidget->append(name + " " + start, column + "startDate", ParameterWidget::Date);
       _parameterWidget->append(name + " " + end, column + "endDate", ParameterWidget::Date);
     }
@@ -329,7 +329,7 @@ bool displayPrivate::setParams(ParameterList &params)
   if (!_search->isNull())
   {
     params.append("search_pattern", _search->text());
-    QString searchon =  QApplication::translate("display", "Search On:", 0, QApplication::UnicodeUTF8);
+    QString searchon =  QApplication::translate("display", "Search On:", 0);
     filter.prepend(searchon + " " + _search->text() + "\n");
   }
   params.append("filter", filter);

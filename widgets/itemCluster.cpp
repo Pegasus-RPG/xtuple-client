@@ -249,18 +249,18 @@ ItemLineEdit::ItemLineEdit(QWidget* pParent, const char* pName) :
   setViewPriv("ViewItemMasters");
   setNewPriv("MaintainItemMasters");
 
-  setAcceptDrops(TRUE);
+  setAcceptDrops(true);
   
   _type = cUndefined;
   _defaultType = cUndefined;
-  _useQuery = FALSE;
-  _useValidationQuery = FALSE;
+  _useQuery = false;
+  _useValidationQuery = false;
   _itemNumber = "";
   _uom = "";
   _itemType = "";
   _id = -1;
-  _configured = FALSE;
-  _fractional = FALSE;
+  _configured = false;
+  _fractional = false;
   _delegate = new ItemLineEditDelegate(this);
 
   connect(_aliasAct, SIGNAL(triggered()), this, SLOT(sAlias()));
@@ -279,9 +279,9 @@ void ItemLineEdit::setItemNumber(const QString& pNumber)
     qDebug("%s::setItemNumber(%s) entered",
            qPrintable(objectName()), qPrintable(pNumber));
   XSqlQuery item;
-  bool      found = FALSE;
+  bool      found = false;
 
-  _parsed = TRUE;
+  _parsed = true;
 
   if (pNumber == text())
     return;
@@ -294,7 +294,7 @@ void ItemLineEdit::setItemNumber(const QString& pNumber)
       item.bindValue(":item_number", pNumber);
       item.exec();
       if (item.first())
-        found = TRUE;
+        found = true;
     }
     else if (_useQuery)
     {
@@ -337,7 +337,7 @@ void ItemLineEdit::setItemNumber(const QString& pNumber)
     _fractional = item.value("item_fractional").toBool();
     _id         = item.value("item_id").toInt();
     _upc        = item.value("item_upccode").toInt();
-    _valid      = TRUE;
+    _valid      = true;
 
     setText(item.value("item_number").toString());
 
@@ -350,7 +350,7 @@ void ItemLineEdit::setItemNumber(const QString& pNumber)
     emit fractional(item.value("item_fractional").toBool());
     emit upcChanged(item.value("item_upccode").toString());
     
-    emit valid(TRUE);
+    emit valid(true);
   }
   else
   {
@@ -358,7 +358,7 @@ void ItemLineEdit::setItemNumber(const QString& pNumber)
     _uom        = "";
     _itemType   = "";
     _id         = -1;
-    _valid      = FALSE;
+    _valid      = false;
     _upc        = "";
 
     setText("");
@@ -368,11 +368,11 @@ void ItemLineEdit::setItemNumber(const QString& pNumber)
     emit descrip1Changed("");
     emit descrip2Changed("");
     emit uomChanged("");
-    emit configured(FALSE);
-    emit fractional(FALSE);
+    emit configured(false);
+    emit fractional(false);
     emit upcChanged("");
 
-    emit valid(FALSE);
+    emit valid(false);
   }
 }
 
@@ -383,9 +383,9 @@ void ItemLineEdit::silentSetId(const int pId)
            qPrintable(objectName()), pId);
 
   XSqlQuery item;
-  bool      found = FALSE;
+  bool      found = false;
 
-  _parsed = TRUE;
+  _parsed = true;
 
   if (_useValidationQuery)
   {
@@ -393,7 +393,7 @@ void ItemLineEdit::silentSetId(const int pId)
     item.bindValue(":item_id", pId);
     item.exec();
     if (item.first())
-      found = TRUE;
+      found = true;
   }
   else if (_useQuery)
   {
@@ -432,7 +432,7 @@ void ItemLineEdit::silentSetId(const int pId)
     _fractional = item.value("item_fractional").toBool();
     _upc        = item.value("item_upccode").toString();
     _id         = pId;
-    _valid      = TRUE;
+    _valid      = true;
 
     setText(item.value("item_number").toString());
     emit aliasChanged("");
@@ -444,7 +444,7 @@ void ItemLineEdit::silentSetId(const int pId)
     emit fractional(item.value("item_fractional").toBool());
     emit upcChanged(item.value("item_upccode").toString());
     
-    emit valid(TRUE);
+    emit valid(true);
 
     if (completer())
       connect(this, SIGNAL(textChanged(QString)), this, SLOT(sHandleCompleter()));
@@ -456,7 +456,7 @@ void ItemLineEdit::silentSetId(const int pId)
     _itemType   = "";
     _id         = -1;
     _upc        = "";
-    _valid      = FALSE;
+    _valid      = false;
 
     setText("");
 
@@ -465,11 +465,11 @@ void ItemLineEdit::silentSetId(const int pId)
     emit descrip1Changed("");
     emit descrip2Changed("");
     emit uomChanged("");
-    emit configured(FALSE);
-    emit fractional(FALSE);
+    emit configured(false);
+    emit fractional(false);
     emit upcChanged("");
 
-    emit valid(FALSE);
+    emit valid(false);
   }
 } 
 
@@ -707,7 +707,7 @@ void ItemLineEdit::sAlias()
   if (!_extraClauses.isEmpty())
     params.append("extraClauses", _extraClauses);
 
-  itemAliasList newdlg(parentWidget(), "", TRUE);
+  itemAliasList newdlg(parentWidget(), "", true);
   newdlg.set(params);
 
   int itemaliasid;
@@ -723,7 +723,7 @@ void ItemLineEdit::sAlias()
     {
       setId(itemalias.value("itemalias_item_id").toInt());
       emit aliasChanged(itemalias.value("itemalias_number").toString());
-      focusNextPrevChild(TRUE);
+      focusNextPrevChild(true);
     }
   }
 }
@@ -773,7 +773,7 @@ void ItemLineEdit::sParse()
            _useValidationQuery, _useQuery);
   if (!_parsed)
   {
-    _parsed = TRUE;
+    _parsed = true;
 
     if (text().length() == 0)
     {
@@ -962,9 +962,9 @@ void ItemCluster::setDescriptionVisible(const bool p)
 void ItemCluster::setReadOnly(const bool pReadOnly)
 {
   if (pReadOnly)
-    _number->setEnabled(FALSE);
+    _number->setEnabled(false);
   else
-    _number->setEnabled(TRUE);
+    _number->setEnabled(true);
 }
 
 void ItemCluster::setEnabled(const bool pEnabled)
@@ -1009,7 +1009,7 @@ itemList::itemList(QWidget* pParent, Qt::WindowFlags pFlags ) :
 
   _itemid = -1;
   _itemType = ItemLineEdit::cUndefined;
-  _useQuery = FALSE;
+  _useQuery = false;
 
   setWindowTitle(tr("Item List"));
 
@@ -1048,10 +1048,10 @@ void itemList::set(const ParameterList &pParams)
   if (valid)
   {
     _sql = param.toString();
-    _useQuery = TRUE;
+    _useQuery = true;
   }
   else
-    _useQuery = FALSE;
+    _useQuery = false;
 
   param = pParams.value("itemType", &valid);
   if (valid)
@@ -1072,7 +1072,7 @@ void itemList::set(const ParameterList &pParams)
   if (valid)
     _extraClauses = param.toStringList();
 
-  _showInactive->setChecked(FALSE);
+  _showInactive->setChecked(false);
   _showInactive->setEnabled(!(_itemType & ItemLineEdit::cActive));
   if(!_showInactive->isEnabled())
     _showInactive->hide();
@@ -1166,7 +1166,7 @@ itemSearch::itemSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
   _itemid = -1;
   _itemType = ItemLineEdit::cUndefined;
-  _useQuery = FALSE;
+  _useQuery = false;
 
   setWindowTitle( tr( "Search for Item" ) );
 
@@ -1175,12 +1175,12 @@ itemSearch::itemSearch(QWidget* pParent, Qt::WindowFlags pFlags)
   _searchDescrip->setText(tr("Search through Description 2"));
 
   _searchUpc = new XCheckBox(tr("Search through Bar Code"), this);
-  _searchUpc->setChecked( TRUE );
+  _searchUpc->setChecked( true );
   _searchUpc->setObjectName("_searchUpc");
   selectorsLyt->addWidget(_searchUpc, 3, 0);
 
   _searchAlias = new XCheckBox(tr("Search through Alias Number"), this);
-  _searchAlias->setChecked( TRUE );
+  _searchAlias->setChecked( true );
   _searchAlias->setObjectName("_searchAlias");
   selectorsLyt->addWidget(_searchAlias, 4, 0);
   
@@ -1218,10 +1218,10 @@ void itemSearch::set(const ParameterList &pParams)
   if (valid)
   {
     _sql = param.toString();
-    _useQuery = TRUE;
+    _useQuery = true;
   }
   else
-    _useQuery = FALSE;
+    _useQuery = false;
 
   param = pParams.value("itemType", &valid);
   if (valid)
@@ -1236,7 +1236,7 @@ void itemSearch::set(const ParameterList &pParams)
   if (valid)
     _extraClauses = param.toStringList();
 
-  _showInactive->setChecked(FALSE);
+  _showInactive->setChecked(false);
   _showInactive->setEnabled(!(_itemType & ItemLineEdit::cActive));
 
   param = pParams.value("caption", &valid);

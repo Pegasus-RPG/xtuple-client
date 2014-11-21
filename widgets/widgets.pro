@@ -3,7 +3,6 @@ TARGET = xtuplewidgets
 TEMPLATE = lib
 CONFIG += qt \
     warn_on \
-    designer \
     plugin
 
 # INCLUDEPATH += $$QT_SOURCE_TREE/tools/designer/interfaces ../common .
@@ -310,4 +309,4 @@ FORMS += alarmMaint.ui \
 
 RESOURCES += widgets.qrc
 
-QT +=  sql script
+QT +=  sql script designer widgets printsupport

@@ -172,12 +172,12 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      _itemTypeGroup->setEnabled(FALSE);
-      _custPn->setEnabled(FALSE);
-      _ordered->setEnabled(FALSE);
-      _billed->setEnabled(FALSE);
-      _price->setEnabled(FALSE);
-      _notes->setReadOnly(TRUE);
+      _itemTypeGroup->setEnabled(false);
+      _custPn->setEnabled(false);
+      _ordered->setEnabled(false);
+      _billed->setEnabled(false);
+      _price->setEnabled(false);
+      _notes->setReadOnly(true);
       _taxtype->setEnabled(false);
       _altRevAccnt->setEnabled(false);
       _qtyUOM->setEnabled(false);
@@ -339,13 +339,13 @@ void invoiceItem::populate()
 
     if (invcitem.value("invcitem_item_id").toInt() != -1)
     {
-      _itemSelected->setChecked(TRUE);
+      _itemSelected->setChecked(true);
       _item->setId(invcitem.value("invcitem_item_id").toInt());
       _warehouse->setId(invcitem.value("invcitem_warehous_id").toInt());
     }
     else
     {
-      _miscSelected->setChecked(TRUE);
+      _miscSelected->setChecked(true);
       _itemNumber->setText(invcitem.value("invcitem_number"));
       _itemDescrip->setText(invcitem.value("invcitem_descrip").toString());
       _salescat->setId(invcitem.value("invcitem_salescat_id").toInt());

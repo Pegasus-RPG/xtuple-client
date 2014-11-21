@@ -25,7 +25,7 @@ XLineEdit::XLineEdit(QWidget *parent, const char *name) :
 {
   if (! name && objectName().isEmpty())
     setObjectName("XLineEdit");
-  setAcceptDrops(FALSE);
+  setAcceptDrops(false);
 
 #ifdef Q_WS_MAC
   QFont f = font();

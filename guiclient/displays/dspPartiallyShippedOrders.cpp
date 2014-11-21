@@ -22,7 +22,7 @@
 #define AMOUNT_CURR_COL	8
 #define BASEAMOUNT_COL	9
 
-dspPartiallyShippedOrders::dspPartiallyShippedOrders(QWidget* parent, const char*, Qt::WFlags fl)
+dspPartiallyShippedOrders::dspPartiallyShippedOrders(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspPartiallyShippedOrders", fl)
 {
   setupUi(optionsWidget());

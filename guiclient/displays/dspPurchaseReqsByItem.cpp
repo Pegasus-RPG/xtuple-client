@@ -21,7 +21,7 @@
 #include "dspRunningAvailability.h"
 #include "purchaseOrder.h"
 
-dspPurchaseReqsByItem::dspPurchaseReqsByItem(QWidget* parent, const char*, Qt::WFlags fl)
+dspPurchaseReqsByItem::dspPurchaseReqsByItem(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspPurchaseReqsByItem", fl)
 {
   setupUi(optionsWidget());

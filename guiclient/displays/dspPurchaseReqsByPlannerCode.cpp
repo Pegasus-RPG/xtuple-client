@@ -22,7 +22,7 @@
 #include "dspRunningAvailability.h"
 #include "purchaseOrder.h"
 
-dspPurchaseReqsByPlannerCode::dspPurchaseReqsByPlannerCode(QWidget* parent, const char*, Qt::WFlags fl)
+dspPurchaseReqsByPlannerCode::dspPurchaseReqsByPlannerCode(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspPurchaseReqsByPlannerCode", fl)
 {
   setupUi(optionsWidget());

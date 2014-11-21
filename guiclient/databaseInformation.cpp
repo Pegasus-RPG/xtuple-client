@@ -15,7 +15,7 @@
 #include <dbtools.h>
 #include "xtupleproductkey.h"
 
-databaseInformation::databaseInformation(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+databaseInformation::databaseInformation(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XAbstractConfigure(parent, fl)
 {
   Q_UNUSED(modal);
@@ -87,8 +87,8 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
 
   if (!_privileges->check("ConfigDatabaseInfo"))
   {
-    _description->setEnabled(FALSE);
-    _comments->setEnabled(FALSE);
+    _description->setEnabled(false);
+    _comments->setEnabled(false);
   }
 }
 

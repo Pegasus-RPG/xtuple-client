@@ -28,7 +28,7 @@
 
 #define DEBUG   false
 
-// TODO: XDialog should have a default implementation that returns FALSE
+// TODO: XDialog should have a default implementation that returns false
 bool syncCompanies::userHasPriv(const int pMode)
 {
   if (DEBUG)
@@ -58,7 +58,7 @@ void syncCompanies::setVisible(bool visible)
     XWidget::setVisible(true);
 }
 
-syncCompanies::syncCompanies(QWidget* parent, const char* name, Qt::WFlags fl)
+syncCompanies::syncCompanies(QWidget* parent, const char* name, Qt::WindowFlags fl)
 : XWidget(parent, name, fl)
 {
   setupUi(this);

@@ -13,7 +13,7 @@
 #include "imageAssignment.h"
 #include "imageview.h"
 
-imageAssignment::imageAssignment(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+imageAssignment::imageAssignment(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : QDialog(parent, fl)
 {
   setupUi(this);
@@ -96,15 +96,15 @@ void imageAssignment::set(const ParameterList &pParams)
     {
       _mode = cEdit;
       _save->setFocus();
-      _purpose->setEnabled(FALSE);
+      _purpose->setEnabled(false);
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
       _save->hide();
       _new->hide();
-      _purpose->setEnabled(FALSE);
-      _image->setEnabled(FALSE);
+      _purpose->setEnabled(false);
+      _image->setEnabled(false);
     }
   }
 }
@@ -182,7 +182,7 @@ void imageAssignment::sNew()
   ParameterList params;
   params.append("mode", "new");
 
-  imageview newdlg(this, "", TRUE);
+  imageview newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != QDialog::Rejected)
@@ -195,7 +195,7 @@ void imageAssignment::sView()
   params.append("mode", "view");
   params.append("image_id", _image->id());
 
-  imageview newdlg(this, "", TRUE);
+  imageview newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -54,7 +54,7 @@ class orReportProto : public QObject, public QScriptable
     Q_INVOKABLE bool                exportToPDF(const QString& fileName);
     Q_INVOKABLE ParameterList       getParamList();
     Q_INVOKABLE bool                isValid();
-    Q_INVOKABLE bool                print(QPrinter *prtThis = 0, bool boolSetupPrinter = TRUE, bool showPreview = false, QWidget *parent = 0);
+    Q_INVOKABLE bool                print(QPrinter *prtThis = 0, bool boolSetupPrinter = true, bool showPreview = false, QWidget *parent = 0);
     Q_INVOKABLE bool                render(QPainter *painter, QPrinter *printer = 0);
     Q_INVOKABLE int                 reportError(QWidget *widget);
     Q_INVOKABLE bool                satisfyParams(QWidget *widget);

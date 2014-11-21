@@ -14,7 +14,7 @@
 #define LOTSERIALUTILS_H
 
 #include <QtCore>
-#include <QtGui>
+#include <QtWidgets>
 #include "parameter.h"
 
 class LotSerialUtils

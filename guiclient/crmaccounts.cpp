@@ -22,7 +22,7 @@
 #include "storedProcErrorLookup.h"
 #include "parameterwidget.h"
 
-crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
+crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "crmaccounts", fl)
 {
   setWindowTitle(tr("Accounts"));
@@ -88,7 +88,7 @@ crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
   connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
 
   if (!_privileges->check("MaintainAllCRMAccounts") && !_privileges->check("MaintainPersonalCRMAccounts"))
-    newAction()->setEnabled(FALSE);
+    newAction()->setEnabled(false);
 }
 
 void crmaccounts::sNew()

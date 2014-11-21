@@ -14,7 +14,7 @@
 #include <QImage>
 #include <quuencode.h>
 
-itemImages::itemImages(QWidget* parent, const char* name, Qt::WFlags fl)
+itemImages::itemImages(QWidget* parent, const char* name, Qt::WindowFlags fl)
   : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -91,8 +91,8 @@ void itemImages::sFillList()
     loadImage();
   else
   {
-    _prev->setEnabled(FALSE);
-    _next->setEnabled(FALSE);
+    _prev->setEnabled(false);
+    _next->setEnabled(false);
     _image->clear();
   }
 }

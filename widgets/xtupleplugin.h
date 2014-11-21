@@ -18,6 +18,7 @@
 class xTuplePlugin : public QObject, public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
+  Q_PLUGIN_METADATA(IID "com.xtuple.plugins.xTuplePlugin")
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
 
   public:

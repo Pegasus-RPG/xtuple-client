@@ -17,14 +17,14 @@
 #include "distributeInventory.h"
 #include "storedProcErrorLookup.h"
 
-postMiscProduction::postMiscProduction(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+postMiscProduction::postMiscProduction(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
 
-  _captive = FALSE;
+  _captive = false;
   _itemsiteid = -1;
   _sense = 1;
   _qty = 0;
@@ -68,7 +68,7 @@ void postMiscProduction::languageChange()
 enum SetResponse postMiscProduction::set(const ParameterList &pParams)
 {
   XDialog::set(pParams);
-  _captive = TRUE;
+  _captive = true;
 
   QVariant param;
   bool     valid;
@@ -77,8 +77,8 @@ enum SetResponse postMiscProduction::set(const ParameterList &pParams)
   if (valid)
   {
     _item->setItemsiteid(param.toInt());
-    _warehouse->setEnabled(FALSE);
-    _item->setReadOnly(TRUE);
+    _warehouse->setEnabled(false);
+    _item->setReadOnly(true);
   }
 
   return NoError;
@@ -239,7 +239,7 @@ bool postMiscProduction::createwo()
 
   // Delete any Child W/O's created
   XSqlQuery child;
-  child.prepare( "SELECT MAX(deleteWo(wo_id, TRUE)) AS result "
+  child.prepare( "SELECT MAX(deleteWo(wo_id, true)) AS result "
                  "FROM wo "
                  "WHERE ((wo_ordtype='W') AND (wo_ordid=:ordid));");
   child.bindValue(":ordid", _woid);
@@ -300,7 +300,7 @@ bool postMiscProduction::post()
 bool postMiscProduction::closewo()
 {
   XSqlQuery close;
-  close.prepare("SELECT closeWo(:wo_id, TRUE, CURRENT_DATE) AS result;");
+  close.prepare("SELECT closeWo(:wo_id, true, CURRENT_DATE) AS result;");
   close.bindValue(":wo_id", _woid);
   close.exec();
   if (close.first())

@@ -34,7 +34,7 @@
  *  the screen will return a docass_id to the calling screen.
  */
 
-docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : QDialog(parent, fl)
 {
   setupUi(this);

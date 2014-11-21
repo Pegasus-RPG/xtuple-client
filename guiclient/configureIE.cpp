@@ -23,7 +23,7 @@ bool configureIE::userHasPriv()
   return _privileges->check("ConfigureImportExport");
 }
 
-configureIE::configureIE(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
+configureIE::configureIE(QWidget* parent, const char* name, bool /*modal*/, Qt::WindowFlags fl)
     : XAbstractConfigure(parent, fl)
 {
   setupUi(this);
@@ -164,7 +164,7 @@ void configureIE::sPopulate()
   _xsltWindowsDir->setText(_metrics->value("XSLTDefaultDirWindows"));
 
   //  TODO: start using Qt's XSLT processor
-  _external->setChecked(TRUE);
+  _external->setChecked(true);
 
   _linuxCmd->setText(_metrics->value("XSLTProcessorLinux"));
   _macCmd->setText(_metrics->value("XSLTProcessorMac"));

@@ -13,7 +13,7 @@
 
 #include "guiclient.h"
 #include "xwidget.h"
-#include <QtGui/QWidget>
+#include <QtWidgets>
 
 #include "ui_departments.h"
 
@@ -22,7 +22,7 @@ class departments : public XWidget, public Ui::departments
     Q_OBJECT
 
 public:
-    departments(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    departments(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
     ~departments();
 
 public slots:

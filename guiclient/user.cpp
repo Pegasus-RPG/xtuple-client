@@ -133,7 +133,7 @@ enum SetResponse user::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 
-      _username->setEnabled(FALSE);
+      _username->setEnabled(false);
     }
     else if (param.toString() == "view")
     {
@@ -576,7 +576,7 @@ void user::sCheck()
     {
       sPopulate();
       _mode = cEdit;
-      _username->setEnabled(FALSE);
+      _username->setEnabled(false);
       _properName->setFocus();
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting User Account"),
@@ -632,9 +632,9 @@ bool user::sPopulate()
                  "          FROM locale"
                  "         WHERE locale_code='Default') AS usr_locale_id,"
                  "       NULL  AS usr_passwd,  cntct_initials AS usr_initials,"
-                 "       FALSE AS usr_agent,   crmacct_active AS usr_active,"
+                 "       false AS usr_agent,   crmacct_active AS usr_active,"
                  "       NULL  AS usr_window,  cntct_email AS usr_email,"
-                 "       FALSE AS createusers,"
+                 "       false AS createusers,"
                  "       userCanCreateUsers(getEffectiveXtUser()) AS enablecreateusers,"
                  "       crmacct_id, crmacct_emp_id, crmacct_owner_username"
                  "  FROM crmacct"
@@ -687,7 +687,7 @@ bool user::sPopulate()
     if(usrq.first())
       _exportContents->setChecked(usrq.value("usrpref_value").toString()=="t");
     else
-      _exportContents->setChecked(FALSE);
+      _exportContents->setChecked(false);
 
     usrq.prepare( "SELECT usrpref_value "
                "  FROM usrpref "
@@ -731,7 +731,7 @@ bool user::sPopulate()
   usrq.bindValue(":username", _cUsername);
   usrq.exec();
   if(usrq.first())
-    _selectedSites->setChecked(TRUE);
+    _selectedSites->setChecked(true);
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting User Sites"),
                                 usrq, __FILE__, __LINE__))
     return false;

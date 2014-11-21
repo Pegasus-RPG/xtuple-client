@@ -43,7 +43,7 @@
 #define cBudget   4
 #define cDiff     5
 
-dspFinancialReport::dspFinancialReport(QWidget* parent, const char*, Qt::WFlags fl)
+dspFinancialReport::dspFinancialReport(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspFinancialReport", fl)
 {
   setupUi(optionsWidget());
@@ -1257,7 +1257,7 @@ void dspFinancialReport::sNotes()
   params.append("period_id", _periods->id());
   params.append("flhead_id", _flhead->id());
 
-  financialReportNotes newdlg(this, "", TRUE);
+  financialReportNotes newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

@@ -141,7 +141,7 @@ class checkForUpdatesPrivate {
     QString _serverVersion;
 };
 
-checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : QDialog(parent, modal ? (fl | Qt::Dialog) : fl),
       reply(0)
 {

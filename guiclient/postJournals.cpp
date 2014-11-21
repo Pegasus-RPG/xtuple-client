@@ -19,7 +19,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 
-postJournals::postJournals(QWidget* parent, const char* name, Qt::WFlags fl)
+postJournals::postJournals(QWidget* parent, const char* name, Qt::WindowFlags fl)
   : XWidget(parent, name, fl)
 {
   setupUi(this);

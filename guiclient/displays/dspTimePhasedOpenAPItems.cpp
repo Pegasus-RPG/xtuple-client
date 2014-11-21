@@ -24,7 +24,7 @@
 #include "dspAPOpenItemsByVendor.h"
 #include "submitReport.h"
 
-dspTimePhasedOpenAPItems::dspTimePhasedOpenAPItems(QWidget* parent, const char*, Qt::WFlags fl)
+dspTimePhasedOpenAPItems::dspTimePhasedOpenAPItems(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspTimePhasedOpenAPItems", fl)
 {
   setupUi(optionsWidget());
@@ -242,12 +242,12 @@ void dspTimePhasedOpenAPItems::sToggleCustom()
   if (_custom->isChecked())
   {
     setReportName("TimePhasedOpenAPItems");
-    _calendarLit->setHidden(FALSE);
-    _calendar->setHidden(FALSE);
-    _periods->setHidden(FALSE);
+    _calendarLit->setHidden(false);
+    _calendar->setHidden(false);
+    _periods->setHidden(false);
     _asOf->setDate(omfgThis->dbDate(), true);
-    _asOf->setEnabled(FALSE);
-    _useGroup->setHidden(TRUE);
+    _asOf->setEnabled(false);
+    _useGroup->setHidden(true);
 
     list()->setColumnCount(0);
     list()->addColumn(tr("Vend. #"), _orderColumn, Qt::AlignLeft, true, "vend_number");
@@ -256,11 +256,11 @@ void dspTimePhasedOpenAPItems::sToggleCustom()
   else
   {
     setReportName("APAging");
-    _calendarLit->setHidden(TRUE);
-    _calendar->setHidden(TRUE);
-    _periods->setHidden(TRUE);
-    _asOf->setEnabled(TRUE);
-    _useGroup->setHidden(FALSE);
+    _calendarLit->setHidden(true);
+    _calendar->setHidden(true);
+    _periods->setHidden(true);
+    _asOf->setEnabled(true);
+    _useGroup->setHidden(false);
 
     list()->addColumn(tr("Total Open"), _bigMoneyColumn, Qt::AlignRight, true, "total_val");
     list()->addColumn(tr("0+ Days"),    _bigMoneyColumn, Qt::AlignRight, true, "cur_val");

@@ -97,7 +97,7 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QTranslator>
-#include <QHttp>
+//#include <QHttp>
 #include <QUrl>
 
 #include <dbtools.h>
@@ -131,7 +131,7 @@ QString __password;
 
 #define DEBUG false
 
-extern void xTupleMessageOutput(QtMsgType type, const char *msg);
+extern void xTupleMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 
 // helps determine which edition we're running & what splash screen to present
 struct editionDesc {
@@ -156,15 +156,15 @@ int main(int argc, char *argv[])
   QString username;
   QString databaseURL;
   QString passwd;
-  bool    haveUsername    = FALSE;
-  bool    haveDatabaseURL = FALSE;
-  bool    loggedIn        = FALSE;
+  bool    haveUsername    = false;
+  bool    haveDatabaseURL = false;
+  bool    loggedIn        = false;
   bool    haveEnhancedAuth= false;
   bool    _enhancedAuth   = false;
   bool    havePasswd      = false;
   bool    forceWelcomeStub= false;
 
-  qInstallMsgHandler(xTupleMessageOutput);
+  qInstallMessageHandler(xTupleMessageOutput);
   QApplication app(argc, argv);
   app.setOrganizationDomain("xTuple.com");
   app.setOrganizationName("xTuple");
@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
   QCoreApplication::addLibraryPath(QString("."));
 #endif
 
-#ifndef Q_WS_MACX
+#ifndef Q_OS_MACX
   QApplication::setWindowIcon(QIcon(":/images/icon32x32.png"));
 #endif
 
@@ -192,23 +192,23 @@ int main(int argc, char *argv[])
 
       if (argument.contains("-databaseURL=", Qt::CaseInsensitive))
       {
-        haveDatabaseURL = TRUE;
+        haveDatabaseURL = true;
         databaseURL = argument.right(argument.length() - 13);
       }
       else if (argument.contains("-username=", Qt::CaseInsensitive))
       {
-        haveUsername = TRUE;
+        haveUsername = true;
         username = argument.right(argument.length() - 10);
       }
       else if (argument.contains("-passwd=", Qt::CaseInsensitive))
       {
-        havePasswd = TRUE;
+        havePasswd = true;
         passwd     = argument.right(argument.length() - 8);
       }
       else if (argument.contains("-noAuth", Qt::CaseInsensitive))
       {
-        haveUsername = TRUE;
-        havePasswd   = TRUE;
+        haveUsername = true;
+        havePasswd   = true;
       } 
       else if (argument.contains("-enhancedAuth", Qt::CaseInsensitive))
       {
@@ -246,7 +246,7 @@ int main(int argc, char *argv[])
   _splash = new QSplashScreen();
   _splash->setPixmap(QPixmap(":/images/splashEmpty.png"));
 
-  _evaluation = FALSE;
+  _evaluation = false;
 
   if (!loggedIn)
   {
@@ -274,7 +274,7 @@ int main(int argc, char *argv[])
     if ( (haveDatabaseURL) && (haveUsername) && (havePasswd) )
       params.append("login");
 
-    login2 newdlg(0, "", TRUE);
+    login2 newdlg(0, "", true);
     newdlg.set(params, _splash);
 
     if(newdlg.result() != QDialog::Accepted)
@@ -439,7 +439,7 @@ int main(int argc, char *argv[])
       _splash->hide();
       if (expired)
       {
-        registrationKeyDialog newdlg(0, "", TRUE);
+        registrationKeyDialog newdlg(0, "", true);
         if(newdlg.exec() == -1)
         {
           QMessageBox::critical(0, QObject::tr("Registration Key"), checkPassReason);
@@ -474,7 +474,8 @@ int main(int argc, char *argv[])
         name = metric.value("name").toString();
       }
 
-      QHttp *http = new QHttp();
+      //for qt5, removed. needs to be ported
+      /*QHttp *http = new QHttp();
       
       QUrl url;
       url.setPath("/api/regviolation.php");
@@ -489,6 +490,7 @@ int main(int argc, char *argv[])
 
       http->setHost("www.xtuple.org");
       http->get(url.toString());
+      */
 
       if(forced)
         return 0;
@@ -520,7 +522,7 @@ int main(int argc, char *argv[])
 
       _splash->hide();
 
-      checkForUpdates newdlg(0,"", TRUE);
+      checkForUpdates newdlg(0,"", true);
 
       result = newdlg.exec();
       if (result == QDialog::Rejected) {
@@ -621,11 +623,11 @@ int main(int argc, char *argv[])
       for (QStringList::Iterator fit = files.begin(); fit != files.end(); ++fit)
       {
         if (DEBUG)
-          qDebug("looking for %s", (*fit).toAscii().data());
+          qDebug("looking for %s", (*fit).toLatin1().data());
         if (translator->load(translationFile(langext, *fit)))
         {
           app.installTranslator(translator);
-          qDebug("installed %s", (*fit).toAscii().data());
+          qDebug("installed %s", (*fit).toLatin1().data());
           translator = new QTranslator(&app);
         }
         else
@@ -664,8 +666,8 @@ int main(int argc, char *argv[])
       QLocale::setDefault(QLocale::system());
 
     qDebug("Locale set to language %s and country %s",
-           QLocale().languageToString(QLocale().language()).toAscii().data(),
-           QLocale().countryToString(QLocale().country()).toAscii().data());
+           QLocale().languageToString(QLocale().language()).toLatin1().data(),
+           QLocale().countryToString(QLocale().country()).toLatin1().data());
 
   }
   else
@@ -708,7 +710,7 @@ int main(int argc, char *argv[])
   
   keytogether = keypath + keyname;
   
-  // qDebug("keytogether: %s", keytogether.toAscii().data());
+  // qDebug("keytogether: %s", keytogether.toLatin1().data());
   QFile keyFile(keytogether);
 
   if(keyFile.exists())
@@ -793,7 +795,7 @@ int main(int argc, char *argv[])
   {
     if(baseCurrency.value("count").toInt() != 1)
     {
-      currenciesDialog newdlg(0, "", TRUE);
+      currenciesDialog newdlg(0, "", true);
       newdlg.exec();
       baseCurrency.exec();
       if(baseCurrency.first())

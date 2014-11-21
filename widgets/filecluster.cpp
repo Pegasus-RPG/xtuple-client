@@ -54,7 +54,7 @@ void FileCluster::sEllipses()
   {
     QStringList filters;
     filters << _filter << tr("Any Files (*)");
-    newdlg.setFilters(filters);
+    newdlg.setNameFilters(filters);
   }
   if (newdlg.exec())
   {

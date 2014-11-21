@@ -74,7 +74,7 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WindowFlags
   _cmnttypeLit->setObjectName("_cmnttypeLit");
   layout8->addWidget( _cmnttypeLit );
 
-  _cmnttype = new XComboBox( FALSE, this);
+  _cmnttype = new XComboBox( false, this);
   _cmnttype->setObjectName("_cmnttype" );
   layout8->addWidget( _cmnttype );
   layout9->addLayout( layout8 );

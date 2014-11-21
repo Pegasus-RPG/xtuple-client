@@ -22,7 +22,7 @@
 #include "package.h"
 #include "storedProcErrorLookup.h"
 
-packages::packages(QWidget* parent, const char* name, Qt::WFlags fl)
+packages::packages(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -215,7 +215,7 @@ void packages::sNew()
   ParameterList params;
   params.append("mode", "new");
 
-  package newdlg(this, "", TRUE);
+  package newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -226,7 +226,7 @@ void packages::sEdit()
   params.append("mode", "edit");
   params.append("pkghead_id", _package->id());
 
-  package newdlg(this, "", TRUE);
+  package newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -239,7 +239,7 @@ void packages::sView()
   params.append("mode", "view");
   params.append("pkghead_id", _package->id());
 
-  package newdlg(this, "", TRUE);
+  package newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

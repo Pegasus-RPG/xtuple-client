@@ -22,7 +22,7 @@
 
 #include "errorReporter.h"
 
-itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   XSqlQuery itemitemPricingScheduleItem;
@@ -85,7 +85,7 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
   _shipViaFreight->setType(XComboBox::ShipVias);
   _freightClass->setType(XComboBox::FreightClasses);
   
-  _tab->setTabEnabled(_tab->indexOf(_configuredPrices),FALSE);
+  _tab->setTabEnabled(_tab->indexOf(_configuredPrices),false);
  
   itemitemPricingScheduleItem.exec("SELECT uom_name FROM uom WHERE (uom_item_weight);");
   if (itemitemPricingScheduleItem.first())
@@ -168,39 +168,39 @@ enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 
-      _item->setReadOnly(TRUE);
-      _prodcat->setEnabled(FALSE);
-      _markupProdcat->setEnabled(FALSE);
-      _typeGroup->setEnabled(FALSE);
-      _dscitem->setReadOnly(TRUE);
-      _markupitem->setReadOnly(TRUE);
-      _discountBy->setEnabled(FALSE);
-      _markupBy->setEnabled(FALSE);
+      _item->setReadOnly(true);
+      _prodcat->setEnabled(false);
+      _markupProdcat->setEnabled(false);
+      _typeGroup->setEnabled(false);
+      _dscitem->setReadOnly(true);
+      _markupitem->setReadOnly(true);
+      _discountBy->setEnabled(false);
+      _markupBy->setEnabled(false);
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
 
-      _item->setReadOnly(TRUE);
-      _prodcat->setEnabled(FALSE);
-      _qtyBreak->setEnabled(FALSE);
-      _qtyBreakCat->setEnabled(FALSE);
-      _qtyBreakFreight->setEnabled(FALSE);
-      _price->setEnabled(FALSE);
-      _discount->setEnabled(FALSE);
-      _fixedAmtDiscount->setEnabled(FALSE);
-      _markup->setEnabled(FALSE);
-      _fixedAmtMarkup->setEnabled(FALSE);
-      _priceFreight->setEnabled(FALSE);
-      _typeGroup->setEnabled(FALSE);
-      _typeFreightGroup->setEnabled(FALSE);
-      _siteFreight->setEnabled(FALSE);
-      _zoneFreightGroup->setEnabled(FALSE);
-      _shipViaFreightGroup->setEnabled(FALSE);
-      _freightClassGroup->setEnabled(FALSE);
-      _dscitem->setReadOnly(TRUE);
-      _discountBy->setEnabled(FALSE);
-      _markupBy->setEnabled(FALSE);
+      _item->setReadOnly(true);
+      _prodcat->setEnabled(false);
+      _qtyBreak->setEnabled(false);
+      _qtyBreakCat->setEnabled(false);
+      _qtyBreakFreight->setEnabled(false);
+      _price->setEnabled(false);
+      _discount->setEnabled(false);
+      _fixedAmtDiscount->setEnabled(false);
+      _markup->setEnabled(false);
+      _fixedAmtMarkup->setEnabled(false);
+      _priceFreight->setEnabled(false);
+      _typeGroup->setEnabled(false);
+      _typeFreightGroup->setEnabled(false);
+      _siteFreight->setEnabled(false);
+      _zoneFreightGroup->setEnabled(false);
+      _shipViaFreightGroup->setEnabled(false);
+      _freightClassGroup->setEnabled(false);
+      _dscitem->setReadOnly(true);
+      _discountBy->setEnabled(false);
+      _markupBy->setEnabled(false);
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }
@@ -261,7 +261,7 @@ void itemPricingScheduleItem::sCheckEnable()
 
 void itemPricingScheduleItem::sSave()
 {
-  sSave(TRUE);
+  sSave(true);
 }
 
 void itemPricingScheduleItem::sSave( bool pClose)
@@ -652,9 +652,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
   {
     _mode = cEdit;
 
-    _item->setReadOnly(TRUE);
-    _prodcat->setEnabled(FALSE);
-    _typeGroup->setEnabled(FALSE);
+    _item->setReadOnly(true);
+    _prodcat->setEnabled(false);
+    _typeGroup->setEnabled(false);
   }
 
 }
@@ -855,9 +855,9 @@ void itemPricingScheduleItem::sUpdateCosts(int pItemid)
   }
   
   if (_item->isConfigured())
-    _tab->setTabEnabled(_tab->indexOf(_configuredPrices),TRUE);
+    _tab->setTabEnabled(_tab->indexOf(_configuredPrices),true);
   else
-    _tab->setTabEnabled(_tab->indexOf(_configuredPrices),FALSE);
+    _tab->setTabEnabled(_tab->indexOf(_configuredPrices),false);
 }
 
 void itemPricingScheduleItem::sUpdateMargins()
@@ -986,14 +986,14 @@ void itemPricingScheduleItem::sPriceUOMChanged()
 void itemPricingScheduleItem::sNew()
 {
   if (_mode == cNew)
-    sSave(FALSE);
+    sSave(false);
   ParameterList params;
   params.append("mode", "new");
   params.append("ipsitem_id", _ipsitemid);
   params.append("curr_id", _price->id());
   params.append("item_id", _item->id());
 
-  characteristicPrice newdlg(this, "", TRUE);
+  characteristicPrice newdlg(this, "", true);
   newdlg.set(params);
 
   int result;
@@ -1015,7 +1015,7 @@ void itemPricingScheduleItem::sEdit()
   params.append("curr_id", _price->id());
   params.append("item_id", _item->id());
 
-  characteristicPrice newdlg(this, "", TRUE);
+  characteristicPrice newdlg(this, "", true);
   newdlg.set(params);
 
   int result;

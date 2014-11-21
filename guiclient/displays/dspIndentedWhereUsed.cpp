@@ -17,7 +17,7 @@
 
 #include "dspInventoryHistory.h"
 
-dspIndentedWhereUsed::dspIndentedWhereUsed(QWidget* parent, const char*, Qt::WFlags fl)
+dspIndentedWhereUsed::dspIndentedWhereUsed(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspIndentedWhereUsed", fl)
 {
   setupUi(optionsWidget());

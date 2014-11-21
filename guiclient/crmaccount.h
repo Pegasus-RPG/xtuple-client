@@ -24,7 +24,7 @@ class crmaccount : public XWidget, public Ui::crmaccount
     Q_OBJECT
 
 public:
-    crmaccount(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    crmaccount(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
     ~crmaccount();
     static      void doDialog(QWidget *, const ParameterList &);
     Q_INVOKABLE int  id();

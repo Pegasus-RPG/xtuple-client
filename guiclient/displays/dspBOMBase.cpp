@@ -15,7 +15,7 @@
 
 #include "item.h"
 
-dspBOMBase::dspBOMBase(QWidget* parent, const char* name, Qt::WFlags fl)
+dspBOMBase::dspBOMBase(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : display(parent, name, fl)
 {
   setupUi(optionsWidget());

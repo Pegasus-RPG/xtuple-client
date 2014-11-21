@@ -17,7 +17,7 @@
 #include "apCreditMemoApplication.h"
 #include "storedProcErrorLookup.h"
 
-applyAPCreditMemo::applyAPCreditMemo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+applyAPCreditMemo::applyAPCreditMemo(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -31,7 +31,7 @@ applyAPCreditMemo::applyAPCreditMemo(QWidget* parent, const char* name, bool mod
 
   _buttonBox->button(QDialogButtonBox::Save)->setText(tr("Post"));
 
-  _captive = FALSE;
+  _captive = false;
 
   _apopen->addColumn(tr("Doc. Type"),   _docTypeColumn,  Qt::AlignCenter,true, "doctype");
   _apopen->addColumn(tr("Doc. Number"), -1,              Qt::AlignCenter,true, "apopen_docnumber");
@@ -50,7 +50,7 @@ applyAPCreditMemo::applyAPCreditMemo(QWidget* parent, const char* name, bool mod
     _apopen->hideColumn("appliedcurrabbr");
   }
 
-  _vend->setReadOnly(TRUE);
+  _vend->setReadOnly(true);
   sPriceGroup();
   adjustSize();
 }
@@ -74,7 +74,7 @@ enum SetResponse applyAPCreditMemo::set(const ParameterList &pParams)
   param = pParams.value("apopen_id", &valid);
   if (valid)
   {
-    _captive = TRUE;
+    _captive = true;
     _apopenid = param.toInt();
     populate();
   }
@@ -155,7 +155,7 @@ void applyAPCreditMemo::sApply()
   params.append("sourceApopenid", _apopenid);
   params.append("targetApopenid", _apopen->id());
 
-  apCreditMemoApplication newdlg(this, "", TRUE);
+  apCreditMemoApplication newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     populate();

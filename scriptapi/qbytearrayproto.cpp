@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which(including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -50,19 +50,19 @@ QScriptValue constructQByteArray(QScriptContext *context,
 
   else if (context->argumentCount() == 1 &&
            context->argument(0).isString())
-    obj = new QByteArray(context->argument(0).toString().toAscii().data());
+    obj = new QByteArray(context->argument(0).toString().toLatin1().data());
 
   else if (context->argumentCount() == 2 &&
            context->argument(0).isString() &&
            context->argument(1).isNumber())
-    obj = new QByteArray(context->argument(0).toString().toAscii().data(),
+    obj = new QByteArray(context->argument(0).toString().toLatin1().data(),
                          context->argument(1).toInt32());
 
   else if (context->argumentCount() == 2 &&
            context->argument(0).isNumber() &&
            context->argument(1).isString())
     obj = new QByteArray(context->argument(0).toInt32(),
-                         context->argument(1).toString().at(0).toAscii());
+                         context->argument(1).toString().at(0).toLatin1());
 
   else
     context->throwError(QScriptContext::UnknownError,

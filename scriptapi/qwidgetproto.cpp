@@ -1,7 +1,7 @@
 /*
  *This file is part of the xTuple ERP: PostBooks Edition, a free and
  *open source Enterprise Resource Planning software suite,
- *Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ *Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
  *It is licensed to you under the Common Public Attribution License
  *version 1.0, the full text of which(including xTuple-specific Exhibits)
  *is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -16,7 +16,7 @@
 
 QScriptValue scriptFind(QScriptContext *context, QScriptEngine  * engine)
 {
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN
   if (context->argumentCount() >= 1 &&
       qscriptvalue_cast<WId>(context->argument(0)))
     return engine->toScriptValue(QWidget::find(qscriptvalue_cast<WId>(context->argument(0))));
@@ -171,7 +171,7 @@ QRect QWidgetProto::contentsRect() const
   return QRect();
 }
 
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN
 WId QWidgetProto::effectiveWinId() const
 {
   QWidget *item = qscriptvalue_cast<QWidget*>(thisObject());
@@ -298,6 +298,7 @@ int QWidgetProto::heightForWidth(int w) const
   return 0;
 }
 
+/*
 QInputContext *QWidgetProto::inputContext()
 {
   QWidget *item = qscriptvalue_cast<QWidget*>(thisObject());
@@ -305,6 +306,7 @@ QInputContext *QWidgetProto::inputContext()
     return item->inputContext();
   return 0;
 }
+*/
 
 QVariant QWidgetProto::inputMethodQuery(int query) const
 {
@@ -637,12 +639,14 @@ void QWidgetProto::setForegroundRole(int role)
     item->setForegroundRole((QPalette::ColorRole)role);
 }
 
+/*
 void QWidgetProto::setInputContext(QInputContext *context)
 {
   QWidget *item = qscriptvalue_cast<QWidget*>(thisObject());
   if (item)
     item->setInputContext(context);
 }
+*/
 
 void QWidgetProto::setLayout(QLayout *layout)
 {
@@ -788,7 +792,7 @@ QRegion QWidgetProto::visibleRegion() const
   return QRegion();
 }
 
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN
 WId QWidgetProto::winId() const
 {
   QWidget *item = qscriptvalue_cast<QWidget*>(thisObject());

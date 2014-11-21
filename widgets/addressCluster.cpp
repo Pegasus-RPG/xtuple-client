@@ -337,7 +337,7 @@ void AddressCluster::silentSetId(const int pId)
         return;
   }
 
-    // _parsed = TRUE;
+    // _parsed = true;
 }
 
 void AddressCluster::setState(const QString &p)
@@ -509,7 +509,7 @@ int AddressCluster::save(enum SaveFlags flag)
     if (datamodQ.value("result").toInt() > 0)
     {
       _id=datamodQ.value("result").toInt();
-      _selected = FALSE;
+      _selected = false;
       _valid = true;
       silentSetId(id());
       return id();
@@ -665,7 +665,7 @@ void AddressCluster::setAddrChange(QString p)
 
 ///////////////////////////////////////////////////////////////////////////
 
-AddressList::AddressList(QWidget* pParent, const char* pName, bool, Qt::WFlags)
+AddressList::AddressList(QWidget* pParent, const char* pName, bool, Qt::WindowFlags)
   : VirtualList(pParent, 0)
 {
     _parent = (AddressCluster*)(pParent);

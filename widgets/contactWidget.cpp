@@ -161,7 +161,7 @@ void ContactWidget::init()
     _webaddr->setPalette(p);
     
     QFont newFont = _email->font();
-    newFont.setUnderline(TRUE);
+    newFont.setUnderline(true);
     emailEdit->setFont(newFont);
     _webaddr->setFont(newFont);
 
@@ -433,7 +433,7 @@ void ContactWidget::silentSetId(const int pId)
   }
 
   _changed=false;
-  // _parsed = TRUE;
+  // _parsed = true;
 }
 
 void ContactWidget::setListVisible(bool p)
@@ -1080,7 +1080,7 @@ void ContactWidget::sLaunchWebaddr()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-ContactList::ContactList(QWidget* pParent, const char* pName, bool, Qt::WFlags) 
+ContactList::ContactList(QWidget* pParent, const char* pName, bool, Qt::WindowFlags) 
   : VirtualList(pParent, 0)
 {
   setAttribute(Qt::WA_DeleteOnClose);
@@ -1303,7 +1303,7 @@ void ContactSearch::sFillList()
   MetaSQLQuery mql("SELECT cntct.*, crmacct_name"
                    "  FROM cntct()"
                    "  LEFT OUTER JOIN crmacct ON (cntct_crmacct_id = crmacct_id)"
-                   " WHERE TRUE"
+                   " WHERE true"
                    "<? if exists('crmacctid') ?>"
                    "  AND (cntct_crmacct_id=<? value('crmacctid') ?>)"
                    "<? endif ?>"
@@ -1428,7 +1428,7 @@ void ContactWidget::sEditEmailList()
   ParameterList params;
   params.append("cntct_id", _id);
 
-  contactEmail newdlg(this, "", TRUE);
+  contactEmail newdlg(this, "", true);
   newdlg.set(params);
   int selected = newdlg.exec();
   fillEmail();
