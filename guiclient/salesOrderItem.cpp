@@ -1444,10 +1444,13 @@ void salesOrderItem::sSave(bool pPartial)
 
   salesSave.exec("COMMIT;");
 
-  if (_mode == cNew)
-    omfgThis->sSalesOrdersUpdated(_soheadid);
-  else if (_mode == cNewQuote)
-    omfgThis->sQuotesUpdated(_soheadid);
+  if (!pPartial)
+  {
+    if (_mode == cNew)
+      omfgThis->sSalesOrdersUpdated(_soheadid);
+    else if (_mode == cNewQuote)
+      omfgThis->sQuotesUpdated(_soheadid);
+  }
   
   _modified = false;
 
