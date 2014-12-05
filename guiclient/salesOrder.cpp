@@ -252,7 +252,10 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
 
   _project->setType(ProjectLineEdit::SalesOrder);
   if (!_metrics->boolean("UseProjects"))
+  {
+    _projectLit->hide();
     _project->hide();
+  }
 
   // If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))

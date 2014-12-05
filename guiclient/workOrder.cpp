@@ -94,7 +94,10 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _project->setType(ProjectLineEdit::WorkOrder);
   if(!_metrics->boolean("UseProjects"))
+  {
+    _projectLit->hide();
     _project->hide();
+  }
 
   _itemchar = new QStandardItemModel(0, 2, this);
   _itemchar->setHeaderData( 0, Qt::Horizontal, tr("Name"), Qt::DisplayRole);
