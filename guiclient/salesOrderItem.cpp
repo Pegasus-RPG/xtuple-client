@@ -2476,6 +2476,11 @@ void salesOrderItem::sHandleSupplyOrder()
     { // supply order does not exist
       // first save the sales order item
       sSave(true);
+      if (_modified)  // catch an error saving
+      {
+        _createSupplyOrder->setChecked(false);
+        return;
+      }
       
       // check _supplyOrderType to determine type of order
       if (_supplyOrderType == "W")
