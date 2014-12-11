@@ -1127,32 +1127,32 @@ void salesOrderItem::sSave(bool pPartial)
     }
 
     //  Check to see if a Reservations need changes
-    if (_qtyOrdered->toDouble() < _qtyOrderedCache)
+    if (_qtyOrdered->toDouble() < _qtyreserved)
     {
-      if (_qtyreserved > 0.0)
+      QMessageBox::warning( this, tr("Unreserve Sales Order Item"),
+                            tr("<p>The quantity ordered for this Sales "
+                               "Order Line Item has been changed. "
+                               "Reservations have been removed "
+                               "and you will be prompted to re-reserve.") );
+      salesSave.prepare("SELECT unreserveSoLineQty(:soitem_id) AS result;");
+      salesSave.bindValue(":soitem_id", _soitemid);
+      salesSave.exec();
+      if (salesSave.first())
       {
-        QMessageBox::warning( this, tr("Unreserve Sales Order Item"),
-                              tr("<p>The quantity ordered for this Sales "
-                                   "Order Line Item has been changed. "
-                                   "Reservations have been removed.") );
-        salesSave.prepare("SELECT unreserveSoLineQty(:soitem_id) AS result;");
-        salesSave.bindValue(":soitem_id", _soitemid);
-        salesSave.exec();
-        if (salesSave.first())
+        int result = salesSave.value("result").toInt();
+        if (result < 0)
         {
-          int result = salesSave.value("result").toInt();
-          if (result < 0)
-          {
-            systemError(this, storedProcErrorLookup("unreservedSoLineQty", result) +
-                        tr("<br>Line Item %1").arg(""),
-                        __FILE__, __LINE__);
-          }
+          systemError(this, storedProcErrorLookup("unreservedSoLineQty", result) +
+                      tr("<br>Line Item %1").arg(""),
+                      __FILE__, __LINE__);
         }
-        else if (salesSave.lastError().type() != QSqlError::NoError)
-        {
-          systemError(this, tr("Line Item %1\n").arg("") +
-                      salesSave.lastError().databaseText(), __FILE__, __LINE__);
-        }
+        // setup for re-reserving the new qty
+        _reserveOnSave->setChecked(true);
+      }
+      else if (salesSave.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, tr("Line Item %1\n").arg("") +
+                    salesSave.lastError().databaseText(), __FILE__, __LINE__);
       }
     }
   }
@@ -1462,10 +1462,11 @@ void salesOrderItem::sSave(bool pPartial)
     return;
   }
 
+  if (_metrics->boolean("EnableSOReservations") && _reserveOnSave->isChecked())
+    sReserveStock();
+
   if ( (!_canceling) && (cNew == _mode || cNewQuote == _mode) )
   {
-    if (_metrics->boolean("EnableSOReservations") && _reserveOnSave->isChecked())
-      sReserveStock();
     clear();
     prepare();
     _prev->setEnabled(true);
