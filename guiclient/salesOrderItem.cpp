@@ -261,6 +261,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   {
     _reserved->hide();
     _reservable->hide();
+    _reserveOnSave->setChecked(false);
   }
   _reserveOnSave->hide();
 
@@ -477,7 +478,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
         systemError(this, setSales.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
-
+      
       if (_metrics->boolean("EnableSOReservations"))
         _reserveOnSave->show();
     }
@@ -542,6 +543,9 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       connect(_unitCost,          SIGNAL(editingFinished()),    this, SLOT(sCalculateFromMarkup()));
       connect(_markupFromUnitCost,SIGNAL(editingFinished()),    this, SLOT(sCalculateFromMarkup()));
       connect(_createSupplyOrder, SIGNAL(toggled(bool)),        this, SLOT(sHandleSupplyOrder()));
+      
+      if (_metrics->boolean("EnableSOReservations"))
+        _reserveOnSave->show();
     }
     else if (param.toString() == "editQuote")
     {
@@ -1129,11 +1133,6 @@ void salesOrderItem::sSave(bool pPartial)
     //  Check to see if a Reservations need changes
     if (_qtyOrdered->toDouble() < _qtyreserved)
     {
-      QMessageBox::warning( this, tr("Unreserve Sales Order Item"),
-                            tr("<p>The quantity ordered for this Sales "
-                               "Order Line Item has been changed. "
-                               "Reservations have been removed "
-                               "and you will be prompted to re-reserve.") );
       salesSave.prepare("SELECT unreserveSoLineQty(:soitem_id) AS result;");
       salesSave.bindValue(":soitem_id", _soitemid);
       salesSave.exec();
@@ -2319,12 +2318,37 @@ void salesOrderItem::sSubstitute()
 
 void salesOrderItem::sReserveStock()
 {
-  ParameterList params;
-  params.append("soitem_id", _soitemid);
-  
-  reserveSalesOrderItem newdlg(this, "", true);
-  newdlg.set(params);
-  newdlg.exec();
+  if (_metrics->boolean("SOManualReservations"))
+  {
+    ParameterList params;
+    params.append("soitem_id", _soitemid);
+    
+    reserveSalesOrderItem newdlg(this, "", true);
+    newdlg.set(params);
+    newdlg.exec();
+  }
+  else
+  {
+    XSqlQuery reserveSales;
+    reserveSales.prepare("SELECT reserveSoLineBalance(:soitem_id) AS result;");
+    reserveSales.bindValue(":soitem_id", _soitemid);
+    reserveSales.exec();
+    if (reserveSales.first())
+    {
+      int result = reserveSales.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("reserveSoLineBalance", result),
+                    __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (reserveSales.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, reserveSales.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
 }
 
 void salesOrderItem::sPopulateHistory()
