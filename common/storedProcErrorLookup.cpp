@@ -983,6 +983,9 @@ const struct {
 	QT_TRANSLATE_NOOP("storedProcErrorLookup", "The A/P Credit Memo to apply was not found."),              0, "" },
   { "postAPCreditMemoApplication", -6,
 	QT_TRANSLATE_NOOP("storedProcErrorLookup", "The amount to apply for this A/P Credit Memo is NULL."),    0, "" },
+  { "postAPCreditMemoApplication", -7,
+    QT_TRANSLATE_NOOP("storedProcErrorLookup", "The value of the applications that are you attempting to post "
+                      "is greater than the balance of the target A/P open item." ),  0, "" },
 
   { "postARCreditMemoApplication", -1,
 	    QT_TRANSLATE_NOOP("storedProcErrorLookup", "There are no A/R Credit Memo applications to post."),	0, "" },
