@@ -108,11 +108,12 @@ void applyAPCreditMemo::sPost()
       return;
     }
   }
-  else if (ErrorReporter::error(QtCriticalMsg, this,
-                                tr("Error posting"), applyPost,
-                                __FILE__, __LINE__))
+  if (applyPost.lastError().type() != QSqlError::NoError)
   {
     applyPost.exec("ROLLBACK;");
+    ErrorReporter::error(QtCriticalMsg, this,
+                         tr("Error posting"), applyPost,
+                         __FILE__, __LINE__);
     return;
   }
 
