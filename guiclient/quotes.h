@@ -32,6 +32,7 @@ public slots:
     virtual void sConvertSalesOrder();
     virtual void sConvertInvoice();
     virtual void sCopy();
+    virtual void sCopyToCustomer();
     virtual void sNew();
     virtual void sEdit();
     virtual void sView();

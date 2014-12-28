@@ -26,6 +26,7 @@
 #include "parameterwidget.h"
 #include "printQuote.h"
 #include "salesOrder.h"
+#include "copyQuote.h"
 #include "storedProcErrorLookup.h"
 
 quotes::quotes(QWidget* parent, const char *name, Qt::WFlags fl)
@@ -107,6 +108,9 @@ void quotes::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
   pMenu->addSeparator();
 
   menuItem = pMenu->addAction(tr("Copy"), this, SLOT(sCopy()));
+  menuItem->setEnabled(_privileges->check("MaintainQuotes"));
+
+  menuItem = pMenu->addAction(tr("Copy to Cust./Prospect"), this, SLOT(sCopyToCustomer()));
   menuItem->setEnabled(_privileges->check("MaintainQuotes"));
 
   pMenu->addSeparator();
@@ -349,6 +353,27 @@ void quotes::sCopy()
   }
   if(lastid != -1)
     omfgThis->sQuotesUpdated(lastid);
+}
+
+void quotes::sCopyToCustomer()
+{
+    QList<XTreeWidgetItem*> selected = list()->selectedItems();
+    int lastid = -1;
+    for (int i = 0; i < selected.size(); i++)
+    {
+      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+      {
+        int qid = ((XTreeWidgetItem*)(selected[i]))->id();
+        ParameterList params;
+        params.append("quhead_id", qid);
+
+        copyQuote newdlg(this, "", TRUE);
+        newdlg.set(params);
+        lastid = newdlg.exec();
+      }
+    }
+    if(lastid != -1)
+      omfgThis->sQuotesUpdated(lastid);
 }
 
 void quotes::sNew()
