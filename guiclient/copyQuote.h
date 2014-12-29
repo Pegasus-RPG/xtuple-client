@@ -35,12 +35,9 @@ protected slots:
 
 signals:
     void newId(int);
-    void newMode(int);
 
 private:
-    int _mode;
     int _quoteid;
-    bool _captive;
 
 };
 

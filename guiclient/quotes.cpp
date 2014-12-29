@@ -175,11 +175,11 @@ void quotes::sConvert(int pType)
       QList<XTreeWidgetItem*> selected = list()->selectedItems();
       QList<XTreeWidgetItem*> notConverted;
 
-      for (int i = 0; i < selected.size(); i++)
+      foreach (XTreeWidgetItem *item, list()->selectedItems())
       {
-        if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+        if (checkSitePrivs(item->id()))
         {
-          int quheadid = ((XTreeWidgetItem*)(selected[i]))->id();
+          int quheadid = item->id();
           XSqlQuery check;
           check.prepare("SELECT * FROM quhead WHERE (quhead_id = :quhead_id) AND (quhead_status ='C');");
           check.bindValue(":quhead_id", quheadid);
@@ -194,8 +194,8 @@ void quotes::sConvert(int pType)
           }
           else
           {
-          convert.bindValue(":quhead_id", quheadid);
-          convert.exec();
+            convert.bindValue(":quhead_id", quheadid);
+            convert.exec();
           }
           if (convert.first())
           {
@@ -226,7 +226,7 @@ void quotes::sConvert(int pType)
                         systemError(this,
                                     storedProcErrorLookup("convertProspectToCustomer",
                                     result), __FILE__, __LINE__);
-                        notConverted.append(selected[i]);
+                        notConverted.append(item);
                         continue;
                       }
                       convert.exec();
@@ -237,8 +237,8 @@ void quotes::sConvert(int pType)
                         {
                           QMessageBox::warning(this, tr("Cannot Convert Quote"),
                                   storedProcErrorLookup("convertQuote", soheadid)
-                                  .arg(selected[i] ? selected[i]->text(0) : ""));
-                          notConverted.append(selected[i]);
+                                  .arg(item->id() ? item->text(0) : ""));
+                          notConverted.append(item);
                           continue;
                         }
                       }
@@ -247,7 +247,7 @@ void quotes::sConvert(int pType)
                     {
                       systemError(this, prospectq.lastError().databaseText(),
                               __FILE__, __LINE__);
-                      notConverted.append(selected[i]);
+                      notConverted.append(item);
                       continue;
                     }
                   }
@@ -258,7 +258,7 @@ void quotes::sConvert(int pType)
                                    "converted to customer from either the "
                                    "Account or Customer windows before "
                                    "coverting this quote."));
-                    notConverted.append(selected[i]);
+                    notConverted.append(item);
                     continue;
                   }
               }
@@ -269,7 +269,7 @@ void quotes::sConvert(int pType)
                                "converted to customer from either the "
                                "Account or Customer windows before "
                                "coverting this quote."));
-                notConverted.append(selected[i]);
+                notConverted.append(item);
                 continue;
               }
             }
@@ -277,8 +277,8 @@ void quotes::sConvert(int pType)
             {
               QMessageBox::warning(this, tr("Cannot Convert Quote"),
                       storedProcErrorLookup("convertQuote", soheadid)
-                      .arg(selected[i] ? selected[i]->text(0) : ""));
-              notConverted.append(selected[i]);
+                      .arg(item->id() ? item->text(0) : ""));
+              notConverted.append(item);
               continue;
             }
             converted << quheadid;
@@ -295,7 +295,7 @@ void quotes::sConvert(int pType)
           else if (ErrorReporter::error(QtCriticalMsg, this, tr("Convert Quote"),
                                         convert, __FILE__, __LINE__))
           {
-            notConverted.append(selected[i]);
+            notConverted.append(item);
             continue;
           }
         }
@@ -330,13 +330,12 @@ void quotes::sConvertInvoice()
 
 void quotes::sCopy()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
   int lastid = -1;
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+    if (checkSitePrivs(item->id()))
     {
-      int qid = ((XTreeWidgetItem*)(selected[i]))->id();
+      int qid = item->id();
       XSqlQuery qq;
       qq.prepare("SELECT copyQuote(:qid, null) AS result;");
       qq.bindValue(":qid", qid);
@@ -357,13 +356,12 @@ void quotes::sCopy()
 
 void quotes::sCopyToCustomer()
 {
-    QList<XTreeWidgetItem*> selected = list()->selectedItems();
     int lastid = -1;
-    for (int i = 0; i < selected.size(); i++)
+    foreach (XTreeWidgetItem *item, list()->selectedItems())
     {
-      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+      if (checkSitePrivs(item->id()))
       {
-        int qid = ((XTreeWidgetItem*)(selected[i]))->id();
+        int qid = item->id();
         ParameterList params;
         params.append("quhead_id", qid);
 
@@ -389,14 +387,13 @@ void quotes::sNew()
 
 void quotes::sEdit()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+    if (checkSitePrivs(item->id()))
     {
       ParameterList params;
       params.append("mode", "editQuote");
-      params.append("quhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+      params.append("quhead_id", item->id());
     
       salesOrder *newdlg = new salesOrder(this);
       newdlg->set(params);
@@ -408,14 +405,13 @@ void quotes::sEdit()
 
 void quotes::sView()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+    if (checkSitePrivs(item->id()))
     {
       ParameterList params;
       params.append("mode", "viewQuote");
-      params.append("quhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+      params.append("quhead_id", item->id());
       
       salesOrder *newdlg = new salesOrder(this);
       newdlg->set(params);
@@ -438,12 +434,11 @@ void quotes::sDelete()
     quotesDelete.prepare("SELECT deleteQuote(:quhead_id) AS result;");
 
     int counter = 0;
-    QList<XTreeWidgetItem*> selected = list()->selectedItems();
-    for (int i = 0; i < selected.size(); i++)
+    foreach (XTreeWidgetItem *item, list()->selectedItems())    
     {
-      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+      if (checkSitePrivs(item->id()))
       {
-        quotesDelete.bindValue(":quhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+        quotesDelete.bindValue(":quhead_id", item->id());
         quotesDelete.exec();
         if (quotesDelete.first())
         {
@@ -459,7 +454,7 @@ void quotes::sDelete()
         else if (quotesDelete.lastError().type() != QSqlError::NoError)
         {
           systemError(this, tr("A System Error occurred deleting Quote #%1\n%2.")
-                             .arg(selected[i]->text(0))
+                             .arg(item->text(0))
                              .arg(quotesDelete.lastError().databaseText()), __FILE__, __LINE__);
           continue;
         }

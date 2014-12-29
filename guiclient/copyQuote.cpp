@@ -10,13 +10,9 @@
 
 #include "copyQuote.h"
 
-#include <QMessageBox>
-#include <QSqlError>
 #include <QVariant>
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
-#include "storedProcErrorLookup.h"
-/*#include "inputManager.h"*/
 
 copyQuote::copyQuote(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -27,7 +23,6 @@ copyQuote::copyQuote(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sCopy()));
 
-  _captive = FALSE;
   _quoteid = -1;
 
   _cust->setType(CLineEdit::ActiveCustomersAndProspects);
@@ -54,7 +49,6 @@ enum SetResponse copyQuote::set(const ParameterList &pParams)
   if (valid)
   {
     setId(param.toInt());
-    _captive=true;
   }
 
   return NoError;
@@ -79,9 +73,9 @@ void copyQuote::sCopy()
     return;
 
   XSqlQuery copyCopy;
-  copyCopy.prepare("SELECT copyQuoteToCustomer(:quhead_id, :crmaccount, :scheddate) AS quhead_id;");
+  copyCopy.prepare("SELECT copyQuoteToCustomer(:quhead_id, :customer, :scheddate) AS quhead_id;");
   copyCopy.bindValue(":quhead_id", _quoteid);
-  copyCopy.bindValue(":crmaccount", _cust->id());
+  copyCopy.bindValue(":customer", _cust->id());
   copyCopy.bindValue(":scheddate", _quoteDate->date());
 
   copyCopy.exec();
@@ -91,9 +85,7 @@ void copyQuote::sCopy()
     int quheadid = copyCopy.value("quhead_id").toInt();
     done(quheadid);
   }
-  else if (copyCopy.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, copyCopy.lastError().databaseText(), __FILE__, __LINE__);
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Could not Copy Quote"),
+                              copyCopy, __FILE__, __LINE__))
     return;
-  }
 }
