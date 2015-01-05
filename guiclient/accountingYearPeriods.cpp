@@ -15,6 +15,7 @@
 #include <QSqlError>
 
 #include <openreports.h>
+#include "errorReporter.h"
 
 #include "accountingYearPeriod.h"
 #include "storedProcErrorLookup.h"
@@ -25,16 +26,19 @@ accountingYearPeriods::accountingYearPeriods(QWidget* parent, const char* name, 
     setupUi(this);
 
     connect(_period, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+    connect(_period, SIGNAL(newId(int)), this, SLOT(sToggleCopy()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_closePeriod, SIGNAL(clicked()), this, SLOT(sClosePeriod()));
+    connect(_copyPeriod, SIGNAL(clicked()), this, SLOT(sCopyPeriod()));
 
     _period->addColumn(tr("Start"),  _dateColumn, Qt::AlignCenter, true, "yearperiod_start");
     _period->addColumn(tr("End"),    _dateColumn, Qt::AlignCenter, true, "yearperiod_end");
     _period->addColumn(tr("Closed"), -1         , Qt::AlignCenter, true, "closed");
+    _period->addColumn(tr("Last Yr."), 10       , Qt::AlignCenter, false, "lastfiscalyear");
 
     if (_privileges->check("MaintainAccountingPeriods"))
     {
@@ -90,6 +94,11 @@ void accountingYearPeriods::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelect
   {
     menuItem = pMenu->addAction(tr("Open..."), this, SLOT(sOpenPeriod()));
   }
+}
+
+void accountingYearPeriods::sToggleCopy()
+{
+  _copyPeriod->setEnabled(_period->currentItem()->text(3) == "Yes");  
 }
 
 void accountingYearPeriods::sNew()
@@ -199,6 +208,23 @@ void accountingYearPeriods::sOpenPeriod()
   }
 }
 
+void accountingYearPeriods::sCopyPeriod()
+{
+  XSqlQuery copyAccountingYear;
+  XSqlQuery copyAccountingPeriods;
+  copyAccountingYear.prepare("SELECT copyAccountingYearPeriod(:period_id) AS result;");
+  copyAccountingYear.bindValue(":period_id", _period->id());
+  copyAccountingYear.exec();
+  if (copyAccountingYear.first())
+  {
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Could not Copy Fiscal Year"),
+                             copyAccountingYear, __FILE__, __LINE__))
+      return;
+    else   
+      sFillList();
+  }
+}
+
 void accountingYearPeriods::sPrint()
 {
   orReport report("AccountingYearPeriodsMasterList");
@@ -215,7 +241,8 @@ void accountingYearPeriods::sFillList()
                     "            ELSE 1"
                     "       END,"
                     "       yearperiod_start, yearperiod_end,"
-                    "       formatBoolYN(yearperiod_closed) AS closed"
+                    "       formatBoolYN(yearperiod_closed) AS closed,"
+                    "       ((SELECT max(yearperiod_end) FROM yearperiod) = yearperiod_end) AS lastfiscalyear"
                     "  FROM yearperiod "
                     " ORDER BY yearperiod_start;", TRUE );
 }
