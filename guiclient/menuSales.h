@@ -39,6 +39,7 @@ class menuSales : public QObject
 
   public slots:
     void sNewSalesOrder();
+    void sSalesOrders();
     void sOpenSalesOrders();
     void sNewQuote();
     void sQuotes();

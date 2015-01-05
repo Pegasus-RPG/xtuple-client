@@ -73,6 +73,7 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspReorderExceptionsByPlannerCode.ui \
            displays/dspReservations.ui \
            displays/dspRunningAvailability.ui \
+           displays/dspSalesOrders.ui \
            displays/dspSalesOrdersByCustomer.ui \
            displays/dspSalesOrdersByCustomerPO.ui \
            displays/dspSalesOrdersByItem.ui \
@@ -195,6 +196,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspReservations.h \
            displays/dspRunningAvailability.h \
            displays/dspSalesHistory.h \
+           displays/dspSalesOrders.h \
            displays/dspSalesOrdersByCustomer.h \
            displays/dspSalesOrdersByCustomerPO.h \
            displays/dspSalesOrdersByItem.h \
@@ -327,6 +329,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspReservations.cpp \
            displays/dspRunningAvailability.cpp \
            displays/dspSalesHistory.cpp \
+           displays/dspSalesOrders.cpp \
            displays/dspSalesOrdersByCustomer.cpp \
            displays/dspSalesOrdersByCustomerPO.cpp \
            displays/dspSalesOrdersByItem.cpp \

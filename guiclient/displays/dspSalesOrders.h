@@ -8,29 +8,28 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPSALESORDERSBYCUSTOMER_H
-#define DSPSALESORDERSBYCUSTOMER_H
+#ifndef DSPSALESORDERS_H
+#define DSPSALESORDERS_H
 
 #include "display.h"
 
-#include "ui_dspSalesOrdersByCustomer.h"
+#include "ui_dspSalesOrders.h"
 
-class dspSalesOrdersByCustomer : public display, public Ui::dspSalesOrdersByCustomer
+class dspSalesOrders : public display, public Ui::dspSalesOrders
 {
     Q_OBJECT
 
 public:
-    dspSalesOrdersByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    dspSalesOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool checkSitePrivs(int orderid);
-    virtual bool setParams(ParameterList&);
+    virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPopulatePo();
-    virtual void sPopulateMenu( QMenu * menuThis, QTreeWidgetItem*, int);
+    virtual void sPopulateMenu(QMenu * menuThis, QTreeWidgetItem*, int);
     virtual void sEditOrder();
-    virtual void sCopyOrder();
     virtual void sViewOrder();
+    virtual void sCopyOrder();
     virtual void sCreateRA();
     virtual void sDspShipmentStatus();
     virtual void sDspShipments();
@@ -40,4 +39,4 @@ protected slots:
 
 };
 
-#endif // DSPSALESORDERSBYCUSTOMER_H
+#endif // DSPSALESORDERS_H

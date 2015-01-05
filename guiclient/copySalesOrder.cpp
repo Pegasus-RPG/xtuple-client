@@ -132,8 +132,11 @@ void copySalesOrder::sPopulateSoInfo(int)
 void copySalesOrder::sCopy()
 {
   XSqlQuery copyCopy;
-  copyCopy.prepare("SELECT copySo(:sohead_id, :scheddate) AS sohead_id;");
+  copyCopy.prepare("SELECT copySo(:sohead_id, :customer, :scheddate) AS sohead_id;");
   copyCopy.bindValue(":sohead_id", _so->id());
+
+  if (_useNewCust->isChecked())
+    copyCopy.bindValue(":customer", _cust->id());
 
   if (_reschedule->isChecked())
     copyCopy.bindValue(":scheddate", _scheduleDate->date());

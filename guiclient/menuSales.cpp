@@ -63,6 +63,7 @@
 #include "dspFreightPricesByCustomer.h"
 #include "dspFreightPricesByCustomerType.h"
 
+#include "dspSalesOrders.h"
 #include "dspSalesOrdersByCustomer.h"
 #include "dspSalesOrdersByItem.h"
 #include "dspSalesOrdersByCustomerPO.h"
@@ -171,6 +172,7 @@ menuSales::menuSales(GUIClient *pParent) :
     { "menu",	tr("&Sales Order"),	(char*)ordersMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
     { "so.newSalesOrder", 	     tr("&New..."),		SLOT(sNewSalesOrder()),   ordersMenu, "MaintainSalesOrders", NULL, NULL,	 true, NULL },
     { "so.listOpenSalesOrders",      tr("&List Open..."),	SLOT(sOpenSalesOrders()), ordersMenu, "MaintainSalesOrders ViewSalesOrders",	QPixmap(":/images/listOpenSalesOrders.png"), toolBar,  true, tr("List Open Sales Orders") },
+    { "so.listSalesOrders",      tr("&Search Orders..."),	SLOT(sSalesOrders()), ordersMenu, "MaintainSalesOrders ViewSalesOrders", NULL, NULL, true, NULL },
 
     // Sales | Billing
     { "menu",	tr("&Billing"),     (char*)billingMenu,		mainMenu,	"true",	NULL, NULL, true, NULL },
@@ -224,9 +226,10 @@ menuSales::menuSales(GUIClient *pParent) :
     
     // Sales | Lookup | Sales Order Lookup
     { "menu",	tr("&Sales Order"),           (char*)lookupSoMenu,	lookupMenu,	"true",	NULL, NULL, true, NULL },
-    { "so.dspSalesOrderLookupByCustomerType", tr("by Customer &Type..."),	SLOT(sDspOrderLookupByCustomerType()), lookupSoMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },
-    { "so.dspSalesOrderLookupByCustomer", tr("by &Customer..."),	SLOT(sDspOrderLookupByCustomer()), lookupSoMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },
-    { "so.dspSalesOrderLookupByCustomerPO", tr("by Customer &PO..."),	SLOT(sDspOrderLookupByCustomerPO()), lookupSoMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },
+    { "so.listSalesOrders",      tr("&Search Orders..."),	SLOT(sSalesOrders()), lookupSoMenu, "MaintainSalesOrders ViewSalesOrders", NULL, NULL, true, NULL },
+    //{ "so.dspSalesOrderLookupByCustomerType", tr("by Customer &Type..."),	SLOT(sDspOrderLookupByCustomerType()), lookupSoMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },
+    //{ "so.dspSalesOrderLookupByCustomer", tr("by &Customer..."),	SLOT(sDspOrderLookupByCustomer()), lookupSoMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },
+    //{ "so.dspSalesOrderLookupByCustomerPO", tr("by Customer &PO..."),	SLOT(sDspOrderLookupByCustomerPO()), lookupSoMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },
     { "so.dspSalesOrderLookupByItem", tr("by &Item..."),	SLOT(sDspOrderLookupByItem()), lookupSoMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },
     
     { "separator",	NULL,	NULL,	lookupMenu,	"true",		NULL, NULL, true, NULL }, 
@@ -397,6 +400,11 @@ void menuSales::addActionsToMenu(actionProperties acts[], unsigned int numElems)
 void menuSales::sNewSalesOrder()
 {
   salesOrder::newSalesOrder(-1);
+}
+
+void menuSales::sSalesOrders()
+{
+  omfgThis->handleNewWindow(new dspSalesOrders());
 }
 
 void menuSales::sOpenSalesOrders()
