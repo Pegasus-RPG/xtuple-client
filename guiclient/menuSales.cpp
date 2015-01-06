@@ -64,10 +64,7 @@
 #include "dspFreightPricesByCustomerType.h"
 
 #include "dspSalesOrders.h"
-#include "dspSalesOrdersByCustomer.h"
 #include "dspSalesOrdersByItem.h"
-#include "dspSalesOrdersByCustomerPO.h"
-#include "dspSalesOrdersByParameterList.h"
 #include "dspQuotesByCustomer.h"
 #include "dspQuotesByItem.h"
 #include "dspInventoryAvailability.h"
@@ -639,29 +636,9 @@ void menuSales::sDspReservations()
   omfgThis->handleNewWindow(new dspReservations());
 }
 
-void menuSales::sDspOrderLookupByCustomer()
-{
-  omfgThis->handleNewWindow(new dspSalesOrdersByCustomer());
-}
-
-void menuSales::sDspOrderLookupByCustomerType()
-{
-  ParameterList params;
-  params.append("custtype");
-
-  dspSalesOrdersByParameterList *newdlg = new dspSalesOrdersByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
 void menuSales::sDspOrderLookupByItem()
 {
   omfgThis->handleNewWindow(new dspSalesOrdersByItem());
-}
-
-void menuSales::sDspOrderLookupByCustomerPO()
-{
-  omfgThis->handleNewWindow(new dspSalesOrdersByCustomerPO());
 }
 
 void menuSales::sDspQuoteLookupByCustomer()

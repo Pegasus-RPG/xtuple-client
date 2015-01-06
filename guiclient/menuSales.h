@@ -82,10 +82,7 @@ class menuSales : public QObject
     void sDspFreightPricesByCustomer();
     void sDspFreightPricesByCustomerType();
 
-    void sDspOrderLookupByCustomer();
-    void sDspOrderLookupByCustomerType();
     void sDspOrderLookupByItem();
-    void sDspOrderLookupByCustomerPO();
     void sDspQuoteLookupByCustomer();
     void sDspQuoteLookupByItem();
     void sDspInventoryAvailability();
