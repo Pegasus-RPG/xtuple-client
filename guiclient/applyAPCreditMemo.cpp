@@ -29,7 +29,7 @@ applyAPCreditMemo::applyAPCreditMemo(QWidget* parent, const char* name, bool mod
   connect(_available, SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
   connect(_clear,          SIGNAL(clicked()), this, SLOT(sClear()));
   connect(_buttonBox,      SIGNAL(accepted()), this, SLOT(sPost()));
-  connect(_buttonBox,      SIGNAL(rejected()), this, SLOT(reject()));
+  connect(_buttonBox,      SIGNAL(rejected()), this, SLOT(sClose()));
 
   _buttonBox->button(QDialogButtonBox::Save)->setText(tr("Post"));
 
@@ -87,12 +87,6 @@ enum SetResponse applyAPCreditMemo::set(const ParameterList &pParams)
 void applyAPCreditMemo::sPost()
 {
   XSqlQuery applyPost;
-  applyPost.exec("BEGIN;");
-  if (applyPost.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, applyPost.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
 
   applyPost.prepare("SELECT postAPCreditMemoApplication(:apopen_id) AS result;");
   applyPost.bindValue(":apopen_id", _apopenid);
@@ -102,7 +96,6 @@ void applyAPCreditMemo::sPost()
     int result = applyPost.value("result").toInt();
     if (result < 0)
     {
-      applyPost.exec("ROLLBACK;");
       systemError(this, storedProcErrorLookup("postAPCreditMemoApplication",
                                               result), __FILE__, __LINE__);
       return;
@@ -110,17 +103,9 @@ void applyAPCreditMemo::sPost()
   }
   if (applyPost.lastError().type() != QSqlError::NoError)
   {
-    applyPost.exec("ROLLBACK;");
     ErrorReporter::error(QtCriticalMsg, this,
                          tr("Error posting"), applyPost,
                          __FILE__, __LINE__);
-    return;
-  }
-
-  applyPost.exec("COMMIT;");
-  if (applyPost.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, applyPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
