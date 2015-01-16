@@ -94,7 +94,10 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WindowFlags fl)
 
   _project->setType(ProjectLineEdit::WorkOrder);
   if(!_metrics->boolean("UseProjects"))
+  {
+    _projectLit->hide();
     _project->hide();
+  }
 
   _itemchar = new QStandardItemModel(0, 2, this);
   _itemchar->setHeaderData( 0, Qt::Horizontal, tr("Name"), Qt::DisplayRole);
@@ -650,7 +653,7 @@ bool workOrder::sSave()
 
 void workOrder::sUpdateStartDate()
 {
-  if (!_warehouse->isValid() || !_dueDate->isValid())
+  if ((_warehouse->id() <= 0) || !_dueDate->isValid())
     return;
 
   if (_leadTime == 0)

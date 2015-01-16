@@ -98,15 +98,41 @@ void copyItem::sSaveItem()
     itemsave.exec("ROLLBACK;");
   else
     _inTransaction = true;
+  
+  //Find an unused temporary item number
+  int tempCopyint = 0;
+  while (true)
+  {
+    itemsave.prepare("SELECT sourceitemnumber AS result "
+                     "FROM item,"
+                     " (SELECT item_number AS sourceitemnumber"
+                     "  FROM item"
+                     "  WHERE item_id=:sourceitemid) AS data "
+                     "WHERE (item_number = ('TEMPCOPY' || :tempcopyint::TEXT || sourceitemnumber));");
+    itemsave.bindValue(":sourceitemid", _source->id());
+    itemsave.bindValue(":tempcopyint", tempCopyint);
+    itemsave.exec();
+    if (itemsave.lastError().type() != QSqlError::NoError)
+    {
+      _inTransaction = false;
+      return;
+    }
+    if(!itemsave.first())
+    {
+      break;
+    }
+    tempCopyint = tempCopyint + 1;
+  }
 
   itemsave.exec("BEGIN;");
   
-  itemsave.prepare("SELECT copyItem(item_id, 'TEMPCOPY' || :sourceitemnumber) AS result,"
+  itemsave.prepare("SELECT copyItem(item_id, 'TEMPCOPY' || :tempcopyint::TEXT || :sourceitemnumber) AS result,"
                    "       item_descrip1, item_listprice, item_listcost "
                    "FROM item "
                    "WHERE (item_id=:sourceitemid);");
   itemsave.bindValue(":sourceitemid", _source->id());
   itemsave.bindValue(":sourceitemnumber", _source->number());
+  itemsave.bindValue(":tempcopyint", tempCopyint);
   itemsave.exec();
   if(itemsave.first())
   {

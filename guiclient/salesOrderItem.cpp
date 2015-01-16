@@ -261,6 +261,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   {
     _reserved->hide();
     _reservable->hide();
+    _reserveOnSave->setChecked(false);
   }
   _reserveOnSave->hide();
 
@@ -477,7 +478,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
         systemError(this, setSales.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
-
+      
       if (_metrics->boolean("EnableSOReservations"))
         _reserveOnSave->show();
     }
@@ -542,6 +543,9 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       connect(_unitCost,          SIGNAL(editingFinished()),    this, SLOT(sCalculateFromMarkup()));
       connect(_markupFromUnitCost,SIGNAL(editingFinished()),    this, SLOT(sCalculateFromMarkup()));
       connect(_createSupplyOrder, SIGNAL(toggled(bool)),        this, SLOT(sHandleSupplyOrder()));
+      
+      if (_metrics->boolean("EnableSOReservations"))
+        _reserveOnSave->show();
     }
     else if (param.toString() == "editQuote")
     {
@@ -1127,32 +1131,27 @@ void salesOrderItem::sSave(bool pPartial)
     }
 
     //  Check to see if a Reservations need changes
-    if (_qtyOrdered->toDouble() < _qtyOrderedCache)
+    if (_qtyOrdered->toDouble() < _qtyreserved)
     {
-      if (_qtyreserved > 0.0)
+      salesSave.prepare("SELECT unreserveSoLineQty(:soitem_id) AS result;");
+      salesSave.bindValue(":soitem_id", _soitemid);
+      salesSave.exec();
+      if (salesSave.first())
       {
-        QMessageBox::warning( this, tr("Unreserve Sales Order Item"),
-                              tr("<p>The quantity ordered for this Sales "
-                                   "Order Line Item has been changed. "
-                                   "Reservations have been removed.") );
-        salesSave.prepare("SELECT unreserveSoLineQty(:soitem_id) AS result;");
-        salesSave.bindValue(":soitem_id", _soitemid);
-        salesSave.exec();
-        if (salesSave.first())
+        int result = salesSave.value("result").toInt();
+        if (result < 0)
         {
-          int result = salesSave.value("result").toInt();
-          if (result < 0)
-          {
-            systemError(this, storedProcErrorLookup("unreservedSoLineQty", result) +
-                        tr("<br>Line Item %1").arg(""),
-                        __FILE__, __LINE__);
-          }
+          systemError(this, storedProcErrorLookup("unreservedSoLineQty", result) +
+                      tr("<br>Line Item %1").arg(""),
+                      __FILE__, __LINE__);
         }
-        else if (salesSave.lastError().type() != QSqlError::NoError)
-        {
-          systemError(this, tr("Line Item %1\n").arg("") +
-                      salesSave.lastError().databaseText(), __FILE__, __LINE__);
-        }
+        // setup for re-reserving the new qty
+        _reserveOnSave->setChecked(true);
+      }
+      else if (salesSave.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, tr("Line Item %1\n").arg("") +
+                    salesSave.lastError().databaseText(), __FILE__, __LINE__);
       }
     }
   }
@@ -1444,10 +1443,13 @@ void salesOrderItem::sSave(bool pPartial)
 
   salesSave.exec("COMMIT;");
 
-  if (_mode == cNew)
-    omfgThis->sSalesOrdersUpdated(_soheadid);
-  else if (_mode == cNewQuote)
-    omfgThis->sQuotesUpdated(_soheadid);
+  if (!pPartial)
+  {
+    if (_mode == cNew)
+      omfgThis->sSalesOrdersUpdated(_soheadid);
+    else if (_mode == cNewQuote)
+      omfgThis->sQuotesUpdated(_soheadid);
+  }
   
   _modified = false;
 
@@ -1459,10 +1461,11 @@ void salesOrderItem::sSave(bool pPartial)
     return;
   }
 
+  if (_metrics->boolean("EnableSOReservations") && _reserveOnSave->isChecked())
+    sReserveStock();
+
   if ( (!_canceling) && (cNew == _mode || cNewQuote == _mode) )
   {
-    if (_metrics->boolean("EnableSOReservations") && _reserveOnSave->isChecked())
-      sReserveStock();
     clear();
     prepare();
     _prev->setEnabled(true);
@@ -2315,12 +2318,37 @@ void salesOrderItem::sSubstitute()
 
 void salesOrderItem::sReserveStock()
 {
-  ParameterList params;
-  params.append("soitem_id", _soitemid);
-  
-  reserveSalesOrderItem newdlg(this, "", true);
-  newdlg.set(params);
-  newdlg.exec();
+  if (_metrics->boolean("SOManualReservations"))
+  {
+    ParameterList params;
+    params.append("soitem_id", _soitemid);
+    
+    reserveSalesOrderItem newdlg(this, "", true);
+    newdlg.set(params);
+    newdlg.exec();
+  }
+  else
+  {
+    XSqlQuery reserveSales;
+    reserveSales.prepare("SELECT reserveSoLineBalance(:soitem_id) AS result;");
+    reserveSales.bindValue(":soitem_id", _soitemid);
+    reserveSales.exec();
+    if (reserveSales.first())
+    {
+      int result = reserveSales.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("reserveSoLineBalance", result),
+                    __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (reserveSales.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, reserveSales.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
 }
 
 void salesOrderItem::sPopulateHistory()
@@ -2473,6 +2501,11 @@ void salesOrderItem::sHandleSupplyOrder()
     { // supply order does not exist
       // first save the sales order item
       sSave(true);
+      if (_modified)  // catch an error saving
+      {
+        _createSupplyOrder->setChecked(false);
+        return;
+      }
       
       // check _supplyOrderType to determine type of order
       if (_supplyOrderType == "W")
@@ -3049,13 +3082,21 @@ void salesOrderItem::sHandleSupplyOrder()
             _supplyDropShip->setChecked(_supplyOrderDropShipCache);
             return;
           }
-          
-          if ( _supplyDropShip->isChecked() && _shiptoid < 1)
-          {
-            QMessageBox::critical(this, tr("Cannot Update Supply Order"),
-                                  tr("<p>You must enter a valid Ship-To # before saving this Sales Order Item."));
-            return;
-          }
+
+           XSqlQuery sto;
+		  sto.prepare( "SELECT cohead_shiptoaddress1 FROM cohead WHERE cohead_id=:cohead_id" );
+			sto.bindValue(":cohead_id", _soheadid);
+			sto.exec();
+			if (sto.first()){
+
+          if ( _supplyDropShip->isChecked() && _shiptoid < 1){
+		  if(sto.value("cohead_shiptoaddress1").toString().isEmpty())
+			  //removes the error if Free-Form Ship-To was used
+			{
+			 QMessageBox::critical(this, tr("Cannot Update Supply Order"),
+					tr("<p>You must enter a valid Ship-To Address (or #) before saving this Sales Order Item."));
+			 return;
+		  }}}
           
           if (QMessageBox::question(this, tr("Drop Ship P/O?"),
                                     tr("<p>The Drop Ship for this Line Item has changed."

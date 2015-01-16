@@ -10,6 +10,7 @@
 
 #include "reports.h"
 
+#include <QMdiArea>
 #include <QMessageBox>
 #include <QVariant>
 //#include <QWorkspace>

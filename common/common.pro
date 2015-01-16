@@ -8,6 +8,10 @@ win32 {
   CONFIG -= dll
   CONFIG += staticlib
 }
+macx {
+  CONFIG -= dll
+  CONFIG += staticlib
+}
 
 DEFINES     += MAKELIB
 
