@@ -655,7 +655,7 @@ void selectPayments::sViewVoucher()
 
 void selectPayments::sVoidVoucher()
 {
-  bool update = FALSE;
+  bool update = false;
   QList<XTreeWidgetItem*> list = _apopen->selectedItems();
   XTreeWidgetItem * cursor = 0;
   XSqlQuery dspVoidVoucher;
@@ -685,7 +685,7 @@ void selectPayments::sVoidVoucher()
                              dspVoidVoucher, __FILE__, __LINE__);
         return;
       }
-      update = TRUE;
+      update = true;
     }
   }
   if(update)
