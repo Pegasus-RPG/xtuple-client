@@ -134,23 +134,7 @@ void selectPayments::sSelectDue()
 
   if (bankaccntid >= 0)
   {
-    MetaSQLQuery mql("SELECT selectDueItemsForPayment("
-                     "    <? if exists(\"vend_id\") ?> <? value(\"vend_id\") ?>"
-                     "    <? else ?> vend_id <? endif ?>,"
-                     "    <? value(\"bankaccnt_id\") ?>) AS result "
-                     "<? if exists(\"vend_id\") ?>"
-                     ";"
-                     "<? elseif exists(\"vendtype_id\") ?>"
-                     "FROM vendinfo "
-                     "WHERE (vend_vendtype_id=<? value(\"vendtype_id\") ?>);"
-                     "<? elseif exists(\"vendtype_pattern\") ?>"
-                     "FROM vendinfo "
-                     "WHERE (vend_vendtype_id IN (SELECT vendtype_id"
-                     "                            FROM vendtype"
-                     "                            WHERE (vendtype_code ~ <? value(\"vendtype_pattern\") ?>)));"
-                     "<? else ?>"
-                     "FROM vendinfo;"
-                     "<? endif ?>");
+    MetaSQLQuery mql = mqlLoad("selectPayments", "dueitems");
     ParameterList params;
     if (! setParams(params))
         return;
@@ -161,14 +145,15 @@ void selectPayments::sSelectDue()
       int result = selectSelectDue.value("result").toInt();
       if (result < 0)
       {
-        systemError(this, storedProcErrorLookup("selectDueItemsForPayment", result),
+        systemError(this, storedProcErrorLookup("selectPayment", result),
                     __FILE__, __LINE__);
         return;
       }
     }
-    else if (selectSelectDue.lastError().type() != QSqlError::NoError)
+    else
     {
-      systemError(this, selectSelectDue.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Select Due"),
+                           selectSelectDue, __FILE__, __LINE__);
       return;
     }
 
@@ -192,23 +177,7 @@ void selectPayments::sSelectDiscount()
 
   if (bankaccntid >= 0)
   {
-    MetaSQLQuery mql("SELECT selectDiscountItemsForPayment("
-                     "    <? if exists(\"vend_id\") ?> <? value(\"vend_id\") ?>"
-                     "    <? else ?> vend_id <? endif ?>,"
-                     "    <? value(\"bankaccnt_id\") ?>) AS result "
-                     "<? if exists(\"vend_id\") ?>"
-                     ";"
-                     "<? elseif exists(\"vendtype_id\") ?>"
-                     "FROM vendinfo "
-                     "WHERE (vend_vendtype_id=<? value(\"vendtype_id\") ?>);"
-                     "<? elseif exists(\"vendtype_pattern\") ?>"
-                     "FROM vendinfo "
-                     "WHERE (vend_vendtype_id IN (SELECT vendtype_id"
-                     "                            FROM vendtype"
-                     "                            WHERE (vendtype_code ~ <? value(\"vendtype_pattern\") ?>)));"
-                     "<? else ?>"
-                     "FROM vendinfo;"
-                     "<? endif ?>");
+    MetaSQLQuery mql = mqlLoad("selectPayments", "discountitems");
     ParameterList params;
     if (! setParams(params))
         return;
@@ -219,16 +188,18 @@ void selectPayments::sSelectDiscount()
       int result = selectSelectDiscount.value("result").toInt();
       if (result < 0)
       {
-        systemError(this, storedProcErrorLookup("selectDiscountItemsForPayment", result),
+        systemError(this, storedProcErrorLookup("selectPayment", result),
                     __FILE__, __LINE__);
         return;
       }
     }
-    else if (selectSelectDiscount.lastError().type() != QSqlError::NoError)
+    else
     {
-      systemError(this, selectSelectDiscount.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Select Discount"),
+                           selectSelectDiscount, __FILE__, __LINE__);
       return;
     }
+
     omfgThis->sPaymentsUpdated(-1, -1, TRUE);
   }
 }
@@ -236,35 +207,11 @@ void selectPayments::sSelectDiscount()
 void selectPayments::sClearAll()
 {
   XSqlQuery selectClearAll;
-  switch (_vendorgroup->state())
-  {
-    case VendorGroup::All:
-      selectClearAll.prepare( "SELECT clearPayment(apselect_id) AS result "
-                 "FROM apselect;" );
-        break;
-    case VendorGroup::Selected:
-      selectClearAll.prepare( "SELECT clearPayment(apselect_id) AS result "
-                 "FROM apopen JOIN apselect ON (apselect_apopen_id=apopen_id) "
-                 "WHERE (apopen_vend_id=:vend_id);" );
-      break;
-    case VendorGroup::SelectedType:
-      selectClearAll.prepare( "SELECT clearPayment(apselect_id) AS result "
-                 "FROM vendinfo JOIN apopen ON (apopen_vend_id=vend_id) "
-                 "              JOIN apselect ON (apselect_apopen_id=apopen_id) "
-                 "WHERE (vend_vendtype_id=:vendtype_id) ;" );
-      break;
-    case VendorGroup::TypePattern:
-      selectClearAll.prepare( "SELECT clearPayment(apselect_id) AS result "
-                 "FROM vendinfo JOIN apopen ON (apopen_vend_id=vend_id) "
-                 "              JOIN apselect ON (apselect_apopen_id=apopen_id) "
-                 "WHERE (vend_vendtype_id IN (SELECT vendtype_id"
-                 "                            FROM vendtype"
-                 "                            WHERE (vendtype_code ~ :vendtype_pattern)));" );
-        break;
-    }
-
-  _vendorgroup->bindValue(selectClearAll);
-  selectClearAll.exec();
+  MetaSQLQuery mql = mqlLoad("selectPayments", "clearall");
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  selectClearAll = mql.toQuery(params);
   if (selectClearAll.first())
   {
     int result = selectClearAll.value("result").toInt();
