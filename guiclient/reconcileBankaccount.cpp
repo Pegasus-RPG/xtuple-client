@@ -633,6 +633,7 @@ void reconcileBankaccount::sReceiptsToggleCleared()
             setto = (setto && (item->child(i)->text(0) == tr("Yes")));
           }
           item->setText(0, (setto ? tr("Yes") : tr("No")));
+          populate();
         }
       }
       else
@@ -659,7 +660,7 @@ void reconcileBankaccount::sChecksToggleCleared()
   _checks->scrollToItem(item);
 
   double rate = item->rawValue("doc_exchrate").toDouble();
-  double amount = item->rawValue("baseamount").toDouble();
+  double amount = item->rawValue("base_amount").toDouble();
   
   if (_allowEdit->isChecked() && item->text(0) != tr("Yes"))
   {
@@ -694,7 +695,10 @@ void reconcileBankaccount::sChecksToggleCleared()
     reconcileChecksToggleCleared.bindValue(":baseamount", amount);
     reconcileChecksToggleCleared.exec();
     if(reconcileChecksToggleCleared.first())
+    {
       item->setText(0, (reconcileChecksToggleCleared.value("cleared").toBool() ? tr("Yes") : tr("No") ));
+      populate();
+    }
     else
     {
       populate();
