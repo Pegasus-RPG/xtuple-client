@@ -37,11 +37,11 @@ win32-msvc* {
 
 QMAKE_LIBDIR = ../lib $${OPENRPT_LIBDIR} $$QMAKE_LIBDIR
 LIBS        += -lxtuplecommon -lxtuplewidgets -lwrtembed -lopenrptcommon
-LIBS        += -lrenderer -lxtuplescriptapi $${DMTXLIB} -lMetaSQL -lQt5DesignerComponents
+LIBS        += -lrenderer -lxtuplescriptapi $${DMTXLIB} -lMetaSQL
 
 #not the best way to handle this, but it should do
 #mac:!static:contains(QT_CONFIG, qt_framework) {
-#  LIBS += -framework
+#  LIBS += -framework QtDesignerComponents
 #}
 # else {
 #  LIBS += -lQtDesignerComponents
