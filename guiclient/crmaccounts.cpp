@@ -61,6 +61,7 @@ crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(vendorsUpdated()),            this, SLOT(sFillList()));
 
   list()->addColumn(tr("Number"),         80, Qt::AlignLeft,    true, "crmacct_number");
+  list()->addColumn(tr("Active"),  _ynColumn,  Qt::AlignCenter,false, "crmacct_active");
   list()->addColumn(tr("Name"),           -1, Qt::AlignLeft,    true, "crmacct_name");
   list()->addColumn(tr("Owner"), _userColumn, Qt::AlignLeft,   false, "crmacct_owner_username");
   list()->addColumn(tr("First"),          50, Qt::AlignLeft  ,  true, "cntct_first_name" );
