@@ -212,8 +212,8 @@ int QFontProto::letterSpacingType() const
     return item->letterSpacingType();
   return 0;
 }
-
-/*#ifdef Q_OS_MAC
+#if QT_VERSION < 5
+#ifdef Q_OS_MAC
 quint32 QFontProto::macFontID() const
 {
   QFont *item = qscriptvalue_cast<QFont*>(thisObject());
@@ -221,8 +221,8 @@ quint32 QFontProto::macFontID() const
     return item->macFontID();
   return quint32();
 }
-#endif*/
-
+#endif
+#endif
 bool QFontProto::overline() const
 {
   QFont *item = qscriptvalue_cast<QFont*>(thisObject());
