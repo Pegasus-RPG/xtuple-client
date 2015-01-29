@@ -237,8 +237,9 @@ for FILE in `ls $TMPDIR/old/* $TMPDIR/new/* | xargs -J X -n 1 basename X | sort 
   elif ! cmp -s $TMPDIR/old/$FILE $TMPDIR/new/$FILE ; then
     REPORTNAME="`head -3 $TMPDIR/new/$FILE | tail -1 | cut -f2 -d:`"
     CHANGEDLIST="$CHANGEDLIST $REPORTNAME"
-    diff -E -b -i -U `cat $TMPDIR/new/$FILE | wc -l` $TMPDIR/{old,new}/$FILE |\
-                      tail -n +4 >> $TMPDIR/diffs
+    diff -w --unchanged-line-format='   %L' \
+                  --old-line-format='-  %L' \
+                  --new-line-format='+  %L' $TMPDIR/{old,new}/$FILE >> $TMPDIR/diffs
   fi
 done
 
