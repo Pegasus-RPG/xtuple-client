@@ -1,4 +1,4 @@
-#
+#!/bin/bash
 # This file is part of the xTuple ERP: PostBooks Edition, a free and
 # open source Enterprise Resource Planning software suite,
 # Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
@@ -234,15 +234,11 @@ for FILE in `ls $TMPDIR/old/* $TMPDIR/new/* | xargs -J X -n 1 basename X | sort 
   elif [ ! -f $TMPDIR/old/$FILE -a -f $TMPDIR/new/$FILE ] ; then
     REPORTNAME="`head -3 $TMPDIR/new/$FILE | tail -1 | cut -f2 -d:`"
     NEWLIST="$NEWLIST $REPORTNAME"
-  else
-    cmp -s $TMPDIR/old/$FILE $TMPDIR/new/$FILE
-    EXITCODE=$?
-    if [ $EXITCODE -eq 1 ]; then
-      REPORTNAME="`head -3 $TMPDIR/new/$FILE | tail -1 | cut -f2 -d:`"
-      CHANGEDLIST="$CHANGEDLIST $REPORTNAME"
-      diff -E -b -i -U `wc -l $TMPDIR/new/$FILE | 
-                        awk '{print $1}'` $TMPDIR/old/$FILE $TMPDIR/new/$FILE | tail -n +4 >> $TMPDIR/diffs
-    fi
+  elif ! cmp -s $TMPDIR/old/$FILE $TMPDIR/new/$FILE ; then
+    REPORTNAME="`head -3 $TMPDIR/new/$FILE | tail -1 | cut -f2 -d:`"
+    CHANGEDLIST="$CHANGEDLIST $REPORTNAME"
+    diff -E -b -i -U `cat $TMPDIR/new/$FILE | wc -l` $TMPDIR/{old,new}/$FILE |\
+                      tail -n +4 >> $TMPDIR/diffs
   fi
 done
 
