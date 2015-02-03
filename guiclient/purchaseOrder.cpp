@@ -971,7 +971,7 @@ void purchaseOrder::sSave()
     _tax->clear();
     _freight->clear();
     _total->clear();
-    _totalProdWt->clear();
+    _totalWeight->clear();
     _totalQtyOrd->clear();
     _poitem->clear();
     _poCurrency->setEnabled(true);
@@ -1364,7 +1364,7 @@ void purchaseOrder::sCalculateTotals()
   if (purchaseCalculateTotals.first())
   {
     _totalQtyOrd->setLocalValue(purchaseCalculateTotals.value("qtyord_total").toDouble());
-    _totalProdWt->setLocalValue(purchaseCalculateTotals.value("wt_total").toDouble());
+    _totalWeight->setLocalValue(purchaseCalculateTotals.value("wt_total").toDouble());
     _subtotal->setLocalValue(purchaseCalculateTotals.value("f_total").toDouble());
     _totalFreight->setLocalValue(purchaseCalculateTotals.value("freightsub").toDouble() + _freight->localValue());
     _total->setLocalValue(purchaseCalculateTotals.value("total").toDouble() + _tax->localValue() + purchaseCalculateTotals.value("freightsub").toDouble() + _freight->localValue());
