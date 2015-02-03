@@ -815,7 +815,7 @@ to be bound by its terms.</comment>
            <item row="3" column="0" alignment="Qt::AlignRight">
             <widget class="QLabel" name="_totalWeightLit">
              <property name="text">
-              <string>Total Weight (lbs):</string>
+              <string>Total Weight:</string>
              </property>
             </widget>
            </item>

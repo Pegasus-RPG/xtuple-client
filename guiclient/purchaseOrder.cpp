@@ -152,6 +152,17 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _so->setReadOnly(TRUE);
 
   _projectId = -1;
+
+XSqlQuery getWeightUOM;
+getWeightUOM.prepare("SELECT uom_name FROM uom WHERE (uom_item_weight);");
+getWeightUOM.exec();
+if (getWeightUOM.first())
+  {
+    QString newLabel (tr("Total Weight ("));
+    newLabel += getWeightUOM.value("uom_name").toString();
+    _totalWeightLit->setText(newLabel + "):");
+  }
+
 }
 
 void purchaseOrder::setPoheadid(const int pId)
