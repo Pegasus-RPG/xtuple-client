@@ -152,6 +152,16 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _so->setReadOnly(TRUE);
 
   _projectId = -1;
+
+XSqlQuery getWeightUOM;
+getWeightUOM.prepare("SELECT uom_name FROM uom WHERE (uom_item_weight);");
+getWeightUOM.exec();
+if (getWeightUOM.first())
+  {
+    QString newLabel (tr("Total Weight (%1):"));
+    _totalWeightLit->setText(newLabel.arg(getWeightUOM.value("uom_name").toString()));
+  }
+
 }
 
 void purchaseOrder::setPoheadid(const int pId)
@@ -971,6 +981,8 @@ void purchaseOrder::sSave()
     _tax->clear();
     _freight->clear();
     _total->clear();
+    _totalWeight->clear();
+    _totalQtyOrd->clear();
     _poitem->clear();
     _poCurrency->setEnabled(true);
     _qecurrency->setEnabled(true);
@@ -1350,13 +1362,19 @@ void purchaseOrder::sCalculateTotals()
   XSqlQuery purchaseCalculateTotals;
   purchaseCalculateTotals.prepare( "SELECT SUM(poitem_qty_ordered * poitem_unitprice) AS total,"
              "       SUM(poitem_qty_ordered * poitem_unitprice) AS f_total,"
-             "       SUM(poitem_freight) AS freightsub "
+             "       SUM(poitem_freight) AS freightsub, "
+             "       SUM(poitem_qty_ordered) AS qtyord_total, "
+             "       SUM(poitem_qty_ordered * (item_prodweight + item_packweight)) AS wt_total "
              "FROM poitem "
+             "  LEFT OUTER JOIN itemsite ON poitem_itemsite_id = itemsite_id "
+             "  LEFT OUTER JOIN item ON itemsite_item_id = item_id "
              "WHERE (poitem_pohead_id=:pohead_id);" );
   purchaseCalculateTotals.bindValue(":pohead_id", _poheadid);
   purchaseCalculateTotals.exec();
   if (purchaseCalculateTotals.first())
   {
+    _totalQtyOrd->setLocalValue(purchaseCalculateTotals.value("qtyord_total").toDouble());
+    _totalWeight->setLocalValue(purchaseCalculateTotals.value("wt_total").toDouble());
     _subtotal->setLocalValue(purchaseCalculateTotals.value("f_total").toDouble());
     _totalFreight->setLocalValue(purchaseCalculateTotals.value("freightsub").toDouble() + _freight->localValue());
     _total->setLocalValue(purchaseCalculateTotals.value("total").toDouble() + _tax->localValue() + purchaseCalculateTotals.value("freightsub").toDouble() + _freight->localValue());
