@@ -158,9 +158,8 @@ getWeightUOM.prepare("SELECT uom_name FROM uom WHERE (uom_item_weight);");
 getWeightUOM.exec();
 if (getWeightUOM.first())
   {
-    QString newLabel (tr("Total Weight ("));
-    newLabel += getWeightUOM.value("uom_name").toString();
-    _totalWeightLit->setText(newLabel + "):");
+    QString newLabel (tr("Total Weight (%1):"));
+    _totalWeightLit->setText(newLabel.arg(getWeightUOM.value("uom_name").toString()));
   }
 
 }
