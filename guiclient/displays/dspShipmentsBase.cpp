@@ -269,6 +269,13 @@ void dspShipmentsBase::sFillURL()
      url += _partial;
     }
 
+   //add USPS Tracking
+   if (shipvia.startsWith("USPS"))
+   {
+     url = QString("https://tools.usps.com/go/TrackConfirmAction_input?qtc_tLabels1=")
+         + tracknum;
+   }
+
    if (shipvia.startsWith("R & L") || shipvia.startsWith("R&L"))
    {
      url = "http://www.rlcarriers.com/index.asp";
