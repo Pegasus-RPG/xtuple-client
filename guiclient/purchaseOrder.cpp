@@ -158,6 +158,7 @@ void purchaseOrder::setPoheadid(const int pId)
 {
   _poheadid = pId;
   _qeitem->setHeadId(pId);
+  emit newId(_poheadid);
 }
 
 purchaseOrder::~purchaseOrder()
@@ -213,6 +214,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
     if ( (param.toString() == "new") || (param.toString() == "releasePr") )
     {
       _mode = cNew;
+      emit newMode(_mode);
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
@@ -358,6 +360,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
             }
 //  Use an existing pohead
             _mode = cEdit;
+            emit newMode(_mode);
 
             setPoheadid(openpoid);
             _orderNumber->setEnabled(FALSE);
@@ -450,6 +453,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
+      emit newMode(_mode);
 
       _orderNumber->setEnabled(FALSE);
       _orderDate->setEnabled(FALSE);
@@ -506,6 +510,19 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
   return NoError;
 }
 
+int purchaseOrder::id() const
+{
+  return _poheadid;
+}
+
+/** \return one of cNew, cEdit, cView, ...
+ \todo   change possible modes to an enum in guiclient.h (and add cUnknown?)
+ */
+int purchaseOrder::mode() const
+{
+  return _mode;
+}
+
 void purchaseOrder::setViewMode()
 {
   if (cEdit == _mode)
@@ -520,6 +537,7 @@ void purchaseOrder::setViewMode()
   }
 
   _mode = cView;
+  emit newMode(_mode);
   
   _orderNumber->setEnabled(FALSE);
   _orderDate->setEnabled(FALSE);
@@ -755,6 +773,7 @@ void purchaseOrder::populate()
 
   sFillCharacteristic();
   sFillList();
+  emit populated();
 }
 
 void purchaseOrder::sSave()
@@ -1420,6 +1439,7 @@ void purchaseOrder::sHandleOrderNumber()
                              _lock.lastError(), __FILE__, __LINE__);
       
       _mode = cEdit;
+      emit newMode(_mode);
       setPoheadid(poheadid);
       populate();
       _orderNumber->setEnabled(FALSE);
