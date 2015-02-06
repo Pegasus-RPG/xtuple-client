@@ -75,7 +75,7 @@
 #include "setup.h"
 #include "setupscriptapi.h"
 
-#if defined(Q_OS_WIN32)
+#if defined(Q_OS_WIN)
 #define NOCRYPT
 #include <windows.h>
 #else
@@ -1989,14 +1989,14 @@ void GUIClient::sCustomCommand()
   */
 void GUIClient::launchBrowser(QWidget * w, const QString & url)
 {
-#if defined(Q_OS_WIN32)
+//#if defined(Q_OS_WIN)
   // Windows - let the OS do the work
-  QT_WA( {
-      ShellExecute(w->winId(), 0, (TCHAR*)url.utf16(), 0, 0, SW_SHOWNORMAL );
-    } , {
-      ShellExecuteA( w->winId(), 0, url.toLocal8Bit(), 0, 0, SW_SHOWNORMAL );
-    } );
-#else
+ // QT_WA( {
+  //    ShellExecute(w->winId(), 0, (TCHAR*)url.utf16(), 0, 0, SW_SHOWNORMAL );
+  //  } , {
+   //   ShellExecuteA(w->winId(), 0, url.toLocal8Bit(), 0, 0, SW_SHOWNORMAL );
+  //  } );
+//#else
   const char *b = getenv("BROWSER");
   QStringList browser;
   if(b) {
@@ -2037,7 +2037,7 @@ void GUIClient::launchBrowser(QWidget * w, const QString & url)
                                 "the environment variable BROWSER to point "
                                 "to the browser executable.") );
   }
-#endif
+//#endif
 }
 
 /** @brief Return the list of windows opened by GUIClient::handleNewWindow().
