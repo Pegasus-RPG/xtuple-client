@@ -35,7 +35,6 @@ public slots:
     virtual void sOpenPeriod();
     virtual void sPrint();
     virtual void sFillList();
-    virtual void sToggleCopy();
     virtual void sCopyPeriod();
 
 protected slots:

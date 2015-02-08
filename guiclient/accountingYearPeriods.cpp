@@ -26,7 +26,6 @@ accountingYearPeriods::accountingYearPeriods(QWidget* parent, const char* name, 
     setupUi(this);
 
     connect(_period, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_period, SIGNAL(newId(int)), this, SLOT(sToggleCopy()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
@@ -38,7 +37,6 @@ accountingYearPeriods::accountingYearPeriods(QWidget* parent, const char* name, 
     _period->addColumn(tr("Start"),  _dateColumn, Qt::AlignCenter, true, "yearperiod_start");
     _period->addColumn(tr("End"),    _dateColumn, Qt::AlignCenter, true, "yearperiod_end");
     _period->addColumn(tr("Closed"), -1         , Qt::AlignCenter, true, "closed");
-    _period->addColumn(tr("Last Yr."), 10       , Qt::AlignCenter, false, "lastfiscalyear");
 
     if (_privileges->check("MaintainAccountingPeriods"))
     {
@@ -94,11 +92,6 @@ void accountingYearPeriods::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelect
   {
     menuItem = pMenu->addAction(tr("Open..."), this, SLOT(sOpenPeriod()));
   }
-}
-
-void accountingYearPeriods::sToggleCopy()
-{
-  _copyPeriod->setEnabled(_period->currentItem()->text(3) == "Yes");  
 }
 
 void accountingYearPeriods::sNew()
@@ -211,9 +204,7 @@ void accountingYearPeriods::sOpenPeriod()
 void accountingYearPeriods::sCopyPeriod()
 {
   XSqlQuery copyAccountingYear;
-  XSqlQuery copyAccountingPeriods;
-  copyAccountingYear.prepare("SELECT copyAccountingYearPeriod(:period_id) AS result;");
-  copyAccountingYear.bindValue(":period_id", _period->id());
+  copyAccountingYear.prepare("SELECT copyAccountingYearPeriod(max(yearperiod_id)) AS result FROM yearperiod;");
   copyAccountingYear.exec();
   if (copyAccountingYear.first())
   {

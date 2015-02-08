@@ -132,7 +132,7 @@ to be bound by its terms.</comment>
           <item>
            <widget class="QPushButton" name="_copyPeriod" >
             <property name="enabled" >
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text" >
              <string>Copy Year</string>
