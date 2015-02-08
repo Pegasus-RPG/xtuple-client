@@ -96,12 +96,14 @@ isEmpty( OPENRPT_IMAGE_DIR ) {
 
 OPENRPTLIBEXT = $${QMAKE_EXTENSION_SHLIB}
 XTLIBEXT      = $${QMAKE_EXTENSION_SHLIB}
+win32:OPENRPTLIBEXT = a
+win32:XTLIBEXT      = a
+macx:OPENRPTLIBEXT  = a
+macx:XTLIBEXT       = a
 isEmpty( OPENRPTLIBEXT ) {
-  win32:OPENRPTLIBEXT = a
   unix:OPENRPTLIBEXT  = so
 }
 isEmpty( XTLIBEXT ) {
-  win32:XTLIBEXT = a
   unix:XTLIBEXT  = so
 }
 
