@@ -3822,6 +3822,10 @@ void salesOrderItem::sDeleteWoMatl()
 
 void salesOrderItem::sCalculateFromDiscount()
 {
+  // do not allow discount > 100 which results in negative price
+  if (_discountFromCust->toDouble() > 100.0)
+    _discountFromCust->setDouble(100.0);
+  
   if (_customerPrice->isZero())
     _discountFromCust->setText(tr("N/A"));
   else
