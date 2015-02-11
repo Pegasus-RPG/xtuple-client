@@ -29,6 +29,9 @@ public:
     purchaseOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~purchaseOrder();
 
+    Q_INVOKABLE virtual int id()   const;
+    Q_INVOKABLE virtual int mode() const;
+  
     virtual void createHeader();
     virtual void populateOrderNumber();
     virtual bool saveDetail();
@@ -74,6 +77,9 @@ protected slots:
     virtual void sTabChanged(int);
 
 signals:
+   void populated();
+   void newId(int);
+   void newMode(int);
    void saved(int);
 
 private:
