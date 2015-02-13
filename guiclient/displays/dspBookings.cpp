@@ -45,7 +45,6 @@ dspBookings::dspBookings(QWidget* parent, const char*, Qt::WFlags fl)
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
 
   parameterWidget()->applyDefaultFilterSet();
-  setupCharacteristics(characteristic::SalesOrders);
 
   list()->addColumn(tr("Order #"),            _orderColumn,    Qt::AlignLeft,   true,  "cohead_number"  );
   list()->addColumn(tr("Line #"),             _seqColumn,      Qt::AlignLeft,   true,  "f_linenumber"  );
@@ -73,6 +72,8 @@ dspBookings::dspBookings(QWidget* parent, const char*, Qt::WFlags fl)
     list()->addColumn(tr("Margin"),           _bigMoneyColumn, Qt::AlignRight,  false, "margin" );
     list()->addColumn(tr("Margin %"),         _prcntColumn,    Qt::AlignRight,  false, "marginpercent" );
   }
+
+  setupCharacteristics(characteristic::SalesOrders);
 }
 
 enum SetResponse dspBookings::set(const ParameterList &pParams)
