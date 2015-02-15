@@ -399,7 +399,7 @@ int main(int argc, char *argv[])
             checkPassReason = QObject::tr("<p>Your xTuple license expired over 30 days ago, and this software will no longer function. Please contact xTuple immediately to reinstate your software.");
           }
           else
-            checkPassReason = QObject::tr("<p>Attention:  Your xTuple license has expired, and in %1 days this software will cease to function.  Please make arrangements for immediate payment").arg(30 - daysTo);
+            checkPassReason = QObject::tr("<p>Attention:  Your xTuple license has expired, and in %1 days this software will cease to function.  Please contact xTuple to arrange for license renewal.").arg(30 - daysTo);
         }
         else
           expired = true;
@@ -499,12 +499,14 @@ int main(int argc, char *argv[])
 
   bool disallowMismatch = false;
   bool shouldCheckForUpdates = false;
+  QString _serverVersion;
   metric.exec("SELECT metric_value"
               " FROM metric"
               " WHERE (metric_name = 'ServerVersion')");
   if (!metric.first() || (metric.value("metric_value").toString() != _dbVersion)) {
 
     int result = 0;
+    _serverVersion = metric.value("metric_value").toString();
 
     metric.exec("SELECT metric_value FROM metric WHERE (metric_name = 'DisallowMismatchClientVersion')");
     if (metric.first() && (metric.value("metric_value").toString() == "t")) {
@@ -530,21 +532,14 @@ int main(int argc, char *argv[])
     else if (!shouldCheckForUpdates && disallowMismatch) {
       _splash->hide();
       result = QMessageBox::warning( 0, QObject::tr("Version Mismatch"),
-      QObject::tr("<p>The version of the database you are connecting to is "
-                  "not the version this client was designed to work against. "
-                  "This client was designed to work against the database "
-                  "version %1. The system has been configured to disallow "
-                  "access in this case.<p>Please contact your systems "
-                  "administrator.").arg(_Version),
+      QObject::tr("<p>The %1 client cannot connect to a %2 database. Please use a %3 client.").arg(_Version, _serverVersion, _serverVersion),
                   QMessageBox::Ok | QMessageBox::Escape | QMessageBox::Default );
       return 0;
     }
     else {
      _splash->hide();
      result = QMessageBox::warning( 0, QObject::tr("Version Mismatch"),
-     QObject::tr("<p>The version of the database you are connecting to is "
-                 "not the version this client was designed to work against. "
-                 "This client was designed to work against the database "
+     QObject::tr("<p>This client was designed to work against the database "
                  "version %1. If you continue some or all functionality may "
                  "not work properly or at all. You may also cause other "
                  "problems on the database.<p>Do you want to continue "
