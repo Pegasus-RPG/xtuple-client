@@ -552,7 +552,6 @@ void characteristicAssignment::handleTargetType()
   model->setTable("char");
   model->setFilter(boolColumn);
   model->setSort(1, Qt::AscendingOrder);
-  model->setSort(17, Qt::AscendingOrder);
   model->select();
   _char->setModel(model);
   _char->setModelColumn(1);
