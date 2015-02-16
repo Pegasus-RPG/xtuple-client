@@ -1483,7 +1483,7 @@ void salesOrderItem::sPopulateItemsiteInfo()
                      "       itemsite_createwo, itemsite_dropship,"
                      "       itemsite_stocked,"
                      "       itemCost(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
-                     "                :curr_id, :effective, :asof, :warehous_id) AS unitcost "
+                     "                :curr_id, :effective, :asof, :warehous_id, :dropShip) AS unitcost "
                      "FROM itemsite JOIN item ON (item_id=itemsite_item_id) "
                      "WHERE ( (itemsite_warehous_id=:warehous_id)"
                      "  AND   (itemsite_item_id=:item_id) );" );
@@ -1502,6 +1502,7 @@ void salesOrderItem::sPopulateItemsiteInfo()
     else
       itemsite.bindValue(":asof", omfgThis->dbDate());
     itemsite.bindValue(":warehous_id", _warehouse->id());
+    itemsite.bindValue(":dropShip", _supplyOrderDropShipCache);
     itemsite.bindValue(":item_id", _item->id());
     itemsite.exec();
     if (itemsite.first())
@@ -3118,6 +3119,8 @@ void salesOrderItem::sHandleSupplyOrder()
                 return;
               }
               // save the sales order item again to capture the supply order id
+              _supplyOrderDropShipCache = _supplyDropShip->isChecked();
+              sCalcUnitCost();
               sSave(true);
             }
             else if (ordq.lastError().type() != QSqlError::NoError)
@@ -4513,7 +4516,7 @@ void salesOrderItem::sPriceUOMChanged()
   XSqlQuery item;
   item.prepare("SELECT item_listprice,"
                "       itemCost(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
-               "                :curr_id, :effective, :asof, :warehous_id) AS unitcost "
+               "                :curr_id, :effective, :asof, :warehous_id, :dropShip) AS unitcost "
                "  FROM item LEFT OUTER JOIN itemsite ON (itemsite_item_id=item_id AND itemsite_warehous_id=:warehous_id)"
                " WHERE(item_id=:item_id);");
   item.bindValue(":cust_id", _custid);
@@ -4531,6 +4534,7 @@ void salesOrderItem::sPriceUOMChanged()
     item.bindValue(":asof", omfgThis->dbDate());
   item.bindValue(":item_id", _item->id());
   item.bindValue(":warehous_id", _warehouse->id());
+  item.bindValue(":dropShip", _supplyOrderDropShipCache);
   item.exec();
   item.first();
   _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
@@ -4556,7 +4560,7 @@ void salesOrderItem::sCalcUnitCost()
   {
     salesCalcUnitCost.prepare( "SELECT * FROM "
                       "itemCost(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
-                      "         :curr_id, :effective, :asof, :warehous_id) AS unitcost;" );
+                      "         :curr_id, :effective, :asof, :warehous_id, :dropShip) AS unitcost;" );
     salesCalcUnitCost.bindValue(":cust_id", _custid);
     salesCalcUnitCost.bindValue(":shipto_id", _shiptoid);
     salesCalcUnitCost.bindValue(":qty", _qtyOrdered->toDouble());
@@ -4572,6 +4576,7 @@ void salesOrderItem::sCalcUnitCost()
     else
       salesCalcUnitCost.bindValue(":asof", omfgThis->dbDate());
     salesCalcUnitCost.bindValue(":warehous_id", _warehouse->id());
+    salesCalcUnitCost.bindValue(":dropShip", _supplyOrderDropShipCache);
     salesCalcUnitCost.exec();
     if (salesCalcUnitCost.first())
       _unitCost->setBaseValue(salesCalcUnitCost.value("unitcost").toDouble() * _priceinvuomratio);
