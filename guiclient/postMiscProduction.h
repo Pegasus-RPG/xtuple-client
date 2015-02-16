@@ -41,7 +41,8 @@ protected slots:
 
 private:
     bool post();
-    
+    bool returntool();
+  
     bool _captive;
     int  _sense;
     int  _itemsiteid;
