@@ -900,8 +900,8 @@ void salesOrderItem::clear()
   _subItem->setEnabled(false);
   _subItemList->setEnabled(false);
   _comments->setId(-1);
-  _warehouse->clear();  // are these two _warehouse steps necessary?
-  _warehouse->setType(WComboBox::Sold);
+//  _warehouse->clear();  // are these two _warehouse steps necessary?
+//  _warehouse->setType(WComboBox::Sold);
   _originalQtyOrd  = 0.0;
   _qtyOrderedCache   = 0.0;
   _priceUOMCache   = -1;
