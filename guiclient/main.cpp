@@ -539,11 +539,11 @@ int main(int argc, char *argv[])
     else {
      _splash->hide();
      result = QMessageBox::warning( 0, QObject::tr("Version Mismatch"),
-     QObject::tr("<p>This client was designed to work against the database "
-                 "version %1. If you continue some or all functionality may "
+     QObject::tr("<p>This client was designed to work against database version %1 "
+                 "and your database is currently at version %2. If you continue some functionality may "
                  "not work properly or at all. You may also cause other "
                  "problems on the database.<p>Do you want to continue "
-                 "anyway?").arg(_Version), QMessageBox::Yes,
+                 "anyway?").arg(_Version, _serverVersion), QMessageBox::Yes,
                  QMessageBox::No | QMessageBox::Escape | QMessageBox::Default );
       if (result != QMessageBox::Yes) {
         return 0;
