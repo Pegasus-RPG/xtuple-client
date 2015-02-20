@@ -29,7 +29,7 @@
 #define EPSILON(d) (pow(10.0, -1 * (1 + d + decimals())) * 5)
 #define ABS(f)	((f) > 0 ? (f) : 0 - (f))
 
-#define MINWIDTH       120
+#define MINWIDTH       155
 #define MAXWIDTH       200
 #define MAXHEIGHT    32767
 #define MAXCURRWIDTH    80	/* max width of _currency combobox */
