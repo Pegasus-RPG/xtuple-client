@@ -548,12 +548,8 @@ void characteristicAssignment::handleTargetType()
     boolColumn = "char_vouchers";
   }
 
-  QSqlTableModel *model = new QSqlTableModel;
-  model->setTable("char");
-  model->setFilter(boolColumn);
-  model->setSort(1, Qt::AscendingOrder);
-  model->setSort(17, Qt::AscendingOrder);
-  model->select();
+  QSqlQueryModel *model = new QSqlQueryModel;
+  model->setQuery("SELECT char_id, char_name FROM char WHERE " + boolColumn + " ORDER BY char_order, char_name");
   _char->setModel(model);
   _char->setModelColumn(1);
   sHandleChar();
