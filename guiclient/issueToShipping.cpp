@@ -470,29 +470,39 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
                     __FILE__, __LINE__);
         return false;
       }
-      else if (distributeInventory::SeriesAdjust(itemlocSeries, this) == XDialog::Rejected)
+      
+      if (itemlocSeries > 0)
       {
-        rollback.exec();
-        QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
-        return false;
+        if (distributeInventory::SeriesAdjust(itemlocSeries, this) == XDialog::Rejected)
+        {
+          rollback.exec();
+          QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+          return false;
+        }
+        
+        // Need to get the inventory history id so we can auto reverse the distribution when issuing
+        prod.prepare("SELECT invhist_id "
+                     "FROM invhist "
+                     "WHERE ((invhist_series = :itemlocseries) "
+                     " AND (invhist_transtype = 'RM')); ");
+        prod.bindValue(":itemlocseries" , itemlocSeries);
+        prod.exec();
+        if (prod.first())
+          invhistid = prod.value("invhist_id").toInt();
+        else
+        {
+          rollback.exec();
+          systemError(this, tr("Inventory history not found"),
+                      __FILE__, __LINE__);
+          return false;
+        }
       }
-
-      // Need to get the inventory history id so we can auto reverse the distribution when issuing
-      prod.prepare("SELECT invhist_id "
-                   "FROM invhist "
-                   "WHERE ((invhist_series = :itemlocseries) "
-                   " AND (invhist_transtype = 'RM')); ");
-      prod.bindValue(":itemlocseries" , itemlocSeries);
-      prod.exec();
-      if (prod.first())
-        invhistid = prod.value("invhist_id").toInt();
-      else
-      {
-        rollback.exec();
-        systemError(this, tr("Inventory history not found"),
-                    __FILE__, __LINE__);
-        return false;
-      }
+    }
+    else if (prod.lastError().type() != QSqlError::NoError)
+    {
+      rollback.exec();
+      systemError(this, prod.lastError().databaseText(), __FILE__, __LINE__);
+      return false;
     }
   }
 
