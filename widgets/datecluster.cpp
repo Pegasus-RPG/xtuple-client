@@ -464,7 +464,7 @@ void XDateEdit::checkDate(const QDate &pDate)
 {
   QDate nextWorkDate = pDate;
 
-  if(determineIfStd() && (_siteId != -1))
+  if(determineIfStd() && (_siteId != -1) && (pDate != _currentDate))
   {
     XSqlQuery workday;
 

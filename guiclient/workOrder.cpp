@@ -194,7 +194,10 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
 
   param = pParams.value("wo_id", &valid);
   if (valid)
+  {
     _woid = param.toInt();
+    emit newId(_woid);
+  }
 
   param = pParams.value("planord_id", &valid);
   if (valid)
@@ -206,6 +209,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+      emit newMode(_mode);
 
       _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured | ItemLineEdit::cActive);
       _item->setDefaultType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cActive);
@@ -223,6 +227,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
+      emit newMode(_mode);
 
       _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured |
                          ItemLineEdit::cActive);
@@ -236,6 +241,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
     else if (param.toString() == "view")
     {
       _mode = cView;
+      emit newMode(_mode);
 
       _item->setQuery("SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
                       "                (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
@@ -268,6 +274,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
     else if (param.toString() == "release")
     {
       _mode = cRelease;
+      emit newMode(_mode);
       //_tabs->removePage(_tabs->page(3));
 
       setWork.prepare( "SELECT planord_itemsite_id, planord_duedate,"
@@ -329,6 +336,19 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
   }
 
   return NoError;
+}
+
+int workOrder::id() const
+{
+  return _woid;
+}
+
+/** \return one of cNew, cEdit, cView, ...
+ \todo   change possible modes to an enum in guiclient.h (and add cUnknown?)
+ */
+int workOrder::mode() const
+{
+  return _mode;
 }
 
 void workOrder::sCreate()
@@ -460,6 +480,7 @@ void workOrder::sCreate()
     }
   
     _woid = workCreate.value("result").toInt();
+    emit newId(_woid);
   
     workCreate.prepare("SELECT updateCharAssignment('W', :target_id, :char_id, :char_value);");
   
@@ -498,7 +519,10 @@ void workOrder::sCreate()
       workCreate.bindValue(":woNumber", _woNumber->text().toInt());
       workCreate.exec();
       if (workCreate.first())
+      {
         _woid = workCreate.value("wo_id").toInt();
+        emit newId(_woid);
+      }
       else
         // give up
         close();
@@ -2100,6 +2124,7 @@ void workOrder::populate()
         workpopulate.exec();
       }
       _mode = cEdit;
+      emit newMode(_mode);
     }
     _assembly->setEnabled(false);
     _disassembly->setEnabled(false);
@@ -2114,6 +2139,8 @@ void workOrder::populate()
     _bottomSpacer->hide();
 
     _save->setEnabled(true);
+    
+    emit populated();
   }
   else if (wo.lastError().type() != QSqlError::NoError)
   {
