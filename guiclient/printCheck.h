@@ -35,6 +35,7 @@ public slots:
     virtual void sEnableCreateEFT();
     virtual void sHandleBankAccount( int pBankaccntid );
     virtual void sPrint();
+    virtual void sPrintedAlready();
     virtual void populate( int pcheckid );
 
 protected slots:
@@ -48,6 +49,7 @@ private:
     int  _setCheckNumber;
 
     virtual void markCheckAsPrinted(const int);
+    virtual void sPrintImpl(bool printedAlready);
 
 };
 
