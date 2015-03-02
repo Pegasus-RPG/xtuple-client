@@ -1,0 +1,3 @@
+bin/* /usr/bin
+debian/postbooks.desktop /usr/share/applications
+
