@@ -390,6 +390,36 @@ void login2::sLogin()
   
   if(!_nonxTupleDB)
   {
+    // check that the connected database at least looks like a valid xTuple database.
+    XSqlQuery checkSchema(
+                "SELECT EXISTS ("
+                "   SELECT 1"
+                "   FROM pg_catalog.pg_class AS c"
+                "   JOIN  pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace"
+                "   WHERE n.nspname = 'public'"
+                "   AND c.relname = 'metric'"
+                ") AS has_metric"
+              );
+
+    if (!(checkSchema.first() ? checkSchema.value("has_metric").toBool() : false))
+    {
+        setCursor(QCursor(Qt::ArrowCursor));
+
+        if (_splash) {
+          _splash->hide();
+        }
+
+        QString msg = QObject::tr(
+           "<p>The database \"%1\" does not appear to be a valid xTuple database.</p>"
+           "<p>Please check the database name and try again.</p>"
+        ).arg(dbName);
+
+        QMessageBox::critical(this, tr("Invalid Database"), msg, QMessageBox::Ok | QMessageBox::Escape | QMessageBox::Default);
+
+        return;
+    }
+
+
     QString loginqry = "";
     if (_setSearchPath)
       loginqry="SELECT login(true) AS result, CURRENT_USER AS user;";

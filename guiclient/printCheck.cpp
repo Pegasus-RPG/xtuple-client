@@ -38,6 +38,7 @@ printCheck::printCheck(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_check,     SIGNAL(newID(int)), this, SLOT(sEnableCreateEFT()));
   connect(_createEFT, SIGNAL(clicked()),  this, SLOT(sCreateEFT()));
   connect(_print,     SIGNAL(clicked()),  this, SLOT(sPrint()));
+  connect(_printed,   SIGNAL(clicked()),  this, SLOT(sPrintedAlready()));
 
   _captive = false;
   _setCheckNumber = -1;
@@ -80,6 +81,16 @@ enum SetResponse printCheck::set(const ParameterList &pParams)
 
 void printCheck::sPrint()
 {
+  sPrintImpl(false);
+}
+
+void printCheck::sPrintedAlready()
+{
+  sPrintImpl(true);
+}
+
+void printCheck::sPrintImpl(bool printedAlready)
+{
   XSqlQuery printPrint;
   if(_setCheckNumber != -1 && _setCheckNumber != _nextCheckNum->text().toInt())
   {
@@ -106,6 +117,7 @@ void printCheck::sPrint()
   }
 
   if (_createEFT->isEnabled() &&
+      !printedAlready &&
       QMessageBox::question(this, tr("Print Anyway?"),
                             tr("<p>The recipient of this check has been "
                                "configured for EFT transactions. Do you want "
@@ -193,6 +205,12 @@ void printCheck::sPrint()
     if (printPrint.lastError().type() != QSqlError::NoError)
     {
       systemError(this, printPrint.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+    if(printedAlready)
+    {
+      markCheckAsPrinted(_check->id());
       return;
     }
 

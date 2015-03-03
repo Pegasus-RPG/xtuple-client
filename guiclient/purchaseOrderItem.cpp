@@ -705,7 +705,7 @@ void purchaseOrderItem::sSave()
     }
   }
 
-  if (_unitPrice->baseValue() > _maxCost && _maxCost > 0.0)
+  if ((_unitPrice->baseValue() / _invVendUOMRatio) > _maxCost && _maxCost > 0.0)
   {
     if (QMessageBox::critical( this, tr("Invalid Unit Price"),
                                tr( "<p>The Unit Price is above the Maximum Desired Cost for this Item."

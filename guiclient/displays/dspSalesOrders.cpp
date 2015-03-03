@@ -8,34 +8,45 @@
  * to be bound by its terms.
  */
 
-#include "dspSalesOrdersByCustomer.h"
+#include "dspSalesOrders.h"
 
-#include <QAction>
-#include <QMenu>
 #include <QMessageBox>
 #include <QVariant>
 
-#include "guiclient.h"
+#include "copySalesOrder.h"
 #include "dspSalesOrderStatus.h"
 #include "dspShipmentsBySalesOrder.h"
 #include "returnAuthorization.h"
 #include "salesOrder.h"
+#include "parameterwidget.h"
 
-dspSalesOrdersByCustomer::dspSalesOrdersByCustomer(QWidget* parent, const char*, Qt::WindowFlags fl)
-  : display(parent, "dspSalesOrdersByCustomer", fl)
+dspSalesOrders::dspSalesOrders(QWidget* parent, const char*, Qt::WindowFlags fl)
+  : display(parent, "dspSalesOrders", fl)
 {
   setupUi(optionsWidget());
-  setWindowTitle(tr("Sales Order Lookup by Customer"));
+  setWindowTitle(tr("Sales Orders"));
   setListLabel(tr("Sales Orders"));
   setMetaSQLOptions("salesOrders", "detail");
+  /* setReportName("ListSalesOrders");  */
+  setParameterWidgetVisible(true);
+  setNewVisible(true);
+  setQueryOnStartEnabled(false);
+  setAutoUpdateEnabled(true);
 
-  connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulatePo()));
+  if (_metrics->boolean("MultiWhs"))
+    parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
+  parameterWidget()->append(tr("Customer"), "cust_id", ParameterWidget::Customer);
+  parameterWidget()->appendComboBox(tr("Customer Type"), "custtype_id", XComboBox::CustomerTypes);
+  parameterWidget()->append(tr("Customer Type Pattern"), "custtype_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("P/O Number"), "poNumber", ParameterWidget::Text);
+  parameterWidget()->append(tr("Project"), "prj_id", ParameterWidget::Project);
+  parameterWidget()->appendComboBox(tr("Sales Rep."), "salesrep_id", XComboBox::SalesRepsActive);
+  parameterWidget()->appendComboBox(tr("Sale Type"), "saletype_id", "SELECT saletype_id, saletype_descr FROM saletype");
+  parameterWidget()->append(tr("Hide Closed"), "hideClosed", ParameterWidget::Exists);
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
-  _dates->setStartCaption(tr("Starting Order Date:"));
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
-  _dates->setEndCaption(tr("Ending Order Date:"));
-
+  list()->addColumn(tr("Customer"),    _itemColumn,  Qt::AlignLeft,   true,  "cust_number"   );
   list()->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft,   true,  "cohead_number"   );
   list()->addColumn(tr("Ordered"),     _dateColumn,  Qt::AlignRight,  true,  "cohead_orderdate"  );
   list()->addColumn(tr("Scheduled"),   _dateColumn,  Qt::AlignRight,  true,  "min_scheddate"  );
@@ -43,40 +54,29 @@ dspSalesOrdersByCustomer::dspSalesOrdersByCustomer(QWidget* parent, const char*,
   list()->addColumn(tr("Ship-to"),     -1,           Qt::AlignLeft,   true,  "cohead_shiptoname"   );
   list()->addColumn(tr("Cust. P/O #"), 200,          Qt::AlignLeft,   true,  "cohead_custponumber"   );
 
+  parameterWidget()->applyDefaultFilterSet();
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList())  );
 }
 
-void dspSalesOrdersByCustomer::languageChange()
+void dspSalesOrders::languageChange()
 {
   display::languageChange();
   retranslateUi(this);
 }
 
-void dspSalesOrdersByCustomer::sPopulatePo()
+void dspSalesOrders::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem*, int)
 {
-  XSqlQuery dspPopulatePo;
-  _poNumber->clear();
+  if(list()->id() == -1)
+    return;
 
-  if ((_cust->isValid()) && (_dates->allValid()))
-  {
-    dspPopulatePo.prepare( "SELECT MIN(cohead_id), cohead_custponumber "
-               "FROM cohead "
-               "WHERE ( (cohead_cust_id=:cust_id)"
-               " AND (cohead_orderdate BETWEEN :startDate AND :endDate) ) "
-               "GROUP BY cohead_custponumber "
-               "ORDER BY cohead_custponumber;" );
-    _dates->bindValue(dspPopulatePo);
-    dspPopulatePo.bindValue(":cust_id", _cust->id());
-    dspPopulatePo.exec();
-    _poNumber->populate(dspPopulatePo);
-  }
-}
-
-void dspSalesOrdersByCustomer::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem*, int)
-{
   if(_privileges->check("MaintainSalesOrders"))
     menuThis->addAction(tr("Edit..."), this, SLOT(sEditOrder()));
   menuThis->addAction(tr("View..."), this, SLOT(sViewOrder()));
+  if(_privileges->check("MaintainSalesOrders"))
+  {
+    menuThis->addSeparator();
+    menuThis->addAction(tr("Copy..."), this, SLOT(sCopyOrder()));
+  }
   menuThis->addSeparator();
   menuThis->addAction(tr("Shipment Status..."), this, SLOT(sDspShipmentStatus()));
   menuThis->addAction(tr("Shipments..."), this, SLOT(sDspShipments()));
@@ -88,7 +88,18 @@ void dspSalesOrdersByCustomer::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem*, 
   }
 }
 
-void dspSalesOrdersByCustomer::sEditOrder()
+bool dspSalesOrders::setParams(ParameterList & params)
+{
+  parameterWidget()->appendValue(params);
+  params.append("noLines", tr("No Lines"));
+  params.append("closed", tr("Closed"));
+  params.append("open", tr("Open"));
+  params.append("partial", tr("Partial"));
+
+  return true;
+}
+
+void dspSalesOrders::sEditOrder()
 {
   if (!checkSitePrivs(list()->id()))
     return;
@@ -96,7 +107,7 @@ void dspSalesOrdersByCustomer::sEditOrder()
   salesOrder::editSalesOrder(list()->id(), false);
 }
 
-void dspSalesOrdersByCustomer::sViewOrder()
+void dspSalesOrders::sViewOrder()
 {
   if (!checkSitePrivs(list()->id()))
     return;
@@ -104,7 +115,20 @@ void dspSalesOrdersByCustomer::sViewOrder()
   salesOrder::viewSalesOrder(list()->id());
 }
 
-void dspSalesOrdersByCustomer::sCreateRA()
+void dspSalesOrders::sCopyOrder()
+{
+  if (!checkSitePrivs(list()->id()))
+    return;
+    
+  ParameterList params;
+  params.append("sohead_id", list()->id());
+      
+  copySalesOrder newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void dspSalesOrders::sCreateRA()
 {
   if (!checkSitePrivs(list()->id()))
     return;
@@ -121,7 +145,7 @@ void dspSalesOrdersByCustomer::sCreateRA()
 			  tr("The new Return Authorization could not be created"));
 }
 
-void dspSalesOrdersByCustomer::sDspShipmentStatus()
+void dspSalesOrders::sDspShipmentStatus()
 {
   if (!checkSitePrivs(list()->id()))
     return;
@@ -135,7 +159,7 @@ void dspSalesOrdersByCustomer::sDspShipmentStatus()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspSalesOrdersByCustomer::sDspShipments()
+void dspSalesOrders::sDspShipments()
 {
   if (!checkSitePrivs(list()->id()))
     return;
@@ -149,30 +173,7 @@ void dspSalesOrdersByCustomer::sDspShipments()
   omfgThis->handleNewWindow(newdlg);
 }
 
-bool dspSalesOrdersByCustomer::setParams(ParameterList &params)
-{
-  if ( !(( (_allPOs->isChecked()) ||
-         ( (_selectedPO->isChecked()) && (_poNumber->currentIndex() != -1) ) ) &&
-       (_dates->allValid())  ))
-  {
-    QMessageBox::warning(this, tr("Incomplete Options"),
-      tr("One or more of the options are incomplete."));
-    return false;
-  }
-
-  _dates->appendValue(params);
-  params.append("noLines", tr("No Lines"));
-  params.append("closed", tr("Closed"));
-  params.append("open", tr("Open"));
-  params.append("partial", tr("Partial"));
-  params.append("cust_id", _cust->id());
-  if (_selectedPO->isChecked())
-    params.append("poNumber", _poNumber->currentText());
-
-  return true;
-}
-
-bool dspSalesOrdersByCustomer::checkSitePrivs(int orderid)
+bool dspSalesOrders::checkSitePrivs(int orderid)
 {
   if (_preferences->boolean("selectedSites"))
   {
@@ -182,7 +183,7 @@ bool dspSalesOrdersByCustomer::checkSitePrivs(int orderid)
     check.exec();
     if (check.first())
     {
-    if (!check.value("result").toBool())
+      if (!check.value("result").toBool())
       {
         QMessageBox::critical(this, tr("Access Denied"),
                                        tr("You may not view or edit this Sales Order as it references "
@@ -193,3 +194,4 @@ bool dspSalesOrdersByCustomer::checkSitePrivs(int orderid)
   }
   return true;
 }
+

@@ -166,6 +166,7 @@ FORMS =   absoluteCalendarItem.ui               \
           copyContract.ui                       \
           copyItem.ui                           \
           copyPurchaseOrder.ui                  \
+          copyQuote.ui                          \
           copySalesOrder.ui                     \
           copyTransferOrder.ui                  \
           correctProductionPosting.ui           \
@@ -720,6 +721,7 @@ HEADERS = ../common/format.h                    \
           copyContract.h                \
           copyItem.h                    \
           copyPurchaseOrder.h           \
+          copyQuote.h                   \
           copySalesOrder.h              \
           copyTransferOrder.h           \
           correctProductionPosting.h    \
@@ -1330,6 +1332,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           copyContract.cpp                      \
           copyItem.cpp                          \
           copyPurchaseOrder.cpp                 \
+          copyQuote.cpp                         \
           copySalesOrder.cpp                    \
           copyTransferOrder.cpp                 \
           correctProductionPosting.cpp          \

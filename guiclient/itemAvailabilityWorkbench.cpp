@@ -358,7 +358,7 @@ void itemAvailabilityWorkbench::sFillList()
       _dspInventoryHistory->sFillList();
     else if (_receivingHistoryButton->isChecked())
       _dspPoItemReceivingsByItem->sFillList();
-    else if (_salesHistoryButton->isChecked())
+    else if (_salesHistoryButton->isChecked() && _sold)
       _dspSalesHistory->sFillList();
   }
   else if (_tab->currentIndex() == _tab->indexOf(_ordersTab))

@@ -55,12 +55,12 @@ void purgeClosedWorkOrders::sPurge()
   if (_cutOffDate->isValid())
   {
     if (_warehouse->isAll())
-      purgePurge.prepare("SELECT MIN(deleteWo(wo_id, false)) AS result"
+      purgePurge.prepare("SELECT MIN(deleteWo(wo_id, false, true)) AS result"
                 "  FROM wo"
                 " WHERE ((wo_status = 'C')"
                 "   AND  (wo_duedate <= :cutoffDate))");
     else
-      purgePurge.prepare("SELECT MIN(deleteWo(wo_id, false)) AS result"
+      purgePurge.prepare("SELECT MIN(deleteWo(wo_id, false, true)) AS result"
                 "  FROM wo, itemsite"
                 " WHERE ((wo_status = 'C')"
                 "   AND  (wo_duedate <= :cutoffDate)"

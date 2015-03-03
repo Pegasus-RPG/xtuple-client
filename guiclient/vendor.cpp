@@ -154,6 +154,7 @@ SetResponse vendor::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+      emit newMode(_mode);
 
       XSqlQuery idq;
       idq.exec("SELECT NEXTVAL('vend_vend_id_seq') AS vend_id;");
@@ -196,6 +197,7 @@ SetResponse vendor::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
+      emit newMode(_mode);
 
       if (_privileges->check("MaintainVendorAddresses"))
       {
@@ -215,6 +217,7 @@ SetResponse vendor::set(const ParameterList &pParams)
     else if (param.toString() == "view")
     {
       _mode = cView;
+      emit newMode(_mode);
 
       _number->setEnabled(false);
       _vendtype->setEnabled(false);
@@ -275,6 +278,14 @@ SetResponse vendor::set(const ParameterList &pParams)
 int vendor::id() const
 {
   return _vendid;
+}
+
+/** \return one of cNew, cEdit, cView, ...
+ \todo   change possible modes to an enum in guiclient.h (and add cUnknown?)
+ */
+int vendor::mode() const
+{
+  return _mode;
 }
 
 void vendor::sSave()
@@ -620,6 +631,7 @@ void vendor::sCheck()
         }
         _vendid = dupq.value("vend_id").toInt();
         _mode = cEdit;
+        emit newMode(_mode);
         sPopulate();
         _name->setFocus();
       }

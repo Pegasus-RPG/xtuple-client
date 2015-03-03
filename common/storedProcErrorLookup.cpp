@@ -1354,6 +1354,16 @@ const struct {
 			       "bill for less than the quantity shipped."),
 								0, "" },
 
+  { "selectPayment",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Document cannot be approved because it "
+                                            "cannot be found or is the wrong document type."),
+    0, "" },
+  { "selectPayment",	-2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Document cannot be approved because the "
+                                            "balance is less than the amount plus discount."),
+    0, "" },
+  { "selectPayment",	-3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Bank account company does not match "
+                                            "the voucher distribution account company."),
+    0, "" },
+  
   { "shipShipment",  -1, "",	 -1, "postInvTrans"		},
   { "shipShipment",  -3, "",	 -3, "insertGLTransaction"	},
   { "shipShipment",  -4, "",	 -4, "insertGLTransaction"	},

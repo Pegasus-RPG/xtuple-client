@@ -457,7 +457,9 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
     {
       vch = vch + qty;
       amt = amt + (qty * pp);
-
+    }
+    else
+    {
       if (item->text(0) == "Receiving")
       {
         rcv = rcv + qty;

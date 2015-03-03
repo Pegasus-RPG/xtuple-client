@@ -260,6 +260,13 @@ static struct {
 
 };
 
+static QString _paycoInsertStmt("INSERT INTO payco ("
+				"  payco_ccpay_id, payco_cohead_id,"
+				"  payco_amount, payco_curr_id"
+				") VALUES ("
+				"  :payco_ccpay_id, :payco_cohead_id,"
+				"  :payco_amount, :payco_curr_id);");
+
 CreditCardProcessor::FraudCheckResult::FraudCheckResult(QChar pcode, int /*TODO: FraudChecks*/ psev, QString ptext)
 {
   code = pcode;
@@ -548,9 +555,7 @@ int CreditCardProcessor::authorize(const int pccardid, const QString &pcvv, cons
     }
     else if (preftype == "cohead")
     {
-      cashq.prepare("INSERT INTO payco VALUES"
-		    " (:payco_ccpay_id, :payco_cohead_id,"
-		    "  :payco_amount, :payco_curr_id);");
+      cashq.prepare(_paycoInsertStmt);
       cashq.bindValue(":payco_ccpay_id",  pccpayid);
       cashq.bindValue(":payco_cohead_id", prefid);
       cashq.bindValue(":payco_amount",    amount);
@@ -682,9 +687,7 @@ int CreditCardProcessor::charge(const int pccardid, const QString &pcvv, const d
     {
       XSqlQuery cashq;
 
-      cashq.prepare("INSERT INTO payco VALUES"
-                " (:payco_ccpay_id, :payco_cohead_id,"
-                "  :payco_amount, :payco_curr_id);");
+      cashq.prepare(_paycoInsertStmt);
       cashq.bindValue(":payco_ccpay_id",  pccpayid);
       cashq.bindValue(":payco_cohead_id", prefid);
       cashq.bindValue(":payco_amount",    pamount);
@@ -1267,9 +1270,8 @@ int CreditCardProcessor::reversePreauthorized(const double pamount, const int pc
   ccq.bindValue(":ccpayid", pccpayid);
   ccq.exec();
 
-  int ccardid;
   if (ccq.first())
-    ccardid = ccq.value("ccpay_ccard_id").toInt();
+    ; // we'll use the returned row further down; fail fast
   else if (ccq.lastError().type() != QSqlError::NoError)
   {
     _errorMsg = ccq.lastError().databaseText();
