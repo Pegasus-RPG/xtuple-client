@@ -3762,11 +3762,10 @@ void salesOrder::populateCMInfo()
 
   // Allocated C/M's
   populateSales.prepare("SELECT COALESCE(SUM(currToCurr(aropenalloc_curr_id, :curr_id,"
-            "                               aropenalloc_amount, :effective)),0) AS amount"
-            "  FROM aropenalloc, aropen"
-            " WHERE ( (aropenalloc_doctype='S')"
-            "  AND    (aropenalloc_doc_id=:doc_id)"
-            "  AND    (aropenalloc_aropen_id=aropen_id) ); ");
+                        "                               aropenalloc_amount, :effective)),0) AS amount"
+                        "  FROM aropenalloc JOIN aropen ON (aropen_id=aropenalloc_aropen_id) "
+                        " WHERE ( (aropenalloc_doctype='S')"
+                        "  AND    (aropenalloc_doc_id=:doc_id) );");
   populateSales.bindValue(":doc_id",    _soheadid);
   populateSales.bindValue(":curr_id",   _allocatedCM->id());
   populateSales.bindValue(":effective", _allocatedCM->effective());
@@ -3778,16 +3777,15 @@ void salesOrder::populateCMInfo()
 
   // Unallocated C/M's
   populateSales.prepare("SELECT SUM(amount) AS f_amount"
-            " FROM (SELECT aropen_id,"
-            "        currToCurr(aropen_curr_id, :curr_id,"
-            "               noNeg(aropen_amount - aropen_paid - SUM(COALESCE(aropenalloc_amount,0))),"
-            "               :effective) AS amount "
-            "       FROM cohead, aropen LEFT OUTER JOIN aropenalloc ON (aropenalloc_aropen_id=aropen_id)"
-            "       WHERE ( (aropen_cust_id=cohead_cust_id)"
-            "         AND   (aropen_doctype IN ('C', 'R'))"
-            "         AND   (aropen_open)"
-            "         AND   (cohead_id=:cohead_id) )"
-            "       GROUP BY aropen_id, aropen_amount, aropen_paid, aropen_curr_id) AS data; ");
+                        " FROM (SELECT aropen_id,"
+                        "              noNeg(currToCurr(aropen_curr_id, :curr_id, (aropen_amount - aropen_paid), :effective) - "
+                        "                    SUM(currToCurr(aropenalloc_curr_id, :curr_id, COALESCE(aropenalloc_amount,0), :effective))) AS amount "
+                        "       FROM cohead JOIN aropen ON (aropen_cust_id=cohead_cust_id) "
+                        "                   LEFT OUTER JOIN aropenalloc ON (aropenalloc_aropen_id=aropen_id)"
+                        "       WHERE ( (aropen_doctype IN ('C', 'R'))"
+                        "         AND   (aropen_open)"
+                        "         AND   (cohead_id=:cohead_id) )"
+                        "       GROUP BY aropen_id, aropen_amount, aropen_paid, aropen_curr_id) AS data; ");
   populateSales.bindValue(":cohead_id", _soheadid);
   populateSales.bindValue(":curr_id",   _outstandingCM->id());
   populateSales.bindValue(":effective", _outstandingCM->effective());
@@ -4515,7 +4513,7 @@ void salesOrder::sEnterCashPayment()
 {
   XSqlQuery cashsave;
 
-  if (_cashReceived->localValue() >  _balance->localValue() &&
+  if (_cashReceived->baseValue() >  _balance->baseValue() &&
       QMessageBox::question(this, tr("Overapplied?"),
                             tr("The Cash Payment is more than the Balance.  Do you want to continue?"),
                             QMessageBox::Yes,
@@ -4654,10 +4652,15 @@ void salesOrder::sEnterCashPayment()
     cashPost.bindValue(":doc_id", _soheadid);
     cashPost.bindValue(":aropen_id", aropenid);
     if (_cashReceived->localValue() >  _balance->localValue())
+    {
       cashPost.bindValue(":amount", _balance->localValue());
+      cashPost.bindValue(":curr_id", _balance->id());
+    }
     else
+    {
       cashPost.bindValue(":amount", _cashReceived->localValue());
-    cashPost.bindValue(":curr_id", _cashReceived->id());
+      cashPost.bindValue(":curr_id", _cashReceived->id());
+    }
     cashPost.exec();
     if (cashPost.lastError().type() != QSqlError::NoError)
     {

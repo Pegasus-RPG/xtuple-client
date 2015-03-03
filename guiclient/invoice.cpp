@@ -1301,16 +1301,16 @@ void invoice::populateCMInfo()
 
   // Allocated C/M's
   cm.prepare("SELECT COALESCE(SUM(currToCurr(aropenalloc_curr_id, :curr_id,"
-            "                               aropenalloc_amount, :effective)),0) AS amount"
-            "  FROM ( "
-            "  SELECT aropenalloc_curr_id, aropenalloc_amount"
-            "    FROM cohead JOIN aropenalloc ON (aropenalloc_doctype='S' AND aropenalloc_doc_id=cohead_id)"
-            "   WHERE (cohead_number=:cohead_number) "
-            "  UNION ALL"
-            "  SELECT aropenalloc_curr_id, aropenalloc_amount"
-            "    FROM aropenalloc"
-            "   WHERE (aropenalloc_doctype='I' AND aropenalloc_doc_id=:invchead_id)"
-            "       ) AS data;");
+             "                               aropenalloc_amount, :effective)),0) AS amount"
+             "  FROM ( "
+             "  SELECT aropenalloc_curr_id, aropenalloc_amount"
+             "    FROM cohead JOIN aropenalloc ON (aropenalloc_doctype='S' AND aropenalloc_doc_id=cohead_id)"
+             "   WHERE (cohead_number=:cohead_number) "
+             "  UNION ALL"
+             "  SELECT aropenalloc_curr_id, aropenalloc_amount"
+             "    FROM aropenalloc"
+             "   WHERE (aropenalloc_doctype='I' AND aropenalloc_doc_id=:invchead_id)"
+             "       ) AS data;");
   cm.bindValue(":invchead_id", _invcheadid);
   cm.bindValue(":cohead_number", _orderNumber->text());
   cm.bindValue(":curr_id",     _allocatedCM->id());
@@ -1328,15 +1328,14 @@ void invoice::populateCMInfo()
 
   // Unallocated C/M's
   cm.prepare("SELECT SUM(amount) AS amount"
-            "  FROM ( SELECT aropen_id, "
-	    "                currToCurr(aropen_curr_id, :curr_id,"
-            "                           noNeg(aropen_amount - aropen_paid - SUM(COALESCE(aropenalloc_amount,0))),"
-	    "                           :effective) AS amount"
-            "           FROM aropen LEFT OUTER JOIN aropenalloc ON (aropenalloc_aropen_id=aropen_id)"
-            "          WHERE ( (aropen_cust_id=:cust_id)"
-            "            AND   (aropen_doctype IN ('C', 'R'))"
-            "            AND   (aropen_open))"
-            "          GROUP BY aropen_id, aropen_amount, aropen_paid, aropen_curr_id) AS data; ");
+             "  FROM ( SELECT aropen_id, "
+             "                noNeg(currToCurr(aropen_curr_id, :curr_id, (aropen_amount - aropen_paid), :effective) - "
+             "                      SUM(currToCurr(aropenalloc_curr_id, :curr_id, COALESCE(aropenalloc_amount,0), :effective))) AS amount "
+             "           FROM aropen LEFT OUTER JOIN aropenalloc ON (aropenalloc_aropen_id=aropen_id)"
+             "          WHERE ( (aropen_cust_id=:cust_id)"
+             "            AND   (aropen_doctype IN ('C', 'R'))"
+             "            AND   (aropen_open))"
+             "          GROUP BY aropen_id, aropen_amount, aropen_paid, aropen_curr_id) AS data; ");
   cm.bindValue(":cust_id",     _cust->id());
   cm.bindValue(":curr_id",     _outstandingCM->id());
   cm.bindValue(":effective",   _outstandingCM->effective());
