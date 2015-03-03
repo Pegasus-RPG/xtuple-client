@@ -37,7 +37,7 @@ win32-msvc* {
 
 QMAKE_LIBDIR = ../lib $${OPENRPT_LIBDIR} $$QMAKE_LIBDIR
 LIBS        += -lxtuplecommon -lxtuplewidgets -lwrtembed -lopenrptcommon
-LIBS        += -lrenderer -lxtuplescriptapi $${DMTXLIB} -lMetaSQL -framework QtDesignerComponents
+LIBS        += -lrenderer -lxtuplescriptapi $${DMTXLIB} -lMetaSQL
 
 #not the best way to handle this, but it should do
 #mac:!static:contains(QT_CONFIG, qt_framework) {
@@ -51,6 +51,7 @@ win32 {
   win32-msvc*:LIBS += -lshell32
   RC_FILE = rcguiclient.rc
   OBJECTS_DIR = win_obj
+  LIBS += -lQt5DesignerComponents -lz
 }
 win32-g++-4.6 {
   LIBS += -lz
@@ -67,7 +68,7 @@ macx {
   #PRECOMPILED_HEADER = stable.h
   OBJECTS_DIR = osx_obj
   QMAKE_INFO_PLIST = Info.plist
-  LIBS += -lz
+  LIBS += -lz -framework Qt5DesignerComponents
 }
 
 DESTDIR     = ../bin
