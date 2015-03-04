@@ -123,7 +123,7 @@ void dspSalesOrders::sCopyOrder()
   ParameterList params;
   params.append("sohead_id", list()->id());
       
-  copySalesOrder newdlg(this, "", TRUE);
+  copySalesOrder newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
