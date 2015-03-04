@@ -168,7 +168,7 @@ menuSales::menuSales(GUIClient *pParent) :
     // Sales | Sales Order
     { "menu",	tr("&Sales Order"),	(char*)ordersMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
     { "so.newSalesOrder", 	     tr("&New..."),		SLOT(sNewSalesOrder()),   ordersMenu, "MaintainSalesOrders", NULL, NULL,	 true, NULL },
-    { "so.listOpenSalesOrders",      tr("&List Open..."),	SLOT(sOpenSalesOrders()), ordersMenu, "MaintainSalesOrders ViewSalesOrders",	QPixmap(":/images/listOpenSalesOrders.png"), toolBar,  true, tr("List Open Sales Orders") },
+    { "so.listOpenSalesOrders",  tr("&List Open..."),	SLOT(sOpenSalesOrders()), ordersMenu, "MaintainSalesOrders ViewSalesOrders", new QPixmap(":/images/listOpenSalesOrders.png"), toolBar,  true, tr("List Open Sales Orders") },
     { "so.listSalesOrders",      tr("&Search Orders..."),	SLOT(sSalesOrders()), ordersMenu, "MaintainSalesOrders ViewSalesOrders", NULL, NULL, true, NULL },
 
     // Sales | Billing
