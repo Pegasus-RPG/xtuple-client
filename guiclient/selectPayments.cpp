@@ -200,7 +200,7 @@ void selectPayments::sSelectDiscount()
       return;
     }
 
-    omfgThis->sPaymentsUpdated(-1, -1, TRUE);
+    omfgThis->sPaymentsUpdated(-1, -1, true);
   }
 }
 
