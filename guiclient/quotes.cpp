@@ -365,7 +365,7 @@ void quotes::sCopyToCustomer()
         ParameterList params;
         params.append("quhead_id", qid);
 
-        copyQuote newdlg(this, "", TRUE);
+        copyQuote newdlg(this, "", true);
         newdlg.set(params);
         lastid = newdlg.exec();
       }
