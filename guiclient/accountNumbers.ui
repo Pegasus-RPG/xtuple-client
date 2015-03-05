@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>634</width>
-    <height>252</height>
+    <width>571</width>
+    <height>451</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,33 +39,7 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item>
-        <widget class="XComboBox" name="_type">
-         <item>
-          <property name="text">
-           <string>Asset</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Liability</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Expense</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Revenue</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Equity</string>
-          </property>
-         </item>
-        </widget>
+        <widget class="XComboBox" name="_type"/>
        </item>
        <item>
         <widget class="XLabel" name="_subTypeLit">
@@ -232,7 +206,7 @@ to be bound by its terms.</comment>
  <customwidgets>
   <customwidget>
    <class>XCheckBox</class>
-   <extends></extends>
+   <extends>QCheckBox</extends>
    <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
@@ -247,7 +221,7 @@ to be bound by its terms.</comment>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
-   <extends></extends>
+   <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
