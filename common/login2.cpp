@@ -172,8 +172,11 @@ int login2::set(const ParameterList &pParams, QSplashScreen *pSplash)
     _setSearchPath = true;
 
   param = pParams.value("applicationName", &valid);
-  if (valid)
+  if (valid) {
     _connAppName = param.toString().trimmed();
+  } else {
+    _connAppName = "xTuple ERP (unknown)";
+  }
 
   if(pParams.inList("login"))
     sLogin();
