@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>571</width>
-    <height>451</height>
+    <width>634</width>
+    <height>252</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,6 +23,85 @@ to be bound by its terms.</comment>
   <layout class="QHBoxLayout">
    <item>
     <layout class="QVBoxLayout">
+     <item>
+      <layout class="QHBoxLayout">
+       <property name="spacing">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="_typeLit">
+         <property name="text">
+          <string>Type:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="XComboBox" name="_type">
+         <item>
+          <property name="text">
+           <string>Asset</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Liability</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Expense</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Revenue</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Equity</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="XLabel" name="_subTypeLit">
+         <property name="text">
+          <string>Sub Account Type:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="XComboBox" name="_subType">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="allowNull">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
      <item>
       <layout class="QHBoxLayout">
        <item>
@@ -153,12 +232,22 @@ to be bound by its terms.</comment>
  <customwidgets>
   <customwidget>
    <class>XCheckBox</class>
-   <extends>QCheckBox</extends>
+   <extends></extends>
    <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
+   <class>XComboBox</class>
+   <extends></extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends></extends>
+   <header>xlabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
+   <extends></extends>
    <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
