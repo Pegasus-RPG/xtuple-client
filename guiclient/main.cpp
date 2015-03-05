@@ -326,27 +326,12 @@ int main(int argc, char *argv[])
     _splash->showMessage(QObject::tr("Checking License Key"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
 	
-
-    // PostgreSQL changed the column "procpid" to just "pid" in 9.2.0+ Incident #21852
-    QString pidColName = "pid";
-    XSqlQuery checkVersion(QString("select compareversion('9.2.0');"));
-
-    if(checkVersion.first() && (checkVersion.value("compareversion").toInt() > 0))
-    {
-      pidColName = "procpid";
-    }
-
     metric.exec(
       QString(
         "SELECT"
-        "   COUNT(*) AS xt_client_count,"
-        "   (SELECT COUNT(*) FROM pg_stat_activity WHERE datname=current_database()) AS total_client_count"
-        " FROM pg_locks"
-        "  LEFT JOIN pg_stat_activity ON pg_stat_activity.%1 = pg_locks.pid"
-        "  WHERE pg_locks.objsubid = 2"
-        "  AND pg_stat_activity.datname=current_database()"
-        "  AND application_name = '%2'"
-      ).arg(pidColName).arg(_ConnAppName)
+        "   numOfDatabaseUsers('%1') AS xt_client_count,"
+        "   numOfServerUsers() as total_client_count"
+      ).arg(_ConnAppName)
     );
 
     int cnt = 50000;
