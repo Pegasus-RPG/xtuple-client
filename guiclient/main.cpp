@@ -254,6 +254,7 @@ int main(int argc, char *argv[])
     params.append("copyright", _Copyright);
     params.append("version",   _Version);
     params.append("build",     _Build.arg(__DATE__).arg(__TIME__));
+    params.append("applicationName", _ConnAppName);
     params.append("setSearchPath", true);
 
     if (haveUsername)
@@ -325,37 +326,20 @@ int main(int argc, char *argv[])
     _splash->showMessage(QObject::tr("Checking License Key"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
 	
-	// PostgreSQL changed the column "procpid" to just "pid" in 9.2.0+ Incident #21852
-	XSqlQuery checkVersion(QString("select compareversion('9.2.0');"));
+    metric.exec(
+      QString(
+        "SELECT"
+        "   numOfDatabaseUsers('%1') AS xt_client_count,"
+        "   numOfServerUsers() as total_client_count"
+      ).arg(_ConnAppName)
+    );
 
-    if(checkVersion.first())
-    {
-      if(checkVersion.value("compareversion").toInt() > 0)
-      {
-	   metric.exec("SELECT count(*) AS registered, (SELECT count(*) FROM pg_stat_activity WHERE datname=current_database()) AS total"
-			"  FROM pg_stat_activity, pg_locks"
-			" WHERE((database=datid)"
-			"   AND (classid=datid)"
-			"   AND (objsubid=2)"
-			"   AND (procpid = pg_backend_pid()));");
-      }
-	  else
-	  {
-	   metric.exec("SELECT count(*) AS registered, (SELECT count(*) FROM pg_stat_activity WHERE datname=current_database()) AS total"
-			"  FROM pg_stat_activity, pg_locks"
-			" WHERE((database=datid)"
-			"   AND (classid=datid)"
-			"   AND (objsubid=2)"
-			"   AND (pg_stat_activity.pid = pg_backend_pid()));");
-      }
-    }
-	
     int cnt = 50000;
     int tot = 50000;
     if(metric.first())
-    {
-      cnt = metric.value("registered").toInt();
-      tot = metric.value("total").toInt();
+    {        
+      cnt = metric.value("xt_client_count").toInt();
+      tot = metric.value("total_client_count").toInt();
     }
     metric.exec("SELECT packageIsEnabled('drupaluserinfo') AS result;");
     bool xtweb = false;
@@ -415,8 +399,13 @@ int main(int argc, char *argv[])
       }
       else if(pkey.users() != 0 && (pkey.users() < cnt || (!xtweb && (pkey.users() * 2 < tot))))
       {
+        if (pkey.users() < cnt) {
+            checkPassReason = QObject::tr("<p>You have exceeded the number of allowed concurrent xTuple users for your license.</p>");
+        } else {
+            checkPassReason = QObject::tr("<p>You have exceeded the number of allowed concurrent database connections for your license.</p>");
+        }
+
         checkPass = false;
-        checkPassReason = QObject::tr("<p>You have exceeded the number of allowed concurrent users for your license.");
         checkLock = forced = forceLimit;
       }
       else

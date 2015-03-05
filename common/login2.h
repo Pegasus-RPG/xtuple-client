@@ -74,6 +74,7 @@ class login2 : public QDialog, public Ui::login2
     QString _cPort;
     QString _cloudDatabaseURL;
     QString _cCompany;
+    QString _connAppName;
 };
 
 #endif

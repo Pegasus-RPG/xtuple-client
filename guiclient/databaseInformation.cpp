@@ -14,6 +14,7 @@
 
 #include <dbtools.h>
 #include "xtupleproductkey.h"
+#include "version.h"
 
 databaseInformation::databaseInformation(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XAbstractConfigure(parent, fl)
@@ -76,8 +77,14 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   _disableAutoComplete->setChecked(_metrics->boolean("DisableAutoComplete"));
   _enableGapless->setChecked(_metrics->boolean("EnableGaplessNumbering"));
   
-  databasedatabaseInformation.exec( "SELECT numOfDatabaseUsers() AS databaseusers,"
-          "       numOfServerUsers() AS serverusers;" );
+  databasedatabaseInformation.exec(
+    QString(
+      "SELECT"
+      " numOfDatabaseUsers('%1') AS databaseusers,"
+      " numOfServerUsers() AS serverusers;"
+    ).arg(_ConnAppName)
+  );
+
   if (databasedatabaseInformation.first())
   {
     _numOfDatabaseUsers->setText(databasedatabaseInformation.value("databaseusers").toString());

@@ -19,6 +19,7 @@
 
 #include "login2.h"
 #include "currcluster.h"
+#include "version.h"
 
 #define DEBUG false
 
@@ -383,6 +384,7 @@ void company::sTest()
   ParameterList params;
   params.append("databaseURL", dbURL);
   params.append("multipleConnections");
+  params.append("applicationName", _ConnAppName);
 
   login2 newdlg(this, "testLogin", false);
   newdlg.set(params);
