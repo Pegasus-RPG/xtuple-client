@@ -60,7 +60,7 @@ win32-g++-4.6 {
 
 unix {
   OBJECTS_DIR = unx_obj
-  LIBS += -lz
+  LIBS += -lz -lQt5DesignerComponents
 }
 
 macx {
