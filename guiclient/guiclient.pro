@@ -68,7 +68,7 @@ macx {
   #PRECOMPILED_HEADER = stable.h
   OBJECTS_DIR = osx_obj
   QMAKE_INFO_PLIST = Info.plist
-  LIBS += -lz -framework Qt5DesignerComponents
+  LIBS += -lz -framework QtDesignerComponents
 }
 
 DESTDIR     = ../bin
