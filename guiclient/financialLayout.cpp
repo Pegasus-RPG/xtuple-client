@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
+#include <QDebug>
 
 #include "errorReporter.h"
 #include "financialLayoutColumns.h"
@@ -469,7 +470,7 @@ void financialLayout::insertFlGroup(int pFlgrpid, QString pFlgrpname, XTreeWidge
       }
     }
   }
-
+  if(!_lastStack.isEmpty())
   _last = _lastStack.pop();
 }
 
@@ -622,7 +623,7 @@ void financialLayout::insertFlGroupAdHoc(int pFlgrpid, QString pFlgrpname, XTree
       }
     }
   }
-
+  if(!_lastStack.isEmpty())
   _last = _lastStack.pop();
 }
 
