@@ -277,6 +277,8 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   {
     _unitCost->hide();
     _unitCostLit->hide();
+    _invCost->hide();
+    _invCostLit->hide();
     _markupFromUnitCost->hide();
     _markupFromUnitCostLit->hide();
   }
@@ -874,6 +876,7 @@ void salesOrderItem::clear()
 //  _scheduledDate->clear();
   _promisedDate->clear();
   _unitCost->clear();
+  _invCost->clear();
   _listPrice->clear();
   _customerPrice->clear();
   _discountFromListPrice->clear();
@@ -1483,7 +1486,8 @@ void salesOrderItem::sPopulateItemsiteInfo()
                      "       itemsite_createwo, itemsite_dropship,"
                      "       itemsite_stocked,"
                      "       itemCost(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
-                     "                :curr_id, :effective, :asof, :warehous_id, :dropShip) AS unitcost "
+                     "                :curr_id, :effective, :asof, :warehous_id, :dropShip) AS unitcost,"
+                     "       itemCost(itemsite_id) AS invunitcost, itemsite_costmethod "
                      "FROM itemsite JOIN item ON (item_id=itemsite_item_id) "
                      "WHERE ( (itemsite_warehous_id=:warehous_id)"
                      "  AND   (itemsite_item_id=:item_id) );" );
@@ -1511,6 +1515,16 @@ void salesOrderItem::sPopulateItemsiteInfo()
       _stocked     = itemsite.value("itemsite_stocked").toBool();
       _costmethod  = itemsite.value("itemsite_costmethod").toString();
       _unitCost->setBaseValue(itemsite.value("unitcost").toDouble() * _priceinvuomratio);
+      _invCost->setBaseValue(itemsite.value("invunitcost").toDouble());
+      QString _costMethod = itemsite.value("itemsite_costmethod").toString();
+      if (_costMethod == "S")
+          _invCostMethod->setText(tr("Standard"));
+      else if (_costMethod == "A")
+          _invCostMethod->setText(tr("Average"));
+      else if (_costMethod == "J")
+          _invCostMethod->setText(tr("Job"));
+      else
+          _invCostMethod->setText(tr("None"));
 
       if (itemsite.value("itemsite_createwo").toBool())
       {
