@@ -2010,6 +2010,7 @@ void salesOrder::sNew()
   params.append("sohead_id", _soheadid);
   params.append("cust_id", _cust->id());
   params.append("shipto_id", _shipTo->id());
+  params.append("shipto_name", _shipToName->text());
   params.append("orderNumber", _orderNumber->text());
   params.append("curr_id", _orderCurrency->id());
   params.append("orderDate", _orderDate->date());
@@ -2058,6 +2059,7 @@ void salesOrder::sEdit()
   params.append("soitem_id", _soitem->id());
   params.append("cust_id", _cust->id());
   params.append("shipto_id", _shipTo->id());
+  params.append("shipto_name", _shipToName->text());
   params.append("orderNumber", _orderNumber->text());
   params.append("curr_id", _orderCurrency->id());
   params.append("orderDate", _orderDate->date());

@@ -97,6 +97,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
 
   _leadTime              = 999;
   _shiptoid              = -1;
+  _shiptoname            = "";
   _preferredWarehouseid  = -1;
   _modified              = false;
   _canceling             = false;
@@ -395,6 +396,12 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
     _charVars.replace(SHIPTO_ID, param.toInt());
   }
 
+  param = pParams.value("shipto_name", &valid);
+  if (valid)
+  {
+    _shiptoname = param.toString();
+  }
+  
   param = pParams.value("warehous_id", &valid);
   if (valid)
   {
@@ -1538,8 +1545,11 @@ void salesOrderItem::sPopulateItemsiteInfo()
         if (_metrics->boolean("EnableDropShipments"))
         {
           _supplyDropShip->setEnabled(true);
-          _supplyDropShip->setChecked(itemsite.value("itemsite_dropship").toBool());
-          _supplyOrderDropShipCache = itemsite.value("itemsite_dropship").toBool();
+          if (_shiptoid > -1 || _shiptoname != "")
+          {
+            _supplyDropShip->setChecked(itemsite.value("itemsite_dropship").toBool());
+            _supplyOrderDropShipCache = itemsite.value("itemsite_dropship").toBool();
+          }
         }
         else
         {
@@ -1555,8 +1565,11 @@ void salesOrderItem::sPopulateItemsiteInfo()
         if (_metrics->boolean("EnableDropShipments"))
         {
           _supplyDropShip->setEnabled(true);
-          _supplyDropShip->setChecked(itemsite.value("itemsite_dropship").toBool());
-          _supplyOrderDropShipCache = itemsite.value("itemsite_dropship").toBool();
+          if (_shiptoid > -1 || _shiptoname != "")
+          {
+            _supplyDropShip->setChecked(itemsite.value("itemsite_dropship").toBool());
+            _supplyOrderDropShipCache = itemsite.value("itemsite_dropship").toBool();
+          }
         }
         else
         {
@@ -3098,21 +3111,14 @@ void salesOrderItem::sHandleSupplyOrder()
             return;
           }
 
-           XSqlQuery sto;
-		  sto.prepare( "SELECT cohead_shiptoaddress1 FROM cohead WHERE cohead_id=:cohead_id" );
-			sto.bindValue(":cohead_id", _soheadid);
-			sto.exec();
-			if (sto.first()){
+          if ( _supplyDropShip->isChecked() && _shiptoid < 1 && _shiptoname == "")
+          {
+            QMessageBox::critical(this, tr("Cannot Update Supply Order"),
+                                  tr("<p>You must enter a valid Ship-To before selecting to drop ship."));
+            _supplyDropShip->setChecked(_supplyOrderDropShipCache);
+            return;
+          }
 
-          if ( _supplyDropShip->isChecked() && _shiptoid < 1){
-		  if(sto.value("cohead_shiptoaddress1").toString().isEmpty())
-			  //removes the error if Free-Form Ship-To was used
-			{
-			 QMessageBox::critical(this, tr("Cannot Update Supply Order"),
-					tr("<p>You must enter a valid Ship-To Address (or #) before saving this Sales Order Item."));
-			 return;
-		  }}}
-          
           if (QMessageBox::question(this, tr("Drop Ship P/O?"),
                                     tr("<p>The Drop Ship for this Line Item has changed."
                                        "<p>Should the P/O Drop Ship for this Line Item be changed?"),
