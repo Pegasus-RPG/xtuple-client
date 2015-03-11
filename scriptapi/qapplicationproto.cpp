@@ -31,8 +31,6 @@ void setupQApplicationProto(QScriptEngine *engine)
   QScriptValue proto = engine->newQObject(new QApplicationProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QApplication*>(), proto);
   /*
-  //engine->setDefaultPrototype(qMetaTypeId<QApplication>(),  proto);
-
   QScriptValue constructor = engine->newFunction(constructQApplication,
                                                  proto);
   engine->globalObject().setProperty("QApplication", constructor);
@@ -77,6 +75,7 @@ bool QApplicationProto::isSessionRestored() const
   return false;
 }
 
+#ifdef Q_WS_MAC
 bool QApplicationProto::macEventFilter(EventHandlerCallRef caller, EventRef event)
 {
   QApplication *item = qscriptvalue_cast<QApplication*>(thisObject());
@@ -84,6 +83,7 @@ bool QApplicationProto::macEventFilter(EventHandlerCallRef caller, EventRef even
     return item->macEventFilter(caller, event);
   return false;
 }
+#endif
 
 bool QApplicationProto::notify(QObject *receiver, QEvent *e)
 {
@@ -93,7 +93,7 @@ bool QApplicationProto::notify(QObject *receiver, QEvent *e)
   return false;
 }
 
-#ifdef Q_OS_LINUX
+#ifdef Q_WS_QWS
 bool QApplicationProto::qwsEventFilter(QWSEvent *event)
 {
   QApplication *item = qscriptvalue_cast<QApplication*>(thisObject());
@@ -139,16 +139,6 @@ void QApplicationProto::setInputContext(QInputContext* inputContext)
   if (item)
     item->setInputContext(inputContext);
 }
-
-/*
-QString QApplicationProto::styleSheet() const
-{
-  QApplication *item = qscriptvalue_cast<QApplication*>(thisObject());
-  if (item)
-    return item->styleSheet();
-  return QString();
-}
-*/
 
 #ifdef Q_OS_SYMBIAN
 bool QApplicationProto::symbianEventFilter(const QSymbianEvent *event)
@@ -231,13 +221,6 @@ int QApplicationProto::colorSpec()
   return qApp->colorSpec();
 }
 
-/*
-int QApplicationProto::cursorFlashTime()
-{
-  return qApp->cursorFlashTime();
-}
-*/
-
 QDesktopWidget *QApplicationProto::desktop()
 {
   return qApp->desktop();
@@ -247,13 +230,6 @@ bool QApplicationProto::desktopSettingsAware()
 {
   return qApp->desktopSettingsAware();
 }
-
-/*
-int QApplicationProto::doubleClickInterval()
-{
-  return qApp->doubleClickInterval();
-}
-*/
 
 int QApplicationProto::exec()
 {
@@ -285,13 +261,6 @@ QFontMetrics QApplicationProto::fontMetrics()
   return qApp->fontMetrics();
 }
 
-/*
-QSize QApplicationProto::globalStrut()
-{
-  return qApp->globalStrut();
-}
-*/
-
 bool QApplicationProto::isEffectEnabled(Qt::UIEffect effect)
 {
   return qApp->isEffectEnabled(effect);
@@ -312,13 +281,6 @@ Qt::LayoutDirection QApplicationProto::keyboardInputDirection()
   return qApp->keyboardInputDirection();
 }
 
-/*
-int QApplicationProto::keyboardInputInterval()
-{
-  return qApp->keyboardInputInterval();
-}
-*/
-
 QLocale QApplicationProto::keyboardInputLocale()
 {
   return qApp->keyboardInputLocale();
@@ -329,26 +291,10 @@ Qt::KeyboardModifiers QApplicationProto::keyboardModifiers()
   return qApp->keyboardModifiers();
 }
 
-/*
-Qt::LayoutDirection QApplicationProto::layoutDirection()
-{
-  return qApp->layoutDirection();
-}
-*/
-
 Qt::MouseButtons QApplicationProto::mouseButtons()
 {
   return qApp->mouseButtons();
 }
-
-/*
-#if defined(Q_OS_LINUX) || defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
-Qt::NavigationMode QApplicationProto::navigationMode()
-{
-  return qApp->navigationMode();
-}
-#endif
-*/
 
 QCursor *QApplicationProto::overrideCursor()
 {
@@ -375,14 +321,7 @@ Qt::KeyboardModifiers QApplicationProto::queryKeyboardModifiers()
   return qApp->queryKeyboardModifiers();
 }
 
-/*
-bool QApplicationProto::quitOnLastWindowClosed()
-{
-  return qApp->quitOnLastWindowClosed();
-}
-*/
-
-#ifdef Q_OS_LINUX
+#if defined(QT_WS_QWS) && !defined(Q_NO_QWS_MANAGER)
 QDecoration &QApplicationProto::qwsDecoration()
 {
   return qApp->qwsDecoration();
@@ -414,13 +353,6 @@ void QApplicationProto::setColorSpec(int spec)
   qApp->setColorSpec(spec);
 }
 
-/*
-void QApplicationProto::setCursorFlashTime(int ms)
-{
-  qApp->setCursorFlashTime(ms);
-}
-*/
-
 void QApplicationProto::setDesktopSettingsAware(bool on)
 {
   qApp->setDesktopSettingsAware(on);
@@ -441,36 +373,10 @@ void QApplicationProto::setFont(const QFont &font, const char *className)
   qApp->setFont(font, className);
 }
 
-/*
-void QApplicationProto::setGlobalStrut(const QSize &size)
-{
-  qApp->setGlobalStrut(size);
-}
-*/
-
 void QApplicationProto::setGraphicsSystem(const QString &system)
 {
   qApp->setGraphicsSystem(system);
 }
-
-/*
-void QApplicationProto::setKeyboardInputInterval(int ms)
-{
-  qApp->setKeyboardInputInterval(ms);
-}
-
-void QApplicationProto::setLayoutDirection(Qt::LayoutDirection direction)
-{
-  qApp->setLayoutDirection(direction);
-}
-
-#if defined(Q_OS_LINUX) || defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
-void QApplicationProto::setNavigationMode(Qt::NavigationMode mode)
-{
-  qApp->setNavigationMode(mode);
-}
-#endif
-*/
 
 void QApplicationProto::setOverrideCursor(const QCursor &cursor)
 {
@@ -487,18 +393,6 @@ void QApplicationProto::setQuitOnLastWindowClosed(bool quit)
   qApp->setQuitOnLastWindowClosed(quit);
 }
 
-/*
-void QApplicationProto::setStartDragDistance(int l)
-{
-  qApp->setStartDragDistance(l);
-}
-
-void QApplicationProto::setStartDragTime(int ms)
-{
-  qApp->setStartDragTime(ms);
-}
-*/
-
 void QApplicationProto::setStyle(QStyle *style)
 {
   qApp->setStyle(style);
@@ -508,30 +402,6 @@ QStyle *QApplicationProto::setStyle(const QString &style)
 {
   return qApp->setStyle(style);
 }
-
-/*
-void QApplicationProto::setWheelScrollLines(int lines)
-{
-  QApplication *item = qscriptvalue_cast<QApplication*>(thisObject());
-  if (item)
-    item->setWheelScrollLines(lines);
-}
-
-void QApplicationProto::setWindowIcon(const QIcon &icon)
-{
-  qApp->setWindowIcon(icon);
-}
-
-int QApplicationProto::startDragDistance()
-{
-  return qApp->startDragDistance();
-}
-
-int QApplicationProto::startDragTime()
-{
-  return qApp->startDragTime();
-}
-*/
 
 QStyle *QApplicationProto::style()
 {
@@ -564,13 +434,6 @@ QApplication::Type QApplicationProto::type()
   return qApp->type();
 }
 
-/*
-int QApplicationProto::wheelScrollLines()
-{
-  return qApp->wheelScrollLines();
-}
-*/
-
 QWidget *QApplicationProto::widgetAt(const QPoint &point)
 {
   return qApp->widgetAt(point);
@@ -580,13 +443,6 @@ QWidget *QApplicationProto::widgetAt(int x, int y)
 {
   return qApp->widgetAt(x, y);
 }
-
-/*
-QIcon QApplicationProto::windowIcon()
-{
-  return qApp->windowIcon();
-}
-*/
 
 QString QApplicationProto::toString() const
 {
