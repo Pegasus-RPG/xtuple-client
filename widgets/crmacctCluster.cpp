@@ -62,7 +62,7 @@ static QString _listAndSearchQueryString(
       "<? elseif exists('vendor') ?>"
       "    SELECT vend_id AS id,         vend_number AS number,"
       "           vend_name AS name,     vend_cntct1_id AS cntct_id,"
-      "           vend_active AS active, cntct_addr_id AS addr_id,"
+      "           vend_active AS active, COALESCE(cntct_addr_id, vend_addr_id) AS addr_id,"
       "           vendtype_code AS type"
       "      FROM vendinfo"
       "      JOIN vendtype ON (vend_vendtype_id=vendtype_id)"
