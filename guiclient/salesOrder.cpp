@@ -1598,9 +1598,13 @@ void salesOrder::sHandleOrderNumber()
     XSqlQuery query;
     if ( (_mode == cNew) && (_userEnteredOrderNumber) )
     {
-      query.prepare("SELECT deleteSO(:sohead_id, :sohead_number) AS result;");
+      query.prepare("SELECT deleteSO(:sohead_id, :sohead_number ::text) AS result;");
       query.bindValue(":sohead_id", _soheadid);
-      query.bindValue(":sohead_number", _orderNumber->text());
+      if (_orderNumberGen)
+        query.bindValue(":sohead_number", _orderNumberGen);
+      else
+        query.bindValue(":sohead_number", _orderNumber->text());
+
       query.exec();
       if (query.first())
       {
