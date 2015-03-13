@@ -1618,6 +1618,14 @@ void purchaseOrder::sCurrencyChanged()
 
 void purchaseOrder::sTabChanged(int pIndex)
 {
+  if (_orderNumber->text() == "" && _purchaseOrderInformation->currentIndex() > 0)
+  {
+    QMessageBox::information(this, tr("Missing Order Number"), tr("Please enter a Purchase Order number before proceeding"));
+    _orderNumber->setFocus();
+    _purchaseOrderInformation->setCurrentIndex(0);
+    return;
+  }
+
   if (pIndex != _cachedTabIndex &&
       _cachedTabIndex == _purchaseOrderInformation->indexOf(_quickEntryTab) &&
       _qeitem->isDirty())
