@@ -12,15 +12,14 @@
 #define __QAPPLICATIONPROTO_H__
 
 #include <QApplication>
-#include <QDecoration>
+#include <QFont>
+#include <QFontMetrics>
 #include <QObject>
+#include <QPalette>
 #include <QSessionManager>
-#include <QWSEvent>
 #include <QtScript>
 
-class QInputContext;
 class QString;
-class QSymbianEvent;
 
 Q_DECLARE_METATYPE(QApplication*)
 
@@ -34,29 +33,10 @@ class QApplicationProto : public QObject, public QScriptable
   public:
     QApplicationProto(QObject *parent);
 
-    Q_INVOKABLE void            commitData(QSessionManager &manager);
-    Q_INVOKABLE QInputContext  *inputContext()                   const;
     Q_INVOKABLE bool            isSessionRestored()              const;
-#ifdef Q_WS_MAC
-    Q_INVOKABLE bool            macEventFilter(EventHandlerCallRef caller, EventRef event);
-#endif
     Q_INVOKABLE bool            notify(QObject *receiver, QEvent *e);
-#ifdef Q_WS_QWS
-    Q_INVOKABLE bool            qwsEventFilter(QWSEvent *event);
-    Q_INVOKABLE void            qwsSetCustomColors(QRgb *colorTable, int start, int numColors);
-#endif
-    Q_INVOKABLE void            saveState(QSessionManager &manager);
     Q_INVOKABLE QString         sessionId()         const;
     Q_INVOKABLE QString         sessionKey()        const;
-    Q_INVOKABLE void            setInputContext(QInputContext* inputContext);
-#ifdef Q_OS_SYMBIAN
-    Q_INVOKABLE bool            symbianEventFilter(const QSymbianEvent *event);
-    Q_INVOKABLE int             symbianProcessEvent(const QSymbianEvent *event);
-#endif
-#ifdef Q_WS_X11
-    Q_INVOKABLE bool            x11EventFilter(XEvent *event);
-    Q_INVOKABLE int             x11ProcessEvent(XEvent *event);
-#endif
 
     Q_INVOKABLE QWidget        *activeModalWidget();
     Q_INVOKABLE QWidget        *activePopupWidget();
@@ -78,8 +58,6 @@ class QApplicationProto : public QObject, public QScriptable
     Q_INVOKABLE bool            isEffectEnabled(Qt::UIEffect effect);
     Q_INVOKABLE bool            isLeftToRight();
     Q_INVOKABLE bool            isRightToLeft();
-    Q_INVOKABLE Qt::LayoutDirection     keyboardInputDirection();
-    Q_INVOKABLE QLocale         keyboardInputLocale();
     Q_INVOKABLE Qt::KeyboardModifiers   keyboardModifiers();
     Q_INVOKABLE Qt::MouseButtons        mouseButtons();
     Q_INVOKABLE QCursor        *overrideCursor();
@@ -87,11 +65,6 @@ class QApplicationProto : public QObject, public QScriptable
     Q_INVOKABLE QPalette        palette(const QWidget *widget);
     Q_INVOKABLE QPalette        palette(const char *className);
     Q_INVOKABLE Qt::KeyboardModifiers   queryKeyboardModifiers();
-#if defined(QT_WS_QWS) && !defined(Q_NO_QWS_MANAGER)
-    Q_INVOKABLE QDecoration    &qwsDecoration();
-    Q_INVOKABLE void            qwsSetDecoration(QDecoration *decoration);
-    Q_INVOKABLE QDecoration    *qwsSetDecoration(const QString &decoration);
-#endif
     Q_INVOKABLE void            restoreOverrideCursor();
     Q_INVOKABLE void            setActiveWindow(QWidget *active);
     Q_INVOKABLE void            setColorSpec(int spec);
@@ -99,18 +72,15 @@ class QApplicationProto : public QObject, public QScriptable
     Q_INVOKABLE void            setDoubleClickInterval(int ms);
     Q_INVOKABLE void            setEffectEnabled(Qt::UIEffect effect, bool enable = true);
     Q_INVOKABLE void            setFont(const QFont &font, const char *className = 0);
-    Q_INVOKABLE void            setGraphicsSystem(const QString &system);
     Q_INVOKABLE void            setOverrideCursor(const QCursor &cursor);
     Q_INVOKABLE void            setPalette(const QPalette &palette, const char *className = 0);
     Q_INVOKABLE void            setQuitOnLastWindowClosed(bool quit);
     Q_INVOKABLE void            setStyle(QStyle *style);
     Q_INVOKABLE QStyle         *setStyle(const QString &style);
     Q_INVOKABLE QStyle         *style();
-    Q_INVOKABLE void            syncX();
     Q_INVOKABLE QWidget        *topLevelAt(const QPoint &point);
     Q_INVOKABLE QWidget        *topLevelAt(int x, int y);
     Q_INVOKABLE QWidgetList     topLevelWidgets();
-    Q_INVOKABLE QApplication::Type      type();
     Q_INVOKABLE QWidget        *widgetAt(const QPoint &point);
     Q_INVOKABLE QWidget        *widgetAt(int x, int y);
 
