@@ -122,6 +122,8 @@ friend class ItemLineEditDelegate;
        cPlanningAny         = cPlanningMRP | cPlanningMPS | cPlanningNone,
 
       // Misc. Options
+      cHasBom              = 0x01000000,
+      cUsedOnBom           = 0x02000000,
       cItemActive          = 0x04000000,
       cSold                = 0x08000000,
 

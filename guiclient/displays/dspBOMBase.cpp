@@ -25,9 +25,7 @@ dspBOMBase::dspBOMBase(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_item, SIGNAL(valid(bool)), _revision, SLOT(setEnabled(bool)));
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), this, SLOT(sFillList()));
 
-  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased |
-                 ItemLineEdit::cPhantom | ItemLineEdit::cKit |
-                 ItemLineEdit::cPlanning | ItemLineEdit::cTooling);
+  _item->setType(ItemLineEdit::cHasBom);
 
   _expiredDaysLit->setEnabled(_showExpired->isChecked());
   _expiredDays->setEnabled(_showExpired->isChecked());
@@ -39,14 +37,6 @@ dspBOMBase::dspBOMBase(QWidget* parent, const char* name, Qt::WFlags fl)
   _revision->setType("BOM");
 
   _revision->setVisible(_metrics->boolean("RevControl"));
-  
-  _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-                           "                (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-                           "                uom_name, item_type, item_config, item_active, item_upccode "
-                           "FROM item JOIN bomitem ON (bomitem_parent_item_id=item_id)  "
-                           "          JOIN uom ON (item_inv_uom_id=uom_id) "
-                           "WHERE (item_active) "
-                           "ORDER BY item_number" ) );
 }
 
 void dspBOMBase::languageChange()
