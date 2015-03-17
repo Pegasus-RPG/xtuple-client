@@ -33,10 +33,13 @@ class QApplicationProto : public QObject, public QScriptable
   public:
     QApplicationProto(QObject *parent);
 
-    Q_INVOKABLE bool            isSessionRestored()              const;
     Q_INVOKABLE bool            notify(QObject *receiver, QEvent *e);
+
+#ifndef QT_NO_SESSIONMANAGER
+    Q_INVOKABLE bool            isSessionRestored() const;
     Q_INVOKABLE QString         sessionId()         const;
     Q_INVOKABLE QString         sessionKey()        const;
+#endif
 
     Q_INVOKABLE QWidget        *activeModalWidget();
     Q_INVOKABLE QWidget        *activePopupWidget();
