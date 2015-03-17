@@ -50,19 +50,20 @@ QApplicationProto::QApplicationProto(QObject *parent)
 {
 }
 
-bool QApplicationProto::isSessionRestored() const
-{
-  QApplication *item = qscriptvalue_cast<QApplication*>(thisObject());
-  if (item)
-    return item->isSessionRestored();
-  return false;
-}
-
 bool QApplicationProto::notify(QObject *receiver, QEvent *e)
 {
   QApplication *item = qscriptvalue_cast<QApplication*>(thisObject());
   if (item)
     return item->notify(receiver, e);
+  return false;
+}
+
+#ifndef QT_NO_SESSIONMANAGER
+bool QApplicationProto::isSessionRestored() const
+{
+  QApplication *item = qscriptvalue_cast<QApplication*>(thisObject());
+  if (item)
+    return item->isSessionRestored();
   return false;
 }
 
@@ -81,6 +82,7 @@ QString QApplicationProto::sessionKey() const
     return item->sessionKey();
   return QString();
 }
+#endif
 
 QWidget *QApplicationProto::activeModalWidget()
 {
