@@ -66,9 +66,6 @@ protected slots:
 
 
 private:
-    int _mode;
-    int _charid;
-    QSqlTableModel *_charoptModel;
     characteristicPrivate *_d;
 };
 
