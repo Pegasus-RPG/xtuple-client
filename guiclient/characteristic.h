@@ -19,6 +19,8 @@
 
 #include "ui_characteristic.h"
 
+class characteristicPrivate;
+
 class characteristic : public XDialog, public Ui::characteristic
 {
     Q_OBJECT
@@ -67,6 +69,7 @@ private:
     int _mode;
     int _charid;
     QSqlTableModel *_charoptModel;
+    characteristicPrivate *_d;
 };
 
 #endif // CHARACTERISTIC_H

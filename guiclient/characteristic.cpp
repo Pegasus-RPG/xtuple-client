@@ -10,6 +10,7 @@
 
 #include "characteristic.h"
 
+#include <QDebug>
 #include <QMessageBox>
 #include <QItemSelectionModel>
 #include <QSqlError>
@@ -18,6 +19,24 @@
 #include <QSqlRecord>
 #include <QSqlTableModel>
 #include <QVariant>
+
+#define DEBUG true
+
+class characteristicPrivate {
+  public:
+    int idCol;
+    int charIdCol;
+    int valueCol;
+    int orderCol;
+
+    characteristicPrivate(int pIdCol, int pCharIdCol, int pValueCol, int pOrderCol)
+      : idCol(pIdCol),
+        charIdCol(pCharIdCol),
+        valueCol(pValueCol),
+        orderCol(pOrderCol)
+    {
+    }
+};
 
 characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -29,6 +48,10 @@ characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt
   _charoptModel = new QSqlTableModel;
   _charoptModel->setTable("charopt");
   _charoptModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
+  _d = new characteristicPrivate(_charoptModel->fieldIndex("charopt_id"),
+                                 _charoptModel->fieldIndex("charopt_char_id"),
+                                 _charoptModel->fieldIndex("charopt_value"),
+                                 _charoptModel->fieldIndex("charopt_order"));
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheck()));
@@ -149,7 +172,7 @@ void characteristic::sSave()
   QStringList values;
   for (int i = 0; i < _charoptModel->rowCount(); i++)
   {
-    QString data = _charoptModel->data(_charoptModel->index(i,2), Qt::EditRole).toString();
+    QString data = _charoptModel->data(_charoptModel->index(i,_d->valueCol), Qt::EditRole).toString();
     if (values.contains(data))
     {
       QMessageBox::critical(this, tr("Error"), tr("Option list may not contain duplicates."));
@@ -323,23 +346,29 @@ void characteristic::sFillList()
 {
   QString filter = QString("charopt_char_id=%1").arg(_charid);
   _charoptModel->setFilter(filter);
-  _charoptModel->setSort(3, Qt::AscendingOrder);
+  _charoptModel->setSort(_d->orderCol, Qt::AscendingOrder);
   _charoptModel->select();
-  _charoptModel->setHeaderData(2, Qt::Horizontal, QVariant(tr("Value")));
-  _charoptModel->setHeaderData(3, Qt::Horizontal, QVariant(tr("Order")));
+  _charoptModel->setHeaderData(_d->valueCol, Qt::Horizontal, QVariant(tr("Value")));
+  _charoptModel->setHeaderData(_d->orderCol, Qt::Horizontal, QVariant(tr("Order")));
 
   _charoptView->setModel(_charoptModel);
-  _charoptView->setColumnHidden(0, true);
-  _charoptView->setColumnHidden(1, true);
+  for (int i = 0; i < _charoptModel->columnCount(); i++) {
+    if (DEBUG)
+    {
+      qDebug() << i << _d->valueCol << _d->orderCol
+               << (i != _d->valueCol && i !=_d->orderCol);
+    }
+    _charoptView->setColumnHidden(i, i != _d->valueCol && i !=_d->orderCol);
+  }
 }
 
 void characteristic::sNew()
 {
   int row = _charoptModel->rowCount();
   _charoptModel->insertRows(row,1);
-  _charoptModel->setData(_charoptModel->index(row,1), QVariant(_charid));
-  _charoptModel->setData(_charoptModel->index(row,3), 0);
-  QModelIndex idx = _charoptModel->index(row,0);
+  _charoptModel->setData(_charoptModel->index(row, _d->charIdCol), QVariant(_charid));
+  _charoptModel->setData(_charoptModel->index(row, _d->orderCol), 0);
+  QModelIndex idx = _charoptModel->index(row, _d->idCol);
   _charoptView->selectionModel()->select(QItemSelection(idx, idx),
                                          QItemSelectionModel::ClearAndSelect |
                                          QItemSelectionModel::Rows);
@@ -348,7 +377,7 @@ void characteristic::sNew()
 void characteristic::sDelete()
 {
   int row = _charoptView->selectionModel()->currentIndex().row();
-  QVariant value = _charoptModel->data(_charoptModel->index(row,2));
+  QVariant value = _charoptModel->data(_charoptModel->index(row, _d->valueCol));
 
   // Validate
   XSqlQuery qry;
@@ -370,7 +399,7 @@ void characteristic::sDelete()
     return;
   }
 
-  _charoptModel->removeRows(row, 1);
+  _charoptModel->removeRows(row,  _d->charIdCol);
   _charoptView->setRowHidden(row, QModelIndex(), true);
 }
 
