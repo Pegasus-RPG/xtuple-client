@@ -397,7 +397,7 @@ void characteristicAssignment::populate()
 
 void characteristicAssignment::sHandleChar()
 {
-  QModelIndex midx = _char->model()->index(_char->currentIndex(), 16);
+  QModelIndex midx = _char->model()->index(_char->currentIndex(), 2); // char_type from model->setQuery
   int sidx = _char->model()->data(midx).toInt();
 
   _stackedWidget->setCurrentIndex(sidx);
@@ -549,9 +549,11 @@ void characteristicAssignment::handleTargetType()
   }
 
   QSqlQueryModel *model = new QSqlQueryModel;
-  model->setQuery("SELECT char_id, char_name FROM char WHERE " + boolColumn + " ORDER BY char_order, char_name");
+  model->setQuery("SELECT char_id, char_name, char_type"
+                  "  FROM char WHERE " + boolColumn +
+                  " ORDER BY char_order, char_name");
   _char->setModel(model);
-  _char->setModelColumn(1);
+  _char->setModelColumn(1); // char_name
   sHandleChar();
 }
 
