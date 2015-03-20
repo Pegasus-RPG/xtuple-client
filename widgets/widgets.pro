@@ -6,7 +6,7 @@ CONFIG += qt \
     plugin
 
 greaterThan(QT_MAJOR_VERSION, 4) {
-    QT += widgets printsupport
+    QT += widgets printsupport sql script designer
 }
 # INCLUDEPATH += $$QT_SOURCE_TREE/tools/designer/interfaces ../common .
 INCLUDEPATH += ../common \
