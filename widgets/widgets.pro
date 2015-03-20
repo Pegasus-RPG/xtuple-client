@@ -312,4 +312,4 @@ FORMS += alarmMaint.ui \
 
 RESOURCES += widgets.qrc
 
-QT +=  sql script designer
+CONFIG +=  sql script designer
