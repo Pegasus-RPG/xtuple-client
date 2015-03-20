@@ -127,7 +127,11 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   setContextMenuPolicy(Qt::CustomContextMenu);
   setSelectionBehavior(QAbstractItemView::SelectRows);
   header()->setStretchLastSection(false);
+#if QT_VERSION >= 0x050000
   header()->setSectionsClickable(true);
+#else
+  header()->setClickable(true);
+#endif
   if (_x_preferences)
     setAlternatingRowColors(!_x_preferences->boolean("NoAlternatingRowColors"));
 
@@ -900,11 +904,19 @@ void XTreeWidget::addColumn(const QString &pString, int pWidth, int pAlignment, 
   if (pWidth >= 0)
   {
     header()->resizeSection(column, pWidth);
+    #if QT_VERSION >= 0x050000
     header()->setSectionResizeMode(column, QHeaderView::Interactive);
+    #else
+    header()->setResizeMode(column, QHeaderView::Interactive);
+    #endif
   }
   else
   {
+    #if QT_VERSION >= 0x050000
     header()->setSectionResizeMode(column, QHeaderView::Interactive);
+    #else
+    header()->setResizeMode(column, QHeaderView::Interactive);
+    #endif
     _stretch.append(column);
   }
   bool forgetCache = _forgetful;

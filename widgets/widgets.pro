@@ -3,6 +3,7 @@ TARGET = xtuplewidgets
 TEMPLATE = lib
 CONFIG += qt \
     warn_on \
+    designer \
     plugin
 
 greaterThan(QT_MAJOR_VERSION, 4) {
@@ -312,4 +313,4 @@ FORMS += alarmMaint.ui \
 
 RESOURCES += widgets.qrc
 
-CONFIG +=  sql script designer
+QT += sql script

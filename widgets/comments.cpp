@@ -19,8 +19,9 @@
 #include <QDesktopServices>
 #include <QDebug>
 #include <QScrollBar>
+#if QT_VERSION >= 0x050000
 #include <QUrlQuery>
-
+#endif
 #include <parameter.h>
 #include <xsqlquery.h>
 
@@ -377,7 +378,11 @@ void Comments::anchorClicked(const QUrl & url)
 {
   if(url.host().isEmpty() && url.path() == "edit")
   {
+    #if QT_VERSION >= 0x050000
     int cid = QUrlQuery(url).queryItemValue("id").toInt();
+    #else
+    int cid = url.queryItemValue("id").toInt();
+    #endif
     if(userCanEdit(cid))
     {
       ParameterList params;

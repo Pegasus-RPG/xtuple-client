@@ -48,7 +48,11 @@ XTableView::XTableView(QWidget *parent) :
   setContextMenuPolicy(Qt::CustomContextMenu);
   verticalHeader()->setDefaultSectionSize(20);
   horizontalHeader()->setStretchLastSection(false);
+#if QT_VERSION >= 0x050000
   horizontalHeader()->setSectionsClickable(true);
+#else
+  horizontalHeader()->setClickable(true);
+#endif
   horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu); 
 
   setAlternatingRowColors(true);
@@ -339,8 +343,11 @@ void XTableView::setColumn(const QString &label, int width, int alignment, bool 
       break;
     }
   }
-
+#if QT_VERSION >= 0x050000
   horizontalHeader()->setSectionResizeMode(colnum, QHeaderView::Interactive);
+#else
+  horizontalHeader()->setResizeMode(colnum, QHeaderView::Interactive);
+#endif
 
   if (! cp->fromSettings)
     setColumnVisible(colnum, visible);
