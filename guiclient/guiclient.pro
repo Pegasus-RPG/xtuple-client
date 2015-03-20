@@ -58,7 +58,7 @@ win32-g++-4.6 {
 }
 
 
-unix {
+unix: !macx {
   OBJECTS_DIR = unx_obj
   LIBS += -lz -lQt5DesignerComponents
 }
