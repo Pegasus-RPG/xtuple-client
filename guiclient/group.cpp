@@ -39,8 +39,9 @@ group::group(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_available, SIGNAL(itemSelected(int)), this, SLOT(sAdd()));
 
 
-  _available->addColumn("Available Privileges", -1, Qt::AlignLeft, true, "priv_name");
-  _granted->addColumn("Granted Privileges", -1, Qt::AlignLeft, true, "priv_name");
+  _available->addColumn(tr("Available Privileges"), -1, Qt::AlignLeft, true, "priv_name");
+  _available->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "priv_descrip");
+  _granted->addColumn(tr("Granted Privileges"), -1, Qt::AlignLeft, true, "priv_name");
 
   groupgroup.exec( "SELECT DISTINCT priv_module "
           "FROM priv "
@@ -234,7 +235,7 @@ void group::sSave()
 void group::sModuleSelected(const QString &pModule)
 {
   XSqlQuery avail;
-  avail.prepare( "SELECT priv_id, priv_name "
+  avail.prepare( "SELECT priv_id, priv_name, priv_descrip "
                  "FROM priv "
                  "WHERE ((priv_module=:priv_module) "
                  "   AND (priv_id NOT IN (SELECT grppriv_priv_id"
