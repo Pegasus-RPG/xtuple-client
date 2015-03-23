@@ -60,6 +60,18 @@ QString buildItemLineEditQuery(const QString pPre, const QStringList pClauses, c
     clauses << "(itemsite_item_id=item_id)";
   }
 
+  if (pType & (ItemLineEdit::cHasBom))
+  {
+    sql += ", bomitem";
+    clauses << "(bomitem_parent_item_id=item_id)";
+  }
+  
+  if (pType & (ItemLineEdit::cUsedOnBom))
+  {
+    sql += ", bomitem";
+    clauses << "(bomitem_item_id=item_id)";
+  }
+  
   if (pType & ItemLineEdit::cAllItemTypes_Mask)
   {
     QStringList types;
