@@ -38,8 +38,8 @@ class QUrlProto : public QObject, public QScriptable
     QUrlProto(QObject *parent = 0);
 
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-    Q_INVOKABLE void addEncodedQueryItem(const QByteArray &key, const QByteArray &value);
-    Q_INVOKABLE bool       hasEncodedQueryItem(const QString &key) const;
+    Q_INVOKABLE void       addEncodedQueryItem(const QByteArray &key, const QByteArray &value);
+    Q_INVOKABLE bool       hasEncodedQueryItem(const QByteArray &key) const;
     Q_INVOKABLE void       removeAllEncodedQueryItems(const QByteArray &key);
     Q_INVOKABLE void       removeEncodedQueryItem(const QByteArray &key);
     Q_INVOKABLE void       setEncodedFragment(const QByteArray &fragment);
@@ -56,10 +56,15 @@ class QUrlProto : public QObject, public QScriptable
 
 
     Q_INVOKABLE void addQueryItem(const QString &key, const QString & value);
+    #if QT_VERSION >= 0x050000
     Q_INVOKABLE QStringList allEncodedQueryItemValues(const QString &key) const;
+    #else
+    Q_INVOKABLE QList<QByteArray> allEncodedQueryItemValues(const QByteArray &key) const;
+    #endif
     Q_INVOKABLE QStringList       allQueryItemValues(const QString &key) const;
     Q_INVOKABLE QString    authority() const;
     Q_INVOKABLE void       clear();
+#if QT_VERSION >= 0x050000
     Q_INVOKABLE QString encodedFragment() const;
     Q_INVOKABLE QString encodedHost()     const;
     Q_INVOKABLE QString encodedPassword() const;
@@ -68,6 +73,16 @@ class QUrlProto : public QObject, public QScriptable
     Q_INVOKABLE QString encodedQueryItemValue(const QString &key) const;
     Q_INVOKABLE QList<QPair<QString, QString> > encodedQueryItems() const;
     Q_INVOKABLE QString encodedUserName() const;
+#else
+    Q_INVOKABLE QByteArray encodedFragment() const;
+    Q_INVOKABLE QByteArray encodedHost()     const;
+    Q_INVOKABLE QByteArray encodedPassword() const;
+    Q_INVOKABLE QByteArray encodedPath()     const;
+    Q_INVOKABLE QByteArray encodedQuery()    const;
+    Q_INVOKABLE QByteArray encodedQueryItemValue(const QByteArray &key) const;
+    Q_INVOKABLE QList<QPair<QByteArray, QByteArray> > encodedQueryItems() const;
+    Q_INVOKABLE QByteArray encodedUserName() const;
+#endif
     Q_INVOKABLE QString    errorString()     const;
     Q_INVOKABLE QString    fragment()       const;
     Q_INVOKABLE bool       hasFragment()    const;

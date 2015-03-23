@@ -79,8 +79,8 @@ QUrlProto::QUrlProto(QObject *parent)
 
 // addEncodedQueryItem removed from both QtUrl and QtUrlQuery classes in Qt5
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-void QUrlProto::addEncodedQueryItem(const QString &key,
-                                    const QString &value)
+void QUrlProto::addEncodedQueryItem(const QByteArray &key,
+                                    const QByteArray &value)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
   if (item)
@@ -105,6 +105,7 @@ void QUrlProto::addQueryItem(const QString &key, const QString &value)
 // RETURN AND PARAM TYPES CHANGED FOR Qt5
 // I did not bother with Qt4 backwards compatibility directives - true backwards compatibility
 // would require varying the return/param types of several methods since QStrings are now used over QByteArrays
+#if QT_VERSION >= 0x050000
 QStringList QUrlProto::allEncodedQueryItemValues(const QString &key) const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -115,7 +116,15 @@ QStringList QUrlProto::allEncodedQueryItemValues(const QString &key) const
 
   return QStringList();
 }
-
+#else
+QList<QByteArray> QUrlProto::allEncodedQueryItemValues(const QByteArray &key) const {
+   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
+  if (item)
+    return item->allEncodedQueryItemValues(key);
+  return QList<QByteArray>();
+ }
+#endif
+#if QT_VERSION >= 0x050000
 QStringList QUrlProto::allQueryItemValues(const QString &key) const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -125,7 +134,18 @@ QStringList QUrlProto::allQueryItemValues(const QString &key) const
   }
 
   return QStringList();
-}        
+}
+#else
+QStringList QUrlProto::allQueryItemValues(const QString &key) const
+{
+  QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
+  if (item) {
+  return item->allQueryItemValues(key);
+  }
+
+  return QStringList();
+}
+#endif
 
 QString QUrlProto::authority() const
 {
@@ -149,14 +169,26 @@ void QUrlProto::clear()
 
 // NOTE: The return types of many of the following methods have been changed from QByteArray to QString for Qt5
 // This is to accommodate the new return type of the QUrl getter methods (since QStrings can now be encodings)
+#if QT_VERSION >= 0x050000
 QString QUrlProto::encodedFragment() const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
-  if (item)
+  if (item) {
     return item->fragment(QUrl::FullyEncoded);
+  }
   return QString();
 }
-
+#else
+QByteArray QUrlProto::encodedFragment() const
+{
+   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
+   if (item) {
+   return item->encodedFragment();
+   }
+  return QByteArray();
+}
+#endif
+#if QT_VERSION >= 0x050000
 QString QUrlProto::encodedHost() const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -164,7 +196,17 @@ QString QUrlProto::encodedHost() const
     return item->host(QUrl::FullyEncoded);
   return QString();
 }
-
+#else
+QByteArray QUrlProto::encodedHost() const
+{
+   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
+   if (item) {
+    return item->encodedHost();
+   }
+  return QByteArray();
+}
+#endif
+#if QT_VERSION >= 0x050000
 QString QUrlProto::encodedPassword() const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -172,7 +214,17 @@ QString QUrlProto::encodedPassword() const
     return item->password(QUrl::FullyEncoded);
   return QString();
 }
-
+#else
+QByteArray QUrlProto::encodedPassword() const
+{
+   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
+   if (item) {
+    return item->encodedPassword();
+   }
+  return QByteArray();
+}
+#endif
+#if QT_VERSION >= 0x050000
 QString QUrlProto::encodedPath() const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -180,7 +232,17 @@ QString QUrlProto::encodedPath() const
     return item->path(QUrl::FullyEncoded);
   return QString();
 }
-
+#else
+QByteArray QUrlProto::encodedPath() const
+{
+   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
+   if (item) {
+    return item->encodedPath();
+   }
+  return QByteArray();
+}
+#endif
+#if QT_VERSION >= 0x050000
 QString QUrlProto::encodedQuery() const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -188,7 +250,17 @@ QString QUrlProto::encodedQuery() const
     return item->query(QUrl::FullyEncoded);
   return QString();
 }
-
+#else
+QByteArray QUrlProto::encodedQuery() const
+{
+   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
+   if (item) {
+    return item->encodedQuery();
+   }
+  return QByteArray();
+}
+#endif
+#if QT_VERSION >= 0x050000
 QString QUrlProto::encodedQueryItemValue(const QString &key) const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -197,7 +269,17 @@ QString QUrlProto::encodedQueryItemValue(const QString &key) const
  
   return QString();
 }
-
+#else
+QByteArray QUrlProto::encodedQueryItemValue(const QByteArray &key) const
+{
+   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
+  if (item) {
+    return item->encodedQueryItemValue(key);
+  }
+  return QByteArray();
+}
+#endif
+#if QT_VERSION >= 0x050000
 QList<QPair<QString, QString> > QUrlProto::encodedQueryItems() const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -206,7 +288,17 @@ QList<QPair<QString, QString> > QUrlProto::encodedQueryItems() const
   
   return QList<QPair<QString, QString> >();
 }
-
+#else
+QList<QPair<QByteArray, QByteArray> > QUrlProto::encodedQueryItems() const
+{
+   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
+  if (item) {
+    return item->encodedQueryItems();
+  }
+  return QList<QPair<QByteArray, QByteArray> >();
+}
+#endif
+#if QT_VERSION >= 0x050000
 QString QUrlProto::encodedUserName() const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -214,7 +306,16 @@ QString QUrlProto::encodedUserName() const
     return item->userName(QUrl::FullyEncoded);
   return QString();
 }
-
+#else
+QByteArray QUrlProto::encodedUserName() const
+{
+   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
+   if (item) {
+    return item->encodedUserName();
+   }
+  return QByteArray();
+}
+#endif
 
 QString QUrlProto::errorString() const
 {
@@ -233,7 +334,7 @@ QString QUrlProto::fragment() const
 }
 
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-bool QUrlProto::hasEncodedQueryItem(const QString &key) const
+bool QUrlProto::hasEncodedQueryItem(const QByteArray &key) const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
   if (item)
