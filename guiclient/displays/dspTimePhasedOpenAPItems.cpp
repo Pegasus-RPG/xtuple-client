@@ -32,6 +32,8 @@ dspTimePhasedOpenAPItems::dspTimePhasedOpenAPItems(QWidget* parent, const char*,
   setReportName("APAging");
 
   connect(_custom, SIGNAL(toggled(bool)), this, SLOT(sToggleCustom()));
+  connect(_detailedReport, SIGNAL(clicked()), this, SLOT(sToggleReport()));
+  connect(_summaryReport, SIGNAL(clicked()), this, SLOT(sToggleReport()));
 
   _asOf->setDate(omfgThis->dbDate(), true);
   sToggleCustom();
@@ -248,6 +250,7 @@ void dspTimePhasedOpenAPItems::sToggleCustom()
     _asOf->setDate(omfgThis->dbDate(), true);
     _asOf->setEnabled(FALSE);
     _useGroup->setHidden(TRUE);
+    _reptGroup->setHidden(TRUE);
 
     list()->setColumnCount(0);
     list()->addColumn(tr("Vend. #"), _orderColumn, Qt::AlignLeft, true, "vend_number");
@@ -255,12 +258,13 @@ void dspTimePhasedOpenAPItems::sToggleCustom()
   }
   else
   {
-    setReportName("APAging");
+    sToggleReport();
     _calendarLit->setHidden(TRUE);
     _calendar->setHidden(TRUE);
     _periods->setHidden(TRUE);
     _asOf->setEnabled(TRUE);
     _useGroup->setHidden(FALSE);
+    _reptGroup->setHidden(FALSE);
 
     list()->addColumn(tr("Total Open"), _bigMoneyColumn, Qt::AlignRight, true, "total_val");
     list()->addColumn(tr("0+ Days"),    _bigMoneyColumn, Qt::AlignRight, true, "cur_val");
@@ -278,4 +282,12 @@ void dspTimePhasedOpenAPItems::sToggleCustom()
     list()->addColumn(tr("61-90 Days"), _bigMoneyColumn, Qt::AlignRight, true, "apaging_ninety_val_sum");
     list()->addColumn(tr("90+ Days"),   _bigMoneyColumn, Qt::AlignRight, true, "apaging_plus_val_sum");
   }
+}
+
+void dspTimePhasedOpenAPItems::sToggleReport()
+{
+  if (_detailedReport->isChecked())
+    setReportName("APAging");
+  else
+    setReportName("APAgingSummary");
 }
