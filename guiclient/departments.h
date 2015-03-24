@@ -13,8 +13,11 @@
 
 #include "guiclient.h"
 #include "xwidget.h"
+#if QT_VERSION >= 0x050000
 #include <QtWidgets>
-
+#else
+#include <QtGui/QWidget>
+#endif
 #include "ui_departments.h"
 
 class departments : public XWidget, public Ui::departments
