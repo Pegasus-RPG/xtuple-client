@@ -18,7 +18,9 @@
 #include <QFontInfo>
 #include <QFontMetrics>
 #include <QGraphicsProxyWidget>
-//#include <QInputContext>
+#if QT_VERSION < 0x050000
+#include <QInputContext>
+#endif
 #include <QKeySequence>
 #include <QLayout>
 #include <QList>
@@ -83,7 +85,9 @@ class QWidgetProto : public QObject, public QScriptable
     //Q_INVOKABLE bool hasEditFocus()                           const;
     Q_INVOKABLE bool hasFocus()                                 const;
     Q_INVOKABLE int heightForWidth(int w)                       const;
-    //Q_INVOKABLE QInputContext *inputContext();
+    #if QT_VERSION < 0x050000
+    Q_INVOKABLE QInputContext *inputContext();
+    #endif
     Q_INVOKABLE QVariant inputMethodQuery(int query)            const;
     Q_INVOKABLE void insertAction(QAction *before, QAction *action);
     Q_INVOKABLE void insertActions(QAction *before, QList<QAction *> actions);
@@ -128,7 +132,9 @@ class QWidgetProto : public QObject, public QScriptable
     Q_INVOKABLE void setFocus(int reason);
     Q_INVOKABLE void setFocusProxy(QWidget *w);
     Q_INVOKABLE void setForegroundRole(int role);
-    //Q_INVOKABLE void setInputContext(QInputContext *context);
+    #if QT_VERSION < 0x050000
+    Q_INVOKABLE void setInputContext(QInputContext *context);
+    #endif
     Q_INVOKABLE void setLayout(QLayout *layout);
     Q_INVOKABLE void setMask(const QBitmap &bitmap);
     Q_INVOKABLE void setMask(const QRegion &region);

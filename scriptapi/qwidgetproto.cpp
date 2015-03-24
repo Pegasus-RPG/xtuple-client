@@ -298,7 +298,7 @@ int QWidgetProto::heightForWidth(int w) const
   return 0;
 }
 
-/*
+#if QT_VERSION < 0x050000
 QInputContext *QWidgetProto::inputContext()
 {
   QWidget *item = qscriptvalue_cast<QWidget*>(thisObject());
@@ -306,7 +306,8 @@ QInputContext *QWidgetProto::inputContext()
     return item->inputContext();
   return 0;
 }
-*/
+#endif
+
 
 QVariant QWidgetProto::inputMethodQuery(int query) const
 {
@@ -639,14 +640,14 @@ void QWidgetProto::setForegroundRole(int role)
     item->setForegroundRole((QPalette::ColorRole)role);
 }
 
-/*
+#if QT_VERSION < 0x050000
 void QWidgetProto::setInputContext(QInputContext *context)
 {
   QWidget *item = qscriptvalue_cast<QWidget*>(thisObject());
   if (item)
     item->setInputContext(context);
 }
-*/
+#endif
 
 void QWidgetProto::setLayout(QLayout *layout)
 {
