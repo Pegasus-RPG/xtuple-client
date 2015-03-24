@@ -13,9 +13,12 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QSqlError>
-//#include <QHttp>
+#if QT_VERSION < 0x050000
+#include <QHttp>
+#else
 #include <QtNetwork>
 #include <QNetworkAccessManager>
+#endif
 #include <QSslSocket>
 #include <QSslCertificate>
 #include <QSslConfiguration>
@@ -288,8 +291,11 @@ CreditCardProcessor::CreditCardProcessor()
     _defaultTestServer("test.creditcardprocessor.com"),
     _defaultLivePort(0),
     _defaultTestPort(0),
+    #if QT_VERSION >= 0x050000
     _manager(0)
-    //_http(0)
+    #else
+    _http(0)
+    #endif
 {
   if (DEBUG)
     qDebug("CCP:CreditCardProcessor()");
@@ -1778,6 +1784,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
                                   "the PEM file %1. "
                                   "This may cause communication problems.")
                                .arg(pemfile));
+#if QT_VERSION >= 0x050000
         else if (QDateTime::currentDateTime() > certlist.at(0).effectiveDate()
          && QDateTime::currentDateTime() < certlist.at(0).expiryDate()  && !certlist.at(0).isBlacklisted())
         {
@@ -1793,6 +1800,22 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
           sslconf.setLocalCertificate(certlist.at(0));
           QSslConfiguration::setDefaultConfiguration(sslconf);
         }
+#else
+        else if (certlist.at(0).isValid())
+        {
+         if (DEBUG)
+             qDebug("Certificate details: valid from %s to %s, issued to %s @ %s in %s, %s",
+                   qPrintable(certlist.at(0).effectiveDate().toString("MMM-dd-yyyy")),
+                   qPrintable(certlist.at(0).expiryDate().toString("MMM-dd-yyyy")),
+                   qPrintable(certlist.at(0).issuerInfo(QSslCertificate::CommonName)),
+                   qPrintable(certlist.at(0).issuerInfo(QSslCertificate::Organization)),
+                   qPrintable(certlist.at(0).issuerInfo(QSslCertificate::LocalityName)),
+                   qPrintable(certlist.at(0).issuerInfo(QSslCertificate::CountryName)));
+          QSslConfiguration sslconf = QSslConfiguration::defaultConfiguration();
+          sslconf.setLocalCertificate(certlist.at(0));
+          QSslConfiguration::setDefaultConfiguration(sslconf);
+        }
+#endif
         else
         {
           QMessageBox::warning(0, tr("Invalid Certificate"),
@@ -1802,7 +1825,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
         }
       }
     }
-/* qt4
+#if QT_VERSION < 0x050000
     QHttp::ConnectionMode cmode = QHttp::ConnectionModeHttps;
     QUrl ccurl(buildURL(_metrics->value("CCServer"), _metrics->value("CCPort"), true));
     if(ccurl.scheme().compare("https", Qt::CaseInsensitive) != 0)
@@ -1840,8 +1863,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
       return -18;
     }
     presponse = _http->readAll();
-    */
-
+   #else
     // ganked from contributed qt5 port
     QNetworkRequest request;
         QUrl ccurl(buildURL(_metrics->value("CCServer"), _metrics->value("CCPort"), true));
@@ -1887,6 +1909,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
           return -18;
         }
         presponse = reply->readAll();
+#endif
   }
   else
 #endif // QT_NO_OPENSSL
@@ -1995,7 +2018,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
 
   return 0;
 }
-
+#if QT_VERSION >= 0x050000
 /** @brief Wait for the HTTP request sent by _manager to finish.
            Added for Qt5.
 
@@ -2011,6 +2034,7 @@ bool CreditCardProcessor::waitForHTTP()
 
   return true;
 }
+#endif
 
 /** @brief Insert into or update the ccpay table based on parameters extracted
            from the credit card processing service' response to a transaction
@@ -3135,7 +3159,7 @@ CreditCardProcessor::FraudCheckResult *CreditCardProcessor::cvvCodeLookup(QChar 
 
   return 0;
 }
-
+#if QT_VERSION >= 0x050000
 void CreditCardProcessor::sslErrors(QNetworkReply *reply, const QList<QSslError> &errors)
 {
   if (DEBUG)
@@ -3160,3 +3184,29 @@ void CreditCardProcessor::sslErrors(QNetworkReply *reply, const QList<QSslError>
         reply->ignoreSslErrors(errors);
   }
 }
+#else
+void CreditCardProcessor::sslErrors(const QList<QSslError> &errors)
+{
+   if (DEBUG)
+     qDebug() << "CreditCardProcessor::sslErrors(" << errors << ")";
+
+  QHttp *httpobj = qobject_cast<QHttp*>(sender());
+  if (errors.size() > 0 && httpobj)
+  {
+    QString errlist;
+    for (int i = 0; i < errors.size(); i++)
+      errlist += QString("<li>%1</li>").arg(errors.at(i).errorString());
+    if (_ignoreSslErrors ||
+        QMessageBox::question(0,
+                              tr("Questionable Security"),
+                              tr("<p>The security of this transaction may be compromised."
+                                 " The following SSL errors have been reported:"
+                                 "<ul>%1</ul></p>"
+                                 "<p>Would you like to continue anyway?</p>")
+                              .arg(errlist),
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+        httpobj->ignoreSslErrors();
+  }
+}
+#endif
