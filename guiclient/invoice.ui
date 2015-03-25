@@ -45,7 +45,7 @@ to be bound by its terms.</comment>
      <item>
       <layout class="QHBoxLayout">
      <item>
-      <widget class="QCheckBox" name="_postInvoice">
+      <widget class="XCheckBox" name="_postInvoice">
        <property name="text">
         <string>Post on Save</string>
        </property>

@@ -40,7 +40,7 @@ to be bound by its terms.</comment>
       </spacer>
      </item>
      <item>
-      <widget class="QCheckBox" name="_postVoucher">
+      <widget class="XCheckBox" name="_postVoucher">
        <property name="text">
         <string>Post on Save</string>
        </property>
