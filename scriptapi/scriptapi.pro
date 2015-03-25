@@ -28,6 +28,7 @@ HEADERS += setupscriptapi.h \
     orreportproto.h \
     parameterlistsetup.h \
     qactionproto.h \
+    qapplicationproto.h \
     qboxlayoutproto.h \
     qbytearrayproto.h \
     qdialogbuttonboxproto.h \
@@ -128,6 +129,7 @@ SOURCES += setupscriptapi.cpp \
     orreportproto.cpp \
     parameterlistsetup.cpp \
     qactionproto.cpp \
+    qapplicationproto.cpp \
     qboxlayoutproto.cpp \
     qbytearrayproto.cpp \
     qdialogbuttonboxproto.cpp \
