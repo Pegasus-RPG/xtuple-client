@@ -154,10 +154,17 @@ void translations::finished(QNetworkReply * nwrep)
       QByteArray ba = nwrep->readAll();
       if(!ba.isEmpty())
       {
+        #if QT_VERSION >= 0x050000
           QDir dir(QStandardPaths::writableLocation(QStandardPaths::DataLocation));
           if(!dir.exists())
             dir.mkpath(QStandardPaths::writableLocation(QStandardPaths::DataLocation));
           QFile file(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + item->text(0) + "." + langext + ".qm");
+        #else
+          QDir dir(QDesktopServices::storageLocation(QDesktopServices::DataLocation));
+          if(!dir.exists())
+            dir.mkpath(QDesktopServices::storageLocation(QDesktopServices::DataLocation));
+          QFile file(QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/" + item->text(0) + "." + langext + ".qm");
+        #endif
           if(file.open(QIODevice::WriteOnly | QIODevice::Truncate))
           {
           file.write(ba);

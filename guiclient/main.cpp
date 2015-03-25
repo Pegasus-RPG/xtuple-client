@@ -97,7 +97,9 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QTranslator>
-//#include <QHttp>
+#if QT_VERSION < 0x050000
+#include <QHttp>
+#endif
 #include <QUrl>
 
 #include <dbtools.h>
@@ -131,8 +133,11 @@ QString __password;
 
 #define DEBUG false
 
+#if QT_VERSION >= 0x050000
 extern void xTupleMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
-
+#else
+extern void xTupleMessageOutput(QtMsgType type, const char *msg);
+#endif
 // helps determine which edition we're running & what splash screen to present
 struct editionDesc {
   editionDesc(QString ed, QString splash, bool check, QString query)
@@ -163,8 +168,11 @@ int main(int argc, char *argv[])
   bool    _enhancedAuth   = false;
   bool    havePasswd      = false;
   bool    forceWelcomeStub= false;
-
+#if QT_VERSION >= 0x050000
   qInstallMessageHandler(xTupleMessageOutput);
+#else
+  qInstallMsgHandler(xTupleMessageOutput);
+#endif
   QApplication app(argc, argv);
   app.setOrganizationDomain("xTuple.com");
   app.setOrganizationName("xTuple");
@@ -474,8 +482,8 @@ int main(int argc, char *argv[])
         name = metric.value("name").toString();
       }
 
-      //for qt5, removed. needs to be ported
-      /*QHttp *http = new QHttp();
+#if QT_VERSION < 0x050000  // below removed in qt5, needs to be ported
+      QHttp *http = new QHttp();
       
       QUrl url;
       url.setPath("/api/regviolation.php");
@@ -490,8 +498,7 @@ int main(int argc, char *argv[])
 
       http->setHost("www.xtuple.org");
       http->get(url.toString());
-      */
-
+#endif
       if(forced)
         return 0;
 

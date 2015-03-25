@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 #include <QBuffer>
-#include <QUiLoader>
+#include <QtUiTools/QUiLoader>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QScriptEngine>

@@ -13,8 +13,8 @@
 
 #include <QMap>
 #include <QString>
-#include <QUiLoader>
-#include <QDesignerCustomWidgetInterface>
+#include <QtUiTools/QUiLoader>
+#include <QtDesigner/QDesignerCustomWidgetInterface>
 
 class XUiLoader : public QUiLoader
 {

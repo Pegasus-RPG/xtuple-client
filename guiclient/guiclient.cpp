@@ -1707,8 +1707,12 @@ QString translationFile(QString localestr, const QString component)
 QString translationFile(QString localestr, const QString component, QString &version)
 {
   QStringList paths;
-//qDebug() << QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+#if QT_VERSION >= 0x050000
   paths << QStandardPaths::standardLocations(QStandardPaths::DataLocation);
+#else
+  //qDebug() << QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+  paths << QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+#endif
   paths << "/usr/lib/postbooks/dict";
   paths << "dict";
   paths << "";
@@ -1989,14 +1993,14 @@ void GUIClient::sCustomCommand()
   */
 void GUIClient::launchBrowser(QWidget * w, const QString & url)
 {
-//#if defined(Q_OS_WIN)
-  // Windows - let the OS do the work
- // QT_WA( {
-  //    ShellExecute(w->winId(), 0, (TCHAR*)url.utf16(), 0, 0, SW_SHOWNORMAL );
-  //  } , {
-   //   ShellExecuteA(w->winId(), 0, url.toLocal8Bit(), 0, 0, SW_SHOWNORMAL );
-  //  } );
-//#else
+#if defined(Q_OS_WIN) && QT_VERSION < 0x050000
+  // Windows - let the OS do the work , needs qt5 replacement
+  QT_WA( {
+      ShellExecute(w->winId(), 0, (TCHAR*)url.utf16(), 0, 0, SW_SHOWNORMAL );
+    } , {
+      ShellExecuteA(w->winId(), 0, url.toLocal8Bit(), 0, 0, SW_SHOWNORMAL );
+    } );
+#else
   const char *b = getenv("BROWSER");
   QStringList browser;
   if(b) {
@@ -2037,7 +2041,7 @@ void GUIClient::launchBrowser(QWidget * w, const QString & url)
                                 "the environment variable BROWSER to point "
                                 "to the browser executable.") );
   }
-//#endif
+#endif
 }
 
 /** @brief Return the list of windows opened by GUIClient::handleNewWindow().

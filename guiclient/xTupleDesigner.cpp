@@ -20,7 +20,7 @@
 #include <QTextStream>
 #include <QtDesigner/QDesignerComponents>
 #include <QtDesigner/QDesignerIntegrationInterface>
-#include <QtDesigner>
+#include <QtDesigner/QtDesigner>
 #include <QtDesigner/QDesignerFormWindowInterface>
 #include <QtDesigner/QDesignerFormEditorInterface>
 #include <QtDesigner/QDesignerFormWindowManagerInterface>
@@ -29,7 +29,9 @@
 
 // TODO: can we live without this?
 // copied from .../qt-mac-commercial-src-4.4.3/tools/designer/src/lib/shared/qdesigner_integration_p.h
-//#include "qdesigner_integration_p.h"
+#if QT_VERSION < 0x050000
+#include "qdesigner_integration_p.h"
+#endif
 
 // TODO: (re)move the following when the UI gets sorted out
 #include <QHBoxLayout>
@@ -228,8 +230,11 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WindowFlag
 
   // resource editor;
   // action editor;
-
+#if QT_VERSION >= 0x050000
   _integration = new QDesignerIntegration(_formeditor, this);
+#else
+  _integration = new qdesigner_internal::QDesignerIntegration(_formeditor, this);
+#endif
   _formeditor->setIntegration(_integration);
 
   // toolbar creation

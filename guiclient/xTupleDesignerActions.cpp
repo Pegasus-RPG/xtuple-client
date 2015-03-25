@@ -15,7 +15,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QtDesigner>
+#include <QtDesigner/QtDesigner>
 
 // TODO: can we live without this?
 // copied from .../qt-mac-commercial-src-4.4.3/tools/designer/src/lib/shared/pluginmanager_p.h
