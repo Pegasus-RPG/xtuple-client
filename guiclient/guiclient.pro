@@ -1,7 +1,7 @@
 include( ../global.pri )
 
 TARGET   = xtuple
-CONFIG   += qt warn_on
+CONFIG   += qt warn_on uitools designer help
 TEMPLATE = app
 QT += designer help uitools
 
@@ -39,13 +39,15 @@ QMAKE_LIBDIR = ../lib $${OPENRPT_LIBDIR} $$QMAKE_LIBDIR
 LIBS        += -lxtuplecommon -lxtuplewidgets -lwrtembed -lopenrptcommon
 LIBS        += -lrenderer -lxtuplescriptapi $${DMTXLIB} -lMetaSQL
 
+lessThan(QT_MAJOR_VERSION, 5) {
 #not the best way to handle this, but it should do
-#mac:!static:contains(QT_CONFIG, qt_framework) {
-#  LIBS += -framework QtDesignerComponents
-#}
-# else {
-#  LIBS += -lQtDesignerComponents
-#}
+mac:!static:contains(QT_CONFIG, qt_framework) {
+  LIBS += -lz -framework QtDesignerComponents
+}
+ else {
+  LIBS += -lz -lQtDesignerComponents
+}
+}
 
 win32 {
   win32-msvc*:LIBS += -lshell32
@@ -62,13 +64,14 @@ unix: !macx {
   OBJECTS_DIR = unx_obj
   LIBS += -lz -lQt5DesignerComponents
 }
-
+greaterThan(QT_MAJOR_VERSION, 5) {
 macx {
   RC_FILE = images/icons.icns
   #PRECOMPILED_HEADER = stable.h
   OBJECTS_DIR = osx_obj
   QMAKE_INFO_PLIST = Info.plist
   LIBS += -lz -framework QtDesignerComponents
+}
 }
 
 DESTDIR     = ../bin

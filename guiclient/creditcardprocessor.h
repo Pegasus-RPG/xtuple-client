@@ -106,7 +106,9 @@ class CreditCardProcessor : public QObject
     virtual int     fraudChecks();
     virtual int     sendViaHTTP(const QString&, QString&);
     virtual int     updateCCPay(int &, ParameterList &);
+#if QT_VERSION >= 0x050000
     virtual bool    waitForHTTP();
+#endif
 
     QList<FraudCheckResult*> _avsCodes;
     QList<FraudCheckResult*> _cvvCodes;
