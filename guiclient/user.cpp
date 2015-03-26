@@ -55,6 +55,7 @@ user::user(QWidget* parent, const char * name, Qt::WindowFlags fl)
   connect(_revokeSite, SIGNAL(clicked()), this, SLOT(sRevokeSite()));
 
   _available->addColumn("Available Privileges", -1, Qt::AlignLeft);
+  _available->addColumn("Description", -1, Qt::AlignLeft);
   _granted->addColumn("Granted Privileges", -1, Qt::AlignLeft);
 
   _availableGroup->addColumn("Available Roles", -1, Qt::AlignLeft);
@@ -371,7 +372,7 @@ void user::sModuleSelected(const QString &pModule)
   _granted->clear();
 
   XSqlQuery privs;
-  privs.prepare( "SELECT priv_id, priv_name "
+  privs.prepare( "SELECT priv_id, priv_name, priv_descrip "
                  "FROM priv "
                  "WHERE (priv_module=:priv_module) "
                  "ORDER BY priv_name;" );
@@ -407,7 +408,7 @@ void user::sModuleSelected(const QString &pModule)
     do
     {
       if (usrpriv.findFirst("priv_id", privs.value("priv_id").toInt()) == -1 && grppriv.findFirst("priv_id", privs.value("priv_id").toInt()) == -1)
-        available = new XTreeWidgetItem(_available, available, privs.value("priv_id").toInt(), privs.value("priv_name"));
+        available = new XTreeWidgetItem(_available, available, privs.value("priv_id").toInt(), privs.value("priv_name"), privs.value("priv_descrip"));
       else
       {
         granted = new XTreeWidgetItem(_granted, granted, privs.value("priv_id").toInt(), privs.value("priv_name"));
