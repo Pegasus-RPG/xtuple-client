@@ -45,6 +45,7 @@ public slots:
     virtual void sPopulateBalanceDue();
     virtual void populateNumber();
     virtual void populate();
+    virtual void postVoucher();
     virtual void closeEvent( QCloseEvent * pEvent );
     virtual void sPopulateDistDate();
     virtual void sPopulateDueDate();

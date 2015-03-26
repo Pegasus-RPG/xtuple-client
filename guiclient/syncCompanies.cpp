@@ -25,6 +25,7 @@
 
 #include "login2.h"
 #include "storedProcErrorLookup.h"
+#include "version.h"
 
 #define DEBUG   false
 
@@ -234,6 +235,7 @@ void syncCompanies::sSync()
     ParameterList params;
     params.append("databaseURL", dbURL);
     params.append("multipleConnections");
+    params.append("applicationName", _ConnAppName);
 
     login2 newdlg(this, "testLogin", false);
     // disallow changing connection info

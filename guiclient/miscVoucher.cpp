@@ -47,6 +47,8 @@ miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
 
   _vendor->setShowInactive(false);
 
+  _postVoucher->setEnabled(_privileges->check("PostVouchers"));
+
   _recurring->setParent(-1, "V");
 
   _miscDistrib->addColumn(tr("Account"),    -1,           Qt::AlignLeft,   true,  "account"  );
@@ -141,6 +143,7 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
       _newCharacteristic->setEnabled(false);
       _close->setText(tr("&Close"));
       _save->hide();
+      _postVoucher->setVisible(FALSE);
 
     }
   }
@@ -297,6 +300,9 @@ void miscVoucher::sSave()
 
   XSqlQuery commitq("COMMIT;");
 
+  if (_postVoucher->isChecked())
+    postVoucher();
+
   omfgThis->sVouchersUpdated();
 
   _voheadid = -1;
@@ -327,6 +333,34 @@ void miscVoucher::sSave()
   set(params);
   _vendor->setFocus();
 
+}
+
+void miscVoucher::postVoucher()
+{
+  XSqlQuery post;
+  post.prepare("SELECT fetchJournalNumber('AP-VO') AS result;");
+  post.exec();
+  int journalNumber = 0;
+  if(post.first())
+    journalNumber = post.value("result").toInt();
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Journal Number"),
+                                post, __FILE__, __LINE__))
+    return;
+
+  post.prepare("SELECT postVoucher(:vohead_id, :journalNumber, FALSE) AS result;");
+  post.bindValue(":vohead_id", _voheadid);
+  post.bindValue(":journalNumber", journalNumber);
+  post.exec();
+  if (post.first())
+  {
+    int result = post.value("result").toInt();
+    if (result < 0)
+      ErrorReporter::error(QtCriticalMsg, this, tr("Posting Voucher"),
+                         post, __FILE__, __LINE__);
+  }
+  else
+    ErrorReporter::error(QtCriticalMsg, this, tr("Posting Voucher"),
+                         post, __FILE__, __LINE__);
 }
 
 void miscVoucher::sHandleVoucherNumber()
@@ -614,6 +648,8 @@ void miscVoucher::populate()
     else
       _recurring->setParent(_voheadid, "V");
 
+    if(vohead.value("vohead_posted").toBool())
+      _postVoucher->setVisible(FALSE);
 
     sFillMiscList();
     sPopulateDistributed();

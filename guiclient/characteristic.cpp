@@ -10,6 +10,7 @@
 
 #include "characteristic.h"
 
+#include <QDebug>
 #include <QMessageBox>
 #include <QItemSelectionModel>
 #include <QSqlError>
@@ -19,16 +20,41 @@
 #include <QSqlTableModel>
 #include <QVariant>
 
+#define DEBUG false
+
+class characteristicPrivate {
+  public:
+    int idCol;
+    int charIdCol;
+    int valueCol;
+    int orderCol;
+
+    int charid;
+    QSqlTableModel *charoptModel;
+    int mode;
+
+    characteristicPrivate()
+    {
+      mode   = cView;
+      charid = -1;
+
+      charoptModel = new QSqlTableModel;
+      charoptModel->setTable("charopt");
+      charoptModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
+
+      idCol     = charoptModel->fieldIndex("charopt_id");
+      charIdCol = charoptModel->fieldIndex("charopt_char_id");
+      valueCol  = charoptModel->fieldIndex("charopt_value");
+      orderCol  = charoptModel->fieldIndex("charopt_order");
+    }
+};
+
 characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-  _charid = -1;
-
-  _charoptModel = new QSqlTableModel;
-  _charoptModel->setTable("charopt");
-  _charoptModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
+  _d = new characteristicPrivate();
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheck()));
@@ -57,7 +83,7 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
   param = pParams.value("char_id", &valid);
   if (valid)
   {
-    _charid = param.toInt();
+    _d->charid = param.toInt();
     populate();
   }
 
@@ -66,24 +92,24 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
   {
     if (param.toString() == "new")
     {
-      _mode = cNew;
+      _d->mode = cNew;
 
       characteristicet.exec("SELECT NEXTVAL('char_char_id_seq') AS char_id;");
       if (characteristicet.first())
-        _charid = characteristicet.value("char_id").toInt();
+        _d->charid = characteristicet.value("char_id").toInt();
 
       sFillList();
     }
     else if (param.toString() == "edit")
     {
-      _mode = cEdit;
+      _d->mode = cEdit;
 // TODO
 //      _mask->setEnabled(false);
 //      _validator->setEnabled(false);
     }
     else if (param.toString() == "view")
     {
-      _mode = cView;
+      _d->mode = cView;
       _name->setEnabled(false);
       _search->setEnabled(false);
       _useGroup->setEnabled(false);
@@ -147,9 +173,9 @@ void characteristic::sSave()
   }
 
   QStringList values;
-  for (int i = 0; i < _charoptModel->rowCount(); i++)
+  for (int i = 0; i < _d->charoptModel->rowCount(); i++)
   {
-    QString data = _charoptModel->data(_charoptModel->index(i,2), Qt::EditRole).toString();
+    QString data = _d->charoptModel->data(_d->charoptModel->index(i,_d->valueCol), Qt::EditRole).toString();
     if (values.contains(data))
     {
       QMessageBox::critical(this, tr("Error"), tr("Option list may not contain duplicates."));
@@ -158,7 +184,7 @@ void characteristic::sSave()
     values.append(data);
   }
 
-  if (_mode == cNew)
+  if (_d->mode == cNew)
   {
     characteristicSave.prepare( "INSERT INTO char "
                "( char_id, char_name, char_items, char_customers, "
@@ -183,7 +209,7 @@ void characteristic::sSave()
 
     characteristicSave.bindValue(":char_type", _type->currentIndex());
   }
-  else if (_mode == cEdit)
+  else if (_d->mode == cEdit)
     characteristicSave.prepare( "UPDATE char "
                "SET char_name=:char_name, char_items=:char_items, "
                "    char_customers=:char_customers, "
@@ -211,7 +237,7 @@ void characteristic::sSave()
                "    char_search=:char_search "
                "WHERE (char_id=:char_id);" );
 
-  characteristicSave.bindValue(":char_id", _charid);
+  characteristicSave.bindValue(":char_id", _d->charid);
   characteristicSave.bindValue(":char_name", _name->text());
   characteristicSave.bindValue(":char_items",       QVariant(_items->isChecked()));
   characteristicSave.bindValue(":char_customers",   QVariant(_customers->isChecked()));
@@ -246,16 +272,16 @@ void characteristic::sSave()
     return;
   }
 
-  _charoptModel->submitAll();
+  _d->charoptModel->submitAll();
 
-  done(_charid);
+  done(_d->charid);
 }
 
 void characteristic::sCheck()
 {
   XSqlQuery characteristicCheck;
   _name->setText(_name->text().trimmed());
-  if ((_mode == cNew) && (_name->text().trimmed().length()))
+  if ((_d->mode == cNew) && (_name->text().trimmed().length()))
   {
     characteristicCheck.prepare( "SELECT char_id "
                "FROM char "
@@ -264,8 +290,8 @@ void characteristic::sCheck()
     characteristicCheck.exec();
     if (characteristicCheck.first())
     {
-      _charid = characteristicCheck.value("char_id").toInt();
-      _mode = cEdit;
+      _d->charid = characteristicCheck.value("char_id").toInt();
+      _d->mode = cEdit;
       populate();
 
       _name->setEnabled(false);
@@ -280,7 +306,7 @@ void characteristic::populate()
   characteristicpopulate.prepare( "SELECT * "
              "FROM char "
              "WHERE (char_id=:char_id);" );
-  characteristicpopulate.bindValue(":char_id", _charid);
+  characteristicpopulate.bindValue(":char_id", _d->charid);
   characteristicpopulate.exec();
   if (characteristicpopulate.first())
   {
@@ -321,25 +347,31 @@ void characteristic::populate()
 
 void characteristic::sFillList()
 {
-  QString filter = QString("charopt_char_id=%1").arg(_charid);
-  _charoptModel->setFilter(filter);
-  _charoptModel->setSort(3, Qt::AscendingOrder);
-  _charoptModel->select();
-  _charoptModel->setHeaderData(2, Qt::Horizontal, QVariant(tr("Value")));
-  _charoptModel->setHeaderData(3, Qt::Horizontal, QVariant(tr("Order")));
+  QString filter = QString("charopt_char_id=%1").arg(_d->charid);
+  _d->charoptModel->setFilter(filter);
+  _d->charoptModel->setSort(_d->orderCol, Qt::AscendingOrder);
+  _d->charoptModel->select();
+  _d->charoptModel->setHeaderData(_d->valueCol, Qt::Horizontal, QVariant(tr("Value")));
+  _d->charoptModel->setHeaderData(_d->orderCol, Qt::Horizontal, QVariant(tr("Order")));
 
-  _charoptView->setModel(_charoptModel);
-  _charoptView->setColumnHidden(0, true);
-  _charoptView->setColumnHidden(1, true);
+  _charoptView->setModel(_d->charoptModel);
+  for (int i = 0; i < _d->charoptModel->columnCount(); i++) {
+    if (DEBUG)
+    {
+      qDebug() << i << _d->valueCol << _d->orderCol
+               << (i != _d->valueCol && i !=_d->orderCol);
+    }
+    _charoptView->setColumnHidden(i, i != _d->valueCol && i !=_d->orderCol);
+  }
 }
 
 void characteristic::sNew()
 {
-  int row = _charoptModel->rowCount();
-  _charoptModel->insertRows(row,1);
-  _charoptModel->setData(_charoptModel->index(row,1), QVariant(_charid));
-  _charoptModel->setData(_charoptModel->index(row,3), 0);
-  QModelIndex idx = _charoptModel->index(row,0);
+  int row = _d->charoptModel->rowCount();
+  _d->charoptModel->insertRows(row,1);
+  _d->charoptModel->setData(_d->charoptModel->index(row, _d->charIdCol), QVariant(_d->charid));
+  _d->charoptModel->setData(_d->charoptModel->index(row, _d->orderCol), 0);
+  QModelIndex idx = _d->charoptModel->index(row, _d->idCol);
   _charoptView->selectionModel()->select(QItemSelection(idx, idx),
                                          QItemSelectionModel::ClearAndSelect |
                                          QItemSelectionModel::Rows);
@@ -348,7 +380,7 @@ void characteristic::sNew()
 void characteristic::sDelete()
 {
   int row = _charoptView->selectionModel()->currentIndex().row();
-  QVariant value = _charoptModel->data(_charoptModel->index(row,2));
+  QVariant value = _d->charoptModel->data(_d->charoptModel->index(row, _d->valueCol));
 
   // Validate
   XSqlQuery qry;
@@ -356,7 +388,7 @@ void characteristic::sDelete()
               "FROM charass "
               "WHERE ((charass_char_id=:char_id) "
               " AND (charass_value=:value));");
-  qry.bindValue(":char_id", _charid);
+  qry.bindValue(":char_id", _d->charid);
   qry.bindValue(":value", value);
   qry.exec();
   if (qry.first())
@@ -370,7 +402,7 @@ void characteristic::sDelete()
     return;
   }
 
-  _charoptModel->removeRows(row, 1);
+  _d->charoptModel->removeRows(row,  _d->charIdCol);
   _charoptView->setRowHidden(row, QModelIndex(), true);
 }
 

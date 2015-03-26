@@ -31,6 +31,7 @@ public slots:
     virtual void sFillStd();
     virtual void sFillCustom();
     virtual void sToggleCustom();
+    virtual void sToggleReport();
 
 protected slots:
     virtual bool setParams(ParameterList &);

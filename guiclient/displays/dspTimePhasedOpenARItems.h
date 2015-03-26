@@ -35,6 +35,7 @@ public slots:
     virtual void sFillStd();
     virtual void sFillCustom();
     virtual void sToggleCustom();
+    virtual void sToggleReport();
 
 private:
     int _column;

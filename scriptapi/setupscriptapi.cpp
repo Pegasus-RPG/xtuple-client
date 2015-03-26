@@ -32,6 +32,7 @@
 #include "parameterwidget.h"
 #include "projectlineeditsetup.h"
 #include "qactionproto.h"
+#include "qapplicationproto.h"
 #include "qboxlayoutproto.h"
 #include "qbytearrayproto.h"
 #include "qdialogsetup.h"
@@ -153,6 +154,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupPeriodListViewItem(engine);
   setupProjectLineEdit(engine);
   setupQActionProto(engine);
+  setupQApplicationProto(engine);
   setupQBoxLayoutProto(engine);
   setupQByteArrayProto(engine);
   setupQDialog(engine);

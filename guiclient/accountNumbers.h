@@ -38,6 +38,7 @@ class accountNumbers : public XWidget, public Ui::accountNumbers
     virtual void sEdit();
     virtual void sPrint();
     virtual void sFillList();
+    virtual void populateSubTypes();
 
   private:
     int _externalCol;

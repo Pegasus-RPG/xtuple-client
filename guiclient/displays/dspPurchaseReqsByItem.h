@@ -28,6 +28,8 @@ public slots:
     virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int);
     virtual void sDspRunningAvailability();
     virtual void sRelease();
+    virtual void sNew();
+    virtual void sEdit();
     virtual void sDelete();
 
 protected slots:

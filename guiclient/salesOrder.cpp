@@ -1598,9 +1598,13 @@ void salesOrder::sHandleOrderNumber()
     XSqlQuery query;
     if ( (_mode == cNew) && (_userEnteredOrderNumber) )
     {
-      query.prepare("SELECT deleteSO(:sohead_id, :sohead_number) AS result;");
+      query.prepare("SELECT deleteSO(:sohead_id, :sohead_number ::text) AS result;");
       query.bindValue(":sohead_id", _soheadid);
-      query.bindValue(":sohead_number", _orderNumber->text());
+      if (_orderNumberGen)
+        query.bindValue(":sohead_number", _orderNumberGen);
+      else
+        query.bindValue(":sohead_number", _orderNumber->text());
+
       query.exec();
       if (query.first())
       {
@@ -2010,6 +2014,7 @@ void salesOrder::sNew()
   params.append("sohead_id", _soheadid);
   params.append("cust_id", _cust->id());
   params.append("shipto_id", _shipTo->id());
+  params.append("shipto_name", _shipToName->text());
   params.append("orderNumber", _orderNumber->text());
   params.append("curr_id", _orderCurrency->id());
   params.append("orderDate", _orderDate->date());
@@ -2058,6 +2063,7 @@ void salesOrder::sEdit()
   params.append("soitem_id", _soitem->id());
   params.append("cust_id", _cust->id());
   params.append("shipto_id", _shipTo->id());
+  params.append("shipto_name", _shipToName->text());
   params.append("orderNumber", _orderNumber->text());
   params.append("curr_id", _orderCurrency->id());
   params.append("orderDate", _orderDate->date());
@@ -3371,7 +3377,7 @@ void salesOrder::setViewMode()
   _comments->setType(Comments::SalesOrder);
   _comments->setReadOnly(true);
   _documents->setType(Documents::SalesOrder);
-//  _documents->setReadOnly(true);
+  _documents->setReadOnly(true);
   _shipComplete->setEnabled(false);
   setFreeFormShipto(false);
   _orderCurrency->setEnabled(false);

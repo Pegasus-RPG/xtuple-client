@@ -223,8 +223,8 @@ void shipTo::sSave()
   XSqlQuery saveq;
   saveq.prepare( "UPDATE shiptoinfo "
                  "SET shipto_active=:shipto_active, shipto_default=:shipto_default,"
-                 "    shipto_name=:shipto_name, shipto_cntct_id=:shipto_cntct_id,"
-                 "    shipto_commission=:shipto_commission,"
+                 "    shipto_num=:shipto_num, shipto_name=:shipto_name,"
+                 "    shipto_cntct_id=:shipto_cntct_id, shipto_commission=:shipto_commission,"
                  "    shipto_comments=:shipto_comments, shipto_shipcomments=:shipto_shipcomments,"
                  "    shipto_taxzone_id=:shipto_taxzone_id, shipto_salesrep_id=:shipto_salesrep_id,"
                  "    shipto_shipzone_id=:shipto_shipzone_id,"

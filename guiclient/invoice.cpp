@@ -19,6 +19,7 @@
 #include <QDebug>
 
 #include "characteristicAssignment.h"
+#include "distributeInventory.h"
 #include "invoiceItem.h"
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
@@ -124,6 +125,8 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _recurring->setParent(-1, "I");
 
   _miscChargeAccount->setType(GLCluster::cRevenue | GLCluster::cExpense);
+
+  _postInvoice->setEnabled(_privileges->check("PostMiscInvoices"));
 }
 
 invoice::~invoice()
@@ -275,6 +278,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       _saleType->setEnabled(false);
 //      _documents->setReadOnly(true);
       _newCharacteristic->setEnabled(false);
+      _postInvoice->setVisible(false);
 
       disconnect(_invcitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       disconnect(_invcitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -599,6 +603,10 @@ void invoice::sSave()
 
   omfgThis->sInvoicesUpdated(_invcheadid, true);
 
+  // post the Invoice if user desires
+  if (_postInvoice->isChecked())
+    postInvoice();
+
   _invcheadid = -1;
   close();
 }
@@ -726,6 +734,104 @@ bool invoice::save()
   XSqlQuery commitq("COMMIT;");
 
   return true;
+}
+
+void invoice::postInvoice()
+{
+  XSqlQuery unpostedPost;
+  int journal = -1;
+  unpostedPost.exec("SELECT fetchJournalNumber('AR-IN') AS result;");
+  if (unpostedPost.first())
+  {
+    journal = unpostedPost.value("result").toInt();
+    if (journal < 0)
+    {
+      systemError(this, storedProcErrorLookup("fetchJournalNumber", journal), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (unpostedPost.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, unpostedPost.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  XSqlQuery xrate;
+  xrate.prepare("SELECT curr_rate "
+		"FROM curr_rate, invchead "
+		"WHERE ((curr_id=invchead_curr_id)"
+		"  AND  (invchead_id=:invchead_id)"
+		"  AND  (invchead_invcdate BETWEEN curr_effective AND curr_expires));");
+  // if SUM becomes dependent on curr_id then move XRATE before it in the loop
+  XSqlQuery sum;
+  sum.prepare("SELECT invoicetotal(:invchead_id) AS subtotal;");
+
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  XSqlQuery post;
+  post.prepare("SELECT postInvoice(:invchead_id, :journal) AS result;");
+
+  sum.bindValue(":invchead_id", _invcheadid);
+  if (sum.exec() && sum.first() && sum.value("subtotal").toDouble() == 0)
+  {
+     if (QMessageBox::question(this, tr("Invoice Has Value 0"),
+	      		  tr("Invoice #%1 has a total value of 0.\n"
+		     	     "Would you like to post it anyway?")
+			    .arg(_invoiceNumber->text()),
+			  QMessageBox::Yes,
+			  QMessageBox::No | QMessageBox::Default)
+	     == QMessageBox::No)
+	       return;
+  }
+  else if (sum.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, sum.lastError().databaseText(), __FILE__, __LINE__);
+  }
+  else if (sum.value("subtotal").toDouble() != 0)
+  {
+     xrate.bindValue(":invchead_id", _invcheadid);
+     xrate.exec();
+     if (xrate.lastError().type() != QSqlError::NoError)
+     {
+       systemError(this, tr("System Error posting Invoice #%1\n%2")
+	            .arg(_invoiceNumber->text())
+	            .arg(xrate.lastError().databaseText()),
+                __FILE__, __LINE__);
+     }
+     else if (!xrate.first() || xrate.value("curr_rate").isNull())
+     {
+       systemError(this, tr("Could not post Invoice #%1 because of a missing exchange rate.")
+				.arg(_invoiceNumber->text()));
+     }
+  }
+
+  unpostedPost.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+  post.bindValue(":invchead_id", _invcheadid);
+  post.bindValue(":journal",     journal);
+  post.exec();
+  if (post.first())
+  {
+     int result = post.value("result").toInt();
+     if (result < 0)
+     {
+       rollback.exec();
+       systemError(this, storedProcErrorLookup("postInvoice", result),
+	           __FILE__, __LINE__);
+     }
+     else if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
+     {
+       rollback.exec();
+       QMessageBox::information( this, tr("Post Invoices"), tr("Transaction Canceled") );
+       return;
+     }
+
+     unpostedPost.exec("COMMIT;");
+   }
+   // contains() string is hard-coded in stored procedure
+   else if (post.lastError().databaseText().contains("post to closed period"))
+     rollback.exec();
+
 }
 
 void invoice::sNew()
@@ -906,6 +1012,7 @@ void invoice::populate()
       _freight->setEnabled(false);
       _shippingZone->setEnabled(false);
       _saleType->setEnabled(false);
+      _postInvoice->setVisible(false);
     }
 
     _loading = false;
@@ -997,9 +1104,9 @@ void invoice::sFillItemList()
              "       COALESCE(coitem_unitcost, itemCost(itemsite_id), 0.0) AS unitcost,"
              "       ROUND((invcitem_billed * invcitem_qty_invuomratio) *"
              "             ((invcitem_price / COALESCE(invcitem_price_invuomratio,1.0)) - "
-             "              COALESCE(coitem_unitcost, itemCost(itemsite_id), 0.0)),2) AS margin,"
+             "              currtolocal(:curr_id, COALESCE(coitem_unitcost, itemCost(itemsite_id), 0.0), :date)),2) AS margin,"
              "       CASE WHEN (invcitem_price = 0.0) THEN 100.0"
-             "            ELSE (((invcitem_price - COALESCE(coitem_unitcost, itemCost(itemsite_id), 0.0)) / invcitem_price) * 100.0)"
+             "            ELSE (((invcitem_price - currtolocal(:curr_id, COALESCE(coitem_unitcost, itemCost(itemsite_id), 0.0), :date)) / invcitem_price) * 100.0)"
              "       END AS marginpercent,"
              "       'qty' AS invcitem_ordered_xtnumericrole,"
              "       'qty' AS invcitem_billed_xtnumericrole,"

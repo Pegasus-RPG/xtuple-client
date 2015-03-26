@@ -40,6 +40,13 @@ to be bound by its terms.</comment>
       </spacer>
      </item>
      <item>
+      <widget class="XCheckBox" name="_postVoucher">
+       <property name="text">
+        <string>Post on Save</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="_save">
        <property name="enabled">
         <bool>false</bool>
@@ -692,6 +699,7 @@ to be bound by its terms.</comment>
   <tabstop>_edit</tabstop>
   <tabstop>_delete</tabstop>
   <tabstop>_notes</tabstop>
+  <tabstop>_postVoucher</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>

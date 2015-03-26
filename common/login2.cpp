@@ -171,6 +171,13 @@ int login2::set(const ParameterList &pParams, QSplashScreen *pSplash)
   if (valid)
     _setSearchPath = true;
 
+  param = pParams.value("applicationName", &valid);
+  if (valid) {
+    _connAppName = param.toString().trimmed();
+  } else {
+    _connAppName = "xTuple ERP (unknown)";
+  }
+
   if(pParams.inList("login"))
     sLogin();
 
@@ -329,7 +336,7 @@ void login2::sLogin()
   int methodidx; // not declared in for () because we'll need it later
   for (methodidx = 0; methodidx < method.size(); methodidx++)
   {
-    db.setConnectOptions(method.at(methodidx).first);
+    db.setConnectOptions(QString("application_name='%1';%2").arg(_connAppName).arg(method.at(methodidx).first));
     db.setPassword(method.at(methodidx).second);
     if (db.open())
       break;  // break instead of for-loop condition to preserve methodidx

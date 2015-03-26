@@ -29,6 +29,7 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _yearend->setType(GLCluster::cEquity);
   _gainLoss->setType(GLCluster::cExpense);
   _discrepancy->setType(GLCluster::cExpense);
+  _unassigned->setType(GLCluster::cExpense);
 
   // AP
   _nextAPMemoNumber->setValidator(omfgThis->orderVal());
@@ -146,6 +147,7 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
     _yearend->setId(_metrics->value("YearEndEquityAccount").toInt());
     _gainLoss->setId(_metrics->value("CurrencyGainLossAccount").toInt());
     _discrepancy->setId(_metrics->value("GLSeriesDiscrepancyAccount").toInt());
+    _unassigned->setId(_metrics->value("UnassignedAccount").toInt());
   }
   else
   {
@@ -758,6 +760,7 @@ bool configureGL::sSave()
     _metrics->set("YearEndEquityAccount", _yearend->id());
     _metrics->set("CurrencyGainLossAccount", _gainLoss->id());
     _metrics->set("GLSeriesDiscrepancyAccount", _discrepancy->id());
+    _metrics->set("UnassignedAccount", _unassigned->id());
   }
   if(companyseg)
     companyseg->setEnabled(_useCompanySegment->isChecked());

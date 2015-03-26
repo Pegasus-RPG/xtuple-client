@@ -1707,6 +1707,8 @@ void customer::sClear()
     _taxzone->setCurrentIndex(-1);
     _shipform->setId(_metrics->value("DefaultShipFormId").toInt());
     _shipvia->setId(_metrics->value("DefaultShipViaId").toInt());
+    _shipchrg->setId(_metrics->value("DefaultShipChrgId").toInt());
+    _sellingWarehouse->setId(_metrics->value("DefaultSellingWarehouseId").toInt());
     _custtype->setId(_metrics->value("DefaultCustType").toInt());
     _backorders->setChecked(_metrics->boolean("DefaultBackOrders"));
     _partialShipments->setEnabled(_metrics->boolean("DefaultBackOrders"));
@@ -1724,9 +1726,6 @@ void customer::sClear()
       _custtype->setEnabled(false);
 
     _defaultCommissionPrcnt->setDouble(0);
-    _shipchrg->setId(-1);
-    if (_metrics->boolean("MultiWhs"))
-      _sellingWarehouse->setId(_preferences->value("PreferredWarehouse").toInt());
     _active->setChecked(true);
     _allowFFBillto->setChecked(false);
     _usesPOs->setChecked(false);
