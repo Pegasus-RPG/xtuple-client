@@ -18,14 +18,14 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QTextStream>
-#include <QtDesigner/QDesignerComponents>
-#include <QtDesigner/QDesignerIntegrationInterface>
-#include <QtDesigner/QtDesigner>
-#include <QtDesigner/QDesignerFormWindowInterface>
-#include <QtDesigner/QDesignerFormEditorInterface>
-#include <QtDesigner/QDesignerFormWindowManagerInterface>
-#include <QtDesigner/QDesignerPropertyEditorInterface>
-#include <QtDesigner/QDesignerWidgetDataBaseInterface>
+#include <QDesignerComponents>
+#include <QDesignerIntegrationInterface>
+#include <QtDesigner>
+#include <QDesignerFormWindowInterface>
+#include <QDesignerFormEditorInterface>
+#include <QDesignerFormWindowManagerInterface>
+#include <QDesignerPropertyEditorInterface>
+#include <QDesignerWidgetDataBaseInterface>
 
 // TODO: can we live without this?
 // copied from .../qt-mac-commercial-src-4.4.3/tools/designer/src/lib/shared/qdesigner_integration_p.h

@@ -13,7 +13,7 @@
 
 #include <QMap>
 #include <QString>
-#include <QtUiTools/QUiLoader>
+#include <QUiLoader>
 #include <QtDesigner/QDesignerCustomWidgetInterface>
 
 class XUiLoader : public QUiLoader

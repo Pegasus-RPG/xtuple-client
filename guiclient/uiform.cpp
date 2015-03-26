@@ -19,7 +19,7 @@
 #include <QTextStream>
 #include <QStatusBar>
 #include <QVariant>
-#include <QtDesigner/QDesignerComponents>
+#include <QDesignerComponents>
 
 #include "customCommand.h"
 #include "package.h"
