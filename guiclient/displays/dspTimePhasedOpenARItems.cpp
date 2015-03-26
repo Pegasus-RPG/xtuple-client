@@ -32,6 +32,8 @@ dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char*,
   setReportName("ARAging");
 
   connect(_custom, SIGNAL(toggled(bool)), this, SLOT(sToggleCustom()));
+  connect(_detailedReport, SIGNAL(clicked()), this, SLOT(sToggleReport()));
+  connect(_summaryReport, SIGNAL(clicked()), this, SLOT(sToggleReport()));
   
   list()->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft, true, "araging_cust_number" );
   list()->addColumn(tr("Customer"), -1,          Qt::AlignLeft, true, "araging_cust_name" );
@@ -265,6 +267,7 @@ void dspTimePhasedOpenARItems::sToggleCustom()
     _asOf->setDate(omfgThis->dbDate(), true);
     _asOf->setEnabled(FALSE);
     _useGroup->setHidden(TRUE);
+    _reptGroup->setHidden(TRUE);
 
     list()->setColumnCount(0);
     list()->addColumn(tr("Cust. #"), _orderColumn, Qt::AlignLeft, true, "cust_number");
@@ -272,12 +275,13 @@ void dspTimePhasedOpenARItems::sToggleCustom()
   }
   else
   {
-    setReportName("ARAging");
+    sToggleReport();
     _calendarLit->setHidden(TRUE);
     _calendar->setHidden(TRUE);
     _periods->setHidden(TRUE);
     _asOf->setEnabled(TRUE);
     _useGroup->setHidden(FALSE);
+    _reptGroup->setHidden(FALSE);
 
     list()->setColumnCount(0);
     list()->addColumn(tr("Cust. #"),       _orderColumn, Qt::AlignLeft,  true, "araging_cust_number");
@@ -289,4 +293,12 @@ void dspTimePhasedOpenARItems::sToggleCustom()
     list()->addColumn(tr("61-90 Days"), _bigMoneyColumn, Qt::AlignRight, true, "araging_ninety_val_sum");
     list()->addColumn(tr("90+ Days"),   _bigMoneyColumn, Qt::AlignRight, true, "araging_plus_val_sum");
   }
+}
+
+void dspTimePhasedOpenARItems::sToggleReport()
+{
+  if (_detailedReport->isChecked())
+    setReportName("ARAging");
+  else
+    setReportName("ARAgingSummary");
 }
