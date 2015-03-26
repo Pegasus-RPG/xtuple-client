@@ -123,12 +123,10 @@ enum SetResponse purchaseRequest::set(const ParameterList &pParams)
     else if (param.toString() == "view")
     {
       _mode = cView;
-<<<<<<< HEAD
-
-      param = pParams.value("pr_id", &valid);
-      if (valid)
-        prid = param.toInt();
-
+      _captive = TRUE;
+      
+      populate();
+      
       _number->setEnabled(false);
       _item->setReadOnly(true);
       _warehouse->setEnabled(false);
@@ -136,19 +134,6 @@ enum SetResponse purchaseRequest::set(const ParameterList &pParams)
       _dueDate->setEnabled(false);
       _notes->setEnabled(false);
       _project->setEnabled(false);
-=======
-      _captive = TRUE;
-      
-      populate();
-      
-      _number->setEnabled(FALSE);
-      _item->setReadOnly(TRUE);
-      _warehouse->setEnabled(FALSE);
-      _qty->setEnabled(FALSE);
-      _dueDate->setEnabled(FALSE);
-      _notes->setEnabled(FALSE);
-      _project->setEnabled(FALSE);
->>>>>>> XTUPLE/4_9_x
       _create->hide();
     }
     else if (param.toString() == "release")
