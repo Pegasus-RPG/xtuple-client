@@ -64,7 +64,7 @@ unix: !macx {
   OBJECTS_DIR = unx_obj
   LIBS += -lz -lQt5DesignerComponents
 }
-greaterThan(QT_MAJOR_VERSION, 5) {
+equals(QT_MAJOR_VERSION, 5) {
 macx {
   RC_FILE = images/icons.icns
   #PRECOMPILED_HEADER = stable.h
