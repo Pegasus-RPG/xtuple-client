@@ -44,6 +44,13 @@ to be bound by its terms.</comment>
      </item>
      <item>
       <layout class="QHBoxLayout">
+     <item>
+      <widget class="XCheckBox" name="_postInvoice">
+       <property name="text">
+        <string>Post on Save</string>
+       </property>
+      </widget>
+     </item>
        <item>
         <widget class="QPushButton" name="_save">
          <property name="text">
@@ -1462,6 +1469,8 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_cust</tabstop>
+  <tabstop>_copyToShipto</tabstop>
   <tabstop>_tabWidget</tabstop>
   <tabstop>_invoiceNumber</tabstop>
   <tabstop>_invoiceDate</tabstop>
@@ -1472,8 +1481,6 @@ to be bound by its terms.</comment>
   <tabstop>_salesrep</tabstop>
   <tabstop>_commission</tabstop>
   <tabstop>_taxzone</tabstop>
-  <tabstop>_cust</tabstop>
-  <tabstop>_copyToShipto</tabstop>
   <tabstop>_billToName</tabstop>
   <tabstop>_billToPhone</tabstop>
   <tabstop>_billToAddr</tabstop>
@@ -1498,6 +1505,7 @@ to be bound by its terms.</comment>
   <tabstop>_miscAmount</tabstop>
   <tabstop>_freight</tabstop>
   <tabstop>_payment</tabstop>
+  <tabstop>_postInvoice</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>

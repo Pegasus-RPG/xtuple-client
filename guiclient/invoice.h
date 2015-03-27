@@ -44,6 +44,7 @@ public slots:
     virtual void sView();
     virtual void sDelete();
     virtual void populate();
+    virtual void postInvoice();
     virtual void sNewCharacteristic();
     virtual void sEditCharacteristic();
     virtual void sDeleteCharacteristic();
