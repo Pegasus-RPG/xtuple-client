@@ -65,8 +65,8 @@ purchaseOrderList::purchaseOrderList(QWidget* parent, const char* name, bool mod
 
   _select = new QPushButton(tr("&Select"), this);
   _select->setObjectName("_select");
-  _select->setEnabled( FALSE );
-  _select->setDefault( TRUE );
+  _select->setEnabled( false );
+  _select->setDefault( true );
   buttonLayout->addWidget( _select );
 
   QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );

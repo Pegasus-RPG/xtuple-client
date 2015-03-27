@@ -143,7 +143,7 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
       _newCharacteristic->setEnabled(false);
       _close->setText(tr("&Close"));
       _save->hide();
-      _postVoucher->setVisible(FALSE);
+      _postVoucher->setVisible(false);
 
     }
   }
@@ -649,7 +649,7 @@ void miscVoucher::populate()
       _recurring->setParent(_voheadid, "V");
 
     if(vohead.value("vohead_posted").toBool())
-      _postVoucher->setVisible(FALSE);
+      _postVoucher->setVisible(false);
 
     sFillMiscList();
     sPopulateDistributed();

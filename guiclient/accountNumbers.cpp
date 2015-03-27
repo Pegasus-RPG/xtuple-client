@@ -41,7 +41,7 @@ accountNumbers::accountNumbers(QWidget* parent, const char* name, Qt::WindowFlag
 
   connect(omfgThis, SIGNAL(configureGLUpdated()), this, SLOT(sBuildList()));
 
-  _type->setAllowNull(TRUE);
+  _type->setAllowNull(true);
   QString qryType = QString( "SELECT  1, '%1' UNION "
                              "SELECT  2, '%2' UNION "
                              "SELECT  3, '%3' UNION "
@@ -55,7 +55,7 @@ accountNumbers::accountNumbers(QWidget* parent, const char* name, Qt::WindowFlag
 
   _type->populate(qryType);
 
-  _subType->setAllowNull(TRUE);
+  _subType->setAllowNull(true);
   populateSubTypes();
 
   _showExternal->setVisible(_metrics->boolean("MultiCompanyFinancialConsolidation"));

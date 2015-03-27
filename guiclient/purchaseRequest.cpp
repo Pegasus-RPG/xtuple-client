@@ -84,7 +84,7 @@ enum SetResponse purchaseRequest::set(const ParameterList &pParams)
   if (valid)
   {
     _item->setId(param.toInt());
-    _item->setEnabled(FALSE);
+    _item->setEnabled(false);
   }
   
   param = pParams.value("qty", &valid);
@@ -111,19 +111,19 @@ enum SetResponse purchaseRequest::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _captive = TRUE;
+      _captive = true;
       _create->setText(tr("Save"));
       
       populate();
       
-      _number->setEnabled(FALSE);
-      _item->setReadOnly(TRUE);
-      _warehouse->setEnabled(FALSE);
+      _number->setEnabled(false);
+      _item->setReadOnly(true);
+      _warehouse->setEnabled(false);
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
-      _captive = TRUE;
+      _captive = true;
       
       populate();
       
