@@ -1835,6 +1835,11 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
           _holdType->setCurrentIndex(1);
       }
 
+      if (_holdType->currentIndex() > 0 && !_privileges->check("OverrideSOHoldType"))
+        _holdType->setEnabled(FALSE);
+      else
+        _holdType->setEnabled(TRUE);
+
       _billToName->setText(cust.value("cust_name").toString());
       _billToAddr->setId(cust.value("addr_id").toInt());
       sFillCcardList();
