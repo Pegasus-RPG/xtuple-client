@@ -52,8 +52,10 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Customer Type Pattern"), "custtype_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("P/O Number"), "poNumber", ParameterWidget::Text);
   parameterWidget()->appendComboBox(tr("Sales Rep."), "salesrep_id", XComboBox::SalesRepsActive);
+  parameterWidget()->appendComboBox(tr("Sale Type"), "saletype_id", XComboBox::SaleTypes);
 
   list()->addColumn(tr("Order #"),          _orderColumn,    Qt::AlignLeft,  true,  "cohead_number");
+  list()->addColumn(tr("Sale Type"),        _orderColumn,    Qt::AlignLeft,  true,  "saletype_descr");
   list()->addColumn(tr("Cust. #"),          _orderColumn,    Qt::AlignLeft,  true,  "cust_number");
   list()->addColumn(tr("Customer"),         _itemColumn,     Qt::AlignLeft,  true,  "cohead_billtoname");
   list()->addColumn(tr("Ship-To"),          _itemColumn,     Qt::AlignLeft,  false, "cohead_shiptoname");
