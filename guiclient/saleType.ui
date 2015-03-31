@@ -106,7 +106,7 @@ to be bound by its terms.</comment>
               <string>Default</string>
              </property>
              <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>
