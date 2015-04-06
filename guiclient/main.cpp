@@ -291,6 +291,10 @@ int main(int argc, char *argv[])
     }
   }
 
+  _splash->showMessage(QObject::tr("Loading Database Metrics"), SplashTextAlignment, SplashTextColor);
+  qApp->processEvents();
+  _metrics = new Metrics();
+
   // TODO: can/should we compose the splash screen on the fly from parts?
   QList<editionDesc> edition;
   edition << editionDesc( "Enterprise",     ":/images/splashEnterprise.png",        true,
@@ -345,28 +349,15 @@ int main(int argc, char *argv[])
     bool xtweb = false;
     if(metric.first())
       xtweb = metric.value("result").toBool();
-    metric.exec("SELECT fetchMetricBool('ForceLicenseLimit') as metric_value;");
-    bool forceLimit = false;
+    bool forceLimit = _metrics->boolean("ForceLicenseLimit");
     bool forced = false;
-    if(metric.first())
-      forceLimit = metric.value("metric_value").toBool();
-    metric.exec("SELECT metric_value"
-                "  FROM metric"
-                " WHERE(metric_name = 'RegistrationKey');");
     bool checkPass = true;
     bool checkLock = false;
     bool expired   = false;
     QString checkPassReason;
-    QString rkey = "";
-    if(metric.first())
-      rkey = metric.value("metric_value").toString();
+    QString rkey = _metrics->value("RegistrationKey");
     XTupleProductKey pkey(rkey);
-    QString application;
-    metric.exec("SELECT fetchMetricText('Application') as app;");
-     if(metric.first())
-     {
-         application = metric.value("app").toString();
-     }
+    QString application = _metrics->value("Application");
     if(pkey.valid() && (pkey.version() == 1 || pkey.version() == 2 || pkey.version() == 3))
     {
       if(pkey.expiration() < QDate::currentDate())
@@ -450,17 +441,13 @@ int main(int argc, char *argv[])
       if(forced)
         checkPassReason.append(" FORCED!");
 
-      metric.exec("SELECT current_database() AS db,"
-                  "       fetchMetricText('DatabaseName') AS dbname,"
-                  "       fetchMetricText('remitto_name') AS name;");
+      metric.exec("SELECT current_database() AS db;");
       QString db = "";
-      QString dbname = "";
-      QString name = "";
+      QString dbname = _metrics->value("DatabaseName");
+      QString name   = _metrics->value("remotto_name");
       if(metric.first())
       {
         db = metric.value("db").toString();
-        dbname = metric.value("dbname").toString();
-        name = metric.value("name").toString();
       }
 
       QHttp *http = new QHttp();
@@ -486,37 +473,18 @@ int main(int argc, char *argv[])
     }
   }
 
-  bool disallowMismatch = false;
-  bool shouldCheckForUpdates = false;
-  QString _serverVersion;
-  metric.exec("SELECT metric_value"
-              " FROM metric"
-              " WHERE (metric_name = 'ServerVersion')");
-  if (!metric.first() || (metric.value("metric_value").toString() != _dbVersion)) {
-
+  QString _serverVersion = _metrics->value("ServerVersion");
+  if (_serverVersion != _dbVersion) {
+    bool shouldCheckForUpdates = _metrics->boolean("CheckForUpdates");
+    bool disallowMismatch      = _metrics->boolean("DisallowMismatchClientVersion");
     int result = 0;
-    _serverVersion = metric.value("metric_value").toString();
-
-    metric.exec("SELECT metric_value FROM metric WHERE (metric_name = 'DisallowMismatchClientVersion')");
-    if (metric.first() && (metric.value("metric_value").toString() == "t")) {
-      disallowMismatch = true;
-    }
-
-    metric.exec("SELECT metric_value FROM metric WHERE (metric_name = 'CheckForUpdates')");
-    if (metric.first()) {
-		 shouldCheckForUpdates = (metric.value("metric_value").toString() == "t" ? true : false);
-	 }
-
-	if (shouldCheckForUpdates) {
-
+    if (shouldCheckForUpdates) {
       _splash->hide();
-
       checkForUpdates newdlg(0,"", TRUE);
-
       result = newdlg.exec();
       if (result == QDialog::Rejected) {
-          return 0;
-	  }
+        return 0;
+      }
     }
     else if (!shouldCheckForUpdates && disallowMismatch) {
       _splash->hide();
@@ -542,10 +510,6 @@ int main(int argc, char *argv[])
       }
     }
   }
-
-  _splash->showMessage(QObject::tr("Loading Database Metrics"), SplashTextAlignment, SplashTextColor);
-  qApp->processEvents();
-  _metrics = new Metrics();
 
   _splash->showMessage(QObject::tr("Loading User Preferences"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
