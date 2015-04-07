@@ -43,11 +43,12 @@ dspSalesOrders::dspSalesOrders(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("P/O Number"), "poNumber", ParameterWidget::Text);
   parameterWidget()->append(tr("Project"), "prj_id", ParameterWidget::Project);
   parameterWidget()->appendComboBox(tr("Sales Rep."), "salesrep_id", XComboBox::SalesRepsActive);
-  parameterWidget()->appendComboBox(tr("Sale Type"), "saletype_id", "SELECT saletype_id, saletype_descr FROM saletype");
+  parameterWidget()->appendComboBox(tr("Sale Type"), "saletype_id", XComboBox::SaleTypes);
   parameterWidget()->append(tr("Hide Closed"), "hideClosed", ParameterWidget::Exists);
 
   list()->addColumn(tr("Customer"),    _itemColumn,  Qt::AlignLeft,   true,  "cust_number"   );
   list()->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft,   true,  "cohead_number"   );
+  list()->addColumn(tr("Sale Type"),   _orderColumn, Qt::AlignLeft,   true,  "saletype_descr"   );
   list()->addColumn(tr("Ordered"),     _dateColumn,  Qt::AlignRight,  true,  "cohead_orderdate"  );
   list()->addColumn(tr("Scheduled"),   _dateColumn,  Qt::AlignRight,  true,  "min_scheddate"  );
   list()->addColumn(tr("Status"),      _itemColumn,  Qt::AlignCenter, true,  "order_status" );
