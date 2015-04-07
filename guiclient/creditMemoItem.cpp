@@ -431,7 +431,7 @@ void creditMemoItem::populate()
                  "       cmhead_taxzone_id, cmhead_curr_id, "
                  "      (SELECT SUM(taxhist_tax * -1) "
 		 "       FROM cmitemtax WHERE (cmitem_id=taxhist_parent_id)) AS tax,"
-                 "       itemsite_costmethod "
+                 "       itemsite_warehous_id, itemsite_costmethod "
                  "FROM cmhead, cmitem "
                  "LEFT OUTER JOIN itemsite ON (cmitem_itemsite_id=itemsite_id)"
                  "WHERE ( (cmitem_cmhead_id=cmhead_id)"
@@ -444,6 +444,7 @@ void creditMemoItem::populate()
     _taxzoneid = cmitem.value("cmhead_taxzone_id").toInt();
     _rsnCode->setId(cmitem.value("cmitem_rsncode_id").toInt());
     _item->setItemsiteid(cmitem.value("cmitem_itemsite_id").toInt());
+    _warehouse->setId(cmitem.value("itemsite_warehous_id").toInt());
     _lineNumber->setText(cmitem.value("cmitem_linenumber").toString());
     _netUnitPrice->setLocalValue(cmitem.value("cmitem_unitprice").toDouble());
     _qtyToCredit->setDouble(cmitem.value("cmitem_qtycredit").toDouble());
