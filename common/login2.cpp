@@ -354,17 +354,19 @@ void login2::sLogin()
     checkVersion.bindValue(":earliest", earliest);
     checkVersion.bindValue(":latest",   latest);
     checkVersion.exec();
-    if (checkVersion.first() && ! checkVersion.value("ok").toBool()) {
+    if (checkVersion.first() && ! checkVersion.value("ok").toBool() &&
+        QMessageBox::question(this, tr("Unsupported Database Server Version"),
+                              tr("<p>The database server is at version %1 "
+                                 "but xTuple ERP only supports %2 to %3.</p>"
+                                 "<p>Continue anyway?</p>")
+                                .arg(checkVersion.value("version").toString(),
+                                     earliest, latest),
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::No) {
       if (_splash) {
         _splash->hide();
       }
       setCursor(QCursor(Qt::ArrowCursor));
-      QMessageBox::critical(this, tr("Cannot Connect to xTuple ERP Server"),
-                            tr("<p>The application cannot connect to this "
-                               "database server. The server is at version %1 "
-                               "but xTuple ERP only supports %2 to %3.")
-                              .arg(checkVersion.value("version").toString(),
-                                   earliest, latest));
       db.close();
       if (! _captive) {
         _username->setText("");
