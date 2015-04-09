@@ -25,6 +25,7 @@
 #include <QVariant>
 
 #include "dbtools.h"
+#include "errorReporter.h"
 #include "login2Options.h"
 #include "qmd5.h"
 #include "storedProcErrorLookup.h"
@@ -340,6 +341,54 @@ void login2::sLogin()
     db.setPassword(method.at(methodidx).second);
     if (db.open())
       break;  // break instead of for-loop condition to preserve methodidx
+  }
+
+  if (db.isOpen())
+  {
+    QString earliest = "8.4.0",
+            latest   = "9.4.0";
+    XSqlQuery checkVersion;
+    checkVersion.prepare("SELECT compareVersion(:earliest) <= 0"
+                         "   AND compareVersion(:latest)   >= 0 AS ok,"
+                         "       version() AS version;");
+    checkVersion.bindValue(":earliest", earliest);
+    checkVersion.bindValue(":latest",   latest);
+    checkVersion.exec();
+    if (checkVersion.first() && ! checkVersion.value("ok").toBool()) {
+      if (_splash) {
+        _splash->hide();
+      }
+      setCursor(QCursor(Qt::ArrowCursor));
+      QMessageBox::critical(this, tr("Cannot Connect to xTuple ERP Server"),
+                            tr("<p>The application cannot connect to this "
+                               "database server. The server is at version %1 "
+                               "but xTuple ERP only supports %2 to %3.")
+                              .arg(checkVersion.value("version").toString(),
+                                   earliest, latest));
+      db.close();
+      if (! _captive) {
+        _username->setText("");
+        _username->setFocus();
+      } else
+        _password->setFocus();
+
+      _password->setText("");
+      return;
+    } else if (ErrorReporter::error(QtCriticalMsg, this,
+                                    tr("Cannot Connect to xTuple ERP Server"),
+                                    checkVersion, __FILE__, __LINE__)) {
+      if (_splash)
+        _splash->hide();
+      db.close();
+      if (! _captive) {
+        _username->setText("");
+        _username->setFocus();
+      } else
+        _password->setFocus();
+
+      _password->setText("");
+      return;
+    }
   }
 
    // if connected using OpenMFG enhanced auth, remangle the password
