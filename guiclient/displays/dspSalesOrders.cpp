@@ -100,6 +100,11 @@ bool dspSalesOrders::setParams(ParameterList & params)
   return true;
 }
 
+void dspSalesOrders::sNew()
+{
+  salesOrder::newSalesOrder(-1, this);
+}
+
 void dspSalesOrders::sEditOrder()
 {
   if (!checkSitePrivs(list()->id()))
