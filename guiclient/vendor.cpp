@@ -755,6 +755,7 @@ bool vendor::sPopulate()
             "       FALSE AS vend_1099,       NULL AS vend_match,"
             "       FALSE  AS vend_qualified, NULL AS vend_comments,"
             "       NULL AS vend_pocomments,  NULL AS vend_taxzone_id,"
+            "       -1 AS vend_expcat_id, -1 AS vend_tax_id,"
             "       'W'  AS vend_fobsource,   NULL AS vend_fob,"
             "       NULL AS vend_ach_enabled, NULL AS routingnum,"
             "       NULL AS accntnum,         NULL AS vend_ach_use_vendinfo,"
