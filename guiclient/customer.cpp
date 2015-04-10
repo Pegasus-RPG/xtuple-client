@@ -336,22 +336,11 @@ enum SetResponse customer::set(const ParameterList &pParams)
     _captive=true;
   }
 
-  if (_mode == cEdit && !_lock.acquire("custinfo", _custid))
+  if (_mode == cEdit && !_lock.acquire("custinfo", _custid, AppLock::Interactive))
   {
-    if (_lock.isLockedOut())
-    {
-      QMessageBox::critical(this, tr("Record Currently Being Edited"),
-                              tr("<p>The record you are trying to edit is "
-                                 "currently being edited by another user. "
-                                 "Continue in View Mode.") );
-      setViewMode();
-    }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
-                                  _lock.lastError(), __FILE__, __LINE__))
-    {
-      setViewMode();
-    }
+    setViewMode();
   }
+
 
   return NoError;
 }
@@ -755,21 +744,10 @@ void customer::sCheck()
 
       _number->setId(customerCheck.value("cust_id").toInt());
 
-      if (_mode == cEdit && !_lock.acquire("custinfo", customerCheck.value("cust_id").toInt()))
+      if (_mode == cEdit && !_lock.acquire("custinfo", customerCheck.value("cust_id").toInt(), 
+                                          AppLock::Interactive))
       {
-        if (_lock.isLockedOut())
-        {
-          QMessageBox::critical(this, tr("Record Currently Being Edited"),
-                              tr("<p>The record you are trying to edit is "
-                                 "currently being edited by another user. "
-                                 "Continue in View Mode.") );
-          setViewMode();
-        }
-        else if (ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
-                                  _lock.lastError(), __FILE__, __LINE__))
-        {
-          setViewMode();
-        }
+        setViewMode();
       }
 
       _mode = cEdit;
