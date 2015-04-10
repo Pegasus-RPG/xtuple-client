@@ -324,63 +324,7 @@ enum SetResponse customer::set(const ParameterList &pParams)
     }
     else if (param.toString() == "view")
     {
-      _mode = cView;
-
-      _number->setCanEdit(FALSE);
-      _name->setEnabled(FALSE);
-      _custtype->setEnabled(FALSE);
-      _active->setEnabled(FALSE);
-      _corrCntct->setEnabled(FALSE);
-      _billCntct->setEnabled(FALSE);
-      _terms->setEnabled(FALSE);
-      _balanceMethod->setEnabled(FALSE);
-      _defaultDiscountPrcnt->setEnabled(FALSE);
-      _creditLimit->setEnabled(FALSE);
-      _creditRating->setEnabled(FALSE);
-      _creditStatusGroup->setEnabled(FALSE);
-      _autoUpdateStatus->setEnabled(FALSE);
-      _autoHoldOrders->setEnabled(FALSE);
-      _taxzone->setEnabled(FALSE);
-      _sellingWarehouse->setEnabled(FALSE);
-      _salesrep->setEnabled(FALSE);
-      _defaultCommissionPrcnt->setEnabled(FALSE);
-      _shipvia->setEnabled(FALSE);
-      _shipform->setEnabled(FALSE);
-      _shipchrg->setEnabled(FALSE);
-      _backorders->setEnabled(FALSE);
-      _usesPOs->setEnabled(FALSE);
-      _blanketPos->setEnabled(FALSE);
-      _allowFFShipto->setEnabled(FALSE);
-      _allowFFBillto->setEnabled(FALSE);
-      _notes->setReadOnly(TRUE);
-      _comments->setReadOnly(TRUE);
-      _newShipto->setEnabled(FALSE);
-      _newCharacteristic->setEnabled(FALSE);
-      _newTaxreg->setEnabled(FALSE);
-      _currency->setEnabled(FALSE);
-      _partialShipments->setEnabled(FALSE);
-      _save->hide();
-      _newCC->setEnabled(false);
-      _editCC->setEnabled(false);
-      _upCC->setEnabled(false);
-      _downCC->setEnabled(false);
-      _warnLate->setEnabled(false);
-      _charass->setEnabled(false);
-      _chartempl->setEnabled(false);
-
-      connect(_shipto, SIGNAL(itemSelected(int)), _viewShipto, SLOT(animateClick()));
-      connect(_cc, SIGNAL(itemSelected(int)), _viewCC, SLOT(animateClick()));
-
-      disconnect(_taxreg, SIGNAL(valid(bool)), _deleteTaxreg, SLOT(setEnabled(bool)));
-      disconnect(_taxreg, SIGNAL(valid(bool)), _editTaxreg, SLOT(setEnabled(bool)));
-      disconnect(_taxreg, SIGNAL(itemSelected(int)), _editTaxreg, SLOT(animateClick()));
-      connect(_taxreg, SIGNAL(itemSelected(int)), _viewTaxreg, SLOT(animateClick()));
-
-      ParameterList params;
-      params.append("mode", "view");
-      _contacts->set(params);
-
-      emit newMode(_mode);
+      setViewMode();
     }
   }
 
@@ -390,6 +334,23 @@ enum SetResponse customer::set(const ParameterList &pParams)
     _number->setEditMode(true);
     sLoadCrmAcct(param.toInt());
     _captive=true;
+  }
+
+  if (_mode == cEdit && !_lock.acquire("custinfo", _custid))
+  {
+    if (_lock.isLockedOut())
+    {
+      QMessageBox::critical(this, tr("Record Currently Being Edited"),
+                              tr("<p>The record you are trying to edit is "
+                                 "currently being edited by another user. "
+                                 "Continue in View Mode.") );
+      setViewMode();
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                                  _lock.lastError(), __FILE__, __LINE__))
+    {
+      setViewMode();
+    }
   }
 
   return NoError;
@@ -406,6 +367,67 @@ int customer::id() const
 int customer::mode() const
 {
   return _mode;
+}
+
+void customer::setViewMode()
+{
+  _mode = cView;
+
+  _number->setEnabled(FALSE);
+  _name->setEnabled(FALSE);
+  _custtype->setEnabled(FALSE);
+  _active->setEnabled(FALSE);
+  _corrCntct->setEnabled(FALSE);
+  _billCntct->setEnabled(FALSE);
+  _terms->setEnabled(FALSE);
+  _balanceMethod->setEnabled(FALSE);
+  _defaultDiscountPrcnt->setEnabled(FALSE);
+  _creditLimit->setEnabled(FALSE);
+  _creditRating->setEnabled(FALSE);
+  _creditStatusGroup->setEnabled(FALSE);
+  _autoUpdateStatus->setEnabled(FALSE);
+  _autoHoldOrders->setEnabled(FALSE);
+  _taxzone->setEnabled(FALSE);
+  _sellingWarehouse->setEnabled(FALSE);
+  _salesrep->setEnabled(FALSE);
+  _defaultCommissionPrcnt->setEnabled(FALSE);
+  _shipvia->setEnabled(FALSE);
+  _shipform->setEnabled(FALSE);
+  _shipchrg->setEnabled(FALSE);
+  _backorders->setEnabled(FALSE);
+  _usesPOs->setEnabled(FALSE);
+  _blanketPos->setEnabled(FALSE);
+  _allowFFShipto->setEnabled(FALSE);
+  _allowFFBillto->setEnabled(FALSE);
+  _notes->setReadOnly(TRUE);
+  _comments->setReadOnly(TRUE);
+  _newShipto->setEnabled(FALSE);
+  _newCharacteristic->setEnabled(FALSE);
+  _newTaxreg->setEnabled(FALSE);
+  _currency->setEnabled(FALSE);
+  _partialShipments->setEnabled(FALSE);
+  _save->hide();
+  _newCC->setEnabled(false);
+  _editCC->setEnabled(false);
+  _upCC->setEnabled(false);
+  _downCC->setEnabled(false);
+  _warnLate->setEnabled(false);
+  _charass->setEnabled(false);
+  _chartempl->setEnabled(false);
+
+  connect(_shipto, SIGNAL(itemSelected(int)), _viewShipto, SLOT(animateClick()));
+  connect(_cc, SIGNAL(itemSelected(int)), _viewCC, SLOT(animateClick()));
+
+  disconnect(_taxreg, SIGNAL(valid(bool)), _deleteTaxreg, SLOT(setEnabled(bool)));
+  disconnect(_taxreg, SIGNAL(valid(bool)), _editTaxreg, SLOT(setEnabled(bool)));
+  disconnect(_taxreg, SIGNAL(itemSelected(int)), _editTaxreg, SLOT(animateClick()));
+  connect(_taxreg, SIGNAL(itemSelected(int)), _viewTaxreg, SLOT(animateClick()));
+
+  ParameterList params;
+  params.append("mode", "view");
+  _contacts->set(params);
+
+  emit newMode(_mode);
 }
 
 void customer::setValid(bool valid)
