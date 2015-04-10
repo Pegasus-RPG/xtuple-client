@@ -27,6 +27,7 @@ public:
 
 public slots:
     virtual void sPopulateMenu(QMenu * menuThis, QTreeWidgetItem*, int);
+    virtual void sNew();
     virtual void sEditOrder();
     virtual void sViewOrder();
     virtual void sCopyOrder();
