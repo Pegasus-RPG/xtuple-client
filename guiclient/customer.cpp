@@ -749,7 +749,29 @@ void customer::sCheck()
         return;
       }
 
+      if (! _lock.release())
+        ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                             _lock.lastError(), __FILE__, __LINE__);
+
       _number->setId(customerCheck.value("cust_id").toInt());
+
+      if (_mode == cEdit && !_lock.acquire("custinfo", customerCheck.value("cust_id").toInt()))
+      {
+        if (_lock.isLockedOut())
+        {
+          QMessageBox::critical(this, tr("Record Currently Being Edited"),
+                              tr("<p>The record you are trying to edit is "
+                                 "currently being edited by another user. "
+                                 "Continue in View Mode.") );
+          setViewMode();
+        }
+        else if (ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                                  _lock.lastError(), __FILE__, __LINE__))
+        {
+          setViewMode();
+        }
+      }
+
       _mode = cEdit;
       _name->setFocus();
       emit newMode(_mode);
