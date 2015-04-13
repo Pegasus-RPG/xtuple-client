@@ -165,7 +165,7 @@ void accountNumbers::sPrint()
   if (! setParams(params))
     return;
 
-  orReport report("AccountNumberMasterList");
+  orReport report("AccountNumberMasterList", params);
   if (report.isValid())
     report.print();
   else
