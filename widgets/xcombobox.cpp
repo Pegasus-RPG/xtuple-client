@@ -1184,9 +1184,9 @@ void XComboBox::setType(XComboBoxTypes pType)
 
   populate(query);
 
-// Resize combobox to fit retrieved contents
+  // Resize combobox _selection_view_ to fit retrieved contents
   int _width = this->minimumSizeHint().width();
-  this->setMinimumWidth(_width);
+  view()->setMinimumWidth(_width);
 
   switch (pType)
   {
