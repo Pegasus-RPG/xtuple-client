@@ -11,6 +11,7 @@
 #ifndef VENDOR_H
 #define VENDOR_H
 
+#include "applock.h"
 #include "guiclient.h"
 #include "xwidget.h"
 #include <parameter.h>
@@ -36,6 +37,7 @@ public slots:
     virtual void sPrintAddresses();
     virtual void sNewAddress();
     virtual void sEditAddress();
+    virtual void setViewMode();
     virtual void sViewAddress();
     virtual void sDeleteAddress();
     virtual void sFillAddressList();
@@ -78,6 +80,7 @@ private:
     int _vendid;
     int _crmacctid;
     int _NumberGen;
+    AppLock _lock;
     QString _cachedNumber;
     bool _ignoreClose;
     bool _notice;

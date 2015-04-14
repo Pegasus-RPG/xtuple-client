@@ -14,6 +14,7 @@
 #include "guiclient.h"
 #include "xwidget.h"
 
+#include "applock.h"
 #include "contacts.h"
 #include "todoList.h"
 #include "quotes.h"
@@ -72,6 +73,7 @@ public slots:
     virtual void sPrintShipto();
     virtual bool sSave();
     virtual void sSaveClicked();
+    virtual void setViewMode();
     virtual void sViewCreditCard();
     virtual void sViewShipto();
     virtual void sViewTaxreg();
@@ -112,6 +114,7 @@ private:
     int _NumberGen;
     QString _cachedNumber;
     QString key;
+    AppLock _lock;
     bool _notice;
     bool _autoSaved;
     bool _captive;
