@@ -29,6 +29,7 @@ dspSalesHistory::dspSalesHistory(QWidget* parent, const char*, Qt::WFlags fl)
 
   parameterWidget()->append(tr("Invoice Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate());
   parameterWidget()->append(tr("Invoice End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->appendComboBox(tr("Class Code"), "classcode_id", XComboBox::ClassCodes);
   parameterWidget()->append(tr("Ship Start Date"), "shipStartDate", ParameterWidget::Date);
   parameterWidget()->append(tr("Ship End Date"),   "shipEndDate",   ParameterWidget::Date);
   parameterWidget()->append(tr("Customer"),   "cust_id",   ParameterWidget::Customer);
@@ -116,6 +117,10 @@ enum SetResponse dspSalesHistory::set(const ParameterList &pParams)
   param = pParams.value("item_id", &valid);
   if (valid)
     parameterWidget()->setDefault(tr("Item"), param.toInt());
+
+  param = pParams.value("classcode_id", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Class Code"), param.toInt());
 
   param = pParams.value("prodcat_id", &valid);
   if (valid)
