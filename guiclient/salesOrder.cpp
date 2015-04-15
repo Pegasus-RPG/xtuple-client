@@ -1835,9 +1835,9 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
       }
 
       if (_holdType->currentIndex() > 0 && !_privileges->check("OverrideSOHoldType"))
-        _holdType->setEnabled(FALSE);
+        _holdType->setEnabled(false);
       else
-        _holdType->setEnabled(TRUE);
+        _holdType->setEnabled(true);
 
       _billToName->setText(cust.value("cust_name").toString());
       _billToAddr->setId(cust.value("addr_id").toInt());
