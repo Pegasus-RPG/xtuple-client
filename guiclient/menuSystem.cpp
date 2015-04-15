@@ -108,7 +108,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.eventManager",             tr("E&vent Manager..."),              SLOT(sEventManager()),             systemMenu, "true",                                      NULL, NULL, true },
     { "sys.viewDatabaseLog",          tr("View Database &Log..."),          SLOT(sErrorLog()),                 systemMenu, "true",                                      NULL, NULL, true },
     { "separator",                    NULL,                                 NULL,                              systemMenu, "true",                                      NULL, NULL, true },
-#ifndef Q_WS_MACX
+#ifndef Q_OS_MAC
     { "sys.preferences",              tr("P&references..."),                SLOT(sPreferences()),              systemMenu, "MaintainPreferencesSelf MaintainPreferencesOthers",  NULL,   NULL,   true },
 #endif
     { "sys.hotkeys",                  tr("&Hot Keys..."),                   SLOT(sHotKeys()),                  systemMenu, "true",  NULL,   NULL,   !(_privileges->check("MaintainPreferencesSelf") || _privileges->check("MaintainPreferencesOthers")) },
@@ -189,7 +189,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   helpMenu = new QMenu();
   actionProperties help[] = {
     { "help.about",		tr("&About..."),		SLOT(sAbout()),	helpMenu, "true", NULL, NULL, true	},
-#ifndef Q_WS_MACX
+#ifndef Q_OS_MAC
     { "separator",		NULL,				NULL,		helpMenu, "true", NULL, NULL, true	},
 #endif
 //  { "help.tableOfContents",	tr("Table of &Contents..."),	SLOT(sTOC()),	helpMenu, "true", NULL, NULL, true	},
@@ -412,7 +412,7 @@ void menuSystem::sExportData()
 void menuSystem::sCSVAtlases()
 {
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
   if (_preferences->value("InterfaceWindowOption") == "Workspace")
   {
     QMessageBox::critical( parent, tr("Interface Option is Invalid"),

@@ -90,7 +90,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   connect(_historyCostsButton,SIGNAL(toggled(bool)),                this, SLOT(sPopulateHistory()));
   connect(_historyDates,      SIGNAL(updated()),                    this, SLOT(sPopulateHistory()));
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   _listPrices->setMaximumWidth(25);
   _subItemList->setMaximumWidth(25);
 #endif

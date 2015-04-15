@@ -136,12 +136,12 @@ void packages::sDelete()
 void packages::sLoad()
 {
   QProcess proc(this);
-#ifdef Q_WS_MACX
+#ifdef Q_OS_MAC
   QString proc_path = QDir::cleanPath(qApp->applicationDirPath() +
                       "/../../../updater.app/Contents/MacOS/updater");
   QString proc_path2= QDir::cleanPath(qApp->applicationDirPath() +
                       "/../../../../Updater/updater.app/Contents/MacOS/updater");
-#elif defined Q_WS_WIN
+#elif defined Q_OS_WIN
   QString proc_path = QDir::cleanPath(qApp->applicationDirPath() + "/updater.exe");
   QString proc_path2= QDir::cleanPath(qApp->applicationDirPath() + "/../Updater/updater.exe");
 #else
@@ -152,7 +152,7 @@ void packages::sLoad()
     proc_path = proc_path2;
   if (! QFile::exists(proc_path))
   {
-#ifdef Q_WS_MACX
+#ifdef Q_OS_MAC
     if (QMessageBox::question(this, tr("Could Not Find Updater"),
                               tr("<p>xTuple ERP could not find the Updater "
                                  "application. Would you like to look for it?"),
@@ -164,7 +164,7 @@ void packages::sLoad()
                                              tr("Find Updater Application"));
     if (proc_path.isEmpty())
       return;
-#ifdef Q_WS_MACX
+#ifdef Q_OS_MAC
     proc_path += "/Contents/MacOS/updater";
 #endif
   }

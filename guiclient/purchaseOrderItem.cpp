@@ -31,7 +31,7 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   XSqlQuery purchasepurchaseOrderItem;
   setupUi(this);
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   _vendorItemNumberList->setMaximumWidth(25);
 #else
   _listPrices->setMinimumWidth(60);

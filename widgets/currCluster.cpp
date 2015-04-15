@@ -193,7 +193,7 @@ CurrCluster::CurrCluster(QWidget * parent, const char* name)
     _valueBaseLit->setHidden(true);
     _valueBaseWidget->setHidden(true);
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     setMinimumWidth(160);
 #endif
 

@@ -46,7 +46,7 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_shipToName, SIGNAL(textChanged(QString)), this, SLOT(sConvertShipto()));
   connect(_shipToAddr, SIGNAL(changed()), this, SLOT(sConvertShipto()));
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   _invoiceList->setMaximumWidth(25);
 #endif
 

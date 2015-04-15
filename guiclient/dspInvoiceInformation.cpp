@@ -35,7 +35,7 @@ dspInvoiceInformation::dspInvoiceInformation(QWidget* parent, const char* name, 
 
   _invoiceAmount->setPrecision(omfgThis->moneyVal());
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   _invoiceList->setMaximumWidth(25);
 #endif
 

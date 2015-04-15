@@ -26,7 +26,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   XSqlQuery returnreturnAuthorizationItem;
   setupUi(this);
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   _listPrices->setMaximumWidth(25);
   _saleListPrices->setMaximumWidth(25);
 #endif

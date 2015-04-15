@@ -38,7 +38,7 @@ imageview::imageview(QWidget* parent, const char* name, bool modal, Qt::WindowFl
   connect(_fileList, SIGNAL(clicked()), this, SLOT(sFileList()));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   _fileList->setMaximumWidth(25);
 #endif
 

@@ -82,7 +82,7 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
 
   _dirty = false;
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   _backgroundList->setMaximumWidth(25);
 #endif
 

@@ -57,7 +57,7 @@ docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WindowFl
   _po->setAllowedTypes(OrderLineEdit::Purchase);
   _so->setAllowedTypes(OrderLineEdit::Sales);
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
     _fileList->setMaximumWidth(25);
 #else
     _fileList->setMinimumWidth(60);

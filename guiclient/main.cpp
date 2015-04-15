@@ -675,11 +675,11 @@ int main(int argc, char *argv[])
   QString keyname;
   QString keytogether;
   
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
   keypath = _metrics->value("CCWinEncKey");
-#elif defined Q_WS_MACX
+#elif defined Q_OS_MACX
   keypath = _metrics->value("CCMacEncKey");
-#elif defined Q_WS_X11
+#elif defined Q_OS_LINUX
   keypath = _metrics->value("CCLinEncKey");
 #endif
   

@@ -625,11 +625,11 @@ GUIClient::~GUIClient()
  */
 GUIClient::WindowSystem GUIClient::getWindowSystem()
 {
-#ifdef Q_WS_X11
+#ifdef Q_OS_LINUX
   return X11;
-#elif defined Q_WS_WIN
+#elif defined Q_OS_WIN
   return WIN;
-#elif defined Q_WS_MAC
+#elif defined Q_OS_MAC
   return MAC;
 #elif defined Q_WS_QWS
   return QWS;
@@ -1720,7 +1720,7 @@ QString translationFile(QString localestr, const QString component, QString &ver
   paths << QApplication::applicationDirPath() + "/dict";
   paths << QApplication::applicationDirPath();
   paths << QApplication::applicationDirPath() + "/../dict";
-#if defined Q_WS_MACX
+#if defined Q_OS_MAC
   paths << QApplication::applicationDirPath() + "/../../../dict";
   paths << QApplication::applicationDirPath() + "/../../..";
 #endif
@@ -2174,7 +2174,7 @@ void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloa
 
 QMenuBar *GUIClient::menuBar()
 {
-#ifdef Q_WS_MACX
+#ifdef Q_OS_MAC
   if (_menuBar == 0)
     _menuBar = new QMenuBar();
 

@@ -44,7 +44,7 @@ void ContactWidget::init()
     _list->setObjectName("_list");
     _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-  #ifndef Q_WS_MAC
+  #ifndef Q_OS_MAC
     _list->setMaximumWidth(25);
   #else
     _list->setMinimumWidth(60);
@@ -860,7 +860,7 @@ void ContactWidget::layout()
     _grid->addWidget(_address,		8, 0, 1, -1);
   }
 
-#if defined Q_WS_MAC
+#if defined Q_OS_MAC
   setMinimumSize(_grid->columnCount() * 50, _grid->rowCount() * 11);
 #endif
   _layoutDone = true;

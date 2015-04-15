@@ -25,7 +25,7 @@ itemImages::itemImages(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_next, SIGNAL(clicked()), this, SLOT(sNext()));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   _prev->setMaximumWidth(25);
   _next->setMaximumWidth(25);
 #endif

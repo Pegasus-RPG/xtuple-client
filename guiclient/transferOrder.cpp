@@ -1656,7 +1656,7 @@ void transferOrder::setViewMode()
 
 void transferOrder::keyPressEvent( QKeyEvent * e )
 {
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
   if(e->key() == Qt::Key_N && (e->modifiers() & Qt::ControlModifier))
   {
     _new->animateClick();

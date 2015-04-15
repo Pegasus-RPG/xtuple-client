@@ -28,7 +28,7 @@ void AddressCluster::init()
     _list->setObjectName("_list");
     _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
     _list->setMaximumWidth(25);
 #else
     _list->setMinimumWidth(60);
@@ -115,7 +115,7 @@ void AddressCluster::init()
     _grid->setColumnStretch(4, 0);
     _grid->setColumnStretch(5, 2);
 
-#if defined Q_WS_MAC
+#if defined Q_OS_MAC
     setMinimumSize(_grid->columnCount() * 60, 132);
 #endif
 

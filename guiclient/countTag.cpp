@@ -31,7 +31,7 @@ countTag::countTag(QWidget* parent, const char* name, bool modal, Qt::WindowFlag
 
   _item->setReadOnly(true);
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   _countTagList->setMaximumWidth(25);
 #endif
 

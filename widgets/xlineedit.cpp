@@ -27,7 +27,7 @@ XLineEdit::XLineEdit(QWidget *parent, const char *name) :
     setObjectName("XLineEdit");
   setAcceptDrops(false);
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
   QFont f = font();
   f.setPointSize(f.pointSize() - 2);
   setFont(f);

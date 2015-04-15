@@ -79,7 +79,7 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WindowFlags 
   connect(_shiptoAddr, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _shiptoCntct, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   _vendaddrList->setMaximumWidth(25);
 #endif
 

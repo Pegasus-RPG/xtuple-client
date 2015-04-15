@@ -179,7 +179,7 @@ void XComboBox::init()
 
   connect(this, SIGNAL(activated(int)), this, SLOT(sHandleNewIndex(int)));
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
   QFont f = font();
   f.setPointSize(f.pointSize() - 2);
   setFont(f);
@@ -1604,7 +1604,7 @@ void XComboBox::showPopup()
 QSize XComboBox::sizeHint() const
 {
   QSize s = QComboBox::sizeHint();
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
   s.setWidth(s.width() + 12);
 #endif
   return s;

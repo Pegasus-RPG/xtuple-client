@@ -24,7 +24,7 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
 {
   setupUi(this);
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   _listPrices->setMaximumWidth(25);
 #endif
 

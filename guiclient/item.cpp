@@ -241,7 +241,7 @@ item::item(QWidget* parent, const char* name, Qt::WindowFlags fl)
     _weightGroup->setTitle(title);
   }
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
   _tab->setUsesScrollButtons(true);
   _tab->setElideMode(Qt::ElideNone);
 #endif

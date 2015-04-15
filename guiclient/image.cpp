@@ -28,7 +28,7 @@ image::image(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   _fileList->setMaximumWidth(25);
 #endif
 
