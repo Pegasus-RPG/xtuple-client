@@ -95,12 +95,14 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
       _fractional = createet.value("item_fractional").toBool();
       
       //If there is preassigned trace info for an associated order, force user to select from list
+      //Pick latest lsdetail record as it can be duplicated when lot/serial returned/re-added to the shipment
       XSqlQuery preassign;
-      preassign.prepare("SELECT lsdetail_id,ls_number,ls_number "
+      preassign.prepare("SELECT MAX(lsdetail_id) AS lsdetail_id,ls_number,ls_number "
                         "FROM lsdetail JOIN ls ON (ls_id=lsdetail_ls_id) "
                         "WHERE ( (lsdetail_source_number=:docnumber) "
                         "AND (lsdetail_source_type=:transtype) "
-                        "AND (lsdetail_qtytoassign > 0) )");
+                        "AND (lsdetail_qtytoassign > 0) ) "
+                        "GROUP BY 2,3");
       preassign.bindValue(":transtype", createet.value("invhist_transtype").toString());
       preassign.bindValue(":docnumber", createet.value("invhist_ordnumber").toString());
       preassign.exec();
@@ -177,6 +179,7 @@ void createLotSerial::sHandleCharacteristics()
 {
     if (_lotSerial->currentText().length() == 0)
     {
+        clearCharacteristics();
         return;
     }
 
@@ -240,30 +243,35 @@ void createLotSerial::sHandleCharacteristics()
     }
     else
     {
-        QList<int> char_types = _lschars.getLotCharTypes();
-        for (int i=0; i < _lschars.numLotChars(); i++)
-        {
-            if (char_types.at(i) == 2)
-            {
-                DLineEdit *l = qobject_cast<DLineEdit *>(_charWidgets.at(i));
-                l->clear();
-            }
-            else if (char_types.at(i) == 1)
-            {
-                XComboBox *x = qobject_cast<XComboBox *>(_charWidgets.at(i));
-                x->setCurrentIndex(0);
-            }
-            else
-            {
-                QLineEdit *l = qobject_cast<QLineEdit *>(_charWidgets.at(i));
-                l->clear();
-            }
-        }
+      clearCharacteristics();
     }
     foreach (QWidget *w, _charWidgets)
     {
         w->setEnabled(!_lotsFound);
     }
+}
+
+void createLotSerial::clearCharacteristics()
+{
+  QList<int> char_types = _lschars.getLotCharTypes();
+  for (int i=0; i < _lschars.numLotChars(); i++)
+  {
+      if (char_types.at(i) == 2)
+      {
+          DLineEdit *l = qobject_cast<DLineEdit *>(_charWidgets.at(i));
+          l->clear();
+      }
+      else if (char_types.at(i) == 1)
+      {
+          XComboBox *x = qobject_cast<XComboBox *>(_charWidgets.at(i));
+          x->setCurrentIndex(0);
+      }
+      else
+      {
+          QLineEdit *l = qobject_cast<QLineEdit *>(_charWidgets.at(i));
+          l->clear();
+      }
+   }
 }
 
 void createLotSerial::sAssign()
@@ -480,6 +488,13 @@ void createLotSerial::sLotSerialSelected()
         !_warranty->isEnabled())
       return;
 
+    if (_lotSerial->currentText().length() == 0)
+    {
+        _expiration->clear();
+        _warranty->clear();
+        return;
+    }
+
     XSqlQuery itemloc;
     itemloc.prepare("SELECT itemloc_expiration, itemloc_warrpurc "
                     "FROM itemloc "
@@ -487,7 +502,11 @@ void createLotSerial::sLotSerialSelected()
                     "UNION "
                     "SELECT itemloc_expiration, itemloc_warrpurc "
                     "FROM lsdetail JOIN itemloc ON (itemloc_itemsite_id=lsdetail_itemsite_id AND itemloc_ls_id=lsdetail_ls_id) "
-                    "WHERE lsdetail_id=:itemloc_id;");
+                    "WHERE lsdetail_id=:itemloc_id "
+                    "UNION "
+                    "SELECT lsdetail_expiration, lsdetail_warrpurc "
+                    "FROM lsdetail "
+                    "WHERE lsdetail_id=:itemloc_id; ");
     itemloc.bindValue(":itemloc_id", _lotSerial->id());
     itemloc.exec();
     if (itemloc.first()) {

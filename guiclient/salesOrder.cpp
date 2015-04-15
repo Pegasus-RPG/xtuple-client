@@ -1257,10 +1257,9 @@ bool salesOrder::save(bool partial)
 
   // TODO: should this be done before saveSales.exec()?
   if ((cNew == _mode) && (!_saved)
-      && ! _lock.acquire(ISORDER(_mode) ? "cohead" : "quhead", _soheadid))
+      && ! _lock.acquire(ISORDER(_mode) ? "cohead" : "quhead", _soheadid,
+                         AppLock::Interactive))
   {
-    ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
-                         _lock.lastError(), __FILE__, __LINE__);
     return false;
   }
 
@@ -1835,6 +1834,11 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
           _holdType->setCurrentIndex(1);
       }
 
+      if (_holdType->currentIndex() > 0 && !_privileges->check("OverrideSOHoldType"))
+        _holdType->setEnabled(FALSE);
+      else
+        _holdType->setEnabled(TRUE);
+
       _billToName->setText(cust.value("cust_name").toString());
       _billToAddr->setId(cust.value("addr_id").toInt());
       sFillCcardList();
@@ -2383,21 +2387,10 @@ void salesOrder::populate()
   {
     XSqlQuery so;
     if (_mode == cEdit
-        && !_lock.acquire(ISORDER(_mode) ? "cohead" : "quhead", _soheadid))
+        && !_lock.acquire(ISORDER(_mode) ? "cohead" : "quhead", _soheadid,
+                          AppLock::Interactive))
     {
-      if (_lock.isLockedOut())
-      {
-        QMessageBox::critical(this, tr("Record Currently Being Edited"),
-                              tr("<p>The record you are trying to edit is "
-                                 "currently being edited by another user. "
-                                 "Continue in View Mode.") );
-        setViewMode();
-      }
-      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
-                                    _lock.lastError(), __FILE__, __LINE__))
-      {
-        setViewMode();
-      }
+      setViewMode();
     }
     so.prepare( "SELECT cohead.*,"
                 "       COALESCE(cohead_shipto_id,-1) AS cohead_shipto_id,"

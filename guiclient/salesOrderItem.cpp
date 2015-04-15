@@ -1453,7 +1453,7 @@ void salesOrderItem::sSave(bool pPartial)
 
   salesSave.exec("COMMIT;");
 
-  if (!pPartial)
+  if (!pPartial && _orderRefresh->isChecked())
   {
     if (_mode == cNew)
       omfgThis->sSalesOrdersUpdated(_soheadid);
@@ -4361,6 +4361,11 @@ void salesOrderItem::reject()
       return;
     }
   }
+
+  if (_mode == cNew)
+    omfgThis->sSalesOrdersUpdated(_soheadid);
+  else if (_mode == cNewQuote)
+    omfgThis->sQuotesUpdated(_soheadid);
 
   XDialog::reject();
 }

@@ -216,50 +216,7 @@ SetResponse vendor::set(const ParameterList &pParams)
     }
     else if (param.toString() == "view")
     {
-      _mode = cView;
-      emit newMode(_mode);
-
-      _number->setEnabled(false);
-      _vendtype->setEnabled(false);
-      _active->setEnabled(false);
-      _name->setEnabled(false);
-      _accountNumber->setEnabled(false);
-      _defaultTerms->setEnabled(false);
-      _defaultShipVia->setEnabled(false);
-      _defaultCurr->setEnabled(false);
-      _contact1->setEnabled(false);
-      _contact2->setEnabled(false);
-      _address->setEnabled(false);
-      _notes->setReadOnly(true);
-      _poComments->setReadOnly(true);
-      _poItems->setEnabled(false);
-      _restrictToItemSource->setEnabled(false);
-      _receives1099->setEnabled(false);
-      _qualified->setEnabled(false);
-      _newAddress->setEnabled(false);
-      _defaultFOBGroup->setEnabled(false);
-      _taxzone->setEnabled(false);
-      _match->setEnabled(false);
-      _newTaxreg->setEnabled(false);
-      _comments->setReadOnly(true);
-      _newCharacteristic->setEnabled(false);
-
-      _achGroup->setEnabled(false);
-      _routingNumber->setEnabled(false);
-      _achAccountNumber->setEnabled(false);
-      _individualId->setEnabled(false);
-      _individualName->setEnabled(false);
-      _accountType->setEnabled(false);
-      _distribGroup->setEnabled(false);
-
-      _save->hide();
-      _close->setText(tr("&Close"));
-
-      disconnect(_taxreg, SIGNAL(valid(bool)), _deleteTaxreg, SLOT(setEnabled(bool)));
-      disconnect(_taxreg, SIGNAL(valid(bool)), _editTaxreg, SLOT(setEnabled(bool)));
-      disconnect(_taxreg, SIGNAL(itemSelected(int)), _editTaxreg, SLOT(animateClick()));
-      connect(_taxreg, SIGNAL(itemSelected(int)), _viewTaxreg, SLOT(animateClick()));
-
+      setViewMode();
     }
   }
 
@@ -270,6 +227,11 @@ SetResponse vendor::set(const ParameterList &pParams)
   {
     _next->hide();
     _previous->hide();
+  }
+
+  if (_mode == cEdit && !_lock.acquire("vendinfo", _vendid, AppLock::Interactive))
+  {
+    setViewMode();
   }
 
   return NoError;
@@ -286,6 +248,54 @@ int vendor::id() const
 int vendor::mode() const
 {
   return _mode;
+}
+
+void vendor::setViewMode()
+{
+  _mode = cView;
+  emit newMode(_mode);
+
+  _number->setEnabled(FALSE);
+  _vendtype->setEnabled(FALSE);
+  _active->setEnabled(FALSE);
+  _name->setEnabled(FALSE);
+  _accountNumber->setEnabled(FALSE);
+  _defaultTerms->setEnabled(FALSE);
+  _defaultShipVia->setEnabled(FALSE);
+  _defaultCurr->setEnabled(FALSE);
+  _contact1->setEnabled(FALSE);
+  _contact2->setEnabled(FALSE);
+  _address->setEnabled(FALSE);
+  _notes->setReadOnly(TRUE);
+  _poComments->setReadOnly(TRUE);
+  _poItems->setEnabled(FALSE);
+  _restrictToItemSource->setEnabled(FALSE);
+  _receives1099->setEnabled(FALSE);
+  _qualified->setEnabled(FALSE);
+  _newAddress->setEnabled(FALSE);
+  _defaultFOBGroup->setEnabled(false);
+  _taxzone->setEnabled(false);
+  _match->setEnabled(false);
+  _newTaxreg->setEnabled(false);
+  _comments->setReadOnly(TRUE);
+  _newCharacteristic->setEnabled(FALSE);
+
+  _achGroup->setEnabled(false);
+  _routingNumber->setEnabled(false);
+  _achAccountNumber->setEnabled(false);
+  _individualId->setEnabled(false);
+  _individualName->setEnabled(false);
+  _accountType->setEnabled(false);
+  _distribGroup->setEnabled(false);
+
+  _save->hide();
+  _close->setText(tr("&Close"));
+
+  disconnect(_taxreg, SIGNAL(valid(bool)), _deleteTaxreg, SLOT(setEnabled(bool)));
+  disconnect(_taxreg, SIGNAL(valid(bool)), _editTaxreg, SLOT(setEnabled(bool)));
+  disconnect(_taxreg, SIGNAL(itemSelected(int)), _editTaxreg, SLOT(animateClick()));
+  connect(_taxreg, SIGNAL(itemSelected(int)), _viewTaxreg, SLOT(animateClick()));
+
 }
 
 void vendor::sSave()
@@ -629,7 +639,19 @@ void vendor::sCheck()
           _number->setFocus();
           return;
         }
+
+        if (! _lock.release())
+          ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                             _lock.lastError(), __FILE__, __LINE__);
+
         _vendid = dupq.value("vend_id").toInt();
+
+        if (_mode == cEdit && !_lock.acquire("vendinfo", _vendid, 
+                                          AppLock::Interactive))
+        {
+          setViewMode();
+        }
+
         _mode = cEdit;
         emit newMode(_mode);
         sPopulate();
@@ -755,6 +777,7 @@ bool vendor::sPopulate()
             "       false AS vend_1099,       NULL AS vend_match,"
             "       false  AS vend_qualified, NULL AS vend_comments,"
             "       NULL AS vend_pocomments,  NULL AS vend_taxzone_id,"
+            "       -1 AS vend_expcat_id, -1 AS vend_tax_id,"
             "       'W'  AS vend_fobsource,   NULL AS vend_fob,"
             "       NULL AS vend_ach_enabled, NULL AS routingnum,"
             "       NULL AS accntnum,         NULL AS vend_ach_use_vendinfo,"

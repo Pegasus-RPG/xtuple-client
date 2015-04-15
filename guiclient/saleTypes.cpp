@@ -38,6 +38,7 @@ saleTypes::saleTypes(QWidget* parent, const char* name, Qt::WindowFlags fl)
 
   _saletype->addColumn(tr("Code"),       _itemColumn, Qt::AlignLeft,   true,  "saletype_code" );
   _saletype->addColumn(tr("Active"),     _ynColumn,   Qt::AlignCenter, true,  "saletype_active" );
+  _saletype->addColumn(tr("Default"),    _ynColumn,   Qt::AlignCenter, true,  "saletype_default" );
   _saletype->addColumn(tr("Description"), -1,         Qt::AlignLeft,   true,  "saletype_descr" );
 
   if (_privileges->check("MaintainSaleTypes"))

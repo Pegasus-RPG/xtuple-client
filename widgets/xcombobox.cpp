@@ -548,7 +548,7 @@ void XComboBox::setType(XComboBoxTypes pType)
     case SaleTypes:
       query.exec( "SELECT saletype_id, (saletype_code || '-' || saletype_descr), saletype_code "
                   "FROM saletype "
-                  "ORDER BY saletype_code;" );
+                  "ORDER BY saletype_default DESC, saletype_code;" );
       break;
 
     case ShippingCharges:

@@ -33,6 +33,7 @@ protected slots:
 
     virtual void sSave();
     virtual void sCheck();
+    virtual void sDefaultChecked();
 
 
 private:

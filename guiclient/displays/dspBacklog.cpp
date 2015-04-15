@@ -43,6 +43,7 @@ dspBacklog::dspBacklog(QWidget* parent, const char*, Qt::WindowFlags fl)
   parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
   parameterWidget()->appendComboBox(tr("Product Category"), "prodcat_id", XComboBox::ProductCategories);
   parameterWidget()->append(tr("Product Category Pattern"), "prodcat_pattern", ParameterWidget::Text);
+  parameterWidget()->appendComboBox(tr("Sale Type"), "saletype_id", XComboBox::SaleTypes);
   parameterWidget()->append(tr("Sales Order"), "cohead_id", ParameterWidget::SalesOrder);
   parameterWidget()->appendComboBox(tr("Sales Rep."), "salesrep_id", XComboBox::SalesRepsActive);
   if (_metrics->boolean("MultiWhs"))
@@ -54,6 +55,7 @@ dspBacklog::dspBacklog(QWidget* parent, const char*, Qt::WindowFlags fl)
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   list()->addColumn(tr("S/O #/Line #"),_itemColumn, Qt::AlignLeft,  true, "coitem_linenumber");
+  list()->addColumn(tr("Sale Type"),  _orderColumn, Qt::AlignLeft,  true,  "saletype_descr");
   list()->addColumn(tr("Customer/Item Number"), -1, Qt::AlignLeft,  true, "item_number");
   list()->addColumn(tr("Order"),       _dateColumn, Qt::AlignCenter,true, "cohead_orderdate");
   list()->addColumn(tr("Ship/Sched."), _dateColumn, Qt::AlignCenter,true, "coitem_scheddate");

@@ -225,15 +225,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
     else if (param.toString() == "view")
     {
       _mode = cView;
-
-      _save->hide();
-      disconnect(_reg, SIGNAL(valid(bool)), _editReg, SLOT(setEnabled(bool)));
-      disconnect(_reg, SIGNAL(valid(bool)), _deleteReg, SLOT(setEnabled(bool)));
-      disconnect(_reg, SIGNAL(valid(bool)), _editReg, SLOT(animateClick()));
-
-      ParameterList params;
-      params.append("mode", "view");
-      _contacts->set(params);
+      setViewMode();
     }
   }
 
@@ -249,6 +241,19 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
   if(pParams.inList("scripted"))
     _tab->setCurrentIndex(_tab->indexOf(_todoListTab));
 
+  if (_mode == cEdit && !_lock.acquire("crmacct", _crmacctId, AppLock::Interactive))
+  {
+    _mode = cView;
+    setViewMode();
+  }
+
+  sHandleChildButtons();
+
+  return NoError;
+}
+
+void crmaccount::setViewMode()
+{
   bool canEdit = (_mode == cNew || _mode == cEdit);
 
   _active->setEnabled(canEdit);
@@ -265,9 +270,17 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
   _secondary->setEnabled(canEdit);
   _typeBox->setEnabled(canEdit);
 
-  sHandleChildButtons();
+  if (_mode == cView)
+  {
+    _save->hide();
+    disconnect(_reg, SIGNAL(valid(bool)), _editReg, SLOT(setEnabled(bool)));
+    disconnect(_reg, SIGNAL(valid(bool)), _deleteReg, SLOT(setEnabled(bool)));
+    disconnect(_reg, SIGNAL(valid(bool)), _editReg, SLOT(animateClick()));
 
-  return NoError;
+    ParameterList params;
+    params.append("mode", "view");
+    _contacts->set(params);
+  }
 }
 
 void crmaccount::sClose()
@@ -1164,8 +1177,18 @@ void crmaccount::sCheckNumber()
                                query, __FILE__, __LINE__))
         return;
 
+      if (! _lock.release())
+        ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                           _lock.lastError(), __FILE__, __LINE__);
+
       setId(newq.value("crmacct_id").toInt());
       sPopulate();
+
+      if (_mode == cEdit && !_lock.acquire("crmacct", _crmacctId, AppLock::Interactive))
+      {
+        _mode = cView;
+        setViewMode();
+      }
 
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));

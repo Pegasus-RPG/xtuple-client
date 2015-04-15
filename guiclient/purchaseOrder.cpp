@@ -647,31 +647,16 @@ void purchaseOrder::createHeader()
   // Populate Ship To contact and addresses for the Receiving Site
   sHandleShipTo();
 
-  if (! _lock.acquire("pohead", _poheadid)
-      && ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
-                              _lock.lastError(), __FILE__, __LINE__))
-  {
-    return;
-  }
+  (void)_lock.acquire("pohead", _poheadid, AppLock::Interactive);
 }
 
 void purchaseOrder::populate()
 {
   XSqlQuery po;
 
-  if (_mode == cEdit && ! _lock.acquire("pohead", _poheadid))
+  if (_mode == cEdit && ! _lock.acquire("pohead", _poheadid, AppLock::Interactive))
   {
-    if (_lock.isLockedOut())
-    {
-      QMessageBox::critical(this, tr("Record Currently Being Edited"),
-                            tr("<p>The record you are trying to edit is "
-                               "currently being edited by another user. "
-                               "Continue in View Mode."));
-      setViewMode();
-    }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
-                                  _lock.lastError(), __FILE__, __LINE__))
-      setViewMode();
+    setViewMode();
   }
   
   po.prepare( "SELECT pohead.*, COALESCE(pohead_warehous_id, -1) AS warehous_id,"

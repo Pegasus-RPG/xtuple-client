@@ -131,21 +131,9 @@ void transferOrder::setToheadid(const int pId)
   _documents->setId(_toheadid);
        
   if (_mode == cEdit
-      && ! _lock.acquire("tohead", _toheadid))
+      && ! _lock.acquire("tohead", _toheadid, AppLock::Interactive))
   {
-    if (_lock.isLockedOut())
-    {
-      QMessageBox::critical(this, tr("Record Currently Being Edited"),
-                            tr("<p>The record you are trying to edit is "
-                               "currently being edited by another user. "
-                               "Continue in View Mode."));
-      setViewMode();
-    }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
-                                  _lock.lastError(), __FILE__, __LINE__))
-    {
-      setViewMode();
-    }
+    setViewMode();
   }
 }
 
@@ -671,7 +659,7 @@ bool transferOrder::save(bool partial)
 
   // TODO: should this be done before saving the t/o?
   if ((cNew == _mode) && (!_saved)
-      && ! _lock.acquire("tohead", _toheadid))
+      && ! _lock.acquire("tohead", _toheadid, AppLock::Silent))
   {
     rollback.exec();
     (void)ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),

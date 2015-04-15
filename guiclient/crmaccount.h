@@ -11,6 +11,7 @@
 #ifndef CRMACCOUNT_H
 #define CRMACCOUNT_H
 
+#include "applock.h"
 #include "contacts.h"
 #include "guiclient.h"
 #include "todoList.h"
@@ -56,6 +57,7 @@ protected slots:
     virtual void sProspect();
     virtual void sSave();
     virtual void sSalesRep();
+    virtual void setViewMode();
     virtual void sTaxAuth();
     virtual void sUser();
     virtual void sUpdateRelationships();
@@ -89,6 +91,7 @@ private:
     int         _prospectId;
     int         _salesrepId;
     int         _taxauthId;
+    AppLock     _lock;
     QString     _username;
     int         _vendId;
     int         _cntct1Id;

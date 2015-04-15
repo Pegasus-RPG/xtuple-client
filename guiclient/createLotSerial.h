@@ -28,6 +28,7 @@ public:
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
+    virtual void clearCharacteristics();
     virtual void sAssign();
     virtual void sHandleLotSerial();
     virtual void sHandleCharacteristics();

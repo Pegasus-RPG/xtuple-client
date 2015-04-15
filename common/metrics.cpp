@@ -33,6 +33,11 @@ void Parameters::load()
   q.exec();
   while (q.next())
     _values[q.value("key").toString()] = q.value("value").toString();
+  if (q.lastError().type() != QSqlError::NoError) {
+    QMessageBox::critical(0, tr("Error loading %1").arg(metaObject()->className()),
+                         q.lastError().text());
+    return;
+  }
 
   _dirty = false;
 

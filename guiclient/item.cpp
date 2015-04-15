@@ -347,58 +347,68 @@ enum SetResponse item::set(const ParameterList &pParams)
     }
     else if (param.toString() == "view")
     {
-      _tab->setEnabled(true);
-
-      setObjectName(QString("item view %1").arg(_itemid));
-      _mode = cView;
-
-      _itemNumber->setEnabled(false);
-      _active->setEnabled(false);
-      _description1->setEnabled(false);
-      _description2->setEnabled(false);
-      _maximumDesiredCost->setEnabled(false);
-      _itemtype->setEnabled(false);
-      _sold->setEnabled(false);
-      _pickListItem->setEnabled(false);
-      _fractional->setEnabled(false);
-      _classcode->setEnabled(false);
-      _freightClass->setEnabled(false);
-      _inventoryUOM->setEnabled(false);
-      _prodWeight->setEnabled(false);
-      _packWeight->setEnabled(false);
-      _notes->setEnabled(false);
-      _comments->setReadOnly(true);
-      _documents->setReadOnly(true);
-      _extDescription->setReadOnly(true);
-      _newCharacteristic->setEnabled(false);
-      _newAlias->setEnabled(false);
-      _newSubstitute->setEnabled(false);
-      _newTransform->setEnabled(false);
-      _taxRecoverable->setEnabled(false);
-      _itemtaxNew->setEnabled(false);
-      _close->setText(tr("&Close"));
-      _newSrc->setEnabled(false);
-      _newUOM->setEnabled(false);
-      _upcCode->setEnabled(false);
-      _newItemSite->setEnabled(false);
-      _bom->findChild<QWidget*>("_new")->hide();
-      _elements->findChild<QWidget*>("_new")->hide();
-
-      disconnect(_itemalias, SIGNAL(valid(bool)), _editAlias, SLOT(setEnabled(bool)));
-      disconnect(_itemalias, SIGNAL(valid(bool)), _deleteAlias, SLOT(setEnabled(bool)));
-      disconnect(_itemsub, SIGNAL(valid(bool)), _editSubstitute, SLOT(setEnabled(bool)));
-      disconnect(_itemsub, SIGNAL(valid(bool)), _deleteSubstitute, SLOT(setEnabled(bool)));
-      disconnect(_itemtrans, SIGNAL(valid(bool)), _deleteTransform, SLOT(setEnabled(bool)));
-
-      _save->hide();
-      
-      emit newMode(_mode);
+      setViewMode();
     }
+  }
+
+  if (_mode == cEdit && !_lock.acquire("item", _itemid, AppLock::Interactive))
+  {
+    setViewMode();
   }
 
   sHandleRightButtons();
 
   return NoError;
+}
+
+void item::setViewMode()
+{
+  _tab->setEnabled(true);
+
+  setObjectName(QString("item view %1").arg(_itemid));
+  _mode = cView;
+
+  _itemNumber->setEnabled(FALSE);
+  _active->setEnabled(FALSE);
+  _description1->setEnabled(FALSE);
+  _description2->setEnabled(FALSE);
+  _maximumDesiredCost->setEnabled(FALSE);
+  _itemtype->setEnabled(FALSE);
+  _sold->setEnabled(FALSE);
+  _pickListItem->setEnabled(FALSE);
+  _fractional->setEnabled(FALSE);
+  _classcode->setEnabled(FALSE);
+  _freightClass->setEnabled(FALSE);
+  _inventoryUOM->setEnabled(FALSE);
+  _prodWeight->setEnabled(FALSE);
+  _packWeight->setEnabled(FALSE);
+  _notes->setEnabled(FALSE);
+  _comments->setReadOnly(TRUE);
+  _documents->setReadOnly(TRUE);
+  _extDescription->setReadOnly(TRUE);
+  _newCharacteristic->setEnabled(FALSE);
+  _newAlias->setEnabled(FALSE);
+  _newSubstitute->setEnabled(FALSE);
+  _newTransform->setEnabled(FALSE);
+  _taxRecoverable->setEnabled(FALSE);
+  _itemtaxNew->setEnabled(FALSE);
+  _close->setText(tr("&Close"));
+  _newSrc->setEnabled(false);
+  _newUOM->setEnabled(false);
+  _upcCode->setEnabled(false);
+  _newItemSite->setEnabled(FALSE);
+  _bom->findChild<QWidget*>("_new")->hide();
+  _elements->findChild<QWidget*>("_new")->hide();
+
+  disconnect(_itemalias, SIGNAL(valid(bool)), _editAlias, SLOT(setEnabled(bool)));
+  disconnect(_itemalias, SIGNAL(valid(bool)), _deleteAlias, SLOT(setEnabled(bool)));
+  disconnect(_itemsub, SIGNAL(valid(bool)), _editSubstitute, SLOT(setEnabled(bool)));
+  disconnect(_itemsub, SIGNAL(valid(bool)), _deleteSubstitute, SLOT(setEnabled(bool)));
+  disconnect(_itemtrans, SIGNAL(valid(bool)), _deleteTransform, SLOT(setEnabled(bool)));
+
+  _save->hide();
+      
+  emit newMode(_mode);
 }
 
 void item::saveCore()
