@@ -41,14 +41,13 @@ docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   setObjectName(name ? name : "docAttach");
   setModal(modal);
 
-  // signals and slots connections
   _save = _buttonBox->button(QDialogButtonBox::Save);
   _save->setEnabled(false);
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_docType, SIGNAL(currentIndexChanged(int)), this, SLOT(sHandleButtons()));
   connect(_fileList, SIGNAL(clicked()), this, SLOT(sFileList()));
 
-  _source = -1;
+  _sourcetype = "";
   _sourceid = -1;
   _targetid = -1;
   _urlid = -1;
@@ -68,19 +67,11 @@ docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WFlags f
     adjustSize();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-
 docAttach::~docAttach()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void docAttach::languageChange()
 {
   retranslateUi(this);
@@ -94,7 +85,7 @@ void docAttach::set(const ParameterList &pParams)
   //source type from document widget
   param = pParams.value("sourceType", &valid);
   if (valid)
-    _source = (enum Documents::DocumentSources)param.toInt();
+    _sourcetype = param.toString();
 
   //source id from document widget
   param = pParams.value("source_id", &valid);
@@ -448,7 +439,7 @@ void docAttach::sSave()
     newDocass.bindValue(":docass_target_type", _targettype);
   }
 
-  if (_targettype == Documents::_documentMap[_source].ident &&
+  if (_targettype == _sourcetype &&
       _targetid == _sourceid)
   {
     QMessageBox::critical(this,tr("Invalid Selection"),
@@ -456,7 +447,7 @@ void docAttach::sSave()
     return;
   }
 
-  newDocass.bindValue(":docass_source_type", Documents::_documentMap[_source].ident);
+  newDocass.bindValue(":docass_source_type", _sourcetype);
   newDocass.bindValue(":docass_source_id", _sourceid);
   newDocass.bindValue(":docass_target_id", _targetid);
   newDocass.bindValue(":docass_purpose", _purpose);

@@ -35,7 +35,7 @@ protected slots:
 
 private:
     int _sourceid;
-    int _source;
+    QString _sourcetype;
     int _targetid;
     int _urlid;
     QString _targettype;
