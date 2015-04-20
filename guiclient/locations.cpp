@@ -32,8 +32,11 @@ locations::locations(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_location, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(updateZoneList()));
+  connect(_zone, SIGNAL(currentIndexChanged(int)), this, SLOT(sFillList()));
 
   _location->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  _location->addColumn(tr("Zone"),        -1, Qt::AlignLeft,   true,  "zone"   );
   _location->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft,   true,  "name"   );
   _location->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "locationname"   );
   _location->addColumn(tr("Netable"),     80,          Qt::AlignCenter, true,  "netable" );
@@ -52,6 +55,7 @@ locations::locations(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_location, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
+  updateZoneList();
   sFillList();
 }
 
@@ -167,22 +171,47 @@ void locations::sFillList()
 {
   XSqlQuery locationsFillList;
   QString sql( "SELECT location_id, warehous_code, formatLocationName(location_id) AS name,"
+               "       whsezone_name||'-'||whsezone_descrip as zone,"
                "       firstLine(location_descrip) AS locationname,"
                "       formatBoolYN(location_netable) AS netable,"
                "       formatBoolYN(location_usable) AS usable,"
                "       formatBoolYN(location_restrict) AS restricted "
-               "FROM location, whsinfo "
-               "WHERE ( (location_warehous_id=warehous_id)" );
+               "FROM location  "
+               " JOIN whsinfo ON (location_warehous_id=warehous_id) "
+               " LEFT OUTER JOIN whsezone ON (location_whsezone_id=whsezone_id) "
+               " WHERE ( (true)" );
 
   if (_warehouse->isSelected())
     sql += " AND (warehous_id=:warehous_id)";
+
+  if (_zone->id() > 0)
+    sql += " AND (location_whsezone_id=:zone_id)";
 
   sql += " ) "
          "ORDER BY warehous_code, locationname;";
 
   locationsFillList.prepare(sql);
   locationsFillList.bindValue(":warehous_id", _warehouse->id());
+  locationsFillList.bindValue(":zone_id", _zone->id());
   locationsFillList.exec();
   _location->populate(locationsFillList);
+}
+
+void locations::updateZoneList()
+{
+  XSqlQuery zoneFillList;
+  QString zoneSql( "SELECT whsezone_id, whsezone_name||'-'||whsezone_descrip "
+             " FROM whsezone  "
+             " WHERE ((true)  " );
+  if (_warehouse->isSelected())
+    zoneSql += " AND (whsezone_warehous_id=:warehous_id)";
+
+  zoneSql += " ) ORDER BY whsezone_name;";
+
+  zoneFillList.prepare(zoneSql);
+  zoneFillList.bindValue(":warehous_id", _warehouse->id());
+  zoneFillList.exec();
+  _zone->populate(zoneFillList);
+  
 }
 
