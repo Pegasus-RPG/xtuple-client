@@ -1871,12 +1871,12 @@ void purchaseOrder::sHandleShipToName()
 {
   XSqlQuery purchaseHandleShipTo;
   purchaseHandleShipTo.prepare( "SELECT * "
-                               "FROM address "
+	  "FROM address left outer join shiptoinfo on (shipto_addr_id=addr_id) "
                                "WHERE (addr_id=:addr_id);" );
   purchaseHandleShipTo.bindValue(":addr_id", _shiptoAddr->id());
   purchaseHandleShipTo.exec();
   if (purchaseHandleShipTo.first())
   {
-    _shiptoName->setText(purchaseHandleShipTo.value("crmacct_name").toString());
+    _shiptoName->setText(purchaseHandleShipTo.value("shipto_name").toString());
   }
 }
