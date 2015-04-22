@@ -66,49 +66,18 @@ bool Documents::addToMap(int id,        QString key, QString trans,
 // Inconsistencies between here and the rest of the app: S? Q?
 QMap<QString, struct DocumentMap *> &Documents::documentMap() {
   if (_strMap.isEmpty()) {
+    XSqlQuery q("SELECT doctype.* FROM doctype;");
     addToMap(Uninitialized,     "",      tr("[Pick a Document Type]")                           );
-    addToMap(Address,           "ADDR",  tr("Address")                                          );
-    addToMap(BBOMHead,          "BBH",   tr("Breeder BOM Head")                                 );
-    addToMap(BBOMItem,          "BBI",   tr("Breeder BOM Item")                                 );
-    addToMap(BOMHead,           "BMH",   tr("BOM Head"),        "bomhead_id", "bom"             );
-    addToMap(BOMItem,           "BMI",   tr("BOM Item")                                         );
-    addToMap(BOOHead,           "BOH",   tr("Router Head")                                      );
-    addToMap(BOOItem,           "BOI",   tr("Router Item")                                      );
-    addToMap(CRMAccount,        "CRMA",  tr("Account"),         "crmacct_id", "crmaccount"      );
-    addToMap(Contact,           "T",     tr("Contact"),         "cntct_id",   "contact"         );
-    addToMap(Contract,          "CNTR",  tr("Contract"),        "contrct_id", "contrct"         );
-    addToMap(CreditMemo,        "CM",    tr("Return"),          "cmhead_id",  "creditMemo"      );
-    addToMap(CreditMemoItem,    "CMI",   tr("Return Item")                                      );
-    addToMap(Customer,          "C",     tr("Customer"),        "cust_id",    "customer"        );
-    addToMap(Employee,          "EMP",   tr("Employee"),        "emp_id",     "employee"        );
-    addToMap(Incident,          "INCDT", tr("Incident"),        "incdt_id",   "incident",     "MaintainPersonalIncidents MaintainAllIncidents" );
-    addToMap(Invoice,           "INV",   tr("Invoice"),         "invchead_id","invoice"         );
-    addToMap(InvoiceItem,       "INVI",  tr("Invoice Item")                                     );
-    addToMap(Item,              "I",     tr("Item"),            "item_id",    "item"            );
-    addToMap(ItemSite,          "IS",    tr("Item Site")                                        );
-    addToMap(ItemSource,        "IR",    tr("Item Source"),     "itemsrc_id", "itemSource"      );
-    addToMap(Location,          "L",     tr("Location")                                         );
-    addToMap(LotSerial,         "LS",    tr("Lot/Serial"),      "ls_id",      "lotSerial"       );
-    addToMap(Opportunity,       "OPP",   tr("Opportunity"),     "ophead_id",  "opportunity",  "MaintainPersonalOpportunities MaintainAllOpportunities" );
-    addToMap(Project,           "J",     tr("Project"),         "prj_id",     "project",      "MaintainPersonalProjects MaintainAllProjects" );
-    addToMap(PurchaseOrder,     "P",     tr("Purchase Order"),  "pohead_id",  "purchaseOrder"   );
-    addToMap(PurchaseOrderItem, "PI",    tr("Purchase Order Item")                              );
-    addToMap(ReturnAuth,        "RA",    tr("Return Authorization"), "rahead_id", "returnAuthorization");
-    addToMap(ReturnAuthItem,    "RI",    tr("Return Authorization Item")                        );
-    addToMap(Quote,             "Q",     tr("Quote"),           "quhead_id",  "salesOrder"      );
-    addToMap(QuoteItem,         "QI",    tr("Quote Item")                                       );
-    addToMap(SalesOrder,        "S",     tr("Sales Order"),     "sohead_id",  "salesOrder"      );
-    addToMap(SalesOrderItem,    "SI",    tr("Sales Order Item")                                 );
-    addToMap(ShipTo,            "SHP",   tr("Ship To"),         "shipto_id",  "shipTo"          );
-    addToMap(TimeExpense,       "TE",    tr("Time Expense")                                     );
-    addToMap(Todo,              "TODO",  tr("To-Do"),           "todoitem_id","todoItem",     "MaintainPersonalToDoItems MaintainAllTodoItems" );
-    addToMap(TransferOrder,     "TO",    tr("Transfer Order"),  "tohead_id",  "transferOrder"   );
-    addToMap(TransferOrderItem, "TI",    tr("Transfer Order Item")                              );
-    addToMap(Vendor,            "V",     tr("Vendor"),          "vend_id",    "vendor"          );
-    addToMap(Voucher,           "VCH",   tr("Voucher"),         "vohead_id",  "voucher"         );
-    addToMap(Warehouse,         "WH",    tr("Site")                                             );
-    addToMap(WorkOrder,         "W",     tr("Work Order"),      "wo_id",      "workOrder"       );
-    addToMap(ProjectTask,       "TASK",  tr("Project Task"),    "prjtask_id", "projectTask"     );
+    while (q.next()) {
+      addToMap(q.value("doctype_id").toInt(),
+               q.value("doctype_type").toString(),
+               tr(q.value("doctype_type_full").toString().toLatin1().data()),
+               q.value("doctype_key_param").toString(),
+               q.value("doctype_uiform_name").toString(),
+               q.value("doctype_create_priv").toString());
+    }
+    ErrorReporter::error(QtCriticalMsg, 0, tr("Error Getting Document Types"),
+                         q, __FILE__, __LINE__);
   }
 
   return _strMap;
