@@ -126,6 +126,7 @@ enum SetResponse BOM::set(const ParameterList &pParams)
       {
         _bomheadid = bomet.value("bomhead_id").toInt();
         _documents->setId(_bomheadid);
+        _comments->setId(_bomheadid);
       }
       else if (bomet.lastError().type() != QSqlError::NoError)
       {
@@ -471,6 +472,7 @@ void BOM::sFillList(int pItemid, bool)
         emit newMode(_mode);
         emit newId(_bomheadid);
       }
+      _comments->setId(_bomheadid);
       _documents->setId(_bomheadid);
       _documentNum->setText(BFillList.value("bomhead_docnum"));
       _revisionDate->setDate(BFillList.value("bomhead_revisiondate").toDate());
