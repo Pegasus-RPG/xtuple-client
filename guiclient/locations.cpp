@@ -16,6 +16,7 @@
 #include <openreports.h>
 #include <parameter.h>
 #include "location.h"
+#include <metasql.h>
 
 locations::locations(QWidget* parent, const char* name, Qt::WFlags fl)
   : XWidget(parent, name, fl)
@@ -169,7 +170,6 @@ void locations::sPrint()
 
 void locations::sFillList()
 {
-  XSqlQuery locationsFillList;
   QString sql( "SELECT location_id, warehous_code, formatLocationName(location_id) AS name,"
                "       whsezone_name||'-'||whsezone_descrip as zone,"
                "       firstLine(location_descrip) AS locationname,"
@@ -179,39 +179,44 @@ void locations::sFillList()
                "FROM location  "
                " JOIN whsinfo ON (location_warehous_id=warehous_id) "
                " LEFT OUTER JOIN whsezone ON (location_whsezone_id=whsezone_id) "
-               " WHERE ( (true)" );
+               " WHERE ( (true)" 
+               " <? if exists(\"warehous_id\") ?>"
+               " AND (warehous_id=<? value(\"warehous_id\") ?>) "
+               " <? endif ?> "
+               " <? if exists(\"zone_id\") ?>"
+               " AND (location_whsezone_id=<? value(\"zone_id\") ?>) "
+               " <? endif ?> ) "
+               "ORDER BY warehous_code, locationname;");
+
+  MetaSQLQuery  mql(sql);
+  ParameterList params;
 
   if (_warehouse->isSelected())
-    sql += " AND (warehous_id=:warehous_id)";
-
+    params.append("warehous_id", _warehouse->id());
   if (_zone->id() > 0)
-    sql += " AND (location_whsezone_id=:zone_id)";
+    params.append("zone_id", _zone->id());
 
-  sql += " ) "
-         "ORDER BY warehous_code, locationname;";
-
-  locationsFillList.prepare(sql);
-  locationsFillList.bindValue(":warehous_id", _warehouse->id());
-  locationsFillList.bindValue(":zone_id", _zone->id());
-  locationsFillList.exec();
-  _location->populate(locationsFillList);
+  XSqlQuery locationsFillList = mql.toQuery(params);
+  if (locationsFillList.first())
+    _location->populate(locationsFillList);
 }
 
 void locations::updateZoneList()
 {
-  XSqlQuery zoneFillList;
   QString zoneSql( "SELECT whsezone_id, whsezone_name||'-'||whsezone_descrip "
              " FROM whsezone  "
-             " WHERE ((true)  " );
+             " <? if exists(\"warehous_id\") ?> "
+             " WHERE (whsezone_warehous_id = <? value(\"warehous_id\") ?>) "
+             " ORDER BY whsezone_name;");
+
+  MetaSQLQuery  mql(zoneSql);
+  ParameterList params;
+
   if (_warehouse->isSelected())
-    zoneSql += " AND (whsezone_warehous_id=:warehous_id)";
+    params.append("warehous_id", _warehouse->id());
 
-  zoneSql += " ) ORDER BY whsezone_name;";
-
-  zoneFillList.prepare(zoneSql);
-  zoneFillList.bindValue(":warehous_id", _warehouse->id());
-  zoneFillList.exec();
-  _zone->populate(zoneFillList);
-  
+  XSqlQuery zoneFillList = mql.toQuery(params);
+  if (zoneFillList.first())
+    _zone->populate(zoneFillList);
 }
 
