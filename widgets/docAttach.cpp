@@ -81,7 +81,7 @@ class docAttachPrivate {
           c->populate(description);
           w = c;
         }
-        else if (description.contains(QRegExp("Cluster")))
+        else if (description.contains("Cluster"))
         {
           w = uil.createWidget(description, p,
                                "_" + q.value("doctype_type").toString());
