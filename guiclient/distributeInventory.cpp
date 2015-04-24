@@ -41,6 +41,7 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
   connect(_taggedOnly,  SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_bc,   SIGNAL(textChanged(QString)), this, SLOT(sBcChanged(QString)));
   connect(_qtyOnly,     SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_zone, SIGNAL(currentIndexChanged(int)), this, SLOT(sFillList()));
 
   omfgThis->inputManager()->notify(cBCLotSerialNumber, this, this, SLOT(sCatchLotSerialNumber(QString)));
 
@@ -65,7 +66,10 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
     _warehouseLit->hide();
     _warehouse->hide();
   }
-  
+
+// Populate Zone filter dropdown
+  updateZoneList();  
+
   //If not lot serial control, hide info
   if (!_metrics->boolean("LotSerialControl"))
   {
@@ -637,6 +641,9 @@ void distributeInventory::sFillList()
     params.append("itemsite_id",    distributeFillList.value("itemsite_id").toInt());
     params.append("transtype",      _transtype);
 
+    if (_zone->id() > 0)
+      params.append("zone",         _zone->id());
+
     MetaSQLQuery mql = mqlLoad("distributeInventory", "locations");
     distributeFillList = mql.toQuery(params);
 
@@ -819,4 +826,19 @@ void distributeInventory::sChangeDefaultLocation()
         systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
+}
+
+void distributeInventory::updateZoneList()
+{
+  XSqlQuery zoneFillList;
+  QString zoneSql( "SELECT whsezone_id, whsezone_name||'-'||whsezone_descrip "
+             " FROM whsezone  "
+             " WHERE (whsezone_warehous_id=:warehous_id)"
+             " ORDER BY whsezone_name;");
+
+  zoneFillList.prepare(zoneSql);
+  zoneFillList.bindValue(":warehous_id", _warehouse->id());
+  zoneFillList.exec();
+  _zone->populate(zoneFillList);
+  
 }

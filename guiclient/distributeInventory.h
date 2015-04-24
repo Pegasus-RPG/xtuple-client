@@ -41,6 +41,7 @@ public slots:
     virtual void sSelectLocation();
     virtual void sPopulateDefaultSelector();
     virtual void sChangeDefaultLocation();
+    virtual void updateZoneList();
 
 protected slots:
     virtual void languageChange();
