@@ -70,7 +70,7 @@ QMap<QString, struct DocumentMap *> &Documents::documentMap() {
     addToMap(Uninitialized,     "",      tr("[Pick a Document Type]")                           );
     while (q.next()) {
       addToMap(q.value("source_enum").toInt(),
-               q.value("source_name").toString(),
+               q.value("source_docass").toString(),
                tr(q.value("source_descrip").toString().toLatin1().data()),
                q.value("source_key_param").toString(),
                q.value("source_uiform_name").toString(),
