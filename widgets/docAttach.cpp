@@ -66,15 +66,15 @@ class docAttachPrivate {
       map.insert(Documents::Uninitialized,     new StackDescriptor(p->_urlPage,     p->_url));
       map.insert(Documents::WorkOrder,         new StackDescriptor(p->_woPage,      p->_wo));
 
-      XSqlQuery q("SELECT * FROM doctype"
-                  " WHERE doctype_widget NOT IN ('', 'core');");
+      XSqlQuery q("SELECT * FROM source"
+                  " WHERE source_widget NOT IN ('', 'core');");
       QUiLoader uil(p);
       while (q.next())
       {
         QWidget *w = 0;
-        QString  description = q.value("doctype_widget").toString();
+        QString  description = q.value("source_widget").toString();
         if (DEBUG)
-          qDebug() << "checking" << q.value("doctype_type") << description;
+          qDebug() << "checking" << q.value("source_name") << description;
         if (description.startsWith("SELECT", Qt::CaseInsensitive))
         {
           XComboBox *c = new XComboBox();
@@ -84,16 +84,17 @@ class docAttachPrivate {
         else if (description.contains("Cluster"))
         {
           w = uil.createWidget(description, p,
-                               "_" + q.value("doctype_type").toString());
+                               "_" + q.value("source_name").toString());
         }
         if (w) {
+          QString litValue = q.value("source_descrip").toString();
           QWidget     *page = new QWidget();
           QFormLayout *lyt  = new QFormLayout(p);
-          QLabel      *lit  = new QLabel(q.value("doctype_type_full").toString());
+          QLabel      *lit  = new QLabel(QT_TRANSLATE_NOOP("docAttach", litValue));
           page->setLayout(lyt);
           lyt->addRow(lit, w);
           p->_documentsStack->addWidget(page);
-          map.insert(q.value("doctype_id").toInt(), new StackDescriptor(page, w));
+          map.insert(q.value("source_enum").toInt(), new StackDescriptor(page, w));
           if (DEBUG) qDebug() << "created a widget for" << description;
         }
         else
@@ -136,7 +137,7 @@ docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_docType,   SIGNAL(newID(int)), this, SLOT(sHandleButtons()));
   connect(_fileList,  SIGNAL(clicked()),  this, SLOT(sFileList()));
-  connect(_save,      SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_save,      SIGNAL(clicked()),  this, SLOT(sSave()));
 
   _sourcetype = "";
   _sourceid = -1;
@@ -148,12 +149,12 @@ docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   _so->setAllowedTypes(OrderLineEdit::Sales);
 
   _docType->populate("SELECT * FROM"
-                     "(SELECT doctype_id, doctype_type_full, doctype_type"
-                     "  FROM doctype"
-                     " WHERE doctype_widget != ''"
+                     "(SELECT source_enum, source_descrip, source_name"
+                     "  FROM source"
+                     " WHERE source_widget != ''"
                      " UNION SELECT -2, 'File',     'FILE'"
                      " UNION SELECT -3, 'Web Site', 'URL') data"
-                     " ORDER BY doctype_type;");
+                     " ORDER BY source_name;");
 
 #ifndef Q_WS_MAC
     _fileList->setMaximumWidth(25);
@@ -252,6 +253,7 @@ void docAttach::sHandleButtons()
   QWidget        *pageWidget = qobject_cast<QWidget *>(pageDesc->stackPage);
   VirtualCluster *docCluster = qobject_cast<VirtualCluster *>(pageDesc->docWidget);
   XComboBox      *docCombo   = qobject_cast<XComboBox *>(pageDesc->docWidget);
+  WoCluster      *wocluster  = qobject_cast<WoCluster *>(pageDesc->docWidget);
 
   if (! pageWidget)
   {
@@ -271,17 +273,25 @@ void docAttach::sHandleButtons()
     connect(docCombo, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
     _save->setEnabled(docCombo->isValid());
   }
+  else if (wocluster)
+  {
+    connect(wocluster, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
+    connect(wocluster, SIGNAL(newId(int)),   this, SLOT(sHandleNewId(int)));
+    _save->setEnabled(wocluster->isValid());
+  }
   else
   {
+    qDebug() << pageDesc->docWidget->objectName() << "is a"
+             << pageDesc->docWidget->metaObject()->className();
     _docAttachPurpose->setEnabled(false);
     _docAttachPurpose->setCurrentIndex(0);
-    _save->setEnabled(true);
+    _save->setEnabled(true); // presumably we're on the file or url stack page
   }
 }
 
 void docAttach::sSave()
 {  
-  if (_docType->id() < 0) {
+  if (_docType->id() == -1) {
     return;
   }
 
@@ -303,6 +313,7 @@ void docAttach::sSave()
   StackDescriptor*pageDesc   = _p->map.value(_docType->id());
   VirtualCluster *docCluster = qobject_cast<VirtualCluster *>(pageDesc->docWidget);
   XComboBox      *docCombo   = qobject_cast<XComboBox *>(pageDesc->docWidget);
+  WoCluster      *wocluster  = qobject_cast<WoCluster *>(pageDesc->docWidget);
 
   _targettype = _docType->code();
   if (docCluster)
@@ -312,6 +323,10 @@ void docAttach::sSave()
   else if (docCombo)
   {
     _targetid = docCombo->id();
+  }
+  else if (wocluster)
+  {
+    _targetid = wocluster->id();
   }
   else if (_documentsStack->currentWidget() == _filePage)
   {

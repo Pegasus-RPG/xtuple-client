@@ -8,15 +8,15 @@
  * to be bound by its terms.
  */
 
-#include <QDesktopServices>
-#include <QMessageBox>
 #include <QDebug>
+#include <QDesktopServices>
 #include <QDialog>
-#include <QUrl>
-#include <QMenu>
-#include <QFileInfo>
 #include <QDir>
+#include <QFileInfo>
+#include <QMenu>
+#include <QMessageBox>
 #include <QSettings>
+#include <QUrl>
 
 #include <openreports.h>
 #include <parameter.h>
@@ -66,15 +66,15 @@ bool Documents::addToMap(int id,        QString key, QString trans,
 // Inconsistencies between here and the rest of the app: S? Q?
 QMap<QString, struct DocumentMap *> &Documents::documentMap() {
   if (_strMap.isEmpty()) {
-    XSqlQuery q("SELECT doctype.* FROM doctype;");
+    XSqlQuery q("SELECT * FROM source;");
     addToMap(Uninitialized,     "",      tr("[Pick a Document Type]")                           );
     while (q.next()) {
-      addToMap(q.value("doctype_id").toInt(),
-               q.value("doctype_type").toString(),
-               tr(q.value("doctype_type_full").toString().toLatin1().data()),
-               q.value("doctype_key_param").toString(),
-               q.value("doctype_uiform_name").toString(),
-               q.value("doctype_create_priv").toString());
+      addToMap(q.value("source_enum").toInt(),
+               q.value("source_name").toString(),
+               tr(q.value("source_descrip").toString().toLatin1().data()),
+               q.value("source_key_param").toString(),
+               q.value("source_uiform_name").toString(),
+               q.value("source_create_priv").toString());
     }
     ErrorReporter::error(QtCriticalMsg, 0, tr("Error Getting Document Types"),
                          q, __FILE__, __LINE__);
