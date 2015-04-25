@@ -94,7 +94,7 @@ class docAttachPrivate {
           page->setLayout(lyt);
           lyt->addRow(lit, w);
           p->_documentsStack->addWidget(page);
-          map.insert(q.value("source_enum").toInt(), new StackDescriptor(page, w));
+          map.insert(q.value("source_docass_num").toInt(), new StackDescriptor(page, w));
           if (DEBUG) qDebug() << "created a widget for" << description;
         }
         else
@@ -149,7 +149,7 @@ docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   _so->setAllowedTypes(OrderLineEdit::Sales);
 
   _docType->populate("SELECT * FROM"
-                     "(SELECT source_enum, source_descrip, source_name"
+                     "(SELECT source_docass_num, source_descrip, source_name"
                      "  FROM source"
                      " WHERE source_widget != ''"
                      " UNION SELECT -2, 'File',     'FILE'"

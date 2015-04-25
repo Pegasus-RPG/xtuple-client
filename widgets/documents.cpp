@@ -69,7 +69,7 @@ QMap<QString, struct DocumentMap *> &Documents::documentMap() {
     XSqlQuery q("SELECT * FROM source;");
     addToMap(Uninitialized,     "",      tr("[Pick a Document Type]")                           );
     while (q.next()) {
-      addToMap(q.value("source_enum").toInt(),
+      addToMap(q.value("source_docass_num").toInt(),
                q.value("source_docass").toString(),
                tr(q.value("source_descrip").toString().toLatin1().data()),
                q.value("source_key_param").toString(),
