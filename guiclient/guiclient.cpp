@@ -146,18 +146,6 @@ static SaveSizePositionEventFilter * __saveSizePositionEventFilter = 0;
 static int __interval = 0;
 static int __intervalCount = 0;
 
-/** @brief Check if the current user has the named privilege.
-    @param privname The name of the privilege to check.
-    @sa    Action
-  */
-static bool __privCheck(const QString & privname)
-{
-  if(privname == "#superuser")
-    return _privileges->isDba();
-
-  return _privileges->check(privname);
-}
-
 /** @brief Check if the current user has privileges to use the given Action.
     @sa    Action
   */
@@ -171,22 +159,7 @@ static void __menuEvaluate(QAction * act)
     act->setEnabled(false);
   else if(!privs.isEmpty())
   {
-    bool enable = false;
-    QStringList privlist = privs.split(' ', QString::SkipEmptyParts);
-    for (int i = 0; i < privlist.size(); ++i)
-    {
-      bool tb = true;
-      QStringList privandlist = privlist.at(i).split('+', QString::SkipEmptyParts);
-      if(privandlist.size() > 1)
-      {
-        for(int ii = 0; ii < privandlist.size(); ++ii)
-          tb = tb && __privCheck(privandlist.at(ii));
-      }
-      else
-        tb = enable || __privCheck(privlist.at(i));
-      enable = enable || tb;
-    }
-    act->setEnabled(enable);
+    act->setEnabled(_privileges->check(privs));
   }
 }
 

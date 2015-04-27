@@ -4,7 +4,8 @@ TEMPLATE = lib
 CONFIG += qt \
     warn_on \
     designer \
-    plugin
+    plugin \
+    uitools
 
 # INCLUDEPATH += $$QT_SOURCE_TREE/tools/designer/interfaces ../common .
 INCLUDEPATH += ../common \

@@ -39,11 +39,10 @@ protected slots:
     virtual void languageChange();
 
 private:
-    enum Documents::DocumentSources _source;
-    int  _mode;
-    int  _sourceid;
-    int  _imageassid;
-    
+    int     _imageassid;
+    int     _mode;
+    int     _sourceid;
+    QString _sourcetype;
 
 };
 
