@@ -180,11 +180,11 @@ void locations::sFillList()
                " JOIN whsinfo ON (location_warehous_id=warehous_id) "
                " LEFT OUTER JOIN whsezone ON (location_whsezone_id=whsezone_id) "
                " WHERE ( (true)" 
-               " <? if exists(\"warehous_id\") ?>"
-               " AND (warehous_id=<? value(\"warehous_id\") ?>) "
+               " <? if exists('warehous_id') ?>"
+               " AND (warehous_id=<? value('warehous_id') ?>) "
                " <? endif ?> "
-               " <? if exists(\"zone_id\") ?>"
-               " AND (location_whsezone_id=<? value(\"zone_id\") ?>) "
+               " <? if exists('zone_id') ?>"
+               " AND (location_whsezone_id=<? value('zone_id') ?>) "
                " <? endif ?> ) "
                "ORDER BY warehous_code, locationname;");
 
@@ -205,8 +205,9 @@ void locations::updateZoneList()
 {
   QString zoneSql( "SELECT whsezone_id, whsezone_name||'-'||whsezone_descrip "
              " FROM whsezone  "
-             " <? if exists(\"warehous_id\") ?> "
-             " WHERE (whsezone_warehous_id = <? value(\"warehous_id\") ?>) "
+             " <? if exists('warehous_id') ?> "
+             " WHERE (whsezone_warehous_id = <? value('warehous_id') ?>) "
+             " <? endif ?> "
              " ORDER BY whsezone_name;");
 
   MetaSQLQuery  mql(zoneSql);
