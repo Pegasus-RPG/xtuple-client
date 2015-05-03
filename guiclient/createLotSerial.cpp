@@ -340,14 +340,17 @@ void createLotSerial::sAssign()
   
   if (_preassigned)
   {
-    createAssign.prepare("SELECT lsdetail_qtytoassign "
-              "FROM lsdetail "
-              "WHERE (lsdetail_id=:lsdetail_id);");
+    createAssign.prepare("SELECT SUM(lsd.lsdetail_qtytoassign) AS qtytoassign "
+              "FROM lsdetail lsd "
+              "JOIN lsdetail lsd2 "
+              "  ON (lsd.lsdetail_source_id=lsd2.lsdetail_source_id "
+              "    AND lsd.lsdetail_ls_id = lsd2.lsdetail_ls_id) "
+              " WHERE (lsd2.lsdetail_id=:lsdetail_id);");
     createAssign.bindValue(":lsdetail_id", _lotSerial->id());
     createAssign.exec();
     if (createAssign.first())
     {
-      if ( _qtyToAssign->toDouble() > createAssign.value("lsdetail_qtytoassign").toDouble() )
+      if ( _qtyToAssign->toDouble() > createAssign.value("qtytoassign").toDouble() )
       {
         QMessageBox::critical( this, tr("Invalid Qty"),
                                tr( "<p>The quantity being assigned is greater than the "
