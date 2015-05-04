@@ -134,7 +134,7 @@ void exportData::sExport()
            qPrintable(exportFileDir));
   if (exportFileDir.isEmpty())
   {
-#if defined Q_OS_MACX
+#if defined Q_OS_MAC
     exportFileDir = _metrics->value("XMLExportDefaultDirMac");
 #elif defined Q_OS_WIN
     exportFileDir = _metrics->value("XMLExportDefaultDirWindows");

@@ -79,7 +79,7 @@
 #define NOCRYPT
 #include <windows.h>
 #else
-#if defined(Q_OS_MACX)
+#if defined(Q_OS_MAC)
 #include <stdlib.h>
 #endif
 #endif
@@ -2007,7 +2007,7 @@ void GUIClient::launchBrowser(QWidget * w, const QString & url)
     QString t(b);
     browser = t.split(':', QString::SkipEmptyParts);
   }
-#if defined(Q_OS_MACX)
+#if defined(Q_OS_MAC)
   browser.append("/usr/bin/open");
 #else
   // append this on linux just as a good guess

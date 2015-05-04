@@ -529,7 +529,7 @@ bool ExportHelper::XSLTConvertFile(QString inputfilename, QString outputfilename
   XSqlQuery q;
   q.prepare("SELECT fetchMetricText(:xsltdir) AS dir,"
             "       fetchMetricText(:xsltcmd) AS cmd;");
-#if defined Q_OS_MACX
+#if defined Q_OS_MAC
   q.bindValue(":xsltdir", "XSLTDefaultDirMac");
   q.bindValue(":xsltcmd", "XSLTProcessorMac");
 #elif defined Q_OS_WIN

@@ -91,7 +91,7 @@ atlasMap::atlasMap(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _mode         = cNew;
   _atlasmapId   = -1;
   _msghandler   = new AtlasMapMessageHandler(this);
-#if defined Q_OS_MACX
+#if defined Q_OS_MAC
   _defaultDir   = _metrics->value("CSVAtlasDefaultDirMac");
 #elif defined Q_OS_WIN
   _defaultDir   = _metrics->value("CSVAtlasDefaultDirWindows");

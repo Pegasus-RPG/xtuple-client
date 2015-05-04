@@ -76,7 +76,7 @@ CSVImpPluginInterface *ImportHelper::getCSVImpPlugin(QObject *parent)
           XSqlQuery defq;
           defq.prepare("SELECT fetchMetricText(:datadir) AS datadir,"
                        "       fetchMetricText(:atlasdir) AS atlasdir;");
-#if defined Q_OS_MACX
+#if defined Q_OS_MAC
           defq.bindValue(":datadir",  "XMLDefaultDirMac");
           defq.bindValue(":atlasdir", "CSVAtlasDefaultDirMac");
 #elif defined Q_OS_WIN
@@ -146,7 +146,7 @@ bool ImportHelper::handleFilePostImport(const QString &pfilename, bool success, 
             "       fetchMetricText('ImportFailureDir')       AS failuredir,"
             "       fetchMetricText('ImportFailureSuffix')    AS failuresuffix,"
             "       fetchMetricText('ImportFailureTreatment') AS failuretreatment;");
-#if defined Q_OS_MACX
+#if defined Q_OS_MAC
   q.bindValue(":xmldir",  "XMLDefaultDirMac");
 #elif defined Q_OS_WIN
   q.bindValue(":xmldir",  "XMLDefaultDirWindows");
@@ -375,7 +375,7 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg, QString 
             "       fetchMetricText(:xsltdir) AS xsltdir,"
             "       fetchMetricText(:xsltcmd) AS xsltcmd,"
             "       fetchMetricBool('ImportXMLCreateErrorFile') AS createerr;");
-#if defined Q_OS_MACX
+#if defined Q_OS_MAC
   q.bindValue(":xmldir",  "XMLDefaultDirMac");
   q.bindValue(":xsltdir", "XSLTDefaultDirMac");
   q.bindValue(":xsltcmd", "XSLTProcessorMac");

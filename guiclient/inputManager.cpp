@@ -39,7 +39,7 @@ typedef struct
 #define cHeader       0x08
 #define cData         0x10
 
-#ifdef Q_OS_MACX
+#ifdef Q_OS_MAC
 #define cPrologCtrl   0x80    /* Macintosh-only */
 #endif
 

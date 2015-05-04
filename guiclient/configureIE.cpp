@@ -282,7 +282,7 @@ void configureIE::sEditMap()
   ParameterList params;
   params.append("mode",       "edit");
   params.append("xsltmap_id", _map->id());
-#if defined Q_OS_MACX
+#if defined Q_OS_MAC
   params.append("defaultDir", _atlasMacDir->text());
 #elif defined Q_OS_WIN
   params.append("defaultDir", _atlasWindowsDir->text());
@@ -299,7 +299,7 @@ void configureIE::sNewAtlasMap()
 {
   ParameterList params;
   params.append("mode",       "new");
-#if defined Q_OS_MACX
+#if defined Q_OS_MAC
   params.append("defaultDir", _atlasMacDir->text());
 #elif defined Q_OS_WIN
   params.append("defaultDir", _atlasWindowsDir->text());

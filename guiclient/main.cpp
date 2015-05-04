@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
   QCoreApplication::addLibraryPath(QString("."));
 #endif
 
-#ifndef Q_OS_MACX
+#ifndef Q_OS_MAC
   QApplication::setWindowIcon(QIcon(":/images/icon32x32.png"));
 #endif
 
@@ -641,7 +641,7 @@ int main(int argc, char *argv[])
   
 #ifdef Q_OS_WIN
   keypath = _metrics->value("CCWinEncKey");
-#elif defined Q_OS_MACX
+#elif defined Q_OS_MAC
   keypath = _metrics->value("CCMacEncKey");
 #elif defined Q_OS_LINUX
   keypath = _metrics->value("CCLinEncKey");

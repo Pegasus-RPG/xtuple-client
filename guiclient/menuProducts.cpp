@@ -117,7 +117,7 @@ menuProducts::menuProducts(GUIClient *Pparent) :
 
   actionProperties acts[] = {
 
-#ifdef Q_OS_MACX
+#ifdef Q_OS_MAC
   { "pd.setup",              tr("&Setup..."),                SLOT(sPreferences()),              mainMenu, "MaintainPreferencesSelf MaintainPreferencesOthers",  NULL,   NULL,   true, NULL },
 #endif
 

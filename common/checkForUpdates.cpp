@@ -87,7 +87,7 @@ class checkForUpdatesPrivate {
     {
       Q_UNUSED(parent);
 
-#ifdef Q_OS_MACX
+#ifdef Q_OS_MAC
       _newExePath   = "xTuple-" + _serverVersion + ".app/Contents/MacOS/xtuple";
       _downloadFile = "xTuple-" + _serverVersion + "-MACi386.dmg";
       _destdir = ".";
