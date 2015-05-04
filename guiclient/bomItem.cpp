@@ -623,7 +623,7 @@ void bomItem::sItemIdChanged()
   }
   else if (qry.lastError().type() != QSqlError::NoError)
       ErrorReporter::error(QtCriticalMsg, this, tr("Item Job cost check"),
-                           _item->id(), __FILE__, __LINE__);
+                           qry, __FILE__, __LINE__);
 
   MetaSQLQuery muom = mqlLoad("uoms", "item");
 
