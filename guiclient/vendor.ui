@@ -1238,7 +1238,7 @@ and Purchase Order amounts</string>
            <item row="0" column="0">
             <widget class="QGroupBox" name="_achGroup">
              <property name="title">
-              <string>Enable EFT Check Printing</string>
+              <string>Enable EFT Payments</string>
              </property>
              <property name="checkable">
               <bool>true</bool>
