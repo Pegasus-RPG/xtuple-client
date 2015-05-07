@@ -364,5 +364,12 @@ void itemUOM::reject()
     itemreject.exec();
   }
 
+  if(cEdit == _mode && _selected->count() == 0)
+  {
+    QMessageBox::warning(this, tr("No Types Selected"),
+      tr("<p>You must select at least one UOM Type for this conversion."));
+    return;
+  }
+
   XDialog::reject();
 }
