@@ -609,6 +609,22 @@ void bomItem::sFillSubstituteList()
 
 void bomItem::sItemIdChanged()
 {
+// Prevent job costed items from being added to the BOM
+  XSqlQuery qry;
+  qry.prepare("SELECT EXISTS(SELECT 1 FROM itemsite WHERE itemsite_item_id = :item_id AND itemsite_costmethod = 'J')");
+  qry.bindValue(":item_id", _item->id());
+  qry.exec();
+  if (qry.first() && qry.value("exists").toBool())
+  {
+    QMessageBox::question(this, tr("Job Costed Item"),
+                            tr("You cannot add a Job Costed item to a Bill of Material"));
+    _item->setId(-1);
+    return;
+  }
+  else if (qry.lastError().type() != QSqlError::NoError)
+      ErrorReporter::error(QtCriticalMsg, this, tr("Item Job cost check"),
+                           qry, __FILE__, __LINE__);
+
   MetaSQLQuery muom = mqlLoad("uoms", "item");
 
   ParameterList params;
