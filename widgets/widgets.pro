@@ -4,7 +4,8 @@ TEMPLATE = lib
 CONFIG += qt \
     warn_on \
     designer \
-    plugin
+    plugin \
+    uitools
 
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets printsupport sql script designer

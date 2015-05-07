@@ -206,13 +206,34 @@ Privileges::Privileges()
 
 bool Privileges::check(const QString &pName)
 {
-  if(_dirty)
-    load();
-  MetricMap::iterator it = _values.find(pName);
-  if (it == _values.end())
-    return false;
-  else
-    return true;
+    if (pName == "#superuser")
+      return isDba();
+
+    if(_dirty)
+      load();
+
+    MetricMap::iterator it = _values.find(pName);
+    if (it != _values.end())
+      return true;
+
+    if (pName.contains(" ")) {
+      QStringList privlist = pName.split(' ', QString::SkipEmptyParts);
+      foreach (QString priv, privlist) {
+        if (check(priv))
+          return true;
+      }
+    }
+
+    if (pName.contains("+")) {
+      bool anded = true;
+      QStringList privlist = pName.split('+', QString::SkipEmptyParts);
+      foreach (QString priv, privlist) {
+        anded = anded && check(priv);
+      }
+      return anded;
+    }
+
+ return false;
 }
 
 bool Privileges::isDba()

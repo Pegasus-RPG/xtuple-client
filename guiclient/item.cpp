@@ -397,6 +397,7 @@ void item::setViewMode()
   _newUOM->setEnabled(false);
   _upcCode->setEnabled(false);
   _newItemSite->setEnabled(false);
+  _deleteItemSite->setEnabled(false);
   _bom->findChild<QWidget*>("_new")->hide();
   _elements->findChild<QWidget*>("_new")->hide();
 
@@ -405,6 +406,13 @@ void item::setViewMode()
   disconnect(_itemsub, SIGNAL(valid(bool)), _editSubstitute, SLOT(setEnabled(bool)));
   disconnect(_itemsub, SIGNAL(valid(bool)), _deleteSubstitute, SLOT(setEnabled(bool)));
   disconnect(_itemtrans, SIGNAL(valid(bool)), _deleteTransform, SLOT(setEnabled(bool)));
+
+  disconnect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+  disconnect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
+  disconnect(_uomconv, SIGNAL(valid(bool)), _editUOM, SLOT(setEnabled(bool)));
+  disconnect(_uomconv, SIGNAL(valid(bool)), _deleteUOM, SLOT(setEnabled(bool)));
+  disconnect(_itemtax, SIGNAL(valid(bool)), _itemtaxEdit, SLOT(setEnabled(bool)));
+  disconnect(_itemtax, SIGNAL(valid(bool)), _itemtaxDelete, SLOT(setEnabled(bool)));
 
   _save->hide();
       

@@ -14,6 +14,8 @@
 #include "documents.h"
 #include "ui_docAttach.h"
 
+class docAttachPrivate;
+
 class docAttach : public QDialog, public Ui::docAttach
 {
     Q_OBJECT
@@ -29,18 +31,20 @@ public slots:
     virtual void sFileList();
     virtual void sHandleButtons();
     virtual void sSave();
+    virtual void sHandleNewId(int);
 
 protected slots:
     virtual void languageChange();
 
 private:
     int _sourceid;
-    int _source;
+    QString _sourcetype;
     int _targetid;
     int _urlid;
     QString _targettype;
     QString _purpose;
     QString _mode;
+    docAttachPrivate *_p;
 };
 
 #endif // docAttach_H
