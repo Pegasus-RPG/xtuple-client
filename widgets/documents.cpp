@@ -65,6 +65,9 @@ bool Documents::addToMap(int id,        QString key, QString trans,
 
 // Inconsistencies between here and the rest of the app: S? Q?
 QMap<QString, struct DocumentMap *> &Documents::documentMap() {
+  if (! _x_privileges)
+    return _strMap;
+
   if (_strMap.isEmpty()) {
     XSqlQuery q("SELECT * FROM source;");
     addToMap(Uninitialized,     "",      tr("[Pick a Document Type]")                           );
