@@ -711,7 +711,7 @@ int YourPayProcessor::doTestConfiguration()
 
 #ifdef Q_OS_WIN
    QString pemfile = _metrics->value("CCYPWinPathPEM");
-#elif defined Q_OS_MAC
+#elif defined Q_OS_DARWIN
    QString pemfile = _metrics->value("CCYPMacPathPEM");
 #elif defined Q_OS_LINUX
    QString pemfile = _metrics->value("CCYPLinPathPEM");
