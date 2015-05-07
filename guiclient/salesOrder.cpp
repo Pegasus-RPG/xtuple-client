@@ -425,7 +425,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
 
       _reserveStock->hide();
       _reserveLineBalance->hide();
-      _paymentInformation->removeTab(_paymentInformation->indexOf(_cashPage));
     }
     else if (param.toString() == "viewQuote")
     {
@@ -636,7 +635,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       setObjectName(QString("salesOrder edit %1").arg(_soheadid));
     else if (cView == _mode)
       setObjectName(QString("salesOrder view %1").arg(_soheadid));
-      populate();
+    populate();
     populateCMInfo();
     populateCCInfo();
     sFillCcardList();
@@ -3364,6 +3363,9 @@ void salesOrder::setViewMode()
 
     _new->setEnabled(false);
   }
+
+  _paymentInformation->removeTab(_paymentInformation->indexOf(_cashPage));
+  _paymentInformation->removeTab(_paymentInformation->indexOf(_creditCardPage));
 
   _mode = cView;
   emit newModeType(2);
