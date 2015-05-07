@@ -344,7 +344,9 @@ void createLotSerial::sAssign()
               "FROM lsdetail lsd "
               "JOIN lsdetail lsd2 "
               "  ON (lsd.lsdetail_source_id=lsd2.lsdetail_source_id "
-              "    AND lsd.lsdetail_ls_id = lsd2.lsdetail_ls_id) "
+              "    AND lsd.lsdetail_ls_id = lsd2.lsdetail_ls_id "
+              "    AND lsd.lsdetail_source_type = lsd2.lsdetail_source_type "
+              "    AND lsd.lsdetail_source_number = lsd2.lsdetail_source_number) "
               " WHERE (lsd2.lsdetail_id=:lsdetail_id);");
     createAssign.bindValue(":lsdetail_id", _lotSerial->id());
     createAssign.exec();
