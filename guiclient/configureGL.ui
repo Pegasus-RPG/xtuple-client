@@ -547,7 +547,7 @@ to be bound by its terms.</comment>
              <item>
               <widget class="QGroupBox" name="_achGroup">
                <property name="title">
-                <string>Enable EFT Check Printing</string>
+                <string>Enable EFT Payments</string>
                </property>
                <property name="checkable">
                 <bool>true</bool>
