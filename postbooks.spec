@@ -1,17 +1,20 @@
 Name: postbooks
 Version: 4.8.1
 Release: 1%{?dist}
-Summary: xTuple Accounting/ERP suite desktop version
+Summary: xTuple Accounting/ERP suite desktop client
 License: CPAL
 Url: http://www.xtuple.com/postbooks/
 Source: https://github.com/xtuple/qt-client/archive/v%version.tar.gz
 BuildRequires: qt-devel
-BuildRequires: openrpt-devel
-BuildRequires: csvimp-devel
+BuildRequires: xtuple-openrpt-devel
+BuildRequires: xtuple-csvimp-devel
 BuildRequires: qtwebkit-devel
 BuildRequires: qt-assistant-adp-devel
 BuildRequires: libsqlite3x-devel
-Requires: qt-postgresql, qt-assistant-adp
+Requires: qt-postgresql
+Requires: qt-assistant-adp
+
+%global _docdir_fmt %{name}
 
 %description
 A full-featured, fully-integrated business management system, the core of
@@ -36,7 +39,11 @@ This package provides the core libraries: libpostbooks
 
 %package devel
 Summary: PostBooks development files
-Requires: %{name}-libs%{?_isa} = %{version}-%{release}, qt-devel, libdmtx-devel, openrpt-devel, csvimp-devel
+Requires: %{name}-libs%{?_isa} = %{version}-%{release}
+Requires: qt-devel
+Requires: libdmtx-devel
+Requires: xtuple-openrpt-devel
+Requires: xtuple-csvimp-devel
 
 %description devel
 A full-featured, fully-integrated business management system, the core of
@@ -67,29 +74,24 @@ make %{?_smp_mflags}
 # the installs manually
 #make INSTALL_ROOT=%{buildroot} install
 rm -f %{buildroot}%{_libdir}/lib*.a
-rm -f %{buildroot}%{_libdir}/lib*.la
 mkdir -p %{buildroot}%{_bindir}
 install bin/* %{buildroot}%{_bindir}
 ln -s %{_bindir}/xtuple %{buildroot}%{_bindir}/postbooks
 mkdir -p %{buildroot}%{_libdir}
 cp -dp lib/lib*.so* %{buildroot}%{_libdir}
 mkdir -p %{buildroot}%{_includedir}/xtuple
-find common -name '*.h' -exec install -D {} %{buildroot}%{_includedir}/xtuple/{} \;
+find common -name '*.h' -exec install -m 0644 -D {} %{buildroot}%{_includedir}/xtuple/{} \;
 
 %post
-/sbin/ldconfig
 
 %post libs -p /sbin/ldconfig
 
 %postun
-/sbin/ldconfig
 
 %postun libs -p /sbin/ldconfig
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files 
+%license LICENSE.txt
 %{_bindir}/*
 
 %files libs
@@ -101,6 +103,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/lib*.so
 
 %changelog
-* Wed Feb 25 2015 Daniel Pocock <<daniel@pocock.pro> - 4.8.1-1
+* Wed Feb 25 2015 Daniel Pocock <daniel@pocock.pro> - 4.8.1-1
 - Initial RPM packaging.
 
