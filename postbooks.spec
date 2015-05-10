@@ -1,5 +1,5 @@
 Name: postbooks
-Version: 4.8.1
+Version: 4.8.2
 Release: 1%{?dist}
 Summary: xTuple Accounting/ERP suite desktop client
 License: CPAL
@@ -13,6 +13,7 @@ BuildRequires: qt-assistant-adp-devel
 BuildRequires: libsqlite3x-devel
 Requires: qt-postgresql
 Requires: qt-assistant-adp
+Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 
 %global _docdir_fmt %{name}
 
@@ -79,8 +80,13 @@ install bin/* %{buildroot}%{_bindir}
 ln -s %{_bindir}/xtuple %{buildroot}%{_bindir}/postbooks
 mkdir -p %{buildroot}%{_libdir}
 cp -dp lib/lib*.so* %{buildroot}%{_libdir}
+find %{buildroot}%{_libdir} -name 'lib*.so*' -exec chmod 0755 {} \;
 mkdir -p %{buildroot}%{_includedir}/xtuple
 find common -name '*.h' -exec install -m 0644 -D {} %{buildroot}%{_includedir}/xtuple/{} \;
+mkdir -p %{buildroot}%{_datadir}/pixmaps
+cp -r guiclient/xTuple.xpm %{buildroot}%{_datadir}/pixmaps
+mkdir -p %{buildroot}%{_datadir}/applications
+install -m 0644 *.desktop %{buildroot}%{_datadir}/applications
 
 %post libs -p /sbin/ldconfig
 
@@ -89,6 +95,8 @@ find common -name '*.h' -exec install -m 0644 -D {} %{buildroot}%{_includedir}/x
 %files 
 %license LICENSE.txt
 %{_bindir}/*
+%{_datadir}/applications/*.desktop
+%{_datadir}/pixmaps/*.xpm
 
 %files libs
 %{_libdir}/lib*.so.*
