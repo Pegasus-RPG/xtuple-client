@@ -102,7 +102,7 @@ enum SetResponse itemUOM::set(const ParameterList &pParams)
   {
     if (param.toString() == "new")
     {
-      _active->setChecked(TRUE);
+      _active->setChecked(true);
       _mode = cNew;
     }
     else if (param.toString() == "edit")
