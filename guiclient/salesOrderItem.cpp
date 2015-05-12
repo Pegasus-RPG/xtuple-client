@@ -1824,28 +1824,36 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
   _itemchar->removeRows(0, _itemchar->rowCount());
   if (pItemid != -1)
   {
-    XSqlQuery uom;
-    uom.prepare("SELECT uom_id, uom_name"
-                "  FROM item"
-                "  JOIN uom ON (item_inv_uom_id=uom_id)"
-                " WHERE(item_id=:item_id)"
-                " UNION "
-                "SELECT uom_id, uom_name"
-                "  FROM item"
-                "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
-                "  JOIN uom ON (itemuomconv_to_uom_id=uom_id)"
-                " WHERE((itemuomconv_from_uom_id=item_inv_uom_id)"
-                "   AND (item_id=:item_id))"
-                " UNION "
-                "SELECT uom_id, uom_name"
-                "  FROM item"
-                "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
-                "  JOIN uom ON (itemuomconv_from_uom_id=uom_id)"
-                " WHERE((itemuomconv_to_uom_id=item_inv_uom_id)"
-                "   AND (item_id=:item_id))"
-                " ORDER BY uom_name;");
-    uom.bindValue(":item_id", _item->id());
-    uom.exec();
+    // Get list of active, valid Selling UOMs
+    MetaSQLQuery muom = mqlLoad("uoms", "item");
+
+    ParameterList params;
+    params.append("uomtype", "Selling");
+    params.append("item_id", pItemid);
+
+    // Also have to factor UOMs previously used on Sales Order now inactive
+    if (_soitemid != -1)
+    {
+      XSqlQuery souom;
+      souom.prepare("SELECT coitem_qty_uom_id, coitem_price_uom_id "
+                "  FROM coitem"
+                " WHERE(coitem_id=:coitem_id);");
+      souom.bindValue(":coitem_id", _soitemid);
+      souom.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Sales Order UOMs"),
+                           souom, __FILE__, __LINE__))
+        return;
+      else if (souom.first())
+      {
+        params.append("uom_id", souom.value("coitem_qty_uom_id"));
+        params.append("uom_id2", souom.value("coitem_price_uom_id"));
+      }
+    }
+    XSqlQuery uom = muom.toQuery(params);
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting UOMs"),
+                           uom, __FILE__, __LINE__))
+      return;
+
     _qtyUOM->populate(uom);
     _priceUOM->populate(uom);
 

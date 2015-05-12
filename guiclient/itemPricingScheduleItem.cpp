@@ -792,35 +792,36 @@ void itemPricingScheduleItem::populate()
 
 void itemPricingScheduleItem::sUpdateCosts(int pItemid)
 {
-  XSqlQuery itemUpdateCosts;
-  XSqlQuery uom;
-  uom.prepare("SELECT uom_id, uom_name"
-              "  FROM item"
-              "  JOIN uom ON (item_inv_uom_id=uom_id)"
-              " WHERE(item_id=:item_id)"
-              " UNION "
-              "SELECT uom_id, uom_name"
-              "  FROM item"
-              "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
-              "  JOIN uom ON (itemuomconv_to_uom_id=uom_id)"
-              " WHERE((itemuomconv_from_uom_id=item_inv_uom_id)"
-              "   AND (item_id=:item_id))"
-              " UNION "
-              "SELECT uom_id, uom_name"
-              "  FROM item"
-              "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
-              "  JOIN uom ON (itemuomconv_from_uom_id=uom_id)"
-              " WHERE((itemuomconv_to_uom_id=item_inv_uom_id)"
-              "   AND (item_id=:item_id))"
-              " ORDER BY uom_name;");
-  uom.bindValue(":item_id", _item->id());
-  uom.exec();
-  if (itemUpdateCosts.lastError().type() != QSqlError::NoError)
+  // Get list of active, valid Selling UOMs
+  MetaSQLQuery muom = mqlLoad("uoms", "item");
+
+  ParameterList params;
+  params.append("uomtype", "Selling");
+  params.append("item_id", pItemid);
+
+  // Also have to factor UOMs previously used on Pricing Item now inactive
+  if (_ipsitemid != -1)
   {
-	systemError(this, _rejectedMsg.arg(itemUpdateCosts.lastError().databaseText()),
-                  __FILE__, __LINE__);
-        done(-1);
+    XSqlQuery pruom;
+    pruom.prepare("SELECT ipsitem_qty_uom_id, ipsitem_price_uom_id "
+                "  FROM ipsiteminfo"
+                " WHERE(ipsitem_id=:ipsitem_id);");
+    pruom.bindValue(":ipsitem_id", _ipsitemid);
+    pruom.exec();
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Sales Pricing UOMs"),
+                         pruom, __FILE__, __LINE__))
+      return;
+    else if (pruom.first())
+    {
+      params.append("uom_id", pruom.value("ipsitem_qty_uom_id"));
+      params.append("uom_id2", pruom.value("ipsitem_price_uom_id"));
+    }
   }
+  XSqlQuery uom = muom.toQuery(params);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting UOMs"),
+                         uom, __FILE__, __LINE__))
+    return;
+
   _qtyUOM->populate(uom);
   _priceUOM->populate(uom);
 
@@ -847,12 +848,9 @@ void itemPricingScheduleItem::sUpdateCosts(int pItemid)
     _qtyUOM->setId(cost.value("item_inv_uom_id").toInt());
     _priceUOM->setId(cost.value("item_price_uom_id").toInt());
   }
-  else if (itemUpdateCosts.lastError().type() != QSqlError::NoError)
-  {
-	systemError(this, _rejectedMsg.arg(itemUpdateCosts.lastError().databaseText()),
-                  __FILE__, __LINE__);
-        done(-1);
-  }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Item Costs"),
+                         cost, __FILE__, __LINE__))
+    done(-1);
   
   if (_item->isConfigured())
     _tab->setTabEnabled(_tab->indexOf(_configuredPrices),true);

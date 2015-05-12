@@ -91,23 +91,10 @@ void applyAPCreditMemo::sPost()
   applyPost.prepare("SELECT postAPCreditMemoApplication(:apopen_id) AS result;");
   applyPost.bindValue(":apopen_id", _apopenid);
   applyPost.exec();
-  if (applyPost.first())
-  {
-    int result = applyPost.value("result").toInt();
-    if (result < 0)
-    {
-      systemError(this, storedProcErrorLookup("postAPCreditMemoApplication",
-                                              result), __FILE__, __LINE__);
-      return;
-    }
-  }
-  if (applyPost.lastError().type() != QSqlError::NoError)
-  {
-    ErrorReporter::error(QtCriticalMsg, this,
-                         tr("Error posting"), applyPost,
-                         __FILE__, __LINE__);
+  if (ErrorReporter::error(QtCriticalMsg, this,
+                           tr("Error posting"), applyPost,
+                           __FILE__, __LINE__))
     return;
-  }
 
   accept();
 }

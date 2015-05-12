@@ -425,7 +425,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
 
       _reserveStock->hide();
       _reserveLineBalance->hide();
-      _paymentInformation->removeTab(_paymentInformation->indexOf(_cashPage));
     }
     else if (param.toString() == "viewQuote")
     {
@@ -636,7 +635,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       setObjectName(QString("salesOrder edit %1").arg(_soheadid));
     else if (cView == _mode)
       setObjectName(QString("salesOrder view %1").arg(_soheadid));
-      populate();
+    populate();
     populateCMInfo();
     populateCCInfo();
     sFillCcardList();
@@ -1974,6 +1973,33 @@ void salesOrder::populateShipto(int pShiptoid)
     _shipToAddr->clear();
     _shipToCntct->clear();
     _shippingComments->clear();
+
+    // Reset Sales Order fields back to Customer defaults
+    QString custSql("SELECT cust_salesrep_id, cust_shipchrg_id, cust_shipform_id,"
+                "       cust_commprcnt AS commission,"
+                "       cust_taxzone_id, cust_shipvia "
+                "FROM custinfo "
+                "WHERE (cust_id=<? value('cust_id') ?>); ");
+    MetaSQLQuery  mql(custSql);
+    ParameterList params;
+    params.append("cust_id", _cust->id());
+    XSqlQuery custDefaults = mql.toQuery(params);
+    if (custDefaults.first())
+    {
+      _salesRep->setId(custDefaults.value("cust_salesrep_id").toInt());
+      _shippingCharges->setId(custDefaults.value("cust_shipchrg_id").toInt());
+      _shippingForm->setId(custDefaults.value("cust_shipform_id").toInt());
+      _commission->setDouble(custDefaults.value("commission").toDouble() * 100);
+      _custtaxzoneid = custDefaults.value("cust_taxzone_id").toInt();
+      _taxZone->setId(custDefaults.value("cust_taxzone_id").toInt());
+      _shipVia->setText(custDefaults.value("cust_shipvia"));
+    }
+    else if (custDefaults.lastError().type() != QSqlError::NoError)
+    {
+      ErrorReporter::error(QtCriticalMsg, this, tr("Customer Defaults Lookup"),
+                         custDefaults.lastError(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   if (_saved)
@@ -3337,6 +3363,9 @@ void salesOrder::setViewMode()
 
     _new->setEnabled(false);
   }
+
+  _paymentInformation->removeTab(_paymentInformation->indexOf(_cashPage));
+  _paymentInformation->removeTab(_paymentInformation->indexOf(_creditCardPage));
 
   _mode = cView;
   emit newModeType(2);

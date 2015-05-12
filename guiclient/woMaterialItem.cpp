@@ -10,6 +10,9 @@
 
 #include "woMaterialItem.h"
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <QVariant>
 #include <QSqlError>
 #include <QMessageBox>
@@ -362,29 +365,34 @@ void woMaterialItem::populate()
 
 void woMaterialItem::sItemIdChanged()
 {
-  XSqlQuery uom;
-  uom.prepare("SELECT uom_id, uom_name"
-              "  FROM item"
-              "  JOIN uom ON (item_inv_uom_id=uom_id)"
-              " WHERE(item_id=:item_id)"
-              " UNION "
-              "SELECT uom_id, uom_name"
-              "  FROM item"
-              "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
-              "  JOIN uom ON (itemuomconv_to_uom_id=uom_id)"
-              " WHERE((itemuomconv_from_uom_id=item_inv_uom_id)"
-              "   AND (item_id=:item_id))"
-              " UNION "
-              "SELECT uom_id, uom_name"
-              "  FROM item"
-              "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
-              "  JOIN uom ON (itemuomconv_from_uom_id=uom_id)"
-              " WHERE((itemuomconv_to_uom_id=item_inv_uom_id)"
-              "   AND (item_id=:item_id))"
-              " ORDER BY uom_name;");
-  uom.bindValue(":item_id", _item->id());
-  uom.exec();
+  // Get list of active, valid MaterialIssue UOMs
+  MetaSQLQuery muom = mqlLoad("uoms", "item");
+
+  ParameterList params;
+  params.append("uomtype", "MaterialIssue");
+  params.append("item_id", _item->id());
+
+  // Also have to factor UOMs previously used on WO Material now inactive
+  if (_womatlid != -1)
+  {
+    XSqlQuery wouom;
+    wouom.prepare("SELECT womatl_uom_id "
+                "  FROM womatl"
+                " WHERE(womatl_id=:womatl_id);");
+    wouom.bindValue(":womatl_id", _womatlid);
+    wouom.exec();
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Sales Order UOMs"),
+                         wouom, __FILE__, __LINE__))
+      return;
+    else if (wouom.first())
+        params.append("uom_id", wouom.value("womatl_uom_id"));
+  }
+  XSqlQuery uom = muom.toQuery(params);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting UOM"),
+                         uom, __FILE__, __LINE__))
+    return;
   _uom->populate(uom);
+
   uom.prepare("SELECT item_inv_uom_id, item_type "
               "  FROM item"
               " WHERE(item_id=:item_id);");

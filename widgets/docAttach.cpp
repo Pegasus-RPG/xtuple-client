@@ -66,6 +66,8 @@ class docAttachPrivate {
       map.insert(Documents::Uninitialized,     new StackDescriptor(p->_urlPage,     p->_url));
       map.insert(Documents::WorkOrder,         new StackDescriptor(p->_woPage,      p->_wo));
 
+      if (! _x_privileges) return; // Qt Designer doesn't connect to the database
+
       XSqlQuery q("SELECT * FROM source"
                   " WHERE source_widget NOT IN ('', 'core');");
       QUiLoader uil(p);

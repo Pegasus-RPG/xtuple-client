@@ -17,12 +17,14 @@
 #include <QVariant>
 #include <QDebug>
 
+#include <metasql.h>
 #include <parameter.h>
 
 #include "addresscluster.h"
 #include "characteristicAssignment.h"
 #include "contact.h"
 #include "inputManager.h"
+#include "mqlutil.h"
 #include "shipTo.h"
 #include "vendor.h"
 #include "vendorAddress.h"
@@ -251,44 +253,16 @@ void address::sPopulate()
   _comments->setId(_addr->id());
   sGetCharacteristics();
 
-  XSqlQuery usesQ;
-  usesQ.prepare("SELECT cntct_id, 1, :contact AS type, cntct_first_name, "
-		"       cntct_last_name, crmacct_number, cntct_phone, "
-		"       cntct_phone2, cntct_fax, cntct_email, cntct_webaddr "
-		"FROM cntct LEFT OUTER JOIN crmacct ON (cntct_crmacct_id=crmacct_id) "
-		"WHERE (cntct_addr_id=:addr_id) "
-		"UNION "
-		"SELECT shipto_id, 2, :shipto, shipto_name, "
-		"       shipto_name, crmacct_number, '',"
-		"       '', '', '', '' "
-		"FROM shiptoinfo LEFT OUTER JOIN crmacct ON (shipto_cust_id=crmacct_cust_id) "
-		"WHERE (shipto_addr_id=:addr_id) "
-		"UNION "
-		"SELECT vend_id, 3, :vendor, vend_number, "
-		"       vend_name, crmacct_number, '',"
-		"       '', '', '', '' "
-		"FROM vendinfo LEFT OUTER JOIN crmacct ON (vend_id=crmacct_vend_id) "
-		"WHERE (vend_addr_id=:addr_id) "
-		"UNION "
-		"SELECT vendaddr_id, 4, :vendaddr, vendaddr_code, "
-		"       vendaddr_name, crmacct_number, '',"
-		"       '', '', '', '' "
-		"FROM vendaddrinfo LEFT OUTER JOIN crmacct ON (vendaddr_vend_id=crmacct_vend_id) "
-		"WHERE (vendaddr_addr_id=:addr_id) "
-		"UNION "
-		"SELECT warehous_id, 5, :whs, warehous_code, "
-		"       warehous_descrip, '', '',"
-		"       '', '', '', '' "
-		"FROM whsinfo "
-		"WHERE (warehous_addr_id=:addr_id) "
-		"ORDER BY 3, 5, 4;");
-  usesQ.bindValue(":addr_id", _addr->id());
-  usesQ.bindValue(":contact",	tr("Contact"));
-  usesQ.bindValue(":shipto",	tr("Ship-To"));
-  usesQ.bindValue(":vendor",	tr("Vendor"));
-  usesQ.bindValue(":vendaddr",	tr("Vendor Address"));
-  usesQ.bindValue(":whs",	tr("Site"));
-  usesQ.exec();
+  MetaSQLQuery mql = mqlLoad("address", "uses");
+  
+  ParameterList params;
+  params.append("addr_id",  _addr->id());
+  params.append("contact",  tr("Contact"));
+  params.append("shipto",   tr("Ship-To"));
+  params.append("vendor",   tr("Vendor"));
+  params.append("vendaddr", tr("Vendor Address"));
+  params.append("whs",      tr("Site"));
+  XSqlQuery usesQ = mql.toQuery(params);
   _uses->populate(usesQ, true);	// true => use alt id (to distinguish types)
 }
 

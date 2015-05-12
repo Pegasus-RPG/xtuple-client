@@ -37,6 +37,7 @@
 #include "itemUOM.h"
 #include "itemtax.h"
 #include "itemSource.h"
+#include "mqlutil.h"
 #include "storedProcErrorLookup.h"
 
 const char *_itemTypes[] = { "P", "M", "F", "R", "S", "T", "O", "L", "K", "B", "C", "Y" };
@@ -162,6 +163,7 @@ item::item(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _uomconv->addColumn(tr("Ratio"),      -1, Qt::AlignRight, true, "uomvalue"  );
   _uomconv->addColumn(tr("Global"),     _ynColumn*2,    Qt::AlignCenter, true, "global" );
   _uomconv->addColumn(tr("Fractional"), _ynColumn*2,   Qt::AlignCenter, true, "fractional" );
+  _uomconv->addColumn(tr("Active"),     _ynColumn*2,   Qt::AlignCenter, true, "active" );
   
   _itemsrc->addColumn(tr("Active"),      _dateColumn,   Qt::AlignCenter, true, "itemsrc_active");
   _itemsrc->addColumn(tr("Vendor"),      _itemColumn, Qt::AlignLeft, true, "vend_number" );
@@ -1875,7 +1877,8 @@ void item::sFillUOMList()
             "       (nuom.uom_name||'/'||duom.uom_name) AS uomname,"
             "       (formatUOMRatio(itemuomconv_from_value)||'/'||formatUOMRatio(itemuomconv_to_value)) AS uomvalue,"
             "       (uomconv_id IS NOT NULL) AS global,"
-            "       itemuomconv_fractional AS fractional"
+            "       itemuomconv_fractional AS fractional, "
+            "       itemuomconv_active AS active "
             "  FROM item"
             "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
             "  JOIN uom AS nuom ON (itemuomconv_from_uom_id=nuom.uom_id)"
@@ -1889,7 +1892,8 @@ void item::sFillUOMList()
             "        uomtype_name AS uomname,"
             "       '' AS uomvalue,"
             "       NULL AS global,"
-            "       NULL AS fractional"
+            "       NULL AS fractional, "
+            "       NULL AS active "
             "  FROM item"
             "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
             "  JOIN uom AS nuom ON (itemuomconv_from_uom_id=nuom.uom_id)"
@@ -1914,39 +1918,18 @@ void item::sFillUOMList()
 
 void item::sPopulatePriceUOMs()
 {
-  XSqlQuery itemPopulatePriceUOMs;
-  int pid = _priceUOM->id();
-  itemPopulatePriceUOMs.prepare("SELECT uom_id, uom_name, uom_name"
-            "  FROM uom"
-            " WHERE(uom_id=:uom_id)"
-            " UNION "
-            "SELECT uom_id, uom_name, uom_name"
-            "  FROM uom"
-            "  JOIN itemuomconv ON (itemuomconv_to_uom_id=uom_id)"
-            "  JOIN item ON (itemuomconv_from_uom_id=item_inv_uom_id)"
-            "  JOIN itemuom ON (itemuom_itemuomconv_id=itemuomconv_id)"
-            "  JOIN uomtype ON (itemuom_uomtype_id=uomtype_id)"
-            " WHERE((itemuomconv_item_id=:item_id)"
-            "   AND (uomtype_name='Selling'))"
-            " UNION "
-            "SELECT uom_id, uom_name, uom_name"
-            "  FROM uom"
-            "  JOIN itemuomconv ON (itemuomconv_from_uom_id=uom_id)"
-            "  JOIN item ON (itemuomconv_to_uom_id=item_inv_uom_id)"
-            "  JOIN itemuom ON (itemuom_itemuomconv_id=itemuomconv_id)"
-            "  JOIN uomtype ON (itemuom_uomtype_id=uomtype_id)"
-            " WHERE((itemuomconv_item_id=:item_id)"
-            "   AND (uomtype_name='Selling'))"
-            " ORDER BY 2;");
-  itemPopulatePriceUOMs.bindValue(":item_id", _itemid);
-  itemPopulatePriceUOMs.bindValue(":uom_id", _inventoryUOM->id());
-  itemPopulatePriceUOMs.exec();
-  _priceUOM->populate(itemPopulatePriceUOMs, pid);
-  if (itemPopulatePriceUOMs.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, itemPopulatePriceUOMs.lastError().databaseText(), __FILE__, __LINE__);
+  MetaSQLQuery muom = mqlLoad("uoms", "item");
+
+  ParameterList params;
+  params.append("uomtype", "Selling");
+  params.append("item_id", _itemid);
+  params.append("uom_id", _priceUOM->id());
+
+  XSqlQuery puom = muom.toQuery(params);
+  _priceUOM->populate(puom);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Price UOMs"),
+                           puom, __FILE__, __LINE__))
     return;
-  }
 }
 
 void item::closeEvent(QCloseEvent *pEvent)
