@@ -97,7 +97,9 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QTranslator>
+#if QT_VERSION < 0x050000
 #include <QHttp>
+#endif
 #include <QUrl>
 
 #include <dbtools.h>
@@ -131,8 +133,11 @@ QString __password;
 
 #define DEBUG false
 
+#if QT_VERSION >= 0x050000
+extern void xTupleMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+#else
 extern void xTupleMessageOutput(QtMsgType type, const char *msg);
-
+#endif
 // helps determine which edition we're running & what splash screen to present
 struct editionDesc {
   editionDesc(QString ed, QString splash, bool check, QString query)
@@ -156,15 +161,18 @@ int main(int argc, char *argv[])
   QString username;
   QString databaseURL;
   QString passwd;
-  bool    haveUsername    = FALSE;
-  bool    haveDatabaseURL = FALSE;
-  bool    loggedIn        = FALSE;
+  bool    haveUsername    = false;
+  bool    haveDatabaseURL = false;
+  bool    loggedIn        = false;
   bool    haveEnhancedAuth= false;
   bool    _enhancedAuth   = false;
   bool    havePasswd      = false;
   bool    forceWelcomeStub= false;
-
+#if QT_VERSION >= 0x050000
+  qInstallMessageHandler(xTupleMessageOutput);
+#else
   qInstallMsgHandler(xTupleMessageOutput);
+#endif
   QApplication app(argc, argv);
   app.setOrganizationDomain("xTuple.com");
   app.setOrganizationName("xTuple");
@@ -178,7 +186,7 @@ int main(int argc, char *argv[])
   QCoreApplication::addLibraryPath(QString("."));
 #endif
 
-#ifndef Q_WS_MACX
+#ifndef Q_OS_MAC
   QApplication::setWindowIcon(QIcon(":/images/icon32x32.png"));
 #endif
 
@@ -192,23 +200,23 @@ int main(int argc, char *argv[])
 
       if (argument.contains("-databaseURL=", Qt::CaseInsensitive))
       {
-        haveDatabaseURL = TRUE;
+        haveDatabaseURL = true;
         databaseURL = argument.right(argument.length() - 13);
       }
       else if (argument.contains("-username=", Qt::CaseInsensitive))
       {
-        haveUsername = TRUE;
+        haveUsername = true;
         username = argument.right(argument.length() - 10);
       }
       else if (argument.contains("-passwd=", Qt::CaseInsensitive))
       {
-        havePasswd = TRUE;
+        havePasswd = true;
         passwd     = argument.right(argument.length() - 8);
       }
       else if (argument.contains("-noAuth", Qt::CaseInsensitive))
       {
-        haveUsername = TRUE;
-        havePasswd   = TRUE;
+        haveUsername = true;
+        havePasswd   = true;
       } 
       else if (argument.contains("-enhancedAuth", Qt::CaseInsensitive))
       {
@@ -246,7 +254,7 @@ int main(int argc, char *argv[])
   _splash = new QSplashScreen();
   _splash->setPixmap(QPixmap(":/images/splashEmpty.png"));
 
-  _evaluation = FALSE;
+  _evaluation = false;
 
   if (!loggedIn)
   {
@@ -275,7 +283,7 @@ int main(int argc, char *argv[])
     if ( (haveDatabaseURL) && (haveUsername) && (havePasswd) )
       params.append("login");
 
-    login2 newdlg(0, "", TRUE);
+    login2 newdlg(0, "", true);
     newdlg.set(params, _splash);
 
     if(newdlg.result() != QDialog::Accepted)
@@ -419,7 +427,7 @@ int main(int argc, char *argv[])
       _splash->hide();
       if (expired)
       {
-        registrationKeyDialog newdlg(0, "", TRUE);
+        registrationKeyDialog newdlg(0, "", true);
         if(newdlg.exec() == -1)
         {
           QMessageBox::critical(0, QObject::tr("Registration Key"), checkPassReason);
@@ -450,6 +458,7 @@ int main(int argc, char *argv[])
         db = metric.value("db").toString();
       }
 
+#if QT_VERSION < 0x050000  // below removed in qt5, needs to be ported
       QHttp *http = new QHttp();
       
       QUrl url;
@@ -465,7 +474,7 @@ int main(int argc, char *argv[])
 
       http->setHost("www.xtuple.org");
       http->get(url.toString());
-
+#endif
       if(forced)
         return 0;
 
@@ -480,7 +489,7 @@ int main(int argc, char *argv[])
     int result = 0;
     if (shouldCheckForUpdates) {
       _splash->hide();
-      checkForUpdates newdlg(0,"", TRUE);
+      checkForUpdates newdlg(0,"", true);
       result = newdlg.exec();
       if (result == QDialog::Rejected) {
         return 0;
@@ -569,11 +578,11 @@ int main(int argc, char *argv[])
       for (QStringList::Iterator fit = files.begin(); fit != files.end(); ++fit)
       {
         if (DEBUG)
-          qDebug("looking for %s", (*fit).toAscii().data());
+          qDebug("looking for %s", (*fit).toLatin1().data());
         if (translator->load(translationFile(langext, *fit)))
         {
           app.installTranslator(translator);
-          qDebug("installed %s", (*fit).toAscii().data());
+          qDebug("installed %s", (*fit).toLatin1().data());
           translator = new QTranslator(&app);
         }
         else
@@ -612,8 +621,8 @@ int main(int argc, char *argv[])
       QLocale::setDefault(QLocale::system());
 
     qDebug("Locale set to language %s and country %s",
-           QLocale().languageToString(QLocale().language()).toAscii().data(),
-           QLocale().countryToString(QLocale().country()).toAscii().data());
+           QLocale().languageToString(QLocale().language()).toLatin1().data(),
+           QLocale().countryToString(QLocale().country()).toLatin1().data());
 
   }
   else
@@ -630,11 +639,11 @@ int main(int argc, char *argv[])
   QString keyname;
   QString keytogether;
   
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
   keypath = _metrics->value("CCWinEncKey");
-#elif defined Q_WS_MACX
+#elif defined Q_OS_MAC
   keypath = _metrics->value("CCMacEncKey");
-#elif defined Q_WS_X11
+#elif defined Q_OS_LINUX
   keypath = _metrics->value("CCLinEncKey");
 #endif
   
@@ -656,7 +665,7 @@ int main(int argc, char *argv[])
   
   keytogether = keypath + keyname;
   
-  // qDebug("keytogether: %s", keytogether.toAscii().data());
+  // qDebug("keytogether: %s", keytogether.toLatin1().data());
   QFile keyFile(keytogether);
 
   if(keyFile.exists())
@@ -741,7 +750,7 @@ int main(int argc, char *argv[])
   {
     if(baseCurrency.value("count").toInt() != 1)
     {
-      currenciesDialog newdlg(0, "", TRUE);
+      currenciesDialog newdlg(0, "", true);
       newdlg.exec();
       baseCurrency.exec();
       if(baseCurrency.first())

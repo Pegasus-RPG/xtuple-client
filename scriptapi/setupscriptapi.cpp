@@ -117,7 +117,6 @@
 #include "xnetworkaccessmanager.h"
 #include "xsqltablemodelproto.h"
 #include "xsqlqueryproto.h"
-#include "xt.h"
 #include "xtreewidget.h"
 #include "xvariantsetup.h"
 

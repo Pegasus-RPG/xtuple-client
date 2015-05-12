@@ -22,7 +22,7 @@
 #include "errorReporter.h"
 #include "guiclient.h"
 
-saleTypes::saleTypes(QWidget* parent, const char* name, Qt::WFlags fl)
+saleTypes::saleTypes(QWidget* parent, const char* name, Qt::WindowFlags fl)
   : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -49,7 +49,7 @@ saleTypes::saleTypes(QWidget* parent, const char* name, Qt::WFlags fl)
   }
   else
   {
-    _new->setEnabled(FALSE);
+    _new->setEnabled(false);
     connect(_saletype, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
@@ -84,7 +84,7 @@ void saleTypes::sNew()
   ParameterList params;
   params.append("mode", "new");
 
-  saleType newdlg(this, "", TRUE);
+  saleType newdlg(this, "", true);
   newdlg.set(params);
   int result = newdlg.exec();
   if (result != XDialog::Rejected)
@@ -97,7 +97,7 @@ void saleTypes::sEdit()
   params.append("mode", "edit");
   params.append("saletype_id", _saletype->id());
 
-  saleType newdlg(this, "", TRUE);
+  saleType newdlg(this, "", true);
   newdlg.set(params);
   int result = newdlg.exec();
   if (result != XDialog::Rejected)
@@ -110,7 +110,7 @@ void saleTypes::sView()
   params.append("mode", "view");
   params.append("saletype_id", _saletype->id());
 
-  saleType newdlg(this, "", TRUE);
+  saleType newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

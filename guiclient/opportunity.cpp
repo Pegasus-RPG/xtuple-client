@@ -28,7 +28,7 @@
 #include "printSoForm.h"
 #include "characteristicAssignment.h"
 
-opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -195,7 +195,7 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
       _printSale->setEnabled(false);
       _newSale->setEnabled(false);
       _attachSale->setEnabled(false);
-      _newCharacteristic->setEnabled(FALSE);
+      _newCharacteristic->setEnabled(false);
 
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
       _cntct->setReadOnly(true);
@@ -826,7 +826,7 @@ void opportunity::sAttachQuote()
   params.append("cust_id", _custid);
   params.append("openOnly", true);
   
-  quoteList newdlg(this, "", TRUE);
+  quoteList newdlg(this, "", true);
   newdlg.set(params);
 
   int id = newdlg.exec();
@@ -916,7 +916,7 @@ void opportunity::sPrintSalesOrder()
   ParameterList params;
   params.append("sohead_id", _salesList->id());
 
-  printSoForm newdlg(this, "", TRUE);
+  printSoForm newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -945,7 +945,7 @@ void opportunity::sAttachSalesOrder()
   params.append("soType", (cSoOpen | cSoCustomer));
   params.append("cust_id", _custid);
   
-  salesOrderList newdlg(this, "", TRUE);
+  salesOrderList newdlg(this, "", true);
   newdlg.set(params);
 
   int id = newdlg.exec();
@@ -1139,7 +1139,7 @@ void opportunity::sNewCharacteristic()
   params.append("mode", "new");
   params.append("ophead_id", _opheadid);
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -1152,7 +1152,7 @@ void opportunity::sEditCharacteristic()
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)

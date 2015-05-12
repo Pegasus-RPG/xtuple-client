@@ -21,7 +21,7 @@
 
 const char *_taskStatuses[] = { "P", "O", "C" };
 
-task::task(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+task::task(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -163,10 +163,10 @@ enum SetResponse task::set(const ParameterList &pParams)
       _completed->setEnabled(false);
       _alarms->setEnabled(false);
       _comments->setReadOnly(true);
-      _newCharacteristic->setEnabled(FALSE);
+      _newCharacteristic->setEnabled(false);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _documents->setReadOnly(TRUE);
+      _documents->setReadOnly(true);
     }
   }
 
@@ -213,9 +213,9 @@ void task::populate()
     sFillList();
 
     //if (taskpopulate.value("prjtask_anyuser").toBool())
-    //  _anyUser->setChecked(TRUE);
+    //  _anyUser->setChecked(true);
     //else
-    //  _userList->setChecked(TRUE);
+    //  _userList->setChecked(true);
   }
   else if (taskpopulate.lastError().type() != QSqlError::NoError)
   {
@@ -232,7 +232,7 @@ void task::sNew()
   params.append("mode", "new");
   params.append("prjtask_id", _prjtaskid);
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -245,7 +245,7 @@ void task::sEdit()
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -401,7 +401,7 @@ void task::sNewUser()
 {
   XSqlQuery taskNewUser;
 /*
-  userList newdlg(this, "", TRUE);
+  userList newdlg(this, "", true);
   int result = newdlg.exec();
   if (result != XDialog::Rejected)
   {

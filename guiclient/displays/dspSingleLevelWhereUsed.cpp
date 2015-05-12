@@ -19,7 +19,7 @@
 #include "dspInventoryHistory.h"
 #include "item.h"
 
-dspSingleLevelWhereUsed::dspSingleLevelWhereUsed(QWidget* parent, const char*, Qt::WFlags fl)
+dspSingleLevelWhereUsed::dspSingleLevelWhereUsed(QWidget* parent, const char*, Qt::WindowFlags fl)
     : display(parent, "dspSingleLevelWhereUsed", fl)
 {
   setupUi(optionsWidget());

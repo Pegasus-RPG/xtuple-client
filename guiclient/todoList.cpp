@@ -23,7 +23,7 @@
 #include <QSqlError>
 #include <QToolBar>
 
-todoList::todoList(QWidget* parent, const char*, Qt::WFlags fl)
+todoList::todoList(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "todoList", fl)
 {
   _shown = false;
@@ -247,7 +247,7 @@ void todoList::sNew()
   parameterWidget()->appendValue(params);
   params.append("mode", "new");
 
-  todoItem newdlg(this, "", TRUE);
+  todoItem newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -282,7 +282,7 @@ void todoList::sEdit()
     params.append("mode", "edit");
     params.append("todoitem_id", list()->id());
 
-    todoItem newdlg(this, "", TRUE);
+    todoItem newdlg(this, "", true);
     newdlg.set(params);
 
     if (newdlg.exec() != XDialog::Rejected)
@@ -306,7 +306,7 @@ void todoList::sView()
     params.append("mode", "view");
     params.append("todoitem_id", list()->id());
 
-    todoItem newdlg(this, "", TRUE);
+    todoItem newdlg(this, "", true);
     newdlg.set(params);
 
     newdlg.exec();
@@ -377,7 +377,7 @@ void todoList::sDelete()
   if (deleteAll)
   {
     procname = "deleteOpenRecurringItems";
-    todoDelete.prepare("SELECT deleteOpenRecurringItems(:id, :type, NULL, TRUE)"
+    todoDelete.prepare("SELECT deleteOpenRecurringItems(:id, :type, NULL, true)"
               "       AS result;");
     todoDelete.bindValue(":id",   list()->id());
     todoDelete.bindValue(":type", recurtype);
@@ -493,7 +493,7 @@ void todoList::sEditIncident()
   params.append("mode", "edit");
   params.append("incdt_id", getId(2));
 
-  incident newdlg(this, "", TRUE);
+  incident newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -506,7 +506,7 @@ void todoList::sViewIncident()
   params.append("mode", "view");
   params.append("incdt_id", getId(2));
 
-  incident newdlg(this, "", TRUE);
+  incident newdlg(this, "", true);
   newdlg.set(params);
 
   newdlg.exec();
@@ -531,7 +531,7 @@ void todoList::sEditProject()
   qDebug("project %d", getId(4));
   params.append("prj_id", getId(4));
 
-  project newdlg(this, "", TRUE);
+  project newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -544,7 +544,7 @@ void todoList::sViewProject()
   params.append("mode", "view");
   params.append("prj_id", getId(4));
 
-  project newdlg(this, "", TRUE);
+  project newdlg(this, "", true);
   newdlg.set(params);
 
   newdlg.exec();
@@ -557,7 +557,7 @@ void todoList::sEditTask()
   params.append("mode", "edit");
   params.append("prjtask_id", list()->id());
 
-  task newdlg(this, "", TRUE);
+  task newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -570,7 +570,7 @@ void todoList::sViewTask()
   params.append("mode", "view");
   params.append("prjtask_id", list()->id());
 
-  task newdlg(this, "", TRUE);
+  task newdlg(this, "", true);
   newdlg.set(params);
 
   newdlg.exec();
@@ -617,7 +617,7 @@ void todoList::sEditOpportunity()
   params.append("mode", "edit");
   params.append("ophead_id", getId(5));
 
-  opportunity newdlg(this, "", TRUE);
+  opportunity newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -630,7 +630,7 @@ void todoList::sViewOpportunity()
   params.append("mode", "view");
   params.append("ophead_id", getId(5));
 
-  opportunity newdlg(this, "", TRUE);
+  opportunity newdlg(this, "", true);
   newdlg.set(params);
 
   newdlg.exec();

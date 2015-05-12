@@ -49,7 +49,7 @@ class characteristicPrivate {
     }
 };
 
-characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -104,8 +104,8 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
     {
       _d->mode = cEdit;
 // TODO
-//      _mask->setEnabled(FALSE);
-//      _validator->setEnabled(FALSE);
+//      _mask->setEnabled(false);
+//      _validator->setEnabled(false);
     }
     else if (param.toString() == "view")
     {
@@ -117,17 +117,17 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
       _mask->setEnabled(false);
       _validator->setEnabled(false);
 
-      _items->setEnabled(FALSE);
-      _customers->setEnabled(FALSE);
-      _lotSerial->setEnabled(FALSE);
-      _addresses->setEnabled(FALSE);
-      _crmaccounts->setEnabled(FALSE);
-      _contacts->setEnabled(FALSE);
-      _opportunity->setEnabled(FALSE);
-      _employees->setEnabled(FALSE);
+      _items->setEnabled(false);
+      _customers->setEnabled(false);
+      _lotSerial->setEnabled(false);
+      _addresses->setEnabled(false);
+      _crmaccounts->setEnabled(false);
+      _contacts->setEnabled(false);
+      _opportunity->setEnabled(false);
+      _employees->setEnabled(false);
       _incidents->setEnabled(false);
-      _projects->setEnabled(FALSE);
-      _tasks->setEnabled(FALSE);
+      _projects->setEnabled(false);
+      _tasks->setEnabled(false);
       _quotes->setEnabled(false);
       _salesorders->setEnabled(false);
       _invoices->setEnabled(false);
@@ -244,8 +244,8 @@ void characteristic::sSave()
   characteristicSave.bindValue(":char_crmaccounts", QVariant(_crmaccounts->isChecked()));
   characteristicSave.bindValue(":char_contacts",	   QVariant(_contacts->isChecked()));
   characteristicSave.bindValue(":char_addresses",   QVariant(_addresses->isChecked()));
-  characteristicSave.bindValue(":char_options",     QVariant(FALSE));
-  characteristicSave.bindValue(":char_attributes",  QVariant(FALSE));
+  characteristicSave.bindValue(":char_options",     QVariant(false));
+  characteristicSave.bindValue(":char_attributes",  QVariant(false));
   characteristicSave.bindValue(":char_lotserial",   QVariant(_lotSerial->isChecked()));
   characteristicSave.bindValue(":char_opportunity", QVariant(_opportunity->isChecked()));
   characteristicSave.bindValue(":char_employees",   QVariant(_employees->isChecked()));
@@ -294,7 +294,7 @@ void characteristic::sCheck()
       _d->mode = cEdit;
       populate();
 
-      _name->setEnabled(FALSE);
+      _name->setEnabled(false);
     }
   }
 }

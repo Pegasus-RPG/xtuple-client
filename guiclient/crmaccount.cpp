@@ -36,7 +36,7 @@
 
 #define DEBUG false
 
-crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
+crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -528,7 +528,7 @@ void crmaccount::sSave()
   }
 
   omfgThis->sCrmAccountsUpdated(_crmacctId);
-  omfgThis->sCustomersUpdated(-1, TRUE);
+  omfgThis->sCustomersUpdated(-1, true);
   omfgThis->sEmployeeUpdated(-1);
   omfgThis->sProspectsUpdated();
   omfgThis->sTaxAuthsUpdated(-1);
@@ -614,7 +614,7 @@ void crmaccount::sNewCharacteristic()
   params.append("mode", "new");
   params.append("crmacct_id", _crmacctId);
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -627,7 +627,7 @@ void crmaccount::sEditCharacteristic()
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -1063,13 +1063,13 @@ void crmaccount::sVendorInfo()
 void crmaccount::sCustomerToggled()
 {
   if (_customer->isChecked())
-    _prospect->setChecked(FALSE);
+    _prospect->setChecked(false);
 }
 
 void crmaccount::sProspectToggled()
 {
   if (_prospect->isChecked())
-    _customer->setChecked(FALSE);
+    _customer->setChecked(false);
 }
 
 void crmaccount::sPopulateRegistrations()
@@ -1104,7 +1104,7 @@ void crmaccount::sNewReg()
   params.append("mode", "new");
   params.append("crmacct_id", _crmacctId);
 
-  lotSerialRegistration newdlg(this, "", TRUE);
+  lotSerialRegistration newdlg(this, "", true);
   newdlg.set(params);
 
   newdlg.exec();
@@ -1117,7 +1117,7 @@ void crmaccount::sEditReg()
   params.append("mode", "edit");
   params.append("lsreg_id", _reg->id());
 
-  lotSerialRegistration newdlg(this, "", TRUE);
+  lotSerialRegistration newdlg(this, "", true);
   newdlg.set(params);
 
   newdlg.exec();
@@ -1192,7 +1192,7 @@ void crmaccount::sCheckNumber()
 
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
-      _number->setEnabled(FALSE);
+      _number->setEnabled(false);
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Database Error"),
                                   newq, __FILE__, __LINE__))

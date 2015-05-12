@@ -23,7 +23,7 @@
 #include "storedProcErrorLookup.h"
 #include "vendor.h"
 
-vendors::vendors(QWidget* parent, const char*, Qt::WFlags fl)
+vendors::vendors(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "vendors", fl)
 {
   setWindowTitle(tr("Vendors"));
@@ -69,7 +69,7 @@ vendors::vendors(QWidget* parent, const char*, Qt::WFlags fl)
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
   else
   {
-    newAction()->setEnabled(FALSE);
+    newAction()->setEnabled(false);
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
   }
 }

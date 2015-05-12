@@ -23,7 +23,7 @@
 #include "storedProcErrorLookup.h"
 #include "parameterwidget.h"
 
-items::items(QWidget* parent, const char*, Qt::WFlags fl)
+items::items(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "items", fl)
 {
   setWindowTitle(tr("Items"));
@@ -93,7 +93,7 @@ items::items(QWidget* parent, const char*, Qt::WFlags fl)
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
   else
   {
-    newAction()->setEnabled(FALSE);
+    newAction()->setEnabled(false);
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
   }
 

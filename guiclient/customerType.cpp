@@ -15,7 +15,7 @@
 #include <QSqlError>
 #include <QVariant>
 
-customerType::customerType(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+customerType::customerType(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -82,8 +82,8 @@ enum SetResponse customerType::set(const ParameterList &pParams)
     else if (param.toString() == "view")
     {
       _mode = cView;
-      _code->setEnabled(FALSE);
-      _description->setEnabled(FALSE);
+      _code->setEnabled(false);
+      _description->setEnabled(false);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
     }
@@ -111,7 +111,7 @@ void customerType::sCheck()
       _mode = cEdit;
       populate();
 
-      _code->setEnabled(FALSE);
+      _code->setEnabled(false);
     }
   }
 }
@@ -122,7 +122,7 @@ void customerType::sNew()
   params.append("mode", "new");
   params.append("custtype_id", _custtypeid);
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -135,7 +135,7 @@ void customerType::sEdit()
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)

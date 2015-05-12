@@ -23,12 +23,12 @@
 #include "taxDetail.h"
 #include "xdoublevalidator.h"
 
-creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   _listPrices->setMaximumWidth(25);
 #endif
 
@@ -95,7 +95,7 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
-  bool     vrestrict = FALSE;
+  bool     vrestrict = false;
 
   param = pParams.value("cmhead_id", &valid);
   if (valid)
@@ -114,7 +114,7 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
       if (! creditet.value("cmhead_invcnumber").toString().isEmpty())
         _invoiceNumber = creditet.value("cmhead_invcnumber").toInt();
       if ( (_invoiceNumber != -1) && (_metrics->boolean("RestrictCreditMemos")) )
-        vrestrict = TRUE;
+        vrestrict = true;
       _taxzoneid = creditet.value("cmhead_taxzone_id").toInt();
       _tax->setId(creditet.value("cmhead_curr_id").toInt());
       _tax->setEffective(creditet.value("cmhead_docdate").toDate());
@@ -163,8 +163,8 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 
-      _item->setReadOnly(TRUE);
-      _warehouse->setEnabled(FALSE);
+      _item->setReadOnly(true);
+      _warehouse->setEnabled(false);
 
       connect(_discountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateFromDiscount()));
       connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
@@ -173,15 +173,15 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      _item->setReadOnly(TRUE);
-      _warehouse->setEnabled(FALSE);
-      _qtyReturned->setEnabled(FALSE);
-      _qtyToCredit->setEnabled(FALSE);
-      _netUnitPrice->setEnabled(FALSE);
-      _discountFromSale->setEnabled(FALSE);
-      _comments->setReadOnly(TRUE);
-      _taxType->setEnabled(FALSE);
-      _rsnCode->setEnabled(FALSE);
+      _item->setReadOnly(true);
+      _warehouse->setEnabled(false);
+      _qtyReturned->setEnabled(false);
+      _qtyToCredit->setEnabled(false);
+      _netUnitPrice->setEnabled(false);
+      _discountFromSale->setEnabled(false);
+      _comments->setReadOnly(true);
+      _taxType->setEnabled(false);
+      _rsnCode->setEnabled(false);
 
       _save->hide();
       _close->setText(tr("&Close"));

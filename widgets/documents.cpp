@@ -203,7 +203,7 @@ void Documents::sNewImage()
   params.append("sourceType", _sourcetype);
   params.append("source_id", _sourceid);
 
-  imageAssignment newdlg(this, "", TRUE);
+  imageAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != QDialog::Rejected)
@@ -257,7 +257,7 @@ void Documents::sOpenDoc(QString mode)
       return;
 
     params.append("image_id", img.value("imageass_image_id").toInt());
-    imageview newdlg(this, "", TRUE);
+    imageview newdlg(this, "", true);
     newdlg.set(params);
 
     if (newdlg.exec() != QDialog::Rejected)
@@ -273,7 +273,7 @@ void Documents::sOpenDoc(QString mode)
       ParameterList params;
       params.append("url_id", targetid);
 
-      docAttach newdlg(this, "", TRUE);
+      docAttach newdlg(this, "", true);
       newdlg.set(params);
       newdlg.exec();
 
@@ -296,7 +296,7 @@ void Documents::sOpenDoc(QString mode)
       QDir tdir;
       // TODO: QDesktopServices::openUrl(urldb) on windows does not open files
       // containing spaces. why not?
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
       QString fileName = fi.fileName().remove(" ");
 #else
       QString fileName = fi.fileName();
@@ -321,7 +321,7 @@ void Documents::sOpenDoc(QString mode)
       tfile.write(qfile.value("url_stream").toByteArray());
       QUrl urldb;
       urldb.setUrl(tfile.fileName());
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN
       urldb.setScheme("file");
 #endif
       tfile.close();
@@ -394,7 +394,7 @@ void Documents::sAttachDoc()
   params.append("sourceType", _sourcetype);
   params.append("source_id", _sourceid);
 
-  docAttach newdlg(this, "", TRUE);
+  docAttach newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 
@@ -576,7 +576,7 @@ void Documents::refresh()
   query.bindValue(":source",   _sourcetype);
   query.bindValue(":sourceid", _sourceid);
   query.exec();
-  _doc->populate(query,TRUE);
+  _doc->populate(query,true);
   ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Documents"),
                        query, __FILE__, __LINE__);
 }

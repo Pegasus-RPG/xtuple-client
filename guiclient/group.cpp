@@ -20,7 +20,7 @@
 
 #define DEBUG false
 
-group::group(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+group::group(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   XSqlQuery groupgroup;
@@ -112,16 +112,16 @@ enum SetResponse group::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _name->setEnabled(FALSE);
+      _name->setEnabled(false);
       groupet.exec("BEGIN;");
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
-      _name->setEnabled(FALSE);
-      _description->setEnabled(FALSE);
-      _addAll->setEnabled(FALSE);
-      _revokeAll->setEnabled(FALSE);
+      _name->setEnabled(false);
+      _description->setEnabled(false);
+      _addAll->setEnabled(false);
+      _revokeAll->setEnabled(false);
       disconnect(_available, SIGNAL(itemSelected(int)), this, SLOT(sAdd()));
       disconnect(_available, SIGNAL(valid(bool)), _add, SLOT(setEnabled(bool)));
       disconnect(_granted, SIGNAL(itemSelected(int)), this, SLOT(sRevoke()));
@@ -192,7 +192,7 @@ void group::sCheck()
       _mode = cEdit;
       populate();
 
-      _name->setEnabled(FALSE);
+      _name->setEnabled(false);
     }
   }
 }

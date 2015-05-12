@@ -7,6 +7,9 @@ CONFIG += qt \
     plugin \
     uitools
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+    QT += widgets printsupport sql script designer
+}
 # INCLUDEPATH += $$QT_SOURCE_TREE/tools/designer/interfaces ../common .
 INCLUDEPATH += ../common \
     .
@@ -311,4 +314,4 @@ FORMS += alarmMaint.ui \
 
 RESOURCES += widgets.qrc
 
-QT +=  sql script
+QT += sql script

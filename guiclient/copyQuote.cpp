@@ -14,7 +14,7 @@
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 
-copyQuote::copyQuote(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+copyQuote::copyQuote(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);

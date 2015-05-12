@@ -22,7 +22,7 @@
 #include "guiclient.h"
 #include "parameterwidget.h"
 
-itemSources::itemSources(QWidget* parent, const char*, Qt::WFlags fl)
+itemSources::itemSources(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "itemSources", fl)
 {
   setWindowTitle(tr("Item Sources"));
@@ -99,7 +99,7 @@ void itemSources::sNew()
   ParameterList params;
   params.append("mode", "new");
 
-  itemSource newdlg(this, "", TRUE);
+  itemSource newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -112,7 +112,7 @@ void itemSources::sEdit()
   params.append("mode", "edit");
   params.append("itemsrc_id", list()->id());
 
-  itemSource newdlg(this, "", TRUE);
+  itemSource newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -125,7 +125,7 @@ void itemSources::sView()
   params.append("mode", "view");
   params.append("itemsrc_id", list()->id());
 
-  itemSource newdlg(this, "", TRUE);
+  itemSource newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -136,7 +136,7 @@ void itemSources::sCopy()
   params.append("mode", "copy");
   params.append("itemsrc_id", list()->id());
 
-  itemSource newdlg(this, "", TRUE);
+  itemSource newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)

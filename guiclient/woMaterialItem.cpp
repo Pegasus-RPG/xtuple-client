@@ -20,7 +20,7 @@
 #include "inputManager.h"
 #include "errorReporter.h"
 
-woMaterialItem::woMaterialItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+woMaterialItem::woMaterialItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -35,7 +35,7 @@ woMaterialItem::woMaterialItem(QWidget* parent, const char* name, bool modal, Qt
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
-  _captive = FALSE;
+  _captive = false;
 
   _wo->setType(cWoOpen | cWoExploded | cWoIssued | cWoReleased);
 
@@ -75,7 +75,7 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
   if (valid)
   {
     _wo->setId(param.toInt());
-    _wo->setReadOnly(TRUE);
+    _wo->setReadOnly(true);
   }
   
   param = pParams.value("bomitem_id", &valid);
@@ -85,10 +85,10 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
   param = pParams.value("item_id", &valid);
   if (valid)
   {
-    _captive = TRUE;
+    _captive = true;
 
     _item->setId(param.toInt());
-    _item->setReadOnly(TRUE);
+    _item->setReadOnly(true);
   }
   
   param = pParams.value("wooper_id", &valid);
@@ -144,10 +144,10 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
   param = pParams.value("womatl_id", &valid);
   if (valid)
   {
-    _captive = TRUE;
+    _captive = true;
 
-    _wo->setEnabled(FALSE);
-    _item->setEnabled(FALSE);
+    _wo->setEnabled(false);
+    _item->setEnabled(false);
 
     _womatlid = param.toInt();
     populate();
@@ -172,15 +172,15 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      _wo->setEnabled(FALSE);
-      _item->setEnabled(FALSE);
-      _qtyFxd->setEnabled(FALSE);
-      _qtyPer->setEnabled(FALSE);
-      _uom->setEnabled(FALSE);
-      _scrap->setEnabled(FALSE);
-      _issueMethod->setEnabled(FALSE);
-      _notes->setEnabled(FALSE);
-      _ref->setEnabled(FALSE);
+      _wo->setEnabled(false);
+      _item->setEnabled(false);
+      _qtyFxd->setEnabled(false);
+      _qtyPer->setEnabled(false);
+      _uom->setEnabled(false);
+      _scrap->setEnabled(false);
+      _issueMethod->setEnabled(false);
+      _notes->setEnabled(false);
+      _ref->setEnabled(false);
 
       _close->setText(tr("&Close"));
       _save->hide();
@@ -298,7 +298,7 @@ void woMaterialItem::sSave()
     }
   }
 
-  omfgThis->sWorkOrderMaterialsUpdated(_wo->id(), _womatlid, TRUE);
+  omfgThis->sWorkOrderMaterialsUpdated(_wo->id(), _womatlid, true);
 
   if (_captive)
     done(_womatlid);

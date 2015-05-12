@@ -29,7 +29,7 @@
 #include "copyQuote.h"
 #include "storedProcErrorLookup.h"
 
-quotes::quotes(QWidget* parent, const char *name, Qt::WFlags fl)
+quotes::quotes(QWidget* parent, const char *name, Qt::WindowFlags fl)
   : display(parent, "quotes", fl)
 {
   setupUi(optionsWidget());
@@ -70,7 +70,7 @@ quotes::quotes(QWidget* parent, const char *name, Qt::WFlags fl)
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
   else
   {
-    newAction()->setEnabled(FALSE);
+    newAction()->setEnabled(false);
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
   }
 
@@ -365,7 +365,7 @@ void quotes::sCopyToCustomer()
         ParameterList params;
         params.append("quhead_id", qid);
 
-        copyQuote newdlg(this, "", TRUE);
+        copyQuote newdlg(this, "", true);
         newdlg.set(params);
         lastid = newdlg.exec();
       }

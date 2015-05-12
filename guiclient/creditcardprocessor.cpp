@@ -13,7 +13,12 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QSqlError>
+#if QT_VERSION < 0x050000
 #include <QHttp>
+#else
+#include <QtNetwork>
+#include <QNetworkAccessManager>
+#endif
 #include <QSslSocket>
 #include <QSslCertificate>
 #include <QSslConfiguration>
@@ -286,7 +291,11 @@ CreditCardProcessor::CreditCardProcessor()
     _defaultTestServer("test.creditcardprocessor.com"),
     _defaultLivePort(0),
     _defaultTestPort(0),
+    #if QT_VERSION >= 0x050000
+    _manager(0)
+    #else
     _http(0)
+    #endif
 {
   if (DEBUG)
     qDebug("CCP:CreditCardProcessor()");
@@ -348,7 +357,7 @@ CreditCardProcessor::~CreditCardProcessor()
 CreditCardProcessor * CreditCardProcessor::getProcessor(const QString pcompany)
 {
   if (DEBUG)
-    qDebug("CCP:getProcessor(%s)", pcompany.toAscii().data());
+    qDebug("CCP:getProcessor(%s)", pcompany.toLatin1().data());
 
   if (pcompany == "Authorize.Net")
     return new AuthorizeDotNetProcessor();
@@ -451,8 +460,8 @@ int CreditCardProcessor::authorize(const int pccardid, const QString &pcvv, cons
   if (DEBUG)
     qDebug("CCP:authorize(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d, %s, %d)",
 	   pccardid, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
-	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid,
-	   preftype.toAscii().data(), prefid);
+	   pneworder.toLatin1().data(), preforder.toLatin1().data(), pccpayid,
+	   preftype.toLatin1().data(), prefid);
   reset();
 
   if (pamount <= 0)
@@ -611,8 +620,8 @@ int CreditCardProcessor::charge(const int pccardid, const QString &pcvv, const d
   if (DEBUG)
     qDebug("CCP:charge(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d, %s, %d)",
 	   pccardid, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
-	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid,
-	   preftype.toAscii().data(), prefid);
+	   pneworder.toLatin1().data(), preforder.toLatin1().data(), pccpayid,
+	   preftype.toLatin1().data(), prefid);
   reset();
 
   if (pamount <= 0)
@@ -740,7 +749,7 @@ int CreditCardProcessor::chargePreauthorized(const QString &pcvv, const double p
   if (DEBUG)
     qDebug("CCP:chargePreauthorized(pcvv, %f, %d, %s, %s, %d)",
 	   pamount, pcurrid,
-	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
+	   pneworder.toLatin1().data(), preforder.toLatin1().data(), pccpayid);
   reset();
 
   int returnVal   = 0;
@@ -1060,8 +1069,8 @@ int CreditCardProcessor::credit(const int pccardid, const QString &pcvv, const d
   if (DEBUG)
     qDebug("CCP:credit(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d, %s, %d)",
 	   pccardid, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
-	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid,
-	   preftype.toAscii().data(), prefid);
+	   pneworder.toLatin1().data(), preforder.toLatin1().data(), pccpayid,
+	   preftype.toLatin1().data(), prefid);
   reset();
 
   if (preftype == "cohead" && prefid < 0)
@@ -1619,7 +1628,7 @@ int CreditCardProcessor::doAuthorize(const int pccardid, const QString &pcvv, do
   if (DEBUG)
     qDebug("CCP:doAuthorize(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
 	   pccardid, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
-	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
+	   pneworder.toLatin1().data(), preforder.toLatin1().data(), pccpayid);
   _errorMsg = errorMsg(-19).arg("doAuthorize");
   return -19;
 }
@@ -1634,7 +1643,7 @@ int CreditCardProcessor::doCharge(const int pccardid, const QString &pcvv, const
   if (DEBUG)
     qDebug("CCP:doCharge(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
 	    pccardid, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
-	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
+	   pneworder.toLatin1().data(), preforder.toLatin1().data(), pccpayid);
   _errorMsg = errorMsg(-19).arg("doCharge");
   return -19;
 }
@@ -1649,7 +1658,7 @@ int CreditCardProcessor::doChargePreauthorized(const int pccardid, const QString
   if (DEBUG)
     qDebug("CCP:doChargePreauthorized(%d, pcvv, %f, %d, %s, %s, %d)",
 	   pccardid, pamount, pcurrid,
-	    pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
+	    pneworder.toLatin1().data(), preforder.toLatin1().data(), pccpayid);
   _errorMsg = errorMsg(-19).arg("doChargePreauthorized");
   return -19;
 }
@@ -1674,7 +1683,7 @@ int CreditCardProcessor::doCredit(const int pccardid, const QString &pcvv, const
   if (DEBUG)
     qDebug("CCP:doCredit(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
 	   pccardid, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
-	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
+	   pneworder.toLatin1().data(), preforder.toLatin1().data(), pccpayid);
   _errorMsg = errorMsg(-19).arg("doCredit");
   return -19;
 }
@@ -1701,8 +1710,8 @@ int CreditCardProcessor::doVoidPrevious(const int pccardid, const QString &pcvv,
   if (DEBUG)
     qDebug("CCP:doVoidPrevious(%d, pcvv, %f, %d, %s, %s, %s, %d)",
 	   pccardid, pamount, pcurrid,
-	   pneworder.toAscii().data(), preforder.toAscii().data(),
-	   papproval.toAscii().data(), pccpayid);
+	   pneworder.toLatin1().data(), preforder.toLatin1().data(),
+	   papproval.toLatin1().data(), pccpayid);
   _errorMsg = errorMsg(-19).arg("doVoidPrevious");
   return -19;
 }
@@ -1728,18 +1737,18 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
 {
   if (DEBUG)
     qDebug("CCP:sendViaHTTP(input, output) with input:\n%s",
-	   prequest.toAscii().data());
+	   prequest.toLatin1().data());
 
   // TODO: find a better place to save this
   if (isTest())
     _metrics->set("CCOrder", prequest);
 
   QString pemfile;
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
   pemfile = _metrics->value("CCYPWinPathPEM");
-#elif defined Q_WS_MACX
+#elif defined Q_OS_MAC
   pemfile = _metrics->value("CCYPMacPathPEM");
-#elif defined Q_WS_X11
+#elif defined Q_OS_LINUX
   pemfile = _metrics->value("CCYPLinPathPEM");
 #endif
 
@@ -1775,10 +1784,27 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
                                   "the PEM file %1. "
                                   "This may cause communication problems.")
                                .arg(pemfile));
-        else if (certlist.at(0).isValid())
+#if QT_VERSION >= 0x050000
+        else if (QDateTime::currentDateTime() > certlist.at(0).effectiveDate()
+         && QDateTime::currentDateTime() < certlist.at(0).expiryDate()  && !certlist.at(0).isBlacklisted())
         {
           if (DEBUG)
             qDebug("Certificate details: valid from %s to %s, issued to %s @ %s in %s, %s",
+                   qPrintable(certlist.at(0).effectiveDate().toString("MMM-dd-yyyy")));
+                   /*qPrintable(certlist.at(0).expiryDate().toString("MMM-dd-yyyy")),
+                   qPrintable(certlist.at(0).issuerInfo(QSslCertificate::CommonName)),
+                   qPrintable(certlist.at(0).issuerInfo(QSslCertificate::Organization)),
+                   qPrintable(certlist.at(0).issuerInfo(QSslCertificate::LocalityName)),
+                   qPrintable(certlist.at(0).issuerInfo(QSslCertificate::CountryName)));*/
+          QSslConfiguration sslconf = QSslConfiguration::defaultConfiguration();
+          sslconf.setLocalCertificate(certlist.at(0));
+          QSslConfiguration::setDefaultConfiguration(sslconf);
+        }
+#else
+        else if (certlist.at(0).isValid())
+        {
+         if (DEBUG)
+             qDebug("Certificate details: valid from %s to %s, issued to %s @ %s in %s, %s",
                    qPrintable(certlist.at(0).effectiveDate().toString("MMM-dd-yyyy")),
                    qPrintable(certlist.at(0).expiryDate().toString("MMM-dd-yyyy")),
                    qPrintable(certlist.at(0).issuerInfo(QSslCertificate::CommonName)),
@@ -1789,6 +1815,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
           sslconf.setLocalCertificate(certlist.at(0));
           QSslConfiguration::setDefaultConfiguration(sslconf);
         }
+#endif
         else
         {
           QMessageBox::warning(0, tr("Invalid Certificate"),
@@ -1798,7 +1825,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
         }
       }
     }
-
+#if QT_VERSION < 0x050000
     QHttp::ConnectionMode cmode = QHttp::ConnectionModeHttps;
     QUrl ccurl(buildURL(_metrics->value("CCServer"), _metrics->value("CCPort"), true));
     if(ccurl.scheme().compare("https", Qt::CaseInsensitive) != 0)
@@ -1836,6 +1863,53 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
       return -18;
     }
     presponse = _http->readAll();
+   #else
+    // ganked from contributed qt5 port
+    QNetworkRequest request;
+        QUrl ccurl(buildURL(_metrics->value("CCServer"), _metrics->value("CCPort"), true));
+
+        request.setUrl(ccurl);
+
+        if (!_extraHeaders.isEmpty())
+        {
+          QPair<QString,QString> pair;
+          foreach(pair, _extraHeaders)
+            request.setRawHeader(pair.first.toLatin1(), pair.second.toLatin1());
+        }
+
+        if(ccurl.scheme().compare("https", Qt::CaseInsensitive) == 0)
+           request.setSslConfiguration(QSslConfiguration::defaultConfiguration());
+
+        _manager = new QNetworkAccessManager(this);
+        connect(_manager, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError> &)),
+                this,  SLOT(sslErrors(QNetworkReply*, const QList<QSslError> &)));
+
+        if(_metrics->boolean("CCUseProxyServer"))
+        {
+          _manager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, _metrics->value("CCProxyServer"), _metrics->value("CCProxyPort").toInt(),
+                        _metricsenc->value("CCProxyLogin"), _metricsenc->value("CCPassword")));
+        }
+
+        QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
+        QNetworkReply *reply;
+        reply =_manager->post(request, prequest.toUtf8());
+
+        if (!waitForHTTP())
+        {
+          //Possible TODO: handle a timeout as indicated by a false return value from waitForHTTP()
+        }
+        QApplication::restoreOverrideCursor();
+
+        if(reply->error() != QNetworkReply::NoError)
+        {
+          _errorMsg = errorMsg(-18)
+                            .arg(ccurl.toString())
+                            .arg(reply->error())
+                            .arg(reply->errorString());
+          return -18;
+        }
+        presponse = reply->readAll();
+#endif
   }
   else
 #endif // QT_NO_OPENSSL
@@ -1843,11 +1917,11 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
     // TODO: why have a hard-coded path to curl?
     QProcess proc(this);
     QString curl_path;
-  #ifdef Q_WS_WIN
+  #ifdef Q_OS_WIN
     curl_path = qApp->applicationDirPath() + "\\curl";
-  #elif defined Q_WS_MACX
+  #elif defined Q_OS_MAC
     curl_path = "/usr/bin/curl";
-  #elif defined Q_WS_X11
+  #elif defined Q_OS_LINUX
     curl_path = "/usr/bin/curl";
   #endif
 
@@ -1886,7 +1960,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
 
     QString curlCmd = curl_path + ((DEBUG) ? (" " + curl_args.join(" ")) : "");
     if (DEBUG)
-      qDebug("%s", curlCmd.toAscii().data());
+      qDebug("%s", curlCmd.toLatin1().data());
 
     QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
     /* TODO: consider changing to the original implementation:
@@ -1944,7 +2018,23 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
 
   return 0;
 }
+#if QT_VERSION >= 0x050000
+/** @brief Wait for the HTTP request sent by _manager to finish.
+           Added for Qt5.
 
+    @todo Add a timeout parameter and return false if it is exceeded.
+  */
+bool CreditCardProcessor::waitForHTTP()
+{
+  QEventLoop loop;
+
+  connect(_manager, SIGNAL(finished(QNetworkReply *)),
+          &loop, SLOT(quit()));
+  loop.exec();
+
+  return true;
+}
+#endif
 
 /** @brief Insert into or update the ccpay table based on parameters extracted
            from the credit card processing service' response to a transaction
@@ -2243,7 +2333,7 @@ int CreditCardProcessor::fraudChecks()
 
   if (DEBUG)
     qDebug("CCP:fraudChecks() returning %d with _errorMsg %s",
-	   returnValue, _errorMsg.toAscii().data());
+	   returnValue, _errorMsg.toLatin1().data());
 
   return returnValue;
 }
@@ -2286,7 +2376,7 @@ int CreditCardProcessor::printReceipt(const int pccpayid)
 
   if (DEBUG)
     qDebug("CCP:printReceipt() returning %d with _errorMsg %s",
-	   returnValue, _errorMsg.toAscii().data());
+	   returnValue, _errorMsg.toLatin1().data());
 
   return returnValue;
 }
@@ -2377,8 +2467,8 @@ bool CreditCardProcessor::handlesCreditCards()
 QString CreditCardProcessor::buildURL(const QString pserver, const QString pport, const bool pinclport)
 {
   if (DEBUG)
-    qDebug("buildURL(%s, %s, %d)", pserver.toAscii().data(),
-           pport.toAscii().data(), pinclport);
+    qDebug("buildURL(%s, %s, %d)", pserver.toLatin1().data(),
+           pport.toLatin1().data(), pinclport);
 
   QString defaultprotocol = "https";
 
@@ -2387,19 +2477,19 @@ QString CreditCardProcessor::buildURL(const QString pserver, const QString pport
   protocol.remove(QRegExp("://.*"));
   if (protocol == serverStr)
     protocol = "";
-  if (DEBUG) qDebug("protocol: %s", protocol.toAscii().data());
+  if (DEBUG) qDebug("protocol: %s", protocol.toLatin1().data());
   if (protocol.isEmpty())
     protocol = defaultprotocol;
 
   QString host      = serverStr;
   host.remove(QRegExp("^.*://")).remove(QRegExp("[/:].*"));
-  if (DEBUG) qDebug("host: %s", host.toAscii().data());
+  if (DEBUG) qDebug("host: %s", host.toLatin1().data());
 
   QString port      = serverStr;
   port.remove(QRegExp("^([^:/]+://)?[^:]*:")).remove(QRegExp("/.*"));
   if (port == serverStr || port == host)
     port = "";
-  if (DEBUG) qDebug("port: %s", port.toAscii().data());
+  if (DEBUG) qDebug("port: %s", port.toLatin1().data());
   if (! pinclport)
     port = "";
   else if (port.isEmpty())
@@ -2409,7 +2499,7 @@ QString CreditCardProcessor::buildURL(const QString pserver, const QString pport
   remainder.remove(QRegExp("^([^:/]+://)?[^:/]*(:[0-9]+)?/"));
   if (remainder == serverStr)
     remainder = "";
-  if (DEBUG) qDebug("remainder: %s", remainder.toAscii().data());
+  if (DEBUG) qDebug("remainder: %s", remainder.toLatin1().data());
 
   serverStr = protocol + "://" + host;
 
@@ -2418,7 +2508,7 @@ QString CreditCardProcessor::buildURL(const QString pserver, const QString pport
 
   serverStr += "/" + remainder;
 
-  if (DEBUG) qDebug("buildURL: returning %s", serverStr.toAscii().data());
+  if (DEBUG) qDebug("buildURL: returning %s", serverStr.toLatin1().data());
   return serverStr;
 }
 
@@ -3069,11 +3159,36 @@ CreditCardProcessor::FraudCheckResult *CreditCardProcessor::cvvCodeLookup(QChar 
 
   return 0;
 }
-
-void CreditCardProcessor::sslErrors(const QList<QSslError> &errors)
+#if QT_VERSION >= 0x050000
+void CreditCardProcessor::sslErrors(QNetworkReply *reply, const QList<QSslError> &errors)
 {
   if (DEBUG)
     qDebug() << "CreditCardProcessor::sslErrors(" << errors << ")";
+
+  //QHttp *httpobj = qobject_cast<QHttp*>(sender());
+  if (errors.size() > 0 && reply)
+  {
+    QString errlist;
+    for (int i = 0; i < errors.size(); i++)
+      errlist += QString("<li>%1</li>").arg(errors.at(i).errorString());
+    if (_ignoreSslErrors ||
+        QMessageBox::question(0,
+                              tr("Questionable Security"),
+                              tr("<p>The security of this transaction may be compromised."
+                                 " The following SSL errors have been reported:"
+                                 "<ul>%1</ul></p>"
+                                 "<p>Would you like to continue anyway?</p>")
+                              .arg(errlist),
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+        reply->ignoreSslErrors(errors);
+  }
+}
+#else
+void CreditCardProcessor::sslErrors(const QList<QSslError> &errors)
+{
+   if (DEBUG)
+     qDebug() << "CreditCardProcessor::sslErrors(" << errors << ")";
 
   QHttp *httpobj = qobject_cast<QHttp*>(sender());
   if (errors.size() > 0 && httpobj)
@@ -3094,3 +3209,4 @@ void CreditCardProcessor::sslErrors(const QList<QSslError> &errors)
         httpobj->ignoreSslErrors();
   }
 }
+#endif

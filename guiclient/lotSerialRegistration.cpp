@@ -19,7 +19,7 @@
 #include "storedProcErrorLookup.h"
 #include "characteristicAssignment.h"
 
-lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -162,7 +162,7 @@ void lotSerialRegistration::sNewCharass()
   params.append("mode", "new");
   params.append("lsreg_id", _lsregid);
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -175,7 +175,7 @@ void lotSerialRegistration::sEditCharass()
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)

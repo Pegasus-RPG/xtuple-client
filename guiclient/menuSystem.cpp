@@ -84,7 +84,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   toolBar = new QToolBar(tr("Community Tools"));
   toolBar->setObjectName("Community Tools");
   toolBar->setIconSize(QSize(32, 32));
-  QList<QToolBar *> toolbars = qFindChildren<QToolBar *>(parent);
+  QList<QToolBar *> toolbars = parent->findChildren<QToolBar *>();
   parent->insertToolBar(toolbars.at(0), toolBar);
 
   errorLogListener::initialize();
@@ -108,7 +108,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.eventManager",             tr("E&vent Manager..."),              SLOT(sEventManager()),             systemMenu, "true",                                      NULL, NULL, true },
     { "sys.viewDatabaseLog",          tr("View Database &Log..."),          SLOT(sErrorLog()),                 systemMenu, "true",                                      NULL, NULL, true },
     { "separator",                    NULL,                                 NULL,                              systemMenu, "true",                                      NULL, NULL, true },
-#ifndef Q_WS_MACX
+#ifndef Q_OS_MAC
     { "sys.preferences",              tr("P&references..."),                SLOT(sPreferences()),              systemMenu, "MaintainPreferencesSelf MaintainPreferencesOthers",  NULL,   NULL,   true },
 #endif
     { "sys.hotkeys",                  tr("&Hot Keys..."),                   SLOT(sHotKeys()),                  systemMenu, "true",  NULL,   NULL,   !(_privileges->check("MaintainPreferencesSelf") || _privileges->check("MaintainPreferencesOthers")) },
@@ -150,8 +150,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.printAlignmentPage",	tr("Print &Alignment Page..."),	SLOT(sPrintAlignment()),	sysUtilsMenu,	"true",	NULL,	NULL,	true	},
 
     // Setup
-    { "sys.setup",	tr("&Setup..."),	SLOT(sSetup()),	systemMenu,	NULL,	NULL,	NULL,	true	},
-
+    { "sys.setup",	tr("&Setup..."),	SLOT(sSetup()),	systemMenu,	"true",	NULL,	NULL,	true	},
     { "separator",		NULL,				NULL,				systemMenu,	"true",	NULL,	NULL,	true	},
     { "sys.exit",	tr("E&xit xTuple ERP..."), SLOT(sExit()),				systemMenu,	"true",	NULL,	NULL,	true	},
 
@@ -166,13 +165,13 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   // Community
   communityMenu = new QMenu();
   actionProperties community[] = {
-    { "community.home",        tr("xTuple.org &Home"),             SLOT(sCommunityHome()),        communityMenu, "true", QPixmap(":images/community.png"), toolBar, true },
+    { "community.home",        tr("xTuple.org &Home"),             SLOT(sCommunityHome()),        communityMenu, "true", new QPixmap(":images/community.png"), toolBar, true },
     { "separator",	       NULL,				   NULL,		          communityMenu, "true", NULL, NULL, true	},
     { "community.editAccount", tr("My Online User &Account"),      SLOT(sCommunityEditAccount()), communityMenu, "true", NULL, NULL, true },
     { "community.support",     tr("Online Customer &Support"),     SLOT(sCommunitySupport()),     communityMenu, "true", NULL, NULL, true },
     { "community.wiki",        tr("Online Documentation / &Wiki"), SLOT(sCommunityWiki()),        communityMenu, "true", NULL, NULL, true },
     { "separator",	       NULL,				   NULL,		          communityMenu, "true", NULL, NULL, true	},
-    { "community.xchange",     tr("&xChange online store"),        SLOT(sCommunityXchange()),     communityMenu, "true", QPixmap(":images/xchange.png"), toolBar, true },
+    { "community.xchange",     tr("&xChange online store"),        SLOT(sCommunityXchange()),     communityMenu, "true", new QPixmap(":images/xchange.png"), toolBar, true },
     { "separator",	       NULL,				   NULL,		          communityMenu, "true", NULL, NULL, true	},
     { "community.forums",      tr("Discussion &Forums"),           SLOT(sCommunityForums()),      communityMenu, "true", NULL, NULL, true },
     { "community.issues",      tr("&Bugs and Feature Requests"),   SLOT(sCommunityIssues()),      communityMenu, "true", NULL, NULL, true },
@@ -189,7 +188,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   helpMenu = new QMenu();
   actionProperties help[] = {
     { "help.about",		tr("&About..."),		SLOT(sAbout()),	helpMenu, "true", NULL, NULL, true	},
-#ifndef Q_WS_MACX
+#ifndef Q_OS_MAC
     { "separator",		NULL,				NULL,		helpMenu, "true", NULL, NULL, true	},
 #endif
 //  { "help.tableOfContents",	tr("Table of &Contents..."),	SLOT(sTOC()),	helpMenu, "true", NULL, NULL, true	},
@@ -254,7 +253,7 @@ void menuSystem::sEventManager()
 
 void menuSystem::sPreferences()
 {
-  userPreferences(parent, "", TRUE).exec();
+  userPreferences(parent, "", true).exec();
 }
 
 void menuSystem::sHotKeys()
@@ -263,7 +262,7 @@ void menuSystem::sHotKeys()
 
   params.append("currentUser");
 
-  hotkeys newdlg(omfgThis, "", TRUE);
+  hotkeys newdlg(omfgThis, "", true);
   newdlg.set(params);
   if (newdlg.exec() == QDialog::Accepted)
     sRescanPrivileges();
@@ -412,7 +411,7 @@ void menuSystem::sExportData()
 void menuSystem::sCSVAtlases()
 {
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
   if (_preferences->value("InterfaceWindowOption") == "Workspace")
   {
     QMessageBox::critical( parent, tr("Interface Option is Invalid"),
