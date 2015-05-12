@@ -59,11 +59,17 @@ win32-g++-4.6 {
   LIBS += -lz
 }
 
-
-unix: !macx {
-  OBJECTS_DIR = unx_obj
-  LIBS += -lz -lQt5DesignerComponents
+equals(QT_MAJOR_VERSION, 5) {
+ unix: !macx {
+ OBJECTS_DIR = unx_obj
+ LIBS += -lz -lQt5DesignerComponents
+ }
 }
+unix: !macx {
+ OBJECTS_DIR = unx_obj
+ LIBS += -lz
+}
+
 equals(QT_MAJOR_VERSION, 5) {
 macx {
   RC_FILE = images/icons.icns
