@@ -15,7 +15,9 @@
 #include <QVariant>
 #include <QRegExpValidator>
 
+#include <metasql.h>
 #include "characteristic.h"
+#include "errorReporter.h"
 
 characteristicAssignment::characteristicAssignment(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -50,156 +52,46 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("item_id", &valid);
-  if (valid)
+  /* derive the _targetType from the source table and pParams,
+     skipping params we know don't describe targets.
+   */
+  QStringList passedIn;
+  foreach (Parameter p, pParams)
   {
-    _targetId = param.toInt();
-    _targetType = "I";
-    handleTargetType();
+    if (p.name() != "charass_id" && p.name() != "char_id" &&
+        p.name() != "mode"       && p.name() != "showPrices")
+    {
+      passedIn << p.name();
+    }
   }
+  ParameterList srcp;
+  srcp.append("paramName", passedIn);
 
-  param = pParams.value("cust_id", &valid);
-  if (valid)
+  MetaSQLQuery srcm("SELECT source.* FROM source WHERE source_key_param IN ("
+                    "<? foreach('paramName') ?>"
+                    "  <? if not isfirst('paramName') ?>, <? endif ?>"
+                    "  <? value('paramName') ?>"
+                    "<? endforeach ?>);");
+  XSqlQuery srcq = srcm.toQuery(srcp);
+  if (srcq.first())
   {
-    _targetId = param.toInt();
-    _targetType = "C";
-    handleTargetType();
+    QString paramName = srcq.value("source_key_param").toString();
+    param = pParams.value(paramName, &valid);
+    if (valid)
+    {
+      _targetId = param.toInt();
+      _targetType = srcq.value("source_charass").toString();
+      QString descrip = srcq.value("source_descrip").toString();
+      setWindowTitle(tr("Characteristic: %1")
+                     .arg(tr(descrip.toLatin1())));
+      handleTargetType();
+    }
   }
-
-  param = pParams.value("crmacct_id", &valid);
-  if (valid)
+  else if (ErrorReporter::error(QtCriticalMsg, this,
+                                tr("Error Finding Characteristic Information"),
+                                srcq, __FILE__, __LINE__))
   {
-    _targetId = param.toInt();
-    _targetType = "CRMACCT";
-    handleTargetType();
-  }
-
-  param = pParams.value("addr_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "ADDR";
-    handleTargetType();
-  }
-
-  param = pParams.value("cntct_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "CNTCT";
-    handleTargetType();
-  }
-
-  param = pParams.value("custtype_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "CT";
-    handleTargetType();
-  }
-
-  param = pParams.value("ls_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "LS";
-    handleTargetType();
-  }
-
-  param = pParams.value("lsreg_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "LSR";
-    handleTargetType();
-  }
-
-  param = pParams.value("ophead_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "OPP";
-    handleTargetType();
-  }
-
-  param = pParams.value("emp_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "EMP";
-    handleTargetType();
-  }
-
-  param = pParams.value("incdt_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "INCDT";
-    handleTargetType();
-  }
-
-  param = pParams.value("prj_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "PROJ";
-    handleTargetType();
-  }
-
-  param = pParams.value("prjtask_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "TASK";
-    handleTargetType();
-  }
-
-  param = pParams.value("quhead_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "QU";
-    handleTargetType();
-  }
-  
-  param = pParams.value("cohead_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "SO";
-    handleTargetType();
-  }
-  
-  param = pParams.value("invchead_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "INV";
-    handleTargetType();
-  }
-  
-  param = pParams.value("vend_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "V";
-    handleTargetType();
-  }
-  
-  param = pParams.value("pohead_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "PO";
-    handleTargetType();
-  }
-  
-  param = pParams.value("vohead_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "VCH";
-    handleTargetType();
+    return Error_NoSetup;
   }
 
   param = pParams.value("charass_id", &valid);
@@ -456,101 +348,10 @@ void characteristicAssignment::handleTargetType()
   if(_targetType != "I")
     _listprice->hide();
 
-  QString boolColumn;
-  if ((_targetType == "C") || (_targetType == "CT"))
-  {
-    setWindowTitle(tr("Customer Characteristic"));
-    boolColumn = "char_customers";
-  }
-  else if (_targetType == "I")
-  {
-    setWindowTitle(tr("Item Characteristic"));
-    boolColumn = "char_items";
-  }
-  else if (_targetType == "CNTCT")
-  {
-    setWindowTitle(tr("Contact Characteristic"));
-    boolColumn = "char_contacts";
-  }
-  else if (_targetType == "ADDR")
-  {
-    setWindowTitle(tr("Address Characteristic"));
-    boolColumn = "char_addresses";
-  }
-  else if (_targetType == "CRMACCT")
-  {
-    setWindowTitle(tr("Account Characteristic"));
-    boolColumn = "char_crmaccounts";
-  }
-  else if (_targetType == "LS")
-  {
-    setWindowTitle(tr("Lot Serial Characteristic"));
-    boolColumn = "char_lotserial";
-  }
-  else if (_targetType == "LSR")
-  {
-    setWindowTitle(tr("Lot/Serial Registration Characteristic"));
-    boolColumn = "char_lotserial";
-  }
-  else if (_targetType == "OPP")
-  {
-    setWindowTitle(tr("Opportunity Characteristic"));
-    boolColumn = "char_opportunity";
-  }
-  else if (_targetType == "EMP")
-  {
-    setWindowTitle(tr("Employee Characteristic"));
-    boolColumn = "char_employees";
-  }
-  else if (_targetType == "INCDT")
-  {
-    setWindowTitle(tr("Incident Characteristic"));
-    boolColumn = "char_incidents";
-  }
-  else if (_targetType == "PROJ")
-  {
-    setWindowTitle(tr("Project Characteristic"));
-    boolColumn = "char_projects";
-  }
-  else if (_targetType == "TASK")
-  {
-    setWindowTitle(tr("Project Task Characteristic"));
-    boolColumn = "char_tasks";
-  }
-  else if (_targetType == "QU")
-  {
-    setWindowTitle(tr("Quote Characteristic"));
-    boolColumn = "char_quotes";
-  }
-  else if (_targetType == "SO")
-  {
-    setWindowTitle(tr("Sales Order Characteristic"));
-    boolColumn = "char_salesorders";
-  }
-  else if (_targetType == "INV")
-  {
-    setWindowTitle(tr("Invoice Characteristic"));
-    boolColumn = "char_invoices";
-  }
-  else if (_targetType == "V")
-  {
-    setWindowTitle(tr("Vendor Characteristic"));
-    boolColumn = "char_vendors";
-  }
-  else if (_targetType == "PO")
-  {
-    setWindowTitle(tr("Purchase Order Characteristic"));
-    boolColumn = "char_purchaseorders";
-  }
-  else if (_targetType == "VCH")
-  {
-    setWindowTitle(tr("Voucher Characteristic"));
-    boolColumn = "char_vouchers";
-  }
-
   QSqlQueryModel *model = new QSqlQueryModel;
   model->setQuery("SELECT char_id, char_name, char_type"
-                  "  FROM char WHERE " + boolColumn +
+                  "  FROM char JOIN charuse ON char_id = charuse_char_id"
+                  " WHERE charuse_target_type = '" + _targetType + "'"
                   " ORDER BY char_order, char_name");
   _char->setModel(model);
   _char->setModelColumn(1); // char_name

@@ -19,6 +19,7 @@
 #include <openreports.h>
 
 #include "characteristic.h"
+#include "errorReporter.h"
 #include "storedProcErrorLookup.h"
 
 characteristics::characteristics(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -107,20 +108,12 @@ void characteristics::sDelete()
   characteristicsDelete.exec();
   if (characteristicsDelete.first())
   {
-    int returnVal = characteristicsDelete.value("result").toInt();
-    if (returnVal < 0)
-    {
-      QMessageBox::critical( this, tr("Cannot Delete Characteristic"),
-                             storedProcErrorLookup("deleteCharacteristic",
-						   returnVal));
-      return;
-    }
-
     sFillList();
   }
-  else if (characteristicsDelete.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this,
+                                tr("Cannot Delete Characteristic"),
+                                characteristicsDelete, __FILE__, __LINE__))
   {
-    systemError(this, characteristicsDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
