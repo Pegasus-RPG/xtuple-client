@@ -1924,6 +1924,20 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
   #elif defined Q_OS_LINUX
     curl_path = "/usr/bin/curl";
   #endif
+    QFileInfo checkCurl(curl_path);
+    if(!checkCurl.exists())
+    {
+     if(DEBUG)
+     {
+       qDebug("%s", checkCurl.absoluteFilePath());
+     }
+     QApplication::restoreOverrideCursor();
+     _errorMsg = errorMsg(-18)
+           .arg(checkCurl)
+           .arg("")
+           .arg(QString(proc.readAllStandardError()));
+     return -18;
+    }
 
     QStringList curl_args;
     curl_args.append( "-k" );
