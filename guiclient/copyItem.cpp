@@ -298,9 +298,10 @@ void copyItem::sFillItem()
   XSqlQuery bomitemq;
   bomitemq.prepare("SELECT item_id, item_number, itemalias_number, item_descrip1 "
                    "FROM item LEFT OUTER JOIN itemalias ON (itemalias_item_id=item_id) "
-                   "WHERE (item_number ~* :searchfor)"
-                   "   OR (itemalias_number ~* :searchfor)"
-                   "   OR (item_descrip1 ~* :searchfor);");
+                   "WHERE ( (item_number ~* :searchfor) OR"
+                   "        (itemalias_number ~* :searchfor) OR"
+                   "        (item_descrip1 ~* :searchfor) )"
+                   "  AND (item_active OR fetchMetricBool('AllowInactiveBomItems'));");
   bomitemq.bindValue(":searchfor", _searchForBOM->text());
   bomitemq.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Filling Bomitem"),
