@@ -23,7 +23,7 @@
 
 #define DEBUG false
 
-company::company(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+company::company(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -96,10 +96,10 @@ enum SetResponse company::set(const ParameterList &pParams)
     {
       _mode = cView;
       
-      _number->setEnabled(FALSE);
-      _descrip->setEnabled(FALSE);
-      _external->setEnabled(FALSE);
-      _authGroup->setEnabled(FALSE);
+      _number->setEnabled(false);
+      _descrip->setEnabled(false);
+      _external->setEnabled(false);
+      _authGroup->setEnabled(false);
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }

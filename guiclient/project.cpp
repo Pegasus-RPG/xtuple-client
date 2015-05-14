@@ -35,7 +35,7 @@
 
 const char *_projectStatuses[] = { "P", "O", "C" };
 
-project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -199,7 +199,7 @@ enum SetResponse project::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 
-      _number->setEnabled(FALSE);
+      _number->setEnabled(false);
 
       connect(_assignedTo, SIGNAL(newId(int)), this, SLOT(sAssignedToChanged(int)));
       connect(_status,  SIGNAL(currentIndexChanged(int)), this, SLOT(sStatusChanged(int)));
@@ -213,28 +213,28 @@ enum SetResponse project::set(const ParameterList &pParams)
     {
       _mode = cView;
       
-      _owner->setEnabled(FALSE);
-      _number->setEnabled(FALSE);
-      _status->setEnabled(FALSE);
-      _name->setEnabled(FALSE);
-      _descrip->setEnabled(FALSE);
-      _so->setEnabled(FALSE);
-      _wo->setEnabled(FALSE);
-      _po->setEnabled(FALSE);
-      _assignedTo->setEnabled(FALSE);
+      _owner->setEnabled(false);
+      _number->setEnabled(false);
+      _status->setEnabled(false);
+      _name->setEnabled(false);
+      _descrip->setEnabled(false);
+      _so->setEnabled(false);
+      _wo->setEnabled(false);
+      _po->setEnabled(false);
+      _assignedTo->setEnabled(false);
       _crmacct->setEnabled(false);
       _cntct->setEnabled(false);
-      _newTask->setEnabled(FALSE);
+      _newTask->setEnabled(false);
       connect(_prjtask, SIGNAL(itemSelected(int)), _viewTask, SLOT(animateClick()));
-      _comments->setReadOnly(TRUE);
-      _documents->setReadOnly(TRUE);
-      _started->setEnabled(FALSE);
-      _assigned->setEnabled(FALSE);
-      _due->setEnabled(FALSE);
-      _completed->setEnabled(FALSE);
-      _recurring->setEnabled(FALSE);
-      _projectType->setEnabled(FALSE);
-      _newCharacteristic->setEnabled(FALSE);
+      _comments->setReadOnly(true);
+      _documents->setReadOnly(true);
+      _started->setEnabled(false);
+      _assigned->setEnabled(false);
+      _due->setEnabled(false);
+      _completed->setEnabled(false);
+      _recurring->setEnabled(false);
+      _projectType->setEnabled(false);
+      _newCharacteristic->setEnabled(false);
       _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Save));
       _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Cancel));
       _buttonBox->addButton(QDialogButtonBox::Close);
@@ -619,7 +619,7 @@ void project::sNewTask()
   params.append("prj_assigned_date", _assigned->date());
   params.append("prj_completed_date", _completed->date());
 
-  task newdlg(this, "", TRUE);
+  task newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillTaskList();
@@ -634,7 +634,7 @@ void project::sEditTask()
   params.append("mode", "edit");
   params.append("prjtask_id", _prjtask->id());
 
-  task newdlg(this, "", TRUE);
+  task newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillTaskList();
@@ -649,7 +649,7 @@ void project::sViewTask()
   params.append("mode", "view");
   params.append("prjtask_id", _prjtask->id());
 
-  task newdlg(this, "", TRUE);
+  task newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -698,7 +698,7 @@ void project::sNew()
   params.append("mode", "new");
   params.append("prj_id", _prjid);
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -711,7 +711,7 @@ void project::sEdit()
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -847,14 +847,14 @@ void project::sNumberChanged()
     projectNumberChanged.exec();
     if(projectNumberChanged.first())
     {
-      _number->setEnabled(FALSE);
+      _number->setEnabled(false);
       _prjid = projectNumberChanged.value("prj_id").toInt();
       _mode = cEdit;
       populate();
     }
     else
     {
-      _number->setEnabled(FALSE);
+      _number->setEnabled(false);
       _mode = cNew;
     }
   }
@@ -1024,7 +1024,7 @@ void project::sViewOrder()
     params.append("mode", "view");
     params.append("prjtask_id", _prjtask->id());
 
-    task newdlg(this, "", TRUE);
+    task newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }

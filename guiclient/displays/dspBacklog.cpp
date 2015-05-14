@@ -20,7 +20,7 @@
 #include "parameterwidget.h"
 #include "printPackingList.h"
 
-dspBacklog::dspBacklog(QWidget* parent, const char*, Qt::WFlags fl)
+dspBacklog::dspBacklog(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspBacklog", fl)
 {
   setWindowTitle(tr("Backlog"));

@@ -23,7 +23,7 @@ class vendor : public XWidget, public Ui::vendor
     Q_OBJECT
 
 public:
-    vendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    vendor(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
     ~vendor();
 
     Q_INVOKABLE virtual int id() const;

@@ -20,7 +20,7 @@
 #include "storedProcErrorLookup.h"
 #include "parameterwidget.h"
 
-customers::customers(QWidget* parent, const char*, Qt::WFlags fl)
+customers::customers(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "customers", fl)
 {
   setUseAltId(true);
@@ -127,7 +127,7 @@ void customers::sReassignCustomerType()
   ParameterList params;
   params.append("custtype_id", list()->altId());
 
-  customerTypeList *newdlg = new customerTypeList(this, "", TRUE);
+  customerTypeList *newdlg = new customerTypeList(this, "", true);
   newdlg->set(params);
   int custtypeid = newdlg->exec();
   if ( (custtypeid != -1) && (custtypeid != XDialog::Rejected) )
@@ -143,7 +143,7 @@ void customers::sReassignCustomerType()
                             infoq, __FILE__, __LINE__))
       return;
 
-    omfgThis->sCustomersUpdated(list()->id(), TRUE);
+    omfgThis->sCustomersUpdated(list()->id(), true);
     sFillList();
   }
 }
@@ -165,7 +165,7 @@ void customers::sDelete()
                            delq, __FILE__, __LINE__))
     return;
 
-  omfgThis->sCustomersUpdated(list()->id(), TRUE); // TODO: TRUE or FALSE????
+  omfgThis->sCustomersUpdated(list()->id(), true); // TODO: true or false????
 }
 
 void customers::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)

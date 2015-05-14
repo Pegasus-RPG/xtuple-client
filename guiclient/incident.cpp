@@ -24,7 +24,7 @@
 #include "characteristicAssignment.h"
 #include <openreports.h>
 
-incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+incident::incident(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   _statusCodes << "N" << "F" << "C" << "A" << "R" << "L";
@@ -824,7 +824,7 @@ void incident::sNewCharacteristic()
   params.append("mode", "new");
   params.append("incdt_id", _incdtid);
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -837,7 +837,7 @@ void incident::sEditCharacteristic()
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)

@@ -125,7 +125,7 @@ class docAttachPrivate {
  *  the screen will return a docass_id to the calling screen.
  */
 
-docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : QDialog(parent, fl)
 {
   setupUi(this);
@@ -158,7 +158,7 @@ docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WFlags f
                      " UNION SELECT -3, 'Web Site', 'URL') data"
                      " ORDER BY source_name;");
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
     _fileList->setMaximumWidth(25);
 #else
     _fileList->setMinimumWidth(60);

@@ -21,7 +21,7 @@
 #include "storedProcErrorLookup.h"
 #include "parameterwidget.h"
 
-employees::employees(QWidget* parent, const char*, Qt::WFlags fl)
+employees::employees(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "employees", fl)
 {
   setWindowTitle(tr("Employees"));
@@ -52,7 +52,7 @@ employees::employees(QWidget* parent, const char*, Qt::WFlags fl)
   connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
 
   if (!_privileges->check("MaintainEmployees"))
-    newAction()->setEnabled(FALSE);
+    newAction()->setEnabled(false);
 }
 
 void employees::sNew()

@@ -146,7 +146,7 @@ class characteristicPrivate {
     }
 };
 
-characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -345,7 +345,7 @@ void characteristic::sCheck()
       _d->setMode(cEdit);
       populate();
 
-      _name->setEnabled(FALSE);
+      _name->setEnabled(false);
     }
   }
 }

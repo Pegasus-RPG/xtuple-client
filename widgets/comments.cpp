@@ -19,7 +19,9 @@
 #include <QDesktopServices>
 #include <QDebug>
 #include <QScrollBar>
-
+#if QT_VERSION >= 0x050000
+#include <QUrlQuery>
+#endif
 #include <parameter.h>
 #include <xsqlquery.h>
 
@@ -129,7 +131,7 @@ Comments::Comments(QWidget *pParent, const char *name) :
 
   _viewComment = new QPushButton(tr("View"), buttons);
   _viewComment->setObjectName("_viewComment");
-  _viewComment->setEnabled(FALSE);
+  _viewComment->setEnabled(false);
   buttonsLayout->addWidget(_viewComment);
 
   _editComment = new QPushButton(tr("Edit"), buttons);
@@ -181,7 +183,7 @@ void Comments::sNew()
   params.append("sourceType", _source);
   params.append("source_id", _sourceid);
 
-  comment newdlg(this, "", TRUE);
+  comment newdlg(this, "", true);
   newdlg.setWindowModality(Qt::WindowModal);
   newdlg.set(params);
 
@@ -201,7 +203,7 @@ void Comments::sView()
   params.append("comment_id", _comment->id());
   params.append("commentIDList", _commentIDList);
 
-  comment newdlg(this, "", TRUE);
+  comment newdlg(this, "", true);
   newdlg.setWindowModality(Qt::WindowModal);
   newdlg.set(params);
   newdlg.exec();
@@ -216,7 +218,7 @@ void Comments::sEdit()
   params.append("comment_id", _comment->id());
   params.append("commentIDList", _commentIDList);
 
-  comment newdlg(this, "", TRUE);
+  comment newdlg(this, "", true);
   newdlg.setWindowModality(Qt::WindowModal);
   newdlg.set(params);
   newdlg.exec();
@@ -376,7 +378,11 @@ void Comments::anchorClicked(const QUrl & url)
 {
   if(url.host().isEmpty() && url.path() == "edit")
   {
+    #if QT_VERSION >= 0x050000
+    int cid = QUrlQuery(url).queryItemValue("id").toInt();
+    #else
     int cid = url.queryItemValue("id").toInt();
+    #endif
     if(userCanEdit(cid))
     {
       ParameterList params;
@@ -386,7 +392,7 @@ void Comments::anchorClicked(const QUrl & url)
       params.append("comment_id", cid);
       params.append("commentIDList", _commentIDList);
 
-      comment newdlg(this, "", TRUE);
+      comment newdlg(this, "", true);
       newdlg.set(params);
       newdlg.exec();
       refresh();

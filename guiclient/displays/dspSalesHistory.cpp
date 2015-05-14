@@ -19,7 +19,7 @@
 #include "parameterwidget.h"
 #include "salesHistoryInformation.h"
 
-dspSalesHistory::dspSalesHistory(QWidget* parent, const char*, Qt::WFlags fl)
+dspSalesHistory::dspSalesHistory(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspSalesHistory", fl)
 {
   setWindowTitle(tr("Sales History"));

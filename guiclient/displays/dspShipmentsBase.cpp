@@ -24,7 +24,7 @@
 #include "inputManager.h"
 #include "printShippingForm.h"
 
-dspShipmentsBase::dspShipmentsBase(QWidget* parent, const char* name, Qt::WFlags fl)
+dspShipmentsBase::dspShipmentsBase(QWidget* parent, const char* name, Qt::WindowFlags fl)
   : display(parent, name, fl)
 {
   setupUi(optionsWidget());

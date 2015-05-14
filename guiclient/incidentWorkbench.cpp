@@ -16,7 +16,7 @@
 #include "incident.h"
 #include "parameterwidget.h"
 
-incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl)
+incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "incidentWorkbench", fl)
 {
   setWindowTitle(tr("Incidents"));
@@ -78,7 +78,7 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
   connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
 
   if (!_privileges->check("MaintainAllIncidents") && !_privileges->check("MaintainPersonalIncidents"))
-    newAction()->setEnabled(FALSE);
+    newAction()->setEnabled(false);
 
   list()->addColumn(tr("Number"),      _orderColumn,Qt::AlignLeft, true, "incdt_number" );
   list()->addColumn(tr("Created"),     _dateColumn, Qt::AlignLeft, true, "incdt_timestamp" );

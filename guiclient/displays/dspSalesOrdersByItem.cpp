@@ -22,7 +22,7 @@
 #include "returnAuthorization.h"
 #include "salesOrder.h"
 
-dspSalesOrdersByItem::dspSalesOrdersByItem(QWidget* parent, const char*, Qt::WFlags fl)
+dspSalesOrdersByItem::dspSalesOrdersByItem(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspSalesOrdersByItem", fl)
 {
   setupUi(optionsWidget());
@@ -120,7 +120,7 @@ void dspSalesOrdersByItem::sCopyOrder()
   ParameterList params;
   params.append("sohead_id", list()->id());
       
-  copySalesOrder newdlg(this, "", TRUE);
+  copySalesOrder newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

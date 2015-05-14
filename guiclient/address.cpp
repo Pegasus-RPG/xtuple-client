@@ -17,18 +17,20 @@
 #include <QVariant>
 #include <QDebug>
 
+#include <metasql.h>
 #include <parameter.h>
 
 #include "addresscluster.h"
 #include "characteristicAssignment.h"
 #include "contact.h"
 #include "inputManager.h"
+#include "mqlutil.h"
 #include "shipTo.h"
 #include "vendor.h"
 #include "vendorAddress.h"
 #include "warehouse.h"
 
-address::address(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+address::address(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
     setupUi(this);
@@ -75,7 +77,7 @@ enum SetResponse address::set(const ParameterList &pParams)
   param = pParams.value("addr_id", &valid);
   if (valid)
   {
-    _captive = TRUE;
+    _captive = true;
     _addr->setId(param.toInt());
     sPopulate();
   }
@@ -115,14 +117,14 @@ enum SetResponse address::set(const ParameterList &pParams)
       disconnect(_uses, SIGNAL(itemSelected(int)), _editAddrUse, SLOT(animateClick()));
       connect(_uses, SIGNAL(itemSelected(int)), _viewAddrUse, SLOT(animateClick()));
 
-      _addr->setEnabled(FALSE);
-      _notes->setEnabled(FALSE);
+      _addr->setEnabled(false);
+      _notes->setEnabled(false);
       _comments->setReadOnly(true);
-      _newCharacteristic->setEnabled(FALSE);
-      _editCharacteristic->setEnabled(FALSE);
-      _deleteCharacteristic->setEnabled(FALSE);
-      _editAddrUse->setEnabled(FALSE);
-      _charass->setEnabled(FALSE);
+      _newCharacteristic->setEnabled(false);
+      _editCharacteristic->setEnabled(false);
+      _deleteCharacteristic->setEnabled(false);
+      _editAddrUse->setEnabled(false);
+      _charass->setEnabled(false);
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }
@@ -191,7 +193,7 @@ void address::sNewCharacteristic()
   params.append("mode", "new");
   params.append("addr_id", _addr->id());
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -206,7 +208,7 @@ void address::sEditCharacteristic()
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -251,44 +253,16 @@ void address::sPopulate()
   _comments->setId(_addr->id());
   sGetCharacteristics();
 
-  XSqlQuery usesQ;
-  usesQ.prepare("SELECT cntct_id, 1, :contact AS type, cntct_first_name, "
-		"       cntct_last_name, crmacct_number, cntct_phone, "
-		"       cntct_phone2, cntct_fax, cntct_email, cntct_webaddr "
-		"FROM cntct LEFT OUTER JOIN crmacct ON (cntct_crmacct_id=crmacct_id) "
-		"WHERE (cntct_addr_id=:addr_id) "
-		"UNION "
-		"SELECT shipto_id, 2, :shipto, shipto_name, "
-		"       shipto_name, crmacct_number, '',"
-		"       '', '', '', '' "
-		"FROM shiptoinfo LEFT OUTER JOIN crmacct ON (shipto_cust_id=crmacct_cust_id) "
-		"WHERE (shipto_addr_id=:addr_id) "
-		"UNION "
-		"SELECT vend_id, 3, :vendor, vend_number, "
-		"       vend_name, crmacct_number, '',"
-		"       '', '', '', '' "
-		"FROM vendinfo LEFT OUTER JOIN crmacct ON (vend_id=crmacct_vend_id) "
-		"WHERE (vend_addr_id=:addr_id) "
-		"UNION "
-		"SELECT vendaddr_id, 4, :vendaddr, vendaddr_code, "
-		"       vendaddr_name, crmacct_number, '',"
-		"       '', '', '', '' "
-		"FROM vendaddrinfo LEFT OUTER JOIN crmacct ON (vendaddr_vend_id=crmacct_vend_id) "
-		"WHERE (vendaddr_addr_id=:addr_id) "
-		"UNION "
-		"SELECT warehous_id, 5, :whs, warehous_code, "
-		"       warehous_descrip, '', '',"
-		"       '', '', '', '' "
-		"FROM whsinfo "
-		"WHERE (warehous_addr_id=:addr_id) "
-		"ORDER BY 3, 5, 4;");
-  usesQ.bindValue(":addr_id", _addr->id());
-  usesQ.bindValue(":contact",	tr("Contact"));
-  usesQ.bindValue(":shipto",	tr("Ship-To"));
-  usesQ.bindValue(":vendor",	tr("Vendor"));
-  usesQ.bindValue(":vendaddr",	tr("Vendor Address"));
-  usesQ.bindValue(":whs",	tr("Site"));
-  usesQ.exec();
+  MetaSQLQuery mql = mqlLoad("address", "uses");
+  
+  ParameterList params;
+  params.append("addr_id",  _addr->id());
+  params.append("contact",  tr("Contact"));
+  params.append("shipto",   tr("Ship-To"));
+  params.append("vendor",   tr("Vendor"));
+  params.append("vendaddr", tr("Vendor Address"));
+  params.append("whs",      tr("Site"));
+  XSqlQuery usesQ = mql.toQuery(params);
   _uses->populate(usesQ, true);	// true => use alt id (to distinguish types)
 }
 
@@ -422,7 +396,7 @@ void address::sEditContact()
   ParameterList params;
   params.append("mode", "edit");
   params.append("cntct_id", _uses->id());
-  contact newdlg(this, "", TRUE);
+  contact newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -432,7 +406,7 @@ void address::sViewContact()
   ParameterList params;
   params.append("mode", "view");
   params.append("cntct_id", _uses->id());
-  contact newdlg(this, "", TRUE);
+  contact newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -440,7 +414,7 @@ void address::sViewContact()
 void address::sEditShipto()
 {
   ParameterList params;
-  shipTo newdlg(this, "", TRUE);
+  shipTo newdlg(this, "", true);
   params.append("mode", "edit");
   params.append("shipto_id", _uses->id());
   newdlg.set(params);
@@ -450,7 +424,7 @@ void address::sEditShipto()
 void address::sViewShipto()
 {
   ParameterList params;
-  shipTo newdlg(this, "", TRUE);
+  shipTo newdlg(this, "", true);
   params.append("mode", "view");
   params.append("shipto_id", _uses->id());
   newdlg.set(params);
@@ -480,7 +454,7 @@ void address::sViewVendor()
 void address::sEditVendorAddress()
 {
   ParameterList params;
-  vendorAddress newdlg(this, "", TRUE);
+  vendorAddress newdlg(this, "", true);
   params.append("mode", "edit");
   params.append("vendaddr_id", _uses->id());
   newdlg.set(params);
@@ -490,7 +464,7 @@ void address::sEditVendorAddress()
 void address::sViewVendorAddress()
 {
   ParameterList params;
-  vendorAddress newdlg(this, "", TRUE);
+  vendorAddress newdlg(this, "", true);
   params.append("mode", "view");
   params.append("vendaddr_id", _uses->id());
   newdlg.set(params);
@@ -500,7 +474,7 @@ void address::sViewVendorAddress()
 void address::sEditWarehouse()
 {
   ParameterList params;
-  warehouse newdlg(this, "", TRUE);
+  warehouse newdlg(this, "", true);
   params.append("mode", "edit");
   params.append("warehous_id", _uses->id());
   newdlg.set(params);
@@ -510,7 +484,7 @@ void address::sEditWarehouse()
 void address::sViewWarehouse()
 {
   ParameterList params;
-  warehouse newdlg(this, "", TRUE);
+  warehouse newdlg(this, "", true);
   params.append("mode", "view");
   params.append("warehous_id", _uses->id());
   newdlg.set(params);

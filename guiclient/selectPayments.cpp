@@ -28,7 +28,7 @@
 #include "storedProcErrorLookup.h"
 #include "voucher.h"
 
-selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl, bool pAutoFill)
+selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WindowFlags fl, bool pAutoFill)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -127,7 +127,7 @@ void selectPayments::sSelectDue()
   int bankaccntid = _bankaccnt->id();
   if(bankaccntid == -1)
   {
-    selectBankAccount newdlg(this, "", TRUE);
+    selectBankAccount newdlg(this, "", true);
     newdlg.set(params);
     bankaccntid = newdlg.exec();
   }
@@ -157,7 +157,7 @@ void selectPayments::sSelectDue()
       return;
     }
 
-    omfgThis->sPaymentsUpdated(-1, -1, TRUE);
+    omfgThis->sPaymentsUpdated(-1, -1, true);
   }
 }
 
@@ -170,7 +170,7 @@ void selectPayments::sSelectDiscount()
   int bankaccntid = _bankaccnt->id();
   if(bankaccntid == -1)
   {
-    selectBankAccount newdlg(this, "", TRUE);
+    selectBankAccount newdlg(this, "", true);
     newdlg.set(params);
     bankaccntid = newdlg.exec();
   }
@@ -200,7 +200,7 @@ void selectPayments::sSelectDiscount()
       return;
     }
 
-    omfgThis->sPaymentsUpdated(-1, -1, TRUE);
+    omfgThis->sPaymentsUpdated(-1, -1, true);
   }
 }
 
@@ -228,7 +228,7 @@ void selectPayments::sClearAll()
     return;
   }
 
-  omfgThis->sPaymentsUpdated(-1, -1, TRUE);
+  omfgThis->sPaymentsUpdated(-1, -1, true);
 }
 
 void selectPayments::sSelect()
@@ -259,7 +259,7 @@ void selectPayments::sSelect()
         if(_bankaccnt->id() != -1)
           params.append("bankaccnt_id", _bankaccnt->id());
 
-        selectPayment newdlg(this, "", TRUE);
+        selectPayment newdlg(this, "", true);
         newdlg.set(params);
         if(newdlg.exec() != XDialog::Rejected)
           update = true;
@@ -284,14 +284,14 @@ void selectPayments::sSelectLine()
   int bankaccntid = _bankaccnt->id();
   if(bankaccntid == -1)
   {
-    selectBankAccount newdlg(this, "", TRUE);
+    selectBankAccount newdlg(this, "", true);
     newdlg.set(params);
     bankaccntid = newdlg.exec();
   }
 
   if (bankaccntid != -1)
   {
-    bool update = FALSE;
+    bool update = false;
     QList<XTreeWidgetItem*> list = _apopen->selectedItems();
     XTreeWidgetItem * cursor = 0;
     selectSelectLine.prepare("SELECT selectPayment(:apopen_id, :bankaccnt_id) AS result;");
@@ -326,18 +326,18 @@ void selectPayments::sSelectLine()
         return;
       }
                 }
-      update = TRUE;
+      update = true;
     }
     }
     if(update)
-      omfgThis->sPaymentsUpdated(-1, -1, TRUE);
+      omfgThis->sPaymentsUpdated(-1, -1, true);
   }
 }
 
 void selectPayments::sClear()
 {
   XSqlQuery selectClear;
-  bool update = FALSE;
+  bool update = false;
   QList<XTreeWidgetItem*> list = _apopen->selectedItems();
   XTreeWidgetItem * cursor = 0;
   selectClear.prepare("SELECT clearPayment(:apopen_id) AS result;");
@@ -362,11 +362,11 @@ void selectPayments::sClear()
       systemError(this, selectClear.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    update = TRUE;
+    update = true;
   }
 
   if(update)
-    omfgThis->sPaymentsUpdated(-1, -1, TRUE);
+    omfgThis->sPaymentsUpdated(-1, -1, true);
 }
 
 void selectPayments::sApplyAllCredits()
@@ -602,7 +602,7 @@ void selectPayments::sViewVoucher()
 
 void selectPayments::sVoidVoucher()
 {
-  bool update = FALSE;
+  bool update = false;
   QList<XTreeWidgetItem*> list = _apopen->selectedItems();
   XTreeWidgetItem * cursor = 0;
   XSqlQuery dspVoidVoucher;
@@ -632,7 +632,7 @@ void selectPayments::sVoidVoucher()
                              dspVoidVoucher, __FILE__, __LINE__);
         return;
       }
-      update = TRUE;
+      update = true;
     }
   }
   if(update)

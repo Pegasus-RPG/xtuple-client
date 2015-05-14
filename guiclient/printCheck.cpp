@@ -29,7 +29,7 @@
 
 QString printCheck::eftFileDir = QString();
 
-printCheck::printCheck(QWidget* parent, const char* name, Qt::WFlags fl)
+printCheck::printCheck(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -40,10 +40,10 @@ printCheck::printCheck(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_print,     SIGNAL(clicked()),  this, SLOT(sPrint()));
   connect(_printed,   SIGNAL(clicked()),  this, SLOT(sPrintedAlready()));
 
-  _captive = FALSE;
+  _captive = false;
   _setCheckNumber = -1;
 
-  _check->setAllowNull(TRUE);
+  _check->setAllowNull(true);
 
   _bankaccnt->setType(XComboBox::APBankAccounts);
 
@@ -63,7 +63,7 @@ void printCheck::languageChange()
 enum SetResponse printCheck::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
-  _captive = TRUE;
+  _captive = true;
 
   QVariant param;
   bool     valid;
@@ -72,8 +72,8 @@ enum SetResponse printCheck::set(const ParameterList &pParams)
   if (valid)
   {
     populate(param.toInt());
-    _bankaccnt->setEnabled(FALSE);
-    _check->setEnabled(FALSE);
+    _bankaccnt->setEnabled(false);
+    _check->setEnabled(false);
   }
 
   return NoError;
@@ -252,12 +252,12 @@ void printCheck::sPrintImpl(bool printedAlready)
                  "       checkhead_for, checkhead_notes,"
                  "       checkhead_curr_id, checkhead_deleted) "
                  "SELECT checkhead_recip_id, checkhead_recip_type,"
-                 "       checkhead_bankaccnt_id, TRUE,"
+                 "       checkhead_bankaccnt_id, true,"
                  "       checkhead_checkdate, fetchNextCheckNumber(checkhead_bankaccnt_id),"
-                 "       checkhead_amount, TRUE, TRUE,"
+                 "       checkhead_amount, true, true,"
                  "       'Continuation of Check #'||checkhead_number,"
                  "       'Continuation of Check #'||checkhead_number,"
-                 "       checkhead_curr_id, TRUE"
+                 "       checkhead_curr_id, true"
                  "  FROM checkhead"
                  " WHERE(checkhead_id=:checkhead_id);");
       qq.bindValue(":checkhead_id", _check->id());
@@ -267,7 +267,7 @@ void printCheck::sPrintImpl(bool printedAlready)
       }
     }
 
-    omfgThis->sChecksUpdated(_bankaccnt->id(), _check->id(), TRUE);
+    omfgThis->sChecksUpdated(_bankaccnt->id(), _check->id(), true);
   }
   else if (printPrint.lastError().type() != QSqlError::NoError)
   {
@@ -332,7 +332,7 @@ void printCheck::sPrintImpl(bool printedAlready)
 	return;
       }
       omfgThis->sChecksUpdated(printPrint.value("checkhead_bankaccnt_id").toInt(),
-			       _check->id(), TRUE);
+			       _check->id(), true);
 
       sHandleBankAccount(_bankaccnt->id());
       _print->setFocus();
@@ -467,7 +467,7 @@ void printCheck::sCreateEFT()
     }
     do
     {
-      eftfile.write(printCreateEFT.value("achline_value").toString().toAscii());
+      eftfile.write(printCreateEFT.value("achline_value").toString().toLatin1());
       eftfile.write("\n");
     } while (printCreateEFT.next());
     eftfile.close();
@@ -570,7 +570,7 @@ void printCheck::markCheckAsPrinted(const int pcheckid)
       return;
     }
     omfgThis->sChecksUpdated(markq.value("checkhead_bankaccnt_id").toInt(),
-                             pcheckid, TRUE);
+                             pcheckid, true);
 
     if (_captive)
       close();

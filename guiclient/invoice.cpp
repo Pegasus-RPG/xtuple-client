@@ -27,7 +27,7 @@
 
 #define cViewQuote (0x20 | cView)
 
-invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
+invoice::invoice(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, fl)
 {
   if(name)
@@ -231,8 +231,8 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       setObjectName(QString("invoice edit %1").arg(_invcheadid));
       _mode = cEdit;
 
-      _new->setEnabled(TRUE);
-      _cust->setReadOnly(TRUE);
+      _new->setEnabled(true);
+      _cust->setReadOnly(true);
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
@@ -242,43 +242,43 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       setObjectName(QString("invoice view %1").arg(_invcheadid));
       _mode = cView;
 
-      _invoiceNumber->setEnabled(FALSE);
-      _orderNumber->setEnabled(FALSE);
-      _invoiceDate->setEnabled(FALSE);
-      _shipDate->setEnabled(FALSE);
-      _orderDate->setEnabled(FALSE);
-      _poNumber->setEnabled(FALSE);
-      _cust->setReadOnly(TRUE);
-      _salesrep->setEnabled(FALSE);
-      _commission->setEnabled(FALSE);
-      _taxzone->setEnabled(FALSE);
-      _terms->setEnabled(FALSE);
+      _invoiceNumber->setEnabled(false);
+      _orderNumber->setEnabled(false);
+      _invoiceDate->setEnabled(false);
+      _shipDate->setEnabled(false);
+      _orderDate->setEnabled(false);
+      _poNumber->setEnabled(false);
+      _cust->setReadOnly(true);
+      _salesrep->setEnabled(false);
+      _commission->setEnabled(false);
+      _taxzone->setEnabled(false);
+      _terms->setEnabled(false);
       _terms->setType(XComboBox::Terms);
-      _fob->setEnabled(FALSE);
-      _shipVia->setEnabled(FALSE);
-      _billToName->setEnabled(FALSE);
-      _billToAddr->setEnabled(FALSE);
-      _billToPhone->setEnabled(FALSE);
-      _shipTo->setEnabled(FALSE);
-      _shipToName->setEnabled(FALSE);
-      _shipToAddr->setEnabled(FALSE);
-      _shipToPhone->setEnabled(FALSE);
-      _miscAmount->setEnabled(FALSE);
-      _miscChargeDescription->setEnabled(FALSE);
-      _miscChargeAccount->setReadOnly(TRUE);
-      _freight->setEnabled(FALSE);
-      _payment->setEnabled(FALSE);
-      _notes->setReadOnly(TRUE);
+      _fob->setEnabled(false);
+      _shipVia->setEnabled(false);
+      _billToName->setEnabled(false);
+      _billToAddr->setEnabled(false);
+      _billToPhone->setEnabled(false);
+      _shipTo->setEnabled(false);
+      _shipToName->setEnabled(false);
+      _shipToAddr->setEnabled(false);
+      _shipToPhone->setEnabled(false);
+      _miscAmount->setEnabled(false);
+      _miscChargeDescription->setEnabled(false);
+      _miscChargeAccount->setReadOnly(true);
+      _freight->setEnabled(false);
+      _payment->setEnabled(false);
+      _notes->setReadOnly(true);
       _edit->hide();
       _save->hide();
       _delete->hide();
       _project->setEnabled(false);
-      _shipChrgs->setEnabled(FALSE);
-      _shippingZone->setEnabled(FALSE);
-      _saleType->setEnabled(FALSE);
-//      _documents->setReadOnly(TRUE);
-      _newCharacteristic->setEnabled(FALSE);
-      _postInvoice->setVisible(FALSE);
+      _shipChrgs->setEnabled(false);
+      _shippingZone->setEnabled(false);
+      _saleType->setEnabled(false);
+//      _documents->setReadOnly(true);
+      _newCharacteristic->setEnabled(false);
+      _postInvoice->setVisible(false);
 
       disconnect(_invcitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       disconnect(_invcitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -601,11 +601,11 @@ void invoice::sSave()
   if (!save())
     return;
 
+  omfgThis->sInvoicesUpdated(_invcheadid, true);
+
   // post the Invoice if user desires
   if (_postInvoice->isChecked())
     postInvoice();
-
-  omfgThis->sInvoicesUpdated(_invcheadid, TRUE);
 
   _invcheadid = -1;
   close();
@@ -927,7 +927,7 @@ void invoice::populate()
     _invoiceNumber->setEnabled(false);
     _orderNumber->setText(invoicepopulate.value("invchead_ordernumber").toString());
     if (! _orderNumber->text().isEmpty() && _orderNumber->text().toInt() != 0)
-	_custCurrency->setEnabled(FALSE);
+	_custCurrency->setEnabled(false);
 
     _invoiceDate->setDate(invoicepopulate.value("invchead_invcdate").toDate(), true);
     _orderDate->setDate(invoicepopulate.value("invchead_orderdate").toDate());
@@ -1033,7 +1033,7 @@ void invoice::sNewCharacteristic()
   params.append("mode", "new");
   params.append("invchead_id", _invcheadid);
   
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
   
   if (newdlg.exec() != XDialog::Rejected)
@@ -1046,7 +1046,7 @@ void invoice::sEditCharacteristic()
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
   
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
   
   if (newdlg.exec() != XDialog::Rejected)
@@ -1223,7 +1223,7 @@ void invoice::sTaxDetail()
   else if (_mode == cNew || _mode == cEdit)
     params.append("mode", "edit");
 
-  taxBreakdown newdlg(this, "", TRUE);
+  taxBreakdown newdlg(this, "", true);
   if (newdlg.set(params) == NoError)
   {
     newdlg.exec();
@@ -1277,7 +1277,7 @@ void invoice::sShipToModified()
 
 void invoice::keyPressEvent( QKeyEvent * e )
 {
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
   if(e->key() == Qt::Key_N && (e->modifiers() & Qt::ControlModifier))
   {
     _new->animateClick();
@@ -1395,7 +1395,7 @@ void invoice::sCreditAllocate()
   params.append("curr_id",   _total->id());
   params.append("effective", _total->effective());
 
-  allocateARCreditMemo newdlg(this, "", TRUE);
+  allocateARCreditMemo newdlg(this, "", true);
   if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
   {
     populateCMInfo();
@@ -1508,7 +1508,7 @@ void invoice::populateCCInfo()
 void invoice::sHandleShipchrg(int pShipchrgid)
 {
   if ( (_mode == cView) || (_mode == cViewQuote) )
-    _freight->setEnabled(FALSE);
+    _freight->setEnabled(false);
   else
   {
     XSqlQuery query;
@@ -1520,10 +1520,10 @@ void invoice::sHandleShipchrg(int pShipchrgid)
     if (query.first())
     {
       if (query.value("shipchrg_custfreight").toBool())
-        _freight->setEnabled(TRUE);
+        _freight->setEnabled(true);
       else
       {
-        _freight->setEnabled(FALSE);
+        _freight->setEnabled(false);
         _freight->clear();
       }
     }

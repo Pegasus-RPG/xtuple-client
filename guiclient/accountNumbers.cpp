@@ -21,7 +21,7 @@
 #include "accountNumber.h"
 #include "storedProcErrorLookup.h"
 
-accountNumbers::accountNumbers(QWidget* parent, const char* name, Qt::WFlags fl)
+accountNumbers::accountNumbers(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -41,7 +41,7 @@ accountNumbers::accountNumbers(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(omfgThis, SIGNAL(configureGLUpdated()), this, SLOT(sBuildList()));
 
-  _type->setAllowNull(TRUE);
+  _type->setAllowNull(true);
   QString qryType = QString( "SELECT  1, '%1' UNION "
                              "SELECT  2, '%2' UNION "
                              "SELECT  3, '%3' UNION "
@@ -55,7 +55,7 @@ accountNumbers::accountNumbers(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _type->populate(qryType);
 
-  _subType->setAllowNull(TRUE);
+  _subType->setAllowNull(true);
   populateSubTypes();
 
   _showExternal->setVisible(_metrics->boolean("MultiCompanyFinancialConsolidation"));
@@ -103,7 +103,7 @@ void accountNumbers::sNew()
   ParameterList params;
   params.append("mode", "new");
 
-  accountNumber newdlg(this, "", TRUE);
+  accountNumber newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -121,7 +121,7 @@ void accountNumbers::sEdit()
     params.append("mode", "edit");
   params.append("accnt_id", _account->id());
 
-  accountNumber newdlg(this, "", TRUE);
+  accountNumber newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)

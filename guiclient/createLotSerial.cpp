@@ -18,7 +18,7 @@
 #include <parameter.h>
 #include <openreports.h>
 
-createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl),
       _lotsFound(false)
 {
@@ -28,7 +28,7 @@ createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, 
   connect(_lotSerial, SIGNAL(textChanged(QString)), this, SLOT(sHandleLotSerial()));
   connect(_lotSerial, SIGNAL(newID(int)), this, SLOT(sHandleCharacteristics()));
 
-  _item->setReadOnly(TRUE);
+  _item->setReadOnly(true);
 
   _serial = false;
   _itemsiteid = -1;
@@ -83,7 +83,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
       {
         _serial = true;
         _qtyToAssign->setText("1");
-        _qtyToAssign->setEnabled(FALSE);
+        _qtyToAssign->setEnabled(false);
       }
       else
         _serial = false;
@@ -340,14 +340,19 @@ void createLotSerial::sAssign()
   
   if (_preassigned)
   {
-    createAssign.prepare("SELECT lsdetail_qtytoassign "
-              "FROM lsdetail "
-              "WHERE (lsdetail_id=:lsdetail_id);");
+    createAssign.prepare("SELECT SUM(lsd.lsdetail_qtytoassign) AS qtytoassign "
+              "FROM lsdetail lsd "
+              "JOIN lsdetail lsd2 "
+              "  ON (lsd.lsdetail_source_id=lsd2.lsdetail_source_id "
+              "    AND lsd.lsdetail_ls_id = lsd2.lsdetail_ls_id "
+              "    AND lsd.lsdetail_source_type = lsd2.lsdetail_source_type "
+              "    AND lsd.lsdetail_source_number = lsd2.lsdetail_source_number) "
+              " WHERE (lsd2.lsdetail_id=:lsdetail_id);");
     createAssign.bindValue(":lsdetail_id", _lotSerial->id());
     createAssign.exec();
     if (createAssign.first())
     {
-      if ( _qtyToAssign->toDouble() > createAssign.value("lsdetail_qtytoassign").toDouble() )
+      if ( _qtyToAssign->toDouble() > createAssign.value("qtytoassign").toDouble() )
       {
         QMessageBox::critical( this, tr("Invalid Qty"),
                                tr( "<p>The quantity being assigned is greater than the "

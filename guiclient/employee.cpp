@@ -26,7 +26,7 @@
 
 #define DEBUG   false
 
-// TODO: XDialog should have a default implementation that returns FALSE
+// TODO: XDialog should have a default implementation that returns false
 bool employee::userHasPriv(const int pMode)
 {
   if (DEBUG)
@@ -528,7 +528,7 @@ void employee::sEditCharass()
   params.append("mode",       "edit");
   params.append("charass_id", _charass->id());
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -546,7 +546,7 @@ void employee::sNewCharass()
   params.append("mode",   "new");
   params.append("emp_id", _empid);
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -682,7 +682,7 @@ void employee::sEditGroup()
   params.append("mode", "edit");
   params.append("empgrp_id", _groups->id());
 
-  empGroup newdlg(this, "", TRUE);
+  empGroup newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
   sFillGroupsList();
@@ -694,7 +694,7 @@ void employee::sViewGroup()
   params.append("mode", "view");
   params.append("empgrp_id", _groups->id());
 
-  empGroup newdlg(this, "", TRUE);
+  empGroup newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

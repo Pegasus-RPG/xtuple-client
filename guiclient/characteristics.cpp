@@ -22,7 +22,7 @@
 #include "errorReporter.h"
 #include "storedProcErrorLookup.h"
 
-characteristics::characteristics(QWidget* parent, const char* name, Qt::WFlags fl)
+characteristics::characteristics(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -43,7 +43,7 @@ characteristics::characteristics(QWidget* parent, const char* name, Qt::WFlags f
   }
   else
   {
-    _new->setEnabled(FALSE);
+    _new->setEnabled(false);
     connect(_char, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
     connect(_char, SIGNAL(valid(bool)),       _view, SLOT(setEnabled(bool)));
   }
@@ -69,7 +69,7 @@ void characteristics::sNew()
   ParameterList params;
   params.append("mode", "new");
 
-  characteristic newdlg(this, "", TRUE);
+  characteristic newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -82,7 +82,7 @@ void characteristics::sEdit()
   params.append("mode", "edit");
   params.append("char_id", _char->id());
 
-  characteristic newdlg(this, "", TRUE);
+  characteristic newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -95,7 +95,7 @@ void characteristics::sView()
   params.append("mode", "view");
   params.append("char_id", _char->id());
 
-  characteristic newdlg(this, "", TRUE);
+  characteristic newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

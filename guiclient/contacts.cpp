@@ -22,7 +22,7 @@
 #include "parameterwidget.h"
 #include "storedProcErrorLookup.h"
 
-contacts::contacts(QWidget* parent, const char*, Qt::WFlags fl)
+contacts::contacts(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "contacts", fl)
 {
   setupUi(optionsWidget());
@@ -164,7 +164,7 @@ void contacts::sNew()
   setParams(params);
   params.append("mode", "new");
 
-  contact newdlg(this, "", TRUE);
+  contact newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -180,7 +180,7 @@ void contacts::sEdit()
     params.append("mode", "edit");
     params.append("cntct_id", ((XTreeWidgetItem*)(selected[i]))->id());
 
-    contact newdlg(this, "", TRUE);
+    contact newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }
@@ -196,7 +196,7 @@ void contacts::sView()
     params.append("mode", "view");
     params.append("cntct_id", ((XTreeWidgetItem*)(selected[i]))->id());
 
-    contact newdlg(this, "", TRUE);
+    contact newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }

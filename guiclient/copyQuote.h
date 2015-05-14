@@ -22,7 +22,7 @@ class copyQuote : public XDialog, public Ui::copyQuote
     Q_OBJECT
 
 public:
-    copyQuote(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    copyQuote(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WindowFlags fl = 0);
     ~copyQuote();
 
 public slots:

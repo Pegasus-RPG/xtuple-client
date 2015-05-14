@@ -31,7 +31,7 @@
 
 #define DEBUG false
 
-vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
+vendor::vendor(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -185,7 +185,7 @@ SetResponse vendor::set(const ParameterList &pParams)
       }
       else
       {
-        _newAddress->setEnabled(FALSE);
+        _newAddress->setEnabled(false);
         connect(_vendaddr, SIGNAL(itemSelected(int)), _viewAddress, SLOT(animateClick()));
       }
 
@@ -207,7 +207,7 @@ SetResponse vendor::set(const ParameterList &pParams)
       }
       else
       {
-        _newAddress->setEnabled(FALSE);
+        _newAddress->setEnabled(false);
         connect(_vendaddr, SIGNAL(itemSelected(int)), _viewAddress, SLOT(animateClick()));
       }
 
@@ -221,7 +221,7 @@ SetResponse vendor::set(const ParameterList &pParams)
   }
 
   if(_metrics->value("CRMAccountNumberGeneration") == "A")
-    _number->setEnabled(FALSE);
+    _number->setEnabled(false);
 
   if(cNew == _mode || !pParams.inList("showNextPrev"))
   {
@@ -255,30 +255,30 @@ void vendor::setViewMode()
   _mode = cView;
   emit newMode(_mode);
 
-  _number->setEnabled(FALSE);
-  _vendtype->setEnabled(FALSE);
-  _active->setEnabled(FALSE);
-  _name->setEnabled(FALSE);
-  _accountNumber->setEnabled(FALSE);
-  _defaultTerms->setEnabled(FALSE);
-  _defaultShipVia->setEnabled(FALSE);
-  _defaultCurr->setEnabled(FALSE);
-  _contact1->setEnabled(FALSE);
-  _contact2->setEnabled(FALSE);
-  _address->setEnabled(FALSE);
-  _notes->setReadOnly(TRUE);
-  _poComments->setReadOnly(TRUE);
-  _poItems->setEnabled(FALSE);
-  _restrictToItemSource->setEnabled(FALSE);
-  _receives1099->setEnabled(FALSE);
-  _qualified->setEnabled(FALSE);
-  _newAddress->setEnabled(FALSE);
+  _number->setEnabled(false);
+  _vendtype->setEnabled(false);
+  _active->setEnabled(false);
+  _name->setEnabled(false);
+  _accountNumber->setEnabled(false);
+  _defaultTerms->setEnabled(false);
+  _defaultShipVia->setEnabled(false);
+  _defaultCurr->setEnabled(false);
+  _contact1->setEnabled(false);
+  _contact2->setEnabled(false);
+  _address->setEnabled(false);
+  _notes->setReadOnly(true);
+  _poComments->setReadOnly(true);
+  _poItems->setEnabled(false);
+  _restrictToItemSource->setEnabled(false);
+  _receives1099->setEnabled(false);
+  _qualified->setEnabled(false);
+  _newAddress->setEnabled(false);
   _defaultFOBGroup->setEnabled(false);
   _taxzone->setEnabled(false);
   _match->setEnabled(false);
   _newTaxreg->setEnabled(false);
-  _comments->setReadOnly(TRUE);
-  _newCharacteristic->setEnabled(FALSE);
+  _comments->setReadOnly(true);
+  _newCharacteristic->setEnabled(false);
 
   _achGroup->setEnabled(false);
   _routingNumber->setEnabled(false);
@@ -692,7 +692,7 @@ void vendor::sCheck()
 
 void vendor::sLoadCrmAcct(int crmacctId)
 {
-  _notice = FALSE;
+  _notice = false;
   _crmacctid = crmacctId;
 
   XSqlQuery getq;
@@ -773,9 +773,9 @@ bool vendor::sPopulate()
             "       NULL AS vend_name,        NULL AS vend_addr_id,"
             "       fetchMetricValue('DefaultTerms') AS vend_terms_id,"
             "       NULL  AS vend_curr_id,"
-            "       FALSE AS vend_po,         FALSE AS vend_restrictpurch,"
-            "       FALSE AS vend_1099,       NULL AS vend_match,"
-            "       FALSE  AS vend_qualified, NULL AS vend_comments,"
+            "       false AS vend_po,         false AS vend_restrictpurch,"
+            "       false AS vend_1099,       NULL AS vend_match,"
+            "       false  AS vend_qualified, NULL AS vend_comments,"
             "       NULL AS vend_pocomments,  NULL AS vend_taxzone_id,"
             "       -1 AS vend_expcat_id, -1 AS vend_tax_id,"
             "       'W'  AS vend_fobsource,   NULL AS vend_fob,"
@@ -798,7 +798,7 @@ bool vendor::sPopulate()
   XSqlQuery getq = mql.toQuery(params);
   if (getq.first())
   {
-    _notice = FALSE;
+    _notice = false;
     _cachedNumber = getq.value("vend_number").toString();
 
     _crmacctid = getq.value("crmacct_id").toInt();
@@ -828,11 +828,11 @@ bool vendor::sPopulate()
 
     if (getq.value("vend_fobsource").toString() == "V")
     {
-      _useVendorFOB->setChecked(TRUE);
+      _useVendorFOB->setChecked(true);
       _vendorFOB->setText(getq.value("vend_fob"));
     }
     else
-      _useWarehouseFOB->setChecked(TRUE);
+      _useWarehouseFOB->setChecked(true);
 
     _achGroup->setChecked(getq.value("vend_ach_enabled").toBool());
     _routingNumber->setText(getq.value("routingnum").toString());
@@ -846,12 +846,12 @@ bool vendor::sPopulate()
     _account->setId(getq.value("vend_accnt_id").toInt());
     if(getq.value("vend_expcat_id").toInt() != -1)
     {
-      _expcatSelected->setChecked(TRUE);
+      _expcatSelected->setChecked(true);
       _expcat->setId(getq.value("vend_expcat_id").toInt());
     }
     if(getq.value("vend_tax_id").toInt() != -1)
     {
-      _taxSelected->setChecked(TRUE);
+      _taxSelected->setChecked(true);
       _taxCode->setId(getq.value("vend_tax_id").toInt());
     }
 
@@ -904,7 +904,7 @@ void vendor::sNewAddress()
   params.append("mode", "new");
   params.append("vend_id", _vendid);
 
-  vendorAddress newdlg(this, "", TRUE);
+  vendorAddress newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -917,7 +917,7 @@ void vendor::sEditAddress()
   params.append("mode", "edit");
   params.append("vendaddr_id", _vendaddr->id());
 
-  vendorAddress newdlg(this, "", TRUE);
+  vendorAddress newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -930,7 +930,7 @@ void vendor::sViewAddress()
   params.append("mode", "view");
   params.append("vendaddr_id", _vendaddr->id());
 
-  vendorAddress newdlg(this, "", TRUE);
+  vendorAddress newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -992,7 +992,7 @@ void vendor::sNewTaxreg()
   params.append("taxreg_rel_id", _vendid);
   params.append("taxreg_rel_type", "V");
 
-  taxRegistration newdlg(this, "", TRUE);
+  taxRegistration newdlg(this, "", true);
   if (newdlg.set(params) == NoError && newdlg.exec() != XDialog::Rejected)
     sFillTaxregList();
 }
@@ -1003,7 +1003,7 @@ void vendor::sEditTaxreg()
   params.append("mode", "edit");
   params.append("taxreg_id", _taxreg->id());
 
-  taxRegistration newdlg(this, "", TRUE);
+  taxRegistration newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.set(params) == NoError && newdlg.exec() != XDialog::Rejected)
@@ -1016,7 +1016,7 @@ void vendor::sViewTaxreg()
   params.append("mode", "view");
   params.append("taxreg_id", _taxreg->id());
 
-  taxRegistration newdlg(this, "", TRUE);
+  taxRegistration newdlg(this, "", true);
   if (newdlg.set(params) == NoError)
     newdlg.exec();
 }
@@ -1040,7 +1040,7 @@ void vendor::sNewCharacteristic()
   params.append("mode", "new");
   params.append("vend_id", _vendid);
   
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
   
   if (newdlg.exec() != XDialog::Rejected)
@@ -1053,7 +1053,7 @@ void vendor::sEditCharacteristic()
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
   
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
   
   if (newdlg.exec() != XDialog::Rejected)
@@ -1244,7 +1244,7 @@ void vendor::sHandleButtons()
 
 void vendor::sNumberEdited()
 {
-  _notice = TRUE;
+  _notice = true;
   _number->setText(_number->text().toUpper());
 }
 

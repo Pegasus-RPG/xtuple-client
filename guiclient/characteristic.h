@@ -26,7 +26,7 @@ class characteristic : public XDialog, public Ui::characteristic
     Q_OBJECT
 
 public:
-    characteristic(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    characteristic(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WindowFlags fl = 0);
     ~characteristic();
 
     enum Type { Text, List, Date };

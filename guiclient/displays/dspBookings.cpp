@@ -19,7 +19,7 @@
 #include "xtreewidget.h"
 #include "parameterwidget.h"
 
-dspBookings::dspBookings(QWidget* parent, const char*, Qt::WFlags fl)
+dspBookings::dspBookings(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspBookings", fl)
 {
   setWindowTitle(tr("Bookings"));

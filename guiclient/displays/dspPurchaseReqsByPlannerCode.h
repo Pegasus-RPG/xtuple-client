@@ -20,7 +20,7 @@ class dspPurchaseReqsByPlannerCode : public display, public Ui::dspPurchaseReqsB
     Q_OBJECT
 
 public:
-    dspPurchaseReqsByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    dspPurchaseReqsByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList &);
 

@@ -55,7 +55,7 @@ class CharacteristicAssignmentPrivate
 
 QMap<QString, QString> CharacteristicAssignmentPrivate::targetTypeMap;
 
-characteristicAssignment::characteristicAssignment(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+characteristicAssignment::characteristicAssignment(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -153,8 +153,8 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      _char->setEnabled(FALSE);
-      _value->setEnabled(FALSE);
+      _char->setEnabled(false);
+      _value->setEnabled(false);
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }

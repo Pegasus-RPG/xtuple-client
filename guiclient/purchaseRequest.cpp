@@ -20,7 +20,7 @@
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 
-purchaseRequest::purchaseRequest(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+purchaseRequest::purchaseRequest(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -76,15 +76,15 @@ enum SetResponse purchaseRequest::set(const ParameterList &pParams)
   if (valid)
   {
     _item->setItemsiteid(param.toInt());
-    _item->setEnabled(FALSE);
-    _warehouse->setEnabled(FALSE);
+    _item->setEnabled(false);
+    _warehouse->setEnabled(false);
   }
 
   param = pParams.value("item_id", &valid);
   if (valid)
   {
     _item->setId(param.toInt());
-    _item->setEnabled(FALSE);
+    _item->setEnabled(false);
   }
   
   param = pParams.value("qty", &valid);
@@ -111,41 +111,41 @@ enum SetResponse purchaseRequest::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _captive = TRUE;
+      _captive = true;
       _create->setText(tr("Save"));
       
       populate();
       
-      _number->setEnabled(FALSE);
-      _item->setReadOnly(TRUE);
-      _warehouse->setEnabled(FALSE);
+      _number->setEnabled(false);
+      _item->setReadOnly(true);
+      _warehouse->setEnabled(false);
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
-      _captive = TRUE;
+      _captive = true;
       
       populate();
       
-      _number->setEnabled(FALSE);
-      _item->setReadOnly(TRUE);
-      _warehouse->setEnabled(FALSE);
-      _qty->setEnabled(FALSE);
-      _dueDate->setEnabled(FALSE);
-      _notes->setEnabled(FALSE);
-      _project->setEnabled(FALSE);
+      _number->setEnabled(false);
+      _item->setReadOnly(true);
+      _warehouse->setEnabled(false);
+      _qty->setEnabled(false);
+      _dueDate->setEnabled(false);
+      _notes->setEnabled(false);
+      _project->setEnabled(false);
       _create->hide();
     }
     else if (param.toString() == "release")
     {
       _mode = cRelease;
-      _captive = TRUE;
+      _captive = true;
 
-      _number->setEnabled(FALSE);
-      _item->setReadOnly(TRUE);
-      _warehouse->setEnabled(FALSE);
-      _qty->setEnabled(FALSE);
-      _dueDate->setEnabled(FALSE);
+      _number->setEnabled(false);
+      _item->setReadOnly(true);
+      _warehouse->setEnabled(false);
+      _qty->setEnabled(false);
+      _dueDate->setEnabled(false);
 
       XSqlQuery purchaseet;
       purchaseet.prepare( "SELECT planord_itemsite_id, planord_duedate,"
@@ -257,7 +257,7 @@ void purchaseRequest::sSave()
     {
       _prid = purchaseCreate.value("prid").toInt();
 
-      purchaseCreate.prepare("SELECT releasePlannedOrder(:planord_id, FALSE) AS result;");
+      purchaseCreate.prepare("SELECT releasePlannedOrder(:planord_id, false) AS result;");
       purchaseCreate.bindValue(":planord_id", _planordid);
       purchaseCreate.exec();
     }
@@ -327,17 +327,17 @@ void purchaseRequest::populateNumber()
 
   if (generationMethod == "M")
   {
-    _number->setEnabled(TRUE);
+    _number->setEnabled(true);
     _number->setFocus();
   }
   else if (generationMethod == "O")
   {
-    _number->setEnabled(TRUE);
+    _number->setEnabled(true);
     _item->setFocus();
   }
   else if (generationMethod == "A")
   {
-    _number->setEnabled(FALSE);
+    _number->setEnabled(false);
     _item->setFocus();
   } 
 }
@@ -388,6 +388,6 @@ void purchaseRequest::sCheckWarehouse( int pWarehousid )
         tr("The selected Site for this Purchase Request is not\n"
            "a \"Supplied At\" Site. You must select a different\n"
            "Site before creating the Purchase Request.") );
-    _warehouse->setEnabled(TRUE);
+    _warehouse->setEnabled(true);
   }
 }

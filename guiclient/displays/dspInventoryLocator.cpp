@@ -20,7 +20,7 @@
 #include "parameterwidget.h"
 #include "metasql.h"
 
-dspInventoryLocator::dspInventoryLocator(QWidget* parent, const char*, Qt::WFlags fl)
+dspInventoryLocator::dspInventoryLocator(QWidget* parent, const char*, Qt::WindowFlags fl)
     : display(parent, "dspInventoryLocator", fl)
 {
   setupUi(optionsWidget());

@@ -26,7 +26,7 @@
 #include "storedProcErrorLookup.h"
 #include "parameterwidget.h"
 
-openSalesOrders::openSalesOrders(QWidget* parent, const char*, Qt::WFlags fl)
+openSalesOrders::openSalesOrders(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "openSalesOrders", fl)
 {
   setupUi(optionsWidget());
@@ -41,9 +41,9 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char*, Qt::WFlags fl)
   _custid = -1;
   optionsWidget()->hide();
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
   _dates->setStartDate(QDate().currentDate().addDays(-90));
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
@@ -156,7 +156,7 @@ void openSalesOrders::sCopy()
   ParameterList params;
   params.append("sohead_id", list()->id());
       
-  copySalesOrder newdlg(this, "", TRUE);
+  copySalesOrder newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -174,7 +174,7 @@ void openSalesOrders::sPrintPackingList()
   ParameterList params;
   params.append("sohead_id", list()->id());
 
-  printPackingList newdlg(this, "", TRUE);
+  printPackingList newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -248,7 +248,7 @@ void openSalesOrders::sPrintForms()
   ParameterList params;
   params.append("sohead_id", list()->id());
 
-  printSoForm newdlg(this, "", TRUE);
+  printSoForm newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
