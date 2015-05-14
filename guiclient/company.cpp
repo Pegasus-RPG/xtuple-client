@@ -55,7 +55,7 @@ company::company(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   _discrepancy->setType(GLCluster::cExpense);
   _discrepancy->setShowExternal(true);
   _discrepancy->setIgnoreCompany(true);
-  _unassigned->setType(GLCluster::cExpense);
+  _unassigned->setType(GLCluster::cLiability);
   _unassigned->setShowExternal(true);
   _unassigned->setIgnoreCompany(true);
 }

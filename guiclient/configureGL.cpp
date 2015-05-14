@@ -29,7 +29,7 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _yearend->setType(GLCluster::cEquity);
   _gainLoss->setType(GLCluster::cExpense);
   _discrepancy->setType(GLCluster::cExpense);
-  _unassigned->setType(GLCluster::cExpense);
+  _unassigned->setType(GLCluster::cLiability);
 
   // AP
   _nextAPMemoNumber->setValidator(omfgThis->orderVal());
