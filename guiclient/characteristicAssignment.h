@@ -17,6 +17,8 @@
 
 #include "ui_characteristicAssignment.h"
 
+class CharacteristicAssignmentPrivate;
+
 class characteristicAssignment : public XDialog, public Ui::characteristicAssignment
 {
     Q_OBJECT
@@ -36,14 +38,11 @@ protected slots:
     virtual void languageChange();
 
 private:
-    bool _template;
     int _mode;
     int _charassid;
     int _targetId;
-    QString _targetType;
 
-    void	handleTargetType();
-
+    CharacteristicAssignmentPrivate *_d;
 };
 
 #endif // CHARACTERISTICASSIGNMENT_H

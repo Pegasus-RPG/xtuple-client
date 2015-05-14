@@ -20,7 +20,6 @@
 
 #include <parameter.h>
 
-#include "characteristic.h"
 #include "parameterwidget.h"
 #include "project.h"
 #include "task.h"
@@ -115,7 +114,7 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Completed Start Date"), "completedStartDate", ParameterWidget::Date, QDate::currentDate());
   parameterWidget()->append(tr("Completed End Date"), "completedEndDate", ParameterWidget::Date, QDate::currentDate());
 
-  setupCharacteristics(characteristic::Projects);
+  setupCharacteristics("J");
           
   _statuses << "None" << "C" << "P" << "O";
 
@@ -192,7 +191,7 @@ void projects::sBuildList()
     list()->addColumn(tr("Budget Exp."),   _priceColumn,  Qt::AlignRight,  true,  "prjtask_exp_budget");
     list()->addColumn(tr("Actual Exp."),   _priceColumn,  Qt::AlignRight,  true,  "prjtask_exp_actual");
     list()->addColumn(tr("Balance Exp."),  _priceColumn,  Qt::AlignRight,  true,  "prjtask_exp_balance");
-    setupCharacteristics(characteristic::Projects);
+    setupCharacteristics("J");
     _showHierarchy->setEnabled(false);
   }
 

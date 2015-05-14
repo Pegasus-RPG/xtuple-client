@@ -16,7 +16,6 @@
 #include <QSqlError>
 #include <QVariant>
 
-#include "characteristic.h"
 #include "crmaccount.h"
 #include "errorReporter.h"
 #include "storedProcErrorLookup.h"
@@ -103,7 +102,7 @@ crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Employee"),       70, Qt::AlignCenter, false, "emp");
   list()->addColumn(tr("Sales Rep"),      70, Qt::AlignCenter, false, "salesrep");
 
-  setupCharacteristics(characteristic::CRMAccounts);
+  setupCharacteristics("CRMACCT");
   parameterWidget()->applyDefaultFilterSet();
 
   connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));

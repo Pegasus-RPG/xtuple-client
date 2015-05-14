@@ -17,7 +17,6 @@
 #include <QVariant>
 #include <metasql.h>
 
-#include "characteristic.h"
 #include "copyItem.h"
 #include "item.h"
 #include "storedProcErrorLookup.h"
@@ -86,7 +85,7 @@ items::items(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Product Category"),  _itemColumn, Qt::AlignLeft , false, "prodcat_code");
   list()->addColumn(tr("Freight Class"),  _itemColumn, Qt::AlignLeft , false, "freightclass_code");
   
-  setupCharacteristics(characteristic::Items);
+  setupCharacteristics("I");
   parameterWidget()->applyDefaultFilterSet();
 
   if (_privileges->check("MaintainItemMasters"))

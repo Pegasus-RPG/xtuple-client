@@ -17,7 +17,6 @@
 
 #include <openreports.h>
 
-#include "characteristic.h"
 #include "errorReporter.h"
 #include "parameterwidget.h"
 #include "storedProcErrorLookup.h"
@@ -61,7 +60,7 @@ vendors::vendors(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Country"), 100, Qt::AlignLeft  , false, "addr_country" );
   list()->addColumn(tr("Postal Code"), 75, Qt::AlignLeft  , false, "addr_postalcode" );
 
-  setupCharacteristics(characteristic::Vendors);
+  setupCharacteristics("V");
 
   connect(omfgThis, SIGNAL(vendorsUpdated()), SLOT(sFillList()));
 

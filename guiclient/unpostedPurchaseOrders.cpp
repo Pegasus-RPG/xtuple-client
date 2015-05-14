@@ -19,7 +19,6 @@
 #include <metasql.h>
 #include <parameter.h>
 
-#include "characteristic.h"
 #include "purchaseOrder.h"
 #include "printPurchaseOrder.h"
 #include "guiclient.h"
@@ -45,7 +44,6 @@ unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char*, Qt:
   parameterWidget()->appendComboBox(tr("Vendor Type"), "vendtype_id", XComboBox::VendorTypes);
   parameterWidget()->append(tr("Vendor Type Pattern"), "vendtype_pattern", ParameterWidget::Text);
   parameterWidget()->appendComboBox(tr("Purchase Agent"), "pohead_agent_usr_id", XComboBox::Agent);
-  setupCharacteristics(characteristic::PurchaseOrders);
 
   connect(omfgThis,	SIGNAL(purchaseOrdersUpdated(int, bool)),
                                               this,	SLOT(sFillList()));
@@ -62,6 +60,7 @@ unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char*, Qt:
   list()->addColumn(tr("Vend. Type"),    _orderColumn, Qt::AlignLeft,   false,"vendtype_code" );
   list()->addColumn(tr("Agent"),         _orderColumn, Qt::AlignLeft,   true, "pohead_agent_username");
 
+  setupCharacteristics("PO");
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   _showUnreleased->setChecked(false);

@@ -12,7 +12,6 @@
 
 #include <QSqlError>
 
-#include "characteristic.h"
 #include "guiclient.h"
 #include "incident.h"
 #include "parameterwidget.h"
@@ -99,7 +98,7 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
   list()->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft, false, "item_number");
   list()->addColumn(tr("Lot/Serial"),   _itemColumn, Qt::AlignLeft, false, "ls_number");
 
-  setupCharacteristics(characteristic::Incidents);
+  setupCharacteristics("INCDT");
   parameterWidget()->applyDefaultFilterSet();
 }
 

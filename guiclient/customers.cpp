@@ -14,7 +14,6 @@
 #include <QSqlError>
 #include <QVariant>
 
-#include "characteristic.h"
 #include "customer.h"
 #include "customerTypeList.h"
 #include "errorReporter.h"
@@ -85,7 +84,7 @@ customers::customers(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Corr. Postal"), 75, Qt::AlignLeft  , false, "corr_postalcode" );
   list()->addColumn(tr("Corr. Country"),100, Qt::AlignLeft , false, "corr_country" );
 
-  setupCharacteristics(characteristic::Customers);
+  setupCharacteristics("C");
   parameterWidget()->applyDefaultFilterSet();
 
   connect(omfgThis, SIGNAL(customersUpdated(int, bool)), SLOT(sFillList()));

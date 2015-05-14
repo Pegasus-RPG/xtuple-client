@@ -19,7 +19,6 @@
 #include <QPrintDialog>
 #include <QShortcut>
 #include <QToolButton>
-#include <QDebug>
 
 #include <metasql.h>
 #include <mqlutil.h>
@@ -125,7 +124,7 @@ public:
   }
 
   bool setParams(ParameterList &);
-  void setupCharacteristics(unsigned int use);
+  void setupCharacteristics(QStringList uses);
   void print(ParameterList, bool, bool);
 
   QString reportName;
@@ -245,52 +244,22 @@ void displayPrivate::print(ParameterList pParams, bool showPreview, bool forceSe
   }
 }
 
-void displayPrivate::setupCharacteristics(unsigned int use)
+void displayPrivate::setupCharacteristics(QStringList uses)
 {
-  QStringList uses;
-  if (use & characteristic::Addresses)
-    uses << "char_addresses";
-  if (use & characteristic::Contacts)
-    uses << "char_contacts";
-  if (use & characteristic::CRMAccounts)
-    uses << "char_crmaccounts";
-  if (use & characteristic::Customers)
-    uses << "char_customers";
-  if (use & characteristic::Employees)
-    uses << "char_employees";
-  if (use & characteristic::Incidents)
-    uses << "char_incidents";
-  if (use & characteristic::Items)
-    uses << "char_items";
-  if (use & characteristic::LotSerial)
-    uses << "char_lotserial";
-  if (use & characteristic::Opportunities)
-    uses << "char_opportunity";
-  if (use & characteristic::Quotes)
-    uses << "char_quotes";
-  if (use & characteristic::SalesOrders)
-    uses << "char_salesorders";
-  if (use & characteristic::Invoices)
-    uses << "char_invoices";
-  if (use & characteristic::Vendors)
-    uses << "char_vendors";
-  if (use & characteristic::PurchaseOrders)
-    uses << "char_purchaseorders";
-  if (use & characteristic::Vouchers)
-    uses << "char_vouchers";
-  if (use & characteristic::Projects)
-    uses << "char_projects";
-
-  // Add columns and parameters for characteristics
   QString column;
   QString name;
   QString sql = QString("SELECT char_id, char_name, char_type "
                         "FROM char "
-                        "WHERE (%1) "
-                        " AND (char_search) "
-                        "ORDER BY char_name;").arg(uses.join(" AND "));
+                        "  JOIN charuse ON char_id = charuse_char_id"
+                        " WHERE char_search "
+                        "   AND charuse_target_type IN ('%1')"
+                        " ORDER BY char_name;").arg(uses.join("','"));
   XSqlQuery chars;
   chars.exec(sql);
+  if (chars.size() <= 0)
+  {
+    qWarning() << "Could not find any characteristics matching" << uses;
+  }
   while (chars.next())
   {
     characteristic::Type chartype = (characteristic::Type)chars.value("char_type").toInt();
@@ -549,9 +518,16 @@ bool display::setParams(ParameterList & params)
   return ret;
 }
 
-void display::setupCharacteristics(unsigned int uses)
+void display::setupCharacteristics(QStringList uses)
 {
   _data->setupCharacteristics(uses);
+}
+
+void display::setupCharacteristics(QString uses)
+{
+  QStringList ulist;
+  ulist << uses;
+  _data->setupCharacteristics(ulist);
 }
 
 void display::setReportName(const QString & reportName)

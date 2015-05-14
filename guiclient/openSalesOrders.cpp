@@ -71,7 +71,7 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Status"),           _statusColumn,   Qt::AlignCenter,false, "status");
   list()->addColumn(tr("Notes"),            -1,              Qt::AlignLeft,  false, "notes");
   
-  setupCharacteristics(characteristic::SalesOrders);
+  setupCharacteristics("SO");
   parameterWidget()->applyDefaultFilterSet();
   
   if (_privileges->check("MaintainSalesOrders"))
