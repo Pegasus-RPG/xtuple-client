@@ -25,6 +25,7 @@
 #include <QUrl>
 #include <QBuffer>
 #include <QDebug>
+#include <QFileInfo>
 
 #include <currcluster.h>
 #include <metasql.h>
