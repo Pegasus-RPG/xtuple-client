@@ -44,7 +44,6 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
 
   connect(_buttonBox,     SIGNAL(rejected()),        this, SLOT(sClose()));
   connect(_buttonBox,     SIGNAL(accepted()),        this, SLOT(sSave()));
-  connect(_printTasks,    SIGNAL(clicked()),         this, SLOT(sPrintTasks()));
   connect(_queryTasks,    SIGNAL(clicked()),         this, SLOT(sFillTaskList()));
   connect(_newTask,       SIGNAL(clicked()),         this, SLOT(sNewTask()));
   connect(_editTask,      SIGNAL(clicked()),         this, SLOT(sEditTask()));
@@ -87,11 +86,6 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   _prjtask->addColumn(tr("Exp. Actual"),      _priceColumn,   Qt::AlignRight,  true,  "exp_actual"  );
   _prjtask->addColumn(tr("Exp. Balance"),      _priceColumn,   Qt::AlignRight,  true,  "exp_balance"  );
 
-  _showSo->setChecked(true);
-  _showWo->setChecked(true);
-  _showPo->setChecked(true);
-  _showIn->setChecked(true);
-
   _owner->setUsername(omfgThis->username());
   _assignedTo->setUsername(omfgThis->username());
   _owner->setType(UsernameLineEdit::UsersActive);
@@ -122,6 +116,11 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   menuItem = newMenu->addAction(tr("Work Order"),   this, SLOT(sNewWorkOrder()));
   menuItem->setEnabled(_privileges->check("MaintainWorkOrders"));
   _newTask->setMenu(newMenu); 
+
+  QMenu * printMenu = new QMenu;
+  printMenu->addAction(tr("Print Tasks"), this, SLOT(sPrintTasks()));
+  printMenu->addAction(tr("Print Orders"), this, SLOT(sPrintOrders()));
+  _print->setMenu(printMenu);
 
   populate();
 }
@@ -595,6 +594,59 @@ void project::sPrintTasks()
   params.append("prj_id", _prjid);
 
   orReport report("ProjectTaskList", params);
+  if(report.isValid())
+    report.print();
+  else
+    report.reportError(this);
+}
+
+void project::sPrintOrders()
+{
+  ParameterList params;
+
+  params.append("prj_id", _prjid);
+
+  params.append("so", tr("Sales Order"));
+  params.append("wo", tr("Work Order"));
+  params.append("po", tr("Purchase Order"));
+  params.append("pr", tr("Purchase Request"));
+  params.append("sos", tr("Sales Orders"));
+  params.append("wos", tr("Work Orders"));
+  params.append("pos", tr("Purchase Orders"));
+  params.append("prs", tr("Purchase Requests"));
+  params.append("quote", tr("Quote"));
+  params.append("quotes", tr("Quotes"));
+  params.append("invoice", tr("Invoice"));
+  params.append("invoices", tr("Invoices"));
+
+  params.append("open", tr("Open"));
+  params.append("closed", tr("Closed"));
+  params.append("converted", tr("Converted"));
+  params.append("canceled", tr("Canceled"));
+  params.append("expired", tr("Expired"));
+  params.append("unposted", tr("Unposted"));
+  params.append("posted", tr("Posted"));
+  params.append("exploded", tr("Exploded"));
+  params.append("released", tr("Released"));
+  params.append("planning", tr("Concept"));
+  params.append("inprocess", tr("In Process"));
+  params.append("complete", tr("Complete"));
+  params.append("unreleased", tr("Unreleased"));
+  params.append("total", tr("Total"));
+
+  if(_showSo->isChecked())
+    params.append("showSo");
+
+  if(_showWo->isChecked())
+    params.append("showWo");
+
+  if(_showPo->isChecked())
+    params.append("showPo");
+
+  if (! _privileges->check("ViewAllProjects") && ! _privileges->check("MaintainAllProjects"))
+    params.append("owner_username", omfgThis->username());
+
+  orReport report("OrderActivityByProject", params);
   if(report.isValid())
     report.print();
   else
