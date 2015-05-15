@@ -1,2 +1,2 @@
 usr/lib/*/lib*.so.*
-debian/xTuple.xpm usr/share/pixmaps
+guiclient/xTuple.xpm usr/share/pixmaps
