@@ -1926,16 +1926,16 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
     curl_path = "/usr/bin/curl";
   #endif
     QFileInfo checkCurl(curl_path);
-    if(!checkCurl.exists())
+    if(!checkCurl.isExecutable())
     {
      if(DEBUG)
      {
-       qDebug("%s", checkCurl.absoluteFilePath());
+       qDebug() << checkCurl.absoluteFilePath();
      }
      QApplication::restoreOverrideCursor();
      _errorMsg = errorMsg(-18)
-           .arg(checkCurl)
-           .arg("")
+           .arg(curl_path)
+           .arg("Cannot find Curl")
            .arg(QString(proc.readAllStandardError()));
      return -18;
     }
