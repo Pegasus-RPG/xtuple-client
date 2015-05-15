@@ -369,7 +369,7 @@ void reconcileBankaccount::populate()
         formatDate(rcp.value("f_date").toDate()), rcp.value("doc_type"), rcp.value("docnumber"),
         rcp.value("notes"),
         rcp.value("doc_curr"),
-        rcp.value("doc_exchrate").isNull() ? tr("?????") : formatUOMRatio(rcp.value("doc_exchrate").toDouble()),
+        rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6), // 6 dp to match bankrec-receipts metasql
         rcp.value("base_amount").isNull() ? tr("?????") : formatMoney(rcp.value("base_amount").toDouble()),
         rcp.value("amount").isNull() ? tr("?????") : formatMoney(rcp.value("amount").toDouble()) );
     }
@@ -391,7 +391,7 @@ void reconcileBankaccount::populate()
         formatDate(rcp.value("f_date").toDate()), rcp.value("doc_type"), rcp.value("docnumber"),
         rcp.value("notes"),
         rcp.value("doc_curr"),
-        rcp.value("doc_exchrate").isNull() ? tr("?????") : formatUOMRatio(rcp.value("doc_exchrate").toDouble()),
+        rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6), // 6 dp to match bankrec-receipts metasql
         rcp.value("base_amount").isNull() ? tr("?????") : formatMoney(rcp.value("base_amount").toDouble()),
         rcp.value("amount").isNull() ? tr("?????") : formatMoney(rcp.value("amount").toDouble()) );
     }
