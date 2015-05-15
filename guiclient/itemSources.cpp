@@ -41,6 +41,7 @@ itemSources::itemSources(QWidget* parent, const char*, Qt::WindowFlags fl)
   parameterWidget()->append(tr("Show Expired"), "showExpired", ParameterWidget::Exists);
   parameterWidget()->append(tr("Show Future"), "showFuture", ParameterWidget::Exists);
 
+  list()->addColumn(tr("Vendor #"),             -1,        Qt::AlignLeft,   true,  "vend_number"   );
   list()->addColumn(tr("Vendor"),             -1,          Qt::AlignLeft,   true,  "vend_name"   );
   list()->addColumn(tr("Contract #"),         _itemColumn, Qt::AlignLeft,   true,  "contrct_number"   );
   list()->addColumn(tr("Effective"),          _dateColumn, Qt::AlignCenter, true,  "itemsrc_effective"   );
