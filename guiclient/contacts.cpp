@@ -17,7 +17,6 @@
 #include <QVariant>
 #include <QMessageBox>
 
-#include "characteristic.h"
 #include "contact.h"
 #include "errorReporter.h"
 #include "parameterwidget.h"
@@ -74,7 +73,7 @@ contacts::contacts(QWidget* parent, const char*, Qt::WindowFlags fl)
 
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-  setupCharacteristics(characteristic::Contacts);
+  setupCharacteristics("CNTCT");
   parameterWidget()->applyDefaultFilterSet();
 
   QToolButton * attachBtn = new QToolButton(this);

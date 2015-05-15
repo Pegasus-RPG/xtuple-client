@@ -21,7 +21,6 @@
 
 #include "addresses.h"
 #include "address.h"
-#include "characteristic.h"
 #include "storedProcErrorLookup.h"
 #include "parameterwidget.h"
 
@@ -45,7 +44,7 @@ addresses::addresses(QWidget* parent, const char*, Qt::WindowFlags fl)
   list()->addColumn(tr("Country"),	 50, Qt::AlignLeft, true, "addr_country");
   list()->addColumn(tr("Postal Code"),50,Qt::AlignLeft, true, "addr_postalcode");
 
-  setupCharacteristics(characteristic::Addresses);
+  setupCharacteristics("ADDR");
   parameterWidget()->applyDefaultFilterSet();
 
   if (_privileges->check("MaintainAddresses"))

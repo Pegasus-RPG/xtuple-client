@@ -18,7 +18,6 @@
 #include <QToolBar>
 #include <QVariant>
 
-#include "characteristic.h"
 #include "guiclient.h"
 #include "opportunity.h"
 #include "parameterwidget.h"
@@ -72,7 +71,7 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WindowFlags f
   parameterWidget()->appendComboBox(tr("Stage"), "opstage_id", XComboBox::OpportunityStages);
   parameterWidget()->append(tr("Stage Pattern"), "opstage_pattern",    ParameterWidget::Text);
 
-  setupCharacteristics(characteristic::Opportunities);
+  setupCharacteristics("OPP");
   parameterWidget()->applyDefaultFilterSet();
 }
 

@@ -12,15 +12,55 @@
 
 #include <QMessageBox>
 #include <QSqlError>
+#include <QSqlRecord>
 #include <QVariant>
 #include <QRegExpValidator>
 
+#include <metasql.h>
 #include "characteristic.h"
+#include "errorReporter.h"
+
+
+class CharacteristicAssignmentPrivate
+{
+  public:
+    static QMap<QString, QString> targetTypeMap;
+    characteristicAssignment     *parent;
+    QString                       targetType;
+    bool                          _template;
+    int                           idCol;
+    int                           nameCol;
+    int                           typeCol;
+
+    CharacteristicAssignmentPrivate(characteristicAssignment *p)
+      : parent(p),
+        _template(false),
+        idCol(0),
+        nameCol(0),
+        typeCol(0)
+    {
+      if (targetTypeMap.isEmpty())
+      {
+        XSqlQuery q("SELECT * FROM source WHERE source_charass != '';");
+        while (q.next())
+        {
+          targetTypeMap.insert(q.value("source_charass").toString(),
+                               parent->tr(q.value("source_descrip")
+                                           .toString().toLatin1()));
+        }
+      }
+    }
+    void handleTargetType();
+};
+
+QMap<QString, QString> CharacteristicAssignmentPrivate::targetTypeMap;
 
 characteristicAssignment::characteristicAssignment(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
+
+  _d = new CharacteristicAssignmentPrivate(this);
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
@@ -29,7 +69,6 @@ characteristicAssignment::characteristicAssignment(QWidget* parent, const char* 
   _listpriceLit->hide();
   _listprice->hide();
   _listprice->setValidator(omfgThis->priceVal());
-  _template = false;
 
   adjustSize();
 }
@@ -50,156 +89,46 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("item_id", &valid);
-  if (valid)
+  /* derive the targetType from the source table and pParams,
+     skipping params we know don't describe targets.
+   */
+  QStringList passedIn;
+  foreach (Parameter p, pParams)
   {
-    _targetId = param.toInt();
-    _targetType = "I";
-    handleTargetType();
+    if (p.name() != "charass_id" && p.name() != "char_id" &&
+        p.name() != "mode"       && p.name() != "showPrices")
+    {
+      passedIn << p.name();
+    }
   }
+  if (! passedIn.isEmpty())
+  {
+    ParameterList srcp;
+    srcp.append("paramName", passedIn);
 
-  param = pParams.value("cust_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "C";
-    handleTargetType();
-  }
-
-  param = pParams.value("crmacct_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "CRMACCT";
-    handleTargetType();
-  }
-
-  param = pParams.value("addr_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "ADDR";
-    handleTargetType();
-  }
-
-  param = pParams.value("cntct_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "CNTCT";
-    handleTargetType();
-  }
-
-  param = pParams.value("custtype_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "CT";
-    handleTargetType();
-  }
-
-  param = pParams.value("ls_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "LS";
-    handleTargetType();
-  }
-
-  param = pParams.value("lsreg_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "LSR";
-    handleTargetType();
-  }
-
-  param = pParams.value("ophead_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "OPP";
-    handleTargetType();
-  }
-
-  param = pParams.value("emp_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "EMP";
-    handleTargetType();
-  }
-
-  param = pParams.value("incdt_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "INCDT";
-    handleTargetType();
-  }
-
-  param = pParams.value("prj_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "PROJ";
-    handleTargetType();
-  }
-
-  param = pParams.value("prjtask_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "TASK";
-    handleTargetType();
-  }
-
-  param = pParams.value("quhead_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "QU";
-    handleTargetType();
-  }
-  
-  param = pParams.value("cohead_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "SO";
-    handleTargetType();
-  }
-  
-  param = pParams.value("invchead_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "INV";
-    handleTargetType();
-  }
-  
-  param = pParams.value("vend_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "V";
-    handleTargetType();
-  }
-  
-  param = pParams.value("pohead_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "PO";
-    handleTargetType();
-  }
-  
-  param = pParams.value("vohead_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "VCH";
-    handleTargetType();
+    MetaSQLQuery srcm("SELECT source.* FROM source WHERE source_key_param IN ("
+                      "<? foreach('paramName') ?>"
+                      "  <? if not isfirst('paramName') ?>, <? endif ?>"
+                      "  <? value('paramName') ?>"
+                      "<? endforeach ?>);");
+    XSqlQuery srcq = srcm.toQuery(srcp);
+    if (srcq.first())
+    {
+      QString paramName = srcq.value("source_key_param").toString();
+      param = pParams.value(paramName, &valid);
+      if (valid)
+      {
+        _targetId = param.toInt();
+        _d->targetType = srcq.value("source_charass").toString();
+        _d->handleTargetType();
+      }
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this,
+                                  tr("Error Finding Characteristic Information"),
+                                  srcq, __FILE__, __LINE__))
+    {
+      return Error_NoSetup;
+    }
   }
 
   param = pParams.value("charass_id", &valid);
@@ -242,7 +171,7 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
   {
     for (int i = 0; i < _char->model()->rowCount(); i++)
     {
-      QModelIndex idx = _char->model()->index(i, 0);
+      QModelIndex idx = _char->model()->index(i, _d->idCol);
       if (_char->model()->data(idx) == param)
         _char->setCurrentIndex(i);
     }
@@ -253,7 +182,7 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
 
 void characteristicAssignment::sSave()
 {
-  if(_targetType == "I")
+  if(_d->targetType == "I")
   {
     if ( ((_stackedWidget->currentIndex() == characteristic::Text) && (_value->text().trimmed() == "")) ||
          ((_stackedWidget->currentIndex() == characteristic::List) && (_listValue->currentText() == "")) ||
@@ -266,7 +195,7 @@ void characteristicAssignment::sSave()
   }
 
   XSqlQuery characteristicSave;
-  if (_char->model()->data(_char->model()->index(_char->currentIndex(), 0)) == -1)
+  if (_char->model()->data(_char->model()->index(_char->currentIndex(), _d->idCol)) == -1)
   {
     QMessageBox::information( this, tr("No Characteristic Selected"),
                               tr("You must select a Characteristic before saving this Characteristic Assignment.") );
@@ -274,7 +203,7 @@ void characteristicAssignment::sSave()
     return;
   }
   if (_mode == cNew &&
-      _template &&
+      _d->_template &&
       _stackedWidget->currentIndex() == characteristic::Date)
   {
     characteristicSave.prepare("SELECT charass_id "
@@ -283,8 +212,8 @@ void characteristicAssignment::sSave()
               "  AND (charass_target_id=:charass_target_id) "
               "  AND (charass_target_type=:charass_target_type));");
     characteristicSave.bindValue(":charass_target_id", _targetId);
-    characteristicSave.bindValue(":charass_target_type", _targetType);
-    characteristicSave.bindValue(":charass_char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), 0)));
+    characteristicSave.bindValue(":charass_target_type", _d->targetType);
+    characteristicSave.bindValue(":charass_char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), _d->idCol)));
     characteristicSave.exec();
     if (characteristicSave.first())
     {
@@ -316,8 +245,8 @@ void characteristicAssignment::sSave()
 
   characteristicSave.bindValue(":charass_id", _charassid);
   characteristicSave.bindValue(":charass_target_id", _targetId);
-  characteristicSave.bindValue(":charass_target_type", _targetType);
-  characteristicSave.bindValue(":charass_char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), 0)));
+  characteristicSave.bindValue(":charass_target_type", _d->targetType);
+  characteristicSave.bindValue(":charass_char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), _d->idCol)));
   if (_stackedWidget->currentIndex() == characteristic::Text)
     characteristicSave.bindValue(":charass_value", _value->text());
   else if (_stackedWidget->currentIndex() == characteristic::List)
@@ -334,16 +263,16 @@ void characteristicAssignment::sSave()
 void characteristicAssignment::sCheck()
 {
   XSqlQuery characteristicCheck;
-  if ((_mode == cNew) || (_char->model()->data(_char->model()->index(_char->currentIndex(), 0)) == -1))
+  if ((_mode == cNew) || (_char->model()->data(_char->model()->index(_char->currentIndex(), _d->idCol)) == -1))
   {
     characteristicCheck.prepare( "SELECT charass_id "
                "FROM charass "
                "WHERE ( (charass_target_type=:charass_target_id)"
                " AND (charass_target_id=:charass_target_id)"
                " AND (charass_char_id=:char_id) );" );
-    characteristicCheck.bindValue(":charass_target_type", _targetType);
+    characteristicCheck.bindValue(":charass_target_type", _d->targetType);
     characteristicCheck.bindValue(":charass_target_id", _targetId);
-    characteristicCheck.bindValue(":char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), 0)));
+    characteristicCheck.bindValue(":char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), _d->idCol)));
     characteristicCheck.exec();
     if (characteristicCheck.first())
     {
@@ -357,27 +286,28 @@ void characteristicAssignment::sCheck()
 void characteristicAssignment::populate()
 {
   XSqlQuery characteristicpopulate;
-  characteristicpopulate.prepare( "SELECT charass.*, char_type "
-             "FROM charass "
-             " JOIN char ON (charass_char_id=char_id) "
-             "WHERE (charass_id=:charass_id);" );
+  characteristicpopulate.prepare("SELECT charass.*, char_type"
+             "  FROM charass "
+             "  JOIN char ON (charass_char_id=char_id)"
+             " WHERE (charass_id=:charass_id);" );
   characteristicpopulate.bindValue(":charass_id", _charassid);
   characteristicpopulate.exec();
   if (characteristicpopulate.first())
   {
     _targetId = characteristicpopulate.value("charass_target_id").toInt();
-    _targetType = characteristicpopulate.value("charass_target_type").toString();
-    handleTargetType();
+    _d->targetType = characteristicpopulate.value("charass_target_type").toString();
+    _d->handleTargetType();
 
     for (int i = 0; i < _char->model()->rowCount(); i++)
     {
-      QModelIndex idx = _char->model()->index(i, 0);
+      QModelIndex idx = _char->model()->index(i, _d->idCol);
       if (_char->model()->data(idx) == characteristicpopulate.value("charass_char_id").toInt())
         _char->setCurrentIndex(i);
     }
     _listprice->setDouble(characteristicpopulate.value("charass_price").toDouble());
     _default->setChecked(characteristicpopulate.value("charass_default").toBool());
-    int chartype = _char->model()->data(_char->model()->index(_char->currentIndex(),16)).toInt();
+    int chartype = _char->model()->data(_char->model()->index(_char->currentIndex(),
+                                                              _d->typeCol)).toInt();
     if (chartype == characteristic::Text)
       _value->setText(characteristicpopulate.value("charass_value").toString());
     else if (chartype == characteristic::List)
@@ -397,7 +327,7 @@ void characteristicAssignment::populate()
 
 void characteristicAssignment::sHandleChar()
 {
-  QModelIndex midx = _char->model()->index(_char->currentIndex(), 2); // char_type from model->setQuery
+  QModelIndex midx = _char->model()->index(_char->currentIndex(), _d->typeCol); // char_type from model->setQuery
   int sidx = _char->model()->data(midx).toInt();
 
   _stackedWidget->setCurrentIndex(sidx);
@@ -409,7 +339,7 @@ void characteristicAssignment::sHandleChar()
                   "       COALESCE(char_validator, '.*') AS char_validator "
                   "FROM char "
                   "WHERE (char_id=:char_id);" );
-    mask.bindValue(":char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), 0)).toInt());
+    mask.bindValue(":char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), _d->idCol)).toInt());
     mask.exec();
     if (mask.first())
     {
@@ -431,12 +361,12 @@ void characteristicAssignment::sHandleChar()
                  "FROM charopt "
                  "WHERE (charopt_char_id=:char_id) "
                  "ORDER BY charopt_order, charopt_value;");
-    qry.bindValue(":char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), 0)).toInt());
+    qry.bindValue(":char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), _d->idCol)).toInt());
     qry.exec();
     _listValue->populate(qry);
   }
 
-  if (sidx != characteristic::Date && _template)
+  if (sidx != characteristic::Date && _d->_template)
     _default->setVisible(true);
   else
   {
@@ -446,114 +376,28 @@ void characteristicAssignment::sHandleChar()
 
 }
 
-void characteristicAssignment::handleTargetType()
+void CharacteristicAssignmentPrivate::handleTargetType()
 {
-  if((_targetType == "I") || (_targetType == "CT"))
+  if ((targetType == "I") || (targetType == "CT"))
     _template=true;
   else
-    _default->hide();
+    parent->_default->hide();
 
-  if(_targetType != "I")
-    _listprice->hide();
+  if (targetType != "I")
+    parent->_listprice->hide();
 
-  QString boolColumn;
-  if ((_targetType == "C") || (_targetType == "CT"))
-  {
-    setWindowTitle(tr("Customer Characteristic"));
-    boolColumn = "char_customers";
-  }
-  else if (_targetType == "I")
-  {
-    setWindowTitle(tr("Item Characteristic"));
-    boolColumn = "char_items";
-  }
-  else if (_targetType == "CNTCT")
-  {
-    setWindowTitle(tr("Contact Characteristic"));
-    boolColumn = "char_contacts";
-  }
-  else if (_targetType == "ADDR")
-  {
-    setWindowTitle(tr("Address Characteristic"));
-    boolColumn = "char_addresses";
-  }
-  else if (_targetType == "CRMACCT")
-  {
-    setWindowTitle(tr("Account Characteristic"));
-    boolColumn = "char_crmaccounts";
-  }
-  else if (_targetType == "LS")
-  {
-    setWindowTitle(tr("Lot Serial Characteristic"));
-    boolColumn = "char_lotserial";
-  }
-  else if (_targetType == "LSR")
-  {
-    setWindowTitle(tr("Lot/Serial Registration Characteristic"));
-    boolColumn = "char_lotserial";
-  }
-  else if (_targetType == "OPP")
-  {
-    setWindowTitle(tr("Opportunity Characteristic"));
-    boolColumn = "char_opportunity";
-  }
-  else if (_targetType == "EMP")
-  {
-    setWindowTitle(tr("Employee Characteristic"));
-    boolColumn = "char_employees";
-  }
-  else if (_targetType == "INCDT")
-  {
-    setWindowTitle(tr("Incident Characteristic"));
-    boolColumn = "char_incidents";
-  }
-  else if (_targetType == "PROJ")
-  {
-    setWindowTitle(tr("Project Characteristic"));
-    boolColumn = "char_projects";
-  }
-  else if (_targetType == "TASK")
-  {
-    setWindowTitle(tr("Project Task Characteristic"));
-    boolColumn = "char_tasks";
-  }
-  else if (_targetType == "QU")
-  {
-    setWindowTitle(tr("Quote Characteristic"));
-    boolColumn = "char_quotes";
-  }
-  else if (_targetType == "SO")
-  {
-    setWindowTitle(tr("Sales Order Characteristic"));
-    boolColumn = "char_salesorders";
-  }
-  else if (_targetType == "INV")
-  {
-    setWindowTitle(tr("Invoice Characteristic"));
-    boolColumn = "char_invoices";
-  }
-  else if (_targetType == "V")
-  {
-    setWindowTitle(tr("Vendor Characteristic"));
-    boolColumn = "char_vendors";
-  }
-  else if (_targetType == "PO")
-  {
-    setWindowTitle(tr("Purchase Order Characteristic"));
-    boolColumn = "char_purchaseorders";
-  }
-  else if (_targetType == "VCH")
-  {
-    setWindowTitle(tr("Voucher Characteristic"));
-    boolColumn = "char_vouchers";
-  }
+  parent->setWindowTitle(parent->tr("Characteristic: %1").arg(targetTypeMap.value(targetType)));
 
   QSqlQueryModel *model = new QSqlQueryModel;
   model->setQuery("SELECT char_id, char_name, char_type"
-                  "  FROM char WHERE " + boolColumn +
+                  "  FROM char JOIN charuse ON char_id = charuse_char_id"
+                  " WHERE charuse_target_type = '" + targetType + "'"
                   " ORDER BY char_order, char_name");
-  _char->setModel(model);
-  _char->setModelColumn(1); // char_name
-  sHandleChar();
+  parent->_char->setModel(model);
+  idCol   = model->query().record().indexOf("char_id");
+  nameCol = model->query().record().indexOf("char_name");
+  typeCol = model->query().record().indexOf("char_type");
+  parent->_char->setModelColumn(nameCol); // char_name
+  parent->sHandleChar();
 }
 

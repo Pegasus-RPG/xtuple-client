@@ -3727,7 +3727,7 @@ void salesOrder::sNewCharacteristic()
   if (ISQUOTE(_mode))
     params.append("quhead_id", _soheadid);
   else
-    params.append("cohead_id", _soheadid);
+    params.append("sohead_id", _soheadid);
   
   characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
