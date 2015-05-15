@@ -34,6 +34,7 @@ public slots:
     virtual void sClose();
     virtual bool sSave(bool partial = false);
     virtual void sPrintTasks();
+    virtual void sPrintOrders();
     virtual void sNewTask();
     virtual void sEditTask();
     virtual void sViewTask();
