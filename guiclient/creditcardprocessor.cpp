@@ -25,6 +25,7 @@
 #include <QUrl>
 #include <QBuffer>
 #include <QDebug>
+#include <QFileInfo>
 
 #include <currcluster.h>
 #include <metasql.h>
@@ -1924,6 +1925,20 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
   #elif defined Q_OS_LINUX
     curl_path = "/usr/bin/curl";
   #endif
+    QFileInfo checkCurl(curl_path);
+    if(!checkCurl.isExecutable())
+    {
+     if(DEBUG)
+     {
+       qDebug() << checkCurl.absoluteFilePath();
+     }
+     QApplication::restoreOverrideCursor();
+     _errorMsg = errorMsg(-18)
+           .arg(curl_path)
+           .arg("Cannot find Curl")
+           .arg(QString(proc.readAllStandardError()));
+     return -18;
+    }
 
     QStringList curl_args;
     curl_args.append( "-k" );
