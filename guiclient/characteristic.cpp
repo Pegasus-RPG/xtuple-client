@@ -296,8 +296,8 @@ void characteristic::sSave()
   characteristicSave.bindValue(":char_id", _d->charid);
   characteristicSave.bindValue(":char_name", _name->text());
 
-  characteristicSave.bindValue(":char_options",     QVariant(FALSE));
-  characteristicSave.bindValue(":char_attributes",  QVariant(FALSE));
+  characteristicSave.bindValue(":char_options",     QVariant(false));
+  characteristicSave.bindValue(":char_attributes",  QVariant(false));
   characteristicSave.bindValue(":char_notes",       _description->toPlainText().trimmed());
 
   if (_mask->currentText().trimmed().size() > 0)
