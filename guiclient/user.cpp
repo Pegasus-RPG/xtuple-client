@@ -57,9 +57,12 @@ user::user(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _available->addColumn("Available Privileges", -1, Qt::AlignLeft);
   _available->addColumn("Description", -1, Qt::AlignLeft);
   _granted->addColumn("Granted Privileges", -1, Qt::AlignLeft);
+  _granted->addColumn("Description", -1, Qt::AlignLeft);
 
   _availableGroup->addColumn("Available Roles", -1, Qt::AlignLeft);
+  _availableGroup->addColumn("Description", -1, Qt::AlignLeft);
   _grantedGroup->addColumn("Granted Roles", -1, Qt::AlignLeft);
+  _grantedGroup->addColumn("Description", -1, Qt::AlignLeft);
 
   _availableSite->addColumn("Available Sites", -1, Qt::AlignLeft);
   _grantedSite->addColumn("Granted Sites",      -1, Qt::AlignLeft);
@@ -352,7 +355,7 @@ void user::sModuleSelected(const QString &pModule)
   _availableGroup->clear();
   _grantedGroup->clear();
   XSqlQuery groups;
-  groups.prepare("SELECT grp_id, grp_name, usrgrp_id"
+  groups.prepare("SELECT grp_id, grp_name, grp_descrip, usrgrp_id"
                  "  FROM grp LEFT OUTER JOIN usrgrp"
                  "    ON (usrgrp_grp_id=grp_id AND usrgrp_username=:username);");
   groups.bindValue(":username", _cUsername);
@@ -360,9 +363,9 @@ void user::sModuleSelected(const QString &pModule)
   while(groups.next())
   {
     if (groups.value("usrgrp_id").toInt() == 0)
-      available = new XTreeWidgetItem(_availableGroup, available, groups.value("grp_id").toInt(), groups.value("grp_name"));
+      available = new XTreeWidgetItem(_availableGroup, available, groups.value("grp_id").toInt(), groups.value("grp_name"), groups.value("grp_descrip"));
     else
-      granted = new XTreeWidgetItem(_grantedGroup, granted, groups.value("grp_id").toInt(), groups.value("grp_name"));
+      granted = new XTreeWidgetItem(_grantedGroup, granted, groups.value("grp_id").toInt(), groups.value("grp_name"), groups.value("grp_descrip"));
   }
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Groups"),
                            groups, __FILE__, __LINE__))
@@ -411,7 +414,7 @@ void user::sModuleSelected(const QString &pModule)
         available = new XTreeWidgetItem(_available, available, privs.value("priv_id").toInt(), privs.value("priv_name"), privs.value("priv_descrip"));
       else
       {
-        granted = new XTreeWidgetItem(_granted, granted, privs.value("priv_id").toInt(), privs.value("priv_name"));
+        granted = new XTreeWidgetItem(_granted, granted, privs.value("priv_id").toInt(), privs.value("priv_name"), privs.value("priv_descrip"));
         if(usrpriv.findFirst("priv_id", privs.value("priv_id").toInt()) == -1)
           granted->setTextColor(Qt::gray);
       }
