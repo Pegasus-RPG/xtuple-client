@@ -336,11 +336,13 @@ enum SetResponse customer::set(const ParameterList &pParams)
     _captive=true;
   }
 
-  if (_mode == cEdit && !_lock.acquire("custinfo", _custid, AppLock::Interactive))
+  if (_mode == cEdit && _custid > 0)
   {
-    setViewMode();
+    if (!_lock.acquire("custinfo", _custid, AppLock::Interactive))
+    {
+      setViewMode();
+    }
   }
-
 
   return NoError;
 }
@@ -1691,6 +1693,13 @@ void customer::setId(int p)
 {
   if (_custid==p)
     return;
+
+  if (! _lock.release())
+    ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                         _lock.lastError(), __FILE__, __LINE__);
+
+  if (_mode == cEdit && !_lock.acquire("custinfo", p, AppLock::Interactive))
+    setViewMode();
 
   _charfilled = false;
   _custid=p;
