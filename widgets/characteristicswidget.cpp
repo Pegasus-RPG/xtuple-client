@@ -47,6 +47,7 @@ CharacteristicsWidget::CharacteristicsWidget(QWidget* parent, const char* name, 
 
   connect(_charass, SIGNAL(valid(bool)), _editCharacteristic,   SLOT(setEnabled(bool)));
   connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
+  connect(_charass, SIGNAL(itemSelected(int)), _editCharacteristic, SLOT(animateClick()));
 
   _charass->addColumn(tr("Characteristic"), _itemColumn,   Qt::AlignLeft,   true, "char_name" );
   _charass->addColumn(tr("Value"),          -1,            Qt::AlignLeft,   true, "charass_value" );
@@ -84,11 +85,13 @@ void CharacteristicsWidget::setReadOnly(bool newState)
     {
       disconnect(_charass, SIGNAL(valid(bool)), _editCharacteristic,   SLOT(setEnabled(bool)));
       disconnect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
+      disconnect(_charass, SIGNAL(itemSelected(int)), _editCharacteristic, SLOT(animateClick()));
     }
     else
     {
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic,   SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(itemSelected(int)), _editCharacteristic, SLOT(animateClick()));
     }
   }
 }

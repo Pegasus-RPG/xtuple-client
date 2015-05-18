@@ -18,11 +18,11 @@
 #include <openreports.h>
 #include <comment.h>
 #include <metasql.h>
+
 #include "mqlutil.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "task.h"
-#include "characteristicAssignment.h"
 #include "salesOrder.h"
 #include "salesOrderItem.h"
 #include "invoice.h"
