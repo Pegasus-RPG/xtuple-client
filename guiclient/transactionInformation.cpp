@@ -67,6 +67,7 @@ enum SetResponse transactionInformation::set(const ParameterList &pParams)
     if (transactionet.first())
     {
       _analyze->setChecked(transactionet.value("invhist_analyze").toBool());
+      _analyzeInit = transactionet.value("invhist_analyze").toBool();
       _transactionType->setText(transactionet.value("invhist_transtype").toString());
       _transactionDate->setDate(transactionet.value("invhist_transdate").toDate());
       _createdDate->setDate(transactionet.value("invhist_created").toDate());
@@ -105,18 +106,21 @@ enum SetResponse transactionInformation::set(const ParameterList &pParams)
 
 void transactionInformation::sSave()
 {
-  XSqlQuery transactionSave;
-  transactionSave.prepare( "UPDATE invhist "
+  // #19160 Only save if the Analyze flag has been edited
+  if (_analyze->isChecked() != _analyzeInit)
+  {
+    XSqlQuery transactionSave;
+    transactionSave.prepare( "UPDATE invhist "
              "SET invhist_analyze=:invhist_analyze "
              "WHERE (invhist_id=:invhist_id);" );
-  transactionSave.bindValue(":invhist_analyze", QVariant(_analyze->isChecked()));
-  transactionSave.bindValue(":invhist_id", _invhistid);
-  transactionSave.exec();
-  if (transactionSave.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, transactionSave.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    transactionSave.bindValue(":invhist_analyze", QVariant(_analyze->isChecked()));
+    transactionSave.bindValue(":invhist_id", _invhistid);
+    transactionSave.exec();
+    if (transactionSave.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, transactionSave.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
-
   accept();
 }
