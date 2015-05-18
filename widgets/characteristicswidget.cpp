@@ -163,6 +163,8 @@ void CharacteristicsWidget::sDelete()
   q.prepare("DELETE FROM charass WHERE charass_id = :charass_id;");
   q.bindValue(":charass_id", _charass->id());
   q.exec();
+  ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Characteristic"),
+                       q, __FILE__, __LINE__);
 
   sFillList();
 }
@@ -183,6 +185,8 @@ void CharacteristicsWidget::sFillList()
   q.bindValue(":id",   _d->id);
   q.exec();
   _charass->populate(q);
+  ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Characteristics"),
+                       q, __FILE__, __LINE__);
 }
 
 // scripting exposure /////////////////////////////////////////////////////////
