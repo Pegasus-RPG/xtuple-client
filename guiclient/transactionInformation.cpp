@@ -10,6 +10,8 @@
 
 #include "transactionInformation.h"
 
+#include "errorReporter.h"
+
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
@@ -78,9 +80,9 @@ enum SetResponse transactionInformation::set(const ParameterList &pParams)
       _qohAfter->setText(formatQty(transactionet.value("invhist_qoh_after").toDouble()));
       _notes->setText(transactionet.value("invhist_comments").toString());
     }
-    else if (transactionet.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Transaction Information"),
+                           transactionet, __FILE__, __LINE__))
     {
-      systemError(this, transactionet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -116,9 +118,9 @@ void transactionInformation::sSave()
     transactionSave.bindValue(":invhist_analyze", QVariant(_analyze->isChecked()));
     transactionSave.bindValue(":invhist_id", _invhistid);
     transactionSave.exec();
-    if (transactionSave.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Transaction Information"),
+                           transactionSave, __FILE__, __LINE__))
     {
-      systemError(this, transactionSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
