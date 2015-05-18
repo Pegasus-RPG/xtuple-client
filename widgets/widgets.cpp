@@ -16,6 +16,7 @@
 #include "plugins/alarmsplugin.h"
 #include "plugins/aropenclusterplugin.h"
 #include "plugins/calendarcomboboxplugin.h"
+#include "plugins/characteristicswidgetplugin.h"
 #include "plugins/clineeditplugin.h"
 #include "plugins/cmheadclusterplugin.h"
 #include "plugins/commentsplugin.h"
@@ -95,6 +96,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new AlarmsPlugin(this));
   m_plugins.append(new AropenClusterPlugin(this));
   m_plugins.append(new CalendarComboBoxPlugin(this));
+  m_plugins.append(new CharacteristicsWidgetPlugin(this));
   m_plugins.append(new CLineEditPlugin(this));
   m_plugins.append(new CmheadClusterPlugin(this));
   m_plugins.append(new CommentsPlugin(this));

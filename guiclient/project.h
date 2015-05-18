@@ -47,10 +47,6 @@ public slots:
     virtual void sNewPurchaseOrder();
     virtual void sNewWorkOrder();
     virtual void sNumberChanged();
-    virtual void sNew();
-    virtual void sEdit();
-    virtual void sDelete();
-    virtual void sFillCharList();
     virtual void sHandleButtons(bool valid = false);
 
 protected slots:

@@ -52,18 +52,13 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   connect(_deleteTask,    SIGNAL(clicked()),         this, SLOT(sDeleteTask()));
   connect(_number,        SIGNAL(editingFinished()), this, SLOT(sNumberChanged()));
   connect(_crmacct,       SIGNAL(newId(int)),        this, SLOT(sCRMAcctChanged(int)));
-  connect(_newCharacteristic, SIGNAL(clicked()),     this, SLOT(sNew()));
-  connect(_editCharacteristic, SIGNAL(clicked()),    this, SLOT(sEdit()));
-  connect(_deleteCharacteristic, SIGNAL(clicked()),  this, SLOT(sDelete()));
   connect(_prjtask, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_showSo, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
   connect(_showPo, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
   connect(_showWo, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
   connect(_showIn, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
 
-  _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name" );
-  _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value" );
-  _charass->addColumn(tr("Default"),        _ynColumn*2,   Qt::AlignCenter, true, "charass_default" );
+  _charass->setType("PROJ");
 
   _prjtask->addColumn(tr("Name"),        _itemColumn,  Qt::AlignLeft,   true,  "name"   );
   _prjtask->addColumn(tr("Status"),      _orderColumn, Qt::AlignLeft,   true,  "status"   );
@@ -152,6 +147,7 @@ enum SetResponse project::set(const ParameterList &pParams)
   {
     _prjid = param.toInt();
     populate();
+    _charass->setId(_prjid);
   }
 
   param = pParams.value("crmacct_id", &valid);
@@ -179,8 +175,6 @@ enum SetResponse project::set(const ParameterList &pParams)
       connect(_prjtask, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
       connect(_prjtask, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
       connect(_prjtask, SIGNAL(itemSelected(int)), _editTask, SLOT(animateClick()));
-      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
       projectet.exec("SELECT NEXTVAL('prj_prj_id_seq') AS prj_id;");
       if (projectet.first())
@@ -193,6 +187,7 @@ enum SetResponse project::set(const ParameterList &pParams)
 
       _comments->setId(_prjid);
       _documents->setId(_prjid);
+      _charass->setId(_prjid);
       _recurring->setParent(_prjid, "J");
     }
     else if (param.toString() == "edit")
@@ -206,8 +201,6 @@ enum SetResponse project::set(const ParameterList &pParams)
       connect(_prjtask, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
       connect(_prjtask, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
       connect(_prjtask, SIGNAL(itemSelected(int)), _editTask, SLOT(animateClick()));
-      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "view")
     {
@@ -227,6 +220,7 @@ enum SetResponse project::set(const ParameterList &pParams)
       _newTask->setEnabled(false);
       connect(_prjtask, SIGNAL(itemSelected(int)), _viewTask, SLOT(animateClick()));
       _comments->setReadOnly(true);
+      _charass->setReadOnly(true);
       _documents->setReadOnly(true);
       _started->setEnabled(false);
       _assigned->setEnabled(false);
@@ -234,7 +228,6 @@ enum SetResponse project::set(const ParameterList &pParams)
       _completed->setEnabled(false);
       _recurring->setEnabled(false);
       _projectType->setEnabled(false);
-      _newCharacteristic->setEnabled(false);
       _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Save));
       _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Cancel));
       _buttonBox->addButton(QDialogButtonBox::Close);
@@ -438,7 +431,6 @@ void project::populate()
   }
 
   sFillTaskList();
-  sFillCharList();
   _comments->setId(_prjid);
   _documents->setId(_prjid);
   emit populated(_prjid);
@@ -690,63 +682,6 @@ void project::sDeleteTask()
   }
   emit deletedTask();
   sFillTaskList();
-}
-
-void project::sNew()
-{
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("prj_id", _prjid);
-
-  characteristicAssignment newdlg(this, "", true);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillCharList();
-}
-
-void project::sEdit()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("charass_id", _charass->id());
-
-  characteristicAssignment newdlg(this, "", true);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillCharList();
-}
-
-void project::sDelete()
-{
-  XSqlQuery taskDelete;
-  taskDelete.prepare( "DELETE FROM charass "
-             "WHERE (charass_id=:charass_id);" );
-  taskDelete.bindValue(":charass_id", _charass->id());
-  taskDelete.exec();
-
-  sFillCharList();
-}
-
-void project::sFillCharList()
-{
-  XSqlQuery taskFillList;
-  taskFillList.prepare( "SELECT charass_id, char_name, "
-             " CASE WHEN char_type < 2 THEN "
-             "   charass_value "
-             " ELSE "
-             "   formatDate(charass_value::date) "
-             "END AS charass_value, "
-             " charass_default "
-             "FROM charass, char "
-             "WHERE ( (charass_target_type='PROJ')"
-             " AND (charass_char_id=char_id)"
-             " AND (charass_target_id=:prj_id) ) "
-             "ORDER BY char_order, char_name;" );
-  taskFillList.bindValue(":prj_id", _prjid);
-  taskFillList.exec();
-  _charass->populate(taskFillList);
 }
 
 void project::sFillTaskList()

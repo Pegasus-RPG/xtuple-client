@@ -11,15 +11,13 @@
 #ifndef CHARACTERISTICASSIGNMENT_H
 #define CHARACTERISTICASSIGNMENT_H
 
-#include "guiclient.h"
-#include "xdialog.h"
 #include <parameter.h>
 
 #include "ui_characteristicAssignment.h"
 
 class CharacteristicAssignmentPrivate;
 
-class characteristicAssignment : public XDialog, public Ui::characteristicAssignment
+class characteristicAssignment : public QDialog, public Ui::characteristicAssignment
 {
     Q_OBJECT
 
@@ -28,7 +26,7 @@ public:
     ~characteristicAssignment();
 
 public slots:
-    virtual enum SetResponse set(const ParameterList & pParams );
+    virtual int  set(const ParameterList &pParams);
     virtual void sSave();
     virtual void sCheck();
     virtual void populate();

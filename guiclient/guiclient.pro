@@ -138,7 +138,6 @@ FORMS =   absoluteCalendarItem.ui               \
           changePoitemQty.ui                    \
           changeWoQty.ui                        \
           characteristic.ui                     \
-          characteristicAssignment.ui           \
           characteristicPrice.ui                \
           characteristics.ui                    \
           check.ui                              \
@@ -691,7 +690,6 @@ HEADERS = ../common/format.h                    \
           changePoitemQty.h             \
           changeWoQty.h                 \
           characteristic.h              \
-          characteristicAssignment.h    \
           characteristicPrice.h         \
           characteristics.h             \
           check.h                       \
@@ -1302,7 +1300,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           changePoitemQty.cpp                   \
           changeWoQty.cpp                       \
           characteristic.cpp                    \
-          characteristicAssignment.cpp          \
           characteristicPrice.cpp               \
           characteristics.cpp                   \
           check.cpp                             \

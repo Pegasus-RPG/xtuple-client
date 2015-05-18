@@ -17,9 +17,19 @@
 #include <QRegExpValidator>
 
 #include <metasql.h>
-#include "characteristic.h"
 #include "errorReporter.h"
+#include "format.h"
+#include "widgets.h"
+#include "xdoublevalidator.h"
 
+// macros to emulate values from guiclient.h
+// we moved this file from guiclient to widgets
+#define NoError 0
+#define Error_NoSetup 6
+// macros to handle characteristic enum values - must match guiclient/characteristic.h
+#define CHARTEXT 0
+#define CHARLIST 1
+#define CHARDATE 2
 
 class CharacteristicAssignmentPrivate
 {
@@ -30,6 +40,7 @@ class CharacteristicAssignmentPrivate
     bool                          _template;
     int                           idCol;
     int                           nameCol;
+    XDoubleValidator             *priceVal;
     int                           typeCol;
 
     CharacteristicAssignmentPrivate(characteristicAssignment *p)
@@ -39,6 +50,7 @@ class CharacteristicAssignmentPrivate
         nameCol(0),
         typeCol(0)
     {
+      priceVal = new XDoubleValidator(0, 9999999.0, decimalPlaces("purchprice"), parent);
       if (targetTypeMap.isEmpty())
       {
         XSqlQuery q("SELECT * FROM source WHERE source_charass != '';");
@@ -56,9 +68,12 @@ class CharacteristicAssignmentPrivate
 QMap<QString, QString> CharacteristicAssignmentPrivate::targetTypeMap;
 
 characteristicAssignment::characteristicAssignment(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
-    : XDialog(parent, name, modal, fl)
+    : QDialog(parent, fl)
 {
   setupUi(this);
+
+  if (name) setObjectName(name);
+  setModal(modal);
 
   _d = new CharacteristicAssignmentPrivate(this);
 
@@ -68,7 +83,7 @@ characteristicAssignment::characteristicAssignment(QWidget* parent, const char* 
 
   _listpriceLit->hide();
   _listprice->hide();
-  _listprice->setValidator(omfgThis->priceVal());
+  _listprice->setValidator(_d->priceVal);
 
   adjustSize();
 }
@@ -83,9 +98,8 @@ void characteristicAssignment::languageChange()
   retranslateUi(this);
 }
 
-enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
+int characteristicAssignment::set(const ParameterList &pParams)
 {
-  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 
@@ -184,9 +198,9 @@ void characteristicAssignment::sSave()
 {
   if(_d->targetType == "I")
   {
-    if ( ((_stackedWidget->currentIndex() == characteristic::Text) && (_value->text().trimmed() == "")) ||
-         ((_stackedWidget->currentIndex() == characteristic::List) && (_listValue->currentText() == "")) ||
-         ((_stackedWidget->currentIndex() == characteristic::Date) && (_dateValue->date().toString() == "")) )
+    if ( ((_stackedWidget->currentIndex() == CHARTEXT) && (_value->text().trimmed() == "")) ||
+         ((_stackedWidget->currentIndex() == CHARLIST) && (_listValue->currentText() == "")) ||
+         ((_stackedWidget->currentIndex() == CHARDATE) && (_dateValue->date().toString() == "")) )
       {
           QMessageBox::information( this, tr("No Value Entered"),
                                     tr("You must enter a value before saving this Item Characteristic.") );
@@ -204,7 +218,7 @@ void characteristicAssignment::sSave()
   }
   if (_mode == cNew &&
       _d->_template &&
-      _stackedWidget->currentIndex() == characteristic::Date)
+      _stackedWidget->currentIndex() == CHARDATE)
   {
     characteristicSave.prepare("SELECT charass_id "
               "FROM charass "
@@ -247,11 +261,11 @@ void characteristicAssignment::sSave()
   characteristicSave.bindValue(":charass_target_id", _targetId);
   characteristicSave.bindValue(":charass_target_type", _d->targetType);
   characteristicSave.bindValue(":charass_char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), _d->idCol)));
-  if (_stackedWidget->currentIndex() == characteristic::Text)
+  if (_stackedWidget->currentIndex() == CHARTEXT)
     characteristicSave.bindValue(":charass_value", _value->text());
-  else if (_stackedWidget->currentIndex() == characteristic::List)
+  else if (_stackedWidget->currentIndex() == CHARLIST)
     characteristicSave.bindValue(":charass_value", _listValue->currentText());
-  else if (_stackedWidget->currentIndex() == characteristic::Date)
+  else if (_stackedWidget->currentIndex() == CHARDATE)
     characteristicSave.bindValue(":charass_value", _dateValue->date());
   characteristicSave.bindValue(":charass_price", _listprice->toDouble());
   characteristicSave.bindValue(":charass_default", QVariant(_default->isChecked()));
@@ -308,19 +322,19 @@ void characteristicAssignment::populate()
     _default->setChecked(characteristicpopulate.value("charass_default").toBool());
     int chartype = _char->model()->data(_char->model()->index(_char->currentIndex(),
                                                               _d->typeCol)).toInt();
-    if (chartype == characteristic::Text)
+    if (chartype == CHARTEXT)
       _value->setText(characteristicpopulate.value("charass_value").toString());
-    else if (chartype == characteristic::List)
+    else if (chartype == CHARLIST)
     {
       int idx = _listValue->findText(characteristicpopulate.value("charass_value").toString());
       _listValue->setCurrentIndex(idx);
     }
-    else if (chartype == characteristic::Date)
+    else if (chartype == CHARDATE)
       _dateValue->setDate(characteristicpopulate.value("charass_value").toDate());
   }
-  else if (characteristicpopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Characteristic Assignment"),
+                                characteristicpopulate, __FILE__, __LINE__))
   {
-    systemError(this, characteristicpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -332,7 +346,7 @@ void characteristicAssignment::sHandleChar()
 
   _stackedWidget->setCurrentIndex(sidx);
 
-  if (sidx == characteristic::Text) // Handle input mask for text
+  if (sidx == CHARTEXT)
   {
     XSqlQuery mask;
     mask.prepare( "SELECT COALESCE(char_mask, '') AS char_mask,"
@@ -348,13 +362,13 @@ void characteristicAssignment::sHandleChar()
       QValidator *validator = new QRegExpValidator(rx, this);
       _value->setValidator(validator);
     }
-    else if (mask.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Characteristic Information"),
+                                  mask, __FILE__, __LINE__))
     {
-      systemError(this, mask.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
-  else if (sidx == characteristic::List) // Handle options for list
+  else if (sidx == CHARLIST)
   {
     QSqlQuery qry;
     qry.prepare("SELECT charopt_id, charopt_value "
@@ -366,7 +380,7 @@ void characteristicAssignment::sHandleChar()
     _listValue->populate(qry);
   }
 
-  if (sidx != characteristic::Date && _d->_template)
+  if (sidx != CHARDATE && _d->_template)
     _default->setVisible(true);
   else
   {
