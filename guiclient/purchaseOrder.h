@@ -44,10 +44,6 @@ public slots:
     virtual void sNew();
     virtual void sEdit();
     virtual void sDelete();
-    virtual void sNewCharacteristic();
-    virtual void sEditCharacteristic();
-    virtual void sDeleteCharacteristic();
-    virtual void sFillCharacteristic();
     virtual void sVendaddrList();
     virtual void sHandleDeleteButton();
     virtual void sHandleOrderDate();

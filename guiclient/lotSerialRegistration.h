@@ -33,10 +33,6 @@ public slots:
     virtual void closeEvent( QCloseEvent * pEvent );
     virtual void populate();
     virtual void sSave();
-    virtual void sNewCharass();
-    virtual void sEditCharass();
-    virtual void sDeleteCharass();
-    virtual void sFillList();
     virtual void sDateUpdated();
     virtual void sSetSoCustId();
     virtual void sSetSoId();

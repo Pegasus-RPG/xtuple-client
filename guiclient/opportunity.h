@@ -59,11 +59,7 @@ public slots:
     virtual void sAttachSalesOrder();
     virtual void sPrintSalesOrder();
     virtual void sViewSalesOrder();
-    virtual void sFillCharList();
-    virtual void sNewCharacteristic();
-    virtual void sEditCharacteristic();
-    virtual void sDeleteCharacteristic();
-	virtual void sHandleCrmacct(int);
+    virtual void sHandleCrmacct(int);
 
 protected slots:
     virtual void languageChange();

@@ -19,7 +19,6 @@
 
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
-#include "characteristicAssignment.h"
 #include "comment.h"
 #include "itemSourceList.h"
 #include "mqlutil.h"
@@ -69,9 +68,6 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WindowFlags 
   connect(_vendAddr,                 SIGNAL(changed()),                                 _vendaddrCode, SLOT(clear()));
   connect(_warehouse,                SIGNAL(newID(int)),                                this,          SLOT(sHandleShipTo()));
   connect(_shiptoAddr,               SIGNAL(newId(int)),                                this,          SLOT(sHandleShipToName()));
-  connect(_newCharacteristic,        SIGNAL(clicked()),                                 this,          SLOT(sNewCharacteristic()));
-  connect(_editCharacteristic,       SIGNAL(clicked()),                                 this,          SLOT(sEditCharacteristic()));
-  connect(_deleteCharacteristic,     SIGNAL(clicked()),                                 this,          SLOT(sDeleteCharacteristic()));
 
   connect(_vendAddr, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _vendCntct, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
@@ -111,8 +107,7 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WindowFlags 
   if (_metrics->value("Application") == "Standard")
 	_poitem->addColumn(tr("Contract"),                -1,   Qt::AlignLeft,   true, "contrct_number");
 
-  _charass->addColumn(tr("Characteristic"), _itemColumn,     Qt::AlignLeft,   true,  "char_name" );
-  _charass->addColumn(tr("Value"),          -1,              Qt::AlignLeft,   true,  "charass_value" );
+  _charass->setType("PO");
   
   _qeitem = new PoitemTableModel(this);
   _qeitemView->setModel(_qeitem);
@@ -225,8 +220,6 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
     {
       _mode = cNew;
       emit newMode(_mode);
-      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
       if (param.toString() == "releasePr")
       {
@@ -472,8 +465,6 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
 
       connect(_poitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_poitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
       _new->setEnabled(true);
 
@@ -540,8 +531,6 @@ void purchaseOrder::setViewMode()
     // Undo some changes set for the edit mode
     disconnect(_poitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     disconnect(_poitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    disconnect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-    disconnect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
     _new->setEnabled(false);
   }
@@ -578,7 +567,7 @@ void purchaseOrder::setViewMode()
   _qecurrency->setEnabled(false);
   _comments->setReadOnly(true);
   //      _documents->setReadOnly(true);
-  _newCharacteristic->setEnabled(false);
+  _charass->setReadOnly(true);
   
   _delete->hide();
   _edit->setText(tr("&View"));
@@ -757,6 +746,7 @@ void purchaseOrder::populate()
 
     _comments->setId(_poheadid);
     _documents->setId(_poheadid);
+    _charass->setId(_poheadid);
     _vendor->setId(po.value("vend_id").toInt());
     _taxZone->setId(po.value("pohead_taxzone_id").toInt());
     _poCurrency->setId(po.value("pohead_curr_id").toInt());
@@ -766,7 +756,6 @@ void purchaseOrder::populate()
                                 po, __FILE__, __LINE__))
     return;
 
-  sFillCharacteristic();
   sFillList();
   emit populated();
 }
@@ -1094,62 +1083,6 @@ void purchaseOrder::sDelete()
   }
 
   sFillList();
-}
-
-void purchaseOrder::sNewCharacteristic()
-{
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("pohead_id", _poheadid);
-  
-  characteristicAssignment newdlg(this, "", true);
-  newdlg.set(params);
-  
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillCharacteristic();
-}
-
-void purchaseOrder::sEditCharacteristic()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("charass_id", _charass->id());
-  
-  characteristicAssignment newdlg(this, "", true);
-  newdlg.set(params);
-  
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillCharacteristic();
-}
-
-void purchaseOrder::sDeleteCharacteristic()
-{
-  XSqlQuery itemDelete;
-  itemDelete.prepare( "DELETE FROM charass "
-                     "WHERE (charass_id=:charass_id);" );
-  itemDelete.bindValue(":charass_id", _charass->id());
-  itemDelete.exec();
-  
-  sFillCharacteristic();
-}
-
-void purchaseOrder::sFillCharacteristic()
-{
-  XSqlQuery charassq;
-  charassq.prepare( "SELECT charass_id, char_name, "
-                   " CASE WHEN char_type < 2 THEN "
-                   "   charass_value "
-                   " ELSE "
-                   "   formatDate(charass_value::date) "
-                   "END AS charass_value "
-                   "FROM charass JOIN char ON (char_id=charass_char_id) "
-                   "WHERE ( (charass_target_type=:target_type)"
-                   "  AND   (charass_target_id=:target_id) ) "
-                   "ORDER BY char_order, char_name;" );
-  charassq.bindValue(":target_id", _poheadid);
-  charassq.bindValue(":target_type", "PO");
-  charassq.exec();
-  _charass->populate(charassq);
 }
 
 void purchaseOrder::sVendaddrList()

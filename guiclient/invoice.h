@@ -45,10 +45,6 @@ public slots:
     virtual void sDelete();
     virtual void populate();
     virtual void postInvoice();
-    virtual void sNewCharacteristic();
-    virtual void sEditCharacteristic();
-    virtual void sDeleteCharacteristic();
-    virtual void sFillCharacteristic();
     virtual void sFillItemList();
     virtual void sCalculateTotal();
     virtual void sCalculateTax();
