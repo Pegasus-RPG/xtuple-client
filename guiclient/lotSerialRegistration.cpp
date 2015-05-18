@@ -30,7 +30,8 @@ lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, 
   connect(_crmacct,     SIGNAL(newId(int)),             this, SLOT(sSetSoCustId()));
   connect(_so,          SIGNAL(newId(int,QString)),     this, SLOT(sSetSoId()));
   
-  _charass->setType("LSR");
+  _charass->setType("LS"); // use LSR??? for now read from LS and disallow edits
+  _charass->setReadOnly(true);
  
   _lotSerial->setStrict(true);
   _shipment->setStrict(true);
@@ -69,13 +70,15 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
   
   param = pParams.value("ls_id", &valid);
   if (valid)
+  {
     _lotSerial->setId(param.toInt());
+    _charass->setId(_lotSerial->id());
+  }
   
   param = pParams.value("lsreg_id", &valid);
   if (valid)
   {
     _lsregid=param.toInt();
-    _charass->setId(_lsregid);
   }
 
   param = pParams.value("mode", &valid);
@@ -98,7 +101,6 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
       if (lotet.first())
       {
         _lsregid = lotet.value("_lsreg_id").toInt();
-        _charass->setId(_lsregid);
       }
       else if (lotet.lastError().type() != QSqlError::NoError)
       {
@@ -181,7 +183,7 @@ void lotSerialRegistration::populate()
       _so->setId(lotpopulate.value("lsreg_cohead_id").toInt());
     if(!lotpopulate.value("lsreg_shiphead_id").isNull())
       _shipment->setId(lotpopulate.value("lsreg_shiphead_id").toInt());
-    _charass->setId(_lsregid);
+    _charass->setId(lotpopulate.value("lsreg_ls_id").toInt());
   }
   else if(lotpopulate.lastError().type() != QSqlError::NoError)
   {
