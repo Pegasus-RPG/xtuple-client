@@ -796,6 +796,38 @@ int main(int argc, char *argv[])
                     "transactions in the system.") );
   }
 
+//  Check for valid current Fiscal period
+  XSqlQuery periodCheck;
+  periodCheck.prepare("SELECT EXISTS(SELECT * FROM period "
+            "     WHERE ((current_date BETWEEN period_start AND period_end) "
+            "       AND (NOT period_closed))) AS result; ");
+  periodCheck.exec();
+  if(periodCheck.first() && periodCheck.value("result").toBool() != true)
+    QMessageBox::warning( omfgThis, QObject::tr("Additional Configuration Required"),
+      QObject::tr("<p>Your system does not have a valid or open Accounting period "
+                  "for the current date. "
+                  "You should define the Accounting periods in 'Accounting | "
+                  "Fiscal Calendar | Accounting Periods...' before posting any "
+                  "transactions in the system.") );
+
+//  Check for valid current exchange rates
+  XSqlQuery xrateCheck;
+  xrateCheck.prepare("SELECT EXISTS(SELECT 1 FROM( "
+            "     SELECT curr_abbr, "
+            "    (SELECT true FROM curr_rate cr "
+            "      WHERE ((cr.curr_id = cs.curr_id) "
+            "      AND (current_date BETWEEN curr_effective AND curr_expires))) as active "
+            "  FROM curr_symbol cs) foo "
+            "  WHERE active IS NULL) AS result; ");
+  xrateCheck.exec();
+  if(xrateCheck.first() && xrateCheck.value("result").toBool() == true)
+    QMessageBox::warning( omfgThis, QObject::tr("Additional Configuration Required"),
+      QObject::tr("<p>Your system has alternate currencies without exchange rates "
+                  "entered for the current date. "
+                  "You should define the exchange rates for these currencies in 'System | "
+                  "Setup | Exchange Rates...' before posting any "
+                  "transactions in the system.") );
+
   app.exec();
 
 //  Clean up
