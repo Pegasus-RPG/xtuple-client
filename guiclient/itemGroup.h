@@ -37,6 +37,10 @@ public slots:
     virtual void sFillList();
     virtual void populate();
 
+signals:
+    void newId(int id);
+    void newMode(int mode);
+
 protected slots:
     virtual void languageChange();
 
