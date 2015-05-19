@@ -1152,7 +1152,7 @@ and Purchase Order amounts</string>
          <item>
           <widget class="QRadioButton" name="_checksButton">
            <property name="text">
-            <string>Checks</string>
+            <string>Payments</string>
            </property>
           </widget>
          </item>
