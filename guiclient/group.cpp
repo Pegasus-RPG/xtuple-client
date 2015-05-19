@@ -42,6 +42,7 @@ group::group(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   _available->addColumn(tr("Available Privileges"), -1, Qt::AlignLeft, true, "priv_name");
   _available->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "priv_descrip");
   _granted->addColumn(tr("Granted Privileges"), -1, Qt::AlignLeft, true, "priv_name");
+  _granted->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "priv_descrip");
 
   groupgroup.exec( "SELECT DISTINCT priv_module "
           "FROM priv "
@@ -254,7 +255,7 @@ void group::sModuleSelected(const QString &pModule)
   }
 
   XSqlQuery grppriv;
-  grppriv.prepare( "SELECT priv_id, priv_name "
+  grppriv.prepare( "SELECT priv_id, priv_name, priv_descrip "
                    "FROM priv, grppriv "
                    "WHERE ((grppriv_priv_id=priv_id)"
                    "   AND (grppriv_grp_id=:grp_id)"
