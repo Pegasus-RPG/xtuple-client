@@ -5,6 +5,7 @@ Summary: xTuple Accounting/ERP suite desktop client
 License: CPAL
 Url: http://www.xtuple.com/postbooks/
 Source: https://github.com/xtuple/qt-client/archive/v%version.tar.gz
+BuildRequires: desktop-file-utils
 BuildRequires: qt-devel
 BuildRequires: xtuple-openrpt-devel
 BuildRequires: xtuple-csvimp-devel
@@ -86,7 +87,7 @@ find common -name '*.h' -exec install -m 0644 -D {} %{buildroot}%{_includedir}/x
 mkdir -p %{buildroot}%{_datadir}/pixmaps
 cp -r guiclient/xTuple.xpm %{buildroot}%{_datadir}/pixmaps
 mkdir -p %{buildroot}%{_datadir}/applications
-install -m 0644 *.desktop %{buildroot}%{_datadir}/applications
+desktop-file-install --dir=%{buildroot}%{_datadir}/applications *.desktop
 
 %post libs -p /sbin/ldconfig
 
