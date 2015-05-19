@@ -25,10 +25,11 @@ lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, 
 
   _lsregid = -1;
 
-  connect(_buttonBox,	SIGNAL(accepted()),              this, SLOT(sSave()));
-  connect(_soldDate,    SIGNAL(newDate(const QDate&)),  this, SLOT(sDateUpdated()));
-  connect(_crmacct,     SIGNAL(newId(int)),             this, SLOT(sSetSoCustId()));
-  connect(_so,          SIGNAL(newId(int,QString)),     this, SLOT(sSetSoId()));
+  connect(_buttonBox, SIGNAL(accepted()),            this, SLOT(sSave()));
+  connect(_soldDate,  SIGNAL(newDate(const QDate&)), this, SLOT(sDateUpdated()));
+  connect(_crmacct,   SIGNAL(newId(int)),            this, SLOT(sSetSoCustId()));
+  connect(_so,        SIGNAL(newId(int,QString)),    this, SLOT(sSetSoId()));
+  connect(_lotSerial, SIGNAL(newId(int)),        _charass, SLOT(setId(int)));
   
   _charass->setType("LS"); // use LSR??? for now read from LS and disallow edits
   _charass->setReadOnly(true);
