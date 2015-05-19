@@ -32,8 +32,9 @@ protected slots:
     virtual void languageChange();
 
 private:
-    int _mode;
-    int _invhistid;
+    int  _mode;
+    int  _invhistid;
+    bool _analyzeInit;
 
 };
 
