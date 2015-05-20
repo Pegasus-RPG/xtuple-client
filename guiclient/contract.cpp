@@ -588,6 +588,8 @@ void contract::sPrint()
 
 void contract::sHandleButtons(XTreeWidgetItem *pItem, int pCol)
 {
+  Q_UNUSED(pCol);
+
   QString oper;
   QString stat;
 

@@ -148,7 +148,7 @@ void dspTimePhasedOpenARItems::sPrintStatement()
 
 void dspTimePhasedOpenARItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int pColumn)
 {
-  QAction *menuItem;
+  //QAction *menuItem;
   _column = pColumn;
   
   if ((_custom->isChecked()) && (_column == list()->column("linetotal")))
@@ -156,11 +156,11 @@ void dspTimePhasedOpenARItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, in
 
   if ((_column > 1) && (list()->id() > 0))
   {
-    menuItem = pMenu->addAction(tr("View Open Items..."), this, SLOT(sViewOpenItems()));
+    (void)pMenu->addAction(tr("View Open Items..."), this, SLOT(sViewOpenItems()));
 
     pMenu->addSeparator();
 
-    menuItem = pMenu->addAction(tr("Print Statement..."), this, SLOT(sPrintStatement()));
+    (void)pMenu->addAction(tr("Print Statement..."), this, SLOT(sPrintStatement()));
   }
 }
 

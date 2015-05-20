@@ -822,7 +822,7 @@ to be bound by its terms.</comment>
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="supplyTab">
         <attribute name="title">
@@ -904,7 +904,7 @@ to be bound by its terms.</comment>
            <item>
             <widget class="QStackedWidget" name="_availabilityStack">
              <property name="currentIndex">
-              <number>0</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="_inventoryPage">
               <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -1719,7 +1719,7 @@ to be bound by its terms.</comment>
             <widget class="DateCluster" name="_historyDates"/>
            </item>
            <item>
-            <layout class="QGridLayout" name="gridLayout">
+            <layout class="QGridLayout" name="gridLayout_13">
              <item row="0" column="0">
               <widget class="QLabel" name="_invCostMethodLit">
                <property name="text">
@@ -2260,6 +2260,7 @@ to be bound by its terms.</comment>
    <class>CurrCluster</class>
    <extends>CurrDisplay</extends>
    <header>currcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>CurrDisplay</class>
@@ -2270,6 +2271,7 @@ to be bound by its terms.</comment>
    <class>DateCluster</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>

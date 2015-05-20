@@ -160,9 +160,9 @@ bool dspSummarizedSales::setParams(ParameterList & params)
 
 void dspSummarizedSales::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 {
-  QAction *menuItem;
+  //QAction *menuItem;
 
-  menuItem = pMenu->addAction(tr("View Sales Detail..."), this, SLOT(sViewHistory()));
+  (void)pMenu->addAction(tr("View Sales Detail..."), this, SLOT(sViewHistory()));
 
 }
 

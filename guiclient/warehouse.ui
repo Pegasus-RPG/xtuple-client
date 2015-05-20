@@ -222,9 +222,6 @@ to be bound by its terms.</comment>
          </spacer>
         </item>
        </layout>
-       <zorder>_accountLit</zorder>
-       <zorder>_account</zorder>
-       <zorder>horizontalSpacer_5</zorder>
       </widget>
      </item>
      <item row="4" column="0" colspan="7">
@@ -357,12 +354,6 @@ to be bound by its terms.</comment>
                  </layout>
                 </item>
                </layout>
-               <zorder>_shipcommlit</zorder>
-               <zorder>_taxzoneLit</zorder>
-               <zorder></zorder>
-               <zorder>_defaultFOBLit</zorder>
-               <zorder></zorder>
-               <zorder></zorder>
               </widget>
              </item>
              <item row="0" column="1">
@@ -806,8 +797,6 @@ to be bound by its terms.</comment>
           </layout>
          </item>
         </layout>
-        <zorder>_whsTypeStack</zorder>
-        <zorder></zorder>
        </widget>
        <widget class="QWidget" name="_contacttab">
         <attribute name="title">

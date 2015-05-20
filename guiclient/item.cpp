@@ -1158,9 +1158,9 @@ void item::sHandleItemtype()
   bool sold      = FALSE;
   bool weight    = FALSE;
   bool config    = FALSE;
-  bool shipUOM   = FALSE;
-  bool capUOM    = FALSE;
-  bool planType  = FALSE;
+  //bool shipUOM   = FALSE;
+  //bool capUOM    = FALSE;
+  //bool planType  = FALSE;
   bool purchased = FALSE;
   bool freight   = FALSE;
   
@@ -1171,9 +1171,9 @@ void item::sHandleItemtype()
     pickList = TRUE;
     sold     = TRUE;
     weight   = TRUE;
-    capUOM   = TRUE;
-    shipUOM  = TRUE;
-    planType = TRUE;
+    //capUOM   = TRUE;
+    //shipUOM  = TRUE;
+    //planType = TRUE;
     purchased = TRUE;
     freight  = TRUE;
   }
@@ -1184,20 +1184,20 @@ void item::sHandleItemtype()
     sold     = TRUE;
     weight   = TRUE;
     config   = TRUE;
-    capUOM   = TRUE;
-    shipUOM  = TRUE;
-    planType = TRUE;
+    //capUOM   = TRUE;
+    //shipUOM  = TRUE;
+    //planType = TRUE;
     purchased = TRUE;
     freight  = TRUE;
   }
 
   if (itemType == "F")
-    planType = TRUE;
+    //planType = TRUE;
 
   if (itemType == "B")
   {
-    capUOM   = TRUE;
-    planType = TRUE;
+    //capUOM   = TRUE;
+    //planType = TRUE;
     purchased = TRUE;
     freight  = TRUE;
   }
@@ -1207,9 +1207,9 @@ void item::sHandleItemtype()
     pickList = TRUE;
     sold     = TRUE;
     weight   = TRUE;
-    capUOM   = TRUE;
-    shipUOM  = TRUE;
-    planType = TRUE;
+    //capUOM   = TRUE;
+    //shipUOM  = TRUE;
+    //planType = TRUE;
     freight  = TRUE;
   }
 
@@ -1218,9 +1218,9 @@ void item::sHandleItemtype()
     pickList = TRUE;
     sold     = TRUE;
     weight   = TRUE;
-    capUOM   = TRUE;
-    shipUOM  = TRUE;
-    planType = TRUE;
+    //capUOM   = TRUE;
+    //shipUOM  = TRUE;
+    //planType = TRUE;
     freight  = TRUE;
   }
 
@@ -1228,8 +1228,8 @@ void item::sHandleItemtype()
   {
     sold     = TRUE;
     weight   = TRUE;
-    capUOM   = TRUE;
-    shipUOM  = TRUE;
+    //capUOM   = TRUE;
+    //shipUOM  = TRUE;
     freight  = TRUE;
     config   = TRUE;
   }
@@ -1238,8 +1238,8 @@ void item::sHandleItemtype()
   {
     pickList = TRUE;
     weight   = TRUE;
-    capUOM   = TRUE;
-    shipUOM  = TRUE;
+    //capUOM   = TRUE;
+    //shipUOM  = TRUE;
     freight  = TRUE;
     purchased = TRUE;
     sold = TRUE;
@@ -1247,8 +1247,8 @@ void item::sHandleItemtype()
 
   if (itemType == "O")
   {
-    capUOM   = TRUE;
-    planType = TRUE;
+    //capUOM   = TRUE;
+    //planType = TRUE;
     purchased = TRUE;
     freight  = TRUE;
   }
@@ -1256,7 +1256,7 @@ void item::sHandleItemtype()
   if (itemType == "A")
   {
     sold     = TRUE;
-    planType = TRUE;
+    //planType = TRUE;
     freight  = TRUE;
   }
 

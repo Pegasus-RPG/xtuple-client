@@ -315,7 +315,7 @@ to be bound by its terms.</comment>
    <item row="2" column="0" colspan="2">
     <widget class="QTabWidget" name="_tab">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="_RecievTab">
       <attribute name="title">
@@ -598,7 +598,7 @@ to be bound by its terms.</comment>
       <attribute name="title">
        <string>Notes</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout">
+      <layout class="QGridLayout" name="gridLayout_13">
        <item row="0" column="0">
         <widget class="XTextEdit" name="_notes">
          <property name="sizePolicy">
@@ -634,6 +634,7 @@ to be bound by its terms.</comment>
    <class>CurrCluster</class>
    <extends>CurrDisplay</extends>
    <header>currcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>CurrDisplay</class>

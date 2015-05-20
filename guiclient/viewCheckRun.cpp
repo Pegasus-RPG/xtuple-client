@@ -339,7 +339,7 @@ void viewCheckRun::sFillList(int pBankaccntid)
 
 void viewCheckRun::sFillList()
 {
-  bool checkPrint;
+  bool checkPrint=0;
   // Based on Bank Account settings allow/disallow posting of payment without
   // having printed the payment
   XSqlQuery bankRequiresPrint;

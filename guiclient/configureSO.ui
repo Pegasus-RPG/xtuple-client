@@ -293,7 +293,7 @@ to be bound by its terms.</comment>
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="general">
         <attribute name="title">
@@ -743,7 +743,7 @@ to be bound by its terms.</comment>
                  <property name="title">
                   <string>Price Effective Date</string>
                  </property>
-                 <layout class="QGridLayout" name="gridLayout">
+                 <layout class="QGridLayout" name="gridLayout_12">
                   <item row="0" column="0">
                    <widget class="QRadioButton" name="_priceCurrent">
                     <property name="text">

@@ -313,7 +313,7 @@ to be bound by its terms.</comment>
       <enum>Qt::ClickFocus</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="_inventoryTab">
       <attribute name="title">
@@ -1272,7 +1272,7 @@ to be bound by its terms.</comment>
           <item row="0" column="0">
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
-             <layout class="QGridLayout" name="gridLayout">
+             <layout class="QGridLayout" name="gridLayout_24">
               <item row="0" column="0">
                <widget class="QLabel" name="_planningTypeLit">
                 <property name="text">

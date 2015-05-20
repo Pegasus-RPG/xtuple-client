@@ -308,7 +308,7 @@ void printMulticopyDocument::sPrint()
   if (! isOkToPrint())
     return;
 
-  bool mpStartedInitialized = _data->_mpIsInitialized;
+  //bool mpStartedInitialized = _data->_mpIsInitialized;
 
   _data->_printed.clear();
 

@@ -136,8 +136,6 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
-  bool     haveQty  = FALSE;
-  bool     haveDate = FALSE;
 
 
 
@@ -377,15 +375,12 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
 
     if (_item->isValid())
       sDeterminePrice();
-
-    haveQty = TRUE;
   }
 
   param = pParams.value("dueDate", &valid);
   if (valid)
   {
     _dueDate->setDate(param.toDate());
-    haveDate = TRUE;
   }
 
   param = pParams.value("prj_id", &valid);

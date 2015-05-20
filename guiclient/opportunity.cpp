@@ -1042,7 +1042,6 @@ void opportunity::sPopulateSalesMenu(QMenu *pMenu)
 {
   bool editPriv = false;
   bool viewPriv = false;
-  bool convertPriv = false;
 
   if(_salesList->currentItem())
   {
@@ -1053,9 +1052,6 @@ void opportunity::sPopulateSalesMenu(QMenu *pMenu)
     viewPriv = (cNew == _mode || cEdit == _mode) && (
       (0 == _salesList->currentItem()->altId() && _privileges->check("ViewQuotes")) ||
       (1 == _salesList->currentItem()->altId() && _privileges->check("ViewSalesOrders")) );
-
-    convertPriv = (cNew == _mode || cEdit == _mode) &&
-      (0 == _salesList->currentItem()->altId() && _privileges->check("ConvertQuotes"));
   }
 
   QAction *menuItem;

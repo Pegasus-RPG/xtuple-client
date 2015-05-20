@@ -1080,8 +1080,6 @@ to be bound by its terms.</comment>
     </layout>
    </item>
   </layout>
-  <zorder>_purchaseOrderInformation</zorder>
-  <zorder></zorder>
  </widget>
  <layoutdefault spacing="5" margin="5"/>
  <customwidgets>
@@ -1104,6 +1102,7 @@ to be bound by its terms.</comment>
    <class>CurrCluster</class>
    <extends>CurrDisplay</extends>
    <header>currcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>CurrDisplay</class>

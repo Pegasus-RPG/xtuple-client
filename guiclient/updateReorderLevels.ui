@@ -36,7 +36,7 @@ to be bound by its terms.</comment>
          <item>
           <widget class="QStackedWidget" name="_stack">
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="_paramPage">
             <layout class="QGridLayout">
@@ -65,7 +65,7 @@ to be bound by its terms.</comment>
                <property name="title">
                 <string/>
                </property>
-               <layout class="QGridLayout" name="gridLayout">
+               <layout class="QGridLayout" name="gridLayout_32">
                 <item row="0" column="0">
                  <widget class="ItemCluster" name="_item">
                   <property name="enabled">

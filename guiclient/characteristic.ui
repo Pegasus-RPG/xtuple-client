@@ -230,7 +230,7 @@ to be bound by its terms.</comment>
          <string>Voucher</string>
         </property>
        </widget>
-      </item>     
+      </item>
       <item row="6" column="0">
        <widget class="QCheckBox" name="_projects">
         <property name="text">

@@ -277,7 +277,6 @@ void createLotSerial::clearCharacteristics()
 void createLotSerial::sAssign()
 {
   XSqlQuery createAssign;
-  int  lsid=-1;
   
   if (_lotSerial->currentText().isEmpty())
   {
@@ -428,7 +427,6 @@ void createLotSerial::sAssign()
                                   QMessageBox::Yes | QMessageBox::Default,
                                   QMessageBox::No  | QMessageBox::Escape) == QMessageBox::No)
           return;
-      lsid=createAssign.value("ls_id").toInt();
     }
     else if (createAssign.lastError().type() != QSqlError::NoError)
     {

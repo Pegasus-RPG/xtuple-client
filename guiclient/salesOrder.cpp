@@ -1323,16 +1323,10 @@ bool salesOrder::save(bool partial)
 
 void salesOrder::sPopulateMenu(QMenu *pMenu)
 {
-  if (_mode == cView)
-  {
-    bool  didsomething = false;
-    if (_numSelected == 1)
-    {
-      didsomething = true;
-      if (_lineMode == cClosed)
+  if (_mode == cView &&
+      _numSelected == 1 &&
+      _lineMode == cClosed)
         pMenu->addAction(tr("Open Line..."), this, SLOT(sAction()));
-    }
-  }
   
   if ((_mode == cNew) || (_mode == cEdit))
   {
