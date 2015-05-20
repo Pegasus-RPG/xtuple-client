@@ -462,9 +462,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
   QString query;
   QString filterValue;
   QDate today = QDate::currentDate();
-  int xid, init_filter_id;
-
-  init_filter_id = filter_id;
+  int xid;
 
   clearFilters();
 

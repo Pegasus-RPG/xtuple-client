@@ -252,7 +252,6 @@ void checkForUpdates::cancelDownload()
 
 void checkForUpdates::downloadFinished()
 {
-  int result = QDialog::Accepted;
   if (DEBUG) qDebug() << "downloadFinished() entered";
 
     if(downloadRequestAborted)

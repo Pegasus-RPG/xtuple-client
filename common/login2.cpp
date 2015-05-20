@@ -52,7 +52,6 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sLogin()));
   connect(_buttonBox, SIGNAL(helpRequested()), this, SLOT(sOpenHelp()));
-  //connect(_options, SIGNAL(clicked()), this, SLOT(sOptions()));
   connect(_server, SIGNAL(editingFinished()), this, SLOT(sChangeURL()));
   connect(_database, SIGNAL(editTextChanged(QString)), this, SLOT(sChangeURL()));
   connect(_port, SIGNAL(textChanged(QString)), this, SLOT(sChangeURL()));
@@ -535,27 +534,6 @@ void login2::sLogin()
     _databaseURL = databaseURL;
     updateRecentOptions();
     accept();
-  }
-}
-
-void login2::sOptions()
-{
-  ParameterList params;
-  params.append("databaseURL", _databaseURL);
-
-  if (_multipleConnections)
-    params.append("dontSaveSettings");
-
-  login2Options newdlg(this, "", TRUE);
-  newdlg.set(params);
-  if (newdlg.exec() != QDialog::Rejected)
-  {
-    updateRecentOptions();
-    _databaseURL = newdlg._databaseURL;
-    populateDatabaseInfo();
-    updateRecentOptions();
-    updateRecentOptionsActions();
-    _username->setFocus();
   }
 }
 
