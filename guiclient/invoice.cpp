@@ -595,11 +595,11 @@ void invoice::sSave()
   if (!save())
     return;
 
-  omfgThis->sInvoicesUpdated(_invcheadid, true);
-
   // post the Invoice if user desires
   if (_postInvoice->isChecked())
     postInvoice();
+
+  omfgThis->sInvoicesUpdated(_invcheadid, true);
 
   _invcheadid = -1;
   close();
