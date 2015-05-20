@@ -27,7 +27,7 @@
 
 static QString lastSaveDir = QString();
 
-scriptEditor::scriptEditor(QWidget* parent, const char* name, Qt::WFlags fl)
+scriptEditor::scriptEditor(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -160,11 +160,11 @@ void scriptEditor::setMode(const int pmode)
     case cView:
     default:
       if (DEBUG) qDebug("scriptEditor::setMode(%d) case view/default", pmode);
-      _name->setEnabled(FALSE);
-      _order->setEnabled(FALSE);
-      _notes->setReadOnly(TRUE);
-      _source->setReadOnly(TRUE);
-      _enabled->setEnabled(FALSE);
+      _name->setEnabled(false);
+      _order->setEnabled(false);
+      _notes->setReadOnly(true);
+      _source->setReadOnly(true);
+      _enabled->setEnabled(false);
       _save->hide();
       _import->setEnabled(false);
       _package->setEnabled(false);

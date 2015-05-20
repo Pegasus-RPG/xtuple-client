@@ -22,7 +22,7 @@
 #include "countTag.h"
 #include "parameterwidget.h"
 
-dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(QWidget* parent, const char*, Qt::WFlags fl)
+dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspDetailedInventoryHistoryByLotSerial", fl)
 {
   setupUi(optionsWidget());

@@ -25,7 +25,7 @@ class crmaccount : public XWidget, public Ui::crmaccount
     Q_OBJECT
 
 public:
-    crmaccount(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    crmaccount(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
     ~crmaccount();
     static      void doDialog(QWidget *, const ParameterList &);
     Q_INVOKABLE int  id();
@@ -45,13 +45,9 @@ protected slots:
     virtual void sClose();
     virtual void sCompetitor();
     virtual void sCustomer();
-    virtual void sDeleteCharacteristic();
     virtual void sDeleteReg();
-    virtual void sEditCharacteristic();
     virtual void sEditReg();
     virtual void sEmployee();
-    virtual void sGetCharacteristics();
-    virtual void sNewCharacteristic();
     virtual void sNewReg();
     virtual void sPartner();
     virtual void sProspect();

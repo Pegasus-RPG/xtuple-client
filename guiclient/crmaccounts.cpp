@@ -16,13 +16,12 @@
 #include <QSqlError>
 #include <QVariant>
 
-#include "characteristic.h"
 #include "crmaccount.h"
 #include "errorReporter.h"
 #include "storedProcErrorLookup.h"
 #include "parameterwidget.h"
 
-crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
+crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "crmaccounts", fl)
 {
   setWindowTitle(tr("Accounts"));
@@ -103,13 +102,13 @@ crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Employee"),       70, Qt::AlignCenter, false, "emp");
   list()->addColumn(tr("Sales Rep"),      70, Qt::AlignCenter, false, "salesrep");
 
-  setupCharacteristics(characteristic::CRMAccounts);
+  setupCharacteristics("CRMACCT");
   parameterWidget()->applyDefaultFilterSet();
 
   connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
 
   if (!_privileges->check("MaintainAllCRMAccounts") && !_privileges->check("MaintainPersonalCRMAccounts"))
-    newAction()->setEnabled(FALSE);
+    newAction()->setEnabled(false);
 }
 
 void crmaccounts::sNew()

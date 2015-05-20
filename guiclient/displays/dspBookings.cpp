@@ -8,7 +8,6 @@
  * to be bound by its terms.
  */
 
-#include "characteristic.h"
 #include "dspBookings.h"
 #include "salesOrder.h"
 #include "salesOrderItem.h"
@@ -20,7 +19,7 @@
 #include "xtreewidget.h"
 #include "parameterwidget.h"
 
-dspBookings::dspBookings(QWidget* parent, const char*, Qt::WFlags fl)
+dspBookings::dspBookings(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspBookings", fl)
 {
   setWindowTitle(tr("Bookings"));
@@ -73,7 +72,7 @@ dspBookings::dspBookings(QWidget* parent, const char*, Qt::WFlags fl)
     list()->addColumn(tr("Margin %"),         _prcntColumn,    Qt::AlignRight,  false, "marginpercent" );
   }
 
-  setupCharacteristics(characteristic::SalesOrders);
+  setupCharacteristics("SO");
 }
 
 enum SetResponse dspBookings::set(const ParameterList &pParams)

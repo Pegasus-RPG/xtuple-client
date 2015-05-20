@@ -72,6 +72,6 @@ HEADERS = applock.h              \
 
 FORMS = login2.ui checkForUpdates.ui
 
-QT +=  script sql xml xmlpatterns network
+QT +=  script sql xml xmlpatterns network widgets
 
 RESOURCES += xTupleCommon.qrc

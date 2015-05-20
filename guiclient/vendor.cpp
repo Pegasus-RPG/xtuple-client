@@ -19,7 +19,6 @@
 #include <openreports.h>
 
 #include "addresscluster.h"
-#include "characteristicAssignment.h"
 #include "comment.h"
 #include "crmaccount.h"
 #include "errorReporter.h"
@@ -31,7 +30,7 @@
 
 #define DEBUG false
 
-vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
+vendor::vendor(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -54,9 +53,6 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_checksButton,        SIGNAL(clicked()),                       this,         SLOT(sHandleButtons()));
   connect(_number,              SIGNAL(textEdited(const QString&)),      this,         SLOT(sNumberEdited()));
   connect(_number,              SIGNAL(editingFinished()),               this,         SLOT(sCheck()));
-  connect(_newCharacteristic,   SIGNAL(clicked()),                       this,         SLOT(sNewCharacteristic()));
-  connect(_editCharacteristic,  SIGNAL(clicked()),                       this,         SLOT(sEditCharacteristic()));
-  connect(_deleteCharacteristic,SIGNAL(clicked()),                       this,         SLOT(sDeleteCharacteristic()));
 
   connect(_address, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _contact2, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
@@ -85,12 +81,6 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
   _taxreg->addColumn(tr("Tax Zone"),        100,             Qt::AlignLeft,   true,  "taxzone_code");
   _taxreg->addColumn(tr("Registration #"),  -1,              Qt::AlignLeft,   true,  "taxreg_number");
 
-  _charass->addColumn(tr("Characteristic"), _itemColumn,     Qt::AlignLeft,   true,  "char_name" );
-  _charass->addColumn(tr("Value"),          -1,              Qt::AlignLeft,   true,  "charass_value" );
-  
-  _accountType->append(0, "Checking", "K");
-  _accountType->append(1, "Savings",  "C");
-
   _transmitStack->setCurrentIndex(0);
   if (_metrics->boolean("EnableBatchManager") &&
       ! (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled")))
@@ -111,6 +101,11 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
   if (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled") && omfgThis->_key.isEmpty())
     _checksButton->setEnabled(false);
 
+
+  _charass->setType("V");
+  
+  _accountType->append(0, "Checking", "K");
+  _accountType->append(1, "Savings",  "C");
   _account->setType(GLCluster::cRevenue | GLCluster::cExpense |
                     GLCluster::cAsset | GLCluster::cLiability);
 
@@ -159,7 +154,10 @@ SetResponse vendor::set(const ParameterList &pParams)
       XSqlQuery idq;
       idq.exec("SELECT NEXTVAL('vend_vend_id_seq') AS vend_id;");
       if (idq.first())
+      {
         _vendid = idq.value("vend_id").toInt();
+        _charass->setId(_vendid);
+      }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Id"),
                                     idq, __FILE__, __LINE__))
         return UndefinedError;
@@ -185,12 +183,9 @@ SetResponse vendor::set(const ParameterList &pParams)
       }
       else
       {
-        _newAddress->setEnabled(FALSE);
+        _newAddress->setEnabled(false);
         connect(_vendaddr, SIGNAL(itemSelected(int)), _viewAddress, SLOT(animateClick()));
       }
-
-      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
       emit newId(_vendid);
     }
@@ -207,12 +202,9 @@ SetResponse vendor::set(const ParameterList &pParams)
       }
       else
       {
-        _newAddress->setEnabled(FALSE);
+        _newAddress->setEnabled(false);
         connect(_vendaddr, SIGNAL(itemSelected(int)), _viewAddress, SLOT(animateClick()));
       }
-
-      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "view")
     {
@@ -221,7 +213,7 @@ SetResponse vendor::set(const ParameterList &pParams)
   }
 
   if(_metrics->value("CRMAccountNumberGeneration") == "A")
-    _number->setEnabled(FALSE);
+    _number->setEnabled(false);
 
   if(cNew == _mode || !pParams.inList("showNextPrev"))
   {
@@ -255,30 +247,30 @@ void vendor::setViewMode()
   _mode = cView;
   emit newMode(_mode);
 
-  _number->setEnabled(FALSE);
-  _vendtype->setEnabled(FALSE);
-  _active->setEnabled(FALSE);
-  _name->setEnabled(FALSE);
-  _accountNumber->setEnabled(FALSE);
-  _defaultTerms->setEnabled(FALSE);
-  _defaultShipVia->setEnabled(FALSE);
-  _defaultCurr->setEnabled(FALSE);
-  _contact1->setEnabled(FALSE);
-  _contact2->setEnabled(FALSE);
-  _address->setEnabled(FALSE);
-  _notes->setReadOnly(TRUE);
-  _poComments->setReadOnly(TRUE);
-  _poItems->setEnabled(FALSE);
-  _restrictToItemSource->setEnabled(FALSE);
-  _receives1099->setEnabled(FALSE);
-  _qualified->setEnabled(FALSE);
-  _newAddress->setEnabled(FALSE);
+  _number->setEnabled(false);
+  _vendtype->setEnabled(false);
+  _active->setEnabled(false);
+  _name->setEnabled(false);
+  _accountNumber->setEnabled(false);
+  _defaultTerms->setEnabled(false);
+  _defaultShipVia->setEnabled(false);
+  _defaultCurr->setEnabled(false);
+  _contact1->setEnabled(false);
+  _contact2->setEnabled(false);
+  _address->setEnabled(false);
+  _notes->setReadOnly(true);
+  _poComments->setReadOnly(true);
+  _poItems->setEnabled(false);
+  _restrictToItemSource->setEnabled(false);
+  _receives1099->setEnabled(false);
+  _qualified->setEnabled(false);
+  _newAddress->setEnabled(false);
   _defaultFOBGroup->setEnabled(false);
   _taxzone->setEnabled(false);
   _match->setEnabled(false);
   _newTaxreg->setEnabled(false);
-  _comments->setReadOnly(TRUE);
-  _newCharacteristic->setEnabled(FALSE);
+  _comments->setReadOnly(true);
+  _charass->setReadOnly(true);
 
   _achGroup->setEnabled(false);
   _routingNumber->setEnabled(false);
@@ -692,7 +684,7 @@ void vendor::sCheck()
 
 void vendor::sLoadCrmAcct(int crmacctId)
 {
-  _notice = FALSE;
+  _notice = false;
   _crmacctid = crmacctId;
 
   XSqlQuery getq;
@@ -773,9 +765,9 @@ bool vendor::sPopulate()
             "       NULL AS vend_name,        NULL AS vend_addr_id,"
             "       fetchMetricValue('DefaultTerms') AS vend_terms_id,"
             "       NULL  AS vend_curr_id,"
-            "       FALSE AS vend_po,         FALSE AS vend_restrictpurch,"
-            "       FALSE AS vend_1099,       NULL AS vend_match,"
-            "       FALSE  AS vend_qualified, NULL AS vend_comments,"
+            "       false AS vend_po,         false AS vend_restrictpurch,"
+            "       false AS vend_1099,       NULL AS vend_match,"
+            "       false  AS vend_qualified, NULL AS vend_comments,"
             "       NULL AS vend_pocomments,  NULL AS vend_taxzone_id,"
             "       -1 AS vend_expcat_id, -1 AS vend_tax_id,"
             "       'W'  AS vend_fobsource,   NULL AS vend_fob,"
@@ -798,7 +790,7 @@ bool vendor::sPopulate()
   XSqlQuery getq = mql.toQuery(params);
   if (getq.first())
   {
-    _notice = FALSE;
+    _notice = false;
     _cachedNumber = getq.value("vend_number").toString();
 
     _crmacctid = getq.value("crmacct_id").toInt();
@@ -828,11 +820,11 @@ bool vendor::sPopulate()
 
     if (getq.value("vend_fobsource").toString() == "V")
     {
-      _useVendorFOB->setChecked(TRUE);
+      _useVendorFOB->setChecked(true);
       _vendorFOB->setText(getq.value("vend_fob"));
     }
     else
-      _useWarehouseFOB->setChecked(TRUE);
+      _useWarehouseFOB->setChecked(true);
 
     _achGroup->setChecked(getq.value("vend_ach_enabled").toBool());
     _routingNumber->setText(getq.value("routingnum").toString());
@@ -846,21 +838,21 @@ bool vendor::sPopulate()
     _account->setId(getq.value("vend_accnt_id").toInt());
     if(getq.value("vend_expcat_id").toInt() != -1)
     {
-      _expcatSelected->setChecked(TRUE);
+      _expcatSelected->setChecked(true);
       _expcat->setId(getq.value("vend_expcat_id").toInt());
     }
     if(getq.value("vend_tax_id").toInt() != -1)
     {
-      _taxSelected->setChecked(TRUE);
+      _taxSelected->setChecked(true);
       _taxCode->setId(getq.value("vend_tax_id").toInt());
     }
 
     sFillAddressList();
     sFillTaxregList();
-    sFillCharacteristic();
 
     _comments->setId(_crmacctid);
     _address->setSearchAcct(_crmacctid);
+    _charass->setId(_vendid);
 
     emit newId(_vendid);
   }
@@ -904,7 +896,7 @@ void vendor::sNewAddress()
   params.append("mode", "new");
   params.append("vend_id", _vendid);
 
-  vendorAddress newdlg(this, "", TRUE);
+  vendorAddress newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -917,7 +909,7 @@ void vendor::sEditAddress()
   params.append("mode", "edit");
   params.append("vendaddr_id", _vendaddr->id());
 
-  vendorAddress newdlg(this, "", TRUE);
+  vendorAddress newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -930,7 +922,7 @@ void vendor::sViewAddress()
   params.append("mode", "view");
   params.append("vendaddr_id", _vendaddr->id());
 
-  vendorAddress newdlg(this, "", TRUE);
+  vendorAddress newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -992,7 +984,7 @@ void vendor::sNewTaxreg()
   params.append("taxreg_rel_id", _vendid);
   params.append("taxreg_rel_type", "V");
 
-  taxRegistration newdlg(this, "", TRUE);
+  taxRegistration newdlg(this, "", true);
   if (newdlg.set(params) == NoError && newdlg.exec() != XDialog::Rejected)
     sFillTaxregList();
 }
@@ -1003,7 +995,7 @@ void vendor::sEditTaxreg()
   params.append("mode", "edit");
   params.append("taxreg_id", _taxreg->id());
 
-  taxRegistration newdlg(this, "", TRUE);
+  taxRegistration newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.set(params) == NoError && newdlg.exec() != XDialog::Rejected)
@@ -1016,7 +1008,7 @@ void vendor::sViewTaxreg()
   params.append("mode", "view");
   params.append("taxreg_id", _taxreg->id());
 
-  taxRegistration newdlg(this, "", TRUE);
+  taxRegistration newdlg(this, "", true);
   if (newdlg.set(params) == NoError)
     newdlg.exec();
 }
@@ -1032,62 +1024,6 @@ void vendor::sDeleteTaxreg()
     return;
 
   sFillTaxregList();
-}
-
-void vendor::sNewCharacteristic()
-{
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("vend_id", _vendid);
-  
-  characteristicAssignment newdlg(this, "", TRUE);
-  newdlg.set(params);
-  
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillCharacteristic();
-}
-
-void vendor::sEditCharacteristic()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("charass_id", _charass->id());
-  
-  characteristicAssignment newdlg(this, "", TRUE);
-  newdlg.set(params);
-  
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillCharacteristic();
-}
-
-void vendor::sDeleteCharacteristic()
-{
-  XSqlQuery itemDelete;
-  itemDelete.prepare( "DELETE FROM charass "
-                     "WHERE (charass_id=:charass_id);" );
-  itemDelete.bindValue(":charass_id", _charass->id());
-  itemDelete.exec();
-  
-  sFillCharacteristic();
-}
-
-void vendor::sFillCharacteristic()
-{
-  XSqlQuery charassq;
-  charassq.prepare( "SELECT charass_id, char_name, "
-                   " CASE WHEN char_type < 2 THEN "
-                   "   charass_value "
-                   " ELSE "
-                   "   formatDate(charass_value::date) "
-                   "END AS charass_value "
-                   "FROM charass JOIN char ON (char_id=charass_char_id) "
-                   "WHERE ( (charass_target_type=:target_type)"
-                   "  AND   (charass_target_id=:target_id) ) "
-                   "ORDER BY char_order, char_name;" );
-  charassq.bindValue(":target_id", _vendid);
-  charassq.bindValue(":target_type", "V");
-  charassq.exec();
-  _charass->populate(charassq);
 }
 
 void vendor::sNext()
@@ -1213,6 +1149,7 @@ void vendor::clear()
   _accountType->setCurrentIndex(0);
 
   _comments->setId(-1);
+  _charass->setId(-1);
   _tabs->setCurrentIndex(0);
 }
 
@@ -1244,7 +1181,7 @@ void vendor::sHandleButtons()
 
 void vendor::sNumberEdited()
 {
-  _notice = TRUE;
+  _notice = true;
   _number->setText(_number->text().toUpper());
 }
 

@@ -19,7 +19,6 @@
 #include <parameter.h>
 #include <openreports.h>
 
-#include "characteristic.h"
 #include "customer.h"
 #include "errorReporter.h"
 #include "failedPostList.h"
@@ -29,7 +28,7 @@
 #include "copyQuote.h"
 #include "storedProcErrorLookup.h"
 
-quotes::quotes(QWidget* parent, const char *name, Qt::WFlags fl)
+quotes::quotes(QWidget* parent, const char *name, Qt::WindowFlags fl)
   : display(parent, "quotes", fl)
 {
   setupUi(optionsWidget());
@@ -54,7 +53,6 @@ quotes::quotes(QWidget* parent, const char *name, Qt::WFlags fl)
   parameterWidget()->appendComboBox(tr("Sales Rep."), "salesrep_id", XComboBox::SalesRepsActive);
   parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date);
   parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date);
-  setupCharacteristics(characteristic::Quotes);
 
   list()->addColumn(tr("Quote #"),     _orderColumn,  Qt::AlignLeft,  true,  "quhead_number");
   list()->addColumn(tr("Customer"),    _itemColumn,   Qt::AlignLeft,  true,  "quhead_billtoname");
@@ -66,11 +64,13 @@ quotes::quotes(QWidget* parent, const char *name, Qt::WFlags fl)
   list()->addColumn(tr("Notes"),       -1,            Qt::AlignLeft,  true,  "notes");
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
+  setupCharacteristics("QU");
+
   if (_privileges->check("MaintainQuotes"))
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
   else
   {
-    newAction()->setEnabled(FALSE);
+    newAction()->setEnabled(false);
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
   }
 
@@ -365,7 +365,7 @@ void quotes::sCopyToCustomer()
         ParameterList params;
         params.append("quhead_id", qid);
 
-        copyQuote newdlg(this, "", TRUE);
+        copyQuote newdlg(this, "", true);
         newdlg.set(params);
         lastid = newdlg.exec();
       }

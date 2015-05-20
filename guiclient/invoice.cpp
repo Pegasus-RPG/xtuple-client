@@ -18,7 +18,6 @@
 
 #include <QDebug>
 
-#include "characteristicAssignment.h"
 #include "distributeInventory.h"
 #include "invoiceItem.h"
 #include "storedProcErrorLookup.h"
@@ -27,7 +26,7 @@
 
 #define cViewQuote (0x20 | cView)
 
-invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
+invoice::invoice(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, fl)
 {
   if(name)
@@ -72,9 +71,6 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_cust,                SIGNAL(newCrmacctId(int)),               _billToAddr,  SLOT(setSearchAcct(int)));
   connect(_cust,                SIGNAL(newCrmacctId(int)),               _shipToAddr,  SLOT(setSearchAcct(int)));
   connect(_invoiceNumber,       SIGNAL(editingFinished()),               this,         SLOT(sCheckInvoiceNumber()));
-  connect(_newCharacteristic,   SIGNAL(clicked()),                       this,         SLOT(sNewCharacteristic()));
-  connect(_editCharacteristic,  SIGNAL(clicked()),                       this,         SLOT(sEditCharacteristic()));
-  connect(_deleteCharacteristic,SIGNAL(clicked()),                       this,         SLOT(sDeleteCharacteristic()));
 
   setFreeFormShipto(false);
 
@@ -105,8 +101,7 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   _invcitem->addColumn(tr("Margin"),        _priceColumn,    Qt::AlignRight,  false, "margin");
   _invcitem->addColumn(tr("Margin %"),      _prcntColumn,    Qt::AlignRight,  false, "marginpercent");
 
-  _charass->addColumn(tr("Characteristic"), _itemColumn,     Qt::AlignLeft,   true,  "char_name" );
-  _charass->addColumn(tr("Value"),          -1,              Qt::AlignLeft,   true,  "charass_value" );
+  _charass->setType("INV");
   
   _custCurrency->setLabel(_custCurrencyLit);
 
@@ -160,8 +155,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
         _invcheadid = invoiceet.value("invchead_id").toInt();
         _recurring->setParent(_invcheadid, "I");
         _documents->setId(_invcheadid);
-        connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-        connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
+        _charass->setId(_invcheadid);
       }
       else if (invoiceet.lastError().type() != QSqlError::NoError)
       {
@@ -226,65 +220,64 @@ enum SetResponse invoice::set(const ParameterList &pParams)
 
       param = pParams.value("invchead_id", &valid);
       if(valid)
+      {
         _invcheadid = param.toInt();
+        _charass->setId(_invcheadid);
+      }
 
       setObjectName(QString("invoice edit %1").arg(_invcheadid));
       _mode = cEdit;
 
-      _new->setEnabled(TRUE);
-      _cust->setReadOnly(TRUE);
-      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
-
+      _new->setEnabled(true);
+      _cust->setReadOnly(true);
     }
     else if (param.toString() == "view")
     {
       setObjectName(QString("invoice view %1").arg(_invcheadid));
       _mode = cView;
 
-      _invoiceNumber->setEnabled(FALSE);
-      _orderNumber->setEnabled(FALSE);
-      _invoiceDate->setEnabled(FALSE);
-      _shipDate->setEnabled(FALSE);
-      _orderDate->setEnabled(FALSE);
-      _poNumber->setEnabled(FALSE);
-      _cust->setReadOnly(TRUE);
-      _salesrep->setEnabled(FALSE);
-      _commission->setEnabled(FALSE);
-      _taxzone->setEnabled(FALSE);
-      _terms->setEnabled(FALSE);
+      _invoiceNumber->setEnabled(false);
+      _orderNumber->setEnabled(false);
+      _invoiceDate->setEnabled(false);
+      _shipDate->setEnabled(false);
+      _orderDate->setEnabled(false);
+      _poNumber->setEnabled(false);
+      _cust->setReadOnly(true);
+      _salesrep->setEnabled(false);
+      _commission->setEnabled(false);
+      _taxzone->setEnabled(false);
+      _terms->setEnabled(false);
       _terms->setType(XComboBox::Terms);
-      _fob->setEnabled(FALSE);
-      _shipVia->setEnabled(FALSE);
-      _billToName->setEnabled(FALSE);
-      _billToAddr->setEnabled(FALSE);
-      _billToPhone->setEnabled(FALSE);
-      _shipTo->setEnabled(FALSE);
-      _shipToName->setEnabled(FALSE);
-      _shipToAddr->setEnabled(FALSE);
-      _shipToPhone->setEnabled(FALSE);
-      _miscAmount->setEnabled(FALSE);
-      _miscChargeDescription->setEnabled(FALSE);
-      _miscChargeAccount->setReadOnly(TRUE);
-      _freight->setEnabled(FALSE);
-      _payment->setEnabled(FALSE);
-      _notes->setReadOnly(TRUE);
+      _fob->setEnabled(false);
+      _shipVia->setEnabled(false);
+      _billToName->setEnabled(false);
+      _billToAddr->setEnabled(false);
+      _billToPhone->setEnabled(false);
+      _shipTo->setEnabled(false);
+      _shipToName->setEnabled(false);
+      _shipToAddr->setEnabled(false);
+      _shipToPhone->setEnabled(false);
+      _miscAmount->setEnabled(false);
+      _miscChargeDescription->setEnabled(false);
+      _miscChargeAccount->setReadOnly(true);
+      _freight->setEnabled(false);
+      _payment->setEnabled(false);
+      _notes->setReadOnly(true);
       _edit->hide();
       _save->hide();
       _delete->hide();
       _project->setEnabled(false);
-      _shipChrgs->setEnabled(FALSE);
-      _shippingZone->setEnabled(FALSE);
-      _saleType->setEnabled(FALSE);
-//      _documents->setReadOnly(TRUE);
-      _newCharacteristic->setEnabled(FALSE);
-      _postInvoice->setVisible(FALSE);
+      _shipChrgs->setEnabled(false);
+      _shippingZone->setEnabled(false);
+      _saleType->setEnabled(false);
+//      _documents->setReadOnly(true);
+      _charass->setReadOnly(true);
+      _postInvoice->setVisible(false);
 
       disconnect(_invcitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       disconnect(_invcitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
       disconnect(_invcitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
       connect(_invcitem, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
-
     }
   }
 
@@ -297,6 +290,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
   {
     _invcheadid = param.toInt();
     _documents->setId(_invcheadid);
+    _charass->setId(_invcheadid);
     populate();
     populateCMInfo();
     populateCCInfo();
@@ -605,7 +599,7 @@ void invoice::sSave()
   if (_postInvoice->isChecked())
     postInvoice();
 
-  omfgThis->sInvoicesUpdated(_invcheadid, TRUE);
+  omfgThis->sInvoicesUpdated(_invcheadid, true);
 
   _invcheadid = -1;
   close();
@@ -927,7 +921,7 @@ void invoice::populate()
     _invoiceNumber->setEnabled(false);
     _orderNumber->setText(invoicepopulate.value("invchead_ordernumber").toString());
     if (! _orderNumber->text().isEmpty() && _orderNumber->text().toInt() != 0)
-	_custCurrency->setEnabled(FALSE);
+	_custCurrency->setEnabled(false);
 
     _invoiceDate->setDate(invoicepopulate.value("invchead_invcdate").toDate(), true);
     _orderDate->setDate(invoicepopulate.value("invchead_orderdate").toDate());
@@ -1017,7 +1011,6 @@ void invoice::populate()
 
     _loading = false;
 
-    sFillCharacteristic();
     sFillItemList();
   }
   if (invoicepopulate.lastError().type() != QSqlError::NoError)
@@ -1025,62 +1018,6 @@ void invoice::populate()
     systemError(this, invoicepopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-}
-
-void invoice::sNewCharacteristic()
-{
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("invchead_id", _invcheadid);
-  
-  characteristicAssignment newdlg(this, "", TRUE);
-  newdlg.set(params);
-  
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillCharacteristic();
-}
-
-void invoice::sEditCharacteristic()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("charass_id", _charass->id());
-  
-  characteristicAssignment newdlg(this, "", TRUE);
-  newdlg.set(params);
-  
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillCharacteristic();
-}
-
-void invoice::sDeleteCharacteristic()
-{
-  XSqlQuery itemDelete;
-  itemDelete.prepare( "DELETE FROM charass "
-                     "WHERE (charass_id=:charass_id);" );
-  itemDelete.bindValue(":charass_id", _charass->id());
-  itemDelete.exec();
-  
-  sFillCharacteristic();
-}
-
-void invoice::sFillCharacteristic()
-{
-  XSqlQuery charassq;
-  charassq.prepare( "SELECT charass_id, char_name, "
-                   " CASE WHEN char_type < 2 THEN "
-                   "   charass_value "
-                   " ELSE "
-                   "   formatDate(charass_value::date) "
-                   "END AS charass_value "
-                   "FROM charass JOIN char ON (char_id=charass_char_id) "
-                   "WHERE ( (charass_target_type=:target_type)"
-                   "  AND   (charass_target_id=:target_id) ) "
-                   "ORDER BY char_order, char_name;" );
-  charassq.bindValue(":target_id", _invcheadid);
-  charassq.bindValue(":target_type", "INV");
-  charassq.exec();
-  _charass->populate(charassq);
 }
 
 void invoice::sFillItemList()
@@ -1223,7 +1160,7 @@ void invoice::sTaxDetail()
   else if (_mode == cNew || _mode == cEdit)
     params.append("mode", "edit");
 
-  taxBreakdown newdlg(this, "", TRUE);
+  taxBreakdown newdlg(this, "", true);
   if (newdlg.set(params) == NoError)
   {
     newdlg.exec();
@@ -1277,7 +1214,7 @@ void invoice::sShipToModified()
 
 void invoice::keyPressEvent( QKeyEvent * e )
 {
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
   if(e->key() == Qt::Key_N && (e->modifiers() & Qt::ControlModifier))
   {
     _new->animateClick();
@@ -1395,7 +1332,7 @@ void invoice::sCreditAllocate()
   params.append("curr_id",   _total->id());
   params.append("effective", _total->effective());
 
-  allocateARCreditMemo newdlg(this, "", TRUE);
+  allocateARCreditMemo newdlg(this, "", true);
   if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
   {
     populateCMInfo();
@@ -1508,7 +1445,7 @@ void invoice::populateCCInfo()
 void invoice::sHandleShipchrg(int pShipchrgid)
 {
   if ( (_mode == cView) || (_mode == cViewQuote) )
-    _freight->setEnabled(FALSE);
+    _freight->setEnabled(false);
   else
   {
     XSqlQuery query;
@@ -1520,10 +1457,10 @@ void invoice::sHandleShipchrg(int pShipchrgid)
     if (query.first())
     {
       if (query.value("shipchrg_custfreight").toBool())
-        _freight->setEnabled(TRUE);
+        _freight->setEnabled(true);
       else
       {
-        _freight->setEnabled(FALSE);
+        _freight->setEnabled(false);
         _freight->clear();
       }
     }

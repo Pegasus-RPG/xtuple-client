@@ -23,7 +23,7 @@
 
 #define DEBUG false
 
-company::company(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+company::company(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -55,7 +55,7 @@ company::company(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _discrepancy->setType(GLCluster::cExpense);
   _discrepancy->setShowExternal(true);
   _discrepancy->setIgnoreCompany(true);
-  _unassigned->setType(GLCluster::cExpense);
+  _unassigned->setType(GLCluster::cLiability);
   _unassigned->setShowExternal(true);
   _unassigned->setIgnoreCompany(true);
 }
@@ -96,10 +96,10 @@ enum SetResponse company::set(const ParameterList &pParams)
     {
       _mode = cView;
       
-      _number->setEnabled(FALSE);
-      _descrip->setEnabled(FALSE);
-      _external->setEnabled(FALSE);
-      _authGroup->setEnabled(FALSE);
+      _number->setEnabled(false);
+      _descrip->setEnabled(false);
+      _external->setEnabled(false);
+      _authGroup->setEnabled(false);
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }

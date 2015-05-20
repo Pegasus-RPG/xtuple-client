@@ -37,7 +37,7 @@
 /* TODO: rename _nonxTupleDB to _isxTupleDB internally and
          set it based on db contents, not command line parameter input
  */
-login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+login2::login2(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : QDialog(parent, modal ? (fl | Qt::Dialog) : fl)
 {
   setObjectName(name);
@@ -110,19 +110,19 @@ int login2::set(const ParameterList &pParams, QSplashScreen *pSplash)
   {
     _username->setText(param.toString());
     _password->setFocus();
-    _captive = TRUE;
+    _captive = true;
   }
   else
   {
     _username->setFocus();
-    _captive = FALSE;
+    _captive = false;
   }
 
   param = pParams.value("password", &valid);
   if (valid)
   {
     _password->setText(param.toString());
-    _captive = TRUE;
+    _captive = true;
   }
 
   param = pParams.value("copyright", &valid);

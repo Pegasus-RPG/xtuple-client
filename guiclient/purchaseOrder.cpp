@@ -19,7 +19,6 @@
 
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
-#include "characteristicAssignment.h"
 #include "comment.h"
 #include "itemSourceList.h"
 #include "mqlutil.h"
@@ -35,7 +34,7 @@
 #define cDelete 0x01
 #define cClose  0x02
 
-purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
+purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   XSqlQuery purchasepurchaseOrder;
@@ -69,9 +68,6 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_vendAddr,                 SIGNAL(changed()),                                 _vendaddrCode, SLOT(clear()));
   connect(_warehouse,                SIGNAL(newID(int)),                                this,          SLOT(sHandleShipTo()));
   connect(_shiptoAddr,               SIGNAL(newId(int)),                                this,          SLOT(sHandleShipToName()));
-  connect(_newCharacteristic,        SIGNAL(clicked()),                                 this,          SLOT(sNewCharacteristic()));
-  connect(_editCharacteristic,       SIGNAL(clicked()),                                 this,          SLOT(sEditCharacteristic()));
-  connect(_deleteCharacteristic,     SIGNAL(clicked()),                                 this,          SLOT(sDeleteCharacteristic()));
 
   connect(_vendAddr, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _vendCntct, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
@@ -79,7 +75,7 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_shiptoAddr, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _shiptoCntct, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   _vendaddrList->setMaximumWidth(25);
 #endif
 
@@ -111,8 +107,7 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   if (_metrics->value("Application") == "Standard")
 	_poitem->addColumn(tr("Contract"),                -1,   Qt::AlignLeft,   true, "contrct_number");
 
-  _charass->addColumn(tr("Characteristic"), _itemColumn,     Qt::AlignLeft,   true,  "char_name" );
-  _charass->addColumn(tr("Value"),          -1,              Qt::AlignLeft,   true,  "charass_value" );
+  _charass->setType("PO");
   
   _qeitem = new PoitemTableModel(this);
   _qeitemView->setModel(_qeitem);
@@ -146,10 +141,10 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   }
 
   if (_metrics->boolean("EnableDropShipments"))
-    _dropShip->setEnabled(FALSE);
+    _dropShip->setEnabled(false);
   else
     _dropShip->hide();
-  _so->setReadOnly(TRUE);
+  _so->setReadOnly(true);
 
   _projectId = -1;
 
@@ -225,8 +220,6 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
     {
       _mode = cNew;
       emit newMode(_mode);
-      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
       if (param.toString() == "releasePr")
       {
@@ -265,7 +258,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
       connect(_poitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_poitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
       connect(_vendor, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
-      //_new->setEnabled(TRUE);
+      //_new->setEnabled(true);
       int openpoid =-1;
       if (itemsiteid != -1 || itemsrcid != -1)
       {
@@ -309,7 +302,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
               itemSourceParams.append("item_id", purchaseet.value("itemsite_item_id").toInt());
               itemSourceParams.append("qty", qty);
               
-              itemSourceList newdlg(omfgThis, "", TRUE);
+              itemSourceList newdlg(omfgThis, "", true);
               newdlg.set(itemSourceParams);
               itemsrcid = newdlg.exec();
               if (itemsrcid == XDialog::Rejected)
@@ -359,7 +352,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
             ParameterList openPurchaseOrderParams;
             openPurchaseOrderParams.append("vend_id", vendid);
             openPurchaseOrderParams.append("vend_name", vendname);
-            openPurchaseOrder newdlg(omfgThis, "", TRUE);
+            openPurchaseOrder newdlg(omfgThis, "", true);
             newdlg.set(openPurchaseOrderParams);
             openpoid = newdlg.exec();
 
@@ -373,9 +366,9 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
             emit newMode(_mode);
 
             setPoheadid(openpoid);
-            _orderNumber->setEnabled(FALSE);
-            _orderDate->setEnabled(FALSE);
-            _vendor->setReadOnly(TRUE);
+            _orderNumber->setEnabled(false);
+            _orderDate->setEnabled(false);
+            _vendor->setReadOnly(true);
             populate();
           }
           else
@@ -418,7 +411,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
 
         newItemParams.append("pr_releasenote", prnotes);
 
-        purchaseOrderItem poItem(this, "", TRUE);
+        purchaseOrderItem poItem(this, "", true);
         poItem.set(newItemParams);
         if (poItem.exec() != XDialog::Rejected)
         {
@@ -465,17 +458,15 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
       _mode = cEdit;
       emit newMode(_mode);
 
-      _orderNumber->setEnabled(FALSE);
-      _orderDate->setEnabled(FALSE);
-      _warehouse->setEnabled(FALSE);
-      _vendor->setReadOnly(TRUE);
+      _orderNumber->setEnabled(false);
+      _orderDate->setEnabled(false);
+      _warehouse->setEnabled(false);
+      _vendor->setReadOnly(true);
 
       connect(_poitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_poitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
-      _new->setEnabled(TRUE);
+      _new->setEnabled(true);
 
     }
     else if (param.toString() == "view")
@@ -540,45 +531,43 @@ void purchaseOrder::setViewMode()
     // Undo some changes set for the edit mode
     disconnect(_poitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     disconnect(_poitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    disconnect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-    disconnect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
-    _new->setEnabled(FALSE);
+    _new->setEnabled(false);
   }
 
   _mode = cView;
   emit newMode(_mode);
   
-  _orderNumber->setEnabled(FALSE);
-  _orderDate->setEnabled(FALSE);
-  _warehouse->setEnabled(FALSE);
-  _taxZone->setEnabled(FALSE);
-  _agent->setEnabled(FALSE);
-  _terms->setEnabled(FALSE);
+  _orderNumber->setEnabled(false);
+  _orderDate->setEnabled(false);
+  _warehouse->setEnabled(false);
+  _taxZone->setEnabled(false);
+  _agent->setEnabled(false);
+  _terms->setEnabled(false);
   _terms->setType(XComboBox::Terms);
-  _vendor->setReadOnly(TRUE);
-  _vendCntct->setEnabled(FALSE);
-  _vendAddr->setEnabled(FALSE);
-  _shiptoCntct->setEnabled(FALSE);
-  _shiptoName->setEnabled(FALSE);
-  _shiptoAddr->setEnabled(FALSE);
-  _shipVia->setEnabled(FALSE);
-  _fob->setEnabled(FALSE);
-  _status->setEnabled(FALSE);
-  _notes->setEnabled(FALSE);
-  _new->setEnabled(FALSE);
-  _freight->setEnabled(FALSE);
-  _tax->setEnabled(FALSE);
+  _vendor->setReadOnly(true);
+  _vendCntct->setEnabled(false);
+  _vendAddr->setEnabled(false);
+  _shiptoCntct->setEnabled(false);
+  _shiptoName->setEnabled(false);
+  _shiptoAddr->setEnabled(false);
+  _shipVia->setEnabled(false);
+  _fob->setEnabled(false);
+  _status->setEnabled(false);
+  _notes->setEnabled(false);
+  _new->setEnabled(false);
+  _freight->setEnabled(false);
+  _tax->setEnabled(false);
   _vendaddrList->hide();
   _purchaseOrderInformation->removeTab(_purchaseOrderInformation->indexOf(_quickEntryTab));
-  _poCurrency->setEnabled(FALSE);
-  _qeitemView->setEnabled(FALSE);
-  _qesave->setEnabled(FALSE);
-  _qedelete->setEnabled(FALSE);
-  _qecurrency->setEnabled(FALSE);
-  _comments->setReadOnly(TRUE);
-  //      _documents->setReadOnly(TRUE);
-  _newCharacteristic->setEnabled(FALSE);
+  _poCurrency->setEnabled(false);
+  _qeitemView->setEnabled(false);
+  _qesave->setEnabled(false);
+  _qedelete->setEnabled(false);
+  _qecurrency->setEnabled(false);
+  _comments->setReadOnly(true);
+  //      _documents->setReadOnly(true);
+  _charass->setReadOnly(true);
   
   _delete->hide();
   _edit->setText(tr("&View"));
@@ -696,13 +685,13 @@ void purchaseOrder::populate()
 
         if ((po.value("cohead_id").toInt())!=-1)
         {
-          _dropShip->setEnabled(TRUE);
+          _dropShip->setEnabled(true);
           _dropShip->setChecked(po.value("pohead_dropship").toBool());
         }
         else
     {
-          _dropShip->setChecked(FALSE);
-      _dropShip->setEnabled(FALSE);
+          _dropShip->setChecked(false);
+      _dropShip->setEnabled(false);
         }
 
     _vendaddrid = po.value("vendaddrid").toInt();
@@ -757,6 +746,7 @@ void purchaseOrder::populate()
 
     _comments->setId(_poheadid);
     _documents->setId(_poheadid);
+    _charass->setId(_poheadid);
     _vendor->setId(po.value("vend_id").toInt());
     _taxZone->setId(po.value("pohead_taxzone_id").toInt());
     _poCurrency->setId(po.value("pohead_curr_id").toInt());
@@ -766,7 +756,6 @@ void purchaseOrder::populate()
                                 po, __FILE__, __LINE__))
     return;
 
-  sFillCharacteristic();
   sFillList();
   emit populated();
 }
@@ -936,7 +925,7 @@ void purchaseOrder::sSave()
 
   purchaseSave.exec();
  
-  omfgThis->sPurchaseOrdersUpdated(_poheadid, TRUE);
+  omfgThis->sPurchaseOrdersUpdated(_poheadid, true);
 
   if (!_pridList.isEmpty())
   {
@@ -1021,7 +1010,7 @@ void purchaseOrder::sNew()
   if (_projectId != -1)
     params.append("prj_id", _projectId);
 
-  purchaseOrderItem newdlg(this, "", TRUE);
+  purchaseOrderItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
   sFillList();
@@ -1045,7 +1034,7 @@ void purchaseOrder::sEdit()
   else if (_mode == cView)
     params.append("mode", "view");
 
-  purchaseOrderItem newdlg(this, "", TRUE);
+  purchaseOrderItem newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
@@ -1096,69 +1085,13 @@ void purchaseOrder::sDelete()
   sFillList();
 }
 
-void purchaseOrder::sNewCharacteristic()
-{
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("pohead_id", _poheadid);
-  
-  characteristicAssignment newdlg(this, "", TRUE);
-  newdlg.set(params);
-  
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillCharacteristic();
-}
-
-void purchaseOrder::sEditCharacteristic()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("charass_id", _charass->id());
-  
-  characteristicAssignment newdlg(this, "", TRUE);
-  newdlg.set(params);
-  
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillCharacteristic();
-}
-
-void purchaseOrder::sDeleteCharacteristic()
-{
-  XSqlQuery itemDelete;
-  itemDelete.prepare( "DELETE FROM charass "
-                     "WHERE (charass_id=:charass_id);" );
-  itemDelete.bindValue(":charass_id", _charass->id());
-  itemDelete.exec();
-  
-  sFillCharacteristic();
-}
-
-void purchaseOrder::sFillCharacteristic()
-{
-  XSqlQuery charassq;
-  charassq.prepare( "SELECT charass_id, char_name, "
-                   " CASE WHEN char_type < 2 THEN "
-                   "   charass_value "
-                   " ELSE "
-                   "   formatDate(charass_value::date) "
-                   "END AS charass_value "
-                   "FROM charass JOIN char ON (char_id=charass_char_id) "
-                   "WHERE ( (charass_target_type=:target_type)"
-                   "  AND   (charass_target_id=:target_id) ) "
-                   "ORDER BY char_order, char_name;" );
-  charassq.bindValue(":target_id", _poheadid);
-  charassq.bindValue(":target_type", "PO");
-  charassq.exec();
-  _charass->populate(charassq);
-}
-
 void purchaseOrder::sVendaddrList()
 {
   XSqlQuery purchaseVendaddrList;
   ParameterList params;
   params.append("vend_id", _vendor->id());
 
-  vendorAddressList newdlg(this, "", TRUE);
+  vendorAddressList newdlg(this, "", true);
   newdlg.set(params);
 
   int vendaddrid;
@@ -1213,17 +1146,17 @@ void purchaseOrder::sHandleDeleteButton()
     QTreeWidgetItem *selected = _poitem->currentItem();
 
     if (selected == 0)
-      _delete->setEnabled(FALSE);
+      _delete->setEnabled(false);
     else if (_poitem->currentItem()->rawValue("poitem_status") == "U")
     {
       _deleteMode = cDelete;
-      _delete->setEnabled(TRUE);
+      _delete->setEnabled(true);
       _delete->setText(tr("&Delete"));
     }
     else
     {
       _deleteMode = cClose;
-      _delete->setEnabled(TRUE);
+      _delete->setEnabled(true);
       _delete->setText(tr("C&lose"));
     }
   }
@@ -1277,12 +1210,12 @@ void purchaseOrder::sHandleVendor(int pVendid)
 
       if (vq.value("vend_fobsource").toString() == "V")
       {
-        _useWarehouseFOB = FALSE;
+        _useWarehouseFOB = false;
         _fob->setText(vq.value("vend_fob"));
       }
       else
       {
-        _useWarehouseFOB = TRUE;
+        _useWarehouseFOB = true;
         _fob->setText(tr("Destination"));
       }
 
@@ -1387,7 +1320,7 @@ void purchaseOrder::sCalculateTotals()
 
 void purchaseOrder::sSetUserOrderNumber()
 {
-  _userOrderNumber = TRUE;
+  _userOrderNumber = true;
 }
     
 void purchaseOrder::sHandleOrderNumber()
@@ -1445,9 +1378,9 @@ void purchaseOrder::sHandleOrderNumber()
       emit newMode(_mode);
       setPoheadid(poheadid);
       populate();
-      _orderNumber->setEnabled(FALSE);
-      _orderDate->setEnabled(FALSE);
-      _vendor->setReadOnly(TRUE);
+      _orderNumber->setEnabled(false);
+      _orderDate->setEnabled(false);
+      _vendor->setReadOnly(true);
     }
   }
   if(_poheadid != -1)
@@ -1479,7 +1412,7 @@ void purchaseOrder::populateOrderNumber()
   }
 
   if (_metrics->value("PONumberGeneration") == "A")
-    _orderNumber->setEnabled(FALSE);
+    _orderNumber->setEnabled(false);
 }
 
 void purchaseOrder::closeEvent(QCloseEvent *pEvent)
@@ -1687,7 +1620,7 @@ void purchaseOrder::sTaxDetail()
   if (_mode == cView)
     params.append("mode", "view");
 
-  taxBreakdown newdlg(this, "", TRUE);
+  taxBreakdown newdlg(this, "", true);
   if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
     populate();
 }
@@ -1780,7 +1713,7 @@ void purchaseOrder::sEditSo()
   fetchso.bindValue(":poitem_id", _poitem->id());
   fetchso.exec();
   if (fetchso.first())
-    salesOrder::editSalesOrder(fetchso.value("coitem_cohead_id").toInt(), TRUE);
+    salesOrder::editSalesOrder(fetchso.value("coitem_cohead_id").toInt(), true);
 }
 
 void purchaseOrder::sViewWo()

@@ -16,7 +16,7 @@
 #include <parameter.h>
 #include "storedProcErrorLookup.h"
 
-itemUOM::itemUOM(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+itemUOM::itemUOM(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -102,7 +102,7 @@ enum SetResponse itemUOM::set(const ParameterList &pParams)
   {
     if (param.toString() == "new")
     {
-      _active->setChecked(TRUE);
+      _active->setChecked(true);
       _mode = cNew;
     }
     else if (param.toString() == "edit")

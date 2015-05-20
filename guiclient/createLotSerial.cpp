@@ -18,7 +18,7 @@
 #include <parameter.h>
 #include <openreports.h>
 
-createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl),
       _lotsFound(false)
 {
@@ -28,7 +28,7 @@ createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, 
   connect(_lotSerial, SIGNAL(textChanged(QString)), this, SLOT(sHandleLotSerial()));
   connect(_lotSerial, SIGNAL(newID(int)), this, SLOT(sHandleCharacteristics()));
 
-  _item->setReadOnly(TRUE);
+  _item->setReadOnly(true);
 
   _serial = false;
   _itemsiteid = -1;
@@ -83,7 +83,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
       {
         _serial = true;
         _qtyToAssign->setText("1");
-        _qtyToAssign->setEnabled(FALSE);
+        _qtyToAssign->setEnabled(false);
       }
       else
         _serial = false;

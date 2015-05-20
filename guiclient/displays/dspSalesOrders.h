@@ -20,7 +20,7 @@ class dspSalesOrders : public display, public Ui::dspSalesOrders
     Q_OBJECT
 
 public:
-    dspSalesOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    dspSalesOrders(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
 
     virtual bool checkSitePrivs(int orderid);
     virtual bool setParams(ParameterList &);

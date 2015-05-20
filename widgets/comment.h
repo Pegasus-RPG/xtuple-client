@@ -31,7 +31,7 @@ class XTUPLEWIDGETS_EXPORT comment : public QDialog
     friend class Comments;
 
   public:
-    comment(QWidget * = 0, const char * = 0, bool = FALSE, Qt::WindowFlags = 0);
+    comment(QWidget * = 0, const char * = 0, bool = false, Qt::WindowFlags = 0);
 
     XComboBox* _cmnttype;
     XTextEdit* _comment;

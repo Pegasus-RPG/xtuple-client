@@ -18,7 +18,7 @@
 #include <QVariant>
 #include <QMessageBox>
 
-saleType::saleType(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+saleType::saleType(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -130,7 +130,7 @@ void saleType::sCheck()
       _mode = cEdit;
       populate();
 
-      _code->setEnabled(FALSE);
+      _code->setEnabled(false);
     }
   }
 }

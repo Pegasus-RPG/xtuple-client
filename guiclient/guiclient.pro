@@ -3,6 +3,7 @@ include( ../global.pri )
 TARGET   = xtuple
 CONFIG   += qt warn_on uitools designer help
 TEMPLATE = app
+QT += designer help uitools
 
 INCLUDEPATH += ../scriptapi \
                ../common \
@@ -38,34 +39,45 @@ QMAKE_LIBDIR = ../lib $${OPENRPT_LIBDIR} $$QMAKE_LIBDIR
 LIBS        += -lxtuplecommon -lxtuplewidgets -lwrtembed -lopenrptcommon
 LIBS        += -lrenderer -lxtuplescriptapi $${DMTXLIB} -lMetaSQL
 
+lessThan(QT_MAJOR_VERSION, 5) {
 #not the best way to handle this, but it should do
 mac:!static:contains(QT_CONFIG, qt_framework) {
-  LIBS += -framework QtDesignerComponents
-} else {
-  LIBS += -lQtDesignerComponents
+  LIBS += -lz -framework QtDesignerComponents
+}
+ else {
+  LIBS += -lz -lQtDesignerComponents
+}
 }
 
 win32 {
   win32-msvc*:LIBS += -lshell32
   RC_FILE = rcguiclient.rc
   OBJECTS_DIR = win_obj
+  LIBS += -lQt5DesignerComponents -lz
 }
 win32-g++-4.6 {
   LIBS += -lz
 }
 
-
-unix {
-  OBJECTS_DIR = unx_obj
-  LIBS += -lz
+equals(QT_MAJOR_VERSION, 5) {
+ unix: !macx {
+ OBJECTS_DIR = unx_obj
+ LIBS += -lz -lQt5DesignerComponents
+ }
+}
+unix: !macx {
+ OBJECTS_DIR = unx_obj
+ LIBS += -lz
 }
 
+equals(QT_MAJOR_VERSION, 5) {
 macx {
   RC_FILE = images/icons.icns
   #PRECOMPILED_HEADER = stable.h
   OBJECTS_DIR = osx_obj
   QMAKE_INFO_PLIST = Info.plist
-  LIBS += -lz
+  LIBS += -lz -framework QtDesignerComponents
+}
 }
 
 DESTDIR     = ../bin
@@ -126,7 +138,6 @@ FORMS =   absoluteCalendarItem.ui               \
           changePoitemQty.ui                    \
           changeWoQty.ui                        \
           characteristic.ui                     \
-          characteristicAssignment.ui           \
           characteristicPrice.ui                \
           characteristics.ui                    \
           check.ui                              \
@@ -679,7 +690,6 @@ HEADERS = ../common/format.h                    \
           changePoitemQty.h             \
           changeWoQty.h                 \
           characteristic.h              \
-          characteristicAssignment.h    \
           characteristicPrice.h         \
           characteristics.h             \
           check.h                       \
@@ -1290,7 +1300,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           changePoitemQty.cpp                   \
           changeWoQty.cpp                       \
           characteristic.cpp                    \
-          characteristicAssignment.cpp          \
           characteristicPrice.cpp               \
           characteristics.cpp                   \
           check.cpp                             \
@@ -1848,8 +1857,8 @@ SOURCES = absoluteCalendarItem.cpp              \
 include( displays/displays.pri )
 include( hunspell.pri )
 
-QT += xml sql script scripttools network
-QT += webkit xmlpatterns
+QT += xml sql script scripttools network quick
+QT += webkit xmlpatterns printsupport webkitwidgets
 
 RESOURCES += guiclient.qrc $${OPENRPT_IMAGE_DIR}/OpenRPTMetaSQL.qrc
 
