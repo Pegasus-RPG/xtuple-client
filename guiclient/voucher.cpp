@@ -21,7 +21,6 @@
 #include <QValidator>
 #include <QVariant>
 
-#include "characteristicAssignment.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "purchaseOrderList.h"
@@ -52,9 +51,6 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_poitem,                   SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this,          SLOT(sPopulateMenu(QMenu*)));
   connect(_amountToDistribute,       SIGNAL(idChanged(int)),                            this,          SLOT(sFillList()));
   connect(_amountDistributed,        SIGNAL(valueChanged()),                            this,          SLOT(sPopulateBalanceDue()));
-  connect(_newCharacteristic,        SIGNAL(clicked()),                                 this,          SLOT(sNewCharacteristic()));
-  connect(_editCharacteristic,       SIGNAL(clicked()),                                 this,          SLOT(sEditCharacteristic()));
-  connect(_deleteCharacteristic,     SIGNAL(clicked()),                                 this,          SLOT(sDeleteCharacteristic()));
 
   _terms->setType(XComboBox::APTerms);
   _poNumber->setAllowedStatuses(OrderLineEdit::Open);
@@ -87,8 +83,7 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _miscDistrib->addColumn(tr("Account"),    -1,           Qt::AlignLeft,   true,  "account"  );
   _miscDistrib->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight,  true,  "vodist_amount" );
 
-  _charass->addColumn(tr("Characteristic"), _itemColumn,  Qt::AlignLeft,   true,  "char_name" );
-  _charass->addColumn(tr("Value"),          -1,           Qt::AlignLeft,   true,  "charass_value" );
+  _charass->setType("VCH");
   
   _vendid = -1;
 
@@ -131,8 +126,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       {
         _voheadid = insq.value("vohead_id").toInt();
         _documents->setId(_voheadid);
-        connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-        connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
+        _charass->setId(_voheadid);
       }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Inserting Voucher"),
                                     insq, __FILE__, __LINE__))
@@ -146,8 +140,6 @@ enum SetResponse voucher::set(const ParameterList &pParams)
 
       _voucherNumber->setEnabled(false);
       _poNumber->setEnabled(false);
-      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "view")
     {
@@ -173,7 +165,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       _distributeall->setEnabled(false);
       _notes->setEnabled(false);
 //      _documents->setReadOnly(true);
-      _newCharacteristic->setEnabled(false);
+      _charass->setReadOnly(true);
       _close->setText(tr("&Close"));
       _save->hide();
 
@@ -193,6 +185,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
   {
     _voheadid = param.toInt();
     _documents->setId(_voheadid);
+    _charass->setId(_voheadid);
     populate();
     enableWindowModifiedSetting();
   }
@@ -324,6 +317,7 @@ bool voucher::sSave()
   _poitem->clear();
   _miscDistrib->clear();
   _notes->setText("");
+  _charass->setId(-1);
 
   setWindowModified(false);
 
@@ -577,62 +571,6 @@ void voucher::sDeleteMiscDistribution()
   sPopulateDistributed();
 }
 
-void voucher::sNewCharacteristic()
-{
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("vohead_id", _voheadid);
-  
-  characteristicAssignment newdlg(this, "", true);
-  newdlg.set(params);
-  
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillCharacteristic();
-}
-
-void voucher::sEditCharacteristic()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("charass_id", _charass->id());
-  
-  characteristicAssignment newdlg(this, "", true);
-  newdlg.set(params);
-  
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillCharacteristic();
-}
-
-void voucher::sDeleteCharacteristic()
-{
-  XSqlQuery itemDelete;
-  itemDelete.prepare( "DELETE FROM charass "
-                     "WHERE (charass_id=:charass_id);" );
-  itemDelete.bindValue(":charass_id", _charass->id());
-  itemDelete.exec();
-  
-  sFillCharacteristic();
-}
-
-void voucher::sFillCharacteristic()
-{
-  XSqlQuery charassq;
-  charassq.prepare( "SELECT charass_id, char_name, "
-                   " CASE WHEN char_type < 2 THEN "
-                   "   charass_value "
-                   " ELSE "
-                   "   formatDate(charass_value::date) "
-                   "END AS charass_value "
-                   "FROM charass JOIN char ON (char_id=charass_char_id) "
-                   "WHERE ( (charass_target_type=:target_type)"
-                   "  AND   (charass_target_id=:target_id) ) "
-                   "ORDER BY char_order, char_name;" );
-  charassq.bindValue(":target_id", _voheadid);
-  charassq.bindValue(":target_type", "VCH");
-  charassq.exec();
-  _charass->populate(charassq);
-}
-
 void voucher::sFillList()
 {
   if (_poNumber->isValid())
@@ -875,7 +813,7 @@ void voucher::populate()
     sFillList();
     sFillMiscList();
     sPopulateDistributed();
-    sFillCharacteristic();
+    _charass->setId(_voheadid);
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Voucher"),
                                 vohead, __FILE__, __LINE__))

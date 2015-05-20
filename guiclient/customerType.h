@@ -29,10 +29,6 @@ public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sCheck();
     virtual void sSave();
-    virtual void sNew();
-    virtual void sEdit();
-    virtual void sDelete();
-    virtual void sFillList();
     virtual void populate();
 
 protected slots:

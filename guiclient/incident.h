@@ -52,10 +52,6 @@ public slots:
     virtual void sReturn();
     virtual void sViewAR();
     virtual void sAssigned();
-    virtual void sDeleteCharacteristic();
-    virtual void sEditCharacteristic();
-    virtual void sFillCharacteristicsList();
-    virtual void sNewCharacteristic();
 
 signals:
     void populated();

@@ -21,7 +21,6 @@
 #include <parameter.h>
 
 #include "addresscluster.h"
-#include "characteristicAssignment.h"
 #include "contact.h"
 #include "inputManager.h"
 #include "mqlutil.h"
@@ -40,9 +39,6 @@ address::address(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
     connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
     connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
     connect(_uses, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_newCharacteristic, SIGNAL(clicked()), this, SLOT(sNewCharacteristic()));
-    connect(_editCharacteristic, SIGNAL(clicked()), this, SLOT(sEditCharacteristic()));
-    connect(_deleteCharacteristic, SIGNAL(clicked()), this, SLOT(sDeleteCharacteristic()));
 
     _uses->addColumn(tr("Used by"),	 50, Qt::AlignLeft, true, "type");
     _uses->addColumn(tr("First Name\nor Number"),50, Qt::AlignLeft, true, "cntct_first_name");
@@ -54,8 +50,7 @@ address::address(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
     _uses->addColumn(tr("E-Mail"),	100, Qt::AlignLeft, true, "cntct_email");
     _uses->addColumn(tr("Web Address"),	100, Qt::AlignLeft, true, "cntct_webaddr");
 
-    _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name");
-    _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value");
+    _charass->setType("ADDR");
 }
 
 address::~address()
@@ -80,6 +75,7 @@ enum SetResponse address::set(const ParameterList &pParams)
     _captive = true;
     _addr->setId(param.toInt());
     sPopulate();
+    _charass->setId(_addr->id());
   }
 
   param = pParams.value("mode", &valid);
@@ -99,15 +95,12 @@ enum SetResponse address::set(const ParameterList &pParams)
 	return UndefinedError;
       }
       _comments->setId(_addr->id());
+      _charass->setId(_addr->id());
       _addr->setLine1("");
-      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
-      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "view")
     {
@@ -120,11 +113,8 @@ enum SetResponse address::set(const ParameterList &pParams)
       _addr->setEnabled(false);
       _notes->setEnabled(false);
       _comments->setReadOnly(true);
-      _newCharacteristic->setEnabled(false);
-      _editCharacteristic->setEnabled(false);
-      _deleteCharacteristic->setEnabled(false);
       _editAddrUse->setEnabled(false);
-      _charass->setEnabled(false);
+      _charass->setReadOnly(true);
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }
@@ -185,73 +175,11 @@ void address::reject()
   XDialog::reject();
 }
 
-void address::sNewCharacteristic()
-{
-  internalSave();
-
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("addr_id", _addr->id());
-
-  characteristicAssignment newdlg(this, "", true);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sGetCharacteristics();
-}
-
-void address::sEditCharacteristic()
-{
-  internalSave();
-
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("charass_id", _charass->id());
-
-  characteristicAssignment newdlg(this, "", true);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sGetCharacteristics();
-}
-
-void address::sDeleteCharacteristic()
-{
-  internalSave();
-
-  XSqlQuery deleteAddress;
-  deleteAddress.prepare( "DELETE FROM charass "
-             "WHERE (charass_id=:charass_id);" );
-  deleteAddress.bindValue(":charass_id", _charass->id());
-  deleteAddress.exec();
-
-  sGetCharacteristics();
-}
-
-void address::sGetCharacteristics()
-{
-  XSqlQuery getAddress;
-  getAddress.prepare( "SELECT charass_id, char_name, "
-             " CASE WHEN char_type < 2 THEN "
-             "   charass_value "
-             " ELSE "
-             "   formatDate(charass_value::date) "
-             "END AS charass_value "
-             "FROM charass, char "
-             "WHERE ( (charass_target_type='ADDR')"
-             " AND (charass_char_id=char_id)"
-             " AND (charass_target_id=:addr_id) ) "
-             "ORDER BY char_order, char_name;" );
-  getAddress.bindValue(":addr_id", _addr->id());
-  getAddress.exec();
-  _charass->populate(getAddress);
-}
-
 void address::sPopulate()
 {
   _notes->setText(_addr->notes());
   _comments->setId(_addr->id());
-  sGetCharacteristics();
+  _charass->setId(_addr->id());
 
   MetaSQLQuery mql = mqlLoad("address", "uses");
   

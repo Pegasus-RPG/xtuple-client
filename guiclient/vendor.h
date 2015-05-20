@@ -46,10 +46,6 @@ public slots:
     virtual void sEditTaxreg();
     virtual void sViewTaxreg();
     virtual void sDeleteTaxreg();
-    virtual void sNewCharacteristic();
-    virtual void sEditCharacteristic();
-    virtual void sDeleteCharacteristic();
-    virtual void sFillCharacteristic();
     virtual void sHandleButtons();
     virtual void sNumberEdited();
 

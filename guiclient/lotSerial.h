@@ -32,9 +32,6 @@ public slots:
     virtual void sSave();
     virtual void sChanged();
     virtual void sFillList();
-    virtual void sNewCharass();
-    virtual void sEditCharass();
-    virtual void sDeleteCharass();
     virtual void sNewReg();
     virtual void sEditReg();
     virtual void sDeleteReg();

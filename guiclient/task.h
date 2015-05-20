@@ -36,10 +36,6 @@ public slots:
     virtual void sStatusChanged(const int);
     virtual void sHoursAdjusted();
     virtual void sExpensesAdjusted();
-    virtual void sNew();
-    virtual void sEdit();
-    virtual void sDelete();
-    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();

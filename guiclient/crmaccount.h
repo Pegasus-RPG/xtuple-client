@@ -45,13 +45,9 @@ protected slots:
     virtual void sClose();
     virtual void sCompetitor();
     virtual void sCustomer();
-    virtual void sDeleteCharacteristic();
     virtual void sDeleteReg();
-    virtual void sEditCharacteristic();
     virtual void sEditReg();
     virtual void sEmployee();
-    virtual void sGetCharacteristics();
-    virtual void sNewCharacteristic();
     virtual void sNewReg();
     virtual void sPartner();
     virtual void sProspect();

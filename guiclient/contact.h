@@ -39,10 +39,8 @@ protected slots:
     virtual void languageChange();
 
     virtual void sClose();
-    virtual void sDeleteCharass();
     virtual void sDetachUse();
     virtual void sEditCRMAccount();
-    virtual void sEditCharass();
     virtual void sEditCustomer();
     virtual void sEditEmployee();
     virtual void sEditIncident();
@@ -61,7 +59,6 @@ protected slots:
     virtual void sEditWarehouse();
     virtual void sFillList();
     virtual void sHandleValidUse(bool);
-    virtual void sNewCharass();
     virtual void sPopulate();
     virtual void sPopulateUsesMenu(QMenu*);
     virtual void sSave();
