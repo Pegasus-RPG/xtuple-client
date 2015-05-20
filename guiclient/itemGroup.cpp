@@ -57,6 +57,7 @@ enum SetResponse itemGroup::set(const ParameterList &pParams)
   {
     _itemgrpid = param.toInt();
     populate();
+    emit newId(_itemgrpid);
   }
 
   param = pParams.value("mode", &valid);
@@ -74,6 +75,8 @@ enum SetResponse itemGroup::set(const ParameterList &pParams)
 
       connect(_itemgrpitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
       connect(_itemgrpparent, SIGNAL(valid(bool)), _deleteParent, SLOT(setEnabled(bool)));
+      emit newId(_itemgrpid);
+      emit newMode(_mode);
     }
     else if (param.toString() == "edit")
     {
@@ -81,6 +84,7 @@ enum SetResponse itemGroup::set(const ParameterList &pParams)
 
       connect(_itemgrpitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
       connect(_itemgrpparent, SIGNAL(valid(bool)), _deleteParent, SLOT(setEnabled(bool)));
+      emit newMode(_mode);
     }
     else if (param.toString() == "view")
     {
@@ -92,6 +96,7 @@ enum SetResponse itemGroup::set(const ParameterList &pParams)
       _newParent->setEnabled(false);
       _close->setText(tr("&Close"));
       _save->hide();
+      emit newMode(_mode);
     }
   }
 
@@ -116,6 +121,9 @@ void itemGroup::sCheck()
       populate();
 
       _name->setEnabled(false);
+
+      emit newId(_itemgrpid);
+      emit newMode(_mode);
     }
   }
 }
