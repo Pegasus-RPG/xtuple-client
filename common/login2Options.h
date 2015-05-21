@@ -18,9 +18,7 @@ class QWidget;
 
 #include "parameter.h"
 
-#include "tmp/ui_login2Options.h"
-
-class login2Options : public QDialog, public Ui::login2Options
+class login2Options : public QDialog
 {
     Q_OBJECT
 
