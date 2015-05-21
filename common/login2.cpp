@@ -26,7 +26,6 @@
 
 #include "dbtools.h"
 #include "errorReporter.h"
-#include "login2Options.h"
 #include "qmd5.h"
 #include "storedProcErrorLookup.h"
 #include "xsqlquery.h"
