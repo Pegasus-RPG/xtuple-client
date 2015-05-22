@@ -5,6 +5,7 @@ Summary: xTuple Accounting/ERP suite desktop client
 License: CPAL
 Url: http://www.xtuple.com/postbooks/
 Source: https://github.com/xtuple/qt-client/archive/v%version.tar.gz
+BuildRequires: desktop-file-utils
 BuildRequires: qt-devel
 BuildRequires: xtuple-openrpt-devel
 BuildRequires: xtuple-csvimp-devel
@@ -83,10 +84,10 @@ cp -dp lib/lib*.so* %{buildroot}%{_libdir}
 find %{buildroot}%{_libdir} -name 'lib*.so*' -exec chmod 0755 {} \;
 mkdir -p %{buildroot}%{_includedir}/xtuple
 find common -name '*.h' -exec install -m 0644 -D {} %{buildroot}%{_includedir}/xtuple/{} \;
-mkdir -p %{buildroot}%{_datadir}/pixmaps
-cp -r guiclient/xTuple.xpm %{buildroot}%{_datadir}/pixmaps
+install -m 0644 -D guiclient/images/icon128x32.png %{buildroot}%{_datadir}/postbooks/images/icon128x32.png
 mkdir -p %{buildroot}%{_datadir}/applications
-install -m 0644 *.desktop %{buildroot}%{_datadir}/applications
+desktop-file-install --dir=%{buildroot}%{_datadir}/applications *.desktop
+install -m 0644 -D postbooks.appdata.xml %{buildroot}%{_datadir}/appdata/postbooks.appdata.xml
 
 %post libs -p /sbin/ldconfig
 
@@ -94,9 +95,12 @@ install -m 0644 *.desktop %{buildroot}%{_datadir}/applications
 
 %files 
 %license LICENSE.txt
+%dir %{_datadir}/postbooks
+%dir %{_datadir}/postbooks/images
+%{_datadir}/postbooks/images/icon128x32.png
 %{_bindir}/*
 %{_datadir}/applications/*.desktop
-%{_datadir}/pixmaps/*.xpm
+%{_datadir}/appdata/postbooks.appdata.xml
 
 %files libs
 %{_libdir}/lib*.so.*
@@ -107,6 +111,6 @@ install -m 0644 *.desktop %{buildroot}%{_datadir}/applications
 %{_libdir}/lib*.so
 
 %changelog
-* Wed Feb 25 2015 Daniel Pocock <daniel@pocock.pro> - 4.8.1-1
+* Wed Feb 25 2015 Daniel Pocock <daniel@pocock.pro> - 4.8.2-1
 - Initial RPM packaging.
 
