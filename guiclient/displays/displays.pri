@@ -222,6 +222,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspUninvoicedReceivings.h \
            displays/dspUnusedPurchasedItems.h \
            displays/dspUsageStatistics.h \
+           displays/dspUserPrivileges.h \
            displays/dspValidLocationsByItem.h \
            displays/dspVendorAPHistory.h \
            displays/dspVoucherRegister.h \
@@ -350,6 +351,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspUninvoicedReceivings.cpp \
            displays/dspUnusedPurchasedItems.cpp \
            displays/dspUsageStatistics.cpp \
+           displays/dspUserPrivileges.cpp \
            displays/dspValidLocationsByItem.cpp \
            displays/dspVendorAPHistory.cpp \
            displays/dspVoucherRegister.cpp \
