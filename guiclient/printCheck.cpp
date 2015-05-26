@@ -46,6 +46,7 @@ printCheck::printCheck(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _check->setAllowNull(true);
 
   _bankaccnt->setType(XComboBox::APBankAccounts);
+  sHandleBankAccount(_bankaccnt->id());
 
   _createEFT->setVisible(_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled"));
 }
