@@ -784,15 +784,6 @@ void GUIClient::initMenuBar()
   findChild<QToolBar*>("Sales Tools")->setVisible(_preferences->boolean("ShowSOToolbar"));
   findChild<QToolBar*>("Accounting Tools")->setVisible(_preferences->boolean("ShowGLToolbar"));
 
-  findChild<QToolBar*>("Community Tools")->setVisible(_preferences->boolean("ShowPDToolbar") ||
-                                                      _preferences->boolean("ShowIMToolbar") ||
-                                                      _preferences->boolean("ShowMSToolbar") ||
-                                                      _preferences->boolean("ShowPOToolbar") ||
-                                                      _preferences->boolean("ShowWOToolbar") ||
-                                                      _preferences->boolean("ShowCRMToolbar") ||
-                                                      _preferences->boolean("ShowSOToolbar") ||
-                                                      _preferences->boolean("ShowGLToolbar"));
-
   firstRun = false;
   qApp->restoreOverrideCursor();
 }
