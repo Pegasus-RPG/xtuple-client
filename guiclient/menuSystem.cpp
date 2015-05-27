@@ -81,11 +81,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   setObjectName("sysModule");
   parent = Pparent;
 
-  toolBar = new QToolBar(tr("Community Tools"));
-  toolBar->setObjectName("Community Tools");
-  toolBar->setIconSize(QSize(32, 32));
   QList<QToolBar *> toolbars = parent->findChildren<QToolBar *>();
-  parent->insertToolBar(toolbars.at(0), toolBar);
 
   errorLogListener::initialize();
 
