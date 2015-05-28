@@ -22,7 +22,8 @@ LotSerialUtils::LotSerialUtils()
 
     XSqlQuery q;
     bool success = q.exec("SELECT char_name, char_type, char_id "
-                "FROM char WHERE char_lotserial=true "
+                "FROM char "
+                "JOIN charuse ON (char_id=charuse_char_id AND charuse_target_type = 'LS') "
                 "ORDER BY char_name ASC");
     while(q.next())
     {
