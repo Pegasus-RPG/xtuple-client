@@ -118,7 +118,6 @@ void postChecks::sHandleBankAccount(int pBankaccntid)
              "JOIN bankaccnt ON (bankaccnt_id=checkhead_bankaccnt_id) "
              "WHERE ( (NOT checkhead_void)"
              " AND (NOT checkhead_posted)"
-             " AND CASE WHEN (bankaccnt_prnt_check) THEN checkhead_printed ELSE 1=1 END"
              " AND (checkhead_bankaccnt_id=:bankaccnt_id) );" );
   postHandleBankAccount.bindValue(":bankaccnt_id", pBankaccntid);
   postHandleBankAccount.exec();

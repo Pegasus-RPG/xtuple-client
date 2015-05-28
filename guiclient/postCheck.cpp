@@ -29,6 +29,7 @@ postCheck::postCheck(QWidget* parent, const char* name, bool modal, Qt::WindowFl
   _check->setAllowNull(true);
 
   _bankaccnt->setType(XComboBox::APBankAccounts);
+  sHandleBankAccount(_bankaccnt->id());
 }
 
 postCheck::~postCheck()
@@ -100,14 +101,15 @@ void postCheck::sHandleBankAccount(int pBankaccntid)
 {
   XSqlQuery postHandleBankAccount;
   postHandleBankAccount.prepare( "SELECT checkhead_id,"
-	     "       (TEXT(checkhead_number) || '-' || checkrecip_name) "
+	     "     (CASE WHEN(checkhead_number=-1) THEN TEXT('Unspecified')"
+             "           ELSE TEXT(checkhead_number) "
+             "      END || '-' || checkrecip_name) "
              "FROM checkhead LEFT OUTER JOIN"
 	     "     checkrecip ON ((checkhead_recip_id=checkrecip_id)"
 	     "                AND (checkhead_recip_type=checkrecip_type))"
              "     JOIN bankaccnt ON (checkhead_bankaccnt_id=bankaccnt_id)  "
              " WHERE ((NOT checkhead_void)"
              "  AND  (NOT checkhead_posted)"
-             "  AND  CASE WHEN (bankaccnt_prnt_check) THEN checkhead_printed ELSE 1=1 END" 
              "  AND  (checkhead_bankaccnt_id=:bankaccnt_id) ) "
              "ORDER BY checkhead_number;" );
   postHandleBankAccount.bindValue(":bankaccnt_id", pBankaccntid);
