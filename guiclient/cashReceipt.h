@@ -41,6 +41,7 @@ public slots:
     virtual void sEditCreditCard();
     virtual void sFillApplyList();
     virtual void sFillMiscList();
+    virtual void sHandleSelector();
     virtual void sMoveDown();
     virtual void sMoveUp();
     virtual void sNewCreditCard();
@@ -52,6 +53,18 @@ public slots:
     virtual void sDateChanged();
     virtual void sHandleAltExchRate();
     virtual void sUpdateGainLoss();
+
+//====================================
+
+    virtual void setCashReceipt(const ParameterList &pParams);  //A
+    virtual ParameterList getParams();
+    virtual void grpFillApplyList();                          //D
+    virtual void populateCustomerInfo();                      //J
+    virtual void updateCustomerGroup();                         //K
+    virtual void activateButtons();                             //M
+    virtual void deactivateButtons();
+
+//====================================
 
 protected slots:
     virtual void languageChange();
