@@ -221,78 +221,80 @@ void comment::set(const ParameterList &pParams)
     _sourcetype = param.toString();
     if(!(_mode == cEdit || _mode == cView))
     {
-        if (_sourcetype == "ADDR")
-          _cmnttype->setType(XComboBox::AddressCommentTypes);
-        else if (_sourcetype == "BBH")
-          _cmnttype->setType(XComboBox::BBOMHeadCommentTypes);
-        else if (_sourcetype == "BBI")
-          _cmnttype->setType(XComboBox::BBOMItemCommentTypes);
-        else if (_sourcetype == "BMH")
-          _cmnttype->setType(XComboBox::BOMHeadCommentTypes);
-        else if (_sourcetype == "BMI")
-          _cmnttype->setType(XComboBox::BOMItemCommentTypes);
-        else if (_sourcetype == "BOH")
-          _cmnttype->setType(XComboBox::BOOHeadCommentTypes);
-        else if (_sourcetype == "BOI")
-          _cmnttype->setType(XComboBox::BOOItemCommentTypes);
-        else if (_sourcetype == "CRMA")
-          _cmnttype->setType(XComboBox::CRMAccountCommentTypes);
-        else if (_sourcetype == "T")
-          _cmnttype->setType(XComboBox::ContactCommentTypes);
-        else if (_sourcetype == "C")
-          _cmnttype->setType(XComboBox::CustomerCommentTypes);
-        else if (_sourcetype == "EMP")
-          _cmnttype->setType(XComboBox::EmployeeCommentTypes);
-        else if (_sourcetype == "INCDT")
-          _cmnttype->setType(XComboBox::IncidentCommentTypes);
-        else if (_sourcetype == "I")
-          _cmnttype->setType(XComboBox::ItemCommentTypes);
-        else if (_sourcetype == "IS")
-          _cmnttype->setType(XComboBox::ItemSiteCommentTypes);
-        else if (_sourcetype == "IR")
-          _cmnttype->setType(XComboBox::ItemSourceCommentTypes);
-        else if (_sourcetype == "L")
-          _cmnttype->setType(XComboBox::LocationCommentTypes);
-        else if (_sourcetype == "LS")
-          _cmnttype->setType(XComboBox::LotSerialCommentTypes);
-        else if (_sourcetype == "OPP")
-          _cmnttype->setType(XComboBox::OpportunityCommentTypes);
-        else if (_sourcetype == "J")
-          _cmnttype->setType(XComboBox::ProjectCommentTypes);
-        else if (_sourcetype == "P")
-          _cmnttype->setType(XComboBox::PurchaseOrderCommentTypes);
-        else if (_sourcetype == "PI")
-          _cmnttype->setType(XComboBox::PurchaseOrderItemCommentTypes);
-        else if (_sourcetype == "RA")
-          _cmnttype->setType(XComboBox::ReturnAuthCommentTypes);
-        else if (_sourcetype == "RI")
-          _cmnttype->setType(XComboBox::ReturnAuthItemCommentTypes);
-        else if (_sourcetype == "Q")
-          _cmnttype->setType(XComboBox::QuoteCommentTypes);
-        else if (_sourcetype == "QI")
-          _cmnttype->setType(XComboBox::QuoteItemCommentTypes);
-        else if (_sourcetype == "S")
-          _cmnttype->setType(XComboBox::SalesOrderCommentTypes);
-        else if (_sourcetype == "SI")
-          _cmnttype->setType(XComboBox::SalesOrderItemCommentTypes);
-        else if (_sourcetype == "TA")
-          _cmnttype->setType(XComboBox::TaskCommentTypes);
-        else if (_sourcetype == "TIME")
-          _cmnttype->setType(XComboBox::TimeAttendanceCommentTypes);
-        else if (_sourcetype == "TD")
-          _cmnttype->setType(XComboBox::TodoItemCommentTypes);
-        else if (_sourcetype == "TO")
-          _cmnttype->setType(XComboBox::TransferOrderCommentTypes);
-        else if (_sourcetype == "TI")
-          _cmnttype->setType(XComboBox::TransferOrderItemCommentTypes);
-        else if (_sourcetype == "V")
-          _cmnttype->setType(XComboBox::VendorCommentTypes);
-        else if (_sourcetype == "WH")
-          _cmnttype->setType(XComboBox::WarehouseCommentTypes);
-        else if (_sourcetype == "W")
-          _cmnttype->setType(XComboBox::WorkOrderCommentTypes);
-        else
-          _cmnttype->setType(XComboBox::AllCommentTypes);
+      //      CommentMap *map = Comments::commentMap().value(_sourcetype);
+      //      _cmnttype->setType(map ? (XComboBox::XComboBoxTypes)map->doctypeId : XComboBox::AllCommentTypes);
+      if (_sourcetype == "ADDR")
+        _cmnttype->setType(XComboBox::AddressCommentTypes);
+      else if (_sourcetype == "BBH")
+        _cmnttype->setType(XComboBox::BBOMHeadCommentTypes);
+      else if (_sourcetype == "BBI")
+        _cmnttype->setType(XComboBox::BBOMItemCommentTypes);
+      else if (_sourcetype == "BMH")
+        _cmnttype->setType(XComboBox::BOMHeadCommentTypes);
+      else if (_sourcetype == "BMI")
+        _cmnttype->setType(XComboBox::BOMItemCommentTypes);
+      else if (_sourcetype == "BOH")
+        _cmnttype->setType(XComboBox::BOOHeadCommentTypes);
+      else if (_sourcetype == "BOI")
+        _cmnttype->setType(XComboBox::BOOItemCommentTypes);
+      else if (_sourcetype == "CRMA")
+        _cmnttype->setType(XComboBox::CRMAccountCommentTypes);
+      else if (_sourcetype == "T")
+        _cmnttype->setType(XComboBox::ContactCommentTypes);
+      else if (_sourcetype == "C")
+        _cmnttype->setType(XComboBox::CustomerCommentTypes);
+      else if (_sourcetype == "EMP")
+        _cmnttype->setType(XComboBox::EmployeeCommentTypes);
+      else if (_sourcetype == "INCDT")
+        _cmnttype->setType(XComboBox::IncidentCommentTypes);
+      else if (_sourcetype == "I")
+        _cmnttype->setType(XComboBox::ItemCommentTypes);
+      else if (_sourcetype == "IS")
+        _cmnttype->setType(XComboBox::ItemSiteCommentTypes);
+      else if (_sourcetype == "IR")
+        _cmnttype->setType(XComboBox::ItemSourceCommentTypes);
+      else if (_sourcetype == "L")
+        _cmnttype->setType(XComboBox::LocationCommentTypes);
+      else if (_sourcetype == "LS")
+        _cmnttype->setType(XComboBox::LotSerialCommentTypes);
+      else if (_sourcetype == "OPP")
+        _cmnttype->setType(XComboBox::OpportunityCommentTypes);
+      else if (_sourcetype == "J")
+        _cmnttype->setType(XComboBox::ProjectCommentTypes);
+      else if (_sourcetype == "P")
+        _cmnttype->setType(XComboBox::PurchaseOrderCommentTypes);
+      else if (_sourcetype == "PI")
+        _cmnttype->setType(XComboBox::PurchaseOrderItemCommentTypes);
+      else if (_sourcetype == "RA")
+        _cmnttype->setType(XComboBox::ReturnAuthCommentTypes);
+      else if (_sourcetype == "RI")
+        _cmnttype->setType(XComboBox::ReturnAuthItemCommentTypes);
+      else if (_sourcetype == "Q")
+        _cmnttype->setType(XComboBox::QuoteCommentTypes);
+      else if (_sourcetype == "QI")
+        _cmnttype->setType(XComboBox::QuoteItemCommentTypes);
+      else if (_sourcetype == "S")
+        _cmnttype->setType(XComboBox::SalesOrderCommentTypes);
+      else if (_sourcetype == "SI")
+        _cmnttype->setType(XComboBox::SalesOrderItemCommentTypes);
+      else if (_sourcetype == "TA")
+        _cmnttype->setType(XComboBox::TaskCommentTypes);
+      else if (_sourcetype == "TIME")
+        _cmnttype->setType(XComboBox::TimeAttendanceCommentTypes);
+      else if (_sourcetype == "TD")
+        _cmnttype->setType(XComboBox::TodoItemCommentTypes);
+      else if (_sourcetype == "TO")
+        _cmnttype->setType(XComboBox::TransferOrderCommentTypes);
+      else if (_sourcetype == "TI")
+        _cmnttype->setType(XComboBox::TransferOrderItemCommentTypes);
+      else if (_sourcetype == "V")
+        _cmnttype->setType(XComboBox::VendorCommentTypes);
+      else if (_sourcetype == "WH")
+        _cmnttype->setType(XComboBox::WarehouseCommentTypes);
+      else if (_sourcetype == "W")
+        _cmnttype->setType(XComboBox::WorkOrderCommentTypes);
+      else
+        _cmnttype->setType(XComboBox::AllCommentTypes);
     }
   }
 
