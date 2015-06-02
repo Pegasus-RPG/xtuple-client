@@ -9,6 +9,9 @@
  */
 
 #include "cashReceiptMiscDistrib.h"
+#include <QDebug>
+
+#include <metasql.h>
 
 #include <QVariant>
 #include <QMessageBox>
@@ -42,6 +45,7 @@ void cashReceiptMiscDistrib::languageChange()
 
 enum SetResponse cashReceiptMiscDistrib::set(const ParameterList &pParams)
 {
+
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -75,6 +79,10 @@ enum SetResponse cashReceiptMiscDistrib::set(const ParameterList &pParams)
       _mode = cEdit;
     }
   }
+
+  param = pParams.value("custSelector", &valid);
+  if (valid && param.toString() == "G")
+      setG(pParams);
 
   return NoError;
 }
@@ -147,5 +155,84 @@ void cashReceiptMiscDistrib::sSave()
   cashSave.exec();
 
   done(_cashrcptmiscid);
+
+  gSave();
+}
+//=================================================
+
+void cashReceiptMiscDistrib::showCustomers(int group, int customer)
+{
+    if (group==0)
+        return;
+
+    //Set Up Customer widget
+    XSqlQuery query;
+    query.prepare("SELECT custinfo.cust_id,custinfo.cust_name FROM custinfo, custgrpitem "
+                  "WHERE custgrpitem.custgrpitem_cust_id = custinfo.cust_id "
+                  "AND (custgrpitem_custgrp_id =:group);");
+    query.bindValue(":group", group);
+    query.exec();
+    if (query.first())
+        _custSelector->populate(query);
+
+    if (_mode == cEdit)
+        _custSelector->setId(customer);
+}
+
+void cashReceiptMiscDistrib::setG(const ParameterList &pParams)
+{
+    if (_mode == cNew)
+    {
+        QString sql = "SELECT cashrcpt_custgrp_id FROM cashrcpt WHERE cashrcpt_id=<? value(\"cashrcpt_id\") ?>";
+        XSqlQuery query;
+        MetaSQLQuery mql(sql);
+        query = mql.toQuery(pParams);
+        if (query.first())
+        {
+            _custgrp = query.value("cashrcpt_custgrp_id").toInt();
+            showCustomers(_custgrp, 0);
+        }
+    }
+        if (_mode == cEdit)
+        {
+          QString sql = "SELECT cashrcptmisc_cust_id, cashrcpt_custgrp_id FROM cashrcpt "
+                        " JOIN cashrcptmisc ON cashrcptmisc_cashrcpt_id=cashrcpt_id "
+                        " WHERE cashrcptmisc_id=<? value(\"cashrcptmisc_id\") ?>";
+          _cashmisc = pParams.value("cashrcptmisc_id").toInt();
+          XSqlQuery query;
+          MetaSQLQuery mql(sql);
+          query = mql.toQuery(pParams);
+          if (query.first())
+          {
+              _custgrp = query.value("cashrcpt_custgrp_id").toInt();
+              showCustomers(_custgrp, query.value("cashrcptmisc_cust_id").toInt());
+          }
+        }
+}
+
+void cashReceiptMiscDistrib::gSave()
+{
+    int cashmisc = -1;
+
+    if (_custSelector->id() == 0)
+        return;
+
+    if (_mode == cNew)
+    {
+      XSqlQuery query;
+      query.prepare("SELECT currval('cashrcptmisc_cashrcptmisc_id_seq') AS _cashrcptmisc_id;");
+      query.exec();
+      if (query.first())
+        cashmisc = query.value("_cashrcptmisc_id").toInt();
+    }
+    else
+      cashmisc = _cashmisc;
+
+    XSqlQuery d;
+    d.prepare("UPDATE cashrcptmisc SET cashrcptmisc_cust_id =:cust "
+             "WHERE cashrcptmisc_id =:cashmisc;");
+    d.bindValue(":cashmisc", cashmisc);
+    d.bindValue(":cust", _custSelector->id());
+    d.exec();
 }
 
