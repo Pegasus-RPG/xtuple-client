@@ -53,7 +53,8 @@ while getopts ho:n:t:x OPTION ; do
         elif [[ "$OPTARG" =~ ^v[1-9]+\.[0-9]+\.[0-9]+ ]] ; then
           OLDVER=$OPTARG
         else
-          log "$PROG: cannot find directory $OPTARG"
+          OLDVER=$OPTARG
+          log "$PROG: cannot find directory $OPTARG so guessing this is a git commit-ish"
         fi
         ;;
     n)  if [ -d "$OPTARG" ] ; then
@@ -61,7 +62,8 @@ while getopts ho:n:t:x OPTION ; do
         elif [[ "$OPTARG" =~ ^v[1-9]+\.[0-9]+\.[0-9]+ ]] ; then
           NEWVER=$OPTARG
         else
-          log "$PROG: cannot find directory $OPTARG"
+          NEWVER=$OPTARG
+          log "$PROG: cannot find directory $OPTARG so guessing this is a git commit-ish"
         fi
         ;;
     t)  TMPDIR=$2
