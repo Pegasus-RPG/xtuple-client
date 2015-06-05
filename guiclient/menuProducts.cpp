@@ -14,6 +14,7 @@
 #include <QPixmap>
 #include <QMenu>
 #include <QToolBar>
+#include <QDebug>
 
 #include <parameter.h>
 
@@ -117,9 +118,9 @@ menuProducts::menuProducts(GUIClient *Pparent) :
 
   actionProperties acts[] = {
 
-#ifdef Q_OS_MAC
-  { "sys.preferences", tr("P&references..."), SLOT(sPreferences()), mainMenu, "MaintainPreferencesSelf MaintainPreferencesOthers", NULL, NULL, true, NULL},
-#endif
+//#ifdef Q_OS_MAC
+//  { "sys.preferences", tr("P&references..."), SLOT(sPreferences()), mainMenu, "MaintainPreferencesSelf MaintainPreferencesOthers", NULL, NULL, true, NULL},
+//#endif
 
   // Product | Reports
   { "menu",	tr("&Reports"), (char*)reportsMenu,	mainMenu, "true", NULL, NULL, true , NULL },
@@ -240,6 +241,7 @@ void menuProducts::addActionsToMenu(actionProperties acts[], unsigned int numEle
   QAction * m = 0;
   for (unsigned int i = 0; i < numElems; i++)
   {
+    qDebug() << acts[i].actionName << acts[i].actionTitle;
     if (! acts[i].visible)
     {
       continue;
@@ -519,6 +521,7 @@ void menuProducts::sReassignProductCategoryByProductCategory()
 
 void menuProducts::sSetup()
 {
+  qDebug() <<"setup called there";
   ParameterList params;
   params.append("module", Xt::ProductsModule);
 
