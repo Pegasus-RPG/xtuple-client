@@ -639,7 +639,7 @@ to be bound by its terms.</comment>
        <item row="3" column="4" colspan="3">
         <widget class="QTabWidget" name="_priceTab">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="_creditTab">
           <attribute name="title">
@@ -1129,7 +1129,7 @@ to be bound by its terms.</comment>
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>5</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="_supply">
         <attribute name="title">

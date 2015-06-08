@@ -240,6 +240,7 @@ enum SetResponse employee::set(const ParameterList &pParams)
 bool employee::sSave(const bool pClose)
 {
   bool dupCode   = false;
+  bool dupNumber = false;
 
   XSqlQuery dupq;
   dupq.prepare("SELECT emp_id"
@@ -260,6 +261,11 @@ bool employee::sSave(const bool pClose)
   dupq.bindValue(":number", _number->text());
   dupq.bindValue(":id",     _empid);
   dupq.exec();
+  if (dupq.first())
+    dupNumber = true;
+  else if(ErrorReporter::error(QtCriticalMsg, this, tr("Database Error"),
+                                dupq, __FILE__, __LINE__))
+    return false;
 
   QList<GuiErrorCheck> errors;
   errors << GuiErrorCheck(_code->text().isEmpty(), _code,
@@ -268,6 +274,8 @@ bool employee::sSave(const bool pClose)
                           tr("You must enter an Employee Number."))
          << GuiErrorCheck(dupCode, _code,
                           tr("An Employee already exists for the Code specified."))
+         << GuiErrorCheck(dupNumber, _number,
+                          tr("An Employee already exists for the Number specified."))
          << GuiErrorCheck(_code->text() == _mgr->number(), _number,
                           tr("An Employee already exists for the Number specified."))
          << GuiErrorCheck(_code->text() == _mgr->number(), _mgr,
