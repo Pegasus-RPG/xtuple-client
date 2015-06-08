@@ -1934,18 +1934,23 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
     disconnect( _itemchar,  SIGNAL(itemChanged(QStandardItem *)), this, SLOT(sRecalcAvailability()));
 
     // Populate customer part number if any
-    salesPopulateItemInfo.prepare( "SELECT itemalias_number "
-              "FROM itemalias"
-              " JOIN item ON (item_id=itemalias_item_id)"
-              " LEFT OUTER JOIN crmacct ON (itemalias_crmacct_id=crmacct_id)"
-              "WHERE (item_id=:item_id)"
-              "  AND (crmacct_cust_id=:cust_id OR itemalias_crmacct_id IS NULL);" );
-    salesPopulateItemInfo.bindValue(":item_id", _item->id());
-    salesPopulateItemInfo.bindValue(":cust_id", _custid);
-    salesPopulateItemInfo.exec();
-    if (salesPopulateItemInfo.first())
+    if (_customerPN->text().trimmed().length() == 0)
     {
-       _customerPN->setText(salesPopulateItemInfo.value("itemalias_number").toString());
+      salesPopulateItemInfo.prepare("SELECT itemalias_number,"
+                                    "       CASE WHEN (itemalias_crmacct_id IS NOT NULL) THEN 0"
+                                    "            ELSE 1 END AS orderby "
+                                    "FROM itemalias"
+                                    " LEFT OUTER JOIN crmacct ON (itemalias_crmacct_id=crmacct_id)"
+                                    "WHERE (itemalias_item_id=:item_id)"
+                                    "  AND (crmacct_cust_id=:cust_id OR itemalias_crmacct_id IS NULL) "
+                                    "ORDER BY orderby, itemalias_number;" );
+      salesPopulateItemInfo.bindValue(":item_id", _item->id());
+      salesPopulateItemInfo.bindValue(":cust_id", _custid);
+      salesPopulateItemInfo.exec();
+      if (salesPopulateItemInfo.first())
+      {
+        _customerPN->setText(salesPopulateItemInfo.value("itemalias_number").toString());
+      }
     }
 
     // Populate Characteristics
