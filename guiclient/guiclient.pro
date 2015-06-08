@@ -632,6 +632,7 @@ FORMS =   absoluteCalendarItem.ui               \
           xdateinputdialog.ui                   \
           xsltMap.ui                            \
           zeroUncountedCountTagsByWarehouse.ui  \
+    printStatementsByCustomerGroup.ui
 
 HEADERS = ../common/format.h                    \
           SaveSizePositionEventFilter.h         \
@@ -1243,7 +1244,8 @@ HEADERS = ../common/format.h                    \
           xuiloader.h                   \
           xwidget.h                     \
           yourpayprocessor.h            \
-          zeroUncountedCountTagsByWarehouse.h   \
+          zeroUncountedCountTagsByWarehouse.h \
+    printStatementsByCustomerGroup.h
 
 SOURCES = absoluteCalendarItem.cpp              \
           accountNumber.cpp                     \
@@ -1853,6 +1855,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           xwidget.cpp                           \
           yourpayprocessor.cpp                  \
           zeroUncountedCountTagsByWarehouse.cpp \
+    printStatementsByCustomerGroup.cpp
 
 include( displays/displays.pri )
 include( hunspell.pri )

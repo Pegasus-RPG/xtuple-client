@@ -31,7 +31,7 @@ public slots:
     virtual void sSave();
 
     virtual void showCustomers(int group, int customer);
-    virtual void setG(const ParameterList &pParams);
+    virtual void setGroup(const ParameterList &pParams);
     virtual void gSave();
 
 protected slots:

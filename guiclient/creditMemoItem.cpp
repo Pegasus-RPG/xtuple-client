@@ -82,12 +82,12 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
 
 creditMemoItem::~creditMemoItem()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void creditMemoItem::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse creditMemoItem::set(const ParameterList &pParams)
@@ -171,9 +171,7 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
       connect(_discountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateFromDiscount()));
       connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
 
-
       //cash_receipt_by_customer_group
-
       QString sql = "SELECT * FROM cmitemaccnt WHERE cmitemaccnt_cmhead_id=<? value('cmhead') ?> "
                     "AND cmitemaccnt_cmitem_id=<? value('cmitem') ?>;";
       XSqlQuery query;
@@ -312,7 +310,6 @@ void creditMemoItem::sSave()
   done(_cmitemid);
 
   //cash_receipt_by_customer_group
-
   QString sql ="SELECT * FROM cmitemaccnt "
                "WHERE cmitemaccnt_cmhead_id=<? value(\"cmhead\") ?> "
                "AND cmitemaccnt_cmitem_id=<? value(\"cmitem\") ?>;";

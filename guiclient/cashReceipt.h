@@ -54,14 +54,12 @@ public slots:
     virtual void sHandleAltExchRate();
     virtual void sUpdateGainLoss();
 
-
-    virtual void setCashReceipt(const ParameterList &pParams);  //A
+    virtual void setCashReceipt(const ParameterList &pParams);
     virtual ParameterList getParams();
-    virtual void grpFillApplyList();                          //D
-    virtual void populateCustomerInfo();                      //J
-    virtual void updateCustomerGroup();                         //K
-    virtual void activateButtons();                             //M
-    virtual void deactivateButtons();
+    virtual void grpFillApplyList();
+    virtual void populateCustomerInfo();
+    virtual void updateCustomerGroup();
+    virtual void activateButtons(bool c);
 
 protected slots:
     virtual void languageChange();
