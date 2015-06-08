@@ -253,9 +253,11 @@ else if(_taxSelected->isChecked() && _mode == cNew)
 void voucherMiscDistrib::sPopulateVendorInfo(int pVendid)
 {
   XSqlQuery populateVoucher;
-  populateVoucher.prepare( "SELECT vend_accnt_id, vend_expcat_id, vend_tax_id "
-             "FROM vendinfo "
-             "WHERE (vend_id=:vend_id);" );
+  populateVoucher.prepare("SELECT COALESCE(vend_accnt_id, -1) AS vend_accnt_id,"
+                          "       COALESCE(vend_expcat_id, -1) AS vend_expcat_id,"
+                          "       COALESCE(vend_tax_id, -1) AS vend_tax_id "
+                          "FROM vendinfo "
+                          "WHERE (vend_id=:vend_id);" );
   populateVoucher.bindValue(":vend_id", pVendid);
   populateVoucher.exec();
   if (populateVoucher.first())
