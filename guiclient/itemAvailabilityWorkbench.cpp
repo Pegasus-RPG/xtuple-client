@@ -328,6 +328,9 @@ void itemAvailabilityWorkbench::populate()
 
 void itemAvailabilityWorkbench::sFillList()
 {
+  if (!_item->isValid())
+    return;
+  
   bool _sold = false;
   XSqlQuery itemq;
   itemq.prepare("SELECT item_sold FROM item "
