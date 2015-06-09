@@ -22,6 +22,8 @@
 #include "widgets.h"
 #include "xdoublevalidator.h"
 
+#define DEBUG true
+
 // macros to emulate values from guiclient.h
 // we moved this file from guiclient to widgets
 #define NoError 0
@@ -392,8 +394,17 @@ void characteristicAssignment::sHandleChar()
 
 void CharacteristicAssignmentPrivate::handleTargetType()
 {
-  if ((targetType == "I") || (targetType == "CT"))
+  QString charuseTargetType = targetType;
+
+  if (targetType == "I")
+  {
     _template=true;
+  }
+  else if (targetType == "CT")
+  {
+    _template=true;
+    charuseTargetType = "C"; // bug 25940
+  }
   else
     parent->_default->hide();
 
@@ -405,7 +416,7 @@ void CharacteristicAssignmentPrivate::handleTargetType()
   QSqlQueryModel *model = new QSqlQueryModel;
   model->setQuery("SELECT char_id, char_name, char_type"
                   "  FROM char JOIN charuse ON char_id = charuse_char_id"
-                  " WHERE charuse_target_type = '" + targetType + "'"
+                  " WHERE charuse_target_type = '" + charuseTargetType + "'"
                   " ORDER BY char_order, char_name");
   parent->_char->setModel(model);
   idCol   = model->query().record().indexOf("char_id");
