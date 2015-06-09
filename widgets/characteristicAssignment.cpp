@@ -22,8 +22,6 @@
 #include "widgets.h"
 #include "xdoublevalidator.h"
 
-#define DEBUG true
-
 // macros to emulate values from guiclient.h
 // we moved this file from guiclient to widgets
 #define NoError 0
