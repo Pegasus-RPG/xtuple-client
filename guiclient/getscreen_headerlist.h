@@ -261,6 +261,7 @@
 #include "dspUninvoicedReceivings.h"
 #include "dspUnusedPurchasedItems.h"
 #include "dspUsageStatistics.h"
+#include "dspUserPrivileges.h"
 #include "dspValidLocationsByItem.h"
 #include "dspVendorAPHistory.h"
 #include "dspVoucherRegister.h"

@@ -2832,5 +2832,21 @@ to be bound by its terms.</comment>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>aliasChanged(QString)</signal>
+   <receiver>_customerPN</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>

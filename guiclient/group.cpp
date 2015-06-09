@@ -14,6 +14,7 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include "user.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "storedProcErrorLookup.h"
@@ -43,12 +44,16 @@ group::group(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   _available->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "priv_descrip");
   _granted->addColumn(tr("Granted Privileges"), -1, Qt::AlignLeft, true, "priv_name");
   _granted->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "priv_descrip");
+  _assigned->addColumn(tr("Username"), 100, Qt::AlignLeft, true, "usr_username");
+  _assigned->addColumn(tr("Proper Name"), -1, Qt::AlignLeft, true, "usr_propername");
 
   groupgroup.exec( "SELECT DISTINCT priv_module "
           "FROM priv "
           "ORDER BY priv_module;" );
   for (int i = 0; groupgroup.next(); i++)
     _module->append(i, groupgroup.value("priv_module").toString());
+
+  connect(_assigned, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem *)), this, SLOT(sPopulateMenu(QMenu *, QTreeWidgetItem *)));
 
   _trapClose = false;
 }
@@ -61,6 +66,15 @@ group::~group()
 void group::languageChange()
 {
   retranslateUi(this);
+}
+
+void group::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
+{
+  QAction *menuItem;
+
+  menuItem = pMenu->addAction("Maintain User...", this, SLOT(sEditUser()));
+  if (!_privileges->check("MaintainUsers"))
+    menuItem->setEnabled(false);
 }
 
 enum SetResponse group::set(const ParameterList &pParams)
@@ -231,6 +245,19 @@ void group::sSave()
   _mode = cEdit;
 
   done(_grpid);
+}
+
+void group::sEditUser()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("username", _assigned->selectedItems().first()->text(0));
+
+  user newdlg(this);
+  newdlg.set(params);
+
+  newdlg.exec();
+  populateAssigned();
 }
 
 void group::sModuleSelected(const QString &pModule)
@@ -423,4 +450,24 @@ void group::populate()
     systemError(this, grouppopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  
+  populateAssigned();
+}
+
+void group::populateAssigned()
+{
+
+  XSqlQuery assignedpopulate;
+  assignedpopulate.prepare( "SELECT usr_username, usr_propername FROM usr "
+                            " JOIN usrgrp ON (usrgrp_username=usr_username) "
+                            " WHERE (usrgrp_grp_id=:grp_id);" );
+  assignedpopulate.bindValue(":grp_id", _grpid);
+  assignedpopulate.exec();
+  if (assignedpopulate.lastError().type() != QSqlError::NoError)
+  {
+    ErrorReporter::error(QtCriticalMsg, this, tr("User Role Assignment"),
+                         assignedpopulate.lastError(), __FILE__, __LINE__);
+    return;
+  }
+  _assigned->populate(assignedpopulate, false);
 }
