@@ -14,7 +14,6 @@
 #include <QPixmap>
 #include <QMenu>
 #include <QToolBar>
-#include <QDebug>
 
 #include <parameter.h>
 
@@ -118,10 +117,6 @@ menuProducts::menuProducts(GUIClient *Pparent) :
 
   actionProperties acts[] = {
 
-//#ifdef Q_OS_MAC
-//  { "sys.preferences", tr("P&references..."), SLOT(sPreferences()), mainMenu, "MaintainPreferencesSelf MaintainPreferencesOthers", NULL, NULL, true, NULL},
-//#endif
-
   // Product | Reports
   { "menu",	tr("&Reports"), (char*)reportsMenu,	mainMenu, "true", NULL, NULL, true , NULL },
   
@@ -223,9 +218,6 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   { "pd.reassignClassCodeByClassCode", tr("Reassign &Class Codes..."), SLOT(sReassignClassCodeByClassCode()), utilitiesMenu, "MaintainItemMasters", NULL, NULL, true , NULL },
   { "pd.reassignProductCategoryByProductCategory", tr("&Reassign Product Categories..."), SLOT(sReassignProductCategoryByProductCategory()), utilitiesMenu, "MaintainItemMasters", NULL, NULL, true , NULL },
 
-  // Setup
-  { "pd.setup",	    tr("&Setup..."),	  SLOT(sSetup()),     mainMenu,	"true",	NULL, NULL,  true, NULL}
-
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
@@ -241,7 +233,6 @@ void menuProducts::addActionsToMenu(actionProperties acts[], unsigned int numEle
   QAction * m = 0;
   for (unsigned int i = 0; i < numElems; i++)
   {
-    qDebug() << acts[i].actionName << acts[i].actionTitle;
     if (! acts[i].visible)
     {
       continue;
@@ -521,7 +512,6 @@ void menuProducts::sReassignProductCategoryByProductCategory()
 
 void menuProducts::sSetup()
 {
-  qDebug() <<"setup called there";
   ParameterList params;
   params.append("module", Xt::ProductsModule);
 

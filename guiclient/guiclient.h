@@ -83,6 +83,11 @@ class XWidget;
 
 // Possible return values from submitReport
 #define cNoReportDefinition   -2
+#ifdef __APPLE__
+#define SETUPMENUITEM "&xSetup"
+#else
+#define SETUPMENUITEM "&Setup"
+#endif
 
 int  systemError(QWidget *, const QString &);
 int  systemError(QWidget *, const QString &, const QString &, const int);
