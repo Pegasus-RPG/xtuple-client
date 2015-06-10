@@ -71,9 +71,8 @@ class characteristicPrivate {
                   "  JOIN pg_namespace n on relnamespace = n.oid"
                   "  JOIN regexp_split_to_table(buildSearchPath(), E',\\s*') sp"
                   "       on nspname = sp"
-                  " WHERE source_charass != ''"
+                  " WHERE source_charass not in ('', 'CT')" // bug 25940
                   " ORDER BY source_descrip;");
-      // TODO: limit to the available tables
       // make the window a max of 4 columns of checkboxes wide
       if (q.size() > 4 * colHeight)
       {
