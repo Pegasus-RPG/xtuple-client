@@ -1372,9 +1372,7 @@ int CreditCardProcessor::reversePreauthorized(const double pamount, const int pc
                     "    AND (payco_cohead_id=:payco_cohead_id));");
     else
     {
-      cashq.prepare("INSERT INTO payco VALUES"
-                    " (:payco_ccpay_id, :payco_cohead_id,"
-                    "  :payco_amount, :payco_curr_id);");
+      cashq.prepare(_paycoInsertStmt);
       cashq.bindValue(":payco_amount",    pamount);
       cashq.bindValue(":payco_curr_id",   pcurrid);
     }
