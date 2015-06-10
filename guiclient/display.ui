@@ -115,7 +115,7 @@ to be bound by its terms.</comment>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
+         <layout class="QGridLayout" name="gridLayout_21">
           <property name="topMargin">
            <number>3</number>
           </property>
@@ -163,7 +163,6 @@ to be bound by its terms.</comment>
      <property name="populateLinear">
       <bool>false</bool>
      </property>
-     <zorder>qt_scrollarea_viewport</zorder>
     </widget>
    </item>
    <item row="3" column="1">

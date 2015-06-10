@@ -1154,13 +1154,11 @@ void item::sPopulateUOMs()
 void item::sHandleItemtype()
 {
   QString itemType = QString(*(_itemTypes + _itemtype->currentIndex()));
+
   bool pickList  = false;
   bool sold      = false;
   bool weight    = false;
   bool config    = false;
-  bool shipUOM   = false;
-  bool capUOM    = false;
-  bool planType  = false;
   bool purchased = false;
   bool freight   = false;
   
@@ -1171,9 +1169,6 @@ void item::sHandleItemtype()
     pickList = true;
     sold     = true;
     weight   = true;
-    capUOM   = true;
-    shipUOM  = true;
-    planType = true;
     purchased = true;
     freight  = true;
   }
@@ -1184,20 +1179,14 @@ void item::sHandleItemtype()
     sold     = true;
     weight   = true;
     config   = true;
-    capUOM   = true;
-    shipUOM  = true;
-    planType = true;
     purchased = true;
     freight  = true;
   }
 
-  if (itemType == "F")
-    planType = true;
-
+  // nothing to do if (itemType == "F")
+  
   if (itemType == "B")
   {
-    capUOM   = true;
-    planType = true;
     purchased = true;
     freight  = true;
   }
@@ -1207,9 +1196,6 @@ void item::sHandleItemtype()
     pickList = true;
     sold     = true;
     weight   = true;
-    capUOM   = true;
-    shipUOM  = true;
-    planType = true;
     freight  = true;
   }
 
@@ -1218,9 +1204,6 @@ void item::sHandleItemtype()
     pickList = true;
     sold     = true;
     weight   = true;
-    capUOM   = true;
-    shipUOM  = true;
-    planType = true;
     freight  = true;
   }
 
@@ -1228,8 +1211,6 @@ void item::sHandleItemtype()
   {
     sold     = true;
     weight   = true;
-    capUOM   = true;
-    shipUOM  = true;
     freight  = true;
     config   = true;
   }
@@ -1238,8 +1219,6 @@ void item::sHandleItemtype()
   {
     pickList = true;
     weight   = true;
-    capUOM   = true;
-    shipUOM  = true;
     freight  = true;
     purchased = true;
     sold = true;
@@ -1247,8 +1226,6 @@ void item::sHandleItemtype()
 
   if (itemType == "O")
   {
-    capUOM   = true;
-    planType = true;
     purchased = true;
     freight  = true;
   }
@@ -1256,7 +1233,6 @@ void item::sHandleItemtype()
   if (itemType == "A")
   {
     sold     = true;
-    planType = true;
     freight  = true;
   }
 

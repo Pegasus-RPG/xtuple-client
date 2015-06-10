@@ -1774,7 +1774,6 @@ void GUIClient::sCustomCommand()
     QString cmd = GCustomCommand.value("cmd_executable").toString();
     if(cmd.toLower() == "!customuiform")
     {
-      bool haveParams = false;
       ParameterList params;
       bool asDialog = false;
       QString asName;
@@ -1826,7 +1825,6 @@ void GUIClient::sCustomCommand()
             var = XVariant::decode(type, value);
           if(active)
           {
-            haveParams = true;
             params.append(name, var);
           }
 // end copied code from OpenRPT/renderapp

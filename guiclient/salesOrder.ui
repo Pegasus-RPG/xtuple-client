@@ -817,7 +817,7 @@ to be bound by its terms.</comment>
          <property name="title">
           <string/>
          </property>
-         <layout class="QGridLayout" name="gridLayout">
+         <layout class="QGridLayout" name="gridLayout_27">
           <item row="0" column="0">
            <widget class="ContactCluster" name="_billToCntct">
             <property name="minimalLayout">
@@ -1858,7 +1858,7 @@ to be bound by its terms.</comment>
        <item>
         <widget class="QTabWidget" name="_paymentInformation">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="_creditCardPage">
           <attribute name="title">
@@ -2498,6 +2498,7 @@ to be bound by its terms.</comment>
    <class>CurrCluster</class>
    <extends>CurrDisplay</extends>
    <header>currcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>CurrDisplay</class>

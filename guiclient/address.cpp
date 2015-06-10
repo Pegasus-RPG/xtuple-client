@@ -196,7 +196,6 @@ void address::sPopulate()
 
 void address::sPopulateMenu(QMenu *pMenu)
 {
-  QAction *menuItem;
   QString editStr = tr("Edit...");
   QString viewStr = tr("View...");
 
@@ -205,18 +204,18 @@ void address::sPopulateMenu(QMenu *pMenu)
     case 1:
       if (_privileges->check("MaintainAllContacts") &&
 	  (cNew == _mode || cEdit == _mode))
-	menuItem = pMenu->addAction(editStr, this, SLOT(sEditContact()));
+    (void)pMenu->addAction(editStr, this, SLOT(sEditContact()));
       else if (_privileges->check("ViewAllContacts"))
-	menuItem = pMenu->addAction(viewStr, this, SLOT(sViewContact()));
+    (void)pMenu->addAction(viewStr, this, SLOT(sViewContact()));
 
       break;
 
     case 2:	// ship-to
       if (_privileges->check("MaintainShiptos") &&
 	  (cNew == _mode || cEdit == _mode))
-	menuItem = pMenu->addAction(editStr, this, SLOT(sEditShipto()));
+    (void)pMenu->addAction(editStr, this, SLOT(sEditShipto()));
       else if (_privileges->check("ViewShiptos"))
-	menuItem = pMenu->addAction(viewStr, this, SLOT(sViewShipto()));
+    (void)pMenu->addAction(viewStr, this, SLOT(sViewShipto()));
 
       break;
 
@@ -234,18 +233,18 @@ void address::sPopulateMenu(QMenu *pMenu)
     case 4:	// vendaddr
       if (_privileges->check("MaintainVendorAddresses") &&
 	  (cNew == _mode || cEdit == _mode))
-	menuItem = pMenu->addAction(editStr, this, SLOT(sEditVendorAddress()));
+    (void)pMenu->addAction(editStr, this, SLOT(sEditVendorAddress()));
       else if (_privileges->check("ViewVendorAddresses"))
-	menuItem = pMenu->addAction(viewStr, this, SLOT(sViewVendorAddress()));
+    (void)pMenu->addAction(viewStr, this, SLOT(sViewVendorAddress()));
 
       break;
 
     case 5:	// warehouse
       if (_privileges->check("MaintainWarehouses") &&
 	  (cNew == _mode || cEdit == _mode))
-	menuItem = pMenu->addAction(editStr, this, SLOT(sEditWarehouse()));
+    (void)pMenu->addAction(editStr, this, SLOT(sEditWarehouse()));
       else if (_privileges->check("ViewWarehouses"))
-	menuItem = pMenu->addAction(viewStr, this, SLOT(sViewWarehouse()));
+    (void)pMenu->addAction(viewStr, this, SLOT(sViewWarehouse()));
 
       break;
 

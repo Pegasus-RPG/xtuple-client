@@ -194,7 +194,7 @@ void copyItem::sAddBomitem()
   }
 
   XSqlQuery bomitemq;
-  int uomid;
+  int uomid=-1;
   QString uomname;
   double qtyper = 1.0;
   bool ok;

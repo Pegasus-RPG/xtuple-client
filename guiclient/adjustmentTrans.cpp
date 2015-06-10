@@ -79,7 +79,6 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
   int      invhistid = -1;
-  bool     noQty     = true;
 
   param = pParams.value("itemsite_id", &valid);
   if (valid)
@@ -99,10 +98,9 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
     _qty->setDouble(param.toDouble());
     _qty->setEnabled(false);
     _afterQty->setDouble(param.toDouble());
+
     _absolute->setChecked(true);
     _adjustmentTypeGroup->setEnabled(false);
-
-    noQty = false;
   }
 
   param = pParams.value("invhist_id", &valid);
