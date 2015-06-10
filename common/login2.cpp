@@ -26,7 +26,6 @@
 
 #include "dbtools.h"
 #include "errorReporter.h"
-#include "login2Options.h"
 #include "qmd5.h"
 #include "storedProcErrorLookup.h"
 #include "xsqlquery.h"
@@ -52,7 +51,6 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sLogin()));
   connect(_buttonBox, SIGNAL(helpRequested()), this, SLOT(sOpenHelp()));
-  //connect(_options, SIGNAL(clicked()), this, SLOT(sOptions()));
   connect(_server, SIGNAL(editingFinished()), this, SLOT(sChangeURL()));
   connect(_database, SIGNAL(editTextChanged(QString)), this, SLOT(sChangeURL()));
   connect(_port, SIGNAL(textChanged(QString)), this, SLOT(sChangeURL()));
@@ -535,27 +533,6 @@ void login2::sLogin()
     _databaseURL = databaseURL;
     updateRecentOptions();
     accept();
-  }
-}
-
-void login2::sOptions()
-{
-  ParameterList params;
-  params.append("databaseURL", _databaseURL);
-
-  if (_multipleConnections)
-    params.append("dontSaveSettings");
-
-  login2Options newdlg(this, "", true);
-  newdlg.set(params);
-  if (newdlg.exec() != QDialog::Rejected)
-  {
-    updateRecentOptions();
-    _databaseURL = newdlg._databaseURL;
-    populateDatabaseInfo();
-    updateRecentOptions();
-    updateRecentOptionsActions();
-    _username->setFocus();
   }
 }
 

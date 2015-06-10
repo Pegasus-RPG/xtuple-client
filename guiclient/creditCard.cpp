@@ -37,8 +37,6 @@ int creditCard::saveCreditCard(QWidget *parent,
                               bool ccActive)
 {
   XSqlQuery creditaveCreditCard;
-  bool everythingOK;
-  everythingOK = true;
   int mode = cNew;
   int seq = 0;
 

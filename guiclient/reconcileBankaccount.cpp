@@ -454,7 +454,7 @@ void reconcileBankaccount::populate()
   params.append("effective", _startDate->date());
   params.append("expires",   _endDate->date());
   XSqlQuery bal = mbal.toQuery(params);
-  bool enableRec = false;
+
   if(bal.first())
   {
     _clearBal->setDouble(bal.value("cleared_amount").toDouble());
@@ -463,12 +463,7 @@ void reconcileBankaccount::populate()
 
     QString stylesheet;
 
-    if(bal.value("diff_value").toDouble() == 0.0)
-    {
-      if(_startDate->isValid() && _endDate->isValid())
-        enableRec = true;
-    }
-    else
+    if(bal.value("diff_value").toDouble() != 0.0)
       stylesheet = QString("* { color: %1; }").arg(namedColor("error").name());
 
     _diffBal->setStyleSheet(stylesheet);
@@ -478,7 +473,6 @@ void reconcileBankaccount::populate()
     systemError(this, bal.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  //_reconcile->setEnabled(enableRec);
 
   qApp->restoreOverrideCursor();
 }

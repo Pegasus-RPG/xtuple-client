@@ -252,6 +252,7 @@ void project::sHandleButtons(bool valid)
 
 void project::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
 {
+  Q_UNUSED(selected);
   QAction *menuItem;
 
   if(_prjtask->altId() == 5)
