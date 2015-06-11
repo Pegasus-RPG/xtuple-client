@@ -811,16 +811,11 @@ int main(int argc, char *argv[])
                   "transactions in the system.") );
 
 //  Check for valid current exchange rates
-  XSqlQuery xrateCheck;
-  xrateCheck.prepare("SELECT EXISTS(SELECT 1 FROM( "
-            "     SELECT curr_abbr, "
-            "    (SELECT true FROM curr_rate cr "
-            "      WHERE ((cr.curr_id = cs.curr_id) "
-            "      AND (current_date BETWEEN curr_effective AND curr_expires))) as active "
-            "  FROM curr_symbol cs) foo "
-            "  WHERE active IS NULL) AS result; ");
-  xrateCheck.exec();
-  if(xrateCheck.first() && xrateCheck.value("result").toBool() == true)
+  XSqlQuery xrateCheck("SELECT curr_abbr"
+	          "  FROM curr_symbol s JOIN curr_rate r ON s.curr_id = r.curr_id"
+	          "  GROUP BY curr_abbr"
+	          "  HAVING NOT BOOL_OR(current_date BETWEEN curr_effective AND curr_expires);");
+  if (xrateCheck.first())
     QMessageBox::warning( omfgThis, QObject::tr("Additional Configuration Required"),
       QObject::tr("<p>Your system has alternate currencies without exchange rates "
                   "entered for the current date. "
