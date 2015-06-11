@@ -494,8 +494,8 @@ int CreditCardProcessor::authorize(const int pccardid, const QString &pcvv, cons
   ParameterList dbupdateinfo;
   double amount = pamount;
   returnVal = doAuthorize(pccardid, pcvv, amount, ptax, ptaxexempt, pfreight, pduty, pcurrid, pneworder, preforder, pccpayid, dbupdateinfo);
-  if (returnVal == -70)
-    return -70;
+  if (returnVal == -70 || returnVal == -18)
+    return returnVal;
   else if (returnVal > 0)
     _errorMsg = errorMsg(4).arg(_errorMsg);
 
@@ -658,8 +658,8 @@ int CreditCardProcessor::charge(const int pccardid, const QString &pcvv, const d
 
   ParameterList dbupdateinfo;
   returnVal = doCharge(pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid, pneworder, preforder, pccpayid, dbupdateinfo);
-  if (returnVal == -72)
-    return -72;
+  if (returnVal == -72 || returnVal == -18)
+    return returnVal;
   else if (returnVal > 0)
     _errorMsg = errorMsg(4).arg(_errorMsg);
 
@@ -861,8 +861,8 @@ int CreditCardProcessor::chargePreauthorized(const QString &pcvv, const double p
 
   ParameterList dbupdateinfo;
   returnVal = doChargePreauthorized(ccardid, pcvv, pamount, pcurrid, pneworder, preforder, pccpayid, dbupdateinfo);
-  if (returnVal == -71)
-    return -71;
+  if (returnVal == -71 || returnVal == -18)
+    return returnVal;
   else if (returnVal > 0)
     _errorMsg = errorMsg(4).arg(_errorMsg);
 
@@ -1300,8 +1300,8 @@ int CreditCardProcessor::reversePreauthorized(const double pamount, const int pc
                                          ccq.value("ccpay_curr_id").toInt(),
                                          neworder, reforder,
                                          pccpayid, dbupdateinfo);
-  if (returnVal == -74)
-    return -74;
+  if (returnVal == -74 || returnVal == -18)
+    return returnVal;
   else if (returnVal < 0)
     return returnVal;
   else if (returnVal > 0)
@@ -1449,8 +1449,8 @@ int CreditCardProcessor::voidPrevious(int &pccpayid)
 				 ccq.value("ccpay_curr_id").toInt(),
 				 neworder, reforder, approval,
                                  pccpayid, dbupdateinfo);
-  if (returnVal == -74)
-    return -74;
+  if (returnVal == -74 || returnVal == -18)
+    return returnVal;
   else if (returnVal < 0)
     return returnVal;
   else if (returnVal > 0)
