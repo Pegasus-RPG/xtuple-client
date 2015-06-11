@@ -86,7 +86,7 @@ class XWidget;
 #ifdef __APPLE__
 #define SETUPMENUITEM "&xSetup"
 #else
-#define SETUPMENUITEM "&Setup"
+#define SETUPMENUITEM "x&Setup"
 #endif
 
 int  systemError(QWidget *, const QString &);
