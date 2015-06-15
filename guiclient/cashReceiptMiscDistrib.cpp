@@ -9,7 +9,6 @@
  */
 
 #include "cashReceiptMiscDistrib.h"
-#include <QDebug>
 
 #include <metasql.h>
 

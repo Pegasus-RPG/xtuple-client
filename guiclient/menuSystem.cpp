@@ -40,6 +40,7 @@
 
 #include "eventManager.h"
 #include "users.h"
+#include "dspUserPrivileges.h"
 #include "userPreferences.h"
 #include "hotkeys.h"
 #include "errorLog.h"
@@ -81,11 +82,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   setObjectName("sysModule");
   parent = Pparent;
 
-  toolBar = new QToolBar(tr("Community Tools"));
-  toolBar->setObjectName("Community Tools");
-  toolBar->setIconSize(QSize(32, 32));
   QList<QToolBar *> toolbars = parent->findChildren<QToolBar *>();
-  parent->insertToolBar(toolbars.at(0), toolBar);
 
   errorLogListener::initialize();
 
@@ -114,11 +111,12 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.hotkeys",                  tr("&Hot Keys..."),                   SLOT(sHotKeys()),                  systemMenu, "true",  NULL,   NULL,   !(_privileges->check("MaintainPreferencesSelf") || _privileges->check("MaintainPreferencesOthers")) },
     { "sys.rescanPrivileges",         tr("Rescan &Privileges"),             SLOT(sRescanPrivileges()),         systemMenu, "true",                                      NULL, NULL, true },
     { "separator",                    NULL,                                 NULL,                              systemMenu, "true",                                      NULL, NULL, true },
-    { "sys.maintainUsers",            tr("Maintain &User Accounts..."),             SLOT(sMaintainUsers()),            systemMenu, "MaintainUsers",       NULL, NULL, true },
-    { "sys.maintainGroups",           tr("Maintain &Roles..."),            SLOT(sMaintainGroups()),           systemMenu, "MaintainGroups",      NULL, NULL, true },
+    { "sys.maintainUsers",            tr("Maintain &User Accounts..."),     SLOT(sMaintainUsers()),            systemMenu, "MaintainUsers",                             NULL, NULL, true },
+    { "sys.userPrivileges",            tr("User Privileges..."),            SLOT(sUserPrivileges()),           systemMenu, "MaintainUsers MaintainGroups",              NULL, NULL, true },
+    { "sys.maintainGroups",           tr("Maintain &Roles..."),             SLOT(sMaintainGroups()),           systemMenu, "MaintainGroups",                            NULL, NULL, true },
 
     { "menu",                         tr("&Employees"),                     (char*)employeeMenu,               systemMenu, "true",                                      NULL, NULL, true },
-    { "sys.employee",                 tr("&New..."),               	    SLOT(sNewEmployee()),            employeeMenu, "MaintainEmployees",               NULL, NULL, true },
+    { "sys.employee",                 tr("&New..."),               	    SLOT(sNewEmployee()),            employeeMenu, "MaintainEmployees",                         NULL, NULL, true },
     { "sys.listEmployees",            tr("&List..."),             	    SLOT(sListEmployees()),          employeeMenu, "ViewEmployees MaintainEmployees",           NULL, NULL, true },
     { "sys.searchEmployees",          tr("&Search..."),       		    SLOT(sSearchEmployees()),        employeeMenu, "ViewEmployees MaintainEmployees",           NULL, NULL, true },
     { "separator",                    NULL,                                 NULL,                            employeeMenu, "true",                                      NULL, NULL, true },
@@ -302,6 +300,11 @@ void menuSystem::sSetup()
 void menuSystem::sMaintainUsers()
 {
   omfgThis->handleNewWindow(new users());
+}
+
+void menuSystem::sUserPrivileges()
+{
+  omfgThis->handleNewWindow(new dspUserPrivileges());
 }
 
 void menuSystem::sMaintainGroups()

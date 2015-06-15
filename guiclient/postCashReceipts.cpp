@@ -53,11 +53,17 @@ void postCashReceipts::sPost()
                       .arg(__LINE__) );
     return;
   }
-
+/*
   postPost.exec( "SELECT cashrcpt_id, cust_number FROM cashrcpt "
                  "JOIN cashrcptitem ON cashrcpt_id=cashrcptitem_cashrcpt_id "
                  "JOIN custinfo ON cust_id=cashrcptitem_cust_id "
                  "WHERE ((NOT cashrcpt_posted) AND (NOT cashrcpt_void));");
+                 */
+  postPost.exec( "SELECT cashrcpt_id, cust_number "
+                 "FROM cashrcp, custinfo "
+                 "WHERE ( (NOT cashrcpt_posted)"
+                 "  AND   (NOT cashrcpt_void)  "
+                 "  AND   (cashrcpt_cust_id=cust_id) );");
   if (postPost.first())
   {
     int counter = 0;

@@ -202,6 +202,22 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
 
       _save->hide();
       _close->setText(tr("&Close"));
+
+      //cash_receipt_by_customer_group
+      QString sql = "SELECT * FROM cmitemaccnt WHERE cmitemaccnt_cmhead_id=<? value('cmhead') ?> "
+                    "AND cmitemaccnt_cmitem_id=<? value('cmitem') ?>;";
+      XSqlQuery query;
+      MetaSQLQuery mql(sql);
+      ParameterList qparams;
+      qparams.append("cmhead", _cmheadid);
+      qparams.append("accnt", _revAccnt->id());
+      qparams.append("cmitem", _cmitemid);
+      query = mql.toQuery(qparams);
+      if (query.first())
+      {
+        _revAccnt->setId(query.value("cmitemaccnt_accnt_id").toInt());
+      }
+      _revAccnt->setEnabled(false);
     }
   }
 

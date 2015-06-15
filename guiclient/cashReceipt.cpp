@@ -8,8 +8,6 @@
  * to be bound by its terms.
  */
 
-#include <QDebug>
-
 #include "cashReceipt.h"
 
 #include <QMessageBox>
@@ -533,10 +531,6 @@ void cashReceipt::sApplyToBalance()
   applyToBal.bindValue(":curr_id", _received->id());
   applyToBal.bindValue(":inclCredits", _credits->isChecked());
 
-  qDebug() << "555: " << _cashrcptid
-           << _received->localValue()
-           << _received->id()
-           << _credits->isChecked();
   applyToBal.exec();
   if (applyToBal.lastError().type() != QSqlError::NoError)
       systemError(this, applyToBal.lastError().databaseText(), __FILE__, __LINE__);

@@ -63,7 +63,6 @@ invoiceItem::invoiceItem(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _priceinvuomratio = 1.0;
   _invuomid = -1;
   _trackqoh = true;
-  _revAccnt->setType(0x08);
   
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
@@ -169,8 +168,6 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       connect(_billed, SIGNAL(editingFinished()), this, SLOT(sDeterminePrice()));
       connect(_billed, SIGNAL(editingFinished()), this, SLOT(sCalculateExtendedPrice()));
       connect(_price, SIGNAL(editingFinished()), this, SLOT(sCalculateExtendedPrice()));
-
-      sCRset();
     }
     else if (param.toString() == "view")
     {
@@ -189,9 +186,6 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
 
       _save->hide();
       _close->setText(tr("&Cancel"));
-
-      sCRset();
-      _revAccnt->setEnabled(false);
     }
   }
 
@@ -311,36 +305,6 @@ void invoiceItem::sSave()
   emit saved(_invcitemid);
 
   done(_invcitemid);
-
-  //cash_receipt_by_customer_group
-
-  QString sql ="SELECT * FROM invcitemaccnt "
-               "WHERE invcitemaccnt_invchead_id=<? value(\"invchead\") ?> "
-               "AND invcitemaccnt_invcitem_id=<? value(\"invcitem\") ?>;";
-  XSqlQuery query;
-  MetaSQLQuery mql(sql);
-  ParameterList qparams;
-  qparams.append("invchead", _invcheadid);
-  qparams.append("accnt", _revAccnt->id());
-  qparams.append("invcitem", _invcitemid);
-  query = mql.toQuery(qparams);
-  if (query.first())
-  {
-    sql = "UPDATE invcitemaccnt SET invcitemaccnt_accnt_id=<? value(\"accnt\") ?> "
-          "WHERE invcitemaccnt_invchead_id=<? value(\"invchead\") ?> "
-          "AND invcitemaccnt_invcitem_id=<? value(\"invcitem\") ?>;";
-  }
-  else
-  {
-    sql = "INSERT INTO invcitemaccnt (invcitemaccnt_invchead_id, invcitemaccnt_invcitem_id, invcitemaccnt_accnt_id) "
-          "VALUES (<? value(\"invchead\") ?>, <? value(\"invcitem\") ?>, <? value(\"accnt\") ?>);";
-  }
-
-  XSqlQuery d;
-  MetaSQLQuery dmql(sql);
-  d=dmql.toQuery(qparams);
-  if (d.lastError().type() == QSqlError::NoError)
-    systemError(this, d.lastError().databaseText(), __FILE__, __LINE__);
 }
 
 void invoiceItem::populate()
@@ -371,7 +335,7 @@ void invoiceItem::populate()
     _lineNumber->setText(invcitem.value("invcitem_linenumber").toString());
 
     // TODO: should this check itemsite_controlmethod == N?
-    _trackqoh = (invcitem.value("invcitem_invcitem_id").toInt() > 0 &&
+    _trackqoh = (invcitem.value("invcitem_item_id").toInt() > 0 &&
                  invcitem.value("itemsite_costmethod").toString() != "J");
 
     if (invcitem.value("invcitem_item_id").toInt() != -1)
@@ -783,24 +747,4 @@ void invoiceItem::sLookupTax()
     systemError(this, taxcal.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-}
-
-void invoiceItem::sCRset()
-{
-    //cash_receipt_by_customer_group
-
-    QString sql = "SELECT * FROM invcitemaccnt "
-                  "WHERE invcitemaccnt_invchead_id=<? value(\"invchead\") ?> "
-                  "AND invcitemaccnt_invcitem_id=<? value(\"invcitem\") ?>;";
-    XSqlQuery query;
-    MetaSQLQuery mql(sql);
-    ParameterList qparams;
-    qparams.append("invchead", _invcheadid);
-    qparams.append("accnt", _revAccnt->id());
-    qparams.append("invcitem", _invcitemid);
-    query = mql.toQuery(qparams);
-    if (query.first())
-    {
-      _revAccnt->setId(query.value("invcitemaccnt_accnt_id").toInt());
-    }
 }

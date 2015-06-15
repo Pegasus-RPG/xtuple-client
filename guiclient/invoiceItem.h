@@ -44,7 +44,6 @@ public slots:
     virtual void sPriceUOMChanged();
     virtual void sMiscSelected(bool);
     virtual void sHandleUpdateInv();
-    virtual void sCRset();
 
 protected slots:
     virtual void languageChange();

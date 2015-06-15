@@ -53,24 +53,17 @@ win32 {
   win32-msvc*:LIBS += -lshell32
   RC_FILE = rcguiclient.rc
   OBJECTS_DIR = win_obj
-  LIBS += -lQt5DesignerComponents -lz
+  LIBS += -lz
 }
 win32-g++-4.6 {
   LIBS += -lz
 }
 
-equals(QT_MAJOR_VERSION, 5) {
- unix: !macx {
- OBJECTS_DIR = unx_obj
- LIBS += -lz -lQt5DesignerComponents
- }
-}
 unix: !macx {
  OBJECTS_DIR = unx_obj
  LIBS += -lz
 }
 
-equals(QT_MAJOR_VERSION, 5) {
 macx {
   RC_FILE = images/icons.icns
   #PRECOMPILED_HEADER = stable.h
@@ -78,6 +71,14 @@ macx {
   QMAKE_INFO_PLIST = Info.plist
   LIBS += -lz -framework QtDesignerComponents
 }
+
+equals(QT_MAJOR_VERSION, 5) {
+  win32 {
+    LIBS += -lQt5DesignerComponents
+  }
+  unix: !macx {
+    LIBS += -lQt5DesignerComponents
+  }
 }
 
 DESTDIR     = ../bin
