@@ -86,7 +86,7 @@ class XWidget;
 #ifdef Q_MAC_OS
 #define SETUPMENUITEM "&xSetup"
 #else
-#define SETUPMENUITEM "x&Setup"
+#define SETUPMENUITEM "&Setup"
 #endif
 
 int  systemError(QWidget *, const QString &);
