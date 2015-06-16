@@ -105,9 +105,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.eventManager",             tr("E&vent Manager..."),              SLOT(sEventManager()),             systemMenu, "true",                                      NULL, NULL, true },
     { "sys.viewDatabaseLog",          tr("View Database &Log..."),          SLOT(sErrorLog()),                 systemMenu, "true",                                      NULL, NULL, true },
     { "separator",                    NULL,                                 NULL,                              systemMenu, "true",                                      NULL, NULL, true },
-#ifndef Q_OS_MAC
-    { "sys.preferences",              tr("P&references..."),                SLOT(sPreferences()),              systemMenu, "MaintainPreferencesSelf MaintainPreferencesOthers",  NULL,   NULL,   true },
-#endif
+    { "sys.preferences",              tr("&Preferences..."),                SLOT(sPreferences()),              systemMenu, "MaintainPreferencesSelf MaintainPreferencesOthers",  NULL,   NULL,   true },
     { "sys.hotkeys",                  tr("&Hot Keys..."),                   SLOT(sHotKeys()),                  systemMenu, "true",  NULL,   NULL,   !(_privileges->check("MaintainPreferencesSelf") || _privileges->check("MaintainPreferencesOthers")) },
     { "sys.rescanPrivileges",         tr("Rescan &Privileges"),             SLOT(sRescanPrivileges()),         systemMenu, "true",                                      NULL, NULL, true },
     { "separator",                    NULL,                                 NULL,                              systemMenu, "true",                                      NULL, NULL, true },
@@ -148,7 +146,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.printAlignmentPage",	tr("Print &Alignment Page..."),	SLOT(sPrintAlignment()),	sysUtilsMenu,	"true",	NULL,	NULL,	true	},
 
     // Setup
-    { "sys.setup",	tr("&Setup..."),	SLOT(sSetup()),	systemMenu,	"true",	NULL,	NULL,	true	},
+    { "sys.setup",	tr(SETUPMENUITEM),	SLOT(sSetup()),	systemMenu,	"true",	NULL,	NULL,	true	},
     { "separator",		NULL,				NULL,				systemMenu,	"true",	NULL,	NULL,	true	},
     { "sys.exit",	tr("E&xit xTuple ERP..."), SLOT(sExit()),				systemMenu,	"true",	NULL,	NULL,	true	},
 
@@ -234,7 +232,8 @@ void menuSystem::sEventManager()
 
 void menuSystem::sPreferences()
 {
-  userPreferences(parent, "", true).exec();
+  userPreferences newdlg(parent, "", true);
+  newdlg.exec();
 }
 
 void menuSystem::sHotKeys()
