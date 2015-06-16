@@ -328,7 +328,7 @@ void todoList::sDelete()
   }
 
   bool deleteAll  = false;
-  bool createMore = false;
+  bool deleteOne  = false;
   if (! recurstr.isEmpty())
   {
     XSqlQuery recurq;
@@ -349,9 +349,9 @@ void todoList::sDelete()
         return;
       else if (ret == QMessageBox::YesToAll)
         deleteAll = true;
-      // user said delete one but the only one that exists is the base
-      else if (ret == QMessageBox::Yes && recurq.value("max").isNull())
-        createMore = true;
+      // user said delete one but the only one that exists is the parent ToDo
+      else if (ret == QMessageBox::Yes)
+        deleteOne = true;
     }
     else if (recurq.lastError().type() != QSqlError::NoError)
     {
@@ -372,11 +372,9 @@ void todoList::sDelete()
 			    QMessageBox::No) == QMessageBox::No)
     return;
 
-  QString procname;
   int procresult = 0;
-  if (deleteAll)
+  if (deleteAll)  // Delete all todos in the recurring series
   {
-    procname = "deleteOpenRecurringItems";
     todoDelete.prepare("SELECT deleteOpenRecurringItems(:id, :type, NULL, true)"
               "       AS result;");
     todoDelete.bindValue(":id",   list()->id());
@@ -384,28 +382,36 @@ void todoList::sDelete()
     todoDelete.exec();
     if (todoDelete.first())
       procresult = todoDelete.value("result").toInt();
-  }
-  if (procresult >= 0 && createMore)
-  {
-    procname = "createRecurringItems";
-    todoDelete.prepare("SELECT createRecurringItems(:id, :type) AS result;");
-    todoDelete.bindValue(":id",   list()->id());
-    todoDelete.bindValue(":type", recurtype);
-    todoDelete.exec();
-    if (todoDelete.first())
-      procresult = todoDelete.value("result").toInt();
+
+    if (procresult < 0)
+    {
+      systemError(this, storedProcErrorLookup("deleteOpenRecurringItems", procresult));
+      return;
+    }
+    else if (todoDelete.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, todoDelete.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
-  // not elseif - error handling for 1 or 2 queries
-  if (procresult < 0)
+  if (deleteOne) // The base todo in a recurring series has been seleted.  Have to move
+                 // recurrence to the next item else we hit foreign key errors.
+                 // Make the next item on the list the parent in the series
   {
-    systemError(this, storedProcErrorLookup(procname, procresult));
-    return;
-  }
-  else if (todoDelete.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, todoDelete.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    todoDelete.prepare("UPDATE todoitem SET todoitem_recurring_todoitem_id =("
+                        "               SELECT MIN(todoitem_id) FROM todoitem"
+                        "                 WHERE todoitem_recurring_todoitem_id=:id"
+                        "                   AND todoitem_id!=:id)"
+                        "  WHERE todoitem_recurring_todoitem_id=:id"
+                        "  AND todoitem_id!=:id;");
+    todoDelete.bindValue(":id",   list()->id());
+    todoDelete.exec();
+    if (todoDelete.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, todoDelete.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   if (list()->altId() == 1)
