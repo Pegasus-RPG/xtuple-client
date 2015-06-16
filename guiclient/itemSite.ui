@@ -313,7 +313,7 @@ to be bound by its terms.</comment>
       <enum>Qt::ClickFocus</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="_inventoryTab">
       <attribute name="title">

@@ -117,10 +117,6 @@ menuProducts::menuProducts(GUIClient *Pparent) :
 
   actionProperties acts[] = {
 
-#ifdef Q_OS_MAC
-  { "sys.preferences", tr("P&references..."), SLOT(sPreferences()), mainMenu, "MaintainPreferencesSelf MaintainPreferencesOthers", NULL, NULL, true, NULL},
-#endif
-
   // Product | Reports
   { "menu",	tr("&Reports"), (char*)reportsMenu,	mainMenu, "true", NULL, NULL, true , NULL },
   
@@ -223,7 +219,7 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   { "pd.reassignProductCategoryByProductCategory", tr("&Reassign Product Categories..."), SLOT(sReassignProductCategoryByProductCategory()), utilitiesMenu, "MaintainItemMasters", NULL, NULL, true , NULL },
 
   // Setup
-  { "pd.setup",	    tr("&Setup..."),	  SLOT(sSetup()),     mainMenu,	"true",	NULL, NULL,  true, NULL}
+  { "pd.setup",	    tr(SETUPMENUITEM),	  SLOT(sSetup()),     mainMenu,	"true",	NULL, NULL,  true, NULL}
 
   };
 
