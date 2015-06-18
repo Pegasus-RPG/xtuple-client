@@ -452,7 +452,7 @@ int main(int argc, char *argv[])
       metric.exec("SELECT current_database() AS db;");
       QString db = "";
       QString dbname = _metrics->value("DatabaseName");
-      QString name   = _metrics->value("remotto_name");
+      QString name   = _metrics->value("remitto_name");
       if(metric.first())
       {
         db = metric.value("db").toString();
