@@ -29,7 +29,6 @@ cashReceiptMiscDistrib::cashReceiptMiscDistrib(QWidget* parent, const char* name
 
   _account->setType(GLCluster::cRevenue | GLCluster::cExpense |
                     GLCluster::cAsset | GLCluster::cLiability);
-
   adjustSize();
 }
 
