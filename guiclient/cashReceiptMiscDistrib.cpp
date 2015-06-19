@@ -181,6 +181,7 @@ void cashReceiptMiscDistrib::sSave()
   query.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Cash Receipt"),
                            query, __FILE__, __LINE__))
+      return;
 }
 
 //cash_receipt_by_customer_group
