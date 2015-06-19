@@ -223,6 +223,20 @@ void cashReceipt::populateCustomerInfo()
 
 void cashReceipt::grpFillApplyList()
 {
+<<<<<<< HEAD
+=======
+//  Need to find the Cash Receipt id
+  if (_mode == cNew)
+  {
+    XSqlQuery query;
+    QString sql = "SELECT cashrcpt_id FROM cashrcpt WHERE cashrcpt_number=<? value('number') ?>;";
+    MetaSQLQuery mql(sql);
+    query = mql.toQuery(getParams());
+    if (query.first())
+      _cashrcptid = query.value("cashrcpt_id").toInt();
+  }
+
+>>>>>>> f830b2b5c44e3304080df7c1c301826d47086c0d
   ParameterList qparams = getParams();
   MetaSQLQuery dbquery = mqlLoad("arOpenApplications", "detail");
   XSqlQuery db;
