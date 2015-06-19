@@ -32,7 +32,6 @@ public slots:
 
     virtual void showCustomers(int group, int customer);
     virtual void setGroup(const ParameterList &pParams);
-    virtual void gSave();
 
 protected slots:
     virtual void languageChange();

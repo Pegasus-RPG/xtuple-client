@@ -62,6 +62,7 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
   _saved = false;
   _revAccnt->setType(0x08);
 
+
   _qtyToCredit->setValidator(omfgThis->qtyVal());
   _qtyReturned->setValidator(omfgThis->qtyVal());
   _qtyShipped->setPrecision(omfgThis->qtyVal());
@@ -69,6 +70,7 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
   _discountFromSale->setValidator(new XDoubleValidator(-9999, 100, 2, this));
 
   _taxType->setEnabled(_privileges->check("OverrideTax"));
+  _revAccnt->setEnabled(_privileges->check("CreditMemoItemAccountOverride"));
 
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
@@ -178,7 +180,6 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
       MetaSQLQuery mql(sql);
       ParameterList qparams;
       qparams.append("cmhead", _cmheadid);
-      qparams.append("accnt", _revAccnt->id());
       qparams.append("cmitem", _cmitemid);
       query = mql.toQuery(qparams);
       if (query.first())
@@ -210,7 +211,6 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
       MetaSQLQuery mql(sql);
       ParameterList qparams;
       qparams.append("cmhead", _cmheadid);
-      qparams.append("accnt", _revAccnt->id());
       qparams.append("cmitem", _cmitemid);
       query = mql.toQuery(qparams);
       if (query.first())
@@ -327,8 +327,8 @@ void creditMemoItem::sSave()
 
   //cash_receipt_by_customer_group
   QString sql ="SELECT * FROM cmitemaccnt "
-               "WHERE cmitemaccnt_cmhead_id=<? value(\"cmhead\") ?> "
-               "AND cmitemaccnt_cmitem_id=<? value(\"cmitem\") ?>;";
+               "WHERE cmitemaccnt_cmhead_id=<? value('cmhead') ?> "
+               "AND cmitemaccnt_cmitem_id=<? value('cmitem') ?>;";
   XSqlQuery query;
   MetaSQLQuery mql(sql);
   ParameterList qparams;
@@ -339,9 +339,9 @@ void creditMemoItem::sSave()
   query = mql.toQuery(qparams);
   if (query.first())
   {
-    sql = "UPDATE cmitemaccnt SET cmitemaccnt_accnt_id=<? value(\"accnt\") ?> "
-          "WHERE cmitemaccnt_cmhead_id=<? value(\"cmhead\") ?> "
-          "AND cmitemaccnt_cmitem_id=<? value(\"cmitem\") ?>;";
+    sql = "UPDATE cmitemaccnt SET cmitemaccnt_accnt_id=<? value('accnt') ?> "
+          "WHERE cmitemaccnt_cmhead_id=<? value('cmhead') ?> "
+          "AND cmitemaccnt_cmitem_id=<? value('cmitem') ?>;";
   }
   else
   {

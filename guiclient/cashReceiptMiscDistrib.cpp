@@ -11,6 +11,7 @@
 #include "cashReceiptMiscDistrib.h"
 
 #include <metasql.h>
+#include <errorReporter.h>
 
 #include <QVariant>
 #include <QMessageBox>
@@ -157,7 +158,28 @@ void cashReceiptMiscDistrib::sSave()
 
   done(_cashrcptmiscid);
 
-  gSave();
+  //cashrcptbycustgrp::gsave()
+  int cashmisc = -1;
+  XSqlQuery query;
+
+  if (_custSelector->id() == 0)
+    return;
+
+  if (_mode == cNew)
+  {
+    query.prepare("SELECT currval('cashrcptmisc_cashrcptmisc_id_seq') AS _cashrcptmisc_id;");
+    query.exec();
+    if (query.first())
+      cashmisc = query.value("_cashrcptmisc_id").toInt();
+  }
+  else
+    cashmisc = _cashmisc;
+
+  query.prepare("UPDATE cashrcptmisc SET cashrcptmisc_cust_id =:cust "
+            "WHERE cashrcptmisc_id =:cashmisc;");
+  query.bindValue(":cashmisc", cashmisc);
+  query.bindValue(":cust", _custSelector->id());
+  query.exec();
 }
 
 //cash_receipt_by_customer_group
@@ -175,6 +197,9 @@ void cashReceiptMiscDistrib::showCustomers(int group, int customer)
   query.exec();
   if (query.first())
     _custSelector->populate(query);
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Populating Customer Info"),
+                                query, __FILE__, __LINE__))
+    return;
 
   if (_mode == cEdit)
     _custSelector->setId(customer);
@@ -184,7 +209,7 @@ void cashReceiptMiscDistrib::setGroup(const ParameterList &pParams)
 {
   if (_mode == cNew)
   {
-    QString sql = "SELECT cashrcpt_custgrp_id FROM cashrcpt WHERE cashrcpt_id=<? value(\"cashrcpt_id\") ?>";
+    QString sql = "SELECT cashrcpt_custgrp_id FROM cashrcpt WHERE cashrcpt_id=<? value('cashrcpt_id') ?>";
     XSqlQuery query;
     MetaSQLQuery mql(sql);
     query = mql.toQuery(pParams);
@@ -198,7 +223,7 @@ void cashReceiptMiscDistrib::setGroup(const ParameterList &pParams)
   {
     QString sql = "SELECT cashrcptmisc_cust_id, cashrcpt_custgrp_id FROM cashrcpt "
                   " JOIN cashrcptmisc ON cashrcptmisc_cashrcpt_id=cashrcpt_id "
-                  " WHERE cashrcptmisc_id=<? value(\"cashrcptmisc_id\") ?>";
+                  " WHERE cashrcptmisc_id=<? value('cashrcptmisc_id') ?>";
     _cashmisc = pParams.value("cashrcptmisc_id").toInt();
     XSqlQuery query;
     MetaSQLQuery mql(sql);
@@ -211,28 +236,3 @@ void cashReceiptMiscDistrib::setGroup(const ParameterList &pParams)
   }
 }
 
-void cashReceiptMiscDistrib::gSave() //can be moved to sSave()
-{
-  int cashmisc = -1;
-
-  if (_custSelector->id() == 0)
-    return;
-
-  if (_mode == cNew)
-  {
-    XSqlQuery query;
-    query.prepare("SELECT currval('cashrcptmisc_cashrcptmisc_id_seq') AS _cashrcptmisc_id;");
-    query.exec();
-    if (query.first())
-      cashmisc = query.value("_cashrcptmisc_id").toInt();
-  }
-  else
-    cashmisc = _cashmisc;
-
-  XSqlQuery d;
-  d.prepare("UPDATE cashrcptmisc SET cashrcptmisc_cust_id =:cust "
-            "WHERE cashrcptmisc_id =:cashmisc;");
-  d.bindValue(":cashmisc", cashmisc);
-  d.bindValue(":cust", _custSelector->id());
-  d.exec();
-}
