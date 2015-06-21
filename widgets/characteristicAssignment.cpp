@@ -394,7 +394,7 @@ void CharacteristicAssignmentPrivate::handleTargetType()
 {
   QString charuseTargetType = targetType;
 
-  if (targetType == "I")
+  if (targetType == "I" || targetType == "ITEMGRP")
   {
     _template=true;
   }
