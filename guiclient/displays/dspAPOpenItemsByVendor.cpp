@@ -223,7 +223,13 @@ void dspAPOpenItemsByVendor::sView()
 bool dspAPOpenItemsByVendor::setParams(ParameterList & params)
 {
   _vendorGroup->appendValue(params);
-  _dates->appendValue(params);
+  if (_docDate->isChecked())
+    _dates->appendValue(params);
+  else
+  {
+    params.append("startDueDate", _dates->startDate());
+    params.append("endDueDate", _dates->endDate());
+  }
   params.append("asofDate", _asOf->date());
 
   // have both in case we add a third option
