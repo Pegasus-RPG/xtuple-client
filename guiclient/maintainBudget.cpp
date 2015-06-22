@@ -307,7 +307,7 @@ void maintainBudget::sAccountsRemove()
   for (int i = 0; i < selected.count(); i++)
     _accounts->takeTopLevelItem(_accounts->indexOfTopLevelItem(selected[i]));
 
-  sGenerateTable();
+  generateTable(false);
 }
 
 void maintainBudget::sPeriodsAll()
@@ -329,6 +329,11 @@ void maintainBudget::sValueChanged(QTableWidgetItem * /* item */)
 }
 
 void maintainBudget::sGenerateTable()
+{
+  generateTable(true);
+}
+
+void maintainBudget::generateTable(bool pVerbose)
 {
   XSqlQuery maintainGenerateTable;
   _generate->setFocus();
@@ -381,9 +386,12 @@ void maintainBudget::sGenerateTable()
   }
   if (periodlist.isEmpty())
   {
-    QMessageBox::critical(this, tr("Incomplete criteria"),
-                          tr("<p>Please select at least one Period "
-                             "before generating the table." ) );
+    if (pVerbose)
+    {
+      QMessageBox::critical(this, tr("Incomplete criteria"),
+                            tr("<p>Please select at least one Period "
+                               "before generating the table." ) );
+    }
     return;
   }
   
@@ -472,7 +480,7 @@ void maintainBudget::populate()
         }
       }
     }
-    sGenerateTable();
+    generateTable(false);
   }
 }
 
