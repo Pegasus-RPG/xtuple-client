@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -1372,8 +1372,8 @@ int CreditCardProcessor::reversePreauthorized(const double pamount, const int pc
                     "    AND (payco_cohead_id=:payco_cohead_id));");
     else
     {
-      cashq.prepare("INSERT INTO payco VALUES"
-                    " (:payco_ccpay_id, :payco_cohead_id,"
+      cashq.prepare("INSERT INTO payco (payco_ccpay_id, payco_cohead_id, payco_amount, payco_curr_id) "
+                    " VALUES (:payco_ccpay_id, :payco_cohead_id,"
                     "  :payco_amount, :payco_curr_id);");
       cashq.bindValue(":payco_amount",    pamount);
       cashq.bindValue(":payco_curr_id",   pcurrid);
