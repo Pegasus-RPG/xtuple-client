@@ -229,20 +229,23 @@ bool opportunityList::setParams(ParameterList &params)
 
 void opportunityList::sOpen()
 {
-  bool editPriv =
-      (omfgThis->username() == list()->currentItem()->rawValue("ophead_owner_username") && _privileges->check("MaintainPersonalOpportunities")) ||
-      (omfgThis->username() == list()->currentItem()->rawValue("ophead_username") && _privileges->check("MaintainPersonalOpportunities")) ||
-      (_privileges->check("MaintainAllOpportunities"));
-
-  bool viewPriv =
-      (omfgThis->username() == list()->currentItem()->rawValue("ophead_owner_username") && _privileges->check("ViewPersonalOpportunities")) ||
-      (omfgThis->username() == list()->currentItem()->rawValue("ophead_username") && _privileges->check("ViewPersonalOpportunities")) ||
-      (_privileges->check("ViewAllOpportunities"));
-
-  if (editPriv)
-    sEdit();
-  else if (viewPriv)
-    sView();
+  if (list()->id() > 0)
+  {
+    bool editPriv =
+    (omfgThis->username() == list()->currentItem()->rawValue("ophead_owner_username") && _privileges->check("MaintainPersonalOpportunities")) ||
+    (omfgThis->username() == list()->currentItem()->rawValue("ophead_username") && _privileges->check("MaintainPersonalOpportunities")) ||
+    (_privileges->check("MaintainAllOpportunities"));
+    
+    bool viewPriv =
+    (omfgThis->username() == list()->currentItem()->rawValue("ophead_owner_username") && _privileges->check("ViewPersonalOpportunities")) ||
+    (omfgThis->username() == list()->currentItem()->rawValue("ophead_username") && _privileges->check("ViewPersonalOpportunities")) ||
+    (_privileges->check("ViewAllOpportunities"));
+    
+    if (editPriv)
+      sEdit();
+    else if (viewPriv)
+      sView();
+  }
 }
 
 
