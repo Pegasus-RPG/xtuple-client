@@ -196,14 +196,14 @@ int characteristicAssignment::set(const ParameterList &pParams)
 
 void characteristicAssignment::sSave()
 {
-  if(_d->targetType == "I")
+  if(_d->targetType == "I" || _d->targetType == "ITEMGRP")
   {
     if ( ((_stackedWidget->currentIndex() == CHARTEXT) && (_value->text().trimmed() == "")) ||
          ((_stackedWidget->currentIndex() == CHARLIST) && (_listValue->currentText() == "")) ||
          ((_stackedWidget->currentIndex() == CHARDATE) && (_dateValue->date().toString() == "")) )
       {
           QMessageBox::information( this, tr("No Value Entered"),
-                                    tr("You must enter a value before saving this Item Characteristic.") );
+                                    tr("You must enter a value before saving this Characteristic.") );
           return;
       }
   }
@@ -394,7 +394,7 @@ void CharacteristicAssignmentPrivate::handleTargetType()
 {
   QString charuseTargetType = targetType;
 
-  if (targetType == "I")
+  if (targetType == "I" || targetType == "ITEMGRP")
   {
     _template=true;
   }
