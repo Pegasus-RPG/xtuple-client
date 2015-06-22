@@ -176,9 +176,9 @@ void quickRelocateLot::sPost()
     updateQuery.bindValue(":ls_id", ls_id);
     updateQuery.bindValue(":itemsite_id", itemsite_id);
     updateQuery.exec();
-    if (qohQuery.lastError().type() != QSqlError::NoError)
+    if (updateQuery.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, qohQuery.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, updateQuery.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   
