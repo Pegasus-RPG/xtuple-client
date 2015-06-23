@@ -822,7 +822,7 @@ to be bound by its terms.</comment>
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="supplyTab">
         <attribute name="title">
@@ -904,7 +904,7 @@ to be bound by its terms.</comment>
            <item>
             <widget class="QStackedWidget" name="_availabilityStack">
              <property name="currentIndex">
-              <number>1</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="_inventoryPage">
               <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -1414,7 +1414,7 @@ to be bound by its terms.</comment>
                   </sizepolicy>
                  </property>
                  <property name="currentIndex">
-                  <number>3</number>
+                  <number>0</number>
                  </property>
                  <widget class="QWidget" name="_workOrderPage">
                   <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -2831,6 +2831,22 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>277</x>
      <y>691</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>aliasChanged(QString)</signal>
+   <receiver>_customerPN</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
     </hint>
    </hints>
   </connection>

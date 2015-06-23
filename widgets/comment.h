@@ -57,6 +57,7 @@ class XTUPLEWIDGETS_EXPORT comment : public QDialog
     int _commentid;
     int _targetId;
     int _mode;
+    QString _sourcetype;
     enum Comments::CommentSources _source;
 };
 

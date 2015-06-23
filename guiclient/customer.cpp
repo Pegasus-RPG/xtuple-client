@@ -1102,9 +1102,11 @@ void customer::sFillCharacteristicList()
 
 void customer::sPopulateShiptoMenu(QMenu *menuThis)
 {
-  menuThis->addAction(tr("Edit..."),   this, SLOT(sEditShipto()));
+  if (_mode != cView)
+    menuThis->addAction(tr("Edit..."),   this, SLOT(sEditShipto()));
   menuThis->addAction(tr("View..."),   this, SLOT(sViewShipto()));
-  menuThis->addAction(tr("Delete..."), this, SLOT(sDeleteShipto()));
+  if (_mode != cView)
+    menuThis->addAction(tr("Delete..."), this, SLOT(sDeleteShipto()));
 }
 
 void customer::sFillShiptoList()

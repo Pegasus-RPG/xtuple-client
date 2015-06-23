@@ -46,6 +46,7 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   connect(_buttonBox,     SIGNAL(accepted()),        this, SLOT(sSave()));
   connect(_queryTasks,    SIGNAL(clicked()),         this, SLOT(sFillTaskList()));
   connect(_newTask,       SIGNAL(clicked()),         this, SLOT(sNewTask()));
+  connect(_print,         SIGNAL(clicked()),         this, SLOT(sPrintTasks()));
   connect(_editTask,      SIGNAL(clicked()),         this, SLOT(sEditTask()));
   connect(_viewTask,      SIGNAL(clicked()),         this, SLOT(sViewTask()));
   connect(_deleteTask,    SIGNAL(clicked()),         this, SLOT(sDeleteTask()));
@@ -56,6 +57,11 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   connect(_showPo, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
   connect(_showWo, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
   connect(_showIn, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
+
+  connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillTaskList()));
+  connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sFillTaskList()));
+  connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillTaskList()));
+  connect(omfgThis, SIGNAL(purchaseOrdersUpdated(int, bool)), this, SLOT(sFillTaskList()));
 
   _charass->setType("PROJ");
 
@@ -94,28 +100,6 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   _totalExpBal->setPrecision(omfgThis->moneyVal());
   
   _saved=false;
-
-  QMenu * newMenu = new QMenu;
-  QAction *menuItem;
-  newMenu->addAction(tr("Task..."), this, SLOT(sNewTask()));
-  newMenu->addSeparator();
-  menuItem = newMenu->addAction(tr("Incident"), this, SLOT(sNewIncident()));
-  menuItem->setEnabled(_privileges->check("MaintainPersonalIncidents") ||
-                       _privileges->check("MaintainAllIncidents"));
-  menuItem = newMenu->addAction(tr("Quote"), this, SLOT(sNewQuotation()));
-  menuItem->setEnabled(_privileges->check("MaintainQuotes"));
-  menuItem = newMenu->addAction(tr("Sales Order"), this, SLOT(sNewSalesOrder()));
-  menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
-  menuItem = newMenu->addAction(tr("Purchase Order"),   this, SLOT(sNewPurchaseOrder()));
-  menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
-  menuItem = newMenu->addAction(tr("Work Order"),   this, SLOT(sNewWorkOrder()));
-  menuItem->setEnabled(_privileges->check("MaintainWorkOrders"));
-  _newTask->setMenu(newMenu); 
-
-  QMenu * printMenu = new QMenu;
-  printMenu->addAction(tr("Print Tasks"), this, SLOT(sPrintTasks()));
-  printMenu->addAction(tr("Print Orders"), this, SLOT(sPrintOrders()));
-  _print->setMenu(printMenu);
 
   populate();
 }
@@ -200,6 +184,28 @@ enum SetResponse project::set(const ParameterList &pParams)
       connect(_prjtask, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
       connect(_prjtask, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
       connect(_prjtask, SIGNAL(itemSelected(int)), _editTask, SLOT(animateClick()));
+
+      QMenu * newMenu = new QMenu;
+      QAction *menuItem;
+      newMenu->addAction(tr("Task..."), this, SLOT(sNewTask()));
+      newMenu->addSeparator();
+      menuItem = newMenu->addAction(tr("Incident"), this, SLOT(sNewIncident()));
+      menuItem->setEnabled(_privileges->check("MaintainPersonalIncidents") ||
+                       _privileges->check("MaintainAllIncidents"));
+      menuItem = newMenu->addAction(tr("Quote"), this, SLOT(sNewQuotation()));
+      menuItem->setEnabled(_privileges->check("MaintainQuotes"));
+      menuItem = newMenu->addAction(tr("Sales Order"), this, SLOT(sNewSalesOrder()));
+      menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
+      menuItem = newMenu->addAction(tr("Purchase Order"),   this, SLOT(sNewPurchaseOrder()));
+      menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
+      menuItem = newMenu->addAction(tr("Work Order"),   this, SLOT(sNewWorkOrder()));
+      menuItem->setEnabled(_privileges->check("MaintainWorkOrders"));
+      _newTask->setMenu(newMenu);
+
+      QMenu * printMenu = new QMenu;
+      printMenu->addAction(tr("Print Tasks"), this, SLOT(sPrintTasks()));
+      printMenu->addAction(tr("Print Orders"), this, SLOT(sPrintOrders()));
+      _print->setMenu(printMenu);
     }
     else if (param.toString() == "view")
     {
@@ -230,6 +236,11 @@ enum SetResponse project::set(const ParameterList &pParams)
       _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Save));
       _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Cancel));
       _buttonBox->addButton(QDialogButtonBox::Close);
+
+      QMenu * printMenu = new QMenu;
+      printMenu->addAction(tr("Print Tasks"), this, SLOT(sPrintTasks()));
+      printMenu->addAction(tr("Print Orders"), this, SLOT(sPrintOrders()));
+      _print->setMenu(printMenu);
     }
   }
     
@@ -871,7 +882,6 @@ void project::sNewQuotation()
   salesOrder *newdlg = new salesOrder(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
-  sFillTaskList();
 }
 
 void project::sNewSalesOrder()
@@ -883,7 +893,6 @@ void project::sNewSalesOrder()
   salesOrder *newdlg = new salesOrder(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
-  sFillTaskList();
 }
 
 
@@ -896,7 +905,6 @@ void project::sNewPurchaseOrder()
   purchaseOrder *newdlg = new purchaseOrder(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
-  sFillTaskList();
 }
 
 void project::sNewWorkOrder()
@@ -908,7 +916,6 @@ void project::sNewWorkOrder()
   workOrder *newdlg = new workOrder(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
-  sFillTaskList();
 }
 
 void project::sEditOrder()
