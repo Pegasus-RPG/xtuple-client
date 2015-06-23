@@ -299,7 +299,6 @@ void creditCard::languageChange()
 }
 
 const char *_fundsTypes2[] = { "M", "V", "A", "D" };
-const int _fundsTypeCount2 = 4;
 
 enum SetResponse creditCard::set(const ParameterList &pParams)
 {

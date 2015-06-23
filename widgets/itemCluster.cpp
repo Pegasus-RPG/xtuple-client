@@ -951,9 +951,15 @@ ItemCluster::ItemCluster(QWidget* pParent, const char* pName) :
   connect(itemNumber, SIGNAL(descrip2Changed(const QString &)), _descrip2, SLOT(setText(const QString &)));
 }
 
-void ItemCluster::addNumberWidget(ItemLineEdit* pNumberWidget)
+void ItemCluster::addNumberWidget(VirtualClusterLineEdit* pNumberWidget)
 {
-    _number = pNumberWidget;
+	VirtualClusterLineEdit *matchType = qobject_cast<VirtualClusterLineEdit *>(pNumberWidget);
+
+	if(matchType == 0)
+	  return;
+	  
+    _number = matchType;
+    
     if (! _number)
       return;
 
@@ -989,7 +995,7 @@ void ItemCluster::setDisabled(bool pDisabled)
   setReadOnly(pDisabled);
 }
 
-void ItemCluster::setId(const int pId)
+void ItemCluster::setId(const int pId, const QString&)
 {
   _number->setId(pId);
 }

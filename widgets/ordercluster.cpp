@@ -176,7 +176,7 @@ void OrderCluster::setCustId(int p)
   ((OrderLineEdit*)_number)->setCustId(p);
 }
 
-bool OrderCluster::descriptionVisible()
+bool OrderCluster::descriptionVisible() const
 {
   return _descripVisible;
 }
@@ -201,7 +201,7 @@ void OrderCluster::setDescriptionVisible(const bool p)
   _descripVisible=p;
 }
 
-bool OrderCluster::nameVisible()
+bool OrderCluster::nameVisible() const
 {
   return _nameVisible;
 }

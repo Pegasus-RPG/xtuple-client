@@ -120,7 +120,7 @@ enum SetResponse itemPricingSchedule::set(const ParameterList &pParams)
     connect(_ipsitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   }
 
-  if ( (_mode == cNew) )
+  if (_mode == cNew)
   {
     itemet.exec("SELECT NEXTVAL('ipshead_ipshead_id_seq') AS ipshead_id;");
     if (itemet.first())

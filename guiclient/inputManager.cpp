@@ -222,7 +222,7 @@ bool InputManager::eventFilter(QObject *, QEvent *pEvent)
 
       case cProlog:
         _private->_cursor++;
-        if (character == *(cBCCProlog + _private->_cursor))
+        if (character == cBCCProlog[_private->_cursor])
         {
           if (_private->_cursor == (cBCPrologSize - 1))
           {
