@@ -229,7 +229,7 @@ void allocateARCreditMemo::sAllocate()
     allocCM.bindValue(":amount", amount);
     allocCM.bindValue(":curr_id", _total->id());
     allocCM.exec();
-    if (!allocCM.lastError().type() == QSqlError::NoError)
+    if (allocCM.lastError().type() != QSqlError::NoError)
       systemError(this, allocCM.lastError().databaseText(), __FILE__, __LINE__);
     double newbalance = _balance->localValue() - amount;
     _balance->setLocalValue(newbalance);
@@ -246,7 +246,7 @@ void allocateARCreditMemo::sAllocate()
     allocCM.bindValue(":invchead_id", _invcheadid);
     allocCM.bindValue(":aropen_id", _aropen->id());
     allocCM.exec();
-    if (!allocCM.lastError().type() == QSqlError::NoError)
+    if (allocCM.lastError().type() != QSqlError::NoError)
       systemError(this, allocCM.lastError().databaseText(), __FILE__, __LINE__);
     double newbalance = _balance->localValue() + amount;
     _balance->setLocalValue(newbalance);

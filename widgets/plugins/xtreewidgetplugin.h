@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#ifndef __XTREEWIDGETLUGIN_H__
+#ifndef __XTREEWIDGETPLUGIN_H__
 #define __XTREEWIDGETPLUGIN_H__
 
 #include "xtreewidget.h"

@@ -9,7 +9,7 @@
  */
 
 #ifndef __WOMATLCLUSTERPLUGIN_H__
-#define __WOCMATLLUSTERPLUGIN_H__
+#define __WOMATLCLUSTERPLUGIN_H__
 
 #include "womatlcluster.h"
 

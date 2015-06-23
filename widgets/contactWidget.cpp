@@ -344,7 +344,7 @@ void ContactWidget::setChanged()
   _changed=true;
 }
 
-void ContactWidget::setId(const int pId)
+void ContactWidget::setId(const int pId, const QString&)
 {
     if (pId == _id)
 	return;
@@ -564,7 +564,7 @@ void ContactWidget::setDataWidgetMap(XDataWidgetMapper* m)
 }
 
 
-void ContactWidget::setName(const QString& p)
+void ContactWidget::setName(int, const QString& p)
 {
   int firstSpace = p.indexOf(" ");
   if (firstSpace > 0)
