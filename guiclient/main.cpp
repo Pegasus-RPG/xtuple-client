@@ -337,21 +337,23 @@ int main(int argc, char *argv[])
   {
     _splash->showMessage(QObject::tr("Checking License Key"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
-	
-    metric.exec(
-      QString(
-        "SELECT"
-        "   numOfDatabaseUsers('%1') AS xt_client_count,"
-        "   numOfServerUsers() as total_client_count"
-      ).arg(_ConnAppName)
-    );
 
     int cnt = 50000;
     int tot = 50000;
+
+    metric.prepare("SELECT numOfDatabaseUsers(:appName) AS xt_client_count,"
+                   "       numOfServerUsers() as total_client_count;");
+    metric.bindValue(":appName", _ConnAppName);
+    metric.exec();
     if(metric.first())
     {        
       cnt = metric.value("xt_client_count").toInt();
       tot = metric.value("total_client_count").toInt();
+    }
+    else
+    {
+      ErrorReporter::error(QtCriticalMsg, 0, QObject::tr("Error Counting Users"),
+                           metric, __FILE__, __LINE__);
     }
     metric.exec("SELECT packageIsEnabled('drupaluserinfo') AS result;");
     bool xtweb = false;
