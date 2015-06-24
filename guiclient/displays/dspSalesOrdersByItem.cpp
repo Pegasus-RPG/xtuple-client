@@ -187,6 +187,7 @@ bool dspSalesOrdersByItem::setParams(ParameterList &params)
   }
 
   _dates->appendValue(params);
+  params.append("orderByOrderdate", true);
   params.append("closed", tr("Closed"));
   params.append("item_id", _item->id());
 

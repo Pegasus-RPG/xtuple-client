@@ -127,6 +127,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _dspSalesOrdersByItem->setCloseVisible(false);
   _dspSalesOrdersByItem->setQueryOnStartEnabled(false);
   _dspSalesOrdersByItem->findChild<QWidget*>("_item")->hide();
+  _dspSalesOrdersByItem->findChild<DateCluster*>("_dates")->setStartDate(QDate().currentDate().addDays(-30));
   
   _dspQuotesByItem = new dspQuotesByItem(this, "dspQuotesByItem", Qt::Widget);
   _dspQuotesByItem->setObjectName("dspQuotesByItem");
