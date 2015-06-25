@@ -40,6 +40,7 @@ dspBookings::dspBookings(QWidget* parent, const char*, Qt::WindowFlags fl)
   parameterWidget()->appendComboBox(tr("Product Category"), "prodcat_id", XComboBox::ProductCategories);
   parameterWidget()->append(tr("Product Category Pattern"), "prodcat_pattern", ParameterWidget::Text);
   parameterWidget()->appendComboBox(tr("Sales Rep."), "salesrep_id", XComboBox::SalesReps);
+  parameterWidget()->appendComboBox(tr("Sale Type"), "saletype_id", XComboBox::SaleTypes);
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
 
@@ -48,6 +49,7 @@ dspBookings::dspBookings(QWidget* parent, const char*, Qt::WindowFlags fl)
   list()->addColumn(tr("Order #"),            _orderColumn,    Qt::AlignLeft,   true,  "cohead_number"  );
   list()->addColumn(tr("Line #"),             _seqColumn,      Qt::AlignLeft,   true,  "f_linenumber"  );
   list()->addColumn(tr("Ord. Date"),          _dateColumn,     Qt::AlignCenter, true,  "cohead_orderdate");
+  list()->addColumn(tr("Sale Type"),          _orderColumn,    Qt::AlignLeft,   true,  "saletype_descr");
   list()->addColumn(tr("Cust. #"),            _itemColumn,     Qt::AlignLeft,   true,  "cust_number"  );
   list()->addColumn(tr("Customer"),           -1,              Qt::AlignLeft,   false, "cust_name"  );
   list()->addColumn(tr("Item Number"),        _itemColumn,     Qt::AlignLeft,   true,  "item_number"  );
