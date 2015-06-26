@@ -1918,13 +1918,13 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
     // TODO: why have a hard-coded path to curl?
     QProcess proc(this);
     QString curl_path;
-  #ifdef Q_OS_WIN
-    curl_path = qApp->applicationDirPath() + "\\curl";
-  #elif defined Q_OS_MAC
+#ifdef Q_OS_WIN
+    curl_path = qApp->applicationDirPath() + "/curl.exe";
+#elif defined Q_OS_MAC
     curl_path = "/usr/bin/curl";
-  #elif defined Q_OS_LINUX
+#elif defined Q_OS_LINUX
     curl_path = "/usr/bin/curl";
-  #endif
+#endif
     QFileInfo checkCurl(curl_path);
     if(!checkCurl.isExecutable())
     {
