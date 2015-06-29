@@ -1093,7 +1093,6 @@ void GUIClient::sSystemMessageAdded()
             ParameterList params;
             params.append("mode", "acknowledge");
 
-//            systemMessage newdlg(this, "", true);
             systemMessage *newdlg = new systemMessage();
             newdlg->set(params);
 
@@ -1104,7 +1103,6 @@ void GUIClient::sSystemMessageAdded()
 
               newdlg->set(params);
               omfgThis->handleNewWindow(newdlg);
-//              newdlg.exec();
             }
             while (msg.next());
           }
