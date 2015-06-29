@@ -12,6 +12,7 @@
 
 #define _orderCluster_h
 
+#include "applock.h"
 #include "parameter.h"
 #include "virtualCluster.h"
 
@@ -65,8 +66,8 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     Q_INVOKABLE virtual QString       fromPrivsClause() {return _fromPrivsClause;}
     Q_INVOKABLE virtual QString       toPrivsClause()   {return _toPrivsClause;}
 
-    Q_INVOKABLE virtual bool lockSelected() {return _lock; }
-    Q_INVOKABLE virtual void setLockSelected(bool lock) { _lock = lock; }
+    Q_INVOKABLE virtual bool lockSelected() {return _locked; }
+    Q_INVOKABLE virtual void setLockSelected(bool lock) { _locked = lock; }
 
   public slots:
     virtual void          setAllowedStatuses(const OrderStatuses);
@@ -102,7 +103,8 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
   private:
     bool        _fromPrivs;
     bool        _toPrivs;
-    bool        _lock;
+    bool        _locked;
+    AppLock     _lock;
     QString     _toPrivsClause;
     QString     _fromPrivsClause;
     QString        _allClause;
