@@ -434,7 +434,7 @@ void docAttach::sSave()
       newDocass.prepare( "INSERT INTO url "
                          "( url_source, url_source_id, url_title, url_url, url_stream ) "
                          "VALUES "
-                         "( :docass_source_type, :docass_source_id, :title, :url, E:stream );" );
+                         "( :docass_source_type, :docass_source_id, :title, :url, :stream );" );
     else
       newDocass.prepare( "UPDATE url SET "
                          "  url_title = :title, "

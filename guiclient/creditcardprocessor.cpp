@@ -1340,7 +1340,7 @@ int CreditCardProcessor::reversePreauthorized(const double pamount, const int pc
                    "    cashrcpt_fundstype=ccpay_cardtype,"
                    "    cashrcpt_bankaccnt_id=ccbank_bankaccnt_id,"
                    "    cashrcpt_distdate=CURRENT_DATE,"
-                   "    cashrcpt_notes=cashrcpt || E'\\n' || :notes, "
+                   "    cashrcpt_notes=cashrcpt || '\n' || :notes, "
                    "    cashrcpt_curr_id=:curr_id,"
                    "    cashrcpt_usecustdeposit=:custdeposit "
                    "  FROM ccpay"
