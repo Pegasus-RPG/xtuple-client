@@ -11,21 +11,18 @@
 #ifndef __QWEBVIEWPROTO_H__
 #define __QWEBVIEWPROTO_H__
 
-#include <QObject>
-#include <QtScript>
-#include <QIcon>
-#include <QNetworkRequest>
-#include <QNetworkAccessManager>
 #include <QByteArray>
+#include <QIcon>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QObject>
 #include <QPainter>
-#include <QWebPage>
-#include <QUrl>
 #include <QString>
+#include <QtScript>
+#include <QUrl>
+#include <QWebFrame>
 #include <QWebView>
-
-class QAction;
-class QWebHistory;
-class QWebSettings;
+#include <QWebPage>
 
 Q_DECLARE_METATYPE(QWebView*)
 
@@ -39,19 +36,32 @@ class QWebViewProto : public QObject, public QScriptable
   public:
     QWebViewProto(QObject *parent);
 
-    Q_INVOKABLE bool            findText(const QString &subString, QWebPage::FindFlags options = 0);
-    Q_INVOKABLE QWebHistory*    history()       const;
-    Q_INVOKABLE void            load(const QUrl &url);
-    Q_INVOKABLE void            load(const QNetworkRequest &request, QNetworkAccessManager::Operation operation = QNetworkAccessManager::GetOperation, const QByteArray &body = QByteArray());
-    Q_INVOKABLE QWebPage       *page()                                  const;
-    Q_INVOKABLE QAction        *pageAction(QWebPage::WebAction action)  const;
-    Q_INVOKABLE void            setContent(const QByteArray &data, const QString &mimeType = QString(), const QUrl &baseUrl = QUrl());
-    Q_INVOKABLE void            setHtml(const QString &html, const QUrl &baseUrl = QUrl());
-    Q_INVOKABLE void            setPage(QWebPage *page);
-    Q_INVOKABLE void            setTextSizeMultiplier(qreal factor);
-    Q_INVOKABLE QWebSettings   *settings()              const;
-    Q_INVOKABLE qreal           textSizeMultiplier()    const;
-    Q_INVOKABLE void            triggerPageAction(QWebPage::WebAction action, bool checked = false);
+    Q_INVOKABLE bool                    findText(const QString &subString, QWebPage::FindFlags options = 0);
+    Q_INVOKABLE bool                    hasSelection() const;
+    Q_INVOKABLE QWebHistory            *history() const;
+    Q_INVOKABLE QIcon                   icon() const;
+    Q_INVOKABLE bool                    isModified() const;
+    Q_INVOKABLE void                    load(const QUrl &url);
+    Q_INVOKABLE void                    load(const QNetworkRequest &request, QNetworkAccessManager::Operation operation = QNetworkAccessManager::GetOperation, const QByteArray &body = QByteArray());
+    Q_INVOKABLE QWebPage               *page() const;
+    Q_INVOKABLE QAction                *pageAction(QWebPage::WebAction action) const;
+    Q_INVOKABLE QPainter::RenderHints   renderHints() const;
+    Q_INVOKABLE QString                 selectedHtml() const;
+    Q_INVOKABLE QString                 selectedText() const;
+    Q_INVOKABLE void                    setContent(const QByteArray &data, const QString &mimeType = QString(), const QUrl &baseUrl = QUrl());
+    Q_INVOKABLE void                    setHtml(const QString &html, const QUrl &baseUrl = QUrl());
+    Q_INVOKABLE void                    setPage(QWebPage *page);
+    Q_INVOKABLE void                    setRenderHint(QPainter::RenderHint hint, bool enabled = true);
+    Q_INVOKABLE void                    setRenderHints(QPainter::RenderHints hints);
+    Q_INVOKABLE void                    setTextSizeMultiplier(qreal factor);
+    Q_INVOKABLE QWebSettings           *settings() const;
+    Q_INVOKABLE void                    setUrl(const QUrl & url);
+    Q_INVOKABLE void                    setZoomFactor(qreal factor);
+    Q_INVOKABLE qreal                   textSizeMultiplier() const;
+    Q_INVOKABLE QString                 title() const;
+    Q_INVOKABLE void                    triggerPageAction(QWebPage::WebAction action, bool checked = false);
+    Q_INVOKABLE QUrl                    url() const;
+    Q_INVOKABLE qreal                   zoomFactor() const;
 };
 
 #endif
