@@ -10,7 +10,7 @@ INCLUDEPATH += $${XTUPLE_DIR}/common          $${XTUPLE_BLD}/common \
                $${XTUPLE_DIR}/widgets         $${XTUPLE_BLD}/widgets \
                $${XTUPLE_DIR}/widgets/tmp/lib $${XTUPLE_BLD}/widgets/tmp/lib \
                $${XTUPLE_DIR}/scriptapi       $${XTUPLE_BLD}/scriptapi \
-	       
+
 
 INCLUDEPATH = $$unique(INCLUDEPATH)
 DEPENDPATH += $${INCLUDEPATH}
@@ -88,6 +88,7 @@ HEADERS += setupscriptapi.h \
     qtsetup.h \
     qurlproto.h \
     qvalidatorproto.h \
+    qwebframeproto.h \
     qwebpageproto.h \
     qwebviewproto.h \
     qwidgetproto.h \
@@ -188,6 +189,7 @@ SOURCES += setupscriptapi.cpp \
     qtsetup.cpp \
     qurlproto.cpp \
     qvalidatorproto.cpp \
+    qwebframeproto.cpp \
     qwebpageproto.cpp \
     qwebviewproto.cpp \
     qwidgetproto.cpp \
@@ -228,4 +230,4 @@ QT += core \
     webkit \
     webkitwidgets \
     widgets \
-    printsupport 
+    printsupport

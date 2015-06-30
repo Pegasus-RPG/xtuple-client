@@ -95,6 +95,7 @@
 #include "queryset.h"
 #include "qurlproto.h"
 #include "qvalidatorproto.h"
+#include "qwebframeproto.h"
 #include "qwebpageproto.h"
 #include "qwebviewproto.h"
 #include "qwidgetproto.h"
@@ -218,6 +219,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQuerySet(engine);
   setupQUrlProto(engine);
   setupQValidatorProto(engine);
+  setupQWebFrameProto(engine);
   setupQWebPageProto(engine);
   setupQWebViewProto(engine);
   setupQWidgetProto(engine);
