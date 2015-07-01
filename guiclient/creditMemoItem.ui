@@ -813,6 +813,48 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="_accounting">
+        <attribute name="title">
+         <string>Accounting</string>
+        </attribute>
+        <widget class="QSplitter" name="splitter">
+         <property name="geometry">
+          <rect>
+           <x>2</x>
+           <y>10</y>
+           <width>1032</width>
+           <height>213</height>
+          </rect>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <widget class="QWidget" name="layoutWidget">
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item alignment="Qt::AlignTop">
+            <widget class="GLCluster" name="_revAccnt">
+             <property name="label">
+              <string>Revenue Account Override:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>728</width>
+               <height>17</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -831,6 +873,11 @@ to be bound by its terms.</comment>
    <class>CurrDisplay</class>
    <extends>QWidget</extends>
    <header>currcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLCluster</class>
+   <extends>QWidget</extends>
+   <header>glcluster.h</header>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>

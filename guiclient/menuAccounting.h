@@ -158,6 +158,7 @@ class menuAccounting : public QObject
     
     void sPrintStatementByCustomer();
     void sPrintStatementsByCustomerType();
+    void sPrintStatementsByCustomerGroup();
 
     void sCustomers();
 
