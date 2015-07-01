@@ -392,7 +392,10 @@ bool scriptEditor::saveFile(const QString &source,
 
   QTextStream ts(&file);
   ts.setCodec("UTF-8");
+#ifdef Q_OS_WIN
+  // bug #15457 Exporting script on windows does not write UTF BOM
   ts.setGenerateByteOrderMark(true);
+#endif
   ts << source;
   file.close();
 
