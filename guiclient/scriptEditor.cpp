@@ -392,6 +392,7 @@ bool scriptEditor::saveFile(const QString &source,
 
   QTextStream ts(&file);
   ts.setCodec("UTF-8");
+  ts.setGenerateByteOrderMark(true);
   ts << source;
   file.close();
 
