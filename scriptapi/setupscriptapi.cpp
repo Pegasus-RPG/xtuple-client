@@ -74,6 +74,7 @@
 #include "qmessageboxsetup.h"
 #include "qnetworkreplyproto.h"
 #include "qnetworkrequestproto.h"
+#include "qobjectproto.h"
 #include "qprinterproto.h"
 #include "qprocessproto.h"
 #include "qprocessenvironmentproto.h"
@@ -198,6 +199,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQNetworkAccessManagerProto(engine);
   setupQNetworkReplyProto(engine);
   setupQNetworkRequestProto(engine);
+  setupQObjectProto(engine);
   setupQPrinterProto(engine);
   setupQProcessProto(engine);
   setupQProcessEnvironmentProto(engine);

@@ -68,6 +68,7 @@ HEADERS += setupscriptapi.h \
     qmessageboxsetup.h \
     qnetworkreplyproto.h \
     qnetworkrequestproto.h \
+    qobjectproto.h \
     qprinterproto.h \
     qprocessproto.h     \
     qprocessenvironmentproto.h     \
@@ -169,6 +170,7 @@ SOURCES += setupscriptapi.cpp \
     qmessageboxsetup.cpp \
     qnetworkreplyproto.cpp \
     qnetworkrequestproto.cpp \
+    qobjectproto.cpp \
     qprinterproto.cpp \
     qprocessproto.cpp \
     qprocessenvironmentproto.cpp \

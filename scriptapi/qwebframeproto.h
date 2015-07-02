@@ -32,6 +32,7 @@
 #include <QWebSecurityOrigin>
 
 Q_DECLARE_METATYPE(QWebFrame*)
+Q_DECLARE_METATYPE(enum QWebFrame::ValueOwnership)
 
 void setupQWebFrameProto(QScriptEngine *engine);
 QScriptValue constructQWebFrame(QScriptContext *context, QScriptEngine *engine);
@@ -43,7 +44,7 @@ class QWebFrameProto : public QObject, public QScriptable
   public:
     QWebFrameProto(QObject *parent);
 
-    Q_INVOKABLE void                          addToJavaScriptWindowObject(const QString & name, QObject * object, QWebFrame::ValueOwnership own);
+    Q_INVOKABLE void                          addToJavaScriptWindowObject(const QString & name, QObject * object, QWebFrame::ValueOwnership own = QWebFrame::QtOwnership);
     Q_INVOKABLE QUrl                          baseUrl() const;
     Q_INVOKABLE QList<QWebFrame *>            childFrames() const;
     Q_INVOKABLE QSize                         contentsSize() const;
