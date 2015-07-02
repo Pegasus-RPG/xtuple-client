@@ -17,6 +17,7 @@
 #include <QNetworkRequest>
 #include <QObject>
 #include <QPainter>
+#include <QPrinter>
 #include <QString>
 #include <QtScript>
 #include <QUrl>
@@ -62,6 +63,13 @@ class QWebViewProto : public QObject, public QScriptable
     Q_INVOKABLE void                    triggerPageAction(QWebPage::WebAction action, bool checked = false);
     Q_INVOKABLE QUrl                    url() const;
     Q_INVOKABLE qreal                   zoomFactor() const;
+
+  public Q_SLOTS:
+    Q_INVOKABLE void                    back();
+    Q_INVOKABLE void                    forward();
+    Q_INVOKABLE void                    print(QPrinter * printer) const;
+    Q_INVOKABLE void                    reload();
+    Q_INVOKABLE void                    stop();
 };
 
 #endif

@@ -13,11 +13,13 @@
 #include <QIcon>
 #include <QList>
 #include <QMultiMap>
+#include <QPrinter>
 #include <QPoint>
 #include <QRect>
 #include <QSize>
 #include <QString>
 #include <QUrl>
+#include <QVariant>
 #include <QWebElement>
 #include <QWebElementCollection>
 #include <QWebHitTestResult>
@@ -403,4 +405,19 @@ qreal QWebFrameProto::zoomFactor() const
   if (item)
     return item->zoomFactor();
   return qreal();
+}
+
+QVariant QWebFrameProto::evaluateJavaScript(const QString& scriptSource)
+{
+  QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
+  if (item)
+    return item->evaluateJavaScript(scriptSource);
+  return QVariant();
+}
+
+void QWebFrameProto::print(QPrinter * printer) const
+{
+  QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
+  if (item)
+    return item->print(printer);
 }

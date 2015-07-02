@@ -25,6 +25,9 @@ class QObjectProto : public QObject, public QScriptable
 
   public:
     QObjectProto(QObject *parent = 0);
+
+  public Q_SLOTS:
+    Q_INVOKABLE void  deleteLater();
 };
 
 #endif

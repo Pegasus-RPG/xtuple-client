@@ -37,3 +37,10 @@ QObjectProto::QObjectProto(QObject *parent)
     : QObject(parent)
 {
 }
+
+void QObjectProto::deleteLater()
+{
+  QObject *item = qscriptvalue_cast<QObject*>(thisObject());
+  if (item)
+    return item->deleteLater();
+}

@@ -18,12 +18,14 @@
 #include <QNetworkRequest>
 #include <QPainter>
 #include <QPoint>
+#include <QPrinter>
 #include <QRect>
 #include <QRegion>
 #include <QSize>
 #include <QString>
 #include <QtScript>
 #include <QUrl>
+#include <QVariant>
 #include <QWebElement>
 #include <QWebElementCollection>
 #include <QWebHitTestResult>
@@ -89,6 +91,10 @@ class QWebFrameProto : public QObject, public QScriptable
     Q_INVOKABLE QString                       toPlainText() const;
     Q_INVOKABLE QUrl                          url() const;
     Q_INVOKABLE qreal                         zoomFactor() const;
+
+  public Q_SLOTS:
+    Q_INVOKABLE QVariant                      evaluateJavaScript(const QString& scriptSource);
+    Q_INVOKABLE void                          print(QPrinter * printer) const;
 };
 
 #endif

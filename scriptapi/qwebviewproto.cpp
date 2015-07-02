@@ -12,6 +12,7 @@
 
 #include <QAction>
 #include <QIcon>
+#include <QPrinter>
 #include <QUrl>
 #include <QWebHistory>
 #include <QWebSettings>
@@ -250,4 +251,39 @@ qreal QWebViewProto::zoomFactor() const
   if (item)
     return item->zoomFactor();
   return qreal();
+}
+
+void QWebViewProto::back()
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->back();
+}
+
+void QWebViewProto::forward()
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->forward();
+}
+
+void QWebViewProto::print(QPrinter * printer) const
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->print(printer);
+}
+
+void QWebViewProto::reload()
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->reload();
+}
+
+void QWebViewProto::stop()
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->stop();
 }
