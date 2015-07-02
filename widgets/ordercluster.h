@@ -66,8 +66,8 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     Q_INVOKABLE virtual QString       fromPrivsClause() {return _fromPrivsClause;}
     Q_INVOKABLE virtual QString       toPrivsClause()   {return _toPrivsClause;}
 
-    Q_INVOKABLE virtual bool lockSelected() {return _locked; }
-    Q_INVOKABLE virtual void setLockSelected(bool lock) { _locked = lock; }
+    Q_INVOKABLE virtual bool lockSelected() {return _lockOnSelect; }
+    Q_INVOKABLE virtual void setLockSelected(bool lock) { _lockOnSelect = lock; }
 
   public slots:
     virtual void          setAllowedStatuses(const OrderStatuses);
@@ -84,11 +84,11 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
 
   protected:
     OrderStatuses        _allowedStatuses;
-    OrderTypes                _allowedTypes;
-    QString                _from;
-    QString                _to;
+    OrderTypes           _allowedTypes;
+    QString              _from;
+    QString              _to;
 
-    virtual QString        buildExtraClause();
+    virtual QString     buildExtraClause();
     virtual void        silentSetId(const int);
     virtual void        unlock();
 
@@ -103,7 +103,7 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
   private:
     bool        _fromPrivs;
     bool        _toPrivs;
-    bool        _locked;
+    bool        _lockOnSelect;
     AppLock     _lock;
     QString     _toPrivsClause;
     QString     _fromPrivsClause;

@@ -295,6 +295,7 @@ OrderLineEdit::OrderLineEdit(QWidget *pParent, const char *pName) :
   _toPrivs=false;
   _fromPrivs=false;
   _custid = -1;
+  _lockOnSelect = false;
   
   setTitles(tr("Order"), tr("Orders"));
 
