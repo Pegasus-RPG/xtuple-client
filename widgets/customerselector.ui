@@ -35,33 +35,7 @@ to be bound by its terms.</comment>
         <item row="0" column="0">
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="XComboBox" name="_select">
-            <item>
-             <property name="text">
-              <string>All Customers</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Select</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Customer Group</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Customer Type</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Customer Type Pattern</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="XComboBox" name="_select"/>
           </item>
           <item>
            <spacer name="verticalSpacer">
@@ -269,22 +243,5 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>_select</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>_selectStack</receiver>
-   <slot>setCurrentIndex(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>112</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>265</x>
-     <y>23</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

@@ -10,6 +10,8 @@
 
 #include <xsqlquery.h>
 #include <parameter.h>
+#include <metasql.h>
+#include <errorReporter.h>
 
 #include "customerselector.h"
 
@@ -22,6 +24,9 @@ CustomerSelector::CustomerSelector(QWidget *pParent, const char *pName) : QWidge
 
   setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
 
+  _allowedStates = 0;
+  populate(All + Selected + SelectedGroup + SelectedType + TypePattern);
+
   _select->setCurrentIndex(All);
   _cust->setType(CLineEdit::AllCustomers);
   _cust->setId(-1);
@@ -29,8 +34,11 @@ CustomerSelector::CustomerSelector(QWidget *pParent, const char *pName) : QWidge
   _customerGroup->setId(-1);
   _customerType->setText("");
 
+
+
   connect(_select,SIGNAL(currentIndexChanged(int)), this, SIGNAL(updated()));
   connect(_select,SIGNAL(currentIndexChanged(int)), this, SIGNAL(newState(int)));
+  connect(_select, SIGNAL(currentIndexChanged(int)), this, SLOT(setStackElement()));
   connect(_cust,                SIGNAL(newId(int)), this, SIGNAL(updated()));
   connect(_cust,                SIGNAL(newId(int)), this, SIGNAL(newCustId(int)));
   connect(_customerTypes,         SIGNAL(newID(int)), this, SIGNAL(updated()));
@@ -40,6 +48,8 @@ CustomerSelector::CustomerSelector(QWidget *pParent, const char *pName) : QWidge
   connect(_customerType,SIGNAL(textChanged(QString)), this, SIGNAL(newTypePattern(QString)));
   connect(_customerGroup,         SIGNAL(newID(int)), this, SIGNAL(updated()));
   connect(_customerGroup,         SIGNAL(newID(int)), this, SIGNAL(newCustGroupId(int)));
+
+
 
   setFocusProxy(_select);
 }
@@ -55,68 +65,40 @@ void CustomerSelector::languageChange()
 
 void CustomerSelector::appendValue(ParameterList &pParams)
 {
-  switch (_select->currentIndex())
-  {
-    case Selected:
-      pParams.append("cust_id", _cust->id());
-      break;
-    case SelectedGroup:
+  if (isSelectedCust())
+    pParams.append("cust_id", _cust->id());
+  if (isSelectedGroup())
     pParams.append("custgrp_id", _customerGroup->id());
-      break;
-    case SelectedType:
-      pParams.append("custtype_id", _customerTypes->id());
-      break;
-    case TypePattern:
-      pParams.append("custtype_pattern", _customerType->text());
-      break;
-    case All:
-    default:
-      ; // nothing
-  }
+  if (isSelectedType())
+    pParams.append("custtype_id", _customerTypes->id());
+  if (isTypePattern())
+    pParams.append("custtype_pattern", _customerType->text());
 }
 
 void CustomerSelector::bindValue(XSqlQuery &pQuery)
 {
-  switch (_select->currentIndex())
-  {
-    case Selected:
-      pQuery.bindValue(":cust_id", _cust->id());
-      break;
-    case SelectedGroup:
-      pQuery.bindValue(":custgrp_id", _customerGroup->id());
-      break;
-    case SelectedType:
-      pQuery.bindValue(":custtype_id", _customerTypes->id());
-      break;
-    case TypePattern:
-      pQuery.bindValue(":custtype_pattern", _customerType->text());
-      break;
-    case All:
-    default:
-      ; // nothing
-  }
+  if (isSelectedCust())
+    pQuery.bindValue(":cust_id", _cust->id());
+  if (isSelectedGroup())
+    pQuery.bindValue(":custgrp_id", _customerGroup->id());
+  if (isSelectedType())
+    pQuery.bindValue(":custtype_id", _customerTypes->id());
+  if (isTypePattern())
+    pQuery.bindValue(":custtype_pattern", _customerType->text());
 }
 
 bool CustomerSelector::isValid()
 {
-  switch (_select->currentIndex())
-  {
-    case Selected:
-      return _cust->isValid();
-      break;
-    case SelectedGroup:
-      return _customerGroup->isValid();
-      break;
-    case SelectedType:
-      return _customerTypes->isValid();
-      break;
-    case TypePattern:
-      return ! _customerType->text().trimmed().isEmpty();
-      break;
-    case All:
-      return true;
-      break;
-  }
+  if (isSelectedCust())
+    return _cust->isValid();
+  else if (isSelectedGroup())
+    return _customerGroup->isValid();
+  else if (isSelectedType())
+    return _customerTypes->isValid();
+  else if (isTypePattern())
+    return ! _customerType->text().trimmed().isEmpty();
+  else if (isAll())
+    return true;
 
   return false;
 }
@@ -172,4 +154,70 @@ void CustomerSelector::synchronize(CustomerSelector *p)
   connect(this, SIGNAL(newCustGroupId(int)),     p, SLOT(setCustGroupId(int)));
 
   p->hide();
+}
+
+void CustomerSelector::populate(int selection)
+{
+  QString sql = "SELECT -1 AS selkey, '[Please Select]', 'N'"
+                "<? if exists('allcust') ?>"
+                " UNION "
+                "SELECT 1 AS selkey, 'All Customers' AS selname, 'A' AS selcode"
+                "<? endif ?>"
+                "<? if exists('cust') ?>"
+                " UNION "
+                "SELECT 2 AS selkey, 'Customer' as selname, 'C' as selcode"
+                "<? endif ?>"
+                "<? if exists('custgrp') ?>"
+                " UNION "
+                "SELECT 3 AS selkey, 'Customer Group' as selname, 'G' as selcode"
+                "<? endif ?>"
+                "<? if exists('custtype') ?>"
+                " UNION "
+                "SELECT 4 AS selkey, 'Customer Type' AS selname, 'T' as selcode"
+                "<? endif ?>"
+                "<? if exists('typepattern') ?>"
+                " UNION "
+                "SELECT 5 AS selkey, 'Customer Type Pattern' AS selname, 'P' as selcode"
+                "<? endif ?>"
+                " ORDER BY selkey;";
+  ParameterList params;
+  MetaSQLQuery mql(sql);
+
+  if (isAllowedType(selection))
+  {
+    if (selection & All) params.append("allcust");
+    if (selection & Selected)  params.append("cust");
+    if (selection & SelectedGroup) params.append("custgrp");
+    if (selection & SelectedType) params.append("custtype");
+    if (selection & TypePattern) params.append("typepattern");
+    _allowedStates = selection;
+  }
+  else
+    ErrorReporter::error(QtCriticalMsg, this, tr("Invalid type"), QString::number(selection), __FILE__, __LINE__);
+  XSqlQuery q = mql.toQuery(params);
+  _select->populate(q);
+}
+
+void CustomerSelector::setStackElement()
+{
+  if (isSelectedCust())
+    _selectStack->setCurrentIndex(1);
+  else if (isSelectedGroup())
+    _selectStack->setCurrentIndex(2);
+  else if (isSelectedType())
+    _selectStack->setCurrentIndex(3);
+  else if (isTypePattern())
+    _selectStack->setCurrentIndex(4);
+  else
+    _selectStack->setCurrentIndex(0);
+}
+
+QString CustomerSelector::selectCode()
+{
+  return _select->code();
+}
+
+bool CustomerSelector::isAllowedType(const int s)
+{
+  return s > 0 && s < 32;
 }

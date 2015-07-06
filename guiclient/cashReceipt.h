@@ -41,11 +41,10 @@ public slots:
     virtual void sEditCreditCard();
     virtual void sFillApplyList();
     virtual void sFillMiscList();
-    virtual void sHandleSelector();
     virtual void sMoveDown();
     virtual void sMoveUp();
     virtual void sNewCreditCard();
-    virtual void sPopulateCustomerInfo( int );
+    virtual void sPopulateCustomerInfo(int = 0);
     virtual void sSave();
     virtual void sUpdateBalance();
     virtual void sViewCreditCard();
@@ -55,8 +54,8 @@ public slots:
     virtual void sUpdateGainLoss();
 
     virtual ParameterList getParams();
+    virtual void bindParams(XSqlQuery&);
     virtual void grpFillApplyList();
-    virtual void populateCustomerInfo();
     virtual void updateCustomerGroup();
     virtual void activateButtons(bool c=true);
 
