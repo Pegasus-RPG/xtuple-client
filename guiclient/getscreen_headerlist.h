@@ -77,6 +77,7 @@
 #include "configurePO.h"
 #include "configureSO.h"
 #include "configureSearchPath.h"
+#include "configureWF.h"
 #include "configureWO.h"
 #include "confirmAchOK.h"
 #include "contact.h"

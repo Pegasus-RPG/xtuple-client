@@ -165,6 +165,7 @@ FORMS =   absoluteCalendarItem.ui               \
           configurePO.ui                        \
           configureSearchPath.ui                \
           configureSO.ui                        \
+          configureWF.ui							\
           configureWO.ui                        \
           confirmAchOK.ui                       \
           contact.ui                            \
@@ -718,6 +719,7 @@ HEADERS = ../common/format.h                    \
           configurePO.h                 \
           configureSearchPath.h         \
           configureSO.h                 \
+          configureWF.h					\
           configureWO.h                 \
           confirmAchOK.h                \
           contact.h                     \
@@ -1328,6 +1330,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           configurePO.cpp                       \
           configureSearchPath.cpp               \
           configureSO.cpp                       \
+          configureWF.cpp						\
           configureWO.cpp                       \
           confirmAchOK.cpp                      \
           contact.cpp                           \
