@@ -14,6 +14,7 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include "errorReporter.h"
 #include "printApOpenItem.h"
 #include "taxDetail.h"
 
@@ -329,7 +330,34 @@ void apOpenItem::sSave()
   else
   {
     if(_printOnPost->isChecked())
-      sPrintOnPost(saveOpenItem.value("result").toInt());
+    {
+      if (_docType->currentIndex() == 0)
+//    Credit Memo function returns journal# not apopenid so we have to go find it
+      {
+        XSqlQuery getCMid;
+        getCMid.prepare("SELECT apopen_id AS result FROM apopen "
+                        "WHERE ((apopen_doctype = 'C') "
+                        " AND (apopen_docnumber = :docnumber) "
+                        " AND (apopen_journalnumber = :journal));");
+        getCMid.bindValue(":docnumber", _docNumber->text());
+        getCMid.bindValue(":journal", saveOpenItem.value("result").toInt());
+        getCMid.exec();
+        if (ErrorReporter::error(QtCriticalMsg, this, tr("Returning apopenid"),
+                           getCMid, __FILE__, __LINE__))
+        {
+          return;
+        }
+        if (getCMid.first())
+        {
+          sPrintOnPost(getCMid.value("result").toInt());
+        }
+      }
+      else
+      {
+//      The Debit Memo returns apopenid so is fine
+        sPrintOnPost(saveOpenItem.value("result").toInt());
+      }
+    }
     done(saveOpenItem.value("result").toInt());
   }
 }
