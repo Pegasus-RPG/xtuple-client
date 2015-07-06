@@ -14,6 +14,7 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include "printApOpenItem.h"
 #include "taxDetail.h"
 
 apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
@@ -38,6 +39,8 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::Window
   _apapply->addColumn( tr("Apply Date"),  _dateColumn, Qt::AlignCenter,true, "apapply_postdate");
   _apapply->addColumn( tr("Amount"),     _moneyColumn, Qt::AlignRight, true, "apapply_amount");
   _apapply->addColumn( tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
+
+  _printOnPost->setVisible(false);
 
   if (omfgThis->singleCurrency())
       _apapply->hideColumn("currabbr");
@@ -104,6 +107,7 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
 
       _paid->clear();
       _buttonBox->button(QDialogButtonBox::Save)->setText(tr("Post"));
+      _printOnPost->setVisible(true);
       populateStatus();
     }
     else if (param.toString() == "edit")
@@ -317,9 +321,17 @@ void apOpenItem::sSave()
   }
 
   if (_mode == cEdit)
+  {
+    if(_printOnPost->isChecked())
+      sPrintOnPost(_apopenid);
     done(_apopenid);
+  }
   else
+  {
+    if(_printOnPost->isChecked())
+      sPrintOnPost(saveOpenItem.value("result").toInt());
     done(saveOpenItem.value("result").toInt());
+  }
 }
 
 void apOpenItem::sClose()
@@ -521,6 +533,16 @@ void apOpenItem::sPopulateDueDate()
       return;
     }
   }
+}
+
+void apOpenItem::sPrintOnPost(int temp_id)
+{
+  ParameterList params;
+  params.append("apopen_id", temp_id);
+
+  printApOpenItem newdlg(this, "", true);
+  if (newdlg.set(params) == NoError)
+    newdlg.exec();
 }
 
 void apOpenItem::sTaxDetail()

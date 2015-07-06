@@ -14,6 +14,7 @@
 
 #include "plugins/addressclusterplugin.h"
 #include "plugins/alarmsplugin.h"
+#include "plugins/apopenclusterplugin.h"
 #include "plugins/aropenclusterplugin.h"
 #include "plugins/calendarcomboboxplugin.h"
 #include "plugins/characteristicswidgetplugin.h"
@@ -94,6 +95,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
 {
   m_plugins.append(new AddressClusterPlugin(this));
   m_plugins.append(new AlarmsPlugin(this));
+  m_plugins.append(new ApopenClusterPlugin(this));
   m_plugins.append(new AropenClusterPlugin(this));
   m_plugins.append(new CalendarComboBoxPlugin(this));
   m_plugins.append(new CharacteristicsWidgetPlugin(this));

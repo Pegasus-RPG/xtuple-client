@@ -39,6 +39,7 @@ HEADERS += plugins/addressclusterplugin.h \
     plugins/calendarcomboboxplugin.h \
     plugins/characteristicswidgetplugin.h       \
     plugins/clineeditplugin.h \
+    plugins/apopenclusterplugin.h \
     plugins/aropenclusterplugin.h \
     plugins/commentsplugin.h \
     plugins/contactclusterplugin.h \
@@ -116,6 +117,7 @@ SOURCES += widgets.cpp \
     addressCluster.cpp \
     alarmMaint.cpp \
     alarms.cpp \
+    apopencluster.cpp \
     aropencluster.cpp \
     calendarTools.cpp \
     characteristicAssignment.cpp        \
@@ -208,6 +210,7 @@ HEADERS += widgets.h \
     addresscluster.h \
     alarmMaint.h \
     alarms.h \
+    apopencluster.h \
     aropencluster.h \
     calendarTools.h \
     characteristicAssignment.h  \

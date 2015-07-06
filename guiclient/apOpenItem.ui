@@ -511,6 +511,13 @@ to be bound by its terms.</comment>
        </widget>
       </widget>
      </item>
+     <item row="4" column="0">
+      <widget class="XCheckBox" name="_printOnPost">
+       <property name="text">
+        <string>Print on post</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>

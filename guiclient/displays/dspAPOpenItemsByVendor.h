@@ -35,6 +35,7 @@ public slots:
     virtual void sView();
     virtual void sOnHold();
     virtual void sOpen();
+    virtual void sPrintItem();
 
 protected slots:
     virtual void languageChange();
