@@ -291,7 +291,7 @@ void returnAuthItemLotSerial::populateLotSerial()
   }
 }
 
-void returnAuthItemLotSerial::closeEvent()
+void returnAuthItemLotSerial::closeEvent(QCloseEvent *)
 {
   done(0);
 }

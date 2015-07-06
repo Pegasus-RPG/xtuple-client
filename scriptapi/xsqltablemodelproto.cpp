@@ -420,7 +420,10 @@ void XSqlTableModelProto::setTable(const QString &tableName, int keyColumns)
 {
   XSqlTableModel *item = qscriptvalue_cast<XSqlTableModel*>(thisObject());
   if (item)
-    item->setTable(tableName, keyColumns);
+  {
+    item->setTable(tableName);
+    item->setKeys(keyColumns);
+  }
 }
 
 QModelIndex XSqlTableModelProto::sibling(int row, int column, const QModelIndex &index) const

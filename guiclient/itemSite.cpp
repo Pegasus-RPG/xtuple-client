@@ -1221,7 +1221,7 @@ void itemSite::sCacheItemType(char pItemType)
       _createPo->setEnabled(false);
     }
 
-    if ( (_itemType == 'M') )
+    if (_itemType == 'M')
       _createWo->setEnabled(_woSupply->isChecked());
     else
     {
