@@ -60,6 +60,8 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
   _priceinvuomratio = 1.0;
   _invuomid = -1;
   _saved = false;
+  _revAccnt->setType(0x08);
+
 
   _qtyToCredit->setValidator(omfgThis->qtyVal());
   _qtyReturned->setValidator(omfgThis->qtyVal());
@@ -68,6 +70,7 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
   _discountFromSale->setValidator(new XDoubleValidator(-9999, 100, 2, this));
 
   _taxType->setEnabled(_privileges->check("OverrideTax"));
+  _revAccnt->setEnabled(_privileges->check("CreditMemoItemAccountOverride"));
 
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
@@ -81,12 +84,12 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
 
 creditMemoItem::~creditMemoItem()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void creditMemoItem::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse creditMemoItem::set(const ParameterList &pParams)
@@ -96,6 +99,7 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
   bool     vrestrict = false;
+
 
   param = pParams.value("cmhead_id", &valid);
   if (valid)
@@ -168,6 +172,20 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
 
       connect(_discountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateFromDiscount()));
       connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
+
+      //cash_receipt_by_customer_group
+      QString sql = "SELECT * FROM cmitemaccnt WHERE cmitemaccnt_cmhead_id=<? value('cmhead') ?> "
+                    "AND cmitemaccnt_cmitem_id=<? value('cmitem') ?>;";
+      XSqlQuery query;
+      MetaSQLQuery mql(sql);
+      ParameterList qparams;
+      qparams.append("cmhead", _cmheadid);
+      qparams.append("cmitem", _cmitemid);
+      query = mql.toQuery(qparams);
+      if (query.first())
+      {
+        _revAccnt->setId(query.value("cmitemaccnt_accnt_id").toInt());
+      }
     }
     else if (param.toString() == "view")
     {
@@ -185,6 +203,21 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
 
       _save->hide();
       _close->setText(tr("&Close"));
+
+      //cash_receipt_by_customer_group
+      QString sql = "SELECT * FROM cmitemaccnt WHERE cmitemaccnt_cmhead_id=<? value('cmhead') ?> "
+                    "AND cmitemaccnt_cmitem_id=<? value('cmitem') ?>;";
+      XSqlQuery query;
+      MetaSQLQuery mql(sql);
+      ParameterList qparams;
+      qparams.append("cmhead", _cmheadid);
+      qparams.append("cmitem", _cmitemid);
+      query = mql.toQuery(qparams);
+      if (query.first())
+      {
+        _revAccnt->setId(query.value("cmitemaccnt_accnt_id").toInt());
+      }
+      _revAccnt->setEnabled(false);
     }
   }
 
@@ -291,6 +324,36 @@ void creditMemoItem::sSave()
   }
 
   done(_cmitemid);
+
+  //cash_receipt_by_customer_group
+  QString sql ="SELECT * FROM cmitemaccnt "
+               "WHERE cmitemaccnt_cmhead_id=<? value('cmhead') ?> "
+               "AND cmitemaccnt_cmitem_id=<? value('cmitem') ?>;";
+  XSqlQuery query;
+  MetaSQLQuery mql(sql);
+  ParameterList qparams;
+
+  qparams.append("cmhead", _cmheadid);
+  qparams.append("accnt", _revAccnt->id());
+  qparams.append("cmitem", _cmitemid);
+  query = mql.toQuery(qparams);
+  if (query.first())
+  {
+    sql = "UPDATE cmitemaccnt SET cmitemaccnt_accnt_id=<? value('accnt') ?> "
+          "WHERE cmitemaccnt_cmhead_id=<? value('cmhead') ?> "
+          "AND cmitemaccnt_cmitem_id=<? value('cmitem') ?>;";
+  }
+  else
+  {
+    sql = "INSERT INTO cmitemaccnt (cmitemaccnt_cmhead_id, cmitemaccnt_cmitem_id, cmitemaccnt_accnt_id) "
+          "VALUES (<? value('cmhead') ?>, <? value('cmitem') ?>, <? value('accnt') ?>);";
+  }
+
+  XSqlQuery d;
+  MetaSQLQuery dmql(sql);
+  d=dmql.toQuery(qparams);
+  if (d.lastError().type() == QSqlError::NoError)
+    systemError(this, d.lastError().databaseText(), __FILE__, __LINE__);
 }
 
 void creditMemoItem::sPopulateItemInfo()
@@ -751,3 +814,5 @@ void creditMemoItem::updatePriceInfo()
   item.first();
   _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
 }
+
+

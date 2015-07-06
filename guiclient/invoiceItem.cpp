@@ -138,8 +138,8 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
         _invcitemid = invoiceet.value("invcitem_id").toInt();
       else if (invoiceet.lastError().type() != QSqlError::NoError)
       {
-            systemError(this, invoiceet.lastError().databaseText(), __FILE__, __LINE__);
-            return UndefinedError;
+        systemError(this, invoiceet.lastError().databaseText(), __FILE__, __LINE__);
+        return UndefinedError;
       }
 
       invoiceet.prepare( "SELECT (COALESCE(MAX(invcitem_linenumber), 0) + 1) AS linenumber "
@@ -335,7 +335,7 @@ void invoiceItem::populate()
     _lineNumber->setText(invcitem.value("invcitem_linenumber").toString());
 
     // TODO: should this check itemsite_controlmethod == N?
-    _trackqoh = (invcitem.value("invcitem_invcitem_id").toInt() > 0 &&
+    _trackqoh = (invcitem.value("invcitem_item_id").toInt() > 0 &&
                  invcitem.value("itemsite_costmethod").toString() != "J");
 
     if (invcitem.value("invcitem_item_id").toInt() != -1)

@@ -133,6 +133,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     double  _qtyinvuomratio;
     double  _priceinvuomratio;
     double  _qtyreserved;
+    double  _qtyatshipping;
     QDate   _scheduledDateCache;
     QString _costmethod;
     QString _priceType;

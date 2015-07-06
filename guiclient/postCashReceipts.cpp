@@ -55,10 +55,10 @@ void postCashReceipts::sPost()
   }
 
   postPost.exec( "SELECT cashrcpt_id, cust_number "
-          "FROM cashrcpt, custinfo "
-          "WHERE ( (NOT cashrcpt_posted)"
-          "  AND   (NOT cashrcpt_void)"
-          "  AND   (cashrcpt_cust_id=cust_id) );" );
+                 "FROM cashrcpt, custinfo "
+                 "WHERE ( (NOT cashrcpt_posted)"
+                 "  AND   (NOT cashrcpt_void)  "
+                 "  AND   (cashrcpt_cust_id=cust_id) );");
   if (postPost.first())
   {
     int counter = 0;

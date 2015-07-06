@@ -1093,16 +1093,16 @@ void GUIClient::sSystemMessageAdded()
             ParameterList params;
             params.append("mode", "acknowledge");
 
-            systemMessage newdlg(this, "", true);
-            newdlg.set(params);
+            systemMessage *newdlg = new systemMessage();
+            newdlg->set(params);
 
             do
             {
               ParameterList params;
               params.append("msguser_id", msg.value("msguser_id").toInt());
 
-              newdlg.set(params);
-              newdlg.exec();
+              newdlg->set(params);
+              omfgThis->handleNewWindow(newdlg);
             }
             while (msg.next());
           }
