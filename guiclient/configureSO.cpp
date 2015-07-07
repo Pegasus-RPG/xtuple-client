@@ -211,6 +211,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
 
     _returnAuthChangeLog->setChecked(_metrics->boolean("ReturnAuthorizationChangeLog"));
     _printRA->setChecked(_metrics->boolean("DefaultPrintRAOnSave"));
+    _closeRA->setChecked(_metrics->boolean("CloseRAOnCredit"));
 
     _enableReservations->setChecked(_metrics->boolean("EnableSOReservations"));
     _requireReservations->setChecked(_metrics->boolean("RequireSOReservations"));
@@ -380,6 +381,7 @@ bool configureSO::sSave()
     _metrics->set("DefaultRaCreditMethod", QString(creditMethodTypes[_creditBy->currentIndex()]));
     _metrics->set("ReturnAuthorizationChangeLog", _returnAuthChangeLog->isChecked());
     _metrics->set("DefaultPrintRAOnSave", _printRA->isChecked());
+    _metrics->set("CloseRAOnCredit", _closeRA->isChecked());
     _metrics->set("RANumberGeneration", _returnAuthorizationNumGeneration->methodCode());
 
     configureSave.prepare( "SELECT setNextRaNumber(:ranumber);" );
