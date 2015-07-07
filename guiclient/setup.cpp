@@ -73,6 +73,7 @@ setup::setup(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   insert(tr("Purchase"), "configurePO", Configure, Xt::PurchaseModule, mode("ConfigurePO"), 0 );
   insert(tr("Registration"), "registrationKey", Configure, Xt::SystemModule, mode("MaintainRegistrationKey"), 0 );
   insert(tr("Schedule"), "configureMS", Configure, Xt::ScheduleModule, mode("ConfigureMS"), 0 );
+  insert(tr("Workflow"), "configureWF", Configure, Xt::SystemModule, mode("ConfigureWF"), 0 );
   insert(tr("Search Path"), "configureSearchPath", Configure, Xt::SystemModule, _privileges->isDba() ? cEdit : 0, 0);
 
   // Account Mappings
