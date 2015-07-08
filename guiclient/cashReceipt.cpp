@@ -186,6 +186,7 @@ void cashReceipt::activateButtons(bool c)
 
 void cashReceipt::sPopulateCustomerInfo(int)
 {
+  activateButtons(_customerSelector->isValid());
   if (_mode == cNew)
   {
     XSqlQuery cust;
@@ -284,24 +285,6 @@ ParameterList cashReceipt::getParams()
   return p;
 }
 
-void cashReceipt::bindParams(XSqlQuery &q)
-{
-  _customerSelector->bindValue(q);
-  q.bindValue(":cashrcpt_amount",     _received->localValue());
-  q.bindValue(":cashrcpt_applydate",  _applDate->date());
-  q.bindValue(":cashrcpt_bankaccnt_id", _bankaccnt->id());
-  q.bindValue(":cashrcpt_discount",   _discount->localValue());
-  q.bindValue(":cashrcpt_distdate",   _distDate->date());
-  q.bindValue(":cashrcpt_docdate",    _docDate->date());
-  q.bindValue(":cashrcpt_docnumber",  _docNumber->text());
-  q.bindValue(":cashrcpt_fundstype",  _fundsType->code());
-  q.bindValue(":cashrcpt_id",         _cashrcptid);
-  q.bindValue(":cashrcpt_notes",          _notes->toPlainText().trimmed());
-  q.bindValue(":cashrcpt_number",     _number->text());
-  q.bindValue(":cashrcpt_usecustdeposit", QVariant(_balCustomerDeposit->isChecked()));
-  q.bindValue(":curr_id",             _received->id());
-  q.bindValue(":docdate",             _docDate->date());
-}
 
 void cashReceipt::updateCustomerGroup()
 {
@@ -396,8 +379,8 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
           else
           {
             _customerSelector->setCustGroupId(d.value("cashrcpt_custgrp_id").toInt());
-            _save->setEnabled(true);
           }
+          _save->setEnabled(true);
           _customerSelector->setEnabled(false);
         }
         _received->setEnabled(true);
@@ -425,14 +408,9 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
         if (d.first())
         {
           if (d.value("cashrcpt_cust_id").toInt() > 0)
-          {
             _customerSelector->setCustId(d.value("cashrcpt_cust_id").toInt());
-          }
           else
-          {
             _customerSelector->setCustGroupId(d.value("cashrcpt_custgrp_id").toInt());
-            _save->setEnabled(true);
-          }
         }
       }
       _received->setEnabled(false);
@@ -498,11 +476,14 @@ void cashReceipt::sApplyToBalance()
   XSqlQuery applyToBal;
 
   applyToBal.prepare( "UPDATE cashrcpt "
-             "SET cashrcpt_cust_id=:cust_id, "
+             "SET cashrcpt_=:cust_id, "
              "    cashrcpt_curr_id=:curr_id, "
              "    cashrcpt_docdate=:docdate "
              "WHERE (cashrcpt_id=:cashrcpt_id);" );
-  bindParams(applyToBal);
+  _customerSelector->bindValue(applyToBal);
+  applyToBal.bindValue(":cashrcpt_id", _cashrcptid);
+  applyToBal.bindValue(":curr_id", _received->id());
+  applyToBal.bindValue(":docdate", _docDate->date());
   applyToBal.exec();
   if((ErrorReporter::error(QtCriticalMsg, this, tr("Error Applying Cash Receipt To Balance"),
                            applyToBal, __FILE__, __LINE__)))
@@ -510,6 +491,10 @@ void cashReceipt::sApplyToBalance()
 
   applyToBal.prepare("SELECT applyCashReceiptToBalance(:cashrcpt_id, "
                      "             :amount, :curr_id, :inclCredits) AS result;");
+  applyToBal.bindValue(":cashrcpt_id", _cashrcptid);
+  applyToBal.bindValue(":amount", _received->localValue());
+  applyToBal.bindValue(":curr_id", _received->id());
+  applyToBal.bindValue(":inclCredits", _credits->isChecked());
   applyToBal.exec();
   if (applyToBal.lastError().type() != QSqlError::NoError)
       systemError(this, applyToBal.lastError().databaseText(), __FILE__, __LINE__);
@@ -557,7 +542,7 @@ void cashReceipt::sApply()
       update = true;
   }
 
-    updateCustomerGroup();
+  updateCustomerGroup();
 
   if (update)
     sFillApplyList();
@@ -576,7 +561,9 @@ void cashReceipt::sApplyLineBalance()
                       "WHERE (cashrcpt_id=:cashrcpt_id);" );
 
   _customerSelector->bindValue(applyToBal);
-  bindParams(applyToBal);
+  applyToBal.bindValue(":cashrcpt_id", _cashrcptid);
+  applyToBal.bindValue(":curr_id", _received->id());
+  applyToBal.bindValue(":docdate", _docDate->date());
   applyToBal.exec();
   if((ErrorReporter::error(QtCriticalMsg, this, tr("Error Applying Cash Receipt To Line Balance"),
                            applyToBal, __FILE__, __LINE__)))
@@ -923,7 +910,23 @@ bool cashReceipt::save(bool partial)
                     "WHERE (cashrcpt_id=:cashrcpt_id);";
 
   cashave.prepare(sql);
-  bindParams(cashave);
+  cashave.bindValue(":cashrcpt_id", _cashrcptid);
+  cashave.bindValue(":cashrcpt_number", _number->text());
+  if (_customerSelector->isSelectedGroup())
+    cashave.bindValue(":cashrcpt_custgrp_id", _customerSelector->custGroupId());
+  else if (_customerSelector->isSelectedCust())
+    cashave.bindValue(":cashrcpt_cust_id", _customerSelector->custId());
+  cashave.bindValue(":cashrcpt_amount", _received->localValue());
+  cashave.bindValue(":cashrcpt_fundstype", _fundsType->code());
+  cashave.bindValue(":cashrcpt_docnumber", _docNumber->text());
+  cashave.bindValue(":cashrcpt_docdate", _docDate->date());
+  cashave.bindValue(":cashrcpt_bankaccnt_id", _bankaccnt->id());
+  cashave.bindValue(":cashrcpt_distdate", _distDate->date());
+  cashave.bindValue(":cashrcpt_applydate", _applDate->date());
+  cashave.bindValue(":cashrcpt_notes",          _notes->toPlainText().trimmed());
+  cashave.bindValue(":cashrcpt_usecustdeposit", QVariant(_balCustomerDeposit->isChecked()));
+  cashave.bindValue(":cashrcpt_discount", _discount->localValue());
+  cashave.bindValue(":curr_id", _received->id());
   if(_altAccnt->isChecked())
     cashave.bindValue(":cashrcpt_salescat_id", _salescat->id());
   else
@@ -956,6 +959,8 @@ void cashReceipt::sFillApplyList()
   }
   if (_customerSelector->isSelectedCust() && _customerSelector->isValid())
   {
+    if (_mode == cNew)
+      activateButtons();
     _aropen->clear();
     MetaSQLQuery mql = mqlLoad("arOpenApplications", "detail");
     ParameterList params = getParams();
@@ -1367,7 +1372,9 @@ void cashReceipt::sUpdateGainLoss()
                           "             (:cashrcpt_amount / currRate(:cashrcpt_curr_id, :cashrcpt_distdate))"
                           "             , 2) AS gainloss;");
     gainLoss.prepare(sql);
-    bindParams(gainLoss);
+    gainLoss.bindValue(":cashrcpt_curr_id", _received->id());
+    gainLoss.bindValue(":cashrcpt_distdate", _applDate->date());
+    gainLoss.bindValue(":cashrcpt_amount", _received->localValue());
     if (_metrics->value("CurrencyExchangeSense").toInt() == 1)
       gainLoss.bindValue(":cashrcpt_alt_curr_rate", 1.0 / _exchRate->toDouble());
     else

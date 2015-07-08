@@ -54,7 +54,6 @@ public slots:
     virtual void sUpdateGainLoss();
 
     virtual ParameterList getParams();
-    virtual void bindParams(XSqlQuery&);
     virtual void grpFillApplyList();
     virtual void updateCustomerGroup();
     virtual void activateButtons(bool c=true);
