@@ -50,7 +50,7 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char*, Qt::WindowFlags f
   parameterWidget()->append(tr("Customer"), "cust_id", ParameterWidget::Customer);
   parameterWidget()->appendComboBox(tr("Customer Type"), "custtype_id", XComboBox::CustomerTypes);
   parameterWidget()->append(tr("Customer Type Pattern"), "custtype_pattern", ParameterWidget::Text);
-  parameterWidget()->append(tr("P/O Number"), "poNumber", ParameterWidget::Text);
+  parameterWidget()->append(tr("Customer P/O Number"), "poNumber", ParameterWidget::Text);
   parameterWidget()->appendComboBox(tr("Sales Rep."), "salesrep_id", XComboBox::SalesRepsActive);
   parameterWidget()->appendComboBox(tr("Sale Type"), "saletype_id", XComboBox::SaleTypes);
 
