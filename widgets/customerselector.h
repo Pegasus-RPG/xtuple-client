@@ -66,6 +66,7 @@ class XTUPLEWIDGETS_EXPORT CustomerSelector : public QWidget, public Ui::Custome
     virtual void setState(int p) { setState((CustomerSelectorState)p); }
     virtual void setState(enum CustomerSelectorState p);
     virtual void setStackElement();
+    virtual void setCurrentSelect(CustomerSelectorState);
 
   signals:
     void newTypePattern(QString);

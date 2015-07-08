@@ -221,3 +221,17 @@ bool CustomerSelector::isAllowedType(const int s)
 {
   return s > 0 && s < 32;
 }
+
+void CustomerSelector::setCurrentSelect(CustomerSelectorState a)
+{
+  if (a == Selected)
+    _select->setCurrentIndex(1);
+  else if (a == SelectedGroup)
+    _select->setCurrentIndex(2);
+  else if (a == SelectedType)
+    _select->setCurrentIndex(3);
+  else if (a == TypePattern)
+    _select->setCurrentIndex(4);
+  else
+    _select->setCurrentIndex(0);
+}

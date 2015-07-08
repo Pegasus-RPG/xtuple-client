@@ -375,13 +375,14 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
           if (d.value("cashrcpt_cust_id").toInt() > 0)
           {
              _customerSelector->setCustId(d.value("cashrcpt_cust_id").toInt());
+             _customerSelector->setCurrentSelect(CustomerSelector::Selected);
           }
           else
           {
             _customerSelector->setCustGroupId(d.value("cashrcpt_custgrp_id").toInt());
+            _customerSelector->setCurrentSelect(CustomerSelector::SelectedGroup);
           }
           _save->setEnabled(true);
-          _customerSelector->setEnabled(false);
         }
         _received->setEnabled(true);
         _fundsType->setEnabled(true);
@@ -408,9 +409,15 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
         if (d.first())
         {
           if (d.value("cashrcpt_cust_id").toInt() > 0)
+          {
             _customerSelector->setCustId(d.value("cashrcpt_cust_id").toInt());
+            _customerSelector->setCurrentSelect(CustomerSelector::Selected);
+          }
           else
+          {
             _customerSelector->setCustGroupId(d.value("cashrcpt_custgrp_id").toInt());
+            _customerSelector->setCurrentSelect(CustomerSelector::SelectedGroup);
+          }
         }
       }
       _received->setEnabled(false);
