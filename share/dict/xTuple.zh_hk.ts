@@ -1207,6 +1207,150 @@ Address:</source>
         <source>User Account</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>[Pick a Document Type]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation type="unfinished">地址</translation>
+    </message>
+    <message>
+        <source>Breeder BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Breeder BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contact</source>
+        <translation type="unfinished">聯絡人</translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">客戶</translation>
+    </message>
+    <message>
+        <source>Employee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Incident</source>
+        <translation type="unfinished">事件</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation type="unfinished">物品</translation>
+    </message>
+    <message>
+        <source>Item Site</source>
+        <translation type="unfinished">物品控制台</translation>
+    </message>
+    <message>
+        <source>Item Source</source>
+        <translation type="unfinished">物品來源</translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished">地點</translation>
+    </message>
+    <message>
+        <source>Lot/Serial</source>
+        <translation type="unfinished">批/序</translation>
+    </message>
+    <message>
+        <source>Opportunity</source>
+        <translation type="unfinished">機會</translation>
+    </message>
+    <message>
+        <source>Project</source>
+        <translation type="unfinished">專案</translation>
+    </message>
+    <message>
+        <source>Purchase Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Purchase Order Item</source>
+        <translation type="unfinished">採購項目</translation>
+    </message>
+    <message>
+        <source>Return Authorization</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Return Authorization Item</source>
+        <translation type="unfinished">退貨授權物品</translation>
+    </message>
+    <message>
+        <source>Quote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quote Item</source>
+        <translation type="unfinished">報價物品</translation>
+    </message>
+    <message>
+        <source>Sales Order</source>
+        <translation type="unfinished">銷售訂單</translation>
+    </message>
+    <message>
+        <source>Sales Order Item</source>
+        <translation type="unfinished">銷售項目</translation>
+    </message>
+    <message>
+        <source>Time Attendance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To-Do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order Item</source>
+        <translation type="unfinished">調度單物品</translation>
+    </message>
+    <message>
+        <source>Vendor</source>
+        <translation type="unfinished">廠商</translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished">所在地</translation>
+    </message>
+    <message>
+        <source>Work Order</source>
+        <translation type="unfinished">工作單</translation>
+    </message>
+    <message>
+        <source>Project Task</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConfigAuthorizeDotNetProcessor</name>
@@ -4455,6 +4599,10 @@ Please immediately log out and contact your Systems Adminitrator.</source>
         <source>All User Accounts</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error Counting Users</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QueryItem</name>
@@ -6654,7 +6802,7 @@ Check the database server log for errors.</source>
     </message>
     <message>
         <source>Site:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">所在地:</translation>
     </message>
     <message>
         <source>Post</source>
@@ -6966,7 +7114,7 @@ Check the database server log for errors.</source>
     </message>
     <message>
         <source>Due Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">到期日</translation>
     </message>
     <message>
         <source>Amount</source>
@@ -8457,7 +8605,7 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Due Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">到期日</translation>
     </message>
     <message>
         <source>Invoice Amt.</source>
@@ -10726,10 +10874,6 @@ Are you sure that you want to save this change?</source>
         <translation type="unfinished">沒有輸入數值</translation>
     </message>
     <message>
-        <source>You must enter a value before saving this Item Characteristic.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You can not use the same characteristic for date type characteristics more than once in this context.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10776,6 +10920,10 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Error Getting Characteristic Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a value before saving this Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12746,7 +12894,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Due Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">到期日</translation>
     </message>
     <message>
         <source>Invoice/Billed Date</source>
@@ -15021,7 +15169,7 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>Due Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">到期日</translation>
     </message>
     <message>
         <source>Status/User</source>
@@ -26502,7 +26650,7 @@ Total</source>
     </message>
     <message>
         <source>Lot/Serial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">批/序</translation>
     </message>
 </context>
 <context>
@@ -27023,7 +27171,7 @@ Total</source>
     </message>
     <message>
         <source>Item Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">物品描述</translation>
     </message>
     <message>
         <source>Expires Start</source>
@@ -27067,7 +27215,7 @@ Total</source>
     </message>
     <message>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">物品</translation>
     </message>
     <message>
         <source>Contract</source>
@@ -28242,7 +28390,7 @@ Total</source>
     </message>
     <message>
         <source>Due Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">到期日</translation>
     </message>
     <message>
         <source>Assigned</source>
@@ -30808,7 +30956,7 @@ Total</source>
     </message>
     <message>
         <source>Reorder Lvl.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">補貨水位</translation>
     </message>
     <message>
         <source>Release multiple PRs?</source>
@@ -30919,7 +31067,7 @@ Total</source>
     </message>
     <message>
         <source>Reorder Lvl.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">補貨水位</translation>
     </message>
     <message>
         <source>Release multiple PRs?</source>
@@ -31973,11 +32121,11 @@ Total</source>
     </message>
     <message>
         <source>Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">開始日期</translation>
     </message>
     <message>
         <source>End Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">結束日期</translation>
     </message>
     <message>
         <source>P/O Number</source>
@@ -32021,7 +32169,7 @@ Total</source>
     </message>
     <message>
         <source>Cust. P/O #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">客戶訂單號碼</translation>
     </message>
     <message>
         <source>Edit...</source>
@@ -32041,7 +32189,7 @@ Total</source>
     </message>
     <message>
         <source>Shipments...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">裝運 ...</translation>
     </message>
     <message>
         <source>Create Return Authorization...</source>
@@ -32069,7 +32217,7 @@ Total</source>
     </message>
     <message>
         <source>The new Return Authorization could not be created</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">無法新增RMA</translation>
     </message>
     <message>
         <source>Access Denied</source>
@@ -41780,11 +41928,11 @@ Are you sure that you want to Implode the selected Work Order?</source>
     </message>
     <message>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">物品</translation>
     </message>
     <message>
         <source>Lot/Serial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">批/序</translation>
     </message>
     <message>
         <source>Project</source>
@@ -42662,7 +42810,7 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>Site:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">所在地:</translation>
     </message>
     <message>
         <source>Item/Location</source>
@@ -43599,7 +43747,7 @@ You may not create duplicate Item Aliases.</source>
     </message>
     <message>
         <source>Running Availability</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">累積可用性</translation>
     </message>
     <message>
         <source>Location/Lot#/Serial# Detail</source>
@@ -44187,7 +44335,7 @@ You may not create duplicate Item Aliases.</source>
     </message>
     <message>
         <source>Currency Exchange Rate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">匯率</translation>
     </message>
     <message>
         <source>Currency Exchange Rate not found.  You should correct before proceeding.</source>
@@ -46901,7 +47049,7 @@ You must reassign the Locales for these Users before you may delete the selected
     </message>
     <message>
         <source>Account#</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">帳戶 #</translation>
     </message>
 </context>
 <context>
@@ -53320,7 +53468,7 @@ post Vouchers.</source>
     </message>
     <message>
         <source>Site:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">所在地:</translation>
     </message>
     <message>
         <source>Unit Cost:</source>
@@ -55286,7 +55434,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Due Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">到期日</translation>
     </message>
     <message>
         <source>Assigned</source>
@@ -55450,11 +55598,11 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Purchase Request</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">請購單</translation>
     </message>
     <message>
         <source>Purchase Requests</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">請購單</translation>
     </message>
     <message>
         <source>Quotes</source>
@@ -55576,7 +55724,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">描述:</translation>
     </message>
     <message>
         <source>disp_descr</source>
@@ -56099,11 +56247,11 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Purchase Request</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">請購單</translation>
     </message>
     <message>
         <source>Purchase Requests</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">請購單</translation>
     </message>
     <message>
         <source>Quote</source>
@@ -57470,7 +57618,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     </message>
     <message>
         <source>Site:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">所在地:</translation>
     </message>
     <message>
         <source>Lot/Serial #:</source>
@@ -62421,7 +62569,7 @@ You must reassign these Invoice Lines before you may delete the selected Sales C
     </message>
     <message>
         <source>Reserved</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">保留量</translation>
     </message>
     <message>
         <source>Reservable</source>
@@ -63279,7 +63427,7 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <source>LT</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">LT</translation>
     </message>
     <message>
         <source>Allocated</source>
@@ -63287,7 +63435,7 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <source>Reorder Lvl.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">補貨水位</translation>
     </message>
     <message>
         <source>Available</source>
@@ -63299,7 +63447,7 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <source>Item#</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">項目 #</translation>
     </message>
     <message>
         <source>Status</source>
@@ -63319,7 +63467,7 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <source>Setup Remain.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">設定保持不變.</translation>
     </message>
     <message>
         <source>Run Remain.</source>
@@ -63327,7 +63475,7 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <source>Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">開始日期</translation>
     </message>
     <message>
         <source>&lt;p&gt;You must create a supply order for this Job Costed Item before saving this Sales Order Item.</source>
@@ -64463,7 +64611,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Approved</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">批准</translation>
     </message>
     <message>
         <source>&lt;p&gt;You must enter a Ship Date before approving this order for billing.</source>
@@ -64566,7 +64714,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Document Type:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">文件類型:</translation>
     </message>
     <message>
         <source>&lt;p&gt;You must specify an amount greater than zero. If you want to clear this approval you may do so from the screen you selected this payment from.</source>
@@ -64757,7 +64905,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Approved</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">批准</translation>
     </message>
     <message>
         <source>Approved (%1)</source>
@@ -64919,7 +65067,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Approved</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">批准</translation>
     </message>
     <message>
         <source>Credit Memo</source>
@@ -65365,7 +65513,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Site:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">所在地:</translation>
     </message>
     <message>
         <source>Approve for Billing</source>
@@ -72789,7 +72937,7 @@ otherwise a new one will be created.</source>
     </message>
     <message>
         <source>Approved</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">批准</translation>
     </message>
     <message>
         <source>Approve This Order for Billing...</source>
