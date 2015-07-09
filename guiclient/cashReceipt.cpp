@@ -80,6 +80,8 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   else
   {
     connect(_newCC, SIGNAL(clicked()), this, SLOT(sNewCreditCard()));
+    connect(_customerSelector, SIGNAL(validCust(bool)), _newCC, SLOT(setEnabled(bool)));
+    connect(_customerSelector, SIGNAL(validCustGroup(bool)), _newCC, SLOT(setEnabled(bool)));
     connect(_editCC, SIGNAL(clicked()), this, SLOT(sEditCreditCard()));
     connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
     connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
@@ -92,7 +94,7 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   bg->addButton(_balCustomerDeposit);
 
   //Set up CustomerSelector widget
-  _customerSelector->populate(CustomerSelector::Selected + CustomerSelector::SelectedGroup);
+  _customerSelector->populate(CustomerSelector::SelectedCust + CustomerSelector::SelectedGroup);
 
   _applied->clear();
 
@@ -375,12 +377,10 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
           if (d.value("cashrcpt_cust_id").toInt() > 0)
           {
              _customerSelector->setCustId(d.value("cashrcpt_cust_id").toInt());
-             _customerSelector->setCurrentSelect(CustomerSelector::Selected);
           }
           else
           {
             _customerSelector->setCustGroupId(d.value("cashrcpt_custgrp_id").toInt());
-            _customerSelector->setCurrentSelect(CustomerSelector::SelectedGroup);
           }
           _save->setEnabled(true);
         }
@@ -411,12 +411,10 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
           if (d.value("cashrcpt_cust_id").toInt() > 0)
           {
             _customerSelector->setCustId(d.value("cashrcpt_cust_id").toInt());
-            _customerSelector->setCurrentSelect(CustomerSelector::Selected);
           }
           else
           {
             _customerSelector->setCustGroupId(d.value("cashrcpt_custgrp_id").toInt());
-            _customerSelector->setCurrentSelect(CustomerSelector::SelectedGroup);
           }
         }
       }
@@ -483,7 +481,7 @@ void cashReceipt::sApplyToBalance()
   XSqlQuery applyToBal;
 
   applyToBal.prepare( "UPDATE cashrcpt "
-             "SET cashrcpt_=:cust_id, "
+             "SET cashrcpt_cust_id=:cust_id, "
              "    cashrcpt_curr_id=:curr_id, "
              "    cashrcpt_docdate=:docdate "
              "WHERE (cashrcpt_id=:cashrcpt_id);" );

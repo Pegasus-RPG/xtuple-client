@@ -29,7 +29,7 @@ class XTUPLEWIDGETS_EXPORT CustomerSelector : public QWidget, public Ui::Custome
   public:
     enum CustomerSelectorState
     {
-      All = 0x1 , Selected = 0x2, SelectedGroup = 0x4, SelectedType = 0x8,  TypePattern = 0x10
+      AllCust = 0x1 , SelectedCust = 0x2, SelectedGroup = 0x4, SelectedType = 0x8,  TypePattern = 0x10
     };
     Q_DECLARE_FLAGS(CustomerSelectorStates, CustomerSelectorState)
 
@@ -66,7 +66,6 @@ class XTUPLEWIDGETS_EXPORT CustomerSelector : public QWidget, public Ui::Custome
     virtual void setState(int p) { setState((CustomerSelectorState)p); }
     virtual void setState(enum CustomerSelectorState p);
     virtual void setStackElement();
-    virtual void setCurrentSelect(CustomerSelectorState);
 
   signals:
     void newTypePattern(QString);
@@ -75,6 +74,8 @@ class XTUPLEWIDGETS_EXPORT CustomerSelector : public QWidget, public Ui::Custome
     void newCustTypeId(int);
     void newCustGroupId(int);
     void updated();
+    void validCust(bool);
+    void validCustGroup(bool);
 
   protected slots:
     virtual void languageChange();

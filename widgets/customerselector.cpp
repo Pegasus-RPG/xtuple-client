@@ -25,9 +25,9 @@ CustomerSelector::CustomerSelector(QWidget *pParent, const char *pName) : QWidge
   setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
 
   _allowedStates = 0;
-  populate(All + Selected + SelectedGroup + SelectedType + TypePattern);
+  populate(AllCust + SelectedCust + SelectedGroup + SelectedType + TypePattern);
 
-  _select->setCurrentIndex(All);
+  _select->setCurrentIndex(AllCust);
   _cust->setType(CLineEdit::AllCustomers);
   _cust->setId(-1);
   _customerTypes->setId(-1);
@@ -36,19 +36,20 @@ CustomerSelector::CustomerSelector(QWidget *pParent, const char *pName) : QWidge
 
 
 
-  connect(_select,SIGNAL(currentIndexChanged(int)), this, SIGNAL(updated()));
-  connect(_select,SIGNAL(currentIndexChanged(int)), this, SIGNAL(newState(int)));
-  connect(_select, SIGNAL(currentIndexChanged(int)), this, SLOT(setStackElement()));
-  connect(_cust,                SIGNAL(newId(int)), this, SIGNAL(updated()));
-  connect(_cust,                SIGNAL(newId(int)), this, SIGNAL(newCustId(int)));
-  connect(_customerTypes,         SIGNAL(newID(int)), this, SIGNAL(updated()));
-  connect(_customerTypes,         SIGNAL(newID(int)), this, SIGNAL(newCustTypeId(int)));
+  connect(_select,         SIGNAL(currentIndexChanged(int)), this, SIGNAL(updated()));
+  connect(_select,         SIGNAL(currentIndexChanged(int)), this, SIGNAL(newState(int)));
+  connect(_select,         SIGNAL(currentIndexChanged(int)), this, SLOT(setStackElement()));
+  connect(_cust,           SIGNAL(newId(int)), this, SIGNAL(updated()));
+  connect(_cust,           SIGNAL(newId(int)), this, SIGNAL(newCustId(int)));
+  connect(_cust,           SIGNAL(valid(bool)), this, SIGNAL(validCust(bool)));
+  connect(_customerTypes,  SIGNAL(newID(int)), this, SIGNAL(updated()));
+  connect(_customerTypes,  SIGNAL(newID(int)), this, SIGNAL(newCustTypeId(int)));
   connect(_customerType,   SIGNAL(editingFinished()), this, SIGNAL(updated()));
   connect(_customerType,   SIGNAL(editingFinished()), this, SLOT(sTypePatternFinished()));
-  connect(_customerType,SIGNAL(textChanged(QString)), this, SIGNAL(newTypePattern(QString)));
-  connect(_customerGroup,         SIGNAL(newID(int)), this, SIGNAL(updated()));
-  connect(_customerGroup,         SIGNAL(newID(int)), this, SIGNAL(newCustGroupId(int)));
-
+  connect(_customerType,   SIGNAL(textChanged(QString)), this, SIGNAL(newTypePattern(QString)));
+  connect(_customerGroup,  SIGNAL(newID(int)), this, SIGNAL(updated()));
+  connect(_customerGroup,  SIGNAL(newID(int)), this, SIGNAL(newCustGroupId(int)));
+  connect(_customerGroup,  SIGNAL(valid(bool)), this, SIGNAL(validCustGroup(bool)));
 
 
   setFocusProxy(_select);
@@ -106,7 +107,7 @@ bool CustomerSelector::isValid()
 void CustomerSelector::setCustId(int p)
 {
   _cust->setId(p);
-  setState(Selected);
+  setState(SelectedCust);
 }
 
 void CustomerSelector::setCustTypeId(int p)
@@ -130,7 +131,18 @@ void CustomerSelector::setCustGroupId(int p)
 
 void CustomerSelector::setState(enum CustomerSelectorState p)
 {
-  _select->setCurrentIndex(p);
+  if (p == AllCust)
+    _select->setCode("A");
+  else if (p == SelectedCust)
+    _select->setCode("C");
+  else if (p == SelectedGroup)
+    _select->setCode("G");
+  else if (p == SelectedType)
+    _select->setCode("T");
+  else if (p == TypePattern)
+    _select->setCode("P");
+  else
+    _select->setCode("N");
 }
 
 void CustomerSelector::sTypePatternFinished()
@@ -185,8 +197,8 @@ void CustomerSelector::populate(int selection)
 
   if (isAllowedType(selection))
   {
-    if (selection & All) params.append("allcust");
-    if (selection & Selected)  params.append("cust");
+    if (selection & AllCust) params.append("allcust");
+    if (selection & SelectedCust)  params.append("cust");
     if (selection & SelectedGroup) params.append("custgrp");
     if (selection & SelectedType) params.append("custtype");
     if (selection & TypePattern) params.append("typepattern");
@@ -219,19 +231,6 @@ QString CustomerSelector::selectCode()
 
 bool CustomerSelector::isAllowedType(const int s)
 {
-  return s > 0 && s < 32;
-}
-
-void CustomerSelector::setCurrentSelect(CustomerSelectorState a)
-{
-  if (a == Selected)
-    _select->setCurrentIndex(1);
-  else if (a == SelectedGroup)
-    _select->setCurrentIndex(2);
-  else if (a == SelectedType)
-    _select->setCurrentIndex(3);
-  else if (a == TypePattern)
-    _select->setCurrentIndex(4);
-  else
-    _select->setCurrentIndex(0);
+  return ((s & (AllCust + SelectedCust + SelectedGroup + SelectedType + TypePattern)) ||
+          (s & (          SelectedCust + SelectedGroup  )));
 }
