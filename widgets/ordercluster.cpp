@@ -724,7 +724,7 @@ void OrderLineEdit::setId(const int pId, const QString &pType)
       setAllowedType(pType);
     silentSetId(pId);
     // Attempt to obtain an application lock on the order
-    if (_id != -1)
+    if (_lockOnSelect && _id != -1)
     {
       QString _table;
       if (isPO())
@@ -882,9 +882,12 @@ void OrderLineEdit::silentSetId(const int pId)
 
 void OrderLineEdit::unlock()
 {
-  if (! _lock.release())
-     ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+  if (_lockOnSelect && _id != -1)
+  {
+    if(!_lock.release())
+      ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
                              _lock.lastError(), __FILE__, __LINE__);
+  }
 }
 
 // List ///////////////////////////////////////////////////////////////////////
