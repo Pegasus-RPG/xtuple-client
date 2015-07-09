@@ -9765,6 +9765,11 @@
       <translation type="unfinished"/>
     </message>
     <message>
+      <width>40</width>
+      <source>Deleted</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
       <width>85</width>
       <source>Report Date:</source>
       <translation type="unfinished"/>
@@ -28260,6 +28265,64 @@
     <message>
       <width>85</width>
       <source>Report Date:</source>
+      <translation type="unfinished"/>
+    </message>
+  </context>
+  <context>
+    <name>UserPrivileges</name>
+    <message>
+      <width>540</width>
+      <source>User Privileges</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>70</width>
+      <source>Username:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>155</width>
+      <source>Role Assigned:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>85</width>
+      <source>Description:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>85</width>
+      <source>Privilege:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>85</width>
+      <source>Module:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>70</width>
+      <source>Username:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>85</width>
+      <source>Description:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>85</width>
+      <source>Role:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>100</width>
+      <source>Report Date:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>100</width>
+      <source>Page:</source>
       <translation type="unfinished"/>
     </message>
   </context>
