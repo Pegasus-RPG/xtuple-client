@@ -35,6 +35,10 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::Window
   _apopenid = -1;
   _seqiss = 0;
 
+  _docType->append(0, tr("Credit Memo"), "C");
+  _docType->append(1, tr("Debit Memo"),  "D");
+  _docType->append(2, tr("Voucher"),     "V");
+
   _apapply->addColumn( tr("Type"),        _dateColumn, Qt::AlignCenter,true, "doctype");
   _apapply->addColumn( tr("Doc. #"),               -1, Qt::AlignLeft,  true, "docnumber");
   _apapply->addColumn( tr("Apply Date"),  _dateColumn, Qt::AlignCenter,true, "apapply_postdate");
@@ -74,16 +78,16 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
     if (param.toString() == "creditMemo")
     {
       setWindowTitle(windowTitle() + tr(" - Enter Misc. Credit Memo"));
-      _docType->setCurrentIndex(0);
+      _docType->setCode("C");
       _status->setEnabled(false);
     }
     else if (param.toString() == "debitMemo")
     {
       setWindowTitle(windowTitle() + tr(" - Enter Misc. Debit Memo"));
-      _docType->setCurrentIndex(1);
+      _docType->setCode("D");
     }
     else if (param.toString() == "voucher")
-      _docType->setCurrentIndex(2);
+      _docType->setCode("V");
     else
       return UndefinedError;
 //  ToDo - better error return types
@@ -214,9 +218,9 @@ void apOpenItem::sSave()
     QString tmpFunctionName;
     QString queryStr;
 
-    if (_docType->currentIndex() == 0)
+    if (_docType->code() == "C")
       tmpFunctionName = "createAPCreditMemo";
-    else if (_docType->currentIndex() == 1)
+    else if (_docType->code() == "D")
       tmpFunctionName = "createAPDebitMemo";
     else
     {
@@ -282,20 +286,7 @@ void apOpenItem::sSave()
   else
     saveOpenItem.bindValue(":apopen_accnt_id", -1);
 
-  switch (_docType->currentIndex())
-  {
-    case 0:
-      saveOpenItem.bindValue(":apopen_doctype", "C");
-      break;
-
-    case 1:
-      saveOpenItem.bindValue(":apopen_doctype", "D");
-      break;
-
-    case 2:
-      saveOpenItem.bindValue(":apopen_doctype", "V");
-      break;
-  }
+  saveOpenItem.bindValue(":apopen_doctype", _docType->code());
 
   saveOpenItem.exec();
   if (saveOpenItem.first())
@@ -331,7 +322,7 @@ void apOpenItem::sSave()
   {
     if(_printOnPost->isChecked())
     {
-      if (_docType->currentIndex() == 0)
+      if (_docType->code() == "C")
 //    Credit Memo function returns journal# not apopenid so we have to go find it
       {
         XSqlQuery getCMid;
@@ -467,12 +458,7 @@ void apOpenItem::populate()
     }
 
     QString docType = populateOpenItem.value("apopen_doctype").toString();
-    if (docType == "C")
-      _docType->setCurrentIndex(0);
-    else if (docType == "D")
-      _docType->setCurrentIndex(1);
-    else if (docType == "V")
-      _docType->setCurrentIndex(2);
+    _docType->setCode(docType);
 
     _cAmount = _amount->localValue();
 
@@ -606,10 +592,7 @@ void apOpenItem::sTaxDetail()
     ap.bindValue(":apopen_id",_apopenid);
     ap.bindValue(":docDate", _docDate->date());
     ap.bindValue(":dueDate", _dueDate->date());
-    if (_docType->currentIndex())
-      ap.bindValue(":docType", "D" );
-    else
-      ap.bindValue(":docType", "C" );
+    ap.bindValue(":docType", _docType->code() );
     ap.bindValue(":docNumber", _docNumber->text());
     ap.bindValue(":currId", _amount->id());
     ap.exec();
@@ -638,7 +621,7 @@ void apOpenItem::sTaxDetail()
   params.append("display_type", "A");
   params.append("subtotal", _amount->localValue());
   params.append("adjustment");
-  if (_docType->currentIndex())
+  if (_docType->code() == "D")
     params.append("sense",-1);
   if (newdlg.set(params) == NoError)  
   {
@@ -651,7 +634,7 @@ void apOpenItem::sTaxDetail()
     taxq.exec();
     if (taxq.first())
     {
-      if (_docType->currentIndex())
+      if (_docType->code() == "D")
         _tax->setLocalValue(taxq.value("tax").toDouble() * -1);
       else
         _tax->setLocalValue(taxq.value("tax").toDouble());
