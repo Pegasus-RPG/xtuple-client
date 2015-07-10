@@ -36,6 +36,7 @@ public slots:
     virtual void sOnHold();
     virtual void sOpen();
     virtual void sPrintItem();
+    virtual void sApplyAPOpenCM();
 
 protected slots:
     virtual void languageChange();
