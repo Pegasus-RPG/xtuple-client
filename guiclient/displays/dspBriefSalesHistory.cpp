@@ -31,6 +31,7 @@ dspBriefSalesHistory::dspBriefSalesHistory(QWidget* parent, const char*, Qt::Win
   parameterWidget()->append(tr("Ship Start Date"), "shipStartDate", ParameterWidget::Date);
   parameterWidget()->append(tr("Ship End Date"),   "shipEndDate",   ParameterWidget::Date);
   parameterWidget()->append(tr("Customer"),   "cust_id",   ParameterWidget::Customer);
+  parameterWidget()->append(tr("Customer P/O Number"), "poNumber", ParameterWidget::Text);
   parameterWidget()->append(tr("Customer Ship-to"),   "shipto_id",   ParameterWidget::Shipto);
   parameterWidget()->appendComboBox(tr("Customer Group"), "custgrp_id", XComboBox::CustomerGroups);
   parameterWidget()->append(tr("Customer Group Pattern"), "custgrp_pattern", ParameterWidget::Text);

@@ -28,6 +28,7 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::Window
   connect(_vend,           SIGNAL(newId(int)),                     this, SLOT(sPopulateVendInfo(int)));
   connect(_taxLit,         SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
   connect(_docNumber,      SIGNAL(textEdited(QString)),       this, SLOT(sReleaseNumber()));
+  connect(_usePrepaid,     SIGNAL(toggled(bool)),             this, SLOT(sToggleAccount()));
 
   _cAmount = 0.0;
   _apopenid = -1;
@@ -45,7 +46,8 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::Window
   _terms->setType(XComboBox::APTerms);
   _journalNumber->setEnabled(false);
 
-  _altAccntid->setType(GLCluster::cRevenue | GLCluster::cExpense);
+  _accntId->setType(GLCluster::cRevenue | GLCluster::cExpense);
+  sToggleAccount();
 }
 
 apOpenItem::~apOpenItem()
@@ -119,8 +121,8 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
       _journalNumber->setEnabled(false);
       _terms->setEnabled(false);
       _notes->setReadOnly(false);
-      _useAltPrepaid->setEnabled(false);
-      _altAccntid->setEnabled(false);
+      _usePrepaid->setEnabled(false);
+      _accntId->setEnabled(false);
     }
     else if (param.toString() == "view")
     {
@@ -137,8 +139,8 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
       _terms->setEnabled(false);
       _terms->setType(XComboBox::Terms);
       _notes->setReadOnly(true);
-      _useAltPrepaid->setEnabled(false);
-      _altAccntid->setEnabled(false);
+      _usePrepaid->setEnabled(false);
+      _accntId->setEnabled(false);
       _status->setEnabled(false);
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
@@ -197,10 +199,10 @@ void apOpenItem::sSave()
       return;
     }
 
-    if (_useAltPrepaid->isChecked() && (!_altAccntid->isValid()))
+    if (!_usePrepaid->isChecked() && (!_accntId->isValid()))
     {
       QMessageBox::critical( this, tr("Cannot Save A/P Memo"),
-                            tr("<p>You must choose a valid Alternate Prepaid "
+                            tr("<p>You must choose a valid Distribution "
                                "Account Number for this A/P Memo before you "
                                "may save it.") );
       return;
@@ -272,8 +274,8 @@ void apOpenItem::sSave()
   else
 	temp = "H" ;
   saveOpenItem.bindValue(":apopen_status", temp);
-  if(_useAltPrepaid->isChecked())
-    saveOpenItem.bindValue(":apopen_accnt_id", _altAccntid->id());
+  if(!_usePrepaid->isChecked())
+    saveOpenItem.bindValue(":apopen_accnt_id", _accntId->id());
   else
     saveOpenItem.bindValue(":apopen_accnt_id", -1);
 
@@ -349,6 +351,11 @@ void apOpenItem::sReleaseNumber()
   }
 }
 
+void apOpenItem::sToggleAccount()
+{
+  _accntId->setEnabled(!_usePrepaid->isChecked());
+}
+
 void apOpenItem::populate()
 {
   populateStatus();
@@ -422,8 +429,8 @@ void apOpenItem::populate()
 
     if(!populateOpenItem.value("apopen_accnt_id").isNull() && populateOpenItem.value("apopen_accnt_id").toInt() != -1)
     {
-      _useAltPrepaid->setChecked(true);
-      _altAccntid->setId(populateOpenItem.value("apopen_accnt_id").toInt());
+      _usePrepaid->setChecked(false);
+      _accntId->setId(populateOpenItem.value("apopen_accnt_id").toInt());
     }
 
     QString docType = populateOpenItem.value("apopen_doctype").toString();

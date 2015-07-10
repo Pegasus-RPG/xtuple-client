@@ -36,6 +36,7 @@ dspBookings::dspBookings(QWidget* parent, const char*, Qt::WindowFlags fl)
   parameterWidget()->append(tr("Customer Group Pattern"), "custgrp_pattern", ParameterWidget::Text);
   parameterWidget()->appendComboBox(tr("Customer Type"), "custtype_id", XComboBox::CustomerTypes);
   parameterWidget()->append(tr("Customer Type Pattern"), "custtype_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Customer P/O Number"), "poNumber", ParameterWidget::Text);
   parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
   parameterWidget()->appendComboBox(tr("Product Category"), "prodcat_id", XComboBox::ProductCategories);
   parameterWidget()->append(tr("Product Category Pattern"), "prodcat_pattern", ParameterWidget::Text);
@@ -47,6 +48,7 @@ dspBookings::dspBookings(QWidget* parent, const char*, Qt::WindowFlags fl)
   parameterWidget()->applyDefaultFilterSet();
 
   list()->addColumn(tr("Order #"),            _orderColumn,    Qt::AlignLeft,   true,  "cohead_number"  );
+  list()->addColumn(tr("Cust. P/O #"),        _orderColumn,    Qt::AlignLeft,   true,  "cohead_custponumber");
   list()->addColumn(tr("Line #"),             _seqColumn,      Qt::AlignLeft,   true,  "f_linenumber"  );
   list()->addColumn(tr("Ord. Date"),          _dateColumn,     Qt::AlignCenter, true,  "cohead_orderdate");
   list()->addColumn(tr("Sale Type"),          _orderColumn,    Qt::AlignLeft,   true,  "saletype_descr");
