@@ -94,7 +94,7 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   bg->addButton(_balCustomerDeposit);
 
   //Set up CustomerSelector widget
-  _customerSelector->populate(CustomerSelector::SelectedCust + CustomerSelector::SelectedGroup);
+  _customerSelector->populate(CustomerSelector::SelectedCust | CustomerSelector::SelectedGroup);
 
   _applied->clear();
 

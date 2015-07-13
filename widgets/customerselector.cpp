@@ -25,7 +25,7 @@ CustomerSelector::CustomerSelector(QWidget *pParent, const char *pName) : QWidge
   setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
 
   _allowedStates = 0;
-  populate(AllCust + SelectedCust + SelectedGroup + SelectedType + TypePattern);
+  populate(AllCust | SelectedCust | SelectedGroup | SelectedType | TypePattern);
 
   _select->setCurrentIndex(AllCust);
   _cust->setType(CLineEdit::AllCustomers);
@@ -231,6 +231,6 @@ QString CustomerSelector::selectCode()
 
 bool CustomerSelector::isAllowedType(const int s)
 {
-  return ((s & (AllCust + SelectedCust + SelectedGroup + SelectedType + TypePattern)) ||
-          (s & (          SelectedCust + SelectedGroup  )));
+  return ((s & (AllCust | SelectedCust | SelectedGroup | SelectedType | TypePattern)) ||
+          (s & (          SelectedCust | SelectedGroup  )));
 }
