@@ -67,7 +67,6 @@
 
 #include "vendor.h"
 #include "vendors.h"
-#include "vendorWorkBench.h"
 
 #include "dspItemsWithoutItemSources.h"
 #include "assignItemToPlannerCode.h"
@@ -562,7 +561,15 @@ void menuPurchase::sVendors()
 
 void menuPurchase::sVendorWorkBench()
 {
-  omfgThis->handleNewWindow(new vendorWorkBench());
+  ParameterList params;
+  if (_privileges->check("MaintainVendors"))
+    params.append("mode", "edit");
+  else
+    params.append("mode", "view");
+  
+  vendor *newdlg = new vendor();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 // Utilities

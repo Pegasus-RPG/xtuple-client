@@ -631,7 +631,6 @@
 #include "vendorPriceList.h"
 #include "vendorType.h"
 #include "vendorTypes.h"
-#include "vendorWorkBench.h"
 #include "viewCheckRun.h"
 #include "voidChecks.h"
 #include "voucher.h"
