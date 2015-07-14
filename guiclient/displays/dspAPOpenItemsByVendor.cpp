@@ -17,6 +17,8 @@
 
 #include "errorReporter.h"
 #include "apOpenItem.h"
+#include "applyAPCreditMemo.h"
+#include "printApOpenItem.h"
 #include "miscVoucher.h"
 #include "voucher.h"
 
@@ -155,6 +157,17 @@ void dspAPOpenItemsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *select
       menuItem->setEnabled(_privileges->check("EditAPOpenItem"));
     }	
   }
+
+  menuItem = pMenu->addAction(tr("Print..."), this, SLOT(sPrintItem()));
+  if (!_privileges->check("EditAPOpenItem"))
+    menuItem->setEnabled(false);
+
+  if (list()->currentItem()->text("f_doctype") == tr("Credit Memo"))
+  {
+    pMenu->addSeparator();
+    menuItem = pMenu->addAction(tr("Apply Credit Memo..."), this, SLOT(sApplyAPOpenCM()));
+    menuItem->setEnabled(_privileges->check("ApplyAPMemos"));
+  }
 }
 
 void dspAPOpenItemsByVendor::sViewVoucher()
@@ -218,6 +231,28 @@ void dspAPOpenItemsByVendor::sView()
 
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
+}
+
+void dspAPOpenItemsByVendor::sApplyAPOpenCM()
+{
+  ParameterList params;
+  params.append("apopen_id", list()->id());
+
+  applyAPCreditMemo newdlg(this, "", true);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void dspAPOpenItemsByVendor::sPrintItem()
+{
+  ParameterList params;
+  params.append("apopen_id", list()->id());
+
+  printApOpenItem newdlg(this, "", true);
+  if (newdlg.set(params) == NoError)
+    newdlg.exec();
 }
 
 bool dspAPOpenItemsByVendor::setParams(ParameterList & params)

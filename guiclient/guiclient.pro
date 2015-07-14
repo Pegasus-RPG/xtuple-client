@@ -402,6 +402,7 @@ FORMS =   absoluteCalendarItem.ui               \
           priceList.ui                          \
           pricingScheduleAssignment.ui          \
           pricingScheduleAssignments.ui         \
+          printApOpenItem.ui                    \
           printArOpenItem.ui                    \
           printCheck.ui                         \
           printChecks.ui                        \
@@ -992,6 +993,7 @@ HEADERS = ../common/format.h                    \
           priceList.h                   \
           pricingScheduleAssignment.h   \
           pricingScheduleAssignments.h  \
+          printApOpenItem.h             \
           printArOpenItem.h             \
           printCheck.h                  \
           printChecks.h                 \
@@ -1603,6 +1605,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           priceList.cpp                         \
           pricingScheduleAssignment.cpp         \
           pricingScheduleAssignments.cpp        \
+          printApOpenItem.cpp                   \
           printArOpenItem.cpp                   \
           printCheck.cpp                        \
           printChecks.cpp                       \

@@ -245,26 +245,6 @@ to be bound by its terms.</comment>
                   <height>16777215</height>
                  </size>
                 </property>
-                <item>
-                 <property name="text">
-                  <string>Credit Memo</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Debit Memo</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Invoice</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Customer Deposit</string>
-                 </property>
-                </item>
                </widget>
               </item>
               <item>
