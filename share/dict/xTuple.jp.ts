@@ -1208,6 +1208,150 @@ Address:</source>
         <source>User Account</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>[Pick a Document Type]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation type="unfinished">住所</translation>
+    </message>
+    <message>
+        <source>Breeder BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Breeder BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account</source>
+        <translation type="unfinished">アカウント</translation>
+    </message>
+    <message>
+        <source>Contact</source>
+        <translation type="unfinished">コンタクト</translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">顧客</translation>
+    </message>
+    <message>
+        <source>Employee</source>
+        <translation type="unfinished">従業員</translation>
+    </message>
+    <message>
+        <source>Incident</source>
+        <translation type="unfinished">インシデント</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation type="unfinished">アイテム</translation>
+    </message>
+    <message>
+        <source>Item Site</source>
+        <translation type="unfinished">アイテムサイト</translation>
+    </message>
+    <message>
+        <source>Item Source</source>
+        <translation type="unfinished">アイテムソース</translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lot/Serial</source>
+        <translation type="unfinished">ロット/シリアル</translation>
+    </message>
+    <message>
+        <source>Opportunity</source>
+        <translation type="unfinished">見込み</translation>
+    </message>
+    <message>
+        <source>Project</source>
+        <translation type="unfinished">プロジェクト</translation>
+    </message>
+    <message>
+        <source>Purchase Order</source>
+        <translation type="unfinished">購買発注</translation>
+    </message>
+    <message>
+        <source>Purchase Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Return Authorization</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Return Authorization Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quote Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sales Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sales Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Time Attendance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To-Do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order</source>
+        <translation type="unfinished">転送発注</translation>
+    </message>
+    <message>
+        <source>Transfer Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vendor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Work Order</source>
+        <translation type="unfinished">作業オーダー</translation>
+    </message>
+    <message>
+        <source>Project Task</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConfigAuthorizeDotNetProcessor</name>
@@ -3889,7 +4033,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">From</translation>
     </message>
     <message>
         <source>To</source>
@@ -3908,7 +4052,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">From</translation>
     </message>
     <message>
         <source>To</source>
@@ -4451,6 +4595,10 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>All User Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Counting Users</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5169,7 +5317,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>Vendor Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ベンダータイプ</translation>
     </message>
     <message>
         <source>Vendor Type Pattern</source>
@@ -5421,7 +5569,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>In Process</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">In 処理</translation>
     </message>
     <message>
         <source>Closed</source>
@@ -6118,7 +6266,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">タイプ:</translation>
     </message>
     <message>
         <source>Sub Account Type:</source>
@@ -8444,7 +8592,7 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Invoice Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">請求日</translation>
     </message>
     <message>
         <source>Due Date</source>
@@ -10719,10 +10867,6 @@ Are you sure that you want to save this change?</source>
         <translation>エラー</translation>
     </message>
     <message>
-        <source>You must enter a value before saving this Item Characteristic.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Characteristic:</source>
         <translation>特徴:</translation>
     </message>
@@ -10764,6 +10908,10 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Error Getting Characteristic Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a value before saving this Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14968,11 +15116,11 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">アイテム番号</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
     <message>
         <source>Vendor Item Number</source>
@@ -15000,7 +15148,7 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>Received</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">受領済</translation>
     </message>
     <message>
         <source>Returned</source>
@@ -15095,7 +15243,7 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
     <message>
         <source>Effective</source>
@@ -15259,7 +15407,7 @@ the period inteval.</source>
     </message>
     <message>
         <source>Effective:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">効果的</translation>
     </message>
     <message>
         <source>New Effective:</source>
@@ -21187,7 +21335,7 @@ This Item is already selected for payment.</source>
     </message>
     <message>
         <source>Document Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">書類の日付</translation>
     </message>
     <message>
         <source>Invoice #</source>
@@ -23532,7 +23680,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
     <message>
         <source>Tag/Slip #</source>
@@ -24411,7 +24559,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Expiration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">満期完了</translation>
     </message>
 </context>
 <context>
@@ -27141,7 +27289,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">アイテム番号</translation>
     </message>
     <message>
         <source>Order Type</source>
@@ -27181,7 +27329,7 @@ Total</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
 </context>
 <context>
@@ -31525,7 +31673,7 @@ Total</source>
     </message>
     <message>
         <source>Delete Order...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">注文...削除</translation>
     </message>
     <message>
         <source>Planned W/O Req. (firmed)</source>
@@ -40257,7 +40405,7 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
     <message>
         <source>Granted Privileges</source>
@@ -41736,7 +41884,7 @@ Are you sure that you want to Implode the selected Work Order?</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">アイテム番号</translation>
     </message>
     <message>
         <source>Lot/Serial Pattern</source>
@@ -43162,7 +43310,7 @@ You may edit the Item Site and deactivate it.</source>
     </message>
     <message>
         <source>Cost</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">原価</translation>
     </message>
     <message>
         <source>Serial #</source>
@@ -43554,7 +43702,7 @@ You may not create duplicate Item Aliases.</source>
     </message>
     <message>
         <source>Orders</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">発注</translation>
     </message>
     <message>
         <source>Purchase Orders</source>
@@ -43582,7 +43730,7 @@ You may not create duplicate Item Aliases.</source>
     </message>
     <message>
         <source>Sales History</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">販売履歴</translation>
     </message>
     <message>
         <source>Item Master</source>
@@ -45300,7 +45448,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     </message>
     <message>
         <source>Effectivity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">効果的</translation>
     </message>
     <message>
         <source>Contract #:</source>
@@ -50563,7 +50711,7 @@ Version %2
     </message>
     <message>
         <source>Journal Series</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">仕訳帳シリーズ</translation>
     </message>
     <message>
         <source>Vend. Type</source>
@@ -51045,7 +51193,7 @@ Version %2
     </message>
     <message>
         <source>Assigned To</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">アサイン済み To</translation>
     </message>
     <message>
         <source>Target Date on or After</source>
@@ -52048,7 +52196,7 @@ is assigned for you may post this Cash Receipt.</source>
     </message>
     <message>
         <source>Journal Series</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">仕訳帳シリーズ</translation>
     </message>
     <message>
         <source>P&amp;rint Journal</source>
@@ -52137,7 +52285,7 @@ Contact you Systems Administrator.</source>
     </message>
     <message>
         <source>Journal Series</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">仕訳帳シリーズ</translation>
     </message>
     <message>
         <source>Bank Account:</source>
@@ -52373,7 +52521,7 @@ be posted or an error occurred trying to post the count slips.</source>
     </message>
     <message>
         <source>Journal Series</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">仕訳帳シリーズ</translation>
     </message>
     <message>
         <source>A System Error occurred at postCreditMemos::%1.</source>
@@ -52450,7 +52598,7 @@ post these Returns.</source>
     </message>
     <message>
         <source>Journal Series</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">仕訳帳シリーズ</translation>
     </message>
     <message>
         <source>&amp;Post</source>
@@ -52556,7 +52704,7 @@ post these Invoices.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
     <message>
         <source>Print on Post</source>
@@ -53063,7 +53211,7 @@ post Vouchers.</source>
     </message>
     <message>
         <source>Journal Series</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">仕訳帳シリーズ</translation>
     </message>
     <message>
         <source>No Vouchers to Post</source>
@@ -55095,7 +55243,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>In-Process</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">インプロセス</translation>
     </message>
     <message>
         <source>Total Hours Actual:</source>
@@ -55423,7 +55571,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>In Process</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">In 処理</translation>
     </message>
     <message>
         <source>Unreleased</source>
@@ -55580,7 +55728,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
     <message>
         <source>Active</source>
@@ -55615,7 +55763,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>In-Process</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">インプロセス</translation>
     </message>
     <message>
         <source>Number</source>
@@ -55692,7 +55840,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Assigned To</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">アサイン済み To</translation>
     </message>
     <message>
         <source>Completed Start Date</source>
@@ -55720,7 +55868,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
     <message>
         <source>Start Start Date</source>
@@ -56080,7 +56228,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>In Process</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">In 処理</translation>
     </message>
     <message>
         <source>Unreleased</source>
@@ -56367,7 +56515,7 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
     </message>
     <message>
         <source>Vouchered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">伝票済み</translation>
     </message>
     <message>
         <source>Freight Recv.</source>
@@ -56946,7 +57094,7 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
     <message>
         <source>A System Error occurred at %1::%2.</source>
@@ -57390,7 +57538,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     </message>
     <message>
         <source>Lot/Serial #:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ロット/シリアル #</translation>
     </message>
     <message>
         <source>Existing Locations:</source>
@@ -58264,7 +58412,7 @@ Please correct this before continuing.</source>
     </message>
     <message>
         <source>Customer:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">顧客:</translation>
     </message>
     <message>
         <source>Max Concurrent Users:</source>
@@ -59161,7 +59309,7 @@ You must Recall this Work Order before Rescheduling it.</source>
     </message>
     <message>
         <source>Expiration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">満期完了</translation>
     </message>
     <message>
         <source>This Reserved</source>
@@ -59287,7 +59435,7 @@ You must Recall this Work Order before Rescheduling it.</source>
     </message>
     <message>
         <source>Customer:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">顧客:</translation>
     </message>
     <message>
         <source>Return Authorization Check</source>
@@ -60695,7 +60843,7 @@ You must instead return each Work Order Material item individually.
     </message>
     <message>
         <source>Journal Number:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">仕訳番号:</translation>
     </message>
     <message>
         <source>A valid distribution date must be entered before the G/L Series can be reversed.</source>
@@ -60884,7 +61032,7 @@ You must instead return each Work Order Material item individually.
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
     <message>
         <source>&amp;Delete</source>
@@ -62412,7 +62560,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     </message>
     <message>
         <source>Phone:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">電話:</translation>
     </message>
     <message>
         <source>Credit</source>
@@ -62591,7 +62739,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     </message>
     <message>
         <source>Status:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ステータス:</translation>
     </message>
     <message>
         <source>Override Price:</source>
@@ -62859,7 +63007,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     </message>
     <message>
         <source>Received</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">受領済</translation>
     </message>
     <message>
         <source>&lt;p&gt;Should the characteristics for the associated supply order be updated?</source>
@@ -62935,7 +63083,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     </message>
     <message>
         <source>Sales History</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">販売履歴</translation>
     </message>
     <message>
         <source>This Qty Ordered/Qty UOM will result in a fractional Inventory Qty for this Item.  This Item does not allow fractional quantities.
@@ -63206,7 +63354,7 @@ Would you like to save them now?</source>
     </message>
     <message>
         <source>Item#</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">アイテム#</translation>
     </message>
     <message>
         <source>Status</source>
@@ -64393,7 +64541,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>P/O #:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">P/O #</translation>
     </message>
     <message>
         <source>Document #:</source>
@@ -64877,7 +65025,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Images</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">イメージs</translation>
     </message>
     <message>
         <source>Class Codes</source>
@@ -69158,7 +69306,7 @@ Updating Chart of Accounts...</source>
     </message>
     <message>
         <source>In-Process</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">インプロセス</translation>
     </message>
     <message>
         <source>Due:</source>
@@ -69759,7 +69907,7 @@ You first need to Revoke those Tax Codes.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
     <message>
         <source>Class</source>
@@ -69953,7 +70101,7 @@ You first need to Revoke those Tax Codes.</source>
     </message>
     <message>
         <source>Effectivity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">効果的</translation>
     </message>
     <message>
         <source>Percentage:</source>
@@ -70146,7 +70294,7 @@ You first need to Revoke those Tax Codes.</source>
     </message>
     <message>
         <source>Effectivity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">効果的</translation>
     </message>
     <message>
         <source>Tax Zone:</source>
@@ -70379,7 +70527,7 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -70830,7 +70978,7 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
     </message>
     <message>
         <source>Assigned To</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">アサイン済み To</translation>
     </message>
     <message>
         <source>Owner</source>
@@ -71021,7 +71169,7 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
     <message>
         <source>Type</source>
@@ -73015,7 +73163,7 @@ otherwise a new one will be created.</source>
     </message>
     <message>
         <source>Journal Series</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">仕訳帳シリーズ</translation>
     </message>
     <message>
         <source>Customer</source>
@@ -73131,7 +73279,7 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>Invoice Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">請求日</translation>
     </message>
     <message>
         <source>Recurring</source>
@@ -73278,7 +73426,7 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">From</translation>
     </message>
     <message>
         <source>Post Canceled</source>
@@ -73397,7 +73545,7 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>Vendor Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ベンダータイプ</translation>
     </message>
     <message>
         <source>Vendor Type Pattern</source>
@@ -74232,7 +74380,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
     <message>
         <source>Schedule</source>
@@ -74319,7 +74467,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">アイテム番号</translation>
     </message>
     <message>
         <source>Curr. Level</source>
@@ -74367,7 +74515,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
     <message>
         <source>New Level</source>
@@ -74434,7 +74582,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     </message>
     <message>
         <source>Sites</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">サイト(場所)</translation>
     </message>
     <message>
         <source>The Username cannot include any spaces.</source>
@@ -75355,7 +75503,7 @@ Please enter both again carefully.</source>
     </message>
     <message>
         <source>Ship Via:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">経由出荷</translation>
     </message>
     <message>
         <source>Please enter a Name for this new Vendor.</source>
@@ -75828,7 +75976,7 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Vendor Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ベンダータイプ</translation>
     </message>
     <message>
         <source>The Code you have entered for this Vendor Type is already in the system.</source>
@@ -75943,7 +76091,7 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">タイプ:</translation>
     </message>
     <message>
         <source>Name</source>
@@ -75975,7 +76123,7 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     </message>
     <message>
         <source>Backlog:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">受注残</translation>
     </message>
     <message>
         <source>Most Recent Purchase:</source>
@@ -76015,7 +76163,7 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     </message>
     <message>
         <source>Checks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">小切手（チェック）</translation>
     </message>
     <message>
         <source>A/P History</source>
@@ -76714,7 +76862,7 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     </message>
     <message>
         <source>Freight:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">運賃</translation>
     </message>
     <message>
         <source>Tax:</source>
@@ -77473,7 +77621,7 @@ that the selected Work Order does.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
     <message>
         <source>Order#</source>
@@ -77481,7 +77629,7 @@ that the selected Work Order does.</source>
     </message>
     <message>
         <source>Whs.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Whs.</translation>
     </message>
     <message>
         <source>Status</source>
@@ -77749,11 +77897,11 @@ You must instead return each Work Order Material item individually.
     </message>
     <message>
         <source>Scrap</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">廃棄残余</translation>
     </message>
     <message>
         <source>Item#</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">アイテム#</translation>
     </message>
     <message>
         <source>Proportional</source>
@@ -77809,7 +77957,7 @@ You must instead return each Work Order Material item individually.
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">説明</translation>
     </message>
     <message>
         <source>Comments</source>
@@ -77877,7 +78025,7 @@ You must instead return each Work Order Material item individually.
     </message>
     <message>
         <source>Received</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">受領済</translation>
     </message>
     <message>
         <source>Availability...</source>
@@ -78177,7 +78325,7 @@ Please correct before creating this Work Order</source>
     </message>
     <message>
         <source>Iss. UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">UOMを発行</translation>
     </message>
     <message>
         <source>Push</source>

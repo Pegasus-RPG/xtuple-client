@@ -1126,7 +1126,7 @@ Address:</source>
     </message>
     <message>
         <source>Characteristic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Параметр</translation>
     </message>
     <message>
         <source>Value</source>
@@ -1204,6 +1204,150 @@ Address:</source>
     </message>
     <message>
         <source>User Account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Pick a Document Type]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation type="unfinished">Адрес</translation>
+    </message>
+    <message>
+        <source>Breeder BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Breeder BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contact</source>
+        <translation type="unfinished">Контакт</translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">Клиент</translation>
+    </message>
+    <message>
+        <source>Employee</source>
+        <translation type="unfinished">Сотрудник</translation>
+    </message>
+    <message>
+        <source>Incident</source>
+        <translation type="unfinished">Событие</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation type="unfinished">Позиция</translation>
+    </message>
+    <message>
+        <source>Item Site</source>
+        <translation type="unfinished">Складская Позиция</translation>
+    </message>
+    <message>
+        <source>Item Source</source>
+        <translation type="unfinished">Источник Позиции</translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lot/Serial</source>
+        <translation type="unfinished">Партия/Серийный №</translation>
+    </message>
+    <message>
+        <source>Opportunity</source>
+        <translation type="unfinished">Сделка</translation>
+    </message>
+    <message>
+        <source>Project</source>
+        <translation type="unfinished">Проект</translation>
+    </message>
+    <message>
+        <source>Purchase Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Purchase Order Item</source>
+        <translation type="unfinished">Ввод Позиции для Закупки</translation>
+    </message>
+    <message>
+        <source>Return Authorization</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Return Authorization Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quote</source>
+        <translation type="unfinished">Резерв</translation>
+    </message>
+    <message>
+        <source>Quote Item</source>
+        <translation type="unfinished">Выбор Позиции для Резервирования</translation>
+    </message>
+    <message>
+        <source>Sales Order</source>
+        <translation type="unfinished">Заказ Покупателя</translation>
+    </message>
+    <message>
+        <source>Sales Order Item</source>
+        <translation type="unfinished">Детали Позиции в Заказе</translation>
+    </message>
+    <message>
+        <source>Time Attendance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To-Do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order</source>
+        <translation type="unfinished">Заказ на Перемещение</translation>
+    </message>
+    <message>
+        <source>Transfer Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vendor</source>
+        <translation type="unfinished">Поставщик</translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished">Место</translation>
+    </message>
+    <message>
+        <source>Work Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project Task</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4448,6 +4592,10 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>All User Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Counting Users</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10712,10 +10860,6 @@ Are you sure that you want to save this change?</source>
         <translation></translation>
     </message>
     <message>
-        <source>You must enter a value before saving this Item Characteristic.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error</source>
         <translation type="unfinished">Ошибка</translation>
     </message>
@@ -10761,6 +10905,10 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Error Getting Characteristic Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a value before saving this Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -21737,7 +21885,7 @@ This Item is already selected for payment.</source>
     </message>
     <message>
         <source>Shipment Status...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Состояние Отгрузки...</translation>
     </message>
     <message>
         <source>System Error posting Invoice #%1
@@ -25663,7 +25811,7 @@ Total</source>
     </message>
     <message>
         <source>Create W/O...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Создать Наряд-Заказ...</translation>
     </message>
     <message>
         <source>By Source Vendor</source>
@@ -25743,7 +25891,7 @@ Total</source>
     </message>
     <message>
         <source>Reorder Lvl.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кол.Дозак.</translation>
     </message>
     <message>
         <source>View Substitute Availability...</source>
@@ -25815,7 +25963,7 @@ Total</source>
     </message>
     <message>
         <source>Running Availability...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Наличие на данный момент...</translation>
     </message>
     <message>
         <source>Item Site Lead Time</source>
@@ -26174,7 +26322,7 @@ Total</source>
     </message>
     <message>
         <source>Create P/R...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Создать Требование на Закупку...</translation>
     </message>
     <message>
         <source>Invalid W/O Selected</source>
@@ -28917,7 +29065,7 @@ Total</source>
     </message>
     <message>
         <source>Running Availability...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Наличие на данный момент...</translation>
     </message>
     <message>
         <source>Show Inactive</source>
@@ -30761,7 +30909,7 @@ Total</source>
     </message>
     <message>
         <source>Reorder Lvl.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кол.Дозак.</translation>
     </message>
     <message>
         <source>Release multiple PRs?</source>
@@ -30872,7 +31020,7 @@ Total</source>
     </message>
     <message>
         <source>Reorder Lvl.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кол.Дозак.</translation>
     </message>
     <message>
         <source>Release multiple PRs?</source>
@@ -30899,7 +31047,7 @@ Total</source>
     </message>
     <message>
         <source>Reorder Lvl.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кол.Дозак.</translation>
     </message>
     <message>
         <source>Use Actual Costs</source>
@@ -31990,7 +32138,7 @@ Total</source>
     </message>
     <message>
         <source>Shipment Status...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Состояние Отгрузки...</translation>
     </message>
     <message>
         <source>Shipments...</source>
@@ -32471,7 +32619,7 @@ Total</source>
     </message>
     <message>
         <source>Enter a Valid Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Введите правильный номер позиции</translation>
     </message>
     <message>
         <source>Bill of Materials Items</source>
@@ -35181,7 +35329,7 @@ Total</source>
     </message>
     <message>
         <source>Running Availability...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Наличие на данный момент...</translation>
     </message>
     <message>
         <source>UOM</source>
@@ -44285,7 +44433,7 @@ You may not create duplicate Pricing Schedule Items.</source>
     </message>
     <message>
         <source>Characteristic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Параметр</translation>
     </message>
     <message>
         <source>Cannot Create Pricing Schedule Item</source>
@@ -50400,7 +50548,7 @@ Version %2
     </message>
     <message>
         <source>Shipment Status...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Состояние Отгрузки...</translation>
     </message>
     <message>
         <source>Customer</source>
@@ -62328,7 +62476,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     </message>
     <message>
         <source>Characteristic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Параметр</translation>
     </message>
     <message>
         <source>Value</source>
@@ -62896,7 +63044,7 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <source>Characteristic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Параметр</translation>
     </message>
     <message>
         <source>Customer</source>
@@ -63185,7 +63333,7 @@ Would you like to save them now?</source>
     </message>
     <message>
         <source>Reorder Lvl.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кол.Дозак.</translation>
     </message>
     <message>
         <source>Available</source>
@@ -77531,7 +77679,7 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     </message>
     <message>
         <source>Running Availability...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Наличие на данный момент...</translation>
     </message>
     <message>
         <source>A System Error occurred at %1::%2, Planned Order ID %3.</source>

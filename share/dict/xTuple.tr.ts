@@ -1128,7 +1128,7 @@ Address:</source>
     </message>
     <message>
         <source>Characteristic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Karakteristik</translation>
     </message>
     <message>
         <source>Value</source>
@@ -1206,6 +1206,150 @@ Address:</source>
     </message>
     <message>
         <source>User Account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Pick a Document Type]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation type="unfinished">Adres</translation>
+    </message>
+    <message>
+        <source>Breeder BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Breeder BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account</source>
+        <translation type="unfinished">Hesap</translation>
+    </message>
+    <message>
+        <source>Contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">Müşteri</translation>
+    </message>
+    <message>
+        <source>Employee</source>
+        <translation type="unfinished">Personel</translation>
+    </message>
+    <message>
+        <source>Incident</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation type="unfinished">Malzeme</translation>
+    </message>
+    <message>
+        <source>Item Site</source>
+        <translation type="unfinished">Malzeme Deposu</translation>
+    </message>
+    <message>
+        <source>Item Source</source>
+        <translation type="unfinished">Malzeme Kaynağı</translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished">Lokasyon</translation>
+    </message>
+    <message>
+        <source>Lot/Serial</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opportunity</source>
+        <translation type="unfinished">Fırsat</translation>
+    </message>
+    <message>
+        <source>Project</source>
+        <translation type="unfinished">Proje</translation>
+    </message>
+    <message>
+        <source>Purchase Order</source>
+        <translation type="unfinished">Satınalma Siparişi</translation>
+    </message>
+    <message>
+        <source>Purchase Order Item</source>
+        <translation type="unfinished">Satınalma Siparişi Kalemi</translation>
+    </message>
+    <message>
+        <source>Return Authorization</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Return Authorization Item</source>
+        <translation type="unfinished">İade Kalemi</translation>
+    </message>
+    <message>
+        <source>Quote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quote Item</source>
+        <translation type="unfinished">Teklif Kalemi</translation>
+    </message>
+    <message>
+        <source>Sales Order</source>
+        <translation type="unfinished">Satış Siparişi</translation>
+    </message>
+    <message>
+        <source>Sales Order Item</source>
+        <translation type="unfinished">Satş Siparişi Kalemi</translation>
+    </message>
+    <message>
+        <source>Time Attendance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To-Do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order Item</source>
+        <translation type="unfinished">Nakil Siparişi Kalemi</translation>
+    </message>
+    <message>
+        <source>Vendor</source>
+        <translation type="unfinished">Tedarikçi</translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Work Order</source>
+        <translation type="unfinished">Üretim Siparişi</translation>
+    </message>
+    <message>
+        <source>Project Task</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4454,6 +4598,10 @@ Please immediately log out and contact your Systems Adminitrator.</source>
         <source>All User Accounts</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error Counting Users</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QueryItem</name>
@@ -4748,7 +4896,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>From:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kimden:</translation>
     </message>
     <message>
         <source>Until:</source>
@@ -6983,7 +7131,7 @@ Check the database server log for errors.</source>
     </message>
     <message>
         <source>Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alacak Dekontu</translation>
     </message>
     <message>
         <source>Customer Deposit</source>
@@ -7626,7 +7774,7 @@ Check the database server log for errors.</source>
     </message>
     <message>
         <source>Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alacak Dekontu</translation>
     </message>
     <message>
         <source>Terms:</source>
@@ -9294,7 +9442,7 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Costs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maliyetler</translation>
     </message>
     <message>
         <source>Costing &amp;Elements:</source>
@@ -10713,10 +10861,6 @@ Devam mı?</translation>
 <context>
     <name>characteristicAssignment</name>
     <message>
-        <source>You must enter a value before saving this Item Characteristic.</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>No Value Entered</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10766,6 +10910,10 @@ Devam mı?</translation>
     </message>
     <message>
         <source>Error Getting Characteristic Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a value before saving this Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14993,7 +15141,7 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>Unreleased</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Onaylanmayan</translation>
     </message>
     <message>
         <source>Released</source>
@@ -15273,7 +15421,7 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>Expires:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Süresi Doluyor:</translation>
     </message>
     <message>
         <source>Vendor Phone:</source>
@@ -23220,7 +23368,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Maintain Item Costs...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Malzeme Maliyet Bakımı...</translation>
     </message>
 </context>
 <context>
@@ -25744,7 +25892,7 @@ Total</source>
     </message>
     <message>
         <source>Post Misc. Production...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Özel Teyit Gir...</translation>
     </message>
     <message>
         <source>Class Code Pattern</source>
@@ -25768,7 +25916,7 @@ Total</source>
     </message>
     <message>
         <source>Available</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kullanılabilir</translation>
     </message>
     <message>
         <source>Enter Valid Date</source>
@@ -25824,7 +25972,7 @@ Total</source>
     </message>
     <message>
         <source>As of:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tarihe Göre:</translation>
     </message>
     <message>
         <source>Please select a valid date range.</source>
@@ -28100,7 +28248,7 @@ Total</source>
     </message>
     <message>
         <source>Unreleased</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Onaylanmayan</translation>
     </message>
     <message>
         <source>Item #</source>
@@ -28402,7 +28550,7 @@ Total</source>
     </message>
     <message>
         <source>Ending Order Date:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Biten Sipariş Tarihi:</translation>
     </message>
     <message>
         <source>Earliest</source>
@@ -29353,7 +29501,7 @@ Total</source>
     </message>
     <message>
         <source>Costs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maliyetler</translation>
     </message>
     <message>
         <source>Purch. Cost</source>
@@ -29536,7 +29684,7 @@ Total</source>
     </message>
     <message>
         <source>Costs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maliyetler</translation>
     </message>
     <message>
         <source>Please enter a valid Start and End Date.</source>
@@ -30928,7 +31076,7 @@ Total</source>
     </message>
     <message>
         <source>QOH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mevcut Miktar</translation>
     </message>
     <message>
         <source>Show All Quantities</source>
@@ -31979,7 +32127,7 @@ Total</source>
     </message>
     <message>
         <source>Cust. P/O #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Müşteri Alış Siparişi No:</translation>
     </message>
     <message>
         <source>Edit...</source>
@@ -31995,11 +32143,11 @@ Total</source>
     </message>
     <message>
         <source>Shipment Status...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sevkiyat Durumu...</translation>
     </message>
     <message>
         <source>Shipments...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sevkiyatlar...</translation>
     </message>
     <message>
         <source>Create Return Authorization...</source>
@@ -32432,7 +32580,7 @@ Total</source>
     </message>
     <message>
         <source>Mixed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Karma</translation>
     </message>
     <message>
         <source>Expires</source>
@@ -34465,7 +34613,7 @@ Total</source>
     </message>
     <message>
         <source>Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alacak Dekontu</translation>
     </message>
     <message>
         <source>Other</source>
@@ -44033,7 +44181,7 @@ You may not create duplicate Item Aliases.</source>
     </message>
     <message>
         <source>Mixed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Karma</translation>
     </message>
     <message>
         <source>Discount</source>
@@ -45102,7 +45250,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     </message>
     <message>
         <source>QOH</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mevcut Miktar</translation>
     </message>
     <message>
         <source>None</source>
@@ -45290,7 +45438,7 @@ before you may save this Item Source.</source>
     </message>
     <message>
         <source>Mixed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Karma</translation>
     </message>
     <message>
         <source>You must select this Vendor that this Item Source is sold by
@@ -46832,7 +46980,7 @@ You must reassign the Locales for these Users before you may delete the selected
     </message>
     <message>
         <source>Account#</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hesap No</translation>
     </message>
 </context>
 <context>
@@ -53393,7 +53541,7 @@ post Vouchers.</source>
     </message>
     <message>
         <source>Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alacak Dekontu</translation>
     </message>
     <message>
         <source>Discover Card</source>
@@ -54559,7 +54707,7 @@ post Vouchers.</source>
     </message>
     <message>
         <source>Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alacak Dekontu</translation>
     </message>
     <message>
         <source>Invoice</source>
@@ -54598,7 +54746,7 @@ post Vouchers.</source>
     </message>
     <message>
         <source>Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alacak Dekontu</translation>
     </message>
     <message>
         <source>As of :</source>
@@ -55424,7 +55572,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Unreleased</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Onaylanmayan</translation>
     </message>
     <message>
         <source>Total</source>
@@ -56081,7 +56229,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Unreleased</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Onaylanmayan</translation>
     </message>
     <message>
         <source>Total</source>
@@ -56468,7 +56616,7 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
     </message>
     <message>
         <source>Unreleased</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Onaylanmayan</translation>
     </message>
     <message>
         <source>&amp;New</source>
@@ -62333,7 +62481,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     </message>
     <message>
         <source>Characteristic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Karakteristik</translation>
     </message>
     <message>
         <source>Value</source>
@@ -62969,7 +63117,7 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <source>Mixed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Karma</translation>
     </message>
     <message>
         <source>Sales History</source>
@@ -62977,7 +63125,7 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <source>Characteristic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Karakteristik</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -63194,7 +63342,7 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <source>Available</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kullanılabilir</translation>
     </message>
     <message>
         <source>Order#</source>
@@ -64489,7 +64637,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alacak Dekontu</translation>
     </message>
     <message>
         <source>Total Credit</source>
@@ -64680,7 +64828,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alacak Dekontu</translation>
     </message>
     <message>
         <source>View Voucher...</source>
@@ -64826,7 +64974,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alacak Dekontu</translation>
     </message>
 </context>
 <context>
@@ -69886,7 +70034,7 @@ You first need to Revoke those Tax Codes.</source>
     </message>
     <message>
         <source>Expire</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Geçerlililik Sonu</translation>
     </message>
     <message>
         <source>Never</source>
@@ -73301,7 +73449,7 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>Unreleased</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Onaylanmayan</translation>
     </message>
     <message>
         <source>Due Date</source>
@@ -74204,7 +74352,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     </message>
     <message>
         <source>Available</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kullanılabilir</translation>
     </message>
     <message>
         <source>Selected</source>
@@ -75797,7 +75945,7 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Mixed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Karma</translation>
     </message>
     <message>
         <source>Base</source>
@@ -76285,7 +76433,7 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     </message>
     <message>
         <source>Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alacak Dekontu</translation>
     </message>
 </context>
 <context>

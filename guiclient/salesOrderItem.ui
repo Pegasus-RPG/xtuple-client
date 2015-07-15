@@ -152,6 +152,9 @@ to be bound by its terms.</comment>
        </item>
        <item>
         <widget class="XCheckBox" name="_orderRefresh">
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
          <property name="toolTip">
           <string>Refresh the Order Items list immediately on save</string>
          </property>

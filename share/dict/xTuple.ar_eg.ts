@@ -1208,6 +1208,150 @@ Address:</source>
         <source>User Account</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>[Pick a Document Type]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation type="unfinished">العنوان</translation>
+    </message>
+    <message>
+        <source>Breeder BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Breeder BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account</source>
+        <translation type="unfinished">الحساب</translation>
+    </message>
+    <message>
+        <source>Contact</source>
+        <translation type="unfinished">متصل</translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">عميل</translation>
+    </message>
+    <message>
+        <source>Employee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Incident</source>
+        <translation type="unfinished">حالة</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation type="unfinished">صنف</translation>
+    </message>
+    <message>
+        <source>Item Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Item Source</source>
+        <translation type="unfinished">مصدر الصنف</translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished">المكان</translation>
+    </message>
+    <message>
+        <source>Lot/Serial</source>
+        <translation type="unfinished">لوت/مسلسل</translation>
+    </message>
+    <message>
+        <source>Opportunity</source>
+        <translation type="unfinished">فرصة</translation>
+    </message>
+    <message>
+        <source>Project</source>
+        <translation type="unfinished">مشروع</translation>
+    </message>
+    <message>
+        <source>Purchase Order</source>
+        <translation type="unfinished">أمر الشراء</translation>
+    </message>
+    <message>
+        <source>Purchase Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Return Authorization</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Return Authorization Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quote Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sales Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sales Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Time Attendance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To-Do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vendor</source>
+        <translation type="unfinished">المورد</translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Work Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project Task</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConfigAuthorizeDotNetProcessor</name>
@@ -4452,6 +4596,10 @@ Please immediately log out and contact your Systems Adminitrator.</source>
         <source>All User Accounts</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error Counting Users</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QueryItem</name>
@@ -4540,7 +4688,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">مصدر</translation>
     </message>
     <message>
         <source>Schema/Group</source>
@@ -10714,10 +10862,6 @@ Are you sure that you want to save this change?</source>
         <translation></translation>
     </message>
     <message>
-        <source>You must enter a value before saving this Item Characteristic.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10763,6 +10907,10 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Error Getting Characteristic Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a value before saving this Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -20470,7 +20618,7 @@ to be deleted.</source>
     </message>
     <message>
         <source>Automatically Update</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">التحديث الألى</translation>
     </message>
     <message>
         <source>display</source>
@@ -27338,7 +27486,7 @@ Total</source>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">مصدر</translation>
     </message>
     <message>
         <source>Account</source>
@@ -33406,7 +33554,7 @@ Total</source>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">مصدر</translation>
     </message>
     <message>
         <source>Other</source>
@@ -39927,7 +40075,7 @@ You may not create duplicate Forms.</source>
     </message>
     <message>
         <source>Schedule</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جدولة</translation>
     </message>
     <message>
         <source>&lt;p&gt;Are you sure you want to delete this G/L Series Entry?</source>
@@ -39995,7 +40143,7 @@ You may not create duplicate Forms.</source>
     </message>
     <message>
         <source>Document Type:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">نوع المستند:</translation>
     </message>
     <message>
         <source>Credits</source>
@@ -40062,7 +40210,7 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     </message>
     <message>
         <source>Document Type:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">نوع المستند:</translation>
     </message>
     <message>
         <source>&lt;p&gt;You must select a Credit Account for this G/L Transaction before you may Post it.</source>
@@ -40913,7 +41061,7 @@ Are you sure that you want to Implode the selected Work Order?</source>
     </message>
     <message>
         <source>Automatically Update</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">التحديث الألى</translation>
     </message>
     <message>
         <source>Error</source>
@@ -52579,7 +52727,7 @@ post these Invoices.</source>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">مصدر</translation>
     </message>
     <message>
         <source>Accounts Receivable</source>
@@ -64471,7 +64619,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Document Type:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">نوع المستند:</translation>
     </message>
     <message>
         <source>&lt;p&gt;You must specify an amount greater than zero. If you want to clear this approval you may do so from the screen you selected this payment from.</source>
@@ -64939,7 +65087,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Schedule</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جدولة</translation>
     </message>
     <message>
         <source>Shipping Charge Types</source>
@@ -69176,7 +69324,7 @@ Updating Chart of Accounts...</source>
     </message>
     <message>
         <source>Schedule</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جدولة</translation>
     </message>
     <message>
         <source>Plan</source>
@@ -74194,7 +74342,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     </message>
     <message>
         <source>Schedule</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جدولة</translation>
     </message>
     <message>
         <source>Description</source>
@@ -78396,7 +78544,7 @@ Please correct before creating this Work Order</source>
     </message>
     <message>
         <source>Document Type:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">نوع المستند:</translation>
     </message>
     <message>
         <source>Export XSLT File Name:</source>
