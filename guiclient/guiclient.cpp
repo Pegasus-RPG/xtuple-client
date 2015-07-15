@@ -1023,21 +1023,31 @@ void GUIClient::sTick()
       emit(tick());
       __intervalCount = 0;
     }
-
-    _tick.singleShot(60000, this, SLOT(sTick()));
   }
   else
   {
     // Check to make sure we are not in the middle of an aborted transaction
     // before we go doing something rash.
-    if(tickle.lastError().databaseText().contains("current transaction is aborted"))
-      return;
-    systemError(this, tr("<p>You have been disconnected from the database server.  "
-                          "This is usually caused by an interruption in your "
-                          "network.  Please exit the application and restart."
-                          "<br><pre>%1</pre>" )
-                      .arg(tickle.lastError().databaseText()));
+    if (!QSqlDatabase::database().isOpen())
+    {
+      if (QSqlDatabase::database().open())
+      {
+        qDebug() << "Reconnected to the database";
+      }
+      else
+      {
+        qDebug() << "Couldn't reconnect to the database";
+        if  (QMessageBox::question(this, tr("Database disconnected"),
+                              tr("It appears that the you've been disconnected from the"
+                                 "database. Select Yes to try to reconnect or "
+                                 "No to terminate the application."),
+                                 QMessageBox::Yes,
+                                 QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+          qApp->quit();
+      }
+    }
   }
+  _tick.singleShot(60000, this, SLOT(sTick()));
 }
 
 /** @brief Make the error button in the main window's status bar visible.
