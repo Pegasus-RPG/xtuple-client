@@ -13,9 +13,8 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
-
+#include <QDebug>
 #include <metasql.h>
-#include <stdlib.h>
 
 #include "cashReceiptItem.h"
 #include "cashReceiptMiscDistrib.h"
@@ -49,10 +48,10 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
 
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo(int)));
 
-  connect(_custGrp, SIGNAL(newID(int)), this, SLOT(populateCustomerInfo()));
-  connect(_custSelector, SIGNAL(newID(int)), this, SLOT(sHandleSelector())); // add slot to .h, add void func() that checks _custSelector's code to decide what to setVisble()
+  connect(_customerSelector, SIGNAL(newState(int)), this, SLOT(sPopulateCustomerInfo(int)));
+  connect(_customerSelector, SIGNAL(newCustId(int)), this, SLOT(sPopulateCustomerInfo(int)));
+  connect(_customerSelector, SIGNAL(newCustGroupId(int)), this, SLOT(sPopulateCustomerInfo(int)));
 
   connect(_received, SIGNAL(editingFinished()), this, SLOT(sUpdateBalance()));
   connect(_applyToBalance, SIGNAL(clicked()), this, SLOT(sApplyToBalance()));
@@ -81,6 +80,8 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   else
   {
     connect(_newCC, SIGNAL(clicked()), this, SLOT(sNewCreditCard()));
+    connect(_customerSelector, SIGNAL(validCust(bool)), _newCC, SLOT(setEnabled(bool)));
+    connect(_customerSelector, SIGNAL(validCustGroup(bool)), _newCC, SLOT(setEnabled(bool)));
     connect(_editCC, SIGNAL(clicked()), this, SLOT(sEditCreditCard()));
     connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
     connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
@@ -92,16 +93,13 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   bg->addButton(_balCreditMemo);
   bg->addButton(_balCustomerDeposit);
 
-  //Set up Customer/Customer Group widget
-  _custSelector->populate("SELECT 1 as selkey, 'Customer' as selname, 'C' as selcode"
-                          " UNION "
-                          "SELECT 2  as selkey, 'Customer Group' as selname, 'G' as selcode;");
+  //Set up CustomerSelector widget
+  _customerSelector->populate(CustomerSelector::SelectedCust | CustomerSelector::SelectedGroup);
 
   _applied->clear();
 
   _CCCVV->setValidator(new QIntValidator(100, 9999, this));
 
-  _cust->setType(CLineEdit::ActiveCustomers);
   _bankaccnt->setType(XComboBox::ARBankAccounts);
   _salescat->setType(XComboBox::SalesCategoriesActive);
 
@@ -171,6 +169,15 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _posted = false;
 }
 
+cashReceipt::~cashReceipt()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void cashReceipt::languageChange()
+{
+  retranslateUi(this);
+}
 
 void cashReceipt::activateButtons(bool c)
 {
@@ -179,32 +186,18 @@ void cashReceipt::activateButtons(bool c)
   _applyToBalance->setEnabled(c);
 }
 
-void cashReceipt::sHandleSelector()
+void cashReceipt::sPopulateCustomerInfo(int)
 {
-  _cust->setVisible(_custSelector->code() == "C");
-  _custGrp->setVisible(_custSelector->code() == "G");
-
-  if (_custSelector->code() == "G")
-    _cust->setId(-1);
-
-  if (_custSelector->code() == "C")
-    activateButtons(false);
-
-  populateCustomerInfo();
-  sFillApplyList();
-}
-
-void cashReceipt::populateCustomerInfo()
-{
+  activateButtons(_customerSelector->isValid());
   if (_mode == cNew)
   {
     XSqlQuery cust;
     QString sql;
     ParameterList pList;
 
-    pList.append("cust_id", _cust->id());
-    pList.append("custgrp_id", _custGrp->id());
-    if (_cust->id() > -1)
+    _customerSelector->appendValue(pList);
+
+    if (_customerSelector->isSelectedCust())
       sql= "SELECT cust_curr_id FROM custinfo WHERE cust_id = <? value('cust_id') ?>;";
     else
       sql = "SELECT cust_curr_id FROM custinfo JOIN custgrpitem on cust_id=custgrpitem_cust_id "
@@ -262,34 +255,34 @@ void cashReceipt::grpFillApplyList()
     _discount->setLocalValue(discount.value("disc").toDouble());
 }
 
-
 ParameterList cashReceipt::getParams()
 {
   ParameterList p;
 
-  p.append("cashrcpt_id", _cashrcptid);
-  p.append("cust_id", _cust->id());
-  if (_cust->id() == -1)
-    p.append("custgrp_id", _custGrp->id());
-  p.append("debitMemo", tr("Debit Memo"));
-  p.append("invoice", tr("Invoice"));
-  p.append("creditMemo", tr("Credit Memo"));
+  _customerSelector->appendValue(p); //cust_id or cust_grp_id
+  p.append("amount", _received->localValue());
+  p.append("applDate", _applDate->date());
+  p.append("bankaccnt_id", _bankaccnt->id());
   p.append("cashdeposit", tr("Customer Deposit"));
-  if (!_credits->isChecked()) //credits->checked()?
+  p.append("cashrcpt_id", _cashrcptid);
+  p.append("cashrcptmisc_id", _cashrcptmisc->id());
+  p.append("creditMemo", tr("Credit Memo"));
+  p.append("curr_id", _received->id());
+  p.append("custSelector", _customerSelector->selectCode());
+  p.append("debitMemo", tr("Debit Memo"));
+  p.append("discount", _discount->localValue());
+  p.append("distDate", _distDate->date());
+  p.append("docdate", _docDate->date());
+  p.append("docnumber", _docNumber->text());
+  p.append("effective", _received->effective());
+  p.append("fundstype", _fundsType->code());
+  p.append("invoice", tr("Invoice"));
+  p.append("notes", _notes->toPlainText());//_notes.plainText
+  if (!_credits->isChecked())
     p.append("noCredits", true);
   p.append("number", _number->text());
-  p.append("amount", _received->localValue());
-  p.append("fundstype", _fundsType->code());
-  p.append("docnumber", _docNumber->text());
-  p.append("docdate", _docDate->date());
-  p.append("bankaccnt_id", _bankaccnt->id());
-  p.append("distDate", _distDate->date());
-  p.append("applDate", _applDate->date());
   p.append("salescat_id", _salescat->id());
-  p.append("notes", _notes->toPlainText());//_notes.plainText
   p.append("usecustdeposit", _balCustomerDeposit->isChecked());//->checked()?
-  p.append("discount", _discount->localValue());
-  p.append("curr_id", _received->id());
 
   return p;
 }
@@ -297,7 +290,8 @@ ParameterList cashReceipt::getParams()
 
 void cashReceipt::updateCustomerGroup()
 {
-  if (_mode == 2 || _mode == cNew) //originally it's supposed to work only for cNew; have to look into it
+  if (_customerSelector->isSelectedGroup() &&
+      (_mode == cNew || _mode == cEdit))
   {
 
     QString sql="UPDATE cashrcpt SET cashrcpt_custgrp_id=<? value ('custgrp_id') ?> "
@@ -321,18 +315,6 @@ void cashReceipt::updateCustomerGroup()
   else
     return;
 }
-
-
-cashReceipt::~cashReceipt()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
-void cashReceipt::languageChange()
-{
-  retranslateUi(this);
-}
-
 
 enum SetResponse cashReceipt::set(const ParameterList &pParams)
 {
@@ -383,7 +365,6 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       _mode = cEdit;
 	  _transType = cEdit;
 
-      _cust->setReadOnly(true);
       param = pParams.value("cashrcpt_id", &valid);
       if (valid)
       {
@@ -394,16 +375,14 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
         if (d.first())
         {
           if (d.value("cashrcpt_cust_id").toInt() > 0)
-             _custSelector->setId(1);
+          {
+             _customerSelector->setCustId(d.value("cashrcpt_cust_id").toInt());
+          }
           else
           {
-            _custGrp->setId(d.value("cashrcpt_custgrp_id").toInt());
-            _custSelector->setId(2);
-            _save->setEnabled(true);
+            _customerSelector->setCustGroupId(d.value("cashrcpt_custgrp_id").toInt());
           }
-          _custGrp->setEnabled(false);
-          _cust->setEnabled(false);
-          _custSelector->setEnabled(false);
+          _save->setEnabled(true);
         }
         _received->setEnabled(true);
         _fundsType->setEnabled(true);
@@ -430,19 +409,15 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
         if (d.first())
         {
           if (d.value("cashrcpt_cust_id").toInt() > 0)
-             _custSelector->setId(1);
+          {
+            _customerSelector->setCustId(d.value("cashrcpt_cust_id").toInt());
+          }
           else
           {
-            _custGrp->setId(d.value("cashrcpt_custgrp_id").toInt());
-            _custSelector->setId(2);
-            _save->setEnabled(true);
+            _customerSelector->setCustGroupId(d.value("cashrcpt_custgrp_id").toInt());
           }
-          _custGrp->setEnabled(false);
-          _cust->setEnabled(false);
-          _custSelector->setEnabled(false);
         }
       }
-      _cust->setReadOnly(true);
       _received->setEnabled(false);
       _fundsType->setEnabled(false);
       _docNumber->setEnabled(false);
@@ -463,9 +438,9 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       _altAccnt->setEnabled(false);
       _newCC->setEnabled(false);
       _editCC->setEnabled(false);
+      _customerSelector->setEnabled(false);
       disconnect(_cashrcptmisc, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       disconnect(_cashrcptmisc, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-
     }
 
     // if this cash receipt was by credit card cash then prevent changes
@@ -488,8 +463,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
 
   param = pParams.value("cust_id", &valid);
   if(cNew == _mode && valid)
-    _cust->setId(param.toInt());
-
+      _customerSelector->setCustId(param.toInt());
   param = pParams.value("docnumber", & valid);
   if (valid)
     _searchDocNum->setText(param.toString());
@@ -511,11 +485,14 @@ void cashReceipt::sApplyToBalance()
              "    cashrcpt_curr_id=:curr_id, "
              "    cashrcpt_docdate=:docdate "
              "WHERE (cashrcpt_id=:cashrcpt_id);" );
-  applyToBal.bindValue(":cust_id", _cust->id());
+  _customerSelector->bindValue(applyToBal);
   applyToBal.bindValue(":cashrcpt_id", _cashrcptid);
   applyToBal.bindValue(":curr_id", _received->id());
   applyToBal.bindValue(":docdate", _docDate->date());
   applyToBal.exec();
+  if((ErrorReporter::error(QtCriticalMsg, this, tr("Error Applying Cash Receipt To Balance"),
+                           applyToBal, __FILE__, __LINE__)))
+    return;
 
   applyToBal.prepare("SELECT applyCashReceiptToBalance(:cashrcpt_id, "
                      "             :amount, :curr_id, :inclCredits) AS result;");
@@ -523,14 +500,11 @@ void cashReceipt::sApplyToBalance()
   applyToBal.bindValue(":amount", _received->localValue());
   applyToBal.bindValue(":curr_id", _received->id());
   applyToBal.bindValue(":inclCredits", _credits->isChecked());
-
   applyToBal.exec();
   if (applyToBal.lastError().type() != QSqlError::NoError)
       systemError(this, applyToBal.lastError().databaseText(), __FILE__, __LINE__);
 
-  if (_custSelector->code() == "G")
-    updateCustomerGroup();
-
+  updateCustomerGroup();
   sFillApplyList();
 }
 
@@ -573,10 +547,7 @@ void cashReceipt::sApply()
       update = true;
   }
 
-  if (_custSelector->code() == "G")
-  {
-    updateCustomerGroup();
-  }
+  updateCustomerGroup();
 
   if (update)
     sFillApplyList();
@@ -593,11 +564,15 @@ void cashReceipt::sApplyLineBalance()
                       "    cashrcpt_curr_id=:curr_id, "
                       "    cashrcpt_docdate=:docdate "
                       "WHERE (cashrcpt_id=:cashrcpt_id);" );
-  applyToBal.bindValue(":cust_id", _cust->id());
+
+  _customerSelector->bindValue(applyToBal);
   applyToBal.bindValue(":cashrcpt_id", _cashrcptid);
   applyToBal.bindValue(":curr_id", _received->id());
   applyToBal.bindValue(":docdate", _docDate->date());
   applyToBal.exec();
+  if((ErrorReporter::error(QtCriticalMsg, this, tr("Error Applying Cash Receipt To Line Balance"),
+                           applyToBal, __FILE__, __LINE__)))
+    return;
 
   XSqlQuery applyq;
   applyq.prepare("SELECT applycashreceiptlinebalance(:cashrcpt_id,"
@@ -666,8 +641,7 @@ void cashReceipt::sApplyLineBalance()
       }
     }
   }
-  if (_custSelector->code() == "G")
-      updateCustomerGroup();
+  updateCustomerGroup();
   sFillApplyList();
 }
 
@@ -693,8 +667,7 @@ void cashReceipt::sClear()
   }
 
   sUpdateBalance();
-  if (_custSelector->code() == "G")
-      updateCustomerGroup();
+  updateCustomerGroup();
   sFillApplyList();
 }
 
@@ -702,19 +675,15 @@ void cashReceipt::sAdd()
 {
   if(_mode == cNew)
   {
-    if (_custSelector->code() == "G")
+    if (_customerSelector->isSelectedGroup())
       sApply();
 
     if(!save(true))
       return;
   }
 
-  ParameterList params;
+  ParameterList params = getParams();
   params.append("mode", "new");
-  params.append("cashrcpt_id", _cashrcptid);
-  params.append("curr_id", _received->id());
-  params.append("effective", _received->effective());
-  params.append("custSelector", _custSelector->code());
 
   cashReceiptMiscDistrib newdlg(this, "", true);
 
@@ -726,12 +695,8 @@ void cashReceipt::sAdd()
 
 void cashReceipt::sEdit()
 {
-  ParameterList params;
+  ParameterList params = getParams();
   params.append("mode", "edit");
-  params.append("cashrcptmisc_id", _cashrcptmisc->id());
-  params.append("curr_id", _received->id());
-  params.append("effective", _received->effective());
-  params.append("custSelector", _custSelector->code());
 
   cashReceiptMiscDistrib newdlg(this, "", true);
   newdlg.set(params);
@@ -810,11 +775,7 @@ void cashReceipt::sSave()
 
     close();
   }
-  if (_custSelector->code() == "G")
-  {
-    updateCustomerGroup();
-    omfgThis->sCashReceiptsUpdated(1, true);
-  }
+  updateCustomerGroup();
 }
 
 bool cashReceipt::save(bool partial)
@@ -956,12 +917,10 @@ bool cashReceipt::save(bool partial)
   cashave.prepare(sql);
   cashave.bindValue(":cashrcpt_id", _cashrcptid);
   cashave.bindValue(":cashrcpt_number", _number->text());
-
-  if (_custSelector->code() == "G")
-    cashave.bindValue(":cashrcpt_custgrp_id", _custGrp->id());
-  else
-    cashave.bindValue(":cashrcpt_cust_id", _cust->id());
-
+  if (_customerSelector->isSelectedGroup())
+    cashave.bindValue(":cashrcpt_custgrp_id", _customerSelector->custGroupId());
+  else if (_customerSelector->isSelectedCust())
+    cashave.bindValue(":cashrcpt_cust_id", _customerSelector->custId());
   cashave.bindValue(":cashrcpt_amount", _received->localValue());
   cashave.bindValue(":cashrcpt_fundstype", _fundsType->code());
   cashave.bindValue(":cashrcpt_docnumber", _docNumber->text());
@@ -994,54 +953,25 @@ bool cashReceipt::save(bool partial)
   return true;
 }
 
-
-
-void cashReceipt::sPopulateCustomerInfo(int)
-{
-  if (_mode == cNew)
-  {
-    XSqlQuery cust;
-    cust.prepare("SELECT cust_curr_id FROM custinfo WHERE cust_id = :cust_id;");
-    cust.bindValue(":cust_id", _cust->id());
-    cust.exec();
-    if (cust.first())
-      _received->setId(cust.value("cust_curr_id").toInt());
-    else if (cust.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-
-  sFillApplyList();
-}
-
 void cashReceipt::sFillApplyList()
 {
-  if (_custSelector->code() == "G")
+  if (_customerSelector->isSelectedGroup())
   {
       _aropen->clear();
       grpFillApplyList();
       if (_mode == cNew)
         activateButtons();
   }
-  if (_cust->isValid())
+  if (_customerSelector->isSelectedCust() && _customerSelector->isValid())
   {
-    _cust->setReadOnly(true);
-
+    if (_mode == cNew)
+      activateButtons();
     _aropen->clear();
     MetaSQLQuery mql = mqlLoad("arOpenApplications", "detail");
-    ParameterList params;
-    params.append("cashrcpt_id", _cashrcptid);
-    params.append("cust_id",     _cust->id());
-    params.append("debitMemo",   tr("Debit Memo"));
-    params.append("invoice",     tr("Invoice"));
-    params.append("creditMemo",  tr("Credit Memo"));
-    params.append("cashdeposit", tr("Customer Deposit"));
+    ParameterList params = getParams();
     if (_posted)
       params.append("posted", true);
-    else if (!_credits->isChecked())
-      params.append("noCredits");
+
     XSqlQuery apply;
     apply = mql.toQuery(params);
     _aropen->populate(apply, true);
@@ -1168,7 +1098,7 @@ void cashReceipt::populate()
   cashpopulate.exec();
   if (cashpopulate.first())
   {
-    _cust->setId(cashpopulate.value("cashrcpt_cust_id").toInt());
+    _customerSelector->setCustId(cashpopulate.value("cashrcpt_cust_id").toInt());
     _number->setText(cashpopulate.value("cashrcpt_number").toString());
     _received->set(cashpopulate.value("cashrcpt_amount").toDouble(),
                    cashpopulate.value("cashrcpt_curr_id").toInt(),
@@ -1202,7 +1132,6 @@ void cashReceipt::populate()
 
     _origFunds = cashpopulate.value("cashrcpt_fundstype").toString();
     _fundsType->setCode(_origFunds);
-    _cust->setId(cashpopulate.value("cashrcpt_cust_id").toInt());
 
     sFillApplyList();
     sFillMiscList();
@@ -1293,7 +1222,7 @@ void cashReceipt::setCreditCard()
   }
 
   cashetCreditCard.prepare( "SELECT expireCreditCard(:cust_id, setbytea(:key)) AS result;");
-  cashetCreditCard.bindValue(":cust_id", _cust->id());
+  _customerSelector->bindValue(cashetCreditCard);
   cashetCreditCard.bindValue(":key", omfgThis->_key);
   cashetCreditCard.exec();
   if (cashetCreditCard.first())
@@ -1314,7 +1243,7 @@ void cashReceipt::setCreditCard()
 
   MetaSQLQuery mql = mqlLoad("creditCards", "detail");
   ParameterList params;
-  params.append("cust_id",    _cust->id());
+  params.append("cust_id", _customerSelector->custId());
   params.append("ccard_type", _fundsType->code());
   params.append("masterCard", tr("MasterCard"));
   params.append("visa",       tr("VISA"));
@@ -1338,7 +1267,7 @@ void cashReceipt::sNewCreditCard()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("cust_id", _cust->id());
+  _customerSelector->appendValue(params);
 
   creditCard newdlg(this, "", true);
   newdlg.set(params);
@@ -1352,7 +1281,7 @@ void cashReceipt::sEditCreditCard()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("cust_id", _cust->id());
+  _customerSelector->appendValue(params);
   params.append("ccard_id", _cc->id());
 
   creditCard newdlg(this, "", true);
@@ -1366,7 +1295,7 @@ void cashReceipt::sViewCreditCard()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("cust_id", _cust->id());
+  _customerSelector->appendValue(params);
   params.append("ccard_id", _cc->id());
 
   creditCard newdlg(this, "", true);

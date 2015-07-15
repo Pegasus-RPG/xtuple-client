@@ -45,6 +45,11 @@ arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::Window
   _aropenid = -1;
   _seqiss = 0;
 
+  _docType->append(0, tr("Credit Memo"),      "C");
+  _docType->append(1, tr("Debit Memo"),       "D");
+  _docType->append(2, tr("Invoice"),          "I");
+  _docType->append(3, tr("Customer Deposit"), "R");
+
   _arapply->addColumn(tr("Type"),            _dateColumn, Qt::AlignCenter,true, "doctype");
   _arapply->addColumn(tr("Doc. #"),                   -1, Qt::AlignLeft,  true, "docnumber");
   _arapply->addColumn(tr("Apply Date"),      _dateColumn, Qt::AlignCenter,true, "arapply_postdate");
@@ -94,19 +99,19 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
     if (param.toString() == "creditMemo")
     {
       setWindowTitle(windowTitle() + tr(" - Enter Misc. Credit Memo"));
-      _docType->setCurrentIndex(0);
+      _docType->setCode("C");
       _rsnCode->setType(XComboBox::ARCMReasonCodes);
     }
     else if (param.toString() == "debitMemo")
     {
       setWindowTitle(windowTitle() + tr(" - Enter Misc. Debit Memo"));
-      _docType->setCurrentIndex(1);
+      _docType->setCode("D");
       _rsnCode->setType(XComboBox::ARDMReasonCodes);
     }
     else if (param.toString() == "invoice")
-      _docType->setCurrentIndex(2);
+      _docType->setCode("I");
     else if (param.toString() == "customerDeposit")
-      _docType->setCurrentIndex(3);
+      _docType->setCode("R");
     else
       return UndefinedError;
 //  ToDo - better error return types
@@ -250,7 +255,7 @@ void arOpenItem::sSave()
       }
     }
 
-    if (_docType->currentIndex() == 0)
+    if (_docType->code() == "C")
     {
       arSave.prepare( "SELECT createARCreditMemo( :aropen_id, :cust_id, :aropen_docnumber, :aropen_ordernumber,"
                  "                           :aropen_docdate, :aropen_amount, :aropen_notes, :aropen_rsncode_id,"
@@ -259,7 +264,7 @@ void arOpenItem::sSave()
                  "                           NULL, :curr_id ) AS result;" );
       storedProc = "createARCreditMemo";
     }
-    else if (_docType->currentIndex() == 1)
+    else if (_docType->code() == "D")
     {
       arSave.prepare( "SELECT createARDebitMemo( :aropen_id,:cust_id, NULL, :aropen_docnumber, :aropen_ordernumber,"
                  "                          :aropen_docdate, :aropen_amount, :aropen_notes, :aropen_rsncode_id,"
@@ -317,24 +322,7 @@ void arOpenItem::sSave()
   else
     arSave.bindValue(":aropen_accnt_id", -1);
 
-  switch (_docType->currentIndex())
-  {
-    case 0:
-      arSave.bindValue(":aropen_doctype", "C");
-      break;
-
-    case 1:
-      arSave.bindValue(":aropen_doctype", "D");
-      break;
-
-    case 2:
-      arSave.bindValue(":aropen_doctype", "I");
-      break;
-
-    case 3:
-      arSave.bindValue(":aropen_doctype", "R");
-      break;
-  }
+  arSave.bindValue(":aropen_doctype", _docType->code());
 
   if (arSave.exec())
   {
@@ -516,14 +504,7 @@ void arOpenItem::populate()
     }
 
     QString docType = arpopulate.value("aropen_doctype").toString();
-    if (docType == "C")
-      _docType->setCurrentIndex(0);
-    else if (docType == "D")
-      _docType->setCurrentIndex(1);
-    else if (docType == "I")
-      _docType->setCurrentIndex(2);
-    else if (docType == "R")
-      _docType->setCurrentIndex(3);
+    _docType->setCode(docType);
 
     _cAmount = arpopulate.value("aropen_amount").toDouble();
 
@@ -707,10 +688,7 @@ void arOpenItem::sTaxDetail()
     ar.bindValue(":docDate", _docDate->date());
     ar.bindValue(":dueDate", _dueDate->date());
     ar.bindValue(":amount", _amount->localValue());
-    if (_docType->currentIndex())
-      ar.bindValue(":docType", "D" );
-    else
-      ar.bindValue(":docType", "C" );
+    ar.bindValue(":docType", _docType->code() );
     ar.bindValue(":docNumber", _docNumber->text());
     ar.bindValue(":currId", _amount->id());
     ar.exec();
@@ -727,7 +705,7 @@ void arOpenItem::sTaxDetail()
 
   params.append("curr_id", _tax->id());
   params.append("date",    _tax->effective());
-  if (!_docType->currentIndex())
+  if (_docType->code() == "C")
     params.append("sense",-1);
   if (_mode != cNew)
     params.append("readOnly");
@@ -741,8 +719,6 @@ void arOpenItem::sTaxDetail()
   params.append("display_type", "A");
   params.append("subtotal", _amount->localValue());
   params.append("adjustment");
-  if (!_docType->currentIndex())
-    params.append("sense",-1);
   if (newdlg.set(params) == NoError)  
   {
     newdlg.exec();
@@ -754,7 +730,7 @@ void arOpenItem::sTaxDetail()
     taxq.exec();
     if (taxq.first())
     {
-      if (!_docType->currentIndex())
+      if (_docType->code() == "C")
         _tax->setLocalValue(taxq.value("tax").toDouble() * -1);
       else
         _tax->setLocalValue(taxq.value("tax").toDouble());
