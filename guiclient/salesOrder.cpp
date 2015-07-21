@@ -2010,6 +2010,7 @@ void salesOrder::sConvertShipTo()
     _shipTo->blockSignals(true);
     _shipTo->setId(-1);
     _shipTo->setCustid(_cust->id());
+    _shipToName->clear();
     _shipTo->blockSignals(false);
   }
 }

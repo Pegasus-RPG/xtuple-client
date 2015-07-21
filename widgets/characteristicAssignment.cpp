@@ -196,14 +196,14 @@ int characteristicAssignment::set(const ParameterList &pParams)
 
 void characteristicAssignment::sSave()
 {
-  if(_d->targetType == "I")
+  if(_d->targetType == "I" || _d->targetType == "ITEMGRP")
   {
     if ( ((_stackedWidget->currentIndex() == CHARTEXT) && (_value->text().trimmed() == "")) ||
          ((_stackedWidget->currentIndex() == CHARLIST) && (_listValue->currentText() == "")) ||
          ((_stackedWidget->currentIndex() == CHARDATE) && (_dateValue->date().toString() == "")) )
       {
           QMessageBox::information( this, tr("No Value Entered"),
-                                    tr("You must enter a value before saving this Item Characteristic.") );
+                                    tr("You must enter a value before saving this Characteristic.") );
           return;
       }
   }
@@ -392,8 +392,17 @@ void characteristicAssignment::sHandleChar()
 
 void CharacteristicAssignmentPrivate::handleTargetType()
 {
-  if ((targetType == "I") || (targetType == "CT"))
+  QString charuseTargetType = targetType;
+
+  if (targetType == "I" || targetType == "ITEMGRP")
+  {
     _template=true;
+  }
+  else if (targetType == "CT")
+  {
+    _template=true;
+    charuseTargetType = "C"; // bug 25940
+  }
   else
     parent->_default->hide();
 
@@ -405,7 +414,7 @@ void CharacteristicAssignmentPrivate::handleTargetType()
   QSqlQueryModel *model = new QSqlQueryModel;
   model->setQuery("SELECT char_id, char_name, char_type"
                   "  FROM char JOIN charuse ON char_id = charuse_char_id"
-                  " WHERE charuse_target_type = '" + targetType + "'"
+                  " WHERE charuse_target_type = '" + charuseTargetType + "'"
                   " ORDER BY char_order, char_name");
   parent->_char->setModel(model);
   idCol   = model->query().record().indexOf("char_id");

@@ -239,14 +239,14 @@ bool scriptEditor::sSaveToDB()
     saveq.prepare( "INSERT INTO script "
                "(script_id, script_name, script_notes, script_order, script_enabled, script_source) "
                "VALUES "
-               "(DEFAULT, :script_name, :script_notes, :script_order, :script_enabled, E:script_source) "
+               "(DEFAULT, :script_name, :script_notes, :script_order, :script_enabled, :script_source) "
                "RETURNING script_id;" );
 
   else if (_mode == cEdit)
     saveq.prepare( "UPDATE script "
                "SET script_name=:script_name, script_notes=:script_notes,"
                "    script_order=:script_order, script_enabled=:script_enabled,"
-               "    script_source=E:script_source "
+               "    script_source=:script_source "
                "WHERE (script_id=:script_id) "
                "RETURNING script_id;" );
 
@@ -392,6 +392,10 @@ bool scriptEditor::saveFile(const QString &source,
 
   QTextStream ts(&file);
   ts.setCodec("UTF-8");
+#ifdef Q_OS_WIN
+  // bug #15457 Exporting script on windows does not write UTF BOM
+  ts.setGenerateByteOrderMark(true);
+#endif
   ts << source;
   file.close();
 
