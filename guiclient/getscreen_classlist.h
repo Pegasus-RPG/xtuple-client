@@ -1,6 +1,7 @@
 // generated 2009-04-30
 // grep "public X[Dialog,Widget]" *.h | awk '{print "CLASSITEM("$2")"}' > getscreen_classlist.h
 CLASSITEM(absoluteCalendarItem)
+CLASSITEM(account1099)
 CLASSITEM(accountingPeriod)
 CLASSITEM(accountingPeriods)
 CLASSITEM(accountingYearPeriod)
@@ -249,6 +250,7 @@ CLASSITEM(dspSummarizedBankrecHistory)
 CLASSITEM(dspSummarizedBOM)
 CLASSITEM(dspSummarizedGLTransactions)
 CLASSITEM(dspSummarizedSales)
+CLASSITEM(dspTax1099)
 CLASSITEM(dspTaxHistory)
 CLASSITEM(dspTimePhasedAvailability)
 CLASSITEM(dspTimePhasedBookings)

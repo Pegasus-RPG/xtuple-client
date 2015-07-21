@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>dspTax1099</class>
+ <widget class="QWidget" name="dspTax1099">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>824</width>
+    <height>553</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Info for 1099's</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>From Date:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>To Date:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="4">
+    <widget class="QWidget" name="widget_2" native="true"/>
+   </item>
+   <item row="10" column="0" colspan="5">
+    <widget class="QFrame" name="_frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="margin">
+       <number>0</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="_listLit">
+        <property name="text">
+         <string>Vendor Payment Information</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="XTreeWidget" name="_list">
+        <property name="populateLinear">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="11" column="0" colspan="2">
+    <widget class="QPushButton" name="_setaccnt">
+     <property name="text">
+      <string>Select Accounts</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="DLineEdit" name="_fromdate"/>
+   </item>
+   <item row="3" column="1">
+    <widget class="DLineEdit" name="_todate"/>
+   </item>
+   <item row="1" column="3">
+    <widget class="QRadioButton" name="_sum1099">
+     <property name="text">
+      <string>Summary 1099</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3">
+    <widget class="QRadioButton" name="_sumall">
+     <property name="text">
+      <string>Summary All</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <widget class="QRadioButton" name="_detail1099">
+     <property name="text">
+      <string>Detail 1099</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="4">
+    <widget class="QRadioButton" name="_detailall">
+     <property name="text">
+      <string>Detail All</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="4">
+    <widget class="QPushButton" name="_close">
+     <property name="text">
+      <string>Close</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QPushButton" name="_print">
+     <property name="text">
+      <string>Print</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QPushButton" name="_query">
+     <property name="text">
+      <string>Query</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="3" colspan="2">
+    <widget class="QPushButton" name="_chg1099">
+     <property name="text">
+      <string>Select Vendors</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QPushButton" name="_p1099">
+     <property name="text">
+      <string>1099</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QPushButton" name="_p1096">
+     <property name="text">
+      <string>1096</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DLineEdit</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

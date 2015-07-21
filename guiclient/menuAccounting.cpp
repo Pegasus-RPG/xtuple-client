@@ -118,6 +118,7 @@
 #include "taxAuthorities.h"
 #include "taxAssignments.h"
 #include "taxRegistrations.h"
+#include "dspTax1099.h"
 #include "dspTaxHistory.h"
 
 #include "reconcileBankaccount.h"
@@ -426,7 +427,8 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     // Accounting | Tax | Reports
     { "menu",			tr("&Reports"),	                (char*)taxReportsMenu,		taxMenu,	"true",			    NULL, NULL, true, NULL },
     { "gl.dspTaxHistory",	tr("&Tax History..."),           SLOT(sDspTaxHistory()),        taxReportsMenu, "ViewTaxReconciliations",   NULL, NULL, true, NULL },
-     
+    { "gl.dspTax1099",	tr("&Info for 1099..."),           SLOT(sDspTax1099()),           taxReportsMenu, "ViewTaxReconciliations",   NULL, NULL, true, NULL },
+    
     { "separator",		  NULL,					NULL,					mainMenu,		"true",					       NULL, NULL, true, NULL },
 
     // Accounting | Utilities
@@ -1043,6 +1045,11 @@ void menuAccounting::sTaxAssignments()
 void menuAccounting::sTaxRegistrations()
 {
   omfgThis->handleNewWindow(new taxRegistrations());
+}
+
+void menuAccounting::sDspTax1099()
+{
+  omfgThis->handleNewWindow(new dspTax1099());
 }
 
 void menuAccounting::sDspTaxHistory()
