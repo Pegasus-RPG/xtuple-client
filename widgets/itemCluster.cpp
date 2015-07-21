@@ -1132,20 +1132,13 @@ void itemList::sFillList()
   }
   else
   {
-      QString pre;
+      QString pre = "SELECT item_id, item_number,"
+                    "(item_descrip1 || ' ' || item_descrip2) AS itemdescrip, item_upccode ";;
       QString post;
       if(_x_preferences && _x_preferences->boolean("ListNumericItemNumbersFirst"))
-      {
-        pre =  "SELECT DISTINCT ON (toNumeric(item_number, 999999999999999), item_number) item_id, item_number,"
-               "(item_descrip1 || ' ' || item_descrip2) AS itemdescrip, item_upccode ";
-        post = "ORDER BY toNumeric(item_number, 999999999999999), item_number, item_upccode ";
-      }
+        post = "ORDER BY isNumeric(item_number) DESC, item_number, item_upccode ";
       else
-      {
-        pre =  "SELECT DISTINCT item_id, item_number,"
-               "(item_descrip1 || ' ' || item_descrip2) AS itemdescrip, item_upccode ";
         post = "ORDER BY item_number";
-      }
 
       QStringList clauses;
       clauses = _extraClauses;
