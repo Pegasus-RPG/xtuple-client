@@ -32,7 +32,7 @@ account1099::account1099(QWidget* parent, const char* name, Qt::WindowFlags fl)
 
   _list->addColumn(tr("Number"),          _orderColumn,  Qt::AlignLeft,     true,  "accnt_name"   );
   _list->addColumn(tr("Description"),     _orderColumn,  Qt::AlignLeft,     true,  "accnt_descrip"   );
-  _list->addColumn(tr("Include in 1099"), _orderColumn,  Qt::AlignCenter,   true,  "accnt1099_form_type"   );
+  _list->addColumn(tr("Include in 1099"), _orderColumn,  Qt::AlignCenter,   true,  "accnt_1099_form_type"   );
   
   sFillList();
 }
