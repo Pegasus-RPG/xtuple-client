@@ -1091,7 +1091,7 @@ Address:</source>
     </message>
     <message>
         <source>Account Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nombre de Cuenta</translation>
     </message>
 </context>
 <context>
@@ -1199,6 +1199,150 @@ Address:</source>
     </message>
     <message>
         <source>Public</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Pick a Document Type]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation type="unfinished">Dirección</translation>
+    </message>
+    <message>
+        <source>Breeder BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Breeder BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account</source>
+        <translation type="unfinished">Cuenta</translation>
+    </message>
+    <message>
+        <source>Contact</source>
+        <translation type="unfinished">Contacto</translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">Cliente</translation>
+    </message>
+    <message>
+        <source>Employee</source>
+        <translation type="unfinished">Empleado</translation>
+    </message>
+    <message>
+        <source>Incident</source>
+        <translation type="unfinished">Incidente</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation type="unfinished">Producto</translation>
+    </message>
+    <message>
+        <source>Item Site</source>
+        <translation type="unfinished">Sitio Producto</translation>
+    </message>
+    <message>
+        <source>Item Source</source>
+        <translation type="unfinished">Origen Producto</translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished">Ubicación</translation>
+    </message>
+    <message>
+        <source>Lot/Serial</source>
+        <translation type="unfinished">Lote/Serie</translation>
+    </message>
+    <message>
+        <source>Opportunity</source>
+        <translation type="unfinished">Oportunidad</translation>
+    </message>
+    <message>
+        <source>Project</source>
+        <translation type="unfinished">Proyecto</translation>
+    </message>
+    <message>
+        <source>Purchase Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Purchase Order Item</source>
+        <translation type="unfinished">Partida de Compra</translation>
+    </message>
+    <message>
+        <source>Return Authorization</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Return Authorization Item</source>
+        <translation type="unfinished">Partidas Devolución Autorizada</translation>
+    </message>
+    <message>
+        <source>Quote</source>
+        <translation type="unfinished">Cotización</translation>
+    </message>
+    <message>
+        <source>Quote Item</source>
+        <translation type="unfinished">Partida de Cotización</translation>
+    </message>
+    <message>
+        <source>Sales Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sales Order Item</source>
+        <translation type="unfinished">Partida de Orden Ventas</translation>
+    </message>
+    <message>
+        <source>Time Attendance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To-Do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order Item</source>
+        <translation type="unfinished">Partida O/T</translation>
+    </message>
+    <message>
+        <source>Vendor</source>
+        <translation type="unfinished">Proveedor</translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished">Sitio</translation>
+    </message>
+    <message>
+        <source>Work Order</source>
+        <translation type="unfinished">Orden de Trabajo</translation>
+    </message>
+    <message>
+        <source>Project Task</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2440,7 +2584,7 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Account Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nombre de Cuenta</translation>
     </message>
     <message>
         <source>&lt;p&gt;Are you sure you want to delete the selected merge records?&lt;/p&gt;&lt;p&gt;Note that obsolete Accounts will be deleted when purging completed merges.&lt;/p&gt;</source>
@@ -2483,7 +2627,7 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Account Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nombre de Cuenta</translation>
     </message>
     <message>
         <source>Error Getting Account</source>
@@ -4442,6 +4586,10 @@ Please immediately log out and contact your Systems Adminitrator.</source>
         <source>All User Accounts</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error Counting Users</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QueryItem</name>
@@ -5050,7 +5198,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Clave:</translation>
     </message>
 </context>
 <context>
@@ -8438,7 +8586,7 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Invoice Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fecha Factura</translation>
     </message>
     <message>
         <source>Due Date</source>
@@ -10728,7 +10876,7 @@ Si no, selecione NO y cambie la Cuenta Bancaria en el campo ASENTAR A</translati
     </message>
     <message>
         <source>You must enter a value before saving this Item Characteristic.</source>
-        <translation>Debe ingresar un valor antes de guardar esta Característica de Producto.</translation>
+        <translation type="obsolete">Debe ingresar un valor antes de guardar esta Característica de Producto.</translation>
     </message>
     <message>
         <source>No Value Entered</source>
@@ -10764,6 +10912,10 @@ Si no, selecione NO y cambie la Cuenta Bancaria en el campo ASENTAR A</translati
     </message>
     <message>
         <source>Error Getting Characteristic Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a value before saving this Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -15420,7 +15572,7 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>Item Sites:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ubicaciones Producto:</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -15428,7 +15580,7 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Quitar</translation>
     </message>
     <message>
         <source>Copying Bom</source>
@@ -19562,7 +19714,7 @@ Please check the values of these dates.</source>
     </message>
     <message>
         <source>Customer #:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cliente #:</translation>
     </message>
     <message>
         <source>Account...</source>
@@ -22716,7 +22868,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Ext. Price</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importe</translation>
     </message>
     <message>
         <source>Currency</source>
@@ -23166,7 +23318,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Costed Single Level Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lista de Materiales con Costos de un solo Nivel</translation>
     </message>
     <message>
         <source>Use Standard Costs</source>
@@ -23731,11 +23883,11 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Created By</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Creado por</translation>
     </message>
     <message>
         <source>Entered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ingresado</translation>
     </message>
     <message>
         <source>Entered By</source>
@@ -24419,7 +24571,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Expiration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vencimiento</translation>
     </message>
     <message>
         <source>View Transaction Information...</source>
@@ -26475,7 +26627,7 @@ Total</source>
     </message>
     <message>
         <source>Lot/Serial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lote/Serie</translation>
     </message>
 </context>
 <context>
@@ -27353,7 +27505,7 @@ Total</source>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fecha</translation>
     </message>
     <message>
         <source>Source</source>
@@ -31803,7 +31955,7 @@ Total</source>
     </message>
     <message>
         <source>Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Código de Clase</translation>
     </message>
     <message>
         <source>Ship Start Date</source>
@@ -32017,7 +32169,7 @@ Total</source>
     </message>
     <message>
         <source>Create Return Authorization...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Crear Autorizo Devolución…</translation>
     </message>
     <message>
         <source>No Lines</source>
@@ -43591,7 +43743,7 @@ You may not create duplicate Item Aliases.</source>
     </message>
     <message>
         <source>Inventory History</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Historial de Inventario</translation>
     </message>
     <message>
         <source>Receiving History</source>
@@ -44149,7 +44301,7 @@ You may not create duplicate Item Aliases.</source>
     </message>
     <message>
         <source>Currency Exchange Rate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tipo de Cambio de Moneda</translation>
     </message>
     <message>
         <source>Currency Exchange Rate not found.  You should correct before proceeding.</source>
@@ -46714,7 +46866,7 @@ Debajo encontrará más detalles del problema con la conección:
     </message>
     <message>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Clave:</translation>
     </message>
     <message>
         <source>Server:</source>
@@ -46868,7 +47020,7 @@ Debajo encontrará más detalles del problema con la conección:
     </message>
     <message>
         <source>Account#</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cuenta #</translation>
     </message>
 </context>
 <context>
@@ -59212,7 +59364,7 @@ You must Recall this Work Order before Rescheduling it.</source>
     </message>
     <message>
         <source>Expiration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vencimiento</translation>
     </message>
     <message>
         <source>This Reserved</source>
@@ -63251,7 +63403,7 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <source>Available</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Disponible</translation>
     </message>
     <message>
         <source>Order#</source>

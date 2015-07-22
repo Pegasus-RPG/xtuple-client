@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -494,8 +494,8 @@ int CreditCardProcessor::authorize(const int pccardid, const QString &pcvv, cons
   ParameterList dbupdateinfo;
   double amount = pamount;
   returnVal = doAuthorize(pccardid, pcvv, amount, ptax, ptaxexempt, pfreight, pduty, pcurrid, pneworder, preforder, pccpayid, dbupdateinfo);
-  if (returnVal == -70)
-    return -70;
+  if (returnVal == -70 || returnVal == -18)
+    return returnVal;
   else if (returnVal > 0)
     _errorMsg = errorMsg(4).arg(_errorMsg);
 
@@ -658,8 +658,8 @@ int CreditCardProcessor::charge(const int pccardid, const QString &pcvv, const d
 
   ParameterList dbupdateinfo;
   returnVal = doCharge(pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid, pneworder, preforder, pccpayid, dbupdateinfo);
-  if (returnVal == -72)
-    return -72;
+  if (returnVal == -72 || returnVal == -18)
+    return returnVal;
   else if (returnVal > 0)
     _errorMsg = errorMsg(4).arg(_errorMsg);
 
@@ -861,8 +861,8 @@ int CreditCardProcessor::chargePreauthorized(const QString &pcvv, const double p
 
   ParameterList dbupdateinfo;
   returnVal = doChargePreauthorized(ccardid, pcvv, pamount, pcurrid, pneworder, preforder, pccpayid, dbupdateinfo);
-  if (returnVal == -71)
-    return -71;
+  if (returnVal == -71 || returnVal == -18)
+    return returnVal;
   else if (returnVal > 0)
     _errorMsg = errorMsg(4).arg(_errorMsg);
 
@@ -1300,8 +1300,8 @@ int CreditCardProcessor::reversePreauthorized(const double pamount, const int pc
                                          ccq.value("ccpay_curr_id").toInt(),
                                          neworder, reforder,
                                          pccpayid, dbupdateinfo);
-  if (returnVal == -74)
-    return -74;
+  if (returnVal == -74 || returnVal == -18)
+    return returnVal;
   else if (returnVal < 0)
     return returnVal;
   else if (returnVal > 0)
@@ -1340,7 +1340,7 @@ int CreditCardProcessor::reversePreauthorized(const double pamount, const int pc
                    "    cashrcpt_fundstype=ccpay_cardtype,"
                    "    cashrcpt_bankaccnt_id=ccbank_bankaccnt_id,"
                    "    cashrcpt_distdate=CURRENT_DATE,"
-                   "    cashrcpt_notes=cashrcpt || E'\\n' || :notes, "
+                   "    cashrcpt_notes=cashrcpt || '\n' || :notes, "
                    "    cashrcpt_curr_id=:curr_id,"
                    "    cashrcpt_usecustdeposit=:custdeposit "
                    "  FROM ccpay"
@@ -1447,8 +1447,8 @@ int CreditCardProcessor::voidPrevious(int &pccpayid)
 				 ccq.value("ccpay_curr_id").toInt(),
 				 neworder, reforder, approval,
                                  pccpayid, dbupdateinfo);
-  if (returnVal == -74)
-    return -74;
+  if (returnVal == -74 || returnVal == -18)
+    return returnVal;
   else if (returnVal < 0)
     return returnVal;
   else if (returnVal > 0)
@@ -1916,13 +1916,13 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
     // TODO: why have a hard-coded path to curl?
     QProcess proc(this);
     QString curl_path;
-  #ifdef Q_OS_WIN
-    curl_path = qApp->applicationDirPath() + "\\curl";
-  #elif defined Q_OS_MAC
+#ifdef Q_OS_WIN
+    curl_path = qApp->applicationDirPath() + "/curl.exe";
+#elif defined Q_OS_MAC
     curl_path = "/usr/bin/curl";
-  #elif defined Q_OS_LINUX
+#elif defined Q_OS_LINUX
     curl_path = "/usr/bin/curl";
-  #endif
+#endif
     QFileInfo checkCurl(curl_path);
     if(!checkCurl.isExecutable())
     {

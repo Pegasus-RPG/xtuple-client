@@ -337,21 +337,23 @@ int main(int argc, char *argv[])
   {
     _splash->showMessage(QObject::tr("Checking License Key"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
-	
-    metric.exec(
-      QString(
-        "SELECT"
-        "   numOfDatabaseUsers('%1') AS xt_client_count,"
-        "   numOfServerUsers() as total_client_count"
-      ).arg(_ConnAppName)
-    );
 
     int cnt = 50000;
     int tot = 50000;
+
+    metric.prepare("SELECT numOfDatabaseUsers(:appName) AS xt_client_count,"
+                   "       numOfServerUsers() as total_client_count;");
+    metric.bindValue(":appName", _ConnAppName);
+    metric.exec();
     if(metric.first())
     {        
       cnt = metric.value("xt_client_count").toInt();
       tot = metric.value("total_client_count").toInt();
+    }
+    else
+    {
+      ErrorReporter::error(QtCriticalMsg, 0, QObject::tr("Error Counting Users"),
+                           metric, __FILE__, __LINE__);
     }
     metric.exec("SELECT packageIsEnabled('drupaluserinfo') AS result;");
     bool xtweb = false;
@@ -452,7 +454,7 @@ int main(int argc, char *argv[])
       metric.exec("SELECT current_database() AS db;");
       QString db = "";
       QString dbname = _metrics->value("DatabaseName");
-      QString name   = _metrics->value("remotto_name");
+      QString name   = _metrics->value("remitto_name");
       if(metric.first())
       {
         db = metric.value("db").toString();
@@ -811,16 +813,11 @@ int main(int argc, char *argv[])
                   "transactions in the system.") );
 
 //  Check for valid current exchange rates
-  XSqlQuery xrateCheck;
-  xrateCheck.prepare("SELECT EXISTS(SELECT 1 FROM( "
-            "     SELECT curr_abbr, "
-            "    (SELECT true FROM curr_rate cr "
-            "      WHERE ((cr.curr_id = cs.curr_id) "
-            "      AND (current_date BETWEEN curr_effective AND curr_expires))) as active "
-            "  FROM curr_symbol cs) foo "
-            "  WHERE active IS NULL) AS result; ");
-  xrateCheck.exec();
-  if(xrateCheck.first() && xrateCheck.value("result").toBool() == true)
+  XSqlQuery xrateCheck("SELECT curr_abbr"
+	          "  FROM curr_symbol s JOIN curr_rate r ON s.curr_id = r.curr_id"
+	          "  GROUP BY curr_abbr"
+	          "  HAVING NOT BOOL_OR(current_date BETWEEN curr_effective AND curr_expires);");
+  if (xrateCheck.first())
     QMessageBox::warning( omfgThis, QObject::tr("Additional Configuration Required"),
       QObject::tr("<p>Your system has alternate currencies without exchange rates "
                   "entered for the current date. "
