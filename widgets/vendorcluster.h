@@ -28,7 +28,6 @@ class QMouseEvent;
 #define __activeVendorss 0x02
 
 #define CRMACCT_ID      6
-#define ISVENDOR        7
 
 class XTUPLEWIDGETS_EXPORT VendorLineEdit : public VirtualClusterLineEdit
 {
