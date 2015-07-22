@@ -1502,6 +1502,7 @@ void XTreeWidget::sShowMenu(const QPoint &pntThis)
       copyMenu->addAction(tr("All"),  this, SLOT(sCopyVisibleToClipboard()));
       copyMenu->addAction(tr("Row"),  this, SLOT(sCopyRowToClipboard()));
       copyMenu->addAction(tr("Cell"),  this, SLOT(sCopyCellToClipboard()));
+      copyMenu->addAction(tr("Column"),this, SLOT(sCopyColumnToClipboard()));
       _menu->addSeparator();
       _menu->addAction(tr("Export As..."),  this, SLOT(sExport()));
     }
@@ -2275,6 +2276,38 @@ void XTreeWidget::sCopyVisibleToClipboard()
     mime->setText(toTxt());
   else
     mime->setHtml(toHtml());
+  clipboard->setMimeData(mime);
+}
+
+void XTreeWidget::sCopyColumnToClipboard()
+{
+  QTextEdit       text;
+  QMimeData       *mime      = new QMimeData();
+  QClipboard      *clipboard = QApplication::clipboard();
+  QString line;
+  QString opText = line + "\r";
+
+  XTreeWidgetItem *item = topLevelItem(0);
+  if (item)
+  {
+    QModelIndex idx = indexFromItem(item);
+    while (idx.isValid())
+    {
+      item = (XTreeWidgetItem *)itemFromIndex(idx);
+      if (item)
+      {
+        line = "";
+        line = line + item->text(currentColumn()) + "\t";
+      }
+      opText = opText + line + "\r\n";
+      idx    = indexBelow(idx);
+    }
+  }
+  text.setText(opText);
+  if (_x_preferences->boolean("CopyListsPlainText"))
+    mime->setText(text.toPlainText());
+  else
+    mime->setHtml(text.toHtml());
   clipboard->setMimeData(mime);
 }
 
