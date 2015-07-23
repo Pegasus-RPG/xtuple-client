@@ -254,26 +254,12 @@ void checkForUpdates::downloadFinished()
 {
   if (DEBUG) qDebug() << "downloadFinished() entered";
 
-    if(downloadRequestAborted)
-    {
-        if(file)
-        {
-            file->close();
-            file->remove();
-            delete file;
-            file = 0;
-        }
-        reply->deleteLater();
-        progressDialog->hide();
-        _ok->setEnabled(true);
-        return;
-    }
-
+  if(!downloadRequestAborted)
+  {
     downloadReadyRead();
     progressDialog->hide();
     _ok->setEnabled(true);
     file->flush();
-    file->close();
 
     if(reply->error())
     {
@@ -286,10 +272,21 @@ void checkForUpdates::downloadFinished()
 
     reply->deleteLater();
     reply = 0;
-
+  }
+  else
+  {
+    reply->deleteLater();
+    progressDialog->hide();
+    _ok->setEnabled(true);
+    return;
+  }
+  if(file)
+  {
+    file->close();
+    file->remove();
     delete file;
     file = 0;
-
+  }
   if (DEBUG) qDebug() << "downloadFinished() returning";
 }
 
