@@ -2284,30 +2284,20 @@ void XTreeWidget::sCopyColumnToClipboard()
   QTextEdit       text;
   QMimeData       *mime      = new QMimeData();
   QClipboard      *clipboard = QApplication::clipboard();
-  QString line;
-  QString opText = line + "\r";
-
+  QString opText = "";
   XTreeWidgetItem *item = topLevelItem(0);
   if (item)
   {
-    QModelIndex idx = indexFromItem(item);
-    while (idx.isValid())
+    for (QModelIndex idx = indexFromItem(item); idx.isValid(); idx = indexBelow(idx))
     {
       item = (XTreeWidgetItem *)itemFromIndex(idx);
       if (item)
-      {
-        line = "";
-        line = line + item->text(currentColumn()) + "\t";
-      }
-      opText = opText + line + "\r\n";
-      idx    = indexBelow(idx);
+        opText = opText + item->text(currentColumn()) + "\t\r\n";
     }
   }
   text.setText(opText);
-  if (_x_preferences->boolean("CopyListsPlainText"))
-    mime->setText(text.toPlainText());
-  else
-    mime->setHtml(text.toHtml());
+  mime->setText(text.toPlainText());
+  mime->setHtml(text.toHtml());
   clipboard->setMimeData(mime);
 }
 
@@ -2346,8 +2336,7 @@ QString XTreeWidget::toTxt() const
   XTreeWidgetItem *item = topLevelItem(0);
   if (item)
   {
-    QModelIndex idx = indexFromItem(item);
-    while (idx.isValid())
+    for (QModelIndex idx = indexFromItem(item); idx.isValid(); idx = indexBelow(idx))
     {
       item = (XTreeWidgetItem *)itemFromIndex(idx);
       if (item)
@@ -2360,7 +2349,6 @@ QString XTreeWidget::toTxt() const
         }
       }
       opText = opText + line + "\r\n";
-      idx    = indexBelow(idx);
     }
   }
   return opText;
@@ -2389,8 +2377,7 @@ QString XTreeWidget::toCsv() const
   XTreeWidgetItem *item = topLevelItem(0);
   if (item)
   {
-    QModelIndex idx = indexFromItem(item);
-    while (idx.isValid())
+    for (QModelIndex idx = indexFromItem(item); idx.isValid(); idx = indexBelow(idx))
     {
       colcount = 0;
       item     = (XTreeWidgetItem *)itemFromIndex(idx);
@@ -2413,7 +2400,6 @@ QString XTreeWidget::toCsv() const
         }
       }
       opText = opText + line + "\r\n";
-      idx    = indexBelow(idx);
     }
   }
   return opText;
@@ -2541,13 +2527,11 @@ QString XTreeWidget::toHtml() const
   XTreeWidgetItem *item = topLevelItem(0);
   if (item)
   {
-    QModelIndex idx = indexFromItem(item);
-    while (idx.isValid())
+    for (QModelIndex idx = indexFromItem(item); idx.isValid(); idx = indexBelow(idx))
     {
       item = (XTreeWidgetItem *)itemFromIndex(idx);
       if (item)
         rowcnt++;
-      idx = indexBelow(idx);
     }
   }
 
@@ -2569,8 +2553,7 @@ QString XTreeWidget::toHtml() const
   item = topLevelItem(0);
   if (item)
   {
-    QModelIndex idx = indexFromItem(item);
-    while (idx.isValid())
+    for (QModelIndex idx = indexFromItem(item); idx.isValid(); idx = indexBelow(idx))
     {
       item = (XTreeWidgetItem *)itemFromIndex(idx);
       if (item)
@@ -2599,7 +2582,6 @@ QString XTreeWidget::toHtml() const
           }
         }
       }
-      idx = indexBelow(idx);
     }
   }
   return doc->toHtml();
