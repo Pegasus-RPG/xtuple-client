@@ -32,20 +32,20 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
   _listPrices->setMaximumWidth(25);
 #endif
 
-  connect(_discountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateFromDiscount()));
-  connect(_extendedPrice, SIGNAL(valueChanged()), this, SLOT(sCalculateTax()));
-  connect(_item,	  SIGNAL(newId(int)),     this, SLOT(sPopulateItemInfo()));
-  connect(_warehouse,	  SIGNAL(newID(int)),     this, SLOT(sPopulateItemsiteInfo()));
-  connect(_listPrices,	  SIGNAL(clicked()),      this, SLOT(sListPrices()));
-  connect(_netUnitPrice,  SIGNAL(valueChanged()), this, SLOT(sCalculateDiscountPrcnt()));
-  connect(_netUnitPrice,  SIGNAL(valueChanged()), this, SLOT(sCalculateExtendedPrice()));
-  connect(_netUnitPrice,  SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
-  connect(_qtyToCredit,	  SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateExtendedPrice()));
-  connect(_save,	  SIGNAL(clicked()),      this, SLOT(sSave()));
-  connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
-  connect(_taxType,	  SIGNAL(newID(int)),	  this, SLOT(sCalculateTax()));
-  connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
-  connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+  connect(_discountFromSale, SIGNAL(editingFinished()),              this, SLOT(sCalculateFromDiscount()));
+  connect(_extendedPrice,    SIGNAL(valueChanged()),                 this, SLOT(sCalculateTax()));
+  connect(_item,	           SIGNAL(newId(int)),                     this, SLOT(sPopulateItemInfo()));
+  connect(_warehouse,	       SIGNAL(newID(int)),                     this, SLOT(sPopulateItemsiteInfo()));
+  connect(_listPrices,	     SIGNAL(clicked()),                      this, SLOT(sListPrices()));
+  connect(_netUnitPrice,     SIGNAL(valueChanged()),                 this, SLOT(sCalculateDiscountPrcnt()));
+  connect(_netUnitPrice,     SIGNAL(valueChanged()),                 this, SLOT(sCalculateExtendedPrice()));
+  connect(_netUnitPrice,     SIGNAL(idChanged(int)),                 this, SLOT(sPriceGroup()));
+  connect(_qtyToCredit,	     SIGNAL(textChanged(const QString&)),    this, SLOT(sCalculateExtendedPrice()));
+  connect(_save,	           SIGNAL(clicked()),                      this, SLOT(sSave()));
+  connect(_taxLit,           SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
+  connect(_taxType,	         SIGNAL(newID(int)),	                   this, SLOT(sCalculateTax()));
+  connect(_qtyUOM,           SIGNAL(newID(int)),                     this, SLOT(sQtyUOMChanged()));
+  connect(_pricingUOM,       SIGNAL(newID(int)),                     this, SLOT(sPriceUOMChanged()));
 
   _mode = cNew;
   _cmitemid = -1;
@@ -359,37 +359,7 @@ void creditMemoItem::sSave()
 void creditMemoItem::sPopulateItemInfo()
 {
   // Get list of active, valid Selling UOMs
-  MetaSQLQuery muom = mqlLoad("uoms", "item");
-
-  ParameterList params;
-  params.append("uomtype", "Selling");
-  params.append("item_id", _item->id());
-
-  // Also have to factor UOMs previously used on Return now inactive
-  if (_cmitemid != -1)
-  {
-    XSqlQuery cmuom;
-    cmuom.prepare("SELECT cmitem_qty_uom_id, cmitem_price_uom_id "
-                "  FROM cmitem"
-                " WHERE(cmitem_id=:cmitem_id);");
-    cmuom.bindValue(":cmitem_id", _cmitemid);
-    cmuom.exec();
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Returns UOMs"),
-                         cmuom, __FILE__, __LINE__))
-      return;
-    else if (cmuom.first())
-    {
-      params.append("uom_id", cmuom.value("cmitem_qty_uom_id"));
-      params.append("uom_id2", cmuom.value("cmitem_price_uom_id"));
-    }
-  }
-  XSqlQuery uom = muom.toQuery(params);
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting UOMs"),
-                         uom, __FILE__, __LINE__))
-    return;
-
-  _qtyUOM->populate(uom);
-  _pricingUOM->populate(uom);
+  sPopulateUOM();
 
   XSqlQuery item;
   item.prepare( "SELECT item_inv_uom_id, item_price_uom_id,"
@@ -425,17 +395,17 @@ void creditMemoItem::sPopulateItemInfo()
   if (_invoiceNumber != -1)
   {
     XSqlQuery cmitem;
-    cmitem.prepare( "SELECT invcitem_warehous_id,"
-                    "       invcitem_qty_uom_id, invcitem_qty_invuomratio,"
-                    "       invcitem_price_uom_id, invcitem_price_invuomratio,"
-                    "       invcitem_billed * invcitem_qty_invuomratio AS f_billed,"
-                    "       currToCurr(invchead_curr_id, :curr_id, "
-		    "                  invcitem_price / invcitem_price_invuomratio, invchead_invcdate) AS invcitem_price_local "
-                    "FROM invchead, invcitem "
-                    "WHERE ( (invcitem_invchead_id=invchead_id)"
-                    " AND (invchead_invcnumber=text(:invoiceNumber))"
-                    " AND (invcitem_item_id=:item_id) ) "
-                    "LIMIT 1;" );
+    cmitem.prepare("SELECT invcitem_warehous_id,"
+                   "       invcitem_qty_uom_id, invcitem_qty_invuomratio,"
+                   "       invcitem_price_uom_id, invcitem_price_invuomratio,"
+                   "       invcitem_billed * invcitem_qty_invuomratio AS f_billed,"
+                   "       currToCurr(invchead_curr_id, :curr_id, "
+                   "                  invcitem_price / invcitem_price_invuomratio, invchead_invcdate) AS invcitem_price_local "
+                   "FROM invchead, invcitem "
+                   "WHERE ( (invcitem_invchead_id=invchead_id)"
+                   " AND (invchead_invcnumber=text(:invoiceNumber))"
+                   " AND (invcitem_item_id=:item_id) ) "
+                   "LIMIT 1;" );
     cmitem.bindValue(":invoiceNumber", _invoiceNumber);
     cmitem.bindValue(":item_id", _item->id());
     cmitem.bindValue(":curr_id", _netUnitPrice->id());
@@ -748,8 +718,92 @@ void creditMemoItem::sTaxDetail()
   }
 }
 
+void creditMemoItem::sPopulateUOM()
+{
+  if (_item->id() != -1)
+  {
+    // Get list of active, valid Selling UOMs
+    MetaSQLQuery muom = mqlLoad("uoms", "item");
+    
+    ParameterList params;
+    params.append("uomtype", "Selling");
+    params.append("item_id", _item->id());
+    
+    // Include Global UOMs
+    if (_privileges->check("MaintainUOMs"))
+    {
+      params.append("includeGlobal", true);
+      params.append("global", tr("-Global"));
+    }
+    
+    // Also have to factor UOMs previously used on Return now inactive
+    if (_cmitemid != -1)
+    {
+      XSqlQuery cmuom;
+      cmuom.prepare("SELECT cmitem_qty_uom_id, cmitem_price_uom_id "
+                    "  FROM cmitem"
+                    " WHERE(cmitem_id=:cmitem_id);");
+      cmuom.bindValue(":cmitem_id", _cmitemid);
+      cmuom.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Return UOMs"),
+                               cmuom, __FILE__, __LINE__))
+        return;
+      else if (cmuom.first())
+      {
+        params.append("uom_id", cmuom.value("cmitem_qty_uom_id"));
+        params.append("uom_id2", cmuom.value("cmitem_price_uom_id"));
+      }
+    }
+    
+    XSqlQuery uom = muom.toQuery(params);
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting UOMs"),
+                             uom, __FILE__, __LINE__))
+      return;
+    
+    _qtyUOM->populate(uom);
+    _pricingUOM->populate(uom);
+  }
+}
+
 void creditMemoItem::sQtyUOMChanged()
 {
+  // Check for Global UOM Conversion that must be setup for Item
+  if (_qtyUOM->code() == "G")
+  {
+    if (QMessageBox::question(this, tr("Use Global UOM?"),
+                              tr("<p>This Global UOM Conversion is not setup for this Item."
+                                 "<p>Do you want to add this UOM conversion to this Item?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+    {
+      // create itemuomconv and itemuom
+      XSqlQuery adduom;
+      adduom.prepare("SELECT createItemUomConv(:item_id, :uom_id, :uom_type) AS result;");
+      adduom.bindValue(":item_id", _item->id());
+      adduom.bindValue(":uom_id", _qtyUOM->id());
+      adduom.bindValue(":uom_type", "Selling");
+      adduom.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Creating Item UOM Conv"),
+                               adduom, __FILE__, __LINE__))
+        return;
+      
+      // repopulate uom comboboxes
+      int saveqtyuomid = _qtyUOM->id();
+      int savepriceuomid = _pricingUOM->id();
+      disconnect(_qtyUOM,     SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+      disconnect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+      sPopulateUOM();
+      _qtyUOM->setId(saveqtyuomid);
+      _pricingUOM->setId(savepriceuomid);
+      connect(_qtyUOM,     SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+      connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+    }
+    else
+    {
+      _qtyUOM->setId(_invuomid);
+    }
+  }
+  
   if(_qtyUOM->id() == _invuomid)
     _qtyinvuomratio = 1.0;
   else
@@ -782,6 +836,42 @@ void creditMemoItem::sPriceUOMChanged()
   if(_pricingUOM->id() == -1 || _qtyUOM->id() == -1)
     return;
 
+  // Check for Global UOM Conversion that must be setup for Item
+  if (_pricingUOM->code() == "G")
+  {
+    if (QMessageBox::question(this, tr("Use Global UOM?"),
+                              tr("<p>This Global UOM Conversion is not setup for this Item."
+                                 "<p>Do you want to add this UOM conversion to this Item?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+    {
+      XSqlQuery adduom;
+      adduom.prepare("SELECT createItemUomConv(:item_id, :uom_id, :uom_type) AS result;");
+      adduom.bindValue(":item_id", _item->id());
+      adduom.bindValue(":uom_id", _pricingUOM->id());
+      adduom.bindValue(":uom_type", "Selling");
+      adduom.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Creating Item UOM Conv"),
+                               adduom, __FILE__, __LINE__))
+        return;
+      
+      // repopulate uom comboboxes
+      int saveqtyuomid = _qtyUOM->id();
+      int savepriceuomid = _pricingUOM->id();
+      disconnect(_qtyUOM,     SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+      disconnect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+      sPopulateUOM();
+      _qtyUOM->setId(saveqtyuomid);
+      _pricingUOM->setId(savepriceuomid);
+      connect(_qtyUOM,     SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+      connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+    }
+    else
+    {
+      _pricingUOM->setId(_invuomid);
+    }
+  }
+  
   if(_pricingUOM->id() == _invuomid)
     _priceinvuomratio = 1.0;
   else

@@ -48,6 +48,7 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   connect(_editCost, SIGNAL(clicked()), this, SLOT(sEditCost()));
   connect(_deleteCost, SIGNAL(clicked()), this, SLOT(sDeleteCost()));
   connect(_char, SIGNAL(activated(int)), this, SLOT(sCharIdChanged()));
+  connect(_uom, SIGNAL(newID(int)), this, SLOT(sUOMChanged()));
 
   _item->setType(ItemLineEdit::cGeneralComponents);
 
@@ -81,6 +82,7 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
       _itemcost->hideColumn(6);
   }
 
+  _invuomid=-1;
   _parentitemid=0;
   _bomheadid=0;
   _saved=false;
@@ -466,6 +468,81 @@ void bomItem::sItemTypeChanged(const QString &type)
   }
 }
 
+void bomItem::sPopulateUOM()
+{
+  if (_item->id() != -1)
+  {
+    // Get list of active, valid Material Issue UOMs
+    MetaSQLQuery muom = mqlLoad("uoms", "item");
+    
+    ParameterList params;
+    params.append("uomtype", "MaterialIssue");
+    params.append("item_id", _item->id());
+    
+    // Include Global UOMs
+    if (_privileges->check("MaintainUOMs"))
+    {
+      params.append("includeGlobal", true);
+      params.append("global", tr("-Global"));
+    }
+    
+    // Also have to factor UOMs previously used on BOM Item now inactive
+    if (_bomitemid != -1)
+    {
+      XSqlQuery bomuom;
+      bomuom.prepare("SELECT bomitem_uom_id "
+                     "  FROM bomitem"
+                     " WHERE(bomitem_id=:bomitem_id);");
+      bomuom.bindValue(":bomitem_id", _bomitemid);
+      bomuom.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting BOM Item UOMs"),
+                               bomuom, __FILE__, __LINE__))
+        return;
+      else if (bomuom.first())
+        params.append("uom_id", bomuom.value("bomitem_uom_id"));
+    }
+
+    XSqlQuery quom = muom.toQuery(params);
+    _uom->populate(quom);
+  }
+}
+
+void bomItem::sUOMChanged()
+{
+  // Check for Global UOM Conversion that must be setup for Item
+  if (_uom->code() == "G")
+  {
+    if (QMessageBox::question(this, tr("Use Global UOM?"),
+                              tr("<p>This Global UOM Conversion is not setup for this Item."
+                                 "<p>Do you want to add this UOM conversion to this Item?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+    {
+      // create itemuomconv and itemuom
+      XSqlQuery adduom;
+      adduom.prepare("SELECT createItemUomConv(:item_id, :uom_id, :uom_type) AS result;");
+      adduom.bindValue(":item_id", _item->id());
+      adduom.bindValue(":uom_id", _uom->id());
+      adduom.bindValue(":uom_type", "MaterialIssue");
+      adduom.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Creating Item UOM Conv"),
+                               adduom, __FILE__, __LINE__))
+        return;
+      
+      // repopulate uom combobox
+      int saveuomid = _uom->id();
+      disconnect(_uom, SIGNAL(newID(int)), this, SLOT(sUOMChanged()));
+      sPopulateUOM();
+      _uom->setId(saveuomid);
+      connect(_uom, SIGNAL(newID(int)), this, SLOT(sUOMChanged()));
+    }
+    else
+    {
+      _uom->setId(_invuomid);
+    }
+  }
+}
+
 void bomItem::populate()
 {
   XSqlQuery qbomitem;
@@ -625,14 +702,8 @@ void bomItem::sItemIdChanged()
       ErrorReporter::error(QtCriticalMsg, this, tr("Item Job cost check"),
                            qry, __FILE__, __LINE__);
 
-  MetaSQLQuery muom = mqlLoad("uoms", "item");
-
-  ParameterList params;
-  params.append("uomtype", "MaterialIssue");
-  params.append("item_id", _item->id());
-
-  XSqlQuery quom = muom.toQuery(params);
-  _uom->populate(quom);
+  // Get list of active, valid Material Issue UOMs
+  sPopulateUOM();
 
   XSqlQuery qitem;
   qitem.prepare("SELECT item_inv_uom_id, item_type "
@@ -642,7 +713,8 @@ void bomItem::sItemIdChanged()
   qitem.exec();
   if(qitem.first())
   {
-    _uom->setId(qitem.value("item_inv_uom_id").toInt());
+    _invuomid = qitem.value("item_inv_uom_id").toInt();
+    _uom->setId(_invuomid);
     if (qitem.value("item_type").toString() != "T" && qitem.value("item_type").toString() != "R")
     {
       if (_qtyPer->text().length() == 0)

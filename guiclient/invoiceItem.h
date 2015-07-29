@@ -40,6 +40,7 @@ public slots:
     virtual void sLookupTax();
     virtual void sPriceGroup();
     virtual void sTaxDetail();
+    virtual void sPopulateUOM();
     virtual void sQtyUOMChanged();
     virtual void sPriceUOMChanged();
     virtual void sMiscSelected(bool);

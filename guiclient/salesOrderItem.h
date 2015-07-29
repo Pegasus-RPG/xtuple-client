@@ -76,6 +76,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void        sCancel();
     virtual void        sLookupTax();
     virtual void        sTaxDetail();
+    virtual void        sPopulateUOM();
     virtual void        sQtyUOMChanged();
     virtual void        sPriceUOMChanged();
     virtual void        sCalcUnitCost();
