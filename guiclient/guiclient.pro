@@ -86,6 +86,7 @@ MOC_DIR     = moc
 UI_DIR      = ui
 
 FORMS =   absoluteCalendarItem.ui               \
+          account1099.ui                        \
           accountNumber.ui                      \
           accountNumbers.ui                     \
           accountingPeriod.ui                   \
@@ -247,6 +248,7 @@ FORMS =   absoluteCalendarItem.ui               \
           dspFinancialReport.ui                         \
           dspInvoiceInformation.ui                      \
           dspMRPDetail.ui                               \
+          dspTax1099.ui                              \
           dspTaxHistory.ui                              \
           duplicateAccountNumbers.ui            \
           editOwners.ui                 \
@@ -639,6 +641,7 @@ FORMS =   absoluteCalendarItem.ui               \
 HEADERS = ../common/format.h                    \
           SaveSizePositionEventFilter.h         \
           absoluteCalendarItem.h                \
+          account1099.h                         \
           accountNumber.h                       \
           accountNumbers.h                      \
           accountingPeriod.h                    \
@@ -809,6 +812,7 @@ HEADERS = ../common/format.h                    \
           dspFinancialReport.h                          \
           dspInvoiceInformation.h                       \
           dspMRPDetail.h                                \
+          dspTax1099.h                              \
           dspTaxHistory.h                               \
           duplicateAccountNumbers.h             \
           editOwners.h                          \
@@ -1251,6 +1255,7 @@ HEADERS = ../common/format.h                    \
     printStatementsByCustomerGroup.h
 
 SOURCES = absoluteCalendarItem.cpp              \
+          account1099.cpp                       \
           accountNumber.cpp                     \
           accountNumbers.cpp                    \
           accountingPeriod.cpp                  \
@@ -1421,6 +1426,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspFinancialReport.cpp                        \
           dspInvoiceInformation.cpp                     \
           dspMRPDetail.cpp                              \
+          dspTax1099.cpp                              \
           dspTaxHistory.cpp                             \
           duplicateAccountNumbers.cpp           \
           editOwners.cpp                        \
