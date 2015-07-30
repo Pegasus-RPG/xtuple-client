@@ -18,6 +18,15 @@
 #include "contactcluster.h"
 #include "ui_vendor.h"
 
+class ParameterList;
+
+class dspCheckRegister;
+class dspPOsByVendor;
+class dspPoItemReceivingsByVendor;
+class dspVendorAPHistory;
+class unappliedAPCreditMemos;
+class selectPayments;
+
 class vendor : public XWidget, public Ui::vendor
 {
     Q_OBJECT
@@ -31,8 +40,11 @@ public:
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
-    virtual void sSave();
+    virtual void setId(int);
+    virtual bool sSave();
+    virtual void sSaveClicked();
     virtual void sCheck();
+    virtual bool sCheckRequired();
     virtual bool sPopulate();
     virtual void sPrintAddresses();
     virtual void sNewAddress();
@@ -53,6 +65,8 @@ public slots:
     virtual void sPrevious();
 
     virtual void clear();
+    virtual void sNumberEditable(bool);
+    virtual void sPrepare();
 
 signals:
     void populated();
@@ -68,8 +82,14 @@ protected slots:
 
 protected:
     virtual void closeEvent(QCloseEvent*);
-    QValidator *_accountValidator;
-    QValidator *_routingValidator;
+    QValidator                  *_accountValidator;
+    QValidator                  *_routingValidator;
+    unappliedAPCreditMemos      *_credits;
+    selectPayments              *_payables;
+    dspPOsByVendor              *_po;
+    dspPoItemReceivingsByVendor *_receipts;
+    dspVendorAPHistory          *_history;
+    dspCheckRegister            *_checks;
 
 private:
     int _mode;
@@ -78,7 +98,7 @@ private:
     int _NumberGen;
     AppLock _lock;
     QString _cachedNumber;
-    bool _ignoreClose;
+    bool _captive;
     bool _notice;
     QString _crmowner;
 

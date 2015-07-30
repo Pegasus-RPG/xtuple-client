@@ -618,7 +618,6 @@ FORMS =   absoluteCalendarItem.ui               \
           vendorPriceList.ui                    \
           vendorType.ui                         \
           vendorTypes.ui                        \
-          vendorWorkBench.ui                    \
           viewCheckRun.ui                       \
           voidChecks.ui                         \
           voucher.ui                            \
@@ -1218,7 +1217,6 @@ HEADERS = ../common/format.h                    \
           vendorPriceList.h             \
           vendorType.h                  \
           vendorTypes.h                 \
-          vendorWorkBench.h             \
           vendors.h                     \
           verisignprocessor.h           \
           version.h                     \
@@ -1830,7 +1828,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           vendorPriceList.cpp                   \
           vendorType.cpp                        \
           vendorTypes.cpp                       \
-          vendorWorkBench.cpp                   \
           vendors.cpp                           \
           verisignprocessor.cpp                 \
           version.cpp                           \

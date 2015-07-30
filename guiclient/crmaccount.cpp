@@ -31,7 +31,6 @@
 #include "taxAuthority.h"
 #include "user.h"
 #include "vendor.h"
-#include "vendorWorkBench.h"
 
 #define DEBUG false
 
@@ -977,16 +976,6 @@ void crmaccount::doDialog(QWidget *parent, const ParameterList & pParams)
   omfgThis->handleNewWindow(ci);
 }
 
-void crmaccount::sVendorInfo()
-{
-  ParameterList params;
-  params.append("vend_id", _vendId);
-
-  vendorWorkBench *newdlg = new vendorWorkBench(this, "vendorWorkBench", Qt::Window);
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
 void crmaccount::sCustomerToggled()
 {
   if (_customer->isChecked())
@@ -1236,8 +1225,6 @@ void crmaccount::sHandleChildButtons()
     menuItem=vendorMenu->addAction(tr("View..."), this, SLOT(sViewVendor()));
     menuItem->setEnabled(_privileges->check("ViewVendors") ||
                          _privileges->check("MaintainVendors"));
-    menuItem=vendorMenu->addAction(tr("Workbench..."), this, SLOT(sVendorInfo()));
-    menuItem->setEnabled(_privileges->check("MaintainVendors"));
     _vendorButton->setMenu(vendorMenu);
   }
   else
