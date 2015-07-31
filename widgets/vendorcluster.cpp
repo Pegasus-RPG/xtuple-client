@@ -194,6 +194,9 @@ bool VendorLineEdit::setEditMode(bool p)
 
 void VendorLineEdit::sParse()
 {
+  if (_editMode)
+    return;
+  
   VirtualClusterLineEdit::sParse();
 }
 
