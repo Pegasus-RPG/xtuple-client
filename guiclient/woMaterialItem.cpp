@@ -436,7 +436,12 @@ void woMaterialItem::sPopulateUOM()
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting UOM"),
                            uom, __FILE__, __LINE__))
     return;
+  
+  int saveuomid = _uom->id();
+  disconnect(_uom, SIGNAL(newID(int)), this, SLOT(sUOMChanged()));
   _uom->populate(uom);
+  _uom->setId(saveuomid);
+  connect(_uom, SIGNAL(newID(int)), this, SLOT(sUOMChanged()));
 }
 
 void woMaterialItem::sUOMChanged()

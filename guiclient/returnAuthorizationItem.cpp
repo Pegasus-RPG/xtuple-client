@@ -1360,9 +1360,21 @@ void returnAuthorizationItem::sPopulateUOM()
                            uom, __FILE__, __LINE__))
     return;
   
+  int saveqtyuomid = _qtyUOM->id();
+  int savepriceuomid = _pricingUOM->id();
+  int savesaleuomid = _salePricingUOM->id();
+  disconnect(_qtyUOM,         SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+  disconnect(_pricingUOM,     SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+  disconnect(_salePricingUOM, SIGNAL(newID(int)), this, SLOT(sSalePriceUOMChanged()));
   _qtyUOM->populate(uom);
   _pricingUOM->populate(uom);
   _salePricingUOM->populate(uom);
+  _qtyUOM->setId(saveqtyuomid);
+  _pricingUOM->setId(savepriceuomid);
+  _salePricingUOM->setId(savesaleuomid);
+  connect(_qtyUOM,         SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+  connect(_pricingUOM,     SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+  connect(_salePricingUOM, SIGNAL(newID(int)), this, SLOT(sSalePriceUOMChanged()));
 }
 
 void returnAuthorizationItem::sQtyUOMChanged()
@@ -1388,19 +1400,7 @@ void returnAuthorizationItem::sQtyUOMChanged()
         return;
       
       // repopulate uom comboboxes
-      int saveqtyuomid = _qtyUOM->id();
-      int savepriceuomid = _pricingUOM->id();
-      int savesaleuomid = _salePricingUOM->id();
-      disconnect(_qtyUOM,         SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
-      disconnect(_pricingUOM,     SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
-      disconnect(_salePricingUOM, SIGNAL(newID(int)), this, SLOT(sSalePriceUOMChanged()));
       sPopulateUOM();
-      _qtyUOM->setId(saveqtyuomid);
-      _pricingUOM->setId(savepriceuomid);
-      _salePricingUOM->setId(savesaleuomid);
-      connect(_qtyUOM,         SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
-      connect(_pricingUOM,     SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
-      connect(_salePricingUOM, SIGNAL(newID(int)), this, SLOT(sSalePriceUOMChanged()));
     }
     else
     {
@@ -1468,19 +1468,7 @@ void returnAuthorizationItem::sPriceUOMChanged()
         return;
       
       // repopulate uom comboboxes
-      int saveqtyuomid = _qtyUOM->id();
-      int savepriceuomid = _pricingUOM->id();
-      int savesaleuomid = _salePricingUOM->id();
-      disconnect(_qtyUOM,         SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
-      disconnect(_pricingUOM,     SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
-      disconnect(_salePricingUOM, SIGNAL(newID(int)), this, SLOT(sSalePriceUOMChanged()));
       sPopulateUOM();
-      _qtyUOM->setId(saveqtyuomid);
-      _pricingUOM->setId(savepriceuomid);
-      _salePricingUOM->setId(savesaleuomid);
-      connect(_qtyUOM,         SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
-      connect(_pricingUOM,     SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
-      connect(_salePricingUOM, SIGNAL(newID(int)), this, SLOT(sSalePriceUOMChanged()));
     }
     else
     {

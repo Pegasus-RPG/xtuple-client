@@ -503,7 +503,15 @@ void bomItem::sPopulateUOM()
     }
 
     XSqlQuery quom = muom.toQuery(params);
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting UOMs"),
+                             quom, __FILE__, __LINE__))
+      return;
+
+    int saveuomid = _uom->id();
+    disconnect(_uom, SIGNAL(newID(int)), this, SLOT(sUOMChanged()));
     _uom->populate(quom);
+    _uom->setId(saveuomid);
+    connect(_uom, SIGNAL(newID(int)), this, SLOT(sUOMChanged()));
   }
 }
 
@@ -530,11 +538,7 @@ void bomItem::sUOMChanged()
         return;
       
       // repopulate uom combobox
-      int saveuomid = _uom->id();
-      disconnect(_uom, SIGNAL(newID(int)), this, SLOT(sUOMChanged()));
       sPopulateUOM();
-      _uom->setId(saveuomid);
-      connect(_uom, SIGNAL(newID(int)), this, SLOT(sUOMChanged()));
     }
     else
     {

@@ -760,8 +760,16 @@ void creditMemoItem::sPopulateUOM()
                              uom, __FILE__, __LINE__))
       return;
     
+    int saveqtyuomid = _qtyUOM->id();
+    int savepriceuomid = _pricingUOM->id();
+    disconnect(_qtyUOM,     SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+    disconnect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
     _qtyUOM->populate(uom);
     _pricingUOM->populate(uom);
+    _qtyUOM->setId(saveqtyuomid);
+    _pricingUOM->setId(savepriceuomid);
+    connect(_qtyUOM,     SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+    connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
   }
 }
 
@@ -788,15 +796,7 @@ void creditMemoItem::sQtyUOMChanged()
         return;
       
       // repopulate uom comboboxes
-      int saveqtyuomid = _qtyUOM->id();
-      int savepriceuomid = _pricingUOM->id();
-      disconnect(_qtyUOM,     SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
-      disconnect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
       sPopulateUOM();
-      _qtyUOM->setId(saveqtyuomid);
-      _pricingUOM->setId(savepriceuomid);
-      connect(_qtyUOM,     SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
-      connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
     }
     else
     {
@@ -856,15 +856,7 @@ void creditMemoItem::sPriceUOMChanged()
         return;
       
       // repopulate uom comboboxes
-      int saveqtyuomid = _qtyUOM->id();
-      int savepriceuomid = _pricingUOM->id();
-      disconnect(_qtyUOM,     SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
-      disconnect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
       sPopulateUOM();
-      _qtyUOM->setId(saveqtyuomid);
-      _pricingUOM->setId(savepriceuomid);
-      connect(_qtyUOM,     SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
-      connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
     }
     else
     {
