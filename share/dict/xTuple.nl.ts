@@ -500,7 +500,7 @@ Address:</source>
     </message>
     <message>
         <source>By-Product</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">op Product</translation>
     </message>
     <message>
         <source>Non-Pick List Items:</source>
@@ -1204,6 +1204,150 @@ Address:</source>
     </message>
     <message>
         <source>User Account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Pick a Document Type]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation type="unfinished">Adres</translation>
+    </message>
+    <message>
+        <source>Breeder BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Breeder BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">Klant</translation>
+    </message>
+    <message>
+        <source>Employee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Incident</source>
+        <translation type="unfinished">gebeurtenis</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation type="unfinished">Artikel</translation>
+    </message>
+    <message>
+        <source>Item Site</source>
+        <translation type="unfinished">Artikellocatie</translation>
+    </message>
+    <message>
+        <source>Item Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished">Locatie</translation>
+    </message>
+    <message>
+        <source>Lot/Serial</source>
+        <translation type="unfinished">Lot/Serie# </translation>
+    </message>
+    <message>
+        <source>Opportunity</source>
+        <translation type="unfinished">Opportuniteit</translation>
+    </message>
+    <message>
+        <source>Project</source>
+        <translation type="unfinished">Project</translation>
+    </message>
+    <message>
+        <source>Purchase Order</source>
+        <translation type="unfinished">Inkooporder</translation>
+    </message>
+    <message>
+        <source>Purchase Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Return Authorization</source>
+        <translation type="unfinished">Terugzending autorisatie</translation>
+    </message>
+    <message>
+        <source>Return Authorization Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quote</source>
+        <translation type="unfinished">Aanbieding</translation>
+    </message>
+    <message>
+        <source>Quote Item</source>
+        <translation type="unfinished">Aanbieding artikel</translation>
+    </message>
+    <message>
+        <source>Sales Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sales Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Time Attendance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To-Do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order</source>
+        <translation type="unfinished">Transfer order</translation>
+    </message>
+    <message>
+        <source>Transfer Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vendor</source>
+        <translation type="unfinished">Leverancier</translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished">Magazijn</translation>
+    </message>
+    <message>
+        <source>Work Order</source>
+        <translation type="unfinished">Productie order</translation>
+    </message>
+    <message>
+        <source>Project Task</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4448,6 +4592,10 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>All User Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Counting Users</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10664,7 +10812,7 @@ Om te voldoen moet het aantal verhoogd worden met %1. Wil u het aantal verhogen 
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Date</source>
@@ -10722,10 +10870,6 @@ Om te voldoen moet het aantal verhoogd worden met %1. Wil u het aantal verhogen 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You must enter a value before saving this Item Characteristic.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Item Characteristic</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10763,6 +10907,10 @@ Om te voldoen moet het aantal verhoogd worden met %1. Wil u het aantal verhogen 
     </message>
     <message>
         <source>Error Getting Characteristic Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a value before saving this Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13407,7 +13555,7 @@ Dit kan niet ongedaan gemaakt worden. Verder gaan?</translation>
     </message>
     <message>
         <source>Scheduled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Geplanned</translation>
     </message>
     <message>
         <source>CreditMemoWatermark</source>
@@ -14972,11 +15120,11 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikelnummer</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Vendor Item Number</source>
@@ -15115,7 +15263,7 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Effective</source>
@@ -22093,7 +22241,7 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>End Order Date</source>
@@ -22392,7 +22540,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Customer Group</source>
@@ -22448,7 +22596,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikelnummer</translation>
     </message>
     <message>
         <source>Cust. #</source>
@@ -22460,7 +22608,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Line #</source>
@@ -22638,7 +22786,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Cust. #</source>
@@ -23200,7 +23348,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikelnummer</translation>
     </message>
     <message>
         <source>Costed Single Level Bill of Materials</source>
@@ -23562,7 +23710,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Posted</source>
@@ -25692,7 +25840,7 @@ Total</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>View Substitute Availability...</source>
@@ -25732,7 +25880,7 @@ Total</source>
     </message>
     <message>
         <source>View Inventory History...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Toon voorraad historie...</translation>
     </message>
     <message>
         <source>UOM</source>
@@ -25856,7 +26004,7 @@ Total</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Enter Misc. Inventory Count...</source>
@@ -26254,7 +26402,7 @@ Total</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Value Before</source>
@@ -26298,7 +26446,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikelnummer</translation>
     </message>
     <message>
         <source>To Area</source>
@@ -26465,7 +26613,7 @@ Total</source>
     </message>
     <message>
         <source>Lot/Serial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lot/Serie# </translation>
     </message>
 </context>
 <context>
@@ -27026,7 +27174,7 @@ Total</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Item</source>
@@ -27174,7 +27322,7 @@ Total</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Manufacturer Item Number Pattern</source>
@@ -27182,7 +27330,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikelnummer</translation>
     </message>
 </context>
 <context>
@@ -27363,7 +27511,7 @@ Total</source>
     </message>
     <message>
         <source>View Inventory History...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Toon voorraad historie...</translation>
     </message>
     <message>
         <source>View WO History...</source>
@@ -28096,7 +28244,7 @@ Total</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Order Activity by Project</source>
@@ -28846,7 +28994,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikelnummer</translation>
     </message>
     <message>
         <source>Manufacture</source>
@@ -28854,7 +29002,7 @@ Total</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Start Date</source>
@@ -28938,7 +29086,7 @@ Total</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Usage Statistics...</source>
@@ -29885,7 +30033,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikelnummer</translation>
     </message>
     <message>
         <source>Vend. UOM</source>
@@ -29909,7 +30057,7 @@ Total</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Status</source>
@@ -30080,7 +30228,7 @@ Total</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Base</source>
@@ -30263,7 +30411,7 @@ Total</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Base</source>
@@ -30940,7 +31088,7 @@ Total</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Use Posted Costs</source>
@@ -30956,7 +31104,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikelnummer</translation>
     </message>
     <message>
         <source>Enter Misc. Count...</source>
@@ -31028,7 +31176,7 @@ Total</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>View Location/Lot/Serial # Detail...</source>
@@ -31697,7 +31845,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikelnummer</translation>
     </message>
     <message>
         <source>Shipping Zones</source>
@@ -31753,7 +31901,7 @@ Total</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Invoice #</source>
@@ -31789,7 +31937,7 @@ Total</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Base Unit Price</source>
@@ -31919,7 +32067,7 @@ Total</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Customer</source>
@@ -31971,7 +32119,7 @@ Total</source>
     </message>
     <message>
         <source>Scheduled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Geplanned</translation>
     </message>
     <message>
         <source>Status</source>
@@ -32003,7 +32151,7 @@ Total</source>
     </message>
     <message>
         <source>Shipments...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Verzendingen...</translation>
     </message>
     <message>
         <source>Create Return Authorization...</source>
@@ -32039,7 +32187,7 @@ Total</source>
     </message>
     <message>
         <source>You may not view or edit this Sales Order as it references a Site for which you have not been granted privileges.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">U mag deze verkooporder niet bekijken of wijzigen aangezien ze een site betreft waar u geen togang toe heeft.</translation>
     </message>
 </context>
 <context>
@@ -32173,7 +32321,7 @@ Total</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Getting Shipment</source>
@@ -32249,7 +32397,7 @@ Total</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Tracking Number</source>
@@ -33188,7 +33336,7 @@ Total</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>&apos;Site:&apos;</source>
@@ -33228,7 +33376,7 @@ Total</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Currency:</source>
@@ -33451,7 +33599,7 @@ Total</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Item#</source>
@@ -33649,7 +33797,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikelnummer</translation>
     </message>
     <message>
         <source>Customer Type Pattern</source>
@@ -33665,7 +33813,7 @@ Total</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Units:</source>
@@ -33673,7 +33821,7 @@ Total</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Time-Phased Bookings</source>
@@ -33930,7 +34078,7 @@ Total</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Item</source>
@@ -33950,7 +34098,7 @@ Total</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Customer Type Pattern</source>
@@ -33962,7 +34110,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikelnummer</translation>
     </message>
     <message>
         <source>Inventory</source>
@@ -34339,7 +34487,7 @@ Total</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Item Group Pattern</source>
@@ -34355,7 +34503,7 @@ Total</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Transfers</source>
@@ -34363,7 +34511,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikelnummer</translation>
     </message>
     <message>
         <source>Sold</source>
@@ -35182,7 +35330,7 @@ Total</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>&lt;p&gt;Are you sure that you want to delete the selected Work Order?</source>
@@ -35278,7 +35426,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikelnummer</translation>
     </message>
     <message>
         <source>Item</source>
@@ -35330,7 +35478,7 @@ Total</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Class Code</source>
@@ -35510,7 +35658,7 @@ Total</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Name</source>
@@ -36068,7 +36216,7 @@ Total</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Nothing selected for Receipt</source>
@@ -38036,7 +38184,7 @@ Would you like to automatically create a credit memo against this return?</sourc
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Delete Query Set?</source>
@@ -39807,7 +39955,7 @@ You may not create duplicate Forms.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Code</source>
@@ -40258,7 +40406,7 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Granted Privileges</source>
@@ -40678,7 +40826,7 @@ The file is not an image, an unknown image format or is corrupt</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Name</source>
@@ -41741,7 +41889,7 @@ Are you sure that you want to Implode the selected Work Order?</source>
     </message>
     <message>
         <source>Lot/Serial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lot/Serie# </translation>
     </message>
     <message>
         <source>User</source>
@@ -41753,7 +41901,7 @@ Are you sure that you want to Implode the selected Work Order?</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikelnummer</translation>
     </message>
     <message>
         <source>Created</source>
@@ -45291,7 +45439,7 @@ before you may save this Item Source.</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Discount Fixed Amt.</source>
@@ -45315,7 +45463,7 @@ before you may save this Item Source.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Default</source>
@@ -46803,7 +46951,7 @@ You must reassign the Locales for these Users before you may delete the selected
     </message>
     <message>
         <source>Lot/Serial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lot/Serie# </translation>
     </message>
     <message>
         <source>Comments</source>
@@ -47009,7 +47157,7 @@ You must reassign these Item Sites before you may delete the selected Planner Co
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>&amp;Delete</source>
@@ -47322,7 +47470,7 @@ You must reassign these Item Sites before you may delete the selected Planner Co
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Customer</source>
@@ -50452,7 +50600,7 @@ Version %2
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Edit...</source>
@@ -50528,7 +50676,7 @@ Version %2
     </message>
     <message>
         <source>You may not view or edit this Sales Order as it references a Site for which you have not been granted privileges.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">U mag deze verkooporder niet bekijken of wijzigen aangezien ze een site betreft waar u geen togang toe heeft.</translation>
     </message>
     <message>
         <source>Sale Type</source>
@@ -51747,7 +51895,7 @@ You must reassign these Opportunities before you may delete the selected Opportu
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
 </context>
 <context>
@@ -52604,7 +52752,7 @@ post these Invoices.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Select All</source>
@@ -54137,7 +54285,7 @@ post Vouchers.</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
 </context>
 <context>
@@ -55584,7 +55732,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Active</source>
@@ -55699,7 +55847,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Completed Start Date</source>
@@ -56958,7 +57106,7 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>&lt;p&gt;The Due Date that you are requesting does not fall within the Lead Time Days for this Item Source.  You may continue but this Vendor may not honor pricing or delivery quotations or may not be able to deliver by the requested Due Date. &lt;p&gt;Do you wish to Continue or Change the Due Date?</source>
@@ -57485,7 +57633,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     </message>
     <message>
         <source>Scheduled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Geplanned</translation>
     </message>
 </context>
 <context>
@@ -57556,7 +57704,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>Quotes</source>
@@ -60080,7 +60228,7 @@ You must Recall this Work Order before Rescheduling it.</source>
     </message>
     <message>
         <source>Lot/Serial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lot/Serie# </translation>
     </message>
     <message>
         <source>&amp;Edit</source>
@@ -60888,7 +61036,7 @@ You must instead return each Work Order Material item individually.
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
@@ -61508,7 +61656,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     </message>
     <message>
         <source>Clea&amp;r</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Wissen</translation>
     </message>
     <message>
         <source>View Purchase Request...</source>
@@ -63185,7 +63333,7 @@ Would you like to save them now?</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>LT</source>
@@ -69754,7 +69902,7 @@ You first need to Revoke those Tax Codes.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Group Sequence</source>
@@ -69841,7 +69989,7 @@ You first need to Revoke those Tax Codes.</source>
     </message>
     <message>
         <source>Expire</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Verloop</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -70082,7 +70230,7 @@ You first need to Revoke those Tax Codes.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Tax Codes</source>
@@ -70382,7 +70530,7 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -70992,7 +71140,7 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Incident</source>
@@ -73404,7 +73552,7 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Magazijn</translation>
     </message>
     <message>
         <source>&lt;p&gt;There were no selected Purchase Orders that you could edit.</source>
@@ -74179,7 +74327,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>You must select an Item to continue.</source>
@@ -74342,11 +74490,11 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikelnummer</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Leadtime</source>
@@ -77476,7 +77624,7 @@ that the selected Work Order does.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>Order#</source>
@@ -77488,7 +77636,7 @@ that the selected Work Order does.</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikelnummer</translation>
     </message>
 </context>
 <context>
@@ -77966,7 +78114,7 @@ You may want to consider imploding and exploding the Work Order.
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omschrijving</translation>
     </message>
     <message>
         <source>The Work Order was created but not Exploded as Component Items defined in the Bill of Materials for

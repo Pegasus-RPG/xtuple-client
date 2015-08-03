@@ -1202,6 +1202,150 @@ Adresse:</translation>
         <source>User Account</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>[Pick a Document Type]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation type="unfinished">Adresse</translation>
+    </message>
+    <message>
+        <source>Breeder BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Breeder BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account</source>
+        <translation type="unfinished">Compte</translation>
+    </message>
+    <message>
+        <source>Contact</source>
+        <translation type="unfinished">Personne-ressource</translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">Client</translation>
+    </message>
+    <message>
+        <source>Employee</source>
+        <translation type="unfinished">Employé</translation>
+    </message>
+    <message>
+        <source>Incident</source>
+        <translation type="unfinished">Incident</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation type="unfinished">Article</translation>
+    </message>
+    <message>
+        <source>Item Site</source>
+        <translation type="unfinished">Article par Site</translation>
+    </message>
+    <message>
+        <source>Item Source</source>
+        <translation type="unfinished">Source d&apos;Approvisionnement d&apos;Article</translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished">Emplacement</translation>
+    </message>
+    <message>
+        <source>Lot/Serial</source>
+        <translation type="unfinished">Lot/Série</translation>
+    </message>
+    <message>
+        <source>Opportunity</source>
+        <translation type="unfinished">Possibilité</translation>
+    </message>
+    <message>
+        <source>Project</source>
+        <translation type="unfinished">Projet</translation>
+    </message>
+    <message>
+        <source>Purchase Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Purchase Order Item</source>
+        <translation type="unfinished">Article de Bon de Commande</translation>
+    </message>
+    <message>
+        <source>Return Authorization</source>
+        <translation type="unfinished">Autorisation de Retour</translation>
+    </message>
+    <message>
+        <source>Return Authorization Item</source>
+        <translation type="unfinished">Article d&apos;Autorisation de Retour</translation>
+    </message>
+    <message>
+        <source>Quote</source>
+        <translation type="unfinished">Soumission</translation>
+    </message>
+    <message>
+        <source>Quote Item</source>
+        <translation type="unfinished">Article de Soumission</translation>
+    </message>
+    <message>
+        <source>Sales Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sales Order Item</source>
+        <translation type="unfinished">Article Commande Client</translation>
+    </message>
+    <message>
+        <source>Time Attendance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To-Do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order</source>
+        <translation type="unfinished">Ordre de Transfert</translation>
+    </message>
+    <message>
+        <source>Transfer Order Item</source>
+        <translation type="unfinished">Article d&apos;Ordre de Transfert</translation>
+    </message>
+    <message>
+        <source>Vendor</source>
+        <translation type="unfinished">Fournisseur</translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Work Order</source>
+        <translation type="unfinished">Bon de Travail</translation>
+    </message>
+    <message>
+        <source>Project Task</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConfigAuthorizeDotNetProcessor</name>
@@ -4438,6 +4582,10 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>All User Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Counting Users</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10716,7 +10864,7 @@ Etes-vous certain de vouloir enregistrer ce changement?  </translation>
     </message>
     <message>
         <source>You must enter a value before saving this Item Characteristic.</source>
-        <translation>Vous devez inscrire une valeur avant d&apos;enregistrer cette Caractéristique d&apos;&apos;Article.</translation>
+        <translation type="obsolete">Vous devez inscrire une valeur avant d&apos;enregistrer cette Caractéristique d&apos;&apos;Article.</translation>
     </message>
     <message>
         <source>Error</source>
@@ -10764,6 +10912,10 @@ Etes-vous certain de vouloir enregistrer ce changement?  </translation>
     </message>
     <message>
         <source>Error Getting Characteristic Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a value before saving this Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14990,7 +15142,7 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>Vendor Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Numéro d&apos;Article Fournisseur</translation>
     </message>
     <message>
         <source>Vendor UOM</source>
@@ -15006,7 +15158,7 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>Unreleased</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Non Lancé</translation>
     </message>
     <message>
         <source>Released</source>
@@ -15429,7 +15581,7 @@ Please check the values of these dates.</source>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Retirer</translation>
     </message>
     <message>
         <source>Copying Bom</source>
@@ -24449,7 +24601,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Expiration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Péremption</translation>
     </message>
 </context>
 <context>
@@ -31983,7 +32135,7 @@ Total</translation>
     </message>
     <message>
         <source>End Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Date de Fin</translation>
     </message>
     <message>
         <source>P/O Number</source>
@@ -32019,7 +32171,7 @@ Total</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">État</translation>
     </message>
     <message>
         <source>Ship-to</source>
@@ -42678,7 +42830,7 @@ Voulez-vous la reporter de toutes façons?</translation>
     </message>
     <message>
         <source>Site:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Site:</translation>
     </message>
     <message>
         <source>Item/Location</source>
@@ -53348,7 +53500,7 @@ post Vouchers.</source>
     </message>
     <message>
         <source>Site:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Site:</translation>
     </message>
     <message>
         <source>Unit Cost:</source>
@@ -55277,7 +55429,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">État</translation>
     </message>
     <message>
         <source>Item #</source>
@@ -55481,7 +55633,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Purchase Requests</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Demandes d&apos;Achat</translation>
     </message>
     <message>
         <source>Quotes</source>
@@ -55537,7 +55689,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Unreleased</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Non Lancé</translation>
     </message>
     <message>
         <source>Total</source>
@@ -56132,7 +56284,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Purchase Requests</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Demandes d&apos;Achat</translation>
     </message>
     <message>
         <source>Quote</source>
@@ -56196,7 +56348,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Unreleased</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Non Lancé</translation>
     </message>
     <message>
         <source>Total</source>
@@ -57505,11 +57657,11 @@ Etes-vous certain que vous voulez supprimer les Enregistrements de Facture séle
     </message>
     <message>
         <source>Site:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Site:</translation>
     </message>
     <message>
         <source>Lot/Serial #:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"># Lot/Série:</translation>
     </message>
     <message>
         <source>Existing Locations:</source>
@@ -59284,11 +59436,11 @@ Vous devez Rappeler ce Bon de Travail avant de le Réordonnancer.</translation>
     </message>
     <message>
         <source>Lot/Serial #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"># Lot/Série</translation>
     </message>
     <message>
         <source>Expiration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Péremption</translation>
     </message>
     <message>
         <source>This Reserved</source>
@@ -63333,15 +63485,15 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <source>Order#</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"># Commande</translation>
     </message>
     <message>
         <source>Item#</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"># Article</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">État</translation>
     </message>
     <message>
         <source>Cust. Price</source>
@@ -63357,11 +63509,11 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <source>Setup Remain.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mise en Course Restante</translation>
     </message>
     <message>
         <source>Run Remain.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Traitement Restant</translation>
     </message>
     <message>
         <source>Start Date</source>
@@ -65403,7 +65555,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Site:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Site:</translation>
     </message>
     <message>
         <source>Approve for Billing</source>

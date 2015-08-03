@@ -1172,7 +1172,7 @@ Address:</source>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sorgente</translation>
     </message>
     <message>
         <source>Edit</source>
@@ -1204,6 +1204,150 @@ Address:</source>
     </message>
     <message>
         <source>User Account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Pick a Document Type]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation type="unfinished">Indirizzo</translation>
+    </message>
+    <message>
+        <source>Breeder BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Breeder BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contact</source>
+        <translation type="unfinished">Contatto</translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">Cliente</translation>
+    </message>
+    <message>
+        <source>Employee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Incident</source>
+        <translation type="unfinished">Incidente</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation type="unfinished">Articolo</translation>
+    </message>
+    <message>
+        <source>Item Site</source>
+        <translation type="unfinished">Deposito Articolo</translation>
+    </message>
+    <message>
+        <source>Item Source</source>
+        <translation type="unfinished">Origine Articolo</translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished">Postazione</translation>
+    </message>
+    <message>
+        <source>Lot/Serial</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opportunity</source>
+        <translation type="unfinished">Opportunità</translation>
+    </message>
+    <message>
+        <source>Project</source>
+        <translation type="unfinished">Progetto</translation>
+    </message>
+    <message>
+        <source>Purchase Order</source>
+        <translation type="unfinished">Ordine di Acquisto</translation>
+    </message>
+    <message>
+        <source>Purchase Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Return Authorization</source>
+        <translation type="unfinished">Codice di Rientro</translation>
+    </message>
+    <message>
+        <source>Return Authorization Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quote</source>
+        <translation type="unfinished">Quotazione</translation>
+    </message>
+    <message>
+        <source>Quote Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sales Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sales Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Time Attendance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To-Do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vendor</source>
+        <translation type="unfinished">Fornitore</translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished">Deposito</translation>
+    </message>
+    <message>
+        <source>Work Order</source>
+        <translation type="unfinished">Ordine di Lavoro</translation>
+    </message>
+    <message>
+        <source>Project Task</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4450,6 +4594,10 @@ Please immediately log out and contact your Systems Adminitrator.</source>
         <source>All User Accounts</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error Counting Users</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QueryItem</name>
@@ -4546,7 +4694,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sorgente</translation>
     </message>
     <message>
         <source>Order</source>
@@ -6959,7 +7107,7 @@ Check the database server log for errors.</source>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Totale</translation>
     </message>
     <message>
         <source>Paid</source>
@@ -7992,7 +8140,7 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Dist. Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Data Cons.:</translation>
     </message>
     <message>
         <source>Yes</source>
@@ -10331,7 +10479,7 @@ Se no, Clicca NO e cambia il Conto bancario nel Campo \&quot;Invia a\&quot;.</tr
     </message>
     <message>
         <source>Bank Account</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Conto Corrente Bancario</translation>
     </message>
     <message>
         <source>Dist. Date</source>
@@ -10718,10 +10866,6 @@ Se no, Clicca NO e cambia il Conto bancario nel Campo \&quot;Invia a\&quot;.</tr
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You must enter a value before saving this Item Characteristic.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error</source>
         <translation type="unfinished">Errore</translation>
     </message>
@@ -10763,6 +10907,10 @@ Se no, Clicca NO e cambia il Conto bancario nel Campo \&quot;Invia a\&quot;.</tr
     </message>
     <message>
         <source>Error Getting Characteristic Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a value before saving this Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10920,7 +11068,7 @@ Se no, Clicca NO e cambia il Conto bancario nel Campo \&quot;Invia a\&quot;.</tr
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Totale</translation>
     </message>
     <message>
         <source>Amount (in %1)</source>
@@ -21043,7 +21191,7 @@ to be deleted.</source>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sorgente</translation>
     </message>
     <message>
         <source>Apply-To</source>
@@ -21051,7 +21199,7 @@ to be deleted.</source>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Totale</translation>
     </message>
     <message>
         <source>Currency</source>
@@ -23911,7 +24059,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Totale</translation>
     </message>
     <message>
         <source>Type</source>
@@ -24955,7 +25103,7 @@ Total</source>
     </message>
     <message>
         <source>Schedule</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Programmazione</translation>
     </message>
     <message>
         <source>Freight Prices</source>
@@ -24963,7 +25111,7 @@ Total</source>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sorgente</translation>
     </message>
     <message>
         <source>Ship Via</source>
@@ -25058,11 +25206,11 @@ Total</source>
     </message>
     <message>
         <source>Schedule</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Programmazione</translation>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sorgente</translation>
     </message>
     <message>
         <source>To</source>
@@ -27374,7 +27522,7 @@ Total</source>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sorgente</translation>
     </message>
     <message>
         <source>Reference</source>
@@ -30135,7 +30283,7 @@ Total</source>
     </message>
     <message>
         <source>Dist. Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Data Cons.:</translation>
     </message>
     <message>
         <source>Enter Valid Dates</source>
@@ -30202,7 +30350,7 @@ Total</source>
     </message>
     <message>
         <source>Dist. Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Data Cons.:</translation>
     </message>
     <message>
         <source>Description</source>
@@ -31633,7 +31781,7 @@ Total</source>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Totale</translation>
     </message>
     <message>
         <source>Running Netable</source>
@@ -33056,7 +33204,7 @@ Total</source>
     </message>
     <message>
         <source>Account #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">N. Conto</translation>
     </message>
     <message>
         <source>View...</source>
@@ -33346,7 +33494,7 @@ Total</source>
     </message>
     <message>
         <source>Dist. Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Data Cons.:</translation>
     </message>
     <message>
         <source>Doc. Date</source>
@@ -33390,7 +33538,7 @@ Total</source>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sorgente</translation>
     </message>
     <message>
         <source>Name</source>
@@ -39732,7 +39880,7 @@ You may not create duplicate Forms.</source>
     </message>
     <message>
         <source>Schedule</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Programmazione</translation>
     </message>
     <message>
         <source>From</source>
@@ -39923,7 +40071,7 @@ You may not create duplicate Forms.</source>
     </message>
     <message>
         <source>Schedule</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Programmazione</translation>
     </message>
     <message>
         <source>Credit</source>
@@ -46335,7 +46483,7 @@ You may edit the existing Substitution but you may not create a duplicate.</sour
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Totale</translation>
     </message>
     <message>
         <source>Minute</source>
@@ -50593,7 +50741,7 @@ Version %2
     </message>
     <message>
         <source>A/P</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">c/to Clienti</translation>
     </message>
     <message>
         <source>Vendor Invc. #</source>
@@ -50633,7 +50781,7 @@ Version %2
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Totale</translation>
     </message>
     <message>
         <source>View Voucher...</source>
@@ -52028,7 +52176,7 @@ You must reassign these Item Sites before you may delete the selected Planner Co
     </message>
     <message>
         <source>A/R</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Credito</translation>
     </message>
     <message>
         <source>General Ledger Series</source>
@@ -52574,7 +52722,7 @@ post these Invoices.</source>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sorgente</translation>
     </message>
     <message>
         <source>Date:</source>
@@ -52946,7 +53094,7 @@ transfer the production to the intended Site.</source>
     </message>
     <message>
         <source>Schedule</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Programmazione</translation>
     </message>
     <message>
         <source>Cannot Post Standard Journal</source>
@@ -69183,7 +69331,7 @@ Posting currency revaluation adjustments...</source>
     </message>
     <message>
         <source>Schedule</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Programmazione</translation>
     </message>
     <message>
         <source>Plan</source>
@@ -69835,7 +69983,7 @@ You first need to Revoke those Tax Codes.</source>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Totale</translation>
     </message>
     <message>
         <source>Expires</source>
@@ -70052,7 +70200,7 @@ You first need to Revoke those Tax Codes.</source>
     </message>
     <message>
         <source>Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Totale</translation>
     </message>
     <message>
         <source>Description</source>
@@ -73052,7 +73200,7 @@ otherwise a new one will be created.</source>
     </message>
     <message>
         <source>A/R</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Credito</translation>
     </message>
     <message>
         <source>Journal Series</source>
@@ -74265,7 +74413,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     </message>
     <message>
         <source>Schedule</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Programmazione</translation>
     </message>
     <message>
         <source>You must provide a Value to continue.</source>

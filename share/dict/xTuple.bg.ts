@@ -456,7 +456,7 @@ Address:</source>
     </message>
     <message>
         <source>Costing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ценообразуване</translation>
     </message>
     <message>
         <source>Type</source>
@@ -1206,6 +1206,150 @@ Address:</source>
         <source>User Account</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>[Pick a Document Type]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation type="unfinished">Адрес</translation>
+    </message>
+    <message>
+        <source>Breeder BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Breeder BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account</source>
+        <translation type="unfinished">Сметка</translation>
+    </message>
+    <message>
+        <source>Contact</source>
+        <translation type="unfinished">За връзка</translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">Клиент</translation>
+    </message>
+    <message>
+        <source>Employee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Incident</source>
+        <translation type="unfinished">Инцидент</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Item Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Item Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished">Местоположение</translation>
+    </message>
+    <message>
+        <source>Lot/Serial</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opportunity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project</source>
+        <translation type="unfinished">Проект</translation>
+    </message>
+    <message>
+        <source>Purchase Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Purchase Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Return Authorization</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Return Authorization Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quote Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sales Order</source>
+        <translation type="unfinished">Поръчки за продажба</translation>
+    </message>
+    <message>
+        <source>Sales Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Time Attendance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To-Do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vendor</source>
+        <translation type="unfinished">Доставчик</translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Work Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project Task</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConfigAuthorizeDotNetProcessor</name>
@@ -1501,7 +1645,7 @@ Address:</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Име:</translation>
     </message>
     <message>
         <source>Number:</source>
@@ -2112,7 +2256,7 @@ What would you like to do?</source>
     </message>
     <message>
         <source>City</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Град</translation>
     </message>
     <message>
         <source>First</source>
@@ -3656,7 +3800,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>Items</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Стоки</translation>
     </message>
     <message>
         <source>Active </source>
@@ -4450,6 +4594,10 @@ Please immediately log out and contact your Systems Adminitrator.</source>
         <source>All User Accounts</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error Counting Users</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QueryItem</name>
@@ -4467,7 +4615,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Име:</translation>
     </message>
     <message>
         <source>Save</source>
@@ -4558,7 +4706,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Име:</translation>
     </message>
     <message>
         <source>Description:</source>
@@ -6963,11 +7111,11 @@ Check the database server log for errors.</source>
     </message>
     <message>
         <source>Paid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Платено</translation>
     </message>
     <message>
         <source>Balance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Баланс</translation>
     </message>
     <message>
         <source>This Alloc.</source>
@@ -7634,7 +7782,7 @@ Check the database server log for errors.</source>
     </message>
     <message>
         <source>Terms:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Условия:</translation>
     </message>
     <message>
         <source>Doc. Date:</source>
@@ -8441,7 +8589,7 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Invoice Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Дата на фактуриране</translation>
     </message>
     <message>
         <source>Due Date</source>
@@ -8665,7 +8813,7 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Име:</translation>
     </message>
     <message>
         <source>&lt;p&gt;Could not find any Maps in the Atlas %1</source>
@@ -9888,7 +10036,7 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Balance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Баланс</translation>
     </message>
     <message>
         <source>Due Date</source>
@@ -10720,10 +10868,6 @@ Are you sure that you want to save this change?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You must enter a value before saving this Item Characteristic.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>No Characteristic Selected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10761,6 +10905,10 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Error Getting Characteristic Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a value before saving this Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14563,7 +14711,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>City</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Град</translation>
     </message>
     <message>
         <source>Acct. Name</source>
@@ -14802,7 +14950,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>City</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Град</translation>
     </message>
     <message>
         <source>State</source>
@@ -17144,7 +17292,7 @@ Item: %2 - %3</source>
     </message>
     <message>
         <source>Incidents</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Инциденти</translation>
     </message>
     <message>
         <source>Projects</source>
@@ -18412,7 +18560,7 @@ Item: %2 - %3</source>
     </message>
     <message>
         <source>City</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Град</translation>
     </message>
     <message>
         <source>View...</source>
@@ -19062,7 +19210,7 @@ Please check the values of these dates.</source>
     </message>
     <message>
         <source>Terms:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Условия:</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -20820,7 +20968,7 @@ to be deleted.</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Име:</translation>
     </message>
     <message>
         <source>Document</source>
@@ -21626,7 +21774,7 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>Invoice Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Дата на фактуриране</translation>
     </message>
     <message>
         <source>Invoice Has Value 0</source>
@@ -22078,7 +22226,7 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>Balance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Баланс</translation>
     </message>
     <message>
         <source>End Order Date</source>
@@ -28189,7 +28337,7 @@ Total</source>
     </message>
     <message>
         <source>City</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Град</translation>
     </message>
     <message>
         <source>State</source>
@@ -31845,7 +31993,7 @@ Total</source>
     </message>
     <message>
         <source>Balance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Баланс</translation>
     </message>
     <message>
         <source>Description</source>
@@ -31908,7 +32056,7 @@ Total</source>
     <name>dspSalesOrders</name>
     <message>
         <source>Sales Orders</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Поръчки за продажба:</translation>
     </message>
     <message>
         <source>Site</source>
@@ -32059,7 +32207,7 @@ Total</source>
     </message>
     <message>
         <source>Sales Orders</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Поръчки за продажба:</translation>
     </message>
     <message>
         <source>Balance</source>
@@ -40772,7 +40920,7 @@ The file is not an image, an unknown image format or is corrupt</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Име:</translation>
     </message>
     <message>
         <source>Description:</source>
@@ -43556,7 +43704,7 @@ You may not create duplicate Item Aliases.</source>
     </message>
     <message>
         <source>Sales Orders</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Поръчки за продажба:</translation>
     </message>
     <message>
         <source>Quotes</source>
@@ -45313,7 +45461,7 @@ before you may save this Item Source.</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Име:</translation>
     </message>
     <message>
         <source>Item Number:</source>
@@ -46009,7 +46157,7 @@ You may edit the existing Substitution but you may not create a duplicate.</sour
     </message>
     <message>
         <source>Items</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Стоки</translation>
     </message>
     <message>
         <source>Item Group</source>
@@ -52029,7 +52177,7 @@ You must make a Bank Account Assignment for this Cash Receipt before you may pos
     </message>
     <message>
         <source>A/R</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Взимания</translation>
     </message>
     <message>
         <source>The selected Cash Receipt cannot be posted as the amount distributed is greater than
@@ -52449,7 +52597,7 @@ Would you like to post them?</source>
     </message>
     <message>
         <source>A/R</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Взимания</translation>
     </message>
     <message>
         <source>Post All</source>
@@ -55145,7 +55293,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Incidents</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Инциденти</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -55177,7 +55325,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>City</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Град</translation>
     </message>
     <message>
         <source>State</source>
@@ -55440,7 +55588,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Име:</translation>
     </message>
     <message>
         <source>New Number:</source>
@@ -55746,7 +55894,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Sales Orders</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Поръчки за продажба:</translation>
     </message>
     <message>
         <source>Work Orders</source>
@@ -55758,7 +55906,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Incidents</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Инциденти</translation>
     </message>
     <message>
         <source>Export View</source>
@@ -55786,7 +55934,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>City</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Град</translation>
     </message>
     <message>
         <source>State</source>
@@ -56256,7 +56404,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>City</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Град</translation>
     </message>
     <message>
         <source>Postal Code</source>
@@ -56952,7 +57100,7 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Име:</translation>
     </message>
     <message>
         <source>Description</source>
@@ -58773,7 +58921,7 @@ You may not create duplicate Calendar Items.</source>
     </message>
     <message>
         <source>Balance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Баланс</translation>
     </message>
     <message>
         <source>Customer</source>
@@ -65415,7 +65563,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Име:</translation>
     </message>
     <message>
         <source>City, State, Zip</source>
@@ -65702,7 +65850,7 @@ You must reassign these Customers before you may delete the selected Shipping Fo
     </message>
     <message>
         <source>Items</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Стоки</translation>
     </message>
     <message>
         <source>Order on Hold</source>
@@ -66492,7 +66640,7 @@ Do you wish to convert %1 %2 at the current rate?</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Име:</translation>
     </message>
     <message>
         <source>Cannot Save State/Province</source>
@@ -69412,7 +69560,7 @@ You first need to Revoke those Tax Codes.</source>
     </message>
     <message>
         <source>City</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Град</translation>
     </message>
     <message>
         <source>Country</source>
@@ -70819,7 +70967,7 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
     </message>
     <message>
         <source>Incidents</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Инциденти</translation>
     </message>
     <message>
         <source>Resolved</source>
@@ -73028,7 +73176,7 @@ otherwise a new one will be created.</source>
     </message>
     <message>
         <source>A/R</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Взимания</translation>
     </message>
     <message>
         <source>Journal Series</source>
@@ -75304,7 +75452,7 @@ Please enter both again carefully.</source>
     </message>
     <message>
         <source>Terms:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Условия:</translation>
     </message>
     <message>
         <source>Name</source>
@@ -75446,7 +75594,7 @@ and Purchase Order amounts</source>
     </message>
     <message>
         <source>City</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Град</translation>
     </message>
     <message>
         <source>State</source>
@@ -75908,7 +76056,7 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Име:</translation>
     </message>
     <message>
         <source>Vendor Workbench</source>
@@ -76043,7 +76191,7 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     </message>
     <message>
         <source>City</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Град</translation>
     </message>
     <message>
         <source>Delete Vendor?</source>
