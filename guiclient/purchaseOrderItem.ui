@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>744</width>
-    <height>876</height>
+    <height>881</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -102,6 +102,22 @@ to be bound by its terms.</comment>
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="XCheckBox" name="_orderRefresh">
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>Refresh the Order Items list immediately on save</string>
+         </property>
+         <property name="text">
+          <string>Refresh Order</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <layout class="QHBoxLayout">
@@ -1206,7 +1222,7 @@ to be bound by its terms.</comment>
                 <enum>Qt::ClickFocus</enum>
                </property>
                <property name="type">
-                <enum>Comments::PurchaseOrderItem</enum>
+                <number>0</number>
                </property>
               </widget>
              </item>
