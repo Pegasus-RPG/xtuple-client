@@ -1098,7 +1098,6 @@ void itemList::set(const ParameterList &pParams)
   param = pParams.value("caption", &valid);
   if (valid)
     setWindowTitle(param.toString());
-
   sFillList();
 }
 
@@ -1132,13 +1131,20 @@ void itemList::sFillList()
   }
   else
   {
-      QString pre = "SELECT item_id, item_number,"
-                    "(item_descrip1 || ' ' || item_descrip2) AS itemdescrip, item_upccode ";;
+      QString pre;
       QString post;
       if(_x_preferences && _x_preferences->boolean("ListNumericItemNumbersFirst"))
-        post = "ORDER BY isNumeric(item_number) DESC, item_number, item_upccode ";
+      {
+        pre = "SELECT DISTINCT item_id, item_number,  "
+              "(item_descrip1 || ' ' || item_descrip2) AS itemdescrip, item_upccode, isNumeric(item_number) ";
+        post = "ORDER BY isNumeric(item_number) DESC, item_number, item_upccode;";
+      }
       else
-        post = "ORDER BY item_number";
+      {
+        pre =  "SELECT DISTINCT item_id, item_number,"
+               "(item_descrip1 || ' ' || item_descrip2) AS itemdescrip, item_upccode ";
+        post = "ORDER BY item_number;";
+      }
 
       QStringList clauses;
       clauses = _extraClauses;
@@ -1164,6 +1170,11 @@ void itemList::sFillList()
 void itemList::reject()
 {
   done(_itemid);
+}
+
+void itemList::showEvent(QShowEvent *e)
+{
+  QDialog::showEvent(e);
 }
 
 //////////////////////////////////////////////////////////////////////
