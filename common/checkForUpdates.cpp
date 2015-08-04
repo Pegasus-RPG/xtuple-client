@@ -252,6 +252,7 @@ void checkForUpdates::cancelDownload()
 
 void checkForUpdates::downloadFinished()
 {
+  if (DEBUG) qDebug() << "downloadFinished() entered";
   if(!downloadRequestAborted)
   {
     downloadReadyRead();
@@ -276,8 +277,7 @@ void checkForUpdates::downloadFinished()
     file = 0;
   }
 
-  if (downloadRequestAborted)
-    return;
+  if (DEBUG) qDebug() << "downloadFinished() returning";
 }
 
 void checkForUpdates::startUpdate()
