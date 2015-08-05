@@ -96,8 +96,10 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
 #endif
 
   _leadTime              = 999;
+  _saletypeid            = -1;
   _shiptoid              = -1;
   _shiptoname            = "";
+  _shipzoneid            = -1;
   _preferredWarehouseid  = -1;
   _modified              = false;
   _canceling             = false;
@@ -365,6 +367,14 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
   param = pParams.value("taxzone_id", &valid);
   if (valid)
     _taxzoneid = param.toInt();
+
+  param = pParams.value("shipzone_id", &valid);
+  if (valid)
+    _shipzoneid = param.toInt();
+
+  param = pParams.value("saletype_id", &valid);
+  if (valid)
+    _saletypeid = param.toInt();
 
   param = pParams.value("cust_id", &valid);
   if (valid)
@@ -1606,6 +1616,8 @@ void salesOrderItem::sListPrices()
   ParameterList params;
   params.append("cust_id", _custid);
   params.append("shipto_id", _shiptoid);
+  params.append("shipzone_id", _shipzoneid);
+  params.append("saletype_id", _saletypeid);
   params.append("item_id", _item->id());
   params.append("warehous_id", _warehouse->id());
   params.append("qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
@@ -1706,7 +1718,7 @@ void salesOrderItem::sDeterminePrice(bool force)
     _charVars.replace(QTY, _qtyOrdered->toDouble() * _qtyinvuomratio);
 
     QModelIndex idx1, idx2, idx3;
-    salesDeterminePrice.prepare("SELECT itemcharprice(:item_id,:char_id,:value,:cust_id,:shipto_id,:qty,:curr_id,:effective,:asof)::numeric(16,4) AS price;");
+    salesDeterminePrice.prepare("SELECT itemcharprice(:item_id,:char_id,:value,:cust_id,:shipto_id,:qty,:curr_id,:effective,:asof,:shipzone_id,:saletype_id)::numeric(16,4) AS price;");
 
     for (int i = 0; i < _itemchar->rowCount(); i++)
     {
@@ -1718,6 +1730,8 @@ void salesOrderItem::sDeterminePrice(bool force)
       salesDeterminePrice.bindValue(":value", _itemchar->data(idx2, Qt::DisplayRole));
       salesDeterminePrice.bindValue(":cust_id", _custid);
       salesDeterminePrice.bindValue(":shipto_id", _shiptoid);
+      salesDeterminePrice.bindValue(":shipzone_id", _shipzoneid);
+      salesDeterminePrice.bindValue(":saletype_id", _saletypeid);
       salesDeterminePrice.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
       salesDeterminePrice.bindValue(":curr_id", _customerPrice->id());
       salesDeterminePrice.bindValue(":effective", _customerPrice->effective());
@@ -1749,9 +1763,11 @@ void salesOrderItem::sDeterminePrice(bool force)
   XSqlQuery itemprice;
   itemprice.prepare( "SELECT * FROM "
                      "itemIpsPrice(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
-                     "             :curr_id, :effective, :asof, :warehouse);" );
+                     "             :curr_id, :effective, :asof, :warehouse, :shipzone_id, :saletype_id);" );
   itemprice.bindValue(":cust_id", _custid);
   itemprice.bindValue(":shipto_id", _shiptoid);
+  itemprice.bindValue(":shipzone_id", _shipzoneid);
+  itemprice.bindValue(":saletype_id", _saletypeid);
   itemprice.bindValue(":qty", _qtyOrdered->toDouble());
   itemprice.bindValue(":qtyUOM", _qtyUOM->id());
   itemprice.bindValue(":priceUOM", _priceUOM->id());
