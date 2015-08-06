@@ -125,6 +125,7 @@ class menuInventory : public QObject
     void sDspTimePhasedUsageStatisticsByItem();
 
     void sPrintItemLabelsByClassCode();
+    void sPrintToForms();
 
     void sWarehouses();
     void sWarehouseLocations();
