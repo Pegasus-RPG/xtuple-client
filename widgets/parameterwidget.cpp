@@ -41,6 +41,7 @@
 #include "shiptocluster.h"
 #include "ordercluster.h"
 #include "wocluster.h"
+#include "../guiclient/guiclient.h"
 
 #define DEBUG false
 
@@ -115,6 +116,7 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
   connect(_manageButton,              SIGNAL(clicked()), this, SLOT(sManageFilters()));
   connect(_saveButton,                SIGNAL(clicked()), this, SLOT(save()));
   connect(this,                       SIGNAL(updated()), this, SLOT(toggleSave()));
+  connect(_manageButton,              SIGNAL(clicked()), this, SLOT(sDebug()));
 
   _saveButton->setShortcut(QKeySequence::Save);
   _saveButton->setToolTip(_saveButton->text()
@@ -548,7 +550,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         XComboBox *mybox = qobject_cast<XComboBox*>(test->widget());
         if (mybox)
           mybox->setCurrentIndex(mybox->findText(key));
-	
+
         found = getFilterWidget(windowIdx);
 
         int widgetType = tempFilterList[2].toInt();
@@ -1466,7 +1468,8 @@ void ParameterWidget::save()
   params.append("classname", classname);
   if (_shared)
     params.append("shared", true);
-
+  if (!_x_privileges->check("AllowSharedFilterEdit"))
+    params.append("disableshare", true);
   filterSave newdlg(this);
   newdlg.set(params);
   filter_id = newdlg.exec();
@@ -2005,4 +2008,3 @@ void setupParameterWidget(QScriptEngine *engine)
 
   engine->globalObject().setProperty("ParameterWidget", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }
-

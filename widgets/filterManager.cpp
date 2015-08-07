@@ -36,7 +36,6 @@ filterManager::filterManager(QWidget* parent, const char* name)
   connect(_unshare, SIGNAL(clicked()), this, SLOT( unshareFilter() ));
   connect(_delete, SIGNAL(clicked()), this, SLOT( deleteFilter() ) );
   connect(this, SIGNAL(filterDeleted()), parent, SLOT(setSavedFilters()) );
-
   shortcuts::setStandardKeys(this);
 }
 
@@ -158,8 +157,13 @@ void filterManager::deleteFilter()
 void filterManager::handleButtons(bool valid)
 {
   _share->setEnabled(valid &&
-                     !_filterSet->currentItem()->rawValue("shared").toBool());
-  _delete->setEnabled(valid);
+                     !_filterSet->currentItem()->rawValue("shared").toBool() &&
+                     _x_privileges->check("AllowSharedFilterEdit"));
+  _delete->setEnabled(valid &&
+                     (!_filterSet->currentItem()->rawValue("shared").toBool() ||
+                      _x_privileges->check("AllowSharedFilterEdit")));
 
-	_unshare->setEnabled(valid && _filterSet->currentItem()->rawValue("shared").toBool());
+  _unshare->setEnabled(valid &&
+                       _filterSet->currentItem()->rawValue("shared").toBool() &&
+                       _x_privileges->check("AllowSharedFilterEdit"));
 }
