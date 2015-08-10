@@ -1222,7 +1222,7 @@ to be bound by its terms.</comment>
                 <enum>Qt::ClickFocus</enum>
                </property>
                <property name="type">
-                <number>0</number>
+                <enum>Comments::PurchaseOrderItem</enum>
                </property>
               </widget>
              </item>
