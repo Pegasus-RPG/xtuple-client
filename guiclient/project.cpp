@@ -783,32 +783,38 @@ void project::sFillTaskList()
 
 // Populate Task List
   MetaSQLQuery mqltask = mqlLoad("orderActivityByProject", "detail");
-  
-  params.append("so", tr("Sales Order"));
-  params.append("wo", tr("Work Order"));
-  params.append("po", tr("Purchase Order"));
-  params.append("pr", tr("Purchase Request"));
-  params.append("sos", tr("Sales Orders"));
-  params.append("wos", tr("Work Orders"));
-  params.append("pos", tr("Purchase Orders"));
-  params.append("prs", tr("Purchase Requests"));
-  params.append("quote", tr("Quote"));
-  params.append("quotes", tr("Quotes"));
-  params.append("invoice", tr("Invoice"));
-  params.append("invoices", tr("Invoices"));
-  params.append("open", tr("Open"));
-  params.append("closed", tr("Closed"));
-  params.append("converted", tr("Converted"));
-  params.append("canceled", tr("Canceled"));
-  params.append("expired", tr("Expired"));
-  params.append("unposted", tr("Unposted"));
-  params.append("posted", tr("Posted"));
-  params.append("exploded", tr("Exploded"));
-  params.append("released", tr("Released"));
-  params.append("planning", tr("Concept"));
-  params.append("inprocess", tr("In Process"));
-  params.append("complete", tr("Complete"));
+
+  params.append("assigned",   tr("Assigned"));
+  params.append("canceled",   tr("Canceled"));
+  params.append("closed",     tr("Closed"));
+  params.append("complete",   tr("Complete"));
+  params.append("confirmed",  tr("Confirmed"));
+  params.append("converted",  tr("Converted"));
+  params.append("expired",    tr("Expired"));
+  params.append("exploded",   tr("Exploded"));
+  params.append("feedback",   tr("Feedback"));
+  params.append("inprocess",  tr("In Process"));
+  params.append("invoice",    tr("Invoice"));
+  params.append("invoices",   tr("Invoices"));
+  params.append("new",        tr("New"));
+  params.append("open",       tr("Open"));
+  params.append("planning",   tr("Concept"));
+  params.append("po",         tr("Purchase Order"));
+  params.append("pos",        tr("Purchase Orders"));
+  params.append("posted",     tr("Posted"));
+  params.append("pr",         tr("Purchase Request"));
+  params.append("prs",        tr("Purchase Requests"));
+  params.append("quote",      tr("Quote"));
+  params.append("quotes",     tr("Quotes"));
+  params.append("released",   tr("Released"));
+  params.append("resolved",   tr("Resolved"));
+  params.append("so",         tr("Sales Order"));
+  params.append("sos",        tr("Sales Orders"));
+  params.append("unposted",   tr("Unposted"));
   params.append("unreleased", tr("Unreleased"));
+  params.append("wo",         tr("Work Order"));
+  params.append("wos",        tr("Work Orders"));
+
   params.append("total", tr("Total"));
 
   if(_showSo->isChecked())
