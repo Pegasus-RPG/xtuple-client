@@ -793,37 +793,7 @@ void itemPricingScheduleItem::populate()
 void itemPricingScheduleItem::sUpdateCosts(int pItemid)
 {
   // Get list of active, valid Selling UOMs
-  MetaSQLQuery muom = mqlLoad("uoms", "item");
-
-  ParameterList params;
-  params.append("uomtype", "Selling");
-  params.append("item_id", pItemid);
-
-  // Also have to factor UOMs previously used on Pricing Item now inactive
-  if (_ipsitemid != -1)
-  {
-    XSqlQuery pruom;
-    pruom.prepare("SELECT ipsitem_qty_uom_id, ipsitem_price_uom_id "
-                "  FROM ipsiteminfo"
-                " WHERE(ipsitem_id=:ipsitem_id);");
-    pruom.bindValue(":ipsitem_id", _ipsitemid);
-    pruom.exec();
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Sales Pricing UOMs"),
-                         pruom, __FILE__, __LINE__))
-      return;
-    else if (pruom.first())
-    {
-      params.append("uom_id", pruom.value("ipsitem_qty_uom_id"));
-      params.append("uom_id2", pruom.value("ipsitem_price_uom_id"));
-    }
-  }
-  XSqlQuery uom = muom.toQuery(params);
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting UOMs"),
-                         uom, __FILE__, __LINE__))
-    return;
-
-  _qtyUOM->populate(uom);
-  _priceUOM->populate(uom);
+  sPopulateUOM();
 
   XSqlQuery cost;
   cost.prepare( "SELECT item_inv_uom_id, item_price_uom_id,"
@@ -934,8 +904,89 @@ void itemPricingScheduleItem::sTypeChanged(bool pChecked)
   }
 }
 
+void itemPricingScheduleItem::sPopulateUOM()
+{
+  // Get list of active, valid Selling UOMs
+  MetaSQLQuery muom = mqlLoad("uoms", "item");
+  
+  ParameterList params;
+  params.append("uomtype", "Selling");
+  params.append("item_id", _item->id());
+  
+  // Include Global UOMs
+  if (_privileges->check("MaintainUOMs"))
+  {
+    params.append("includeGlobal", true);
+    params.append("global", tr("-Global"));
+  }
+  
+  // Also have to factor UOMs previously used on Pricing Item now inactive
+  if (_ipsitemid != -1)
+  {
+    XSqlQuery pruom;
+    pruom.prepare("SELECT ipsitem_qty_uom_id, ipsitem_price_uom_id "
+                  "  FROM ipsiteminfo"
+                  " WHERE(ipsitem_id=:ipsitem_id);");
+    pruom.bindValue(":ipsitem_id", _ipsitemid);
+    pruom.exec();
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Sales Pricing UOMs"),
+                             pruom, __FILE__, __LINE__))
+      return;
+    else if (pruom.first())
+    {
+      params.append("uom_id", pruom.value("ipsitem_qty_uom_id"));
+      params.append("uom_id2", pruom.value("ipsitem_price_uom_id"));
+    }
+  }
+  
+  XSqlQuery uom = muom.toQuery(params);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting UOMs"),
+                           uom, __FILE__, __LINE__))
+    return;
+  
+  int saveqtyuomid = _qtyUOM->id();
+  int savepriceuomid = _priceUOM->id();
+  disconnect(_qtyUOM,     SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+  disconnect(_priceUOM,   SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+  _qtyUOM->populate(uom);
+  _priceUOM->populate(uom);
+  _qtyUOM->setId(saveqtyuomid);
+  _priceUOM->setId(savepriceuomid);
+  connect(_qtyUOM,     SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+  connect(_priceUOM,   SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+}
+
 void itemPricingScheduleItem::sQtyUOMChanged()
 {
+  // Check for Global UOM Conversion that must be setup for Item
+  if (_qtyUOM->code() == "G")
+  {
+    if (QMessageBox::question(this, tr("Use Global UOM?"),
+                              tr("<p>This Global UOM Conversion is not setup for this Item."
+                                 "<p>Do you want to add this UOM conversion to this Item?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+    {
+      // create itemuomconv and itemuom
+      XSqlQuery adduom;
+      adduom.prepare("SELECT createItemUomConv(:item_id, :uom_id, :uom_type) AS result;");
+      adduom.bindValue(":item_id", _item->id());
+      adduom.bindValue(":uom_id", _qtyUOM->id());
+      adduom.bindValue(":uom_type", "Selling");
+      adduom.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Creating Item UOM Conv"),
+                               adduom, __FILE__, __LINE__))
+        return;
+      
+      // repopulate uom comboboxes
+      sPopulateUOM();
+    }
+    else
+    {
+      _qtyUOM->setId(_invuomid);
+    }
+  }
+  
   if(_qtyUOM->id() != _invuomid)
   {
     _priceUOM->setId(_qtyUOM->id());
@@ -943,6 +994,7 @@ void itemPricingScheduleItem::sQtyUOMChanged()
   }
   else
     _priceUOM->setEnabled(true);
+  
   sPriceUOMChanged();
 }
 
@@ -951,6 +1003,34 @@ void itemPricingScheduleItem::sPriceUOMChanged()
   if(_priceUOM->id() == -1 || _qtyUOM->id() == -1)
     return;
 
+  // Check for Global UOM Conversion that must be setup for Item
+  if (_priceUOM->code() == "G")
+  {
+    if (QMessageBox::question(this, tr("Use Global UOM?"),
+                              tr("<p>This Global UOM Conversion is not setup for this Item."
+                                 "<p>Do you want to add this UOM conversion to this Item?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+    {
+      XSqlQuery adduom;
+      adduom.prepare("SELECT createItemUomConv(:item_id, :uom_id, :uom_type) AS result;");
+      adduom.bindValue(":item_id", _item->id());
+      adduom.bindValue(":uom_id", _priceUOM->id());
+      adduom.bindValue(":uom_type", "Selling");
+      adduom.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Creating Item UOM Conv"),
+                               adduom, __FILE__, __LINE__))
+        return;
+      
+      // repopulate uom comboboxes
+      sPopulateUOM();
+    }
+    else
+    {
+      _priceUOM->setId(_invuomid);
+    }
+  }
+  
   XSqlQuery cost;
   cost.prepare( "SELECT "
                 "       itemuomtouomratio(item_id, :qtyuomid, :priceuomid) AS ratio,"
