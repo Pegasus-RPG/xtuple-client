@@ -423,6 +423,7 @@ FORMS =   absoluteCalendarItem.ui               \
           printPackingList.ui                   \
           printPackingListBatchByShipvia.ui     \
           printPoForm.ui                        \
+          printToForm.ui                        \
           printPurchaseOrder.ui                 \
           printPurchaseOrdersByAgent.ui         \
           printQuote.ui                         \
@@ -1015,6 +1016,7 @@ HEADERS = ../common/format.h                    \
           printPackingList.h            \
           printPackingListBatchByShipvia.h      \
           printPoForm.h                 \
+          printToForm.h                 \
           printPurchaseOrder.h          \
           printPurchaseOrdersByAgent.h  \
           printQuote.h                  \
@@ -1628,6 +1630,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           printPackingList.cpp                  \
           printPackingListBatchByShipvia.cpp    \
           printPoForm.cpp                       \
+          printToForm.cpp                       \
           printPurchaseOrder.cpp                \
           printPurchaseOrdersByAgent.cpp        \
           printQuote.cpp                        \

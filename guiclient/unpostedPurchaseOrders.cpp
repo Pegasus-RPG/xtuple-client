@@ -21,6 +21,7 @@
 
 #include "purchaseOrder.h"
 #include "printPurchaseOrder.h"
+#include "printPoForm.h"
 #include "guiclient.h"
 #include "storedProcErrorLookup.h"
 #include "parameterwidget.h"
@@ -208,6 +209,24 @@ void unpostedPurchaseOrders::sPrint()
   sFillList();
 }
 
+void unpostedPurchaseOrders::sPrintForms()
+{
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+    { 
+      ParameterList params;
+      params.append("pohead_id", list()->id());
+
+      printPoForm newdlg(this, "", true);
+      newdlg.set(params);
+      newdlg.exec();
+      break;
+    }
+  }
+}
+
 void unpostedPurchaseOrders::sRelease()
 {
   XSqlQuery unpostedRelease;
@@ -292,6 +311,9 @@ void unpostedPurchaseOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem,
 
 
   menuItem = pMenu->addAction(tr("Print..."), this, SLOT(sPrint()));
+  menuItem->setEnabled(_privileges->check("PrintPurchaseOrders"));
+
+  menuItem = pMenu->addAction(tr("Print Purchase Order Forms..."), this, SLOT(sPrintForms())); 
   menuItem->setEnabled(_privileges->check("PrintPurchaseOrders"));
 
   pMenu->addSeparator();

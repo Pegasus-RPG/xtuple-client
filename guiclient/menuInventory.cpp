@@ -104,6 +104,7 @@
 #include "dspTimePhasedUsageStatisticsByItem.h"
 
 #include "printItemLabelsByClassCode.h"
+#include "printToForm.h"
 
 #include "warehouses.h"
 #include "warehouse.h"
@@ -315,6 +316,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     // Inventory | Forms
     { "menu",                           tr("&Forms"),                (char*)formsMenu,                    mainMenu,  "true",            NULL, NULL, true, NULL },
     { "im.printItemLabelsByClassCode",  tr("Print &Item Labels..."), SLOT(sPrintItemLabelsByClassCode()), formsMenu, "ViewItemSites",   NULL, NULL, true, NULL },
+    { "im.printTOForms",  tr("Print &T/O Forms..."), SLOT(sPrintToForms()), formsMenu, "MaintainTransferOrders",   NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
 
     //  Inventory | Reports
     { "menu",                           tr("&Reports"),                   (char*)reportsMenu,                   mainMenu,       "true", NULL, NULL, true, NULL },
@@ -927,6 +929,11 @@ void menuInventory::sDspTimePhasedUsageStatisticsByItem()
 void menuInventory::sPrintItemLabelsByClassCode()
 {
   printItemLabelsByClassCode(parent, "", true).exec();
+}
+
+void menuInventory::sPrintToForms()
+{
+  printToForm(parent, "", true).exec();
 }
 
 
