@@ -132,13 +132,9 @@ void pricingScheduleAssignment::sAssign()
 
   if (_selectedShipZone->isChecked())
     pricingAssign.bindValue(":ipsass_shipzone_id", _shipZone->id());
-  else
-    pricingAssign.bindValue(":ipsass_shipzone_id", -1);
 
   if (_selectedSaleType->isChecked())
     pricingAssign.bindValue(":ipsass_saletype_id", _saleType->id());
-  else
-    pricingAssign.bindValue(":ipsass_saletype_id", -1);
 
   pricingAssign.exec();
   if (pricingAssign.first())
@@ -218,13 +214,9 @@ void pricingScheduleAssignment::sAssign()
 
   if (_selectedShipZone->isChecked())
     pricingAssign.bindValue(":ipsass_shipzone_id", _shipZone->id());
-  else
-    pricingAssign.bindValue(":ipsass_shipzone_id", -1);
 
   if (_selectedSaleType->isChecked())
     pricingAssign.bindValue(":ipsass_saletype_id", _saleType->id());
-  else
-    pricingAssign.bindValue(":ipsass_saletype_id", -1);
 
   pricingAssign.exec();
 
@@ -265,12 +257,12 @@ void pricingScheduleAssignment::populate()
       _selectedCustomerType->setChecked(true);
       _customerTypes->setId(pricingpopulate.value("ipsass_custtype_id").toInt());
     }
-    else if (pricingpopulate.value("ipsass_shipzone_id").toInt() != -1)
+    else if (pricingpopulate.value("ipsass_shipzone_id").toInt() > 0)
     {
       _selectedShipZone->setChecked(true);
       _shipZone->setId(pricingpopulate.value("ipsass_shipzone_id").toInt());
     }
-    else if (pricingpopulate.value("ipsass_saletype_id").toInt() != -1)
+    else if (pricingpopulate.value("ipsass_saletype_id").toInt() > 0)
     {
       _selectedSaleType->setChecked(true);
       _saleType->setId(pricingpopulate.value("ipsass_saletype_id").toInt());
