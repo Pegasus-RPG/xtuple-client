@@ -156,7 +156,7 @@ docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WindowFl
                      " WHERE source_widget != ''"
                      " UNION SELECT -2, 'File',     'FILE'"
                      " UNION SELECT -3, 'Web Site', 'URL') data"
-                     " ORDER BY source_name;");
+                     " ORDER BY source_descrip;");
 
 #ifndef Q_OS_MAC
     _fileList->setMaximumWidth(25);
