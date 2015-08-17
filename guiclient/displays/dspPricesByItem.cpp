@@ -112,6 +112,8 @@ bool dspPricesByItem::setParams(ParameterList & params)
   params.append("shipToPattern", tr("Cust. Ship-To Pattern"));
   params.append("custType", tr("Cust. Type"));
   params.append("custTypePattern", tr("Cust. Type Pattern"));
+  params.append("shipZone",        tr("Shipping Zone"));
+  params.append("saleType",        tr("Sale Type"));
   params.append("sale", tr("Sale"));
   params.append("listPrice", tr("List Price"));
   params.append("item_id", _item->id());

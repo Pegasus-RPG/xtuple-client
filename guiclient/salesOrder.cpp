@@ -2043,6 +2043,8 @@ void salesOrder::sNew()
   params.append("curr_id", _orderCurrency->id());
   params.append("orderDate", _orderDate->date());
   params.append("taxzone_id", _taxZone->id());
+  params.append("shipzone_id", _shippingZone->id());
+  params.append("saletype_id", _saleType->id());
   if (_warehouse->id() != -1)
     params.append("warehous_id", _warehouse->id());
   if (_shipDate->isValid())
@@ -2092,6 +2094,8 @@ void salesOrder::sEdit()
   params.append("curr_id", _orderCurrency->id());
   params.append("orderDate", _orderDate->date());
   params.append("taxzone_id", _taxZone->id());
+  params.append("shipzone_id", _shippingZone->id());
+  params.append("saletype_id", _saleType->id());
 
   if (_mode == cView)
     params.append("mode", "view");
