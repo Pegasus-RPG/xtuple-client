@@ -1378,7 +1378,7 @@ bool transferOrder::deleteForCancel()
     deleteTo = true;
   }
 
-  if (cNew == _mode && _toitem->topLevelItemCount() > 0)
+  if (cNew == _mode && _toitem->topLevelItemCount() > 0 && !_captive)
   {
     if (QMessageBox::question(this, tr("Delete Transfer Order?"),
                           tr("<p>Are you sure you want to delete this "
