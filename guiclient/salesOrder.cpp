@@ -165,7 +165,6 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
   _freightCache      = 0;
   _taxzoneidCache    = -1;
   _custtaxzoneid     = -1;
-  _amountOutstanding = 0.0;
   _crmacctid         =-1;
 
   _captive       = false;
@@ -2964,7 +2963,7 @@ void salesOrder::sCalculateTotal()
   _total->setLocalValue(total);
   _cashTotal->setLocalValue(total);
 
-  double balance = total - _allocatedCM->localValue() - _authCC->localValue() - _amountOutstanding;
+  double balance = total - _allocatedCM->localValue() - _authCC->localValue();
   if (balance < 0)
     balance = 0;
   _balance->setLocalValue(balance);
