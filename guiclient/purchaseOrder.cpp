@@ -734,8 +734,6 @@ void purchaseOrder::populate()
     _vendAddr->setCountry(po.value("pohead_vendcountry").toString());
         connect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
 
-    _shiptoName->setText(po.value("pohead_shiptoname").toString());
-
     _shiptoAddr->setId(po.value("pohead_shiptoaddress_id").toInt());
     _shiptoAddr->setLine1(po.value("pohead_shiptoaddress1").toString());
     _shiptoAddr->setLine2(po.value("pohead_shiptoaddress2").toString());
@@ -745,6 +743,9 @@ void purchaseOrder::populate()
     _shiptoAddr->setPostalCode(po.value("pohead_shiptozipcode").toString());
     _shiptoAddr->setCountry(po.value("pohead_shiptocountry").toString());
 
+    // must be after _shiptoAddr
+    _shiptoName->setText(po.value("pohead_shiptoname").toString());
+    
     _comments->setId(_poheadid);
     _documents->setId(_poheadid);
     _charass->setId(_poheadid);
