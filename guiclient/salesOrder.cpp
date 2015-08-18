@@ -2937,10 +2937,10 @@ void salesOrder::sFillItemList()
     fillSales.exec();
     if (fillSales.first())
     {
-      _freightCache = fillSales.value("freight").toDouble();
       disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
-      _freight->setLocalValue(_freightCache);
+      _freight->setLocalValue(fillSales.value("freight").toDouble());
       connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+      _freightCache = _freight->localValue();
     }
     else if (fillSales.lastError().type() != QSqlError::NoError)
     {
