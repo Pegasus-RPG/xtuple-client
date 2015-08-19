@@ -492,6 +492,22 @@ to be bound by its terms.</comment>
   <connection>
    <sender>_apopen</sender>
    <signal>valid(bool)</signal>
+   <receiver>_select</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>534</x>
+     <y>469</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>775</x>
+     <y>187</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_apopen</sender>
+   <signal>valid(bool)</signal>
    <receiver>_selectLine</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
