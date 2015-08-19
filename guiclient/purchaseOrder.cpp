@@ -17,6 +17,7 @@
 
 #include <metasql.h>
 
+#include "storedProcErrorLookup.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "comment.h"
@@ -804,8 +805,31 @@ void purchaseOrder::sSave()
   {
     if ((purchaseSave.value("pohead_status") == "O") && (_status->currentIndex() == 0))
     {
-      errors << GuiErrorCheck(true, _status,
-                              tr( "This Purchase Order has been released. You may not set its Status back to 'Unreleased'." ));
+      if (!_privileges->check("UnreleasePurchaseOrders"))
+        errors << GuiErrorCheck(true, _status,
+                                tr( "You do not have the privilege to set the status back to 'Unreleased'." ));
+      else
+      {
+        XSqlQuery unRelease;
+        unRelease.prepare("SELECT unreleasePurchaseOrder(:pohead_id) AS result;");
+        unRelease.bindValue(":pohead_id", _poheadid);
+        unRelease.exec();
+        if (unRelease.first())
+        {
+          int result = unRelease.value("result").toInt();
+          if (result < 0)
+          {
+            systemError(this, storedProcErrorLookup("unreleasePurchaseOrder", result),
+                        __FILE__, __LINE__);
+            return;
+          }
+        }
+        else if (unRelease.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, unRelease.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
+      }
     }
   }
 
