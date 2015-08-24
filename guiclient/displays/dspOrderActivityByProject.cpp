@@ -426,7 +426,7 @@ void dspOrderActivityByProject::sView()
 
 bool dspOrderActivityByProject::setParams(ParameterList &params)
 {
-  if(_project->id() == -1 && _run)
+  if(_project->id() == -1)
   {
     QMessageBox::warning(this, tr("Project Required"),
       tr("You must specify a Project."));
