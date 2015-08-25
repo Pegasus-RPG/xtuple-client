@@ -581,8 +581,9 @@ void issueToShipping::sIssueAllBalance()
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)_soitem->topLevelItem(i);
     if (sIssueLineBalance(cursor->id(),cursor->altId()))
       refresh = true;
-    else
-      break;
+    // attempt to issue all lines
+    //else
+    //  break;
   }
 
   if (refresh)
