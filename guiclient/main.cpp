@@ -101,6 +101,10 @@
 #include <QHttp>
 #endif
 #include <QUrl>
+#include <QUrlQuery>
+#include <QDebug>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
 
 #include <dbtools.h>
 #include <parameter.h>
@@ -460,23 +464,31 @@ int main(int argc, char *argv[])
         db = metric.value("db").toString();
       }
 
-#if QT_VERSION < 0x050000  // below removed in qt5, needs to be ported
-      QHttp *http = new QHttp();
-      
+      QUrlQuery urlQuery;
       QUrl url;
-      url.setPath("/api/regviolation.php");
-      url.addQueryItem("key", QUrl::toPercentEncoding(rkey));
-      url.addQueryItem("error", QUrl::toPercentEncoding(checkPassReason));
-      url.addQueryItem("name", QUrl::toPercentEncoding(name));
-      url.addQueryItem("dbname", QUrl::toPercentEncoding(dbname));
-      url.addQueryItem("db", QUrl::toPercentEncoding(db));
-      url.addQueryItem("cnt", QString::number(cnt));
-      url.addQueryItem("tot", QString::number(tot));
-      url.addQueryItem("ver", _Version);
+      //better way to do this? toPercentEncoding handled this in previous version of Qt, why will it not replace spaces now?
+      QString reasonEncoded = checkPassReason.replace(" ", "%20");
+      QString nameEncoded = name.replace(" ", "%20");
+      QString dbnameEncoded = dbname.replace(" ", "%20");
+      QNetworkAccessManager *manager = new QNetworkAccessManager(&app);
+      urlQuery.setQuery("www.xtuple.org/api/regviolation.php");
+      urlQuery.addQueryItem("key", QUrl::toPercentEncoding(rkey));
+      urlQuery.addQueryItem("error", QUrl::toPercentEncoding(reasonEncoded));
+      urlQuery.addQueryItem("name", QUrl::toPercentEncoding(nameEncoded));
+      urlQuery.addQueryItem("dbname", QUrl::toPercentEncoding(dbnameEncoded));
+      urlQuery.addQueryItem("db", QUrl::toPercentEncoding(db));
+      urlQuery.addQueryItem("cnt", QString::number(cnt));
+      urlQuery.addQueryItem("tot", QString::number(tot));
+      urlQuery.addQueryItem("ver", _Version);
+      qDebug() << "urlQuery= " << urlQuery.query();
+      url.setQuery(urlQuery.query());
+      QNetworkReply *reply = 0;
+      reply = manager->get(QNetworkRequest(QUrl(url.toString())));
+      //QObject::connect(reply, SIGNAL(finished(QNetworkReply*)), &app, SLOT(replyFinished(QNetworkReply*)));
+      qDebug() << "url= " << url.toString();
+      //qDebug() << "reply= "<< reply->error();
+      //qDebug() << "http=" << http->lastResponse().statusCode();
 
-      http->setHost("www.xtuple.org");
-      http->get(url.toString());
-#endif
       if(forced)
         return 0;
 
