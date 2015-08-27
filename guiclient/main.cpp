@@ -464,30 +464,23 @@ int main(int argc, char *argv[])
         db = metric.value("db").toString();
       }
 
-      QUrlQuery urlQuery;
-      QUrl url;
-      //better way to do this? toPercentEncoding handled this in previous version of Qt, why will it not replace spaces now?
-      QString reasonEncoded = checkPassReason.replace(" ", "%20");
-      QString nameEncoded = name.replace(" ", "%20");
-      QString dbnameEncoded = dbname.replace(" ", "%20");
       QNetworkAccessManager *manager = new QNetworkAccessManager(&app);
-      urlQuery.setQuery("www.xtuple.org/api/regviolation.php");
-      urlQuery.addQueryItem("key", QUrl::toPercentEncoding(rkey));
-      urlQuery.addQueryItem("error", QUrl::toPercentEncoding(reasonEncoded));
-      urlQuery.addQueryItem("name", QUrl::toPercentEncoding(nameEncoded));
-      urlQuery.addQueryItem("dbname", QUrl::toPercentEncoding(dbnameEncoded));
-      urlQuery.addQueryItem("db", QUrl::toPercentEncoding(db));
+      QUrlQuery urlQuery;
+      urlQuery.setQuery("www.xtuple.org/api/regviolation.php?");
+      urlQuery.addQueryItem("key", rkey);
+      urlQuery.addQueryItem("error", checkPassReason);
+      urlQuery.addQueryItem("name", name);
+      urlQuery.addQueryItem("dbname", dbname);
+      urlQuery.addQueryItem("db", db);
       urlQuery.addQueryItem("cnt", QString::number(cnt));
       urlQuery.addQueryItem("tot", QString::number(tot));
       urlQuery.addQueryItem("ver", _Version);
-      qDebug() << "urlQuery= " << urlQuery.query();
-      url.setQuery(urlQuery.query());
+      QUrl url = urlQuery.query();
+      qDebug() << "urlEncoded=" << url.toEncoded();
       QNetworkReply *reply = 0;
-      reply = manager->get(QNetworkRequest(QUrl(url.toString())));
+      reply = manager->get(QNetworkRequest(QUrl(url.toEncoded())));
       //QObject::connect(reply, SIGNAL(finished(QNetworkReply*)), &app, SLOT(replyFinished(QNetworkReply*)));
-      qDebug() << "url= " << url.toString();
       //qDebug() << "reply= "<< reply->error();
-      //qDebug() << "http=" << http->lastResponse().statusCode();
 
       if(forced)
         return 0;
