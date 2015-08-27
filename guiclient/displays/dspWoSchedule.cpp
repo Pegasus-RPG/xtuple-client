@@ -168,6 +168,7 @@ bool dspWoSchedule::setParams(ParameterList & params)
   params.append("planord", tr("Planned Order"));
   params.append("mps", tr("MPS"));
   params.append("so", tr("S/O"));
+  params.append("quote", tr("Quote"));
 
   params.append("overdue", tr("Overdue"));
   params.append("ontime", tr("On Time"));

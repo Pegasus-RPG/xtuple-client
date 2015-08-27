@@ -17,6 +17,7 @@
 
 #include <metasql.h>
 
+#include "storedProcErrorLookup.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "comment.h"
@@ -734,8 +735,6 @@ void purchaseOrder::populate()
     _vendAddr->setCountry(po.value("pohead_vendcountry").toString());
         connect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
 
-    _shiptoName->setText(po.value("pohead_shiptoname").toString());
-
     _shiptoAddr->setId(po.value("pohead_shiptoaddress_id").toInt());
     _shiptoAddr->setLine1(po.value("pohead_shiptoaddress1").toString());
     _shiptoAddr->setLine2(po.value("pohead_shiptoaddress2").toString());
@@ -745,6 +744,9 @@ void purchaseOrder::populate()
     _shiptoAddr->setPostalCode(po.value("pohead_shiptozipcode").toString());
     _shiptoAddr->setCountry(po.value("pohead_shiptocountry").toString());
 
+    // must be after _shiptoAddr
+    _shiptoName->setText(po.value("pohead_shiptoname").toString());
+    
     _comments->setId(_poheadid);
     _documents->setId(_poheadid);
     _charass->setId(_poheadid);
@@ -804,8 +806,31 @@ void purchaseOrder::sSave()
   {
     if ((purchaseSave.value("pohead_status") == "O") && (_status->currentIndex() == 0))
     {
-      errors << GuiErrorCheck(true, _status,
-                              tr( "This Purchase Order has been released. You may not set its Status back to 'Unreleased'." ));
+      if (!_privileges->check("UnreleasePurchaseOrders"))
+        errors << GuiErrorCheck(true, _status,
+                                tr( "You do not have the privilege to set the status back to 'Unreleased'." ));
+      else
+      {
+        XSqlQuery unRelease;
+        unRelease.prepare("SELECT unreleasePurchaseOrder(:pohead_id) AS result;");
+        unRelease.bindValue(":pohead_id", _poheadid);
+        unRelease.exec();
+        if (unRelease.first())
+        {
+          int result = unRelease.value("result").toInt();
+          if (result < 0)
+          {
+            systemError(this, storedProcErrorLookup("unreleasePurchaseOrder", result),
+                        __FILE__, __LINE__);
+            return;
+          }
+        }
+        else if (unRelease.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, unRelease.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
+      }
     }
   }
 

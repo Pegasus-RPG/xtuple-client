@@ -787,7 +787,7 @@ bool salesOrder::save(bool partial)
                           tr("You must select the Terms for this order before you may save it.") )
          << GuiErrorCheck((_shipTo->id() == -1) && (!_shipToName->isEnabled()), _shipTo,
                           tr("You must select a Ship-To for this order before you may save it.") )
-         << GuiErrorCheck(_total->localValue() < 0, _cust,
+         << GuiErrorCheck(!partial && _total->localValue() < 0, _cust,
                           tr("<p>The Total must be a positive value.") )
          << GuiErrorCheck(!partial && _soitem->topLevelItemCount() == 0, _new,
                           tr("<p>You must create at least one Line Item for this order before you may save it.") )
@@ -2940,10 +2940,10 @@ void salesOrder::sFillItemList()
     fillSales.exec();
     if (fillSales.first())
     {
-      _freightCache = fillSales.value("freight").toDouble();
       disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
-      _freight->setLocalValue(_freightCache);
+      _freight->setLocalValue(fillSales.value("freight").toDouble());
       connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+      _freightCache = _freight->localValue();
     }
     else if (fillSales.lastError().type() != QSqlError::NoError)
     {

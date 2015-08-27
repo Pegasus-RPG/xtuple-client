@@ -203,6 +203,9 @@ bool dspInventoryAvailability::setParams(ParameterList &params)
   if(_showShortages->isChecked())
     params.append("showShortages");
 
+  if (_metrics->boolean("EnableSOReservations"))
+    params.append("showReserved");
+  
   if(_byVendor->isChecked())
     params.append("byVend");
 
@@ -459,6 +462,8 @@ void dspInventoryAvailability::sByVendorChanged()
   list()->addColumn(tr("Reorder Lvl."), _qtyColumn,  Qt::AlignRight, true, "reorderlevel");
   list()->addColumn(tr("OUT Level"),    _qtyColumn,  Qt::AlignRight, false, "outlevel");
   list()->addColumn(tr("Available"),    _qtyColumn,  Qt::AlignRight, true, "available");
+  if (_metrics->boolean("EnableSOReservations"))
+    list()->addColumn(tr("Reserved"),   _qtyColumn,  Qt::AlignRight, true, "reserved");
 }
 
 void dspInventoryAvailability::sAsofChanged(int index)
