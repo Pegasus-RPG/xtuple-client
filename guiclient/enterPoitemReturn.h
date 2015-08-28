@@ -34,6 +34,7 @@ protected slots:
 
 private:
     int _poitemid;
+    QString _rma;
     double _cachedReceived;
     double _returned;
 
