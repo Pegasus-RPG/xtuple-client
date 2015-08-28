@@ -1016,7 +1016,7 @@ bool salesOrder::save(bool partial)
   }
   else if ((_mode == cEditQuote) || ((_mode == cNewQuote) && _saved))
     saveSales.prepare( "UPDATE quhead "
-               "SET quhead_custponumber=:custponumber, quhead_shipto_id=:shipto_id,"
+               "SET quhead_custponumber=:custponumber, quhead_shipto_id=:shipto_id, quhead_cust_id=:cust_id,"
                "    quhead_billtoname=:billtoname, quhead_billtoaddress1=:billtoaddress1,"
                "    quhead_billtoaddress2=:billtoaddress2, quhead_billtoaddress3=:billtoaddress3,"
                "    quhead_billtocity=:billtocity, quhead_billtostate=:billtostate, quhead_billtozip=:billtozipcode,"
