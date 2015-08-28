@@ -156,7 +156,7 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
 
   param = pParams.value("poreject_rma", &valid);
   if (valid)
-    _rma = param.toString();
+    _rmAuthority = param.toString();
 
 
   return NoError;
@@ -214,7 +214,7 @@ void enterPoitemReturn::sReturn()
   enterReturn.bindValue(":poitem_id", _poitemid);
   enterReturn.bindValue(":qty", _toReturn->toDouble());
   enterReturn.bindValue(":rjctcode_id", _rejectCode->id());
-  enterReturn.bindValue(":rma", _rma);
+  enterReturn.bindValue(":rma", _rmAuthority);
   if (_receipts->id() != -1)
     enterReturn.bindValue(":recv_id", _receipts->id());
   enterReturn.exec();
