@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>945</width>
-    <height>856</height>
+    <height>904</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1106,6 +1106,32 @@ to be bound by its terms.</comment>
                        </widget>
                       </item>
                      </layout>
+                    </item>
+                    <item>
+                     <widget class="QGroupBox" name="_asOfGroup">
+                      <property name="title">
+                       <string>As Of</string>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_15">
+                       <item>
+                        <widget class="QRadioButton" name="_asOfScheddate">
+                         <property name="text">
+                          <string>Scheduled Date</string>
+                         </property>
+                         <property name="checked">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QRadioButton" name="_asOfLeadTime">
+                         <property name="text">
+                          <string>Lead Time</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
                     </item>
                     <item>
                      <spacer>
