@@ -349,7 +349,7 @@ void shipTo::populate()
 
 void shipTo::sPopulateNumber()
 {
-  if (_shipToNumber->text().length() == 0)
+  if (_shipToNumber->text().trimmed().length() == 0)
   {
     XSqlQuery nextnumq;
     nextnumq.prepare( "SELECT (COALESCE(MAX(CAST(shipto_num AS INTEGER)), 0) + 1) AS n_shipto_num "
@@ -375,7 +375,7 @@ void shipTo::sPopulateNumber()
                      " AND (UPPER(shipto_num)=UPPER(:shipto_num))"
                      " AND (shipto_id != :shipto_id));" );
     dupnumq.bindValue(":cust_id", _custid);
-    dupnumq.bindValue(":shipto_num", _shipToNumber->text());
+    dupnumq.bindValue(":shipto_num", _shipToNumber->text().trimmed());
     dupnumq.bindValue(":shipto_id", _shiptoid);
     dupnumq.exec();
     if (dupnumq.first())
