@@ -3946,6 +3946,7 @@ void salesOrderItem::populate()
           "       coitem_promdate AS promdate,"
           "       coitem_substitute_item_id, coitem_prcost,"
           "       qtyAtShipping(coitem_id) AS qtyatshipping,"
+          "       kitAtShipping(coitem_id) AS kitatshipping,"
           "       coitem_taxtype_id,"
           "       coitem_cos_accnt_id, coitem_rev_accnt_id, "
           "       coitem_warranty, coitem_qtyreserved, locale_qty_scale, "
@@ -3981,7 +3982,7 @@ void salesOrderItem::populate()
             "       quitem_price_invuomratio AS price_invuomratio,"
             "       quitem_promdate AS promdate,"
             "       -1 AS coitem_substitute_item_id, quitem_prcost AS coitem_prcost,"
-            "       0.0 AS qtyatshipping,"
+            "       0.0 AS qtyatshipping, 0.0 AS kitatshipping,"
             "       quitem_taxtype_id AS coitem_taxtype_id, quitem_dropship, quitem_itemsrc_id"
             "       locale_qty_scale, quhead_number AS ordnumber "
             "  FROM item, uom, quhead, locale "
@@ -4101,8 +4102,9 @@ void salesOrderItem::populate()
     _warehouse->setEnabled(false);
 
     _qtyatshipping = item.value("qtyatshipping").toDouble() + item.value("qtyshipped").toDouble();
+    double _kitatshipping = item.value("kitatshipping").toDouble();
     if ( (cView != _mode) && (item.value("coitem_status").toString() == "O") )
-      _cancel->setEnabled(_qtyatshipping==0.0);
+      _cancel->setEnabled((_qtyatshipping + _kitatshipping)==0.0);
     else
       _cancel->setEnabled(false);
   }

@@ -373,7 +373,7 @@ void enterPoReceipt::sPost()
         issue.prepare("SELECT issueToShipping('SO', coitem_id, "
                       "  roundQty(item_fractional, (recv_qty * poitem_invvenduomratio / coitem_qty_invuomratio)), "
                       "  :itemlocseries, recv_gldistdate, invhist_id ) AS result, "
-                      "  coitem_cohead_id, cohead_holdtype "
+                      "  coitem_cohead_id, soHoldType(cohead_id) AS holdtype "
                       "FROM invhist, recv "
                       " JOIN poitem ON (poitem_id=recv_orderitem_id) "
                       " JOIN coitem ON (coitem_id=poitem_order_id AND poitem_order_type='S') "
@@ -394,7 +394,7 @@ void enterPoReceipt::sPost()
                         __FILE__, __LINE__);
             return;
           }
-          if (issue.value("cohead_holdtype").toString() != "N")
+          if (issue.value("holdtype").toString() != "N")
           {
             QString msg = tr("This Purchase Order is being drop shipped against "
                      "a Sales Order that is on Hold.  The Sales Order must "

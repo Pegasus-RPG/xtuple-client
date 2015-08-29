@@ -770,33 +770,28 @@ void issueToShipping::sFillList()
   }
   else if (_order->isSO())
   {
-    issueFillList.prepare( "SELECT cohead_holdtype,"
-                           "       (calcSalesOrderAmt(cohead_id) - "
-                           "       COALESCE(SUM(currToCurr(aropenalloc_curr_id, cohead_curr_id,"
-                           "                               aropenalloc_amount, cohead_orderdate)),0)) AS balance "
-                           "FROM cohead LEFT OUTER JOIN aropenalloc ON (aropenalloc_doctype='S' AND"
-                           "                                            aropenalloc_doc_id=cohead_id) "
-                           "WHERE (cohead_id=:sohead_id) "
-                           "GROUP BY cohead_holdtype, cohead_id;" );
+    issueFillList.prepare("SELECT soHoldType(cohead_id) AS holdtype "
+                          "FROM cohead "
+                          "WHERE (cohead_id=:sohead_id);" );
     issueFillList.bindValue(":sohead_id", _order->id());
     issueFillList.exec();
     if (issueFillList.first())
     {
-      if ( (issueFillList.value("cohead_holdtype").toString() == "C") && (issueFillList.value("balance").toDouble() > 0.0) )
+      if (issueFillList.value("holdtype").toString() == "C")
       {
         QMessageBox::critical( this, tr("Cannot Issue Stock"),
                               storedProcErrorLookup("issuetoshipping", -12));
         _order->setId(-1);
         _order->setFocus();
       }
-      else if (issueFillList.value("cohead_holdtype").toString() == "P")
+      else if (issueFillList.value("holdtype").toString() == "P")
       {
         QMessageBox::critical( this, tr("Cannot Issue Stock"),
                               storedProcErrorLookup("issuetoshipping", -13));
         _order->setId(-1);
         _order->setFocus();
       }
-      else if (issueFillList.value("cohead_holdtype").toString() == "R")
+      else if (issueFillList.value("holdtype").toString() == "R")
       {
         QMessageBox::critical( this, tr("Cannot Issue Stock"),
                               storedProcErrorLookup("issuetoshipping", -14));
