@@ -1668,7 +1668,7 @@ bool purchaseOrder::saveDetail()
          << GuiErrorCheck(!_orderDate->isValid(), _orderDate,
                           tr("You may not save this Purchase Order until you have entered a valid Purchase Order Date."))
          << GuiErrorCheck(!_vendor->isValid(), _vendor,
-                          tr("You may not save this Purchase Order until you have entered a valid Vendor."))
+                          tr("You may not save this Purchase Order until you have selected a valid Vendor."))
   ;
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Purchase Order"), errors))
