@@ -15,7 +15,10 @@
 #include <QSqlError>
 #include <QValidator>
 #include <QVariant>
+#include <metasql.h>
 
+#include "mqlutil.h"
+#include "errorReporter.h"
 #include "creditMemoItem.h"
 #include "invoiceList.h"
 #include "storedProcErrorLookup.h"
@@ -780,38 +783,15 @@ void creditMemo::sDelete()
 
 void creditMemo::sFillList()
 {
-  XSqlQuery creditFillList;
-  creditFillList.prepare( "SELECT cmitem_id, cmitem_linenumber, item_number,"
-             "       (item_descrip1 || ' ' || item_descrip2) AS description,"
-             "       warehous_code, quom.uom_name AS qtyuom,"
-             "       cmitem_qtyreturned, cmitem_qtycredit,"
-             "       puom.uom_name AS priceuom,"
-             "       cmitem_unitprice,"
-             "       (cmitem_qtycredit * cmitem_qty_invuomratio) *"
-             "        (cmitem_unitprice / cmitem_price_invuomratio) AS extprice,"
-             "       'qty' AS cmitem_qtyreturned_xtnumericrole,"
-             "       'qty' AS cmitem_qtycredit_xtnumericrole,"
-             "       'salesprice' AS cmitem_unitprice_xtnumericrole,"
-             "       'curr' AS extprice_xtnumericrole "
-             "FROM cmitem, itemsite, item, whsinfo, uom AS quom, uom AS puom "
-             "WHERE ( (cmitem_itemsite_id=itemsite_id)"
-             " AND (cmitem_qty_uom_id=quom.uom_id)"
-             " AND (cmitem_price_uom_id=puom.uom_id)"
-             " AND (itemsite_item_id=item_id)"
-             " AND (itemsite_warehous_id=warehous_id)"
-             " AND (cmitem_cmhead_id=:cmhead_id) ) "
-             "ORDER BY cmitem_linenumber;" );
-  creditFillList.bindValue(":cmhead_id", _cmheadid);
-  creditFillList.exec();
-  if (creditFillList.lastError().type() != QSqlError::NoError)
-      systemError(this, creditFillList.lastError().databaseText(), __FILE__, __LINE__);
+  MetaSQLQuery mql = mqlLoad("creditMemoItems", "list");
 
-  _cmitem->populate(creditFillList);
-  if (creditFillList.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, creditFillList.lastError().databaseText(), __FILE__, __LINE__);
+  ParameterList params;
+  params.append("cmhead_id", _cmheadid);
+  XSqlQuery creditFillList = mql.toQuery(params);
+  _cmitem->populate(creditFillList, true);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Credit Memo Items"),
+                             creditFillList, __FILE__, __LINE__))
     return;
-  }
 
   sCalculateSubtotal();
   sCalculateTax();
@@ -824,10 +804,10 @@ void creditMemo::sCalculateSubtotal()
 //  Determine the subtotal and line item tax
   XSqlQuery query;
   query.prepare( "SELECT SUM(round((cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio), 2)) AS subtotal "
-                 "FROM cmitem, itemsite, item "
-                 "WHERE ( (cmitem_itemsite_id=itemsite_id)"
-                 " AND (itemsite_item_id=item_id)"
-                 " AND (cmitem_cmhead_id=:cmhead_id) );" );
+                 "FROM cmitem "
+                 "LEFT OUTER JOIN itemsite ON (cmitem_itemsite_id=itemsite_id) "
+                 "LEFT OUTER JOIN item ON (itemsite_item_id=item_id) "
+                 "WHERE (cmitem_cmhead_id=:cmhead_id);" );
   query.bindValue(":cmhead_id", _cmheadid);
   query.exec();
   if (query.first())
