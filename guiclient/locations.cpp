@@ -170,6 +170,8 @@ void locations::sPrint()
 
 void locations::sFillList()
 {
+  _location->clear();
+  
   QString sql( "SELECT location_id, warehous_code, formatLocationName(location_id) AS name,"
                "       whsezone_name||'-'||whsezone_descrip as zone,"
                "       firstLine(location_descrip) AS locationname,"
@@ -203,6 +205,8 @@ void locations::sFillList()
 
 void locations::updateZoneList()
 {
+  _zone->clear();
+  
   QString zoneSql( "SELECT whsezone_id, whsezone_name||'-'||whsezone_descrip "
              " FROM whsezone  "
              " <? if exists('warehous_id') ?> "
