@@ -3398,7 +3398,7 @@ void salesOrder::setViewMode()
   _comments->setType(Comments::SalesOrder);
   _comments->setReadOnly(true);
   _documents->setType("S");
-  _documents->setReadOnly(true);
+  // _documents->setReadOnly(true); 20996, 25319, 26431
   _shipComplete->setEnabled(false);
   setFreeFormShipto(false);
   _orderCurrency->setEnabled(false);
