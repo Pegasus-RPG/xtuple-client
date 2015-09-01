@@ -89,6 +89,7 @@ QMap<QString, struct CommentMap *> &Comments::commentMap() {
 //    addToMap(CreditMemoItem,    "CMI",   tr("Return Item")                                      );
     addToMap(Customer,          "C",     tr("Customer"),        "cust_id",    "customer"        );
     addToMap(Employee,          "EMP",   tr("Employee"),        "emp_id",     "employee"        );
+    addToMap(ExchangeRate,      "FX",    tr("Exchange Rate")                                    );
     addToMap(Incident,          "INCDT", tr("Incident"),        "incdt_id",   "incident",     "MaintainPersonalIncidents MaintainAllIncidents" );
 //    addToMap(Invoice,           "INV",   tr("Invoice"),         "invchead_id","invoice"         );
 //    addToMap(InvoiceItem,       "INVI",  tr("Invoice Item")                                     );

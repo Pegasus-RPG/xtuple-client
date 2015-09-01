@@ -1359,6 +1359,13 @@ to be bound by its terms.</comment>
             </widget>
            </item>
            <item>
+            <widget class="QCheckBox" name="_fxChangeLog">
+             <property name="text">
+              <string>Post Exchange Rate changes to Change Log</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QGroupBox" name="_taxGroup">
              <property name="title">
               <string>Tax</string>

@@ -245,6 +245,8 @@ void comment::set(const ParameterList &pParams)
         _cmnttype->setType(XComboBox::CustomerCommentTypes);
       else if (_sourcetype == "EMP")
         _cmnttype->setType(XComboBox::EmployeeCommentTypes);
+      else if (_sourcetype == "FX")
+        _cmnttype->setType(XComboBox::ExchangeRateCommentTypes);
       else if (_sourcetype == "INCDT")
         _cmnttype->setType(XComboBox::IncidentCommentTypes);
       else if (_sourcetype == "I")
