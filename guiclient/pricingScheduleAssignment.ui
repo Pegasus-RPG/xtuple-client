@@ -297,14 +297,14 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_selectedCustomer</tabstop>
-  <tabstop>_cust</tabstop>
   <tabstop>_selectedCustomerShipto</tabstop>
   <tabstop>_shiptoIdCust</tabstop>
   <tabstop>_shiptoId</tabstop>
   <tabstop>_selectedShiptoPattern</tabstop>
   <tabstop>_shiptoPatternCust</tabstop>
   <tabstop>_shiptoPattern</tabstop>
+  <tabstop>_selectedCustomer</tabstop>
+  <tabstop>_cust</tabstop>
   <tabstop>_selectedCustomerType</tabstop>
   <tabstop>_customerTypes</tabstop>
   <tabstop>_customerTypePattern</tabstop>
