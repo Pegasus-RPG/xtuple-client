@@ -548,7 +548,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         XComboBox *mybox = qobject_cast<XComboBox*>(test->widget());
         if (mybox)
           mybox->setCurrentIndex(mybox->findText(key));
-	
+
         found = getFilterWidget(windowIdx);
 
         int widgetType = tempFilterList[2].toInt();
