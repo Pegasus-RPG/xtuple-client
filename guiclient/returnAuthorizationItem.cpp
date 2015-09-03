@@ -91,6 +91,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_qtyUOM,               SIGNAL(newID(int)),                     this, SLOT(sQtyUOMChanged()));
   connect(_qtyUOM,               SIGNAL(newID(int)),                     this, SLOT(sPopulateOrderInfo()));
   connect(_pricingUOM,           SIGNAL(newID(int)),                     this, SLOT(sPriceUOMChanged()));
+  connect(_salePricingUOM,       SIGNAL(newID(int)),                     this, SLOT(sSalePriceUOMChanged()));
   connect(_disposition,          SIGNAL(newID(int)),                     this, SLOT(sDispositionChanged()));
   connect(_shipWhs,              SIGNAL(newID(int)),                     this, SLOT(sDetermineAvailability()));
   connect(_scheduledDate,        SIGNAL(newDate(const QDate&)),          this, SLOT(sDetermineAvailability()));
@@ -692,38 +693,7 @@ bool returnAuthorizationItem::sSave()
 void returnAuthorizationItem::sPopulateItemInfo()
 {
   // Get list of active, valid Selling UOMs
-  MetaSQLQuery muom = mqlLoad("uoms", "item");
-
-  ParameterList params;
-  params.append("uomtype", "Selling");
-  params.append("item_id", _item->id());
-
-  // Also have to factor UOMs previously used on Return Auth now inactive
-  if (_raitemid != -1)
-  {
-    XSqlQuery cmuom;
-    cmuom.prepare("SELECT raitem_qty_uom_id, raitem_price_uom_id "
-                "  FROM raitem"
-                " WHERE(raitem_id=:raitem_id);");
-    cmuom.bindValue(":raitem_id", _raitemid);
-    cmuom.exec();
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Returns UOMs"),
-                         cmuom, __FILE__, __LINE__))
-      return;
-    else if (cmuom.first())
-    {
-      params.append("uom_id", cmuom.value("raitem_qty_uom_id"));
-      params.append("uom_id2", cmuom.value("raitem_price_uom_id"));
-    }
-  }
-  XSqlQuery uom = muom.toQuery(params);
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting UOMs"),
-                         uom, __FILE__, __LINE__))
-    return;
-
-  _qtyUOM->populate(uom);
-  _pricingUOM->populate(uom);
-  _salePricingUOM->populate(uom);
+  sPopulateUOM();
 
   XSqlQuery item;
   item.prepare( "SELECT item_inv_uom_id, item_price_uom_id,"
@@ -1351,8 +1321,93 @@ void returnAuthorizationItem::sTaxDetail()
   }
 }
 
+void returnAuthorizationItem::sPopulateUOM()
+{
+  // Get list of active, valid Selling UOMs
+  MetaSQLQuery muom = mqlLoad("uoms", "item");
+  
+  ParameterList params;
+  params.append("uomtype", "Selling");
+  params.append("item_id", _item->id());
+  
+  // Include Global UOMs
+  if (_privileges->check("MaintainUOMs"))
+  {
+    params.append("includeGlobal", true);
+    params.append("global", tr("-Global"));
+  }
+  
+  // Also have to factor UOMs previously used on Return Auth now inactive
+  if (_raitemid != -1)
+  {
+    XSqlQuery cmuom;
+    cmuom.prepare("SELECT raitem_qty_uom_id, raitem_price_uom_id "
+                  "  FROM raitem"
+                  " WHERE(raitem_id=:raitem_id);");
+    cmuom.bindValue(":raitem_id", _raitemid);
+    cmuom.exec();
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Returns UOMs"),
+                             cmuom, __FILE__, __LINE__))
+      return;
+    else if (cmuom.first())
+    {
+      params.append("uom_id", cmuom.value("raitem_qty_uom_id"));
+      params.append("uom_id2", cmuom.value("raitem_price_uom_id"));
+    }
+  }
+  XSqlQuery uom = muom.toQuery(params);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting UOMs"),
+                           uom, __FILE__, __LINE__))
+    return;
+  
+  int saveqtyuomid = _qtyUOM->id();
+  int savepriceuomid = _pricingUOM->id();
+  int savesaleuomid = _salePricingUOM->id();
+  disconnect(_qtyUOM,         SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+  disconnect(_pricingUOM,     SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+  disconnect(_salePricingUOM, SIGNAL(newID(int)), this, SLOT(sSalePriceUOMChanged()));
+  _qtyUOM->populate(uom);
+  _pricingUOM->populate(uom);
+  _salePricingUOM->populate(uom);
+  _qtyUOM->setId(saveqtyuomid);
+  _pricingUOM->setId(savepriceuomid);
+  _salePricingUOM->setId(savesaleuomid);
+  connect(_qtyUOM,         SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+  connect(_pricingUOM,     SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+  connect(_salePricingUOM, SIGNAL(newID(int)), this, SLOT(sSalePriceUOMChanged()));
+}
+
 void returnAuthorizationItem::sQtyUOMChanged()
 {
+  // Check for Global UOM Conversion that must be setup for Item
+  if (_qtyUOM->code() == "G")
+  {
+    if (QMessageBox::question(this, tr("Use Global UOM?"),
+                              tr("<p>This Global UOM Conversion is not setup for this Item."
+                                 "<p>Do you want to add this UOM conversion to this Item?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+    {
+      // create itemuomconv and itemuom
+      XSqlQuery adduom;
+      adduom.prepare("SELECT createItemUomConv(:item_id, :uom_id, :uom_type) AS result;");
+      adduom.bindValue(":item_id", _item->id());
+      adduom.bindValue(":uom_id", _qtyUOM->id());
+      adduom.bindValue(":uom_type", "Selling");
+      adduom.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Creating Item UOM Conv"),
+                               adduom, __FILE__, __LINE__))
+        return;
+      
+      // repopulate uom comboboxes
+      sPopulateUOM();
+    }
+    else
+    {
+      _qtyUOM->setId(_invuomid);
+    }
+  }
+  
   if(_qtyUOM->id() == _invuomid || _item->id() == -1)
     _qtyinvuomratio = 1.0;
   else
@@ -1383,6 +1438,7 @@ void returnAuthorizationItem::sQtyUOMChanged()
     _pricingUOM->setEnabled(isEditing);
     _salePricingUOM->setEnabled(isEditing);
   }
+  
   sCalculateExtendedPrice();
   sCalculateSaleExtendedPrice();
 }
@@ -1392,6 +1448,34 @@ void returnAuthorizationItem::sPriceUOMChanged()
   if(_pricingUOM->id() == -1 || _qtyUOM->id() == -1)
     return;
 
+  // Check for Global UOM Conversion that must be setup for Item
+  if (_pricingUOM->code() == "G")
+  {
+    if (QMessageBox::question(this, tr("Use Global UOM?"),
+                              tr("<p>This Global UOM Conversion is not setup for this Item."
+                                 "<p>Do you want to add this UOM conversion to this Item?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+    {
+      XSqlQuery adduom;
+      adduom.prepare("SELECT createItemUomConv(:item_id, :uom_id, :uom_type) AS result;");
+      adduom.bindValue(":item_id", _item->id());
+      adduom.bindValue(":uom_id", _pricingUOM->id());
+      adduom.bindValue(":uom_type", "Selling");
+      adduom.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Creating Item UOM Conv"),
+                               adduom, __FILE__, __LINE__))
+        return;
+      
+      // repopulate uom comboboxes
+      sPopulateUOM();
+    }
+    else
+    {
+      _pricingUOM->setId(_invuomid);
+    }
+  }
+  
   if(_pricingUOM->id() == _invuomid)
     _priceinvuomratio = 1.0;
   else
@@ -1411,6 +1495,49 @@ void returnAuthorizationItem::sPriceUOMChanged()
   //_ratio->setText(formatUOMRatio(_priceinvuomratio));
 
   updatePriceInfo();
+}
+
+void returnAuthorizationItem::sSalePriceUOMChanged()
+{
+  // Check for Global UOM Conversion that must be setup for Item
+  if (_salePricingUOM->code() == "G")
+  {
+    if (QMessageBox::question(this, tr("Use Global UOM?"),
+                              tr("<p>This Global UOM Conversion is not setup for this Item."
+                                 "<p>Do you want to add this UOM conversion to this Item?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+    {
+      XSqlQuery adduom;
+      adduom.prepare("SELECT createItemUomConv(:item_id, :uom_id, :uom_type) AS result;");
+      adduom.bindValue(":item_id", _item->id());
+      adduom.bindValue(":uom_id", _salePricingUOM->id());
+      adduom.bindValue(":uom_type", "Selling");
+      adduom.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Creating Item UOM Conv"),
+                               adduom, __FILE__, __LINE__))
+        return;
+      
+      // repopulate uom comboboxes
+      int saveqtyuomid = _qtyUOM->id();
+      int savepriceuomid = _pricingUOM->id();
+      int savesaleuomid = _salePricingUOM->id();
+      disconnect(_qtyUOM,         SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+      disconnect(_pricingUOM,     SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+      disconnect(_salePricingUOM, SIGNAL(newID(int)), this, SLOT(sSalePriceUOMChanged()));
+      sPopulateUOM();
+      _qtyUOM->setId(saveqtyuomid);
+      _pricingUOM->setId(savepriceuomid);
+      _salePricingUOM->setId(savesaleuomid);
+      connect(_qtyUOM,         SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+      connect(_pricingUOM,     SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+      connect(_salePricingUOM, SIGNAL(newID(int)), this, SLOT(sSalePriceUOMChanged()));
+    }
+    else
+    {
+      _salePricingUOM->setId(_invuomid);
+    }
+  }
 }
 
 void returnAuthorizationItem::updatePriceInfo()

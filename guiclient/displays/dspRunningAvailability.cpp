@@ -46,6 +46,8 @@ dspRunningAvailability::dspRunningAvailability(QWidget* parent, const char*, Qt:
   list()->addColumn(tr("Amount"),                 _moneyColumn, Qt::AlignRight, true, "amount");
   list()->addColumn(tr("Ordered"),                _qtyColumn,   Qt::AlignRight, true, "qtyordered");
   list()->addColumn(tr("Received"),               _qtyColumn,   Qt::AlignRight, true, "qtyreceived");
+  if (_metrics->boolean("EnableSOReservations"))
+    list()->addColumn(tr("Reserved"),             _qtyColumn,   Qt::AlignRight, true, "reserved");
   list()->addColumn(tr("Balance"),                _qtyColumn,   Qt::AlignRight, true, "balance");
   list()->addColumn(tr("Running Avail."),         _qtyColumn,   Qt::AlignRight, true, "runningavail");
   list()->addColumn(tr("Running Netable"),        _qtyColumn,   Qt::AlignRight, true, "runningnetable");
@@ -121,6 +123,9 @@ bool dspRunningAvailability::setParams(ParameterList & params)
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
 
+  if (_metrics->boolean("EnableSOReservations"))
+    params.append("showReserved");
+  
   if (_metrics->value("Application") == "Standard")
   {
     XSqlQuery xtmfg;

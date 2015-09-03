@@ -1,6 +1,7 @@
 // generated 2009-04-30
 // grep "public X[Dialog,Widget]" *.h | awk -F : '{print "#include \""$1"\""}' > getscreen_headerlist.h
 #include "absoluteCalendarItem.h"
+#include "account1099.h"
 #include "accountingPeriod.h"
 #include "accountingPeriods.h"
 #include "accountingYearPeriod.h"
@@ -249,6 +250,7 @@
 #include "dspSummarizedBOM.h"
 #include "dspSummarizedGLTransactions.h"
 #include "dspSummarizedSales.h"
+#include "dspTax1099.h"
 #include "dspTaxHistory.h"
 #include "dspTimePhasedAvailability.h"
 #include "dspTimePhasedBookings.h"
@@ -441,6 +443,7 @@
 #include "printPackingListBatchByShipvia.h"
 #include "printPackingList.h"
 #include "printPoForm.h"
+#include "printToForm.h"
 #include "printPurchaseOrder.h"
 #include "printPurchaseOrdersByAgent.h"
 #include "printRaForm.h"
@@ -632,7 +635,6 @@
 #include "vendorPriceList.h"
 #include "vendorType.h"
 #include "vendorTypes.h"
-#include "vendorWorkBench.h"
 #include "viewCheckRun.h"
 #include "voidChecks.h"
 #include "voucher.h"

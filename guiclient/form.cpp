@@ -151,6 +151,8 @@ void form::sSave()
     formSave.bindValue(":form_key", "PES");
   else if (_key->currentIndex() == 9)
     formSave.bindValue(":form_key", "RA");
+  else if (_key->currentIndex() == 10)
+    formSave.bindValue(":form_key", "TO");
   else
     formSave.bindValue(":form_key", "");
 
@@ -198,6 +200,8 @@ void form::populate()
       _key->setCurrentIndex(8);
     else if (formpopulate.value("form_key").toString() == "RA")
       _key->setCurrentIndex(9);
+    else if (formpopulate.value("form_key").toString() == "TO")
+      _key->setCurrentIndex(10);
     else
       _key->setCurrentIndex(-1);
   }

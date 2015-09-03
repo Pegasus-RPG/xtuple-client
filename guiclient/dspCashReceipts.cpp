@@ -31,18 +31,18 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char*, Qt::WindowFlags f
   setMetaSQLOptions("cashReceipts", "detail");
   setNewVisible(true);
   setUseAltId(true);
-  setParameterWidgetVisible(true);
+  setParameterWidgetVisible(false);
   
-  QString qryType = QString("SELECT  1, '%1' UNION "
-                            "SELECT  2, '%2' UNION "
-                            "SELECT  3, '%3' UNION "
-                            "SELECT  4, '%4' UNION "
-                            "SELECT  5, '%5' UNION "
-                            "SELECT  6, '%6' UNION "
-                            "SELECT  7, '%7' UNION "
-                            "SELECT  8, '%8' UNION "
-                            "SELECT  9, '%9' UNION "
-                            "SELECT  10, '%10'")
+  QString qryType = QString("SELECT  1, '%1', 'K' UNION "
+                            "SELECT  2, '%2', 'C' UNION "
+                            "SELECT  3, '%3', 'T'  UNION "
+                            "SELECT  4, '%4', 'M' UNION "
+                            "SELECT  5, '%5', 'V' UNION "
+                            "SELECT  6, '%6', 'A' UNION "
+                            "SELECT  7, '%7', 'D' UNION "
+                            "SELECT  8, '%8', 'O' UNION "
+                            "SELECT  9, '%9', 'W' UNION "
+                            "SELECT  10, '%10', 'R'")
   .arg(tr("Cash"))
   .arg(tr("Check"))
   .arg(tr("Cert. Check"))
@@ -54,7 +54,7 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char*, Qt::WindowFlags f
   .arg(tr("Wire Trans."))
   .arg(tr("Other"));
 
-  parameterWidget()->appendComboBox(tr("Funds Type"), "fundstype_id", qryType);
+  _fundsType->populate(qryType);
 
   connect(_applications, SIGNAL(toggled(bool)), list(), SLOT(clear()));
 
@@ -100,6 +100,8 @@ bool dspCashReceipts::setParams(ParameterList &pParams)
 
   _customerSelector->appendValue(pParams);
   _dates->appendValue(pParams);
+  if (_fundsType->isValid())
+    pParams.append("fundstype", _fundsType->code());
   pParams.append("creditMemo", tr("Credit Memo"));
   pParams.append("debitMemo", tr("Debit Memo"));
   pParams.append("cashdeposit", tr("Customer Deposit"));

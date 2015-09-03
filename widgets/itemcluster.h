@@ -54,6 +54,7 @@ private:
     bool _useQuery;
     QString _sql;
     QStringList _extraClauses;
+    void showEvent(QShowEvent *);
 };
 
 class XTUPLEWIDGETS_EXPORT itemSearch : public VirtualSearch

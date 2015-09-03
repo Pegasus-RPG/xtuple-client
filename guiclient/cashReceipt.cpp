@@ -95,6 +95,7 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
 
   //Set up CustomerSelector widget
   _customerSelector->populate(CustomerSelector::SelectedCust | CustomerSelector::SelectedGroup);
+  _customerSelector->setCurrentSelection(1);
 
   _applied->clear();
 
