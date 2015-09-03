@@ -41,7 +41,6 @@
 #include "shiptocluster.h"
 #include "ordercluster.h"
 #include "wocluster.h"
-#include "../guiclient/guiclient.h"
 
 #define DEBUG false
 
@@ -116,7 +115,6 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
   connect(_manageButton,              SIGNAL(clicked()), this, SLOT(sManageFilters()));
   connect(_saveButton,                SIGNAL(clicked()), this, SLOT(save()));
   connect(this,                       SIGNAL(updated()), this, SLOT(toggleSave()));
-  connect(_manageButton,              SIGNAL(clicked()), this, SLOT(sDebug()));
 
   _saveButton->setShortcut(QKeySequence::Save);
   _saveButton->setToolTip(_saveButton->text()
