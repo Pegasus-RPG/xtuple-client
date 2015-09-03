@@ -1466,7 +1466,8 @@ void ParameterWidget::save()
   params.append("classname", classname);
   if (_shared)
     params.append("shared", true);
-
+  if (!_x_privileges->check("AllowSharedFilterEdit"))
+    params.append("disableshare", true);
   filterSave newdlg(this);
   newdlg.set(params);
   filter_id = newdlg.exec();
@@ -2005,4 +2006,3 @@ void setupParameterWidget(QScriptEngine *engine)
 
   engine->globalObject().setProperty("ParameterWidget", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }
-
