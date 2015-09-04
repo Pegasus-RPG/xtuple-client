@@ -331,7 +331,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _cust->setType(CLineEdit::ActiveCustomers);
       _salesRep->setType(XComboBox::SalesRepsActive);
       _comments->setType(Comments::SalesOrder);
-      _documents->setType(Documents::SalesOrder);
       _calcfreight = _metrics->boolean("CalculateFreight");
 
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
@@ -379,7 +378,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       else
         _saveAndAdd->hide();
       _comments->setType(Comments::SalesOrder);
-      _documents->setType(Documents::SalesOrder);
       _cust->setType(CLineEdit::AllCustomers);
 
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
@@ -476,6 +474,9 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     }
   }
 
+  // argument must match source_docass
+  _documents->setType(ISQUOTE(_mode) ? "Q" : "S");
+
   sHandleMore();
 
   if (ISNEW(_mode))
@@ -555,7 +556,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     setWindowTitle(tr("Quote"));
 
     _comments->setType(Comments::Quote);
-    _documents->setType(Documents::Quote);
 
     _saveAndAdd->hide();
     _fromQuote->hide();
@@ -1016,7 +1016,7 @@ bool salesOrder::save(bool partial)
   }
   else if ((_mode == cEditQuote) || ((_mode == cNewQuote) && _saved))
     saveSales.prepare( "UPDATE quhead "
-               "SET quhead_custponumber=:custponumber, quhead_shipto_id=:shipto_id,"
+               "SET quhead_custponumber=:custponumber, quhead_shipto_id=:shipto_id, quhead_cust_id=:cust_id,"
                "    quhead_billtoname=:billtoname, quhead_billtoaddress1=:billtoaddress1,"
                "    quhead_billtoaddress2=:billtoaddress2, quhead_billtoaddress3=:billtoaddress3,"
                "    quhead_billtocity=:billtocity, quhead_billtostate=:billtostate, quhead_billtozip=:billtozipcode,"
@@ -3395,8 +3395,8 @@ void salesOrder::setViewMode()
   _edit->setText(tr("View"));
   _comments->setType(Comments::SalesOrder);
   _comments->setReadOnly(true);
-  _documents->setType(Documents::SalesOrder);
-  _documents->setReadOnly(true);
+  _documents->setType("S");
+  // _documents->setReadOnly(true); 20996, 25319, 26431
   _shipComplete->setEnabled(false);
   setFreeFormShipto(false);
   _orderCurrency->setEnabled(false);

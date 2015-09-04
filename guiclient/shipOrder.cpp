@@ -454,7 +454,7 @@ void shipOrder::sHandleSo()
 
 
   shipHandleSo.prepare( "SELECT DISTINCT"
-                        "       cohead_holdtype, cust_name, cohead_shiptoname, "
+                        "       soHoldType(cohead_id) AS holdtype, cust_name, cohead_shiptoname, "
                         "       cohead_shiptoaddress1, cohead_curr_id, cohead_freight "
                         "FROM cohead JOIN custinfo ON (cust_id=cohead_cust_id)"
                         "            JOIN coitem ON (coitem_cohead_id=cohead_id)"
@@ -467,13 +467,13 @@ void shipOrder::sHandleSo()
   if (shipHandleSo.first())
   {
     QString msg;
-    if ( (shipHandleSo.value("cohead_holdtype").toString() == "C"))
+    if ( (shipHandleSo.value("holdtype").toString() == "C"))
       msg = storedProcErrorLookup("shipShipment", -12);
-    else if (shipHandleSo.value("cohead_holdtype").toString() == "P")
+    else if (shipHandleSo.value("holdtype").toString() == "P")
       msg = storedProcErrorLookup("shipShipment", -13);
-    else if (shipHandleSo.value("cohead_holdtype").toString() == "R")
+    else if (shipHandleSo.value("holdtype").toString() == "R")
       msg = storedProcErrorLookup("shipShipment", -14);
-    else if (shipHandleSo.value("cohead_holdtype").toString() == "S")
+    else if (shipHandleSo.value("holdtype").toString() == "S")
       msg = storedProcErrorLookup("shipShipment", -15);
 
     if (! msg.isEmpty())

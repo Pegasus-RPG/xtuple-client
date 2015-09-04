@@ -284,19 +284,19 @@ void shippingInformation::sFillList()
 
   if (_order->isValid() && _order->type() == "SO")
   {
-    shippingFillList.prepare( "SELECT cohead_orderdate AS orderdate,"
-	       "       cohead_holdtype AS holdtype,"
-               "       cohead_custponumber AS ponumber,"
-               "       cust_name AS name, cntct_phone AS phone,"
-               "       cohead_shipcomments AS shipcomments,"
-	       "       cohead_shipvia AS shipvia,"
-               "       cohead_shipchrg_id AS shipchrg_id,"
-               "       cohead_shipform_id AS shipform_id, "
-               "       cohead_shiptoname AS shiptoname "
-               "FROM cohead, custinfo "
-               "LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
-               "WHERE ((cohead_cust_id=cust_id)"
-               " AND (cohead_id=:cohead_id));" );
+    shippingFillList.prepare("SELECT cohead_orderdate AS orderdate,"
+                             "       soHoldType(cohead_id) AS holdtype,"
+                             "       cohead_custponumber AS ponumber,"
+                             "       cust_name AS name, cntct_phone AS phone,"
+                             "       cohead_shipcomments AS shipcomments,"
+                             "       cohead_shipvia AS shipvia,"
+                             "       cohead_shipchrg_id AS shipchrg_id,"
+                             "       cohead_shipform_id AS shipform_id, "
+                             "       cohead_shiptoname AS shiptoname "
+                             "FROM cohead, custinfo "
+                             "LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
+                             "WHERE ((cohead_cust_id=cust_id)"
+                             " AND (cohead_id=:cohead_id));" );
     shippingFillList.bindValue(":cohead_id", _order->id());
   }
   else if (_order->isValid() && _order->type() == "TO")
@@ -324,11 +324,11 @@ void shippingInformation::sFillList()
     _shipToName->setText(shippingFillList.value("shiptoname").toString());
 
     QString msg;
-    if (shippingFillList.value("head_holdtype").toString() == "C")
+    if (shippingFillList.value("holdtype").toString() == "C")
       msg = storedProcErrorLookup("issuetoshipping", -12);
-    else if (shippingFillList.value("head_holdtype").toString() == "P")
+    else if (shippingFillList.value("holdtype").toString() == "P")
       msg = storedProcErrorLookup("issuetoshipping", -13);
-    else if (shippingFillList.value("head_holdtype").toString() == "R")
+    else if (shippingFillList.value("holdtype").toString() == "R")
       msg = storedProcErrorLookup("issuetoshipping", -14);
 
     if (! msg.isEmpty())

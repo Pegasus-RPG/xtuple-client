@@ -112,6 +112,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     int     _availabilityLastItemid;
     int     _availabilityLastWarehousid;
     QDate   _availabilityLastSchedDate;
+    bool    _availabilityLastAsOf;
     bool    _availabilityLastShow;
     bool    _availabilityLastShowIndent;
     double  _originalQtyOrd;
