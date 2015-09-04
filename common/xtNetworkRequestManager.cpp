@@ -28,17 +28,23 @@ xtNetworkRequestManager::xtNetworkRequestManager(const QUrl & url, const QMutex 
   if(DEBUG){
   qDebug() << "url= " << url.toEncoded();
   }
-  _nwrep = nwam->get(QNetworkRequest(url));
+  QNetworkRequest request(url);
+  request.setHeader(QNetworkRequest::ContentTypeHeader,"application/test");
+  _nwrep = nwam->get(request);
   connect(_nwrep, SIGNAL(finished()), this, SLOT(requestCompleted()));
 
 }
 void xtNetworkRequestManager::requestCompleted() {
 
   QVariant possibleRedirect = _nwrep->attribute(QNetworkRequest::RedirectionTargetAttribute);
+  if(DEBUG){
+      qDebug() << "redirect=" << possibleRedirect;
+  }
 
-  if(_nwrep->error()){
+  if(_nwrep->error() != QNetworkReply::NoError){
       if(DEBUG){
-      qDebug() << "error=" << _nwrep->error();
+      qDebug() << "errorfuck=" << _nwrep->errorString();
+      qDebug() << "errorString=" << _nwrep->errorString();
       }
   }
   else if(!possibleRedirect.isNull()){

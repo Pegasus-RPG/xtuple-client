@@ -477,7 +477,7 @@ int main(int argc, char *argv[])
       urlQuery.addQueryItem("tot", QString::number(tot));
       urlQuery.addQueryItem("ver", _Version);
       QUrl url = urlQuery.query();
-      qDebug() << "urlEncoded=" << url.toEncoded();
+      //qDebug() << "urlEncoded=" << url.toEncoded();
       QMutex wait;
       xtNetworkRequestManager _networkManager(QUrl(url), wait);
       //QNetworkReply *reply = 0;
