@@ -16,6 +16,7 @@
 
 #include <metasql.h>
 #include <parameter.h>
+#include "errorReporter.h"
 
 accountNumber::accountNumber(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -187,10 +188,10 @@ void accountNumber::sSave()
 			     "with the same number already exists.") );
     return;
   }
-  else if (accountSave.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Account"),
+                                accountSave, __FILE__, __LINE__))
   {
-    systemError(this, accountSave.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+      return;
   }
 
   if (_mode == cNew)
@@ -206,10 +207,10 @@ void accountNumber::sSave()
     accountSave.exec("SELECT NEXTVAL('accnt_accnt_id_seq') AS _accnt_id;");
     if (accountSave.first())
       _accntid = accountSave.value("_accnt_id").toInt();
-    else if (accountSave.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Account"),
+                                  accountSave, __FILE__, __LINE__))
     {
-      systemError(this, accountSave.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+        return;
     }
 
     accountSave.prepare( "INSERT INTO accnt "
@@ -263,10 +264,11 @@ void accountNumber::sSave()
     accountSave.bindValue(":accnt_type", "Q");
 
   accountSave.exec();
-  if (accountSave.lastError().type() != QSqlError::NoError)
+
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating Period"),
+                                accountSave, __FILE__, __LINE__))
   {
-    systemError(this, accountSave.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+      return;
   }
 
   done(_accntid);
@@ -320,10 +322,10 @@ void accountNumber::populate()
     populateSubTypes();
     _subType->setId(populateAccount.value("subaccnttype_id").toInt());
   }
-  else if (populateAccount.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Account"),
+                                populateAccount, __FILE__, __LINE__))
   {
-    systemError(this, populateAccount.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+      return;
   }
 }
 
@@ -346,10 +348,10 @@ void accountNumber::populateSubTypes()
     sub.bindValue(":subaccnttype_accnt_type", "Q");
   sub.exec();
   _subType->populate(sub);
-  if (sub.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retreiving SubTypes"),
+                                sub, __FILE__, __LINE__))
   {
-    systemError(this, sub.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+      return;
   }
   
 }
