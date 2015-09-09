@@ -47,6 +47,7 @@ SOURCES = applock.cpp              \
           tarfile.cpp \
           xbase32.cpp \
           xtupleproductkey.cpp \
+          xtNetworkRequestManager.cpp \
           xtsettings.cpp
 HEADERS = applock.h              \
           calendarcontrol.h      \
@@ -68,6 +69,7 @@ HEADERS = applock.h              \
           tarfile.h \
           xbase32.h \
           xtupleproductkey.h \
+          xtNetworkRequestManager.h \
           xtsettings.h
 
 FORMS = login2.ui checkForUpdates.ui

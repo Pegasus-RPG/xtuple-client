@@ -467,7 +467,7 @@ int main(int argc, char *argv[])
       }
 
       //QNetworkAccessManager *manager = new QNetworkAccessManager(&app);
-      QUrlQuery urlQuery("www.xtuple.org/api/regviolation.php?");
+      QUrlQuery urlQuery("https://www.xtuple.org/api/regviolation.php?");
       urlQuery.addQueryItem("key", rkey);
       urlQuery.addQueryItem("error", checkPassReason);
       urlQuery.addQueryItem("name", name);
