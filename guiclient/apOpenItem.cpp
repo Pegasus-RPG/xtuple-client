@@ -15,6 +15,7 @@
 #include <QVariant>
 
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "printApOpenItem.h"
 #include "taxDetail.h"
 
@@ -29,8 +30,9 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::Window
   connect(_terms,          SIGNAL(newID(int)),                     this, SLOT(sPopulateDueDate()));
   connect(_vend,           SIGNAL(newId(int)),                     this, SLOT(sPopulateVendInfo(int)));
   connect(_taxLit,         SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
-  connect(_docNumber,      SIGNAL(textEdited(QString)),       this, SLOT(sReleaseNumber()));
-  connect(_usePrepaid,     SIGNAL(toggled(bool)),             this, SLOT(sToggleAccount()));
+  connect(_docNumber,      SIGNAL(textEdited(QString)),            this, SLOT(sReleaseNumber()));
+  connect(_usePrepaid,     SIGNAL(toggled(bool)),                  this, SLOT(sToggleAccount()));
+  connect(_amount,         SIGNAL(valueChanged()),                 this, SLOT(sCalcBalance()));
 
   _cAmount = 0.0;
   _apopenid = -1;
@@ -128,6 +130,7 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
       _docNumber->setEnabled(false);
       _poNumber->setEnabled(false);
       _journalNumber->setEnabled(false);
+      _amount->setCurrencyEditable(false);
       _terms->setEnabled(false);
       _notes->setReadOnly(false);
       _usePrepaid->setEnabled(false);
@@ -174,49 +177,26 @@ void apOpenItem::sSave()
   XSqlQuery saveOpenItem;
   if (_mode == cNew)
   {
-    if (!_docDate->isValid())
-    {
-      QMessageBox::critical( this, tr("Cannot Save A/P Memo"),
-                             tr("<p>You must enter a date for this A/P Memo "
-                                "before you may save it") );
-      _docDate->setFocus();
+    QList<GuiErrorCheck> errors;
+    errors << GuiErrorCheck(!_docDate->isValid(), _docDate,
+                            tr("<p>You must enter a Document Date for this A/P Memo "
+                               "before you may save it"))
+    << GuiErrorCheck(!_dueDate->isValid(), _dueDate,
+                     tr("<p>You must enter a Due Date for this A/P Memo "
+                        "before you may save it"))
+    << GuiErrorCheck(_amount->isZero(), _amount,
+                     tr("<p>You must enter an amount for this A/P Memo "
+                        "before you may save it"))
+    << GuiErrorCheck(_tax->localValue() > _amount->localValue(), _tax,
+                     tr("The tax amount may not be greater than the total A/P Memo amount."))
+    << GuiErrorCheck(!_usePrepaid->isChecked() && !_accntId->isValid(), _accntId,
+                     tr("<p>You must choose a valid Distribution "
+                        "Account Number for this A/P Memo before you "
+                        "may save it."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save A/P Memo"), errors))
       return;
-    }
-
-    if (!_dueDate->isValid())
-    {
-      QMessageBox::critical( this, tr("Cannot Save A/P Memo"),
-                             tr("<p>You must enter a date for this A/P Memo "
-                                "before you may save it") );
-      _dueDate->setFocus();
-      return;
-    }
-
-    if (_amount->isZero())
-    {
-      QMessageBox::critical( this, tr("Cannot Save A/P Memo"),
-                             tr("<p>You must enter an amount for this A/P Memo "
-                                "before you may save it") );
-      _amount->setFocus();
-      return;
-    }
-
-    if(_tax->localValue() > _amount->localValue())
-    {
-      QMessageBox::critical( this, tr("Cannot Save A/P Memo"),
-                             tr("The tax amount may not be greater than the total A/P Memo amount.") );
-      return;
-    }
-
-    if (!_usePrepaid->isChecked() && (!_accntId->isValid()))
-    {
-      QMessageBox::critical( this, tr("Cannot Save A/P Memo"),
-                            tr("<p>You must choose a valid Distribution "
-                               "Account Number for this A/P Memo before you "
-                               "may save it.") );
-      return;
-    }
-
+    
     QString tmpFunctionName;
     QString queryStr;
 
@@ -233,11 +213,11 @@ void apOpenItem::sSave()
     }
 
     queryStr = "SELECT " + tmpFunctionName + "( :apopen_id, :vend_id, " +
-		(_journalNumber->text().isEmpty() ?
-		      QString("fetchJournalNumber('AP-MISC')") : _journalNumber->text()) +
-	       ", :apopen_docnumber, :apopen_ponumber, :apopen_docdate,"
-	       "  :apopen_amount, :apopen_notes, :apopen_accnt_id,"
-	       "  :apopen_duedate, :apopen_terms_id, :curr_id ) AS result;";
+    (_journalNumber->text().isEmpty() ?
+     QString("fetchJournalNumber('AP-MISC')") : _journalNumber->text()) +
+    ", :apopen_docnumber, :apopen_ponumber, :apopen_docdate,"
+    "  :apopen_amount, :apopen_notes, :apopen_accnt_id,"
+    "  :apopen_duedate, :apopen_terms_id, :curr_id ) AS result;";
 	
     saveOpenItem.prepare(queryStr);
     saveOpenItem.bindValue(":vend_id", _vend->id());
@@ -257,15 +237,16 @@ void apOpenItem::sSave()
                                  tr("Yes"), tr("No"), QString::null ) == 1 )
         return;
 
-    saveOpenItem.prepare( "UPDATE apopen "
-	       "SET apopen_doctype=:apopen_doctype,"
-               "    apopen_ponumber=:apopen_ponumber, apopen_docnumber=:apopen_docnumber,"
-               "    apopen_amount=:apopen_amount,"
-               "    apopen_terms_id=:apopen_terms_id, "
-	       "    apopen_notes=:apopen_notes, "
-	           "    apopen_curr_id=:curr_id, "
-		       "    apopen_status = :apopen_status "
-               "WHERE (apopen_id=:apopen_id);" );
+    saveOpenItem.prepare("UPDATE apopen "
+                         "SET apopen_doctype=:apopen_doctype,"
+                         "    apopen_ponumber=:apopen_ponumber,"
+                         "    apopen_docnumber=:apopen_docnumber,"
+                         "    apopen_amount=:apopen_amount,"
+                         "    apopen_terms_id=:apopen_terms_id, "
+                         "    apopen_notes=:apopen_notes, "
+                         "    apopen_curr_id=:curr_id, "
+                         "    apopen_status = :apopen_status "
+                         "WHERE (apopen_id=:apopen_id);" );
   }
 
   if (_apopenid != -1)
@@ -661,4 +642,9 @@ void apOpenItem::populateStatus()
            "UNION "
            "SELECT 2 AS status_id, TEXT('On Hold') AS status, TEXT('On Hold') AS status;";
   _status->populate(status, -1);
+}
+
+void apOpenItem::sCalcBalance()
+{
+  _balance->setLocalValue(_amount->localValue() - _paid->localValue());
 }
