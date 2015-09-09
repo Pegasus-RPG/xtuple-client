@@ -1276,7 +1276,7 @@ bool salesOrder::save(bool partial)
       omfgThis->sProjectsUpdated(_soheadid);
     }
     else if ( (_mode == cNewQuote) || (_mode == cEditQuote) )
-      omfgThis->sQuotesUpdated(_soheadid);
+      omfgThis->sQuotesUpdated(-1);
   }
   else
   {
