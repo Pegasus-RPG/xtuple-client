@@ -466,7 +466,6 @@ int main(int argc, char *argv[])
         db = metric.value("db").toString();
       }
 
-      //QNetworkAccessManager *manager = new QNetworkAccessManager(&app);
       QUrlQuery urlQuery("https://www.xtuple.org/api/regviolation.php?");
       urlQuery.addQueryItem("key", rkey);
       urlQuery.addQueryItem("error", checkPassReason);
@@ -477,15 +476,8 @@ int main(int argc, char *argv[])
       urlQuery.addQueryItem("tot", QString::number(tot));
       urlQuery.addQueryItem("ver", _Version);
       QUrl url = urlQuery.query();
-      //qDebug() << "urlEncoded=" << url.toEncoded();
       QMutex wait;
       xtNetworkRequestManager _networkManager(QUrl(url), wait);
-      //QNetworkReply *reply = 0;
-      //reply = manager->get(QNetworkRequest(QUrl(url.toEncoded())));
-      //qDebug() << "error=" << reply->readAll();
-      //qDebug() << "reply=" << reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
-      //QObject::connect(reply, SIGNAL(finished(QNetworkReply*)), &app, SLOT(replyFinished(QNetworkReply*)));
-      //qDebug() << "reply= "<< reply->error();
 
       if(forced)
         return 0;

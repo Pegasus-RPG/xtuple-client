@@ -30,8 +30,6 @@ xtNetworkRequestManager::xtNetworkRequestManager(const QUrl & url, const QMutex 
   QEventLoop loop;
   _nwrep = nwam->get(QNetworkRequest(url));
   connect(_nwrep, SIGNAL(finished()), SLOT(requestCompleted()));
-  connect(_nwrep, SIGNAL(readyRead()), SLOT(readyRead()));
-  //connect(_nwrep, SIGNAL(error(QNetworkReply::NetworkError)), SLOT(replyError(QNetworkReply::NetworkError)));
   connect(nwam, SIGNAL(sslErrors(QNetworkReply*,QList<QSslError>)), this, SLOT(sslErrors(QNetworkReply*,QList<QSslError>)));
   connect(nwam, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit())); //loop through and quit on finished signal, is this correct?
   loop.exec();
@@ -76,9 +74,6 @@ void xtNetworkRequestManager::sslErrors(QNetworkReply*, const QList<QSslError> &
        }
 
    qDebug() << "errorString= " << errorString;
-}
-void xtNetworkRequestManager::readyRead() {
-    qDebug() << "readyReadCalled";
 }
 xtNetworkRequestManager::~xtNetworkRequestManager() {
  delete nwam;

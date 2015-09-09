@@ -32,8 +32,6 @@ protected slots:
     virtual void requestCompleted();
     virtual void toggleLock(QMutex & mutex);
     virtual void sslErrors(QNetworkReply*, const QList<QSslError> &errors);
-    virtual void readyRead();
-    //virtual void replyError(QNetworkReply::NetworkError code);
 
 private:
     QNetworkAccessManager * nwam;
