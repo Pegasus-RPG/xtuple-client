@@ -28,6 +28,7 @@
 #include "vendor.h"
 #include "vendorAddress.h"
 #include "warehouse.h"
+#include "errorReporter.h"
 
 address::address(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -88,11 +89,10 @@ enum SetResponse address::set(const ParameterList &pParams)
       int addrSaveResult = _addr->save(AddressCluster::CHANGEONE);
       if (addrSaveResult < 0)
       {
-	systemError(this, tr("There was an error creating a new address (%).\n"
-			     "Check the database server log for errors.")
-			  .arg(addrSaveResult),
-		    __FILE__, __LINE__);
-	return UndefinedError;
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Address"),
+                  tr("There was an error creating a new address (%1).\n"
+                     "Check the database server log for errors.") .arg(addrSaveResult), __FILE__, __LINE__);
+        return UndefinedError;
       }
       _comments->setId(_addr->id());
       _charass->setId(_addr->id());
@@ -148,10 +148,9 @@ void address::internalSave(AddressCluster::SaveFlags flag)
   }
   if (0 > saveResult)	// NOT else if
   {
-    systemError(this, tr("There was an error saving this address (%1).\n"
-			 "Check the database server log for errors.")
-		      .arg(saveResult),
-		__FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Address"),
+              tr("There was an error saving this address (%1).\n"
+                 "Check the database server log for errors.") .arg(saveResult), __FILE__, __LINE__);
   }
 }
 
@@ -165,10 +164,10 @@ void address::reject()
     rejectAddress.bindValue(":addr_id", _addr->id());
     rejectAddress.bindValue(":number", _addr->number().toInt());
     rejectAddress.exec();
-    if (rejectAddress.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Rejecting Address"),
+                                  rejectAddress, __FILE__, __LINE__))
     {
-      systemError(this, rejectAddress.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+        return;
     }
   }
 
