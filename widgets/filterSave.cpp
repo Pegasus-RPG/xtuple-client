@@ -54,6 +54,11 @@ void filterSave::set(const ParameterList &pParams)
   param = pParams.value("shared", &valid);
   if (valid)
     _shared->setChecked(true);
+
+  param = pParams.value("disableshare", &valid);
+  if (valid && _shared->isChecked())
+    _shared->setChecked(false);
+    _shared->setDisabled(valid);
 }
 
 void filterSave::save()
@@ -93,6 +98,13 @@ void filterSave::save()
   {
     if (qry.value("filter_username").toString().isEmpty())
     {
+      if (!_shared->isEnabled())
+      {
+        QMessageBox::warning(this, "Unable to save",
+                              tr("You are not allowed to overwrite shared filters.\n"
+                                 "Please, change the name of the filter if you want to save its current settings."));
+        return;
+      }
       if ( QMessageBox::question( this, tr("Shared Filter Exists"),
                                   tr("<p>This will over-write a shared filter.\n"
                                      " Are you sure this is what you want to do?"),
