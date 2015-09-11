@@ -154,6 +154,11 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
     }
   }
 
+  param = pParams.value("poreject_rma", &valid);
+  if (valid)
+    _rmAuthority = param.toString();
+
+
   return NoError;
 }
 
@@ -205,10 +210,11 @@ void enterPoitemReturn::sReturn()
     }
   }
 
-  enterReturn.prepare("SELECT enterPoReturn(:poitem_id, :qty, :rjctcode_id, :recv_id) AS result;");
+  enterReturn.prepare("SELECT enterPoReturn(:poitem_id, :qty, :rjctcode_id, :recv_id, :rma) AS result;");
   enterReturn.bindValue(":poitem_id", _poitemid);
   enterReturn.bindValue(":qty", _toReturn->toDouble());
   enterReturn.bindValue(":rjctcode_id", _rejectCode->id());
+  enterReturn.bindValue(":rma", _rmAuthority);
   if (_receipts->id() != -1)
     enterReturn.bindValue(":recv_id", _receipts->id());
   enterReturn.exec();

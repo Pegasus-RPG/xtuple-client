@@ -233,6 +233,7 @@ void enterPoReturn::sEnter()
 {
   ParameterList params;
   params.append("poitem_id", _poitem->id());
+  params.append("poreject_rma", _rma->text());
   if(_dropShip->isChecked())
     _dropshipWarn->showMessage(tr("Returns made against Drop Shipped Purchase Orders "
                                   "will not reverse shipment transactions generated "
