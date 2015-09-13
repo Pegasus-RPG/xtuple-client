@@ -138,7 +138,10 @@ bool dspTaxHistory::setParams(ParameterList &params)
     params.append("cashbasedtax", true);
   
   if (_summary->isChecked())
+  {
     params.append("type", "summary");
+    params.append("summary");
+  }
   else
     params.append("type", "detail");
     
@@ -181,9 +184,6 @@ bool dspTaxHistory::setParams(ParameterList &params)
     }
   }
     
-  if (_summary->isChecked())
-    params.append("summary");
-    
   if ((_showOnlyGroup->isCheckable() && _showOnlyGroup->isChecked()) || 
        _summary->isChecked())
   {
@@ -224,6 +224,7 @@ bool dspTaxHistory::setParams(ParameterList &params)
   params.append("sales",tr("Sales"));
   params.append("purchase",tr("Purchase"));
   params.append("voucher",tr("Voucher"));
+  params.append("check",tr("Misc. Check"));
 
   return true;
 }

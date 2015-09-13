@@ -30,6 +30,7 @@ miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_amountToDistribute,   SIGNAL(effectiveChanged(const QDate&)), this, SLOT(sFillMiscList()));
   connect(_amountToDistribute,   SIGNAL(idChanged(int)),                 this, SLOT(sFillMiscList()));
   connect(_amountToDistribute,   SIGNAL(valueChanged()),                 this, SLOT(sPopulateBalanceDue()));
+  connect(_amountToDistribute,   SIGNAL(editingFinished()),                 this, SLOT(sUpdateVoucherTax()));
   connect(_delete,               SIGNAL(clicked()),                      this, SLOT(sDeleteMiscDistribution()));
   connect(_edit,                 SIGNAL(clicked()),                      this, SLOT(sEditMiscDistribution()));
   connect(_invoiceDate,          SIGNAL(newDate(const QDate&)),          this, SLOT(sPopulateDistDate()));
@@ -38,6 +39,7 @@ miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_new,                  SIGNAL(clicked()),                      this, SLOT(sNewMiscDistribution()));
   connect(_save,                 SIGNAL(clicked()),                      this, SLOT(sSave()));
   connect(_voucherNumber,        SIGNAL(editingFinished()),              this, SLOT(sHandleVoucherNumber()));
+  connect(_taxzone,              SIGNAL(newID(int)),                     this, SLOT(sUpdateVoucherTax()));
 
   _terms->setType(XComboBox::APTerms);
 
@@ -637,6 +639,27 @@ void miscVoucher::sPopulateDueDate()
                                   dateq, __FILE__, __LINE__))
       return;
   }
+}
+
+void miscVoucher::sUpdateVoucherTax()
+{
+  if (_amountToDistribute->localValue() <= 0 || !_taxzone->isValid())
+    return;
+
+  XSqlQuery updTax;
+  updTax.prepare("SELECT updatemiscvouchertax(:voheadid,:taxzone,:distdate,:curr,:amount) as ret;");
+  updTax.bindValue(":voheadid", _voheadid);
+  updTax.bindValue(":taxzone",  _taxzone->id());
+  updTax.bindValue(":distdate", _distributionDate->date());
+  updTax.bindValue(":curr", _amountToDistribute->id());
+  updTax.bindValue(":amount", _amountToDistribute->localValue());
+  updTax.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Adding Tax to Voucher"),
+                         updTax, __FILE__, __LINE__))
+    return;
+
+  sFillMiscList();
+  sPopulateDistributed();
 }
 
 void miscVoucher::keyPressEvent( QKeyEvent * e )

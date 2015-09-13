@@ -32,6 +32,8 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sSave();
     virtual void sClose();
+    virtual void sDetermineTaxAmount();
+    virtual bool sInitializeMemo();
     virtual void sPopulateVendInfo( int vend_id );
     virtual void sPopulateDueDate();
     virtual void sTaxDetail();

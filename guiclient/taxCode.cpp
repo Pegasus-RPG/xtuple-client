@@ -40,6 +40,7 @@ taxCode::taxCode(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_expire, SIGNAL(clicked()), this, SLOT(sExpire())); 
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_vat, SIGNAL(clicked()), this, SLOT(sSetVAT()));
   
   _taxitems->addColumn(tr("Effective"), _dateColumn,    Qt::AlignLeft,  true, "effective" );
   _taxitems->addColumn(tr("Expires"),   _dateColumn,    Qt::AlignLeft,  true, "expires" );
@@ -285,6 +286,8 @@ enum SetResponse taxCode::set(const ParameterList &pParams)
       _edit->setEnabled(false);
       _expire->setEnabled(false);
       _delete->setEnabled(false);
+      _vatSales->setEnabled(false);
+      _vatPurchases->setEnabled(false);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
     }
@@ -316,6 +319,14 @@ void taxCode::sSave()
     _distaccount->setFocus();
     return;
   }
+  if (_vat->isChecked() && !(_vatPurchases->isChecked() || _vatSales->isChecked()) )
+  {
+    QMessageBox::warning( this, tr("VAT Tax Code"),
+                         tr("Please mark this Tax Code as either VAT Purchases or Sales.") );
+    _vatPurchases->setFocus();
+    return;
+  }
+
   taxSave.prepare("SELECT tax_id"
                   "  FROM tax"
                   " WHERE((tax_id!= :tax_id)"
@@ -337,7 +348,9 @@ void taxCode::sSave()
                   "    tax_dist_accnt_id=:tax_dist_accnt_id,"
                   "    tax_taxclass_id=:tax_taxclass_id,"
                   "    tax_taxauth_id=:tax_taxauth_id,"
-                  "    tax_basis_tax_id=:tax_basis_tax_id "
+                  "    tax_basis_tax_id=:tax_basis_tax_id, "
+                  "    tax_sales=:vat_sales, "
+                  "    tax_purch=:vat_purchases "
                   "WHERE (tax_id=:tax_id);" );
   
   taxSave.bindValue(":tax_code", _code->text().trimmed());
@@ -352,6 +365,8 @@ void taxCode::sSave()
     taxSave.bindValue(":tax_taxclass_id", _taxClass->id());
   if(_basis->isValid())
     taxSave.bindValue(":tax_basis_tax_id", _basis->id());
+  taxSave.bindValue(":vat_sales", _vatSales->isChecked());
+  taxSave.bindValue(":vat_purchases", _vatPurchases->isChecked());
   taxSave.bindValue(":tax_id", _taxid); 
   taxSave.exec();
   done (_taxid);
@@ -409,6 +424,12 @@ void taxCode::populate()
     _taxClass->setId(taxpopulate.value("tax_taxclass_id").toInt());
     _taxauth->setId(taxpopulate.value("tax_taxauth_id").toInt());
     _basis->setId(taxpopulate.value("tax_basis_tax_id").toInt());
+    _vatSales->setChecked(taxpopulate.value("tax_sales").toBool());
+    _vatPurchases->setChecked(taxpopulate.value("tax_purch").toBool());
+    if (taxpopulate.value("tax_sales").toBool() || taxpopulate.value("tax_purch").toBool())
+      _vat->setChecked(true);
+    else
+      _vat->setChecked(false);
   }
   
   sFillList();
@@ -453,6 +474,15 @@ bool taxCode::setParams(ParameterList &pParams)
   pParams.append("never",       tr("Never"));
 
   return true;
+}
+
+void taxCode::sSetVAT()
+{
+  if (!_vat->isChecked())
+  {
+    _vatPurchases->setChecked(false);
+    _vatSales->setChecked(false);
+  }
 }
 
 void taxCode::sClose()
