@@ -2055,6 +2055,9 @@ void salesOrderItem::sDetermineAvailability( bool p )
         ((_qtyOrdered->toDouble() * _qtyinvuomratio)==_availabilityQtyOrdered) &&
         (!p) )
     return;
+  
+  if (_partialsaved)
+    sSave(true);
 
   _availabilityLastItemid      = _item->id();
   _availabilityLastWarehousid  = _warehouse->id();
@@ -2115,10 +2118,20 @@ void salesOrderItem::sDetermineAvailability( bool p )
     if (availability.first())
     {
       _onHand->setDouble(availability.value("availableqoh").toDouble());
-      _allocated->setDouble(availability.value("allocated").toDouble());
-      _unallocated->setDouble(availability.value("unallocated").toDouble());
-      _onOrder->setDouble(availability.value("ordered").toDouble());
-      _available->setDouble(availability.value("available").toDouble());
+      if (_partialsaved)
+      {
+        _allocated->setDouble(availability.value("allocated").toDouble() - _qtyOrdered->toDouble());
+        _unallocated->setDouble(availability.value("unallocated").toDouble() + _qtyOrdered->toDouble());
+        _onOrder->setDouble(availability.value("ordered").toDouble() - _supplyOrderQty->toDouble());
+        _available->setDouble(availability.value("available").toDouble() + _qtyOrdered->toDouble() - _supplyOrderQty->toDouble());
+      }
+      else
+      {
+        _allocated->setDouble(availability.value("allocated").toDouble());
+        _unallocated->setDouble(availability.value("unallocated").toDouble());
+        _onOrder->setDouble(availability.value("ordered").toDouble());
+        _available->setDouble(availability.value("available").toDouble());
+      }
       _reserved->setDouble(availability.value("reserved").toDouble());
       _reservable->setDouble(availability.value("reservable").toDouble());
       _leadtime->setText(availability.value("itemsite_leadtime").toString());
