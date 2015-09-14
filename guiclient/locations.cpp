@@ -170,8 +170,6 @@ void locations::sPrint()
 
 void locations::sFillList()
 {
-  _location->clear();
-  
   QString sql( "SELECT location_id, warehous_code, formatLocationName(location_id) AS name,"
                "       whsezone_name||'-'||whsezone_descrip as zone,"
                "       firstLine(location_descrip) AS locationname,"
@@ -199,8 +197,7 @@ void locations::sFillList()
     params.append("zone_id", _zone->id());
 
   XSqlQuery locationsFillList = mql.toQuery(params);
-  if (locationsFillList.first())
-    _location->populate(locationsFillList);
+  _location->populate(locationsFillList);
 }
 
 void locations::updateZoneList()
