@@ -89,6 +89,12 @@ enum SetResponse shipOrder::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("transdate", &valid);
+  if (valid)
+  {
+    _transDate->setDate(param.toDate(), true);
+  }
+  
   param = pParams.value("shiphead_id", &valid);
   if (valid)
   {
