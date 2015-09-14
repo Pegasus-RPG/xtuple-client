@@ -202,8 +202,6 @@ void locations::sFillList()
 
 void locations::updateZoneList()
 {
-  _zone->clear();
-  
   QString zoneSql( "SELECT whsezone_id, whsezone_name||'-'||whsezone_descrip "
              " FROM whsezone  "
              " <? if exists('warehous_id') ?> "
@@ -218,7 +216,6 @@ void locations::updateZoneList()
     params.append("warehous_id", _warehouse->id());
 
   XSqlQuery zoneFillList = mql.toQuery(params);
-  if (zoneFillList.first())
-    _zone->populate(zoneFillList);
+  _zone->populate(zoneFillList);
 }
 
