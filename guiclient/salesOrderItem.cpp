@@ -514,7 +514,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       setWindowTitle(tr("Quote Item"));
 
       _save->setEnabled(false);
-      _next->setText(tr("New"));
+      _next->setEnabled(false);
       _comments->setType(Comments::QuoteItem);
       _comments->setReadOnly(true);
       _cancel->hide();
