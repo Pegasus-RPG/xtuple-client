@@ -40,6 +40,7 @@ quotes::quotes(QWidget* parent, const char *name, Qt::WindowFlags fl)
   setParameterWidgetVisible(true);
   setNewVisible(true);
   setQueryOnStartEnabled(true);
+  setAutoUpdateEnabled(true);
 
   _convertedtoSo->setVisible(false);
 
@@ -65,6 +66,7 @@ quotes::quotes(QWidget* parent, const char *name, Qt::WindowFlags fl)
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   setupCharacteristics("QU");
+  parameterWidget()->applyDefaultFilterSet();
 
   if (_privileges->check("MaintainQuotes"))
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
@@ -74,7 +76,7 @@ quotes::quotes(QWidget* parent, const char *name, Qt::WindowFlags fl)
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
   }
 
-  connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sHandleQuoteEvent(int, bool)));
 }
 
 enum SetResponse quotes::set(const ParameterList& pParams)
@@ -88,6 +90,12 @@ enum SetResponse quotes::set(const ParameterList& pParams)
     sFillList();
 
   return NoError;
+}
+
+void quotes::sHandleQuoteEvent(int pQuheadid, bool)
+{
+  if (pQuheadid == -1)
+    sFillList();
 }
 
 void quotes::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
