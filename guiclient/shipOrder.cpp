@@ -399,7 +399,6 @@ void shipOrder::sShip()
   {
     _order->setId(-1);
     _order->setEnabled(true);
-    sHandleButtons();
     _billToName->clear();
     _shipToName->clear();
     _shipToAddr1->clear();
