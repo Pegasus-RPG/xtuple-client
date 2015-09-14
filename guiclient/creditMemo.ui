@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Return</string>
+   <string>Sales Credit Memo</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -93,7 +93,7 @@ to be bound by its terms.</comment>
                 </size>
                </property>
                <property name="text">
-                <string>Return #:</string>
+                <string>Credit Memo #:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -184,7 +184,7 @@ to be bound by its terms.</comment>
                 </size>
                </property>
                <property name="text">
-                <string>Return Date:</string>
+                <string>Memo Date:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

@@ -32,6 +32,7 @@ public slots:
     virtual void populate();
     virtual void sCalculateDiscountPrcnt();
     virtual void sCalculateFromDiscount();
+    virtual void sHandleSelection();
     virtual void sListPrices();
     virtual void sCalculateTax();
     virtual void sPriceGroup();

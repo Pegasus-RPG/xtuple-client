@@ -116,7 +116,7 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char*, Qt::WindowFlags fl)
   menuItem = newMenu->addAction(tr("Misc. Debit Memo"),   this, SLOT(sEnterMiscArDebitMemo()));
   menuItem->setEnabled(_privileges->check("MaintainARMemos"));
   newMenu->addSeparator();
-  menuItem = newMenu->addAction(tr("Return"), this, SLOT(sNewCreditMemo()));
+  menuItem = newMenu->addAction(tr("Sales Credit Memo"), this, SLOT(sNewCreditMemo()));
   menuItem->setEnabled(_privileges->check("MaintainCreditMemos"));
   menuItem = newMenu->addAction(tr("Misc. Credit Memo"),   this, SLOT(sEnterMiscArCreditMemo()));
   menuItem->setEnabled(_privileges->check("MaintainARMemos"));
@@ -195,7 +195,7 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
   else if (((XTreeWidgetItem *)pItem)->altId() == 1 && ((XTreeWidgetItem *)pItem)->id("docnumber") > -1)
   // Credit Memo
   {
-    menuItem = pMenu->addAction(tr("Edit Return..."), this, SLOT(sEdit()));
+    menuItem = pMenu->addAction(tr("Edit Credit Memo..."), this, SLOT(sEdit()));
     menuItem->setEnabled(_privileges->check("MaintainCreditMemos"));
   }
   else if (((XTreeWidgetItem *)pItem)->id() > 0)
@@ -246,7 +246,7 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
       menuItem->setEnabled(_privileges->check("VoidPostedARCreditMemos"));
     }
 
-    menuItem = pMenu->addAction(tr("View Return..."), this, SLOT(sViewCreditMemo()));
+    menuItem = pMenu->addAction(tr("View Credit Memo..."), this, SLOT(sViewCreditMemo()));
     menuItem->setEnabled(_privileges->check("MaintainCreditMemos") || _privileges->check("ViewCreditMemos"));
   }
   else if (((XTreeWidgetItem *)pItem)->altId() == 4)
@@ -463,9 +463,9 @@ void dspAROpenItems::sCCRefundCM()
 
 void dspAROpenItems::sDeleteCreditMemo()
 {
-  if (QMessageBox::question(this, tr("Delete Selected Returns?"),
+  if (QMessageBox::question(this, tr("Delete Selected Credit Memos?"),
                             tr("<p>Are you sure that you want to delete the "
-			       "selected Returns?"),
+			       "selected Credit Memos?"),
                             QMessageBox::Yes, QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
     XSqlQuery delq;
@@ -478,12 +478,12 @@ void dspAROpenItems::sDeleteCreditMemo()
       if (delq.first())
       {
             if (! delq.value("result").toBool())
-              systemError(this, tr("Could not delete Return."),
+              systemError(this, tr("Could not delete Credit Memo."),
                           __FILE__, __LINE__);
       }
       else if (delq.lastError().type() != QSqlError::NoError)
             systemError(this,
-                        tr("Error deleting Return %1\n").arg(list()->currentItem()->text("docnumber")) +
+                        tr("Error deleting Credit Memo %1\n").arg(list()->currentItem()->text("docnumber")) +
                         delq.lastError().databaseText(), __FILE__, __LINE__);
     }
 
@@ -634,8 +634,8 @@ void dspAROpenItems::sVoidCreditMemo()
   XSqlQuery dspVoidCreditMemo;
   XTreeWidgetItem *pItem = list()->currentItem();
   if(pItem->rawValue("posted") != 0 &&
-      QMessageBox::question(this, tr("Void Posted Return?"),
-                            tr("<p>This Return has already been posted. "
+      QMessageBox::question(this, tr("Void Posted Credit Memo?"),
+                            tr("<p>This Credit Memo has already been posted. "
                                "Are you sure you want to void it?"),
                             QMessageBox::Yes,
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
@@ -665,7 +665,7 @@ void dspAROpenItems::sVoidCreditMemo()
     else if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
     {
       rollback.exec();
-      QMessageBox::information( this, tr("Void Return"), tr("Transaction Canceled") );
+      QMessageBox::information( this, tr("Void Memo"), tr("Transaction Canceled") );
       return;
     }
 
@@ -675,7 +675,7 @@ void dspAROpenItems::sVoidCreditMemo()
   else if (post.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, tr("A System Error occurred voiding Return.\n%1")
+    systemError(this, tr("A System Error occurred voiding Credit Memo.\n%1")
                 .arg(post.lastError().databaseText()),
                 __FILE__, __LINE__);
   }
@@ -892,7 +892,7 @@ bool dspAROpenItems::setParams(ParameterList &params)
     params.append("endDueDate", _dates->endDate());
   }
   params.append("invoice", tr("Invoice"));
-  params.append("return", tr("Return"));
+  params.append("return", tr("Sales Credit Memo"));
   params.append("creditMemo", tr("Credit Memo"));
   params.append("debitMemo", tr("Debit Memo"));
   params.append("cashdeposit", tr("Customer Deposit"));
@@ -922,7 +922,7 @@ void dspAROpenItems::sPreview()
     ParameterList params;
     params.append("cust_id", _customerSelector->custId());
     params.append("invoice",  tr("Invoice"));
-    params.append("return",   tr("Return"));
+    params.append("return",   tr("Sales Credit Memo"));
     params.append("debit",    tr("Debit Memo"));
     params.append("credit",   tr("Credit Memo"));
     params.append("deposit",  tr("Deposit"));
@@ -1053,7 +1053,7 @@ void dspAROpenItems::sPostCreditMemo()
   if (_privileges->check("ChangeSOMemoPostDate"))
   {
     getGLDistDate newdlg(this, "", true);
-    newdlg.sSetDefaultLit(tr("Return Date"));
+    newdlg.sSetDefaultLit(tr("Credit Memo Date"));
     if (newdlg.exec() == XDialog::Accepted)
     {
       newDate = newdlg.date();
@@ -1104,7 +1104,7 @@ void dspAROpenItems::sPostCreditMemo()
       if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
       {
         rollback.exec();
-        QMessageBox::information( this, tr("Post Return"), tr("Transaction Canceled") );
+        QMessageBox::information( this, tr("Post Credit Memo"), tr("Transaction Canceled") );
         return;
       }
 
@@ -1115,14 +1115,14 @@ void dspAROpenItems::sPostCreditMemo()
   else if (postq.lastError().databaseText().contains("post to closed period"))
   {
     rollback.exec();
-    systemError(this, tr("Could not post Return #%1 because of a missing exchange rate.")
+    systemError(this, tr("Could not post Credit Memo #%1 because of a missing exchange rate.")
                                       .arg(list()->currentItem()->text("docnumber")));
     return;
   }
   else if (postq.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, tr("A System Error occurred posting Return#%1.\n%2")
+    systemError(this, tr("A System Error occurred posting Credit Memo#%1.\n%2")
             .arg(list()->currentItem()->text("docnumber"))
             .arg(postq.lastError().databaseText()),
           __FILE__, __LINE__);
@@ -1343,7 +1343,7 @@ bool dspAROpenItems::checkCreditMemoSitePrivs(int cmid)
     if (!check.value("result").toBool())
       {
         QMessageBox::critical(this, tr("Access Denied"),
-                                       tr("You may not view or edit this Return as it references "
+                                       tr("You may not view or edit this Credit Memo as it references "
                                        "a Site for which you have not been granted privileges.")) ;
         return false;
       }
