@@ -71,7 +71,7 @@ void applyARDiscount::sApply()
 void applyARDiscount::populate()
 {
   XSqlQuery applypopulate;
-  applypopulate.prepare("=SELECT cust_name, aropen_docnumber, aropen_docdate,"
+  applypopulate.prepare("SELECT cust_name, aropen_docnumber, aropen_docdate,"
             "       CASE WHEN (aropen_doctype='I') THEN :invoice "
             "            WHEN (aropen_doctype='C') THEN :creditmemo "
             "            ELSE aropen_doctype "
