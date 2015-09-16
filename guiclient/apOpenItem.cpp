@@ -226,9 +226,9 @@ void apOpenItem::sSave()
       tmpFunctionName = "createAPDebitMemo";
     else
     {
-      systemError(this,
-		  tr("Internal Error: _docType has an invalid document type %1")
-		  .arg(_docType->currentIndex()), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Cannot Save A/P Memo"),
+                           tr("Internal Error: _docType has an invalid document type of %1")
+                           .arg(_docType->currentIndex()), __FILE__, __LINE__);
       return;
     }
 
@@ -308,9 +308,9 @@ void apOpenItem::sSave()
       }
     }
   }
-  else if (saveOpenItem.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Cannot Create A/P Memo"),
+                                saveOpenItem, __FILE__, __LINE__))
   {
-    systemError(this, saveOpenItem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -509,12 +509,12 @@ void apOpenItem::populate()
     populateOpenItem.bindValue(":apopen_id", _apopenid);
     populateOpenItem.bindValue(":other", tr("Other"));
     populateOpenItem.exec();
-    if (populateOpenItem.lastError().type() != QSqlError::NoError)
-	systemError(this, populateOpenItem.lastError().databaseText(), __FILE__, __LINE__);
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Information"),
+                                  populateOpenItem, __FILE__, __LINE__))
     _apapply->populate(populateOpenItem, true);
-    if (populateOpenItem.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Information"),
+                                  populateOpenItem, __FILE__, __LINE__))
     {
-      systemError(this, populateOpenItem.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -548,9 +548,9 @@ void apOpenItem::sPopulateDueDate()
     dueq.exec();
     if (dueq.first())
       _dueDate->setDate(dueq.value("duedate").toDate());
-    else if (dueq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Setting Due Date"),
+                                  dueq, __FILE__, __LINE__))
     {
-      systemError(this, dueq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -583,9 +583,9 @@ void apOpenItem::sTaxDetail()
     ap.exec();
     if (ap.first())
       _apopenid = ap.value("result").toInt();
-    else if (ap.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Setting Tax Amounts"),
+                                  ap, __FILE__, __LINE__))
     {
-      systemError(this, ap.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
@@ -603,10 +603,10 @@ void apOpenItem::sTaxDetail()
     ap.bindValue(":docNumber", _docNumber->text());
     ap.bindValue(":currId", _amount->id());
     ap.exec();
-    if (ap.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Setting Tax Amounts"),
+                                  ap, __FILE__, __LINE__))
     {
       ap.exec("ROLLBACK;");
-      systemError(this, ap.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -646,9 +646,9 @@ void apOpenItem::sTaxDetail()
       else
         _tax->setLocalValue(taxq.value("tax").toDouble());
     }
-    else if (taxq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Setting Tax Amounts"),
+                                  taxq, __FILE__, __LINE__))
     {
-      systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
