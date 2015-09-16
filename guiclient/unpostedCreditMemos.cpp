@@ -42,7 +42,7 @@ unpostedCreditMemos::unpostedCreditMemos(QWidget* parent, const char* name, Qt::
     _cmhead->addColumn(tr("Return #"),      _orderColumn, Qt::AlignLeft,   true,  "cmhead_number"   );
     _cmhead->addColumn(tr("Prnt'd"),        _orderColumn, Qt::AlignCenter, true,  "printed" );
     _cmhead->addColumn(tr("Customer"),      -1,           Qt::AlignLeft,   true,  "cmhead_billtoname"   );
-    _cmhead->addColumn(tr("Return Date"),   _dateColumn,  Qt::AlignCenter, true,  "cmhead_docdate" );
+    _cmhead->addColumn(tr("Memo Date"),   _dateColumn,  Qt::AlignCenter, true,  "cmhead_docdate" );
     _cmhead->addColumn(tr("Hold"),          _whsColumn,   Qt::AlignCenter, true,  "cmhead_hold" );
     _cmhead->addColumn(tr("G/L Dist Date"), _dateColumn,  Qt::AlignCenter, true,  "distdate" );
 
@@ -172,7 +172,7 @@ void unpostedCreditMemos::sPost()
   if (_privileges->check("ChangeSOMemoPostDate"))
   {
     getGLDistDate newdlg(this, "", true);
-    newdlg.sSetDefaultLit(tr("Return Date"));
+    newdlg.sSetDefaultLit(tr("Credit Memo Date"));
     if (newdlg.exec() == XDialog::Accepted)
     {
       newDate = newdlg.date();

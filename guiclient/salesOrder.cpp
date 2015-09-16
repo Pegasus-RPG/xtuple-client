@@ -431,6 +431,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
 
       _orderNumber->setEnabled(false);
       _packDate->setEnabled(false);
+      _shipDate->setEnabled(false);
       _cust->setReadOnly(true);
       _warehouse->setEnabled(false);
       _salesRep->setEnabled(false);
@@ -450,6 +451,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _shippingComments->setEnabled(false);
       _custPONumber->setEnabled(false);
       _holdType->setEnabled(false);
+      _saleType->setEnabled(false);
+      _shippingZone->setEnabled(false);
       _edit->setText(tr("View"));
       _cust->setType(CLineEdit::AllCustomersAndProspects);
       _comments->setReadOnly(true);
@@ -1276,7 +1279,7 @@ bool salesOrder::save(bool partial)
       omfgThis->sProjectsUpdated(_soheadid);
     }
     else if ( (_mode == cNewQuote) || (_mode == cEditQuote) )
-      omfgThis->sQuotesUpdated(_soheadid);
+      omfgThis->sQuotesUpdated(-1);
   }
   else
   {

@@ -147,6 +147,12 @@ to be bound by its terms.</comment>
         </attribute>
         <layout class="QGridLayout" name="_checkRunTabLayout"/>
        </widget>
+       <widget class="QWidget" name="_apHistoryTab">
+        <attribute name="title">
+         <string>A/P History</string>
+        </attribute>
+        <layout class="QGridLayout" name="_apHistoryTabLayout"/>
+       </widget>
       </widget>
      </item>
     </layout>
