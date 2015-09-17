@@ -490,8 +490,6 @@ void apOpenItem::populate()
     populateOpenItem.bindValue(":apopen_id", _apopenid);
     populateOpenItem.bindValue(":other", tr("Other"));
     populateOpenItem.exec();
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Information"),
-                                  populateOpenItem, __FILE__, __LINE__))
     _apapply->populate(populateOpenItem, true);
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Information"),
                                   populateOpenItem, __FILE__, __LINE__))
