@@ -116,10 +116,11 @@ void applyARCreditMemo::sPost()
       return;
     }
   }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting A/R CM"),
-                                applyPost, __FILE__, __LINE__))
+  else if (applyPost.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting A/R CM"),
+                                  applyPost, __FILE__, __LINE__);
     return;
   }
   applyPost.exec("COMMIT;");

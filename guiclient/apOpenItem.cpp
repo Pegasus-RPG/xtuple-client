@@ -585,7 +585,6 @@ void apOpenItem::sTaxDetail()
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Setting Tax Amounts"),
                                   ap, __FILE__, __LINE__))
     {
-      ap.exec("ROLLBACK;");
       return;
     }
   }
