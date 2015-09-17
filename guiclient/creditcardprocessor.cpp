@@ -9,6 +9,7 @@
  */
 
 #include <QApplication>
+#include <QDir>
 #include <QFile>
 #include <QMessageBox>
 #include <QProcess>
@@ -327,6 +328,34 @@ CreditCardProcessor::CreditCardProcessor()
   _cvvCodes.append(new FraudCheckResult('S', NotAvail,     tr("CVV should be on the card but was not supplied")));
   _cvvCodes.append(new FraudCheckResult('U', Unsupported,  tr("Card issuing bank was not certified for CVV")));
   _cvvCodes.append(new FraudCheckResult('X', Unsupported,  tr("Card Verification is not supported for this processor or card type")));
+
+  QSslConfiguration config = QSslConfiguration::defaultConfiguration();
+  config.setProtocol(QSsl::SecureProtocols);
+  QList<QSslCertificate> certs = config.caCertificates();
+  QDir certDir(QApplication::applicationDirPath() + "/certificates");
+  if (DEBUG) qDebug() << "looking for certificates in" << certDir;
+  foreach (QString filename, certDir.entryList(QDir::Files | QDir::Readable)) {
+    if (DEBUG) qDebug() << "checking" << filename;
+    QFile certfile(certDir.path() + "/" + filename);
+    if (certfile.open(QIODevice::ReadOnly))
+    {
+      if (DEBUG) qDebug() << "opening" << filename;
+      QString suffix = QFileInfo(certfile).suffix().toLower();
+      QSslCertificate *cert = new QSslCertificate(&certfile,
+                                                  (suffix == "cer" || suffix == "crt" ? QSsl::Der
+                                                                                      : QSsl::Pem));
+      if (cert->isValid()) {
+        certs.append(*cert);
+        if (DEBUG) qDebug() << "adding certificate" << cert;
+      }
+    }
+    else
+      qDebug() << "opening" << filename << "failed:" << certfile.errorString()
+               << certfile.error();
+    certfile.close();
+  }
+  config.setCaCertificates(certs);
+  QSslConfiguration::setDefaultConfiguration(config);
 }
 
 CreditCardProcessor::~CreditCardProcessor()
