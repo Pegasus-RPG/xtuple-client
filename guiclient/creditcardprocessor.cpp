@@ -341,9 +341,11 @@ CreditCardProcessor::CreditCardProcessor()
     {
       if (DEBUG) qDebug() << "opening" << filename;
       QString suffix = QFileInfo(certfile).suffix().toLower();
-      QSslCertificate *cert = new QSslCertificate(&certfile,
-                                                  (suffix == "cer" || suffix == "crt" ? QSsl::Der
-                                                                                      : QSsl::Pem));
+      QSslCertificate *cert = new QSslCertificate(&certfile, QSsl::Pem);
+      if (cert && ! cert->isValid()) {
+        delete cert;
+        cert = new QSslCertificate(&certfile, QSsl::Der);
+      }
       if (cert->isValid()) {
         certs.append(*cert);
         if (DEBUG) qDebug() << "adding certificate" << cert;
