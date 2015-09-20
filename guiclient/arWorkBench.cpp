@@ -267,13 +267,14 @@ void arWorkBench::sDeleteCashrcpt()
     int result = arDeleteCashrcpt.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("deleteCashrcpt", result));
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Cash Receipt"),
+                                  arDeleteCashrcpt, __FILE__, __LINE__);
       return;
     }
   }
-  else if (arDeleteCashrcpt.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Cash Receipt"),
+                                arDeleteCashrcpt, __FILE__, __LINE__))
   {
-    systemError(this, arDeleteCashrcpt.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillCashrcptList();
@@ -303,9 +304,9 @@ void arWorkBench::sPostCashrcpt()
   arPostCashrcpt.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
   if (arPostCashrcpt.first())
     journalNumber = arPostCashrcpt.value("journalnumber").toInt();
-  else if (arPostCashrcpt.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt"),
+                                arPostCashrcpt, __FILE__, __LINE__))
   {
-    systemError(this, arPostCashrcpt.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -342,15 +343,15 @@ void arWorkBench::sPostCashrcpt()
       int result = arPostCashrcpt.value("result").toInt();
       if (result < 0)
       {
-        systemError(this, storedProcErrorLookup("postCashReceipt", result),
-                    __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt"),
+                                      arPostCashrcpt, __FILE__, __LINE__);
         arPostCashrcpt.exec("ROLLBACK;");
         return;
       }
     }
-    else if (arPostCashrcpt.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt"),
+                                  arPostCashrcpt, __FILE__, __LINE__))
     {
-      systemError(this, arPostCashrcpt.lastError().databaseText(), __FILE__, __LINE__);
       arPostCashrcpt.exec("ROLLBACK;");
       return;
     }

@@ -20,6 +20,7 @@
 #include "storedProcErrorLookup.h"
 #include "taxDetail.h"
 #include "currcluster.h"
+#include "errorReporter.h"
 
 arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -132,11 +133,11 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
         _docNumber->setText(aret.value("number").toString());
         _seqiss = aret.value("number").toInt();
       }
-      else if (aret.lastError().type() != QSqlError::NoError)
-      {
-	systemError(this, aret.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
-      }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving A/R Information"),
+                                  aret, __FILE__, __LINE__))
+    {
+      return UndefinedError;
+    }
 
       _paid->clear();
       _save->setText(tr("Post"));
@@ -331,19 +332,19 @@ void arOpenItem::sSave()
     else
     {
       arSave.first();
-      if (arSave.lastError().type() != QSqlError::NoError)
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting A/R %1M").arg(_docType->code()),
+                                    arSave, __FILE__, __LINE__))
       {
-	systemError(this, arSave.lastError().databaseText(), __FILE__, __LINE__);
         reset();
-	return;
+        return;
       }
       _last = arSave.value("result").toInt();
       if (_last < 0)
       {
-	systemError(this, storedProc.isEmpty() ?
-			    tr("Saving Credit Memo Failed: %1").arg(_last) :
-			    storedProcErrorLookup(storedProc, _last),
-		    __FILE__, __LINE__);
+      systemError(this, storedProc.isEmpty() ?
+                tr("Saving Credit Memo Failed: %1").arg(_last) :
+                storedProcErrorLookup(storedProc, _last),
+            __FILE__, __LINE__);
         reset();
 	return;
       }
@@ -352,9 +353,9 @@ void arOpenItem::sSave()
       reset();
     }
   }
-  else if (arSave.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting A/R %1M").arg(_docType->code()),
+                                arSave, __FILE__, __LINE__))
   {
-    systemError(this, arSave.lastError().databaseText(), __FILE__, __LINE__);
     if (_mode == cNew)
       reset();
     return;
@@ -393,9 +394,9 @@ void arOpenItem::sReleaseNumber()
     arReleaseNumber.prepare("SELECT releaseARMemoNumber(:docNumber);");
     arReleaseNumber.bindValue(":docNumber", _seqiss);
     arReleaseNumber.exec();
-    if (arReleaseNumber.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Cancelling A/R %1M").arg(_docType->code()),
+                                  arReleaseNumber, __FILE__, __LINE__))
     {
-      systemError(this, arReleaseNumber.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -419,9 +420,9 @@ void arOpenItem::sPopulateCustInfo(int pCustid)
       _tax->setId(c.value("cust_curr_id").toInt());
       _commprcnt = c.value("cust_commprcnt").toDouble();
     }
-    else if (c.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving A/R Information"),
+                                  c, __FILE__, __LINE__))
     {
-      systemError(this, c.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -579,12 +580,12 @@ void arOpenItem::populate()
     arpopulate.bindValue(":aropen_id", _aropenid);
     arpopulate.exec();
     _arapply->populate(arpopulate, true);
-    if (arpopulate.lastError().type() != QSqlError::NoError)
-	systemError(this, arpopulate.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving A/R Information"),
+                                  arpopulate, __FILE__, __LINE__);
   }
-  else if (arpopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Next Period Number"),
+                                arpopulate, __FILE__, __LINE__))
   {
-    systemError(this, arpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -671,9 +672,9 @@ void arOpenItem::sTaxDetail()
     ar.exec();
     if (ar.first())
       _aropenid = ar.value("result").toInt();
-    else if (ar.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Cannot set tax amounts"),
+                                  ar, __FILE__, __LINE__))
     {
-      systemError(this, ar.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
@@ -692,9 +693,9 @@ void arOpenItem::sTaxDetail()
     ar.bindValue(":docNumber", _docNumber->text());
     ar.bindValue(":currId", _amount->id());
     ar.exec();
-    if (ar.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Cannot set tax amounts"),
+                                  ar, __FILE__, __LINE__))
     {
-      systemError(this, ar.lastError().databaseText(), __FILE__, __LINE__);
       reset();
       return;
     }
@@ -735,9 +736,9 @@ void arOpenItem::sTaxDetail()
       else
         _tax->setLocalValue(taxq.value("tax").toDouble());
     }
-    else if (taxq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Cannot set tax amounts"),
+                                  taxq, __FILE__, __LINE__))
     {
-      systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
