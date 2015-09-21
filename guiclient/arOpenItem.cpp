@@ -341,10 +341,8 @@ void arOpenItem::sSave()
       _last = arSave.value("result").toInt();
       if (_last < 0)
       {
-      systemError(this, storedProc.isEmpty() ?
-                tr("Saving Credit Memo Failed: %1").arg(_last) :
-                storedProcErrorLookup(storedProc, _last),
-            __FILE__, __LINE__);
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting A/R %1M").arg(_docType->code()),
+                                    arSave, __FILE__, __LINE__))
         reset();
 	return;
       }
