@@ -18,24 +18,26 @@
 #include <QDebug>
 #include <QtWidgets>
 
-#define DEBUG true
+#define DEBUG false
 
-xtNetworkRequestManager::xtNetworkRequestManager(const QUrl & url, const QMutex &mutex) {
-  nwam = new QNetworkAccessManager(this);
+xtNetworkRequestManager::xtNetworkRequestManager(const QUrl & url, QMutex &mutex) {
+  nwam = new QNetworkAccessManager;
   _nwrep = 0;
-  //toggleLock(mutex);
-  if(DEBUG){
-  qDebug() << "url= " << url.toEncoded();
-  }
-  QEventLoop loop;
-  _nwrep = nwam->get(QNetworkRequest(url));
-  connect(_nwrep, SIGNAL(finished()), SLOT(requestCompleted()));
-  connect(nwam, SIGNAL(sslErrors(QNetworkReply*,QList<QSslError>)), this, SLOT(sslErrors(QNetworkReply*,QList<QSslError>)));
-  connect(nwam, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit())); //loop through and quit on finished signal, is this correct?
-  loop.exec();
+  _response = 0;
+  _mutex = &mutex;
+  _mutex->lock();
+  _loop = new QEventLoop;
+  startRequest(url);
+}
+void xtNetworkRequestManager::startRequest(const QUrl & url) {
+    _nwrep = nwam->get(QNetworkRequest(url));
+    connect(_nwrep, SIGNAL(finished()), SLOT(requestCompleted()));
+    connect(nwam, SIGNAL(sslErrors(QNetworkReply*,QList<QSslError>)), this, SLOT(sslErrors(QNetworkReply*,QList<QSslError>)));
+    connect(nwam, SIGNAL(finished(QNetworkReply*)), _loop, SLOT(quit()));
+    _loop->exec();
 }
 void xtNetworkRequestManager::requestCompleted() {
-  QByteArray response = _nwrep->readAll(); //we don't really care here but store it anyways
+  _response = _nwrep->readAll(); //we don't really care here but store it anyways
   _nwrep->close();
   QVariant possibleRedirect = _nwrep->attribute(QNetworkRequest::RedirectionTargetAttribute);
   if(DEBUG){
@@ -43,27 +45,15 @@ void xtNetworkRequestManager::requestCompleted() {
       qDebug() << "replyError=" << _nwrep->errorString();
       qDebug() << "replyErrorCode=" << _nwrep->error();
   }
-  if(_nwrep->error() != QNetworkReply::NoError){
-      if(DEBUG){
-      qDebug() << "error=" << _nwrep->errorString();
-      }
+  if(_nwrep->error() == QNetworkReply::NoError){
+      _nwrep->deleteLater();
+      _mutex->unlock();
   }
   else if(!possibleRedirect.isNull()){
       QUrl newUrl = possibleRedirect.toUrl();
       _nwrep->deleteLater();
-      _nwrep = nwam->get(QNetworkRequest(newUrl));
-      connect(nwam, SIGNAL(finished()), this, SLOT(requestCompleted()));
+      startRequest(newUrl);
   }
-  _nwrep->deleteLater(); //clean up
-}
-void xtNetworkRequestManager::toggleLock(QMutex & mutex) {
-    if(mutex.tryLock()){
-        mutex.unlock();
-    }
-    else {
-        mutex.lock();
-    }
-    return;
 }
 void xtNetworkRequestManager::sslErrors(QNetworkReply*, const QList<QSslError> &errors) {
     QString errorString;
@@ -72,11 +62,11 @@ void xtNetworkRequestManager::sslErrors(QNetworkReply*, const QList<QSslError> &
                errorString += ", ";
            errorString += error.errorString();
        }
-
+   if(DEBUG)
    qDebug() << "errorString= " << errorString;
 }
 xtNetworkRequestManager::~xtNetworkRequestManager() {
- delete nwam;
+    nwam->deleteLater();
     nwam = 0;
 }
 

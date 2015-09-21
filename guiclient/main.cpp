@@ -477,8 +477,7 @@ int main(int argc, char *argv[])
       urlQuery.addQueryItem("ver", _Version);
       QUrl url = urlQuery.query();
       QMutex wait;
-      xtNetworkRequestManager _networkManager(QUrl(url), wait);
-
+      xtNetworkRequestManager _networkManager(url, wait);
       if(forced)
         return 0;
 

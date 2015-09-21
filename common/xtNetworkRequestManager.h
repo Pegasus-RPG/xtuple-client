@@ -12,9 +12,11 @@
 #define __XTNETWORKREQUESTMANAGER_H__
 
 #include <QObject>
+#include <QThread>
 #include <QString>
 #include <QUrl>
 #include <QNetworkAccessManager>
+#include <QEventLoop>
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -24,19 +26,23 @@ class xtNetworkRequestManager : public QObject
     Q_OBJECT
 
 public:
-    xtNetworkRequestManager(const QUrl &, const QMutex &);
+    xtNetworkRequestManager(const QUrl &, QMutex &);
     virtual ~xtNetworkRequestManager();
 
 
 protected slots:
+    virtual void startRequest(const QUrl &);
     virtual void requestCompleted();
-    virtual void toggleLock(QMutex & mutex);
     virtual void sslErrors(QNetworkReply*, const QList<QSslError> &errors);
 
 private:
     QNetworkAccessManager * nwam;
     QNetworkReply * _nwrep;
     QNetworkRequest * _request;
+    QByteArray _response;
+    QMutex * _mutex;
+    QEventLoop *_loop;
+    QThread *_t;
 };
 
 #endif
