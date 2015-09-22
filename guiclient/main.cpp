@@ -479,7 +479,7 @@ int main(int argc, char *argv[])
       QUrl url = urlQuery.query();
 #else
       QUrl url;
-      url.setPath("https://www.xtuple.org/api/regviolation.php");
+      url.setUrl("https://www.xtuple.org/api/regviolation.php");
       url.addQueryItem("key", QUrl::toPercentEncoding(rkey));
       url.addQueryItem("error", QUrl::toPercentEncoding(checkPassReason));
       url.addQueryItem("name", QUrl::toPercentEncoding(name));

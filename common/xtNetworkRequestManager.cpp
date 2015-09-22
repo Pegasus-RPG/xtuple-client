@@ -17,7 +17,7 @@
 #include <QObject>
 #include <QDebug>
 
-#define DEBUG false
+#define DEBUG true
 
 xtNetworkRequestManager::xtNetworkRequestManager(const QUrl & url, QMutex &mutex) {
   nwam = new QNetworkAccessManager;
@@ -32,6 +32,9 @@ void xtNetworkRequestManager::startRequest(const QUrl & url) {
     _nwrep = nwam->get(QNetworkRequest(url));
     connect(_nwrep, SIGNAL(finished()), SLOT(requestCompleted()));
     connect(nwam, SIGNAL(sslErrors(QNetworkReply*,QList<QSslError>)), this, SLOT(sslErrors(QNetworkReply*,QList<QSslError>)));
+#if QT_VERSION < 0x050000 //this feels hackish, ignore error or provide root cert, we'll ignore for now
+    connect(nwam, SIGNAL(sslErrors(QNetworkReply*,QList<QSslError>)), _nwrep, SLOT(ignoreSslErrors()));
+#endif
     connect(nwam, SIGNAL(finished(QNetworkReply*)), _loop, SLOT(quit()));
     _loop->exec();
 }
