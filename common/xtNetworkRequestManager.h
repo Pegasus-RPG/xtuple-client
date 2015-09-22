@@ -17,6 +17,7 @@
 #include <QUrl>
 #include <QNetworkAccessManager>
 #include <QEventLoop>
+#include <QMutex>
 
 class QNetworkAccessManager;
 class QNetworkReply;

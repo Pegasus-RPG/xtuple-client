@@ -99,9 +99,10 @@
 #include <QTranslator>
 #if QT_VERSION < 0x050000
 #include <QHttp>
+#else
+#include <QUrlQuery>
 #endif
 #include <QUrl>
-#include <QUrlQuery>
 #include <QDebug>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -465,7 +466,7 @@ int main(int argc, char *argv[])
       {
         db = metric.value("db").toString();
       }
-
+#if QT_VERSION >= 0x050000
       QUrlQuery urlQuery("https://www.xtuple.org/api/regviolation.php?");
       urlQuery.addQueryItem("key", rkey);
       urlQuery.addQueryItem("error", checkPassReason);
@@ -476,6 +477,18 @@ int main(int argc, char *argv[])
       urlQuery.addQueryItem("tot", QString::number(tot));
       urlQuery.addQueryItem("ver", _Version);
       QUrl url = urlQuery.query();
+#else
+      QUrl url;
+      url.setPath("https://www.xtuple.org/api/regviolation.php");
+      url.addQueryItem("key", QUrl::toPercentEncoding(rkey));
+      url.addQueryItem("error", QUrl::toPercentEncoding(checkPassReason));
+      url.addQueryItem("name", QUrl::toPercentEncoding(name));
+      url.addQueryItem("dbname", QUrl::toPercentEncoding(dbname));
+      url.addQueryItem("db", QUrl::toPercentEncoding(db));
+      url.addQueryItem("cnt", QString::number(cnt));
+      url.addQueryItem("tot", QString::number(tot));
+      url.addQueryItem("ver", _Version);
+#endif
       QMutex wait;
       xtNetworkRequestManager _networkManager(url, wait);
       if(forced)

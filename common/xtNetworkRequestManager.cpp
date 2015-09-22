@@ -16,7 +16,6 @@
 #include <QMutexLocker>
 #include <QObject>
 #include <QDebug>
-#include <QtWidgets>
 
 #define DEBUG false
 
@@ -56,6 +55,7 @@ void xtNetworkRequestManager::requestCompleted() {
   }
 }
 void xtNetworkRequestManager::sslErrors(QNetworkReply*, const QList<QSslError> &errors) {
+#if QT_VERSION >= 0x050000
     QString errorString;
        foreach (const QSslError &error, errors) {
            if (!errorString.isEmpty())
@@ -64,6 +64,7 @@ void xtNetworkRequestManager::sslErrors(QNetworkReply*, const QList<QSslError> &
        }
    if(DEBUG)
    qDebug() << "errorString= " << errorString;
+#endif
 }
 xtNetworkRequestManager::~xtNetworkRequestManager() {
     nwam->deleteLater();
