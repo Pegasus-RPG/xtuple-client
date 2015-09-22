@@ -17,7 +17,7 @@
 #include <QObject>
 #include <QDebug>
 
-#define DEBUG true
+#define DEBUG false
 
 xtNetworkRequestManager::xtNetworkRequestManager(const QUrl & url, QMutex &mutex) {
   nwam = new QNetworkAccessManager;

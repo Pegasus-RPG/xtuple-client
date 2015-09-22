@@ -481,9 +481,9 @@ int main(int argc, char *argv[])
       QUrl url;
       url.setUrl("https://www.xtuple.org/api/regviolation.php");
       url.addQueryItem("key", QUrl::toPercentEncoding(rkey));
-      url.addQueryItem("error", QUrl::toPercentEncoding(checkPassReason));
-      url.addQueryItem("name", QUrl::toPercentEncoding(name));
-      url.addQueryItem("dbname", QUrl::toPercentEncoding(dbname));
+      url.addQueryItem("error", checkPassReason);
+      url.addQueryItem("name", name);
+      url.addQueryItem("dbname", dbname);
       url.addQueryItem("db", QUrl::toPercentEncoding(db));
       url.addQueryItem("cnt", QString::number(cnt));
       url.addQueryItem("tot", QString::number(tot));
