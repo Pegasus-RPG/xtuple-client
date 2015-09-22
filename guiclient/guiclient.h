@@ -83,7 +83,7 @@ class XWidget;
 
 // Possible return values from submitReport
 #define cNoReportDefinition   -2
-#ifdef Q_MAC_OS
+#ifdef __APPLE__
 #define SETUPMENUITEM "&xSetup"
 #else
 #define SETUPMENUITEM "&Setup"
