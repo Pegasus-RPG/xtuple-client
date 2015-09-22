@@ -845,9 +845,10 @@ void item::sSave()
   itemSave.exec();
   if (itemSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
-    itemSave.exec("ROLLBACK;");
+    XSqlQuery itemTrxn;
+    itemTrxn.exec("ROLLBACK;");
     _inTransaction = false;
+    systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
