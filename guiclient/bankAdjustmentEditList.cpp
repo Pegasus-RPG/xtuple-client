@@ -190,15 +190,15 @@ void bankAdjustmentEditList::sPost()
     int result = bankPost.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("postBankAdjustment", result),
-		  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Bank Adjustment"),
+                           bankPost, __FILE__, __LINE__);
       return;
     }
     sFillList();
   }
-  else if (bankPost.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Bank Adjustment"),
+                                bankPost, __FILE__, __LINE__))
   {
-    systemError(this, bankPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
