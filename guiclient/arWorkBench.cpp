@@ -344,7 +344,8 @@ void arWorkBench::sPostCashrcpt()
       if (result < 0)
       {
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt"),
-                                      arPostCashrcpt, __FILE__, __LINE__);
+                             storedProcErrorLookup("postCashReceipt", result),
+                             __FILE__, __LINE__);
         arPostCashrcpt.exec("ROLLBACK;");
         return;
       }

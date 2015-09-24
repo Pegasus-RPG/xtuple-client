@@ -110,7 +110,8 @@ void bankAdjustmentTypes::sDelete()
     if (result < 0)
     {
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Adjustment Type"),
-                           bankDelete, __FILE__, __LINE__);
+                          storedProcErrorLookup("bankDelete", result),
+                           __FILE__, __LINE__);
       return;
     }
   }

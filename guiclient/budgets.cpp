@@ -79,8 +79,9 @@ void budgets::sDelete()
     int result = budgetsDelete.value("result").toInt();
     if (result < 0)
     {
-    ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Budget"),
-                                  budgetsDelete, __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Budget"),
+                           storedProcErrorLookup("deleteBudget", result),
+                             __FILE__, __LINE__);
       return;
     }
   }

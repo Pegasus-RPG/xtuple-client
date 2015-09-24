@@ -191,7 +191,8 @@ void bankAdjustmentEditList::sPost()
     if (result < 0)
     {
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Bank Adjustment"),
-                           bankPost, __FILE__, __LINE__);
+                           storedProcErrorLookup("postBankAdjustment", result),
+                           __FILE__, __LINE__);
       return;
     }
     sFillList();

@@ -94,8 +94,8 @@ void assessFinanceCharges::sAssessCharges()
       if (result < 0)
       {
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Assessing Finance Charges"),
-                                    arAssessCharges, __FILE__, __LINE__);
-        arAssessCharges.exec("ROLLBACK;");
+                             storedProcErrorLookup("assessFinanceCharge", result),
+                             __FILE__, __LINE__);
         return;
       }
     }
