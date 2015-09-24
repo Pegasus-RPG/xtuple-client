@@ -225,6 +225,10 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
     else if(_metrics->value("SOReservationLocationMethod").toInt() == 3)
       _alpha->setChecked(true);
   }
+  
+  _enableSSOS->setChecked(_metrics->boolean("EnableSSOS"));
+  _ssosCust->setId(_metrics->value("DefaultSSOSCustId").toInt());
+  
   adjustSize();
 }
 
@@ -394,6 +398,17 @@ bool configureSO::sSave()
     }
   }
   _metrics->set("EnableReturnAuth", (_enableReturns->isChecked() || !_enableReturns->isCheckable()));
+  
+  if (_enableSSOS->isChecked())
+  {
+    _metrics->set("EnableSSOS", true);
+    _metrics->set("DefaultSSOSCustId", _ssosCust->id());
+  }
+  else
+  {
+    _metrics->set("EnableSSOS", false);
+    _metrics->set("DefaultSSOSCustId", -1);
+  }
 
   return true;
 }

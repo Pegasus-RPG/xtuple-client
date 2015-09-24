@@ -501,6 +501,7 @@ FORMS =   absoluteCalendarItem.ui               \
           salesOrder.ui                         \
           salesOrderInformation.ui              \
           salesOrderItem.ui                     \
+          salesOrderSimple.ui                     \
           salesRep.ui                           \
           salesReps.ui                          \
           saleType.ui                           \
@@ -1095,6 +1096,7 @@ HEADERS = ../common/format.h                    \
           salesOrder.h                          \
           salesOrderInformation.h               \
           salesOrderItem.h                      \
+          salesOrderSimple.h                     \
           salesRep.h                            \
           salesReps.h                           \
           saleType.h                            \
@@ -1709,6 +1711,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           salesOrder.cpp                        \
           salesOrderInformation.cpp             \
           salesOrderItem.cpp                    \
+          salesOrderSimple.cpp                     \
           salesRep.cpp                          \
           salesReps.cpp                         \
           saleType.cpp                          \

@@ -518,6 +518,7 @@
 #include "salesOrder.h"
 #include "salesOrderInformation.h"
 #include "salesOrderItem.h"
+#include "salesOrderSimple.h"
 #include "salesRep.h"
 #include "salesReps.h"
 #include "saleType.h"
