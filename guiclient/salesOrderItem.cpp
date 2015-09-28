@@ -859,8 +859,6 @@ void salesOrderItem::prepare()
       }
     }
   }
-  _modified = false;
-  _partialsaved = false;
 }
 
 void salesOrderItem::clear()
@@ -881,6 +879,8 @@ void salesOrderItem::clear()
     disconnect(_supplyDropShip,    SIGNAL(toggled(bool)),                this, SLOT(sHandleSupplyOrder()));
   }
 
+  _modified = false;
+  _partialsaved = false;
   _supplyOrderType = "";
   _supplyOrderId = -1;
   _createSupplyOrder->setChecked(false);
