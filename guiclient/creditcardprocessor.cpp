@@ -1626,14 +1626,13 @@ int CreditCardProcessor::checkCreditCard(const int pccid, const QString &pcvv, Q
     _errorMsg = errorMsg(-98);
     return -98;
   }
-  else if (pcvv.isEmpty())
+  else if (pcvv.isEmpty() && _metrics->value("CCCVVCheck").contains(QRegExp("^[FW]$")))
   {
     if (QMessageBox::question(0,
 	      tr("Confirm No CVV Code"),
               tr("<p>You must confirm that you wish to proceed "
                  "without a CVV code. Would you like to continue?"),
-              QMessageBox::Yes | QMessageBox::Default,
-              QMessageBox::No  | QMessageBox::Escape ) == QMessageBox::No)
+              QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
     {
       _errorMsg = errorMsg(-75);
       return -75;
