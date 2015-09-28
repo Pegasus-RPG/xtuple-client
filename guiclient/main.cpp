@@ -103,10 +103,6 @@
 #include <QUrlQuery>
 #endif
 #include <QUrl>
-#include <QDebug>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
 
 #include <dbtools.h>
 #include <parameter.h>
