@@ -41,9 +41,9 @@ void xtNetworkRequestManager::startRequest(const QUrl & url) {
 void xtNetworkRequestManager::requestCompleted() {
   _response = _nwrep->readAll(); //we don't really care here but store it anyways
   _nwrep->close();
-  QVariant possibleRedirect = _nwrep->attribute(QNetworkRequest::RedirectionTargetAttribute);
+  QUrl possibleRedirect = _nwrep->attribute(QNetworkRequest::RedirectionTargetAttribute);
   if(DEBUG){
-      qDebug() << "redirect=" << possibleRedirect;
+      qDebug() << "redirect=" << possibleRedirect.resolved();
       qDebug() << "replyError=" << _nwrep->errorString();
       qDebug() << "replyErrorCode=" << _nwrep->error();
   }
@@ -52,7 +52,7 @@ void xtNetworkRequestManager::requestCompleted() {
       _mutex->unlock();
   }
   else if(!possibleRedirect.isNull()){
-      QUrl newUrl = possibleRedirect.toUrl();
+      QUrl newUrl = possibleRedirect.resolved();
       _nwrep->deleteLater();
       startRequest(newUrl);
   }
@@ -65,7 +65,6 @@ void xtNetworkRequestManager::sslErrors(QNetworkReply*, const QList<QSslError> &
                errorString += ", ";
            errorString += error.errorString();
        }
-   if(DEBUG)
    qDebug() << "errorString= " << errorString;
 #endif
 }
