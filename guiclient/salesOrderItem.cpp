@@ -4551,8 +4551,8 @@ void salesOrderItem::sPopulateUOM()
         return;
       else if (souom.first())
       {
-        params.append("uom_id", souom.value("coitem_qty_uom_id"));
-        params.append("uom_id2", souom.value("coitem_price_uom_id"));
+        params.append("uom_id", souom.value("qtyuomid"));
+        params.append("uom_id2", souom.value("priceuomid"));
       }
     }
 
