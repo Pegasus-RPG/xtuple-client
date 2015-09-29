@@ -85,6 +85,7 @@ salesOrderSimple::salesOrderSimple(QWidget *parent, const char *name, Qt::Window
 
   connect(_qty,                 SIGNAL(editingFinished()),                      this,         SLOT(sSaveLine()));
   
+  _lineMode = cNew;
   _saved = false;
 
   _soheadid          = -1;
@@ -356,154 +357,21 @@ bool salesOrderSimple::save(bool partial)
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Sales Order"), errors))
       return false;
 
-  if ((_mode == cEdit) || ((_mode == cNew) && _saved))
-    saveSales.prepare( "UPDATE cohead "
-               "SET cohead_custponumber=:custponumber, cohead_shipto_id=:shipto_id, cohead_cust_id=:cust_id,"
-               "    cohead_billtoname=:billtoname, cohead_billtoaddress1=:billtoaddress1,"
-               "    cohead_billtoaddress2=:billtoaddress2, cohead_billtoaddress3=:billtoaddress3,"
-               "    cohead_billtocity=:billtocity, cohead_billtostate=:billtostate, cohead_billtozipcode=:billtozipcode,"
-               "    cohead_billtocountry=:billtocountry,"
-               "    cohead_shiptoname=:shiptoname, cohead_shiptoaddress1=:shiptoaddress1,"
-               "    cohead_shiptoaddress2=:shiptoaddress2, cohead_shiptoaddress3=:shiptoaddress3,"
-               "    cohead_shiptocity=:shiptocity, cohead_shiptostate=:shiptostate, cohead_shiptozipcode=:shiptozipcode,"
-               "    cohead_shiptocountry=:shiptocountry,"
-               "    cohead_orderdate=:orderdate, cohead_packdate=:packdate,"
-               "    cohead_salesrep_id=:salesrep_id, cohead_commission=:commission,"
-               "    cohead_taxzone_id=:taxzone_id, cohead_terms_id=:terms_id,"
-               "    cohead_fob=:fob, cohead_shipvia=:shipvia, cohead_warehous_id=:warehous_id,"
-               "    cohead_freight=:freight, cohead_calcfreight=:calcfreight,"
-               "    cohead_misc=:misc, cohead_misc_accnt_id=:misc_accnt_id, cohead_misc_descrip=:misc_descrip,"
-               "    cohead_holdtype=:holdtype,"
-               "    cohead_ordercomments=:ordercomments, cohead_shipcomments=:shipcomments,"
-               "    cohead_shipchrg_id=:shipchrg_id, cohead_shipform_id=:shipform_id,"
-               "    cohead_prj_id=:prj_id,"
-               "    cohead_ophead_id=:ophead_id,"
-               "    cohead_curr_id = :curr_id,"
-               "    cohead_shipcomplete=:cohead_shipcomplete,"
-               "    cohead_shipto_cntct_id=:shipto_cntct_id,"
-               "    cohead_shipto_cntct_honorific=:shipto_cntct_honorific,"
-               "    cohead_shipto_cntct_first_name=:shipto_cntct_first_name,"
-               "    cohead_shipto_cntct_middle=:shipto_cntct_middle,"
-               "    cohead_shipto_cntct_last_name=:shipto_cntct_last_name,"
-               "    cohead_shipto_cntct_suffix=:shipto_cntct_suffix,"
-               "    cohead_shipto_cntct_phone=:shipto_cntct_phone,"
-               "    cohead_shipto_cntct_title=:shipto_cntct_title,"
-               "    cohead_shipto_cntct_fax=:shipto_cntct_fax,"
-               "    cohead_shipto_cntct_email=:shipto_cntct_email,"
-               "    cohead_billto_cntct_id=:billto_cntct_id,"
-               "    cohead_billto_cntct_honorific=:billto_cntct_honorific,"
-               "    cohead_billto_cntct_first_name=:billto_cntct_first_name,"
-               "    cohead_billto_cntct_middle=:billto_cntct_middle,"
-               "    cohead_billto_cntct_last_name=:billto_cntct_last_name,"
-               "    cohead_billto_cntct_suffix=:billto_cntct_suffix,"
-               "    cohead_billto_cntct_phone=:billto_cntct_phone,"
-               "    cohead_billto_cntct_title=:billto_cntct_title,"
-               "    cohead_billto_cntct_fax=:billto_cntct_fax,"
-               "    cohead_billto_cntct_email=:billto_cntct_email, "
-               "    cohead_shipzone_id=:shipzone_id,"
-               "    cohead_saletype_id=:saletype_id "
-               "WHERE (cohead_id=:id);" );
-  else if (_mode == cNew)
-  {
-    saveSales.prepare("INSERT INTO cohead "
-              "(cohead_id, cohead_number, cohead_cust_id,"
-              "    cohead_custponumber, cohead_shipto_id,"
-              "    cohead_billtoname, cohead_billtoaddress1,"
-              "    cohead_billtoaddress2, cohead_billtoaddress3,"
-              "    cohead_billtocity, cohead_billtostate, cohead_billtozipcode,"
-              "    cohead_billtocountry,"
-              "    cohead_shiptoname, cohead_shiptoaddress1,"
-              "    cohead_shiptoaddress2, cohead_shiptoaddress3,"
-              "    cohead_shiptocity, cohead_shiptostate, cohead_shiptozipcode,"
-              "    cohead_shiptocountry,"
-              "    cohead_orderdate, cohead_packdate,"
-              "    cohead_salesrep_id, cohead_commission,"
-              "    cohead_taxzone_id, cohead_terms_id,"
-              "    cohead_fob, cohead_shipvia, cohead_warehous_id,"
-              "    cohead_freight, cohead_calcfreight,"
-              "    cohead_misc, cohead_misc_accnt_id, cohead_misc_descrip,"
-              "    cohead_holdtype,"
-              "    cohead_ordercomments, cohead_shipcomments,"
-              "    cohead_shipchrg_id, cohead_shipform_id,"
-              "    cohead_prj_id, cohead_ophead_id,"
-              "    cohead_curr_id,"
-              "    cohead_shipcomplete,"
-              "    cohead_shipto_cntct_id,"
-              "    cohead_shipto_cntct_honorific,"
-              "    cohead_shipto_cntct_first_name,"
-              "    cohead_shipto_cntct_middle,"
-              "    cohead_shipto_cntct_last_name,"
-              "    cohead_shipto_cntct_suffix,"
-              "    cohead_shipto_cntct_phone,"
-              "    cohead_shipto_cntct_title,"
-              "    cohead_shipto_cntct_fax,"
-              "    cohead_shipto_cntct_email,"
-              "    cohead_billto_cntct_id,"
-              "    cohead_billto_cntct_honorific,"
-              "    cohead_billto_cntct_first_name,"
-              "    cohead_billto_cntct_middle,"
-              "    cohead_billto_cntct_last_name,"
-              "    cohead_billto_cntct_suffix,"
-              "    cohead_billto_cntct_phone,"
-              "    cohead_billto_cntct_title,"
-              "    cohead_billto_cntct_fax,"
-              "    cohead_billto_cntct_email,"
-              "    cohead_shipzone_id, cohead_saletype_id)"
-              "    VALUES (:id,:number, :cust_id,"
-              "    :custponumber,:shipto_id,"
-              "    :billtoname, :billtoaddress1,"
-              "    :billtoaddress2, :billtoaddress3,"
-              "    :billtocity, :billtostate, :billtozipcode,"
-              "    :billtocountry,"
-              "    :shiptoname, :shiptoaddress1,"
-              "    :shiptoaddress2, :shiptoaddress3,"
-              "    :shiptocity, :shiptostate, :shiptozipcode,"
-              "    :shiptocountry,"
-              "    :orderdate, :packdate,"
-              "    :salesrep_id, :commission,"
-              "    :taxzone_id, :terms_id,"
-              "    :fob, :shipvia, :warehous_id,"
-              "    :freight, :calcfreight,"
-              "    :misc, :misc_accnt_id, :misc_descrip,"
-              "    :holdtype,"
-              "    :ordercomments, :shipcomments,"
-              "    :shipchrg_id, :shipform_id,"
-              "    :prj_id, :ophead_id,"
-              "    :curr_id,"
-              "    :cohead_shipcomplete,"
-              "    :shipto_cntct_id,"
-              "    :shipto_cntct_honorific,"
-              "    :shipto_cntct_first_name,"
-              "    :shipto_cntct_middle,"
-              "    :shipto_cntct_last_name,"
-              "    :shipto_cntct_suffix,"
-              "    :shipto_cntct_phone,"
-              "    :shipto_cntct_title,"
-              "    :shipto_cntct_fax,"
-              "    :shipto_cntct_email,"
-              "    :billto_cntct_id,"
-              "    :billto_cntct_honorific,"
-              "    :billto_cntct_first_name,"
-              "    :billto_cntct_middle,"
-              "    :billto_cntct_last_name,"
-              "    :billto_cntct_suffix,"
-              "    :billto_cntct_phone,"
-              "    :billto_cntct_title,"
-              "    :billto_cntct_fax,"
-              "    :billto_cntct_email,"
-              "    :shipzone_id, :saletype_id) ");
-  }
-  saveSales.bindValue(":id", _soheadid );
-  saveSales.bindValue(":number", _orderNumber->text());
-  saveSales.bindValue(":orderdate", omfgThis->dbDate());
-  saveSales.bindValue(":packdate", omfgThis->dbDate());
-
-  saveSales.bindValue(":cust_id", _cust->id());
-  saveSales.bindValue(":custponumber", _custPONumber->text().trimmed());
+  MetaSQLQuery mql = mqlLoad("salesOrder", "simple");
+  
+  ParameterList params;
+  params.append("id", _soheadid );
+  params.append("number", _orderNumber->text());
+  params.append("cust_id", _cust->id());
+  params.append("custponumber", _custPONumber->text().trimmed());
   if (_shipTo->id() > 0)
-    saveSales.bindValue(":shipto_id", _shipTo->id());
-
-  saveSales.exec();
+    params.append("shipto_id", _shipTo->id());
+  
+  if ((_mode == cEdit) || ((_mode == cNew) && _saved))
+    params.append("EditMode", true);
+  else if (_mode == cNew)
+    params.append("NewMode", true);
+  saveSales = mql.toQuery(params);
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Saving Order"),
                            saveSales, __FILE__, __LINE__))
   {
@@ -554,92 +422,32 @@ void salesOrderSimple::sSaveLine()
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Sales Order Item"), errors))
     return;
   
-  QDate promiseDate;
+  // Save the cohead
+  if (!save(true))
+    return;
   
-  if (_metrics->boolean("UsePromiseDate"))
-    promiseDate = omfgThis->endOfTime();
-  else
-    promiseDate = omfgThis->endOfTime();
+  MetaSQLQuery mql = mqlLoad("salesOrderItem", "simple");
   
+  ParameterList params;
+  params.append("id", _soitemid);
+  params.append("sohead_id", _soheadid);
+  params.append("qtyord", _qty->toDouble());
+  params.append("item_id", _item->id());
+  params.append("cust_id", _cust->id());
+  params.append("shipto_id", _shipTo->id());
   if (_lineMode == cNew)
-  {
-    salesSave.prepare( "INSERT INTO coitem "
-                      "( coitem_id, coitem_cohead_id, coitem_linenumber, coitem_itemsite_id,"
-                      "  coitem_status, coitem_scheddate, coitem_promdate,"
-                      "  coitem_qtyord, coitem_qty_uom_id, coitem_qty_invuomratio,"
-                      "  coitem_qtyshipped, coitem_qtyreturned,"
-                      "  coitem_unitcost, coitem_custprice, coitem_pricemode,"
-                      "  coitem_price, coitem_price_uom_id, coitem_price_invuomratio,"
-                      "  coitem_order_type, coitem_order_id,"
-                      "  coitem_custpn, coitem_memo, coitem_substitute_item_id,"
-                      "  coitem_prcost, coitem_taxtype_id, coitem_warranty,"
-                      "  coitem_cos_accnt_id, coitem_rev_accnt_id) "
-                      "  SELECT :soitem_id, :soitem_sohead_id, :soitem_linenumber, itemsite_id,"
-                      "       'O', :soitem_scheddate, :soitem_promdate,"
-                      "       :soitem_qtyord, :qty_uom_id, :qty_invuomratio, 0, 0,"
-                      "       :soitem_unitcost, :soitem_custprice, :soitem_pricemode,"
-                      "       :soitem_price, :price_uom_id, :price_invuomratio,"
-                      "       :soitem_order_type, :soitem_order_id,"
-                      "       :soitem_custpn, :soitem_memo, :soitem_substitute_item_id,"
-                      "       :soitem_prcost, :soitem_taxtype_id, :soitem_warranty, "
-                      "       :soitem_cos_accnt_id, :soitem_rev_accnt_id "
-                      "FROM itemsite "
-                      "WHERE ( (itemsite_item_id=:item_id)"
-                      " AND (itemsite_warehous_id=:warehous_id) );" );
-    salesSave.bindValue(":soitem_id", _soitemid);
-    salesSave.bindValue(":soitem_sohead_id", _soheadid);
-    salesSave.bindValue(":soitem_promdate", promiseDate);
-    salesSave.bindValue(":soitem_qtyord", _qty->toDouble());
-    salesSave.bindValue(":item_id", _item->id());
-    salesSave.exec();
-    if (salesSave.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, salesSave.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
+    params.append("NewMode", true);
   else if (_lineMode == cEdit)
+    params.append("EditMode", true);
+  salesSave = mql.toQuery(params);
+  if (salesSave.lastError().type() != QSqlError::NoError)
   {
-    salesSave.prepare("UPDATE coitem "
-                      "SET coitem_itemsite_id=(SELECT itemsite_id"
-                      "                        FROM itemsite"
-                      "                        WHERE (itemsite_item_id=:item_id)"
-                      "                          AND (itemsite_warehous_id=:warehous_id)),"
-                      "    coitem_scheddate=:soitem_scheddate,"
-                      "    coitem_promdate=:soitem_promdate,"
-                      "    coitem_qtyord=:soitem_qtyord,"
-                      "    coitem_qty_uom_id=:qty_uom_id,"
-                      "    coitem_qty_invuomratio=:qty_invuomratio,"
-                      "    coitem_unitcost=:soitem_unitcost,"
-                      "    coitem_custprice=:soitem_custprice,"
-                      "    coitem_pricemode=:soitem_pricemode,"
-                      "    coitem_price=:soitem_price,"
-                      "    coitem_price_uom_id=:price_uom_id,"
-                      "    coitem_price_invuomratio=:price_invuomratio,"
-                      "    coitem_memo=:soitem_memo,"
-                      "    coitem_order_type=:soitem_order_type,"
-                      "    coitem_order_id=:soitem_order_id,"
-                      "    coitem_substitute_item_id=:soitem_substitute_item_id,"
-                      "    coitem_prcost=:soitem_prcost,"
-                      "    coitem_taxtype_id=:soitem_taxtype_id, "
-                      "    coitem_cos_accnt_id=:soitem_cos_accnt_id, "
-                      "    coitem_rev_accnt_id=:soitem_rev_accnt_id, "
-                      "    coitem_warranty=:soitem_warranty, "
-                      "    coitem_custpn=:custpn "
-                      "WHERE (coitem_id=:soitem_id);" );
-    salesSave.bindValue(":item_id", _item->id());
-    salesSave.bindValue(":soitem_promdate", promiseDate);
-    salesSave.bindValue(":soitem_qtyord", _qty->toDouble());
-    salesSave.bindValue(":soitem_id", _soitemid);
-    salesSave.exec();
-    if (salesSave.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, salesSave.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+    systemError(this, salesSave.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
   
   prepareLine();
+  sFillItemList();
   _item->setFocus();
 }
 
@@ -1171,6 +979,9 @@ void salesOrderSimple::prepare()
 
 void salesOrderSimple::prepareLine()
 {
+  _item->setId(-1);
+  _qty->clear();
+  
   XSqlQuery salesprepare;
   //  Grab the next coitem_id
   salesprepare.exec("SELECT NEXTVAL('coitem_coitem_id_seq') AS _coitem_id");
