@@ -23,10 +23,11 @@ xtNetworkRequestManager::xtNetworkRequestManager(const QUrl & url, QMutex &mutex
   nwam = new QNetworkAccessManager;
   _nwrep = 0;
   _response = 0;
+  _url = url;
   _mutex = &mutex;
   _mutex->lock();
   _loop = new QEventLoop;
-  startRequest(url);
+  startRequest(_url);
 }
 void xtNetworkRequestManager::startRequest(const QUrl & url) {
     _nwrep = nwam->get(QNetworkRequest(url));
@@ -41,9 +42,9 @@ void xtNetworkRequestManager::startRequest(const QUrl & url) {
 void xtNetworkRequestManager::requestCompleted() {
   _response = _nwrep->readAll(); //we don't really care here but store it anyways
   _nwrep->close();
-  QUrl possibleRedirect = _nwrep->attribute(QNetworkRequest::RedirectionTargetAttribute);
+  QVariant possibleRedirect = _nwrep->attribute(QNetworkRequest::RedirectionTargetAttribute);
   if(DEBUG){
-      qDebug() << "redirect=" << possibleRedirect.resolved();
+      qDebug() << "redirect=" << possibleRedirect.toUrl();
       qDebug() << "replyError=" << _nwrep->errorString();
       qDebug() << "replyErrorCode=" << _nwrep->error();
   }
@@ -51,8 +52,8 @@ void xtNetworkRequestManager::requestCompleted() {
       _nwrep->deleteLater();
       _mutex->unlock();
   }
-  else if(!possibleRedirect.isEmpty()){
-      QUrl newUrl = possibleRedirect.resolved();
+  else if(!possibleRedirect.isNull()){
+      QUrl newUrl = _url.resolved(possibleRedirect.toUrl());
       _nwrep->deleteLater();
       startRequest(newUrl);
   }

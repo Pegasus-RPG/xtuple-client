@@ -43,7 +43,7 @@ private:
     QByteArray _response;
     QMutex * _mutex;
     QEventLoop *_loop;
-    QThread *_t;
+    QUrl _url;
 };
 
 #endif
