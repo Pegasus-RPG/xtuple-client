@@ -51,7 +51,7 @@ void xtNetworkRequestManager::requestCompleted() {
       _nwrep->deleteLater();
       _mutex->unlock();
   }
-  else if(!possibleRedirect.isNull()){
+  else if(!possibleRedirect.isEmpty()){
       QUrl newUrl = possibleRedirect.resolved();
       _nwrep->deleteLater();
       startRequest(newUrl);
