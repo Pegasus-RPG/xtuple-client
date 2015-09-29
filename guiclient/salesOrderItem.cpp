@@ -4530,14 +4530,21 @@ void salesOrderItem::sPopulateUOM()
       params.append("global", tr("-Global"));
     }
     
-    // Also have to factor UOMs previously used on Sales Order now inactive
+    // Also have to factor UOMs previously used on Sales Order/Quote now inactive
     if (_soitemid != -1)
     {
       XSqlQuery souom;
-      souom.prepare("SELECT coitem_qty_uom_id, coitem_price_uom_id "
-                    "  FROM coitem"
-                    " WHERE(coitem_id=:coitem_id);");
-      souom.bindValue(":coitem_id", _soitemid);
+      if (ISORDER(_mode))
+        souom.prepare("SELECT coitem_qty_uom_id AS qtyuomid,"
+                      "       coitem_price_uom_id AS priceuomid "
+                      "  FROM coitem"
+                      " WHERE(coitem_id=:soitem_id);");
+      else
+        souom.prepare("SELECT quitem_qty_uom_id AS qtyuomid,"
+                      "       quitem_price_uom_id AS priceuomid "
+                      "  FROM quitem"
+                      " WHERE(quitem_id=:soitem_id);");
+      souom.bindValue(":soitem_id", _soitemid);
       souom.exec();
       if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Sales Order UOMs"),
                                souom, __FILE__, __LINE__))
