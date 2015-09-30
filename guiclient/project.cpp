@@ -100,8 +100,6 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   _totalExpBal->setPrecision(omfgThis->moneyVal());
   
   _saved=false;
-
-  populate();
 }
 
 project::~project()
