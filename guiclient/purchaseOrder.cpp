@@ -49,6 +49,7 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WindowFlags 
   connect(_poitem,                   SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this,          SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_delete,                   SIGNAL(clicked()),                                 this,          SLOT(sDelete()));
   connect(_edit,                     SIGNAL(clicked()),                                 this,          SLOT(sEdit()));
+  connect(_freight,                  SIGNAL(valueChanged()),                            this,          SLOT(sCalculateTax()));
   connect(_freight,                  SIGNAL(valueChanged()),                            this,          SLOT(sCalculateTotals()));
   connect(_new,                      SIGNAL(clicked()),                                 this,          SLOT(sNew()));
   connect(_orderDate,                SIGNAL(newDate(QDate)),                            this,          SLOT(sHandleOrderDate()));
@@ -1622,6 +1623,9 @@ void purchaseOrder::sTaxZoneChanged()
 
 void purchaseOrder::sCalculateTax()
 {  
+  if (!saveDetail())
+    return;
+
   XSqlQuery taxq;
   taxq.prepare( "SELECT SUM(tax) AS tax "
                 "FROM ("
@@ -1633,11 +1637,9 @@ void purchaseOrder::sCalculateTax()
   taxq.exec();
   if (taxq.first())
     _tax->setLocalValue(taxq.value("tax").toDouble());
-  else if (taxq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }              
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Calculating P/O Tax"),
+                                    taxq, __FILE__, __LINE__))
+        return;
 }
 
 void purchaseOrder::sTaxDetail()

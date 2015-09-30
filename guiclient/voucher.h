@@ -46,6 +46,8 @@ public slots:
     virtual void sPopulatePoInfo();
     virtual void sPopulateDistributed();
     virtual void sPopulateBalanceDue();
+    virtual void sCalculateTax();
+    virtual void sTaxDetail();
     virtual void populateNumber();
     virtual void populate();
     virtual void clear();
@@ -53,7 +55,7 @@ public slots:
     virtual void sPopulateDistDate();
     virtual void sPopulateDueDate();
     virtual void sView();
-    virtual void saveDetail();
+    virtual bool saveDetail();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );
@@ -68,6 +70,7 @@ private:
     int _vendid;
     int _voheadid;
     int _mode;
+    double _freighttax;
 
 };
 
