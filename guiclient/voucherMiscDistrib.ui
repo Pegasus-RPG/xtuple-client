@@ -127,9 +127,6 @@ to be bound by its terms.</comment>
         </item>
         <item row="1" column="3">
          <widget class="XComboBox" name="_taxType">
-          <property name="currentText">
-           <string/>
-          </property>
           <property name="allowNull">
            <bool>true</bool>
           </property>

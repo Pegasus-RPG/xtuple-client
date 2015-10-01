@@ -21,7 +21,6 @@
 #include "storedProcErrorLookup.h"
 #include "taxDetail.h"
 #include "currcluster.h"
-#include "errorReporter.h"
 
 arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
