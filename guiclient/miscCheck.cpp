@@ -456,13 +456,10 @@ void miscCheck::sCalculateTax()
   calcTax.bindValue(":curr_id",    _amount->id());
   calcTax.bindValue(":amount",     _amount->localValue());
   calcTax.exec();
-  if (ErrorReporter::error(QtCriticalMsg, this,
+  if (calcTax.first())
+    _tax->setLocalValue(calcTax.value("tax").toDouble());
+  else if (ErrorReporter::error(QtCriticalMsg, this,
                                 tr("Tax Calculation"),
                                 calcTax, __FILE__, __LINE__))
     return; 
-  else
-  {
-    if (calcTax.first())
-      _tax->setLocalValue(calcTax.value("tax").toDouble());
-  }
 }

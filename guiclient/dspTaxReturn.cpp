@@ -95,7 +95,7 @@ enum SetResponse dspTaxReturn::set(const ParameterList &pParams)
     
   param = pParams.value("endDate", &valid);
   if (valid)
-    _dates->setStartDate(param.toDate());
+    _dates->setEndDate(param.toDate());
 
   if (pParams.inList("run"))
   {
