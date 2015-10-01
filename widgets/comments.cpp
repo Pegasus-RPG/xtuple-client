@@ -89,6 +89,7 @@ QMap<QString, struct CommentMap *> &Comments::commentMap() {
 //    addToMap(CreditMemoItem,    "CMI",   tr("Return Item")                                      );
     addToMap(Customer,          "C",     tr("Customer"),        "cust_id",    "customer"        );
     addToMap(Employee,          "EMP",   tr("Employee"),        "emp_id",     "employee"        );
+    addToMap(ExchangeRate,      "FX",    tr("Exchange Rate")                                    );
     addToMap(Incident,          "INCDT", tr("Incident"),        "incdt_id",   "incident",     "MaintainPersonalIncidents MaintainAllIncidents" );
 //    addToMap(Invoice,           "INV",   tr("Invoice"),         "invchead_id","invoice"         );
 //    addToMap(InvoiceItem,       "INVI",  tr("Invoice Item")                                     );
@@ -341,7 +342,7 @@ void Comments::refresh()
                      "       comment_user=getEffectiveXtUser() AS self "
                      "  FROM crmacct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:sourceCust)"
-                     "   AND (crmacct_id=:sourceid)"
+                     "   AND ( (crmacct_id=:sourceid) OR (crmacct_parent_id=:sourceid) )"
                      "   AND (comment_source_id=crmacct_cust_id) ) "
                      " UNION "
                      "SELECT comment_id, comment_date, comment_source,"
@@ -355,7 +356,7 @@ void Comments::refresh()
                      "       comment_user=getEffectiveXtUser() AS self "
                      "  FROM crmacct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:sourceVend)"
-                     "   AND (crmacct_id=:sourceid)"
+                     "   AND ( (crmacct_id=:sourceid) OR (crmacct_parent_id=:sourceid) )"
                      "   AND (comment_source_id=crmacct_vend_id) ) "
                      " UNION "
                      "SELECT comment_id, comment_date, comment_source,"

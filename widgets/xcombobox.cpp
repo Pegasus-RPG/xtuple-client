@@ -216,6 +216,7 @@ void XComboBox::init()
   insertEditor(CustomerGroups,"customerGroups","MaintainCustomerGroups");
   insertEditor(CustomerTypes,"customerTypes","MaintainCustomerTypes");
   insertEditor(EmployeeCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(ExchangeRateCommentTypes,"commentTypes","MaintainCommentTypes");
   insertEditor(ExpenseCategories,"expenseCategories","MaintainCustomerTypes");
   insertEditor(FinancialLayouts,"financialLayouts","MaintainFinancialLayouts");
   insertEditor(FiscalYears,"accountingYearPeriods","MaintainAccountingPeriods");
@@ -762,6 +763,14 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='EMP')"
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
+      break;
+
+    case ExchangeRateCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='FX')"
                   "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 

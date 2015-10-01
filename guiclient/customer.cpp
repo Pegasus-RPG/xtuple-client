@@ -1686,7 +1686,7 @@ void customer::sCancel()
   if (_autoSaved)
       QMessageBox::information( this, tr("Customer Saved"),
                            tr("The customer record was automatically "
-                           "saved to the database. The committed changes"
+                           "saved to the database. The committed changes "
                            "will not be cancelled.") );
   close();
 }

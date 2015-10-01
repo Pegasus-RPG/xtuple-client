@@ -40,6 +40,7 @@ public slots:
     virtual void sPrintOnPost(int temp_id);
     virtual void sReleaseNumber();
     virtual void sToggleAccount();
+    virtual void sCalcBalance();
 
 protected slots:
     virtual void languageChange();

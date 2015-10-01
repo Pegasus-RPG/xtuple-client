@@ -110,14 +110,15 @@ void applyAPCreditMemo::sApplyBalance()
     int result = applyApplyBalance.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("applyAPCreditMemoToBalance",
-                                              result), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Applying A/P Credit Memo"),
+                             storedProcErrorLookup("applyAPCreditMemoToBalance", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (applyApplyBalance.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Applying A/P Credit Memo"),
+                                applyApplyBalance, __FILE__, __LINE__))
   {
-    systemError(this, applyApplyBalance.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -145,8 +146,8 @@ void applyAPCreditMemo::sClear()
   applyClear.bindValue(":sourceApopenid", _apopenid);
   applyClear.bindValue(":targetApopenid", _apopen->id());
   applyClear.exec();
-  if (applyClear.lastError().type() != QSqlError::NoError)
-      systemError(this, applyClear.lastError().databaseText(), __FILE__, __LINE__);
+  ErrorReporter::error(QtCriticalMsg, this, tr("Error Clearing Application of A/P CM"),
+                                applyClear, __FILE__, __LINE__);
 
   populate();
 }
@@ -158,10 +159,10 @@ void applyAPCreditMemo::sClose()
              "WHERE (apcreditapply_source_apopen_id=:sourceApopenid);" );
   applyClose.bindValue(":sourceApopenid", _apopenid);
   applyClose.exec();
-  if (applyClose.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Cancelling Application of A/P CM"),
+                                applyClose, __FILE__, __LINE__))
   {
-      systemError(this, applyClose.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+    return;
   }
 
   reject();
@@ -193,8 +194,9 @@ void applyAPCreditMemo::populate()
   
     _cachedAmount = applypopulate.value("available").toDouble();
   }
-  else if (applypopulate.lastError().type() != QSqlError::NoError)
-      systemError(this, applypopulate.lastError().databaseText(), __FILE__, __LINE__);
+  else (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving A/P Information"),
+                                applypopulate, __FILE__, __LINE__));
+
 
   applypopulate.prepare( "SELECT apopen_id,"
              "       CASE WHEN (apopen_doctype='V') THEN :voucher"
@@ -235,8 +237,8 @@ void applyAPCreditMemo::populate()
   applypopulate.bindValue(":debitMemo", tr("Debit Memo"));
   applypopulate.exec();
   _apopen->populate(applypopulate);
-  if (applypopulate.lastError().type() != QSqlError::NoError)
-      systemError(this, applypopulate.lastError().databaseText(), __FILE__, __LINE__);
+  ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving A/P Information"),
+                                applypopulate, __FILE__, __LINE__);
 }
 
 void applyAPCreditMemo::sPriceGroup()

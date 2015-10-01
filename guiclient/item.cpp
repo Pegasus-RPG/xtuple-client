@@ -191,6 +191,8 @@ item::item(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _itemSite->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter, true, "warehous_code" );
   _itemSite->addColumn(tr("Description"),   -1,          Qt::AlignLeft, true, "warehous_descrip"   );
   _itemSite->addColumn(tr("Cntrl. Method"), _itemColumn, Qt::AlignCenter, true, "itemsite_controlmethod" );
+  _itemSite->addColumn(tr("Cost Method"),   _itemColumn, Qt::AlignCenter, true, "itemsite_costmethod" );
+  _itemSite->addColumn(tr("Avg. Cost"),     _moneyColumn, Qt::AlignRight, true, "avgcost" );
   _itemSite->setDragString("itemsiteid=");
 
   connect(omfgThis, SIGNAL(itemsitesUpdated()), SLOT(sFillListItemSites()));
@@ -843,7 +845,8 @@ void item::sSave()
   itemSave.exec();
   if (itemSave.lastError().type() != QSqlError::NoError)
   {
-    itemSave.exec("ROLLBACK;");
+    XSqlQuery itemTrxn;
+    itemTrxn.exec("ROLLBACK;");
     _inTransaction = false;
     systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1146,8 +1149,7 @@ void item::sPopulateUOMs()
   {
     saveCore();
     sPopulatePriceUOMs();
-    if (_priceUOM->id()==-1)
-      _priceUOM->setId(_inventoryUOM->id());
+    _priceUOM->setId(_inventoryUOM->id());
   }
 }
 
@@ -1719,11 +1721,19 @@ void item::sFillListItemSites()
   XSqlQuery itemFillListItemSites;
   QString sql( "SELECT itemsite_id, itemsite_active,"
                "       warehous_code, warehous_descrip, "
-               "       CASE WHEN itemsite_controlmethod='R' THEN :regular"
-               "            WHEN itemsite_controlmethod='N' THEN :none"
-               "            WHEN itemsite_controlmethod='L' THEN :lotNumber"
-               "            WHEN itemsite_controlmethod='S' THEN :serialNumber"
-               "       END AS itemsite_controlmethod "
+               "       CASE itemsite_controlmethod WHEN 'R' THEN :regular"
+               "                                   WHEN 'N' THEN :none"
+               "                                   WHEN 'L' THEN :lotNumber"
+               "                                   WHEN 'S' THEN :serialNumber"
+               "       END AS itemsite_controlmethod,"
+               "       CASE itemsite_costmethod WHEN 'S' THEN :standard"
+               "                                WHEN 'N' THEN :none"
+               "                                WHEN 'J' THEN :job"
+               "                                WHEN 'A' THEN :average"
+               "       END AS itemsite_costmethod,"
+               "       CASE WHEN (itemsite_costmethod='A') THEN avgCost(itemsite_id) END AS avgcost,"
+               "       'curr' AS avgcost_xtnumericrole,"
+               "       :na AS avgcost_xtnullrole "
                "FROM itemsite, item, whsinfo "
                "WHERE ( (itemsite_item_id=item_id)"
                " AND (itemsite_warehous_id=warehous_id) "
@@ -1736,6 +1746,10 @@ void item::sFillListItemSites()
   itemFillListItemSites.bindValue(":none", tr("None"));
   itemFillListItemSites.bindValue(":lotNumber", tr("Lot #"));
   itemFillListItemSites.bindValue(":serialNumber", tr("Serial #"));
+  itemFillListItemSites.bindValue(":standard", tr("Standard"));
+  itemFillListItemSites.bindValue(":job", tr("Job"));
+  itemFillListItemSites.bindValue(":average", tr("Average"));
+  itemFillListItemSites.bindValue(":na", tr("N/A"));
   itemFillListItemSites.exec();
   _itemSite->populate(itemFillListItemSites);
 }
@@ -1899,7 +1913,7 @@ void item::sPopulatePriceUOMs()
   ParameterList params;
   params.append("uomtype", "Selling");
   params.append("item_id", _itemid);
-  params.append("uom_id", _priceUOM->id());
+  params.append("uom_id", _inventoryUOM->id());
 
   XSqlQuery puom = muom.toQuery(params);
   _priceUOM->populate(puom);

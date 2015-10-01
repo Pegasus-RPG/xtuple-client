@@ -15,9 +15,12 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
-
 #include <QDebug>
 
+#include <metasql.h>
+
+#include "mqlutil.h"
+#include "errorReporter.h"
 #include "distributeInventory.h"
 #include "invoiceItem.h"
 #include "storedProcErrorLookup.h"
@@ -1022,47 +1025,17 @@ void invoice::populate()
 
 void invoice::sFillItemList()
 {
-  XSqlQuery invoiceFillItemList;
-  invoiceFillItemList.prepare( "SELECT invcitem_id, invcitem_linenumber,"
-             "       formatSoItemNumber(invcitem_coitem_id) AS soitemnumber, "
-             "       CASE WHEN (item_id IS NULL) THEN invcitem_number"
-             "            ELSE item_number"
-             "       END AS itemnumber,"
-             "       CASE WHEN (item_id IS NULL) THEN invcitem_descrip"
-             "            ELSE (item_descrip1 || ' ' || item_descrip2)"
-             "       END AS itemdescription,"
-             "       quom.uom_name AS qtyuom,"
-             "       invcitem_ordered, invcitem_billed,"
-             "       puom.uom_name AS priceuom,"
-             "       invcitem_price,"
-             "       round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / "
-	           "            (CASE WHEN(item_id IS NULL) THEN 1 "
-	           "			            ELSE invcitem_price_invuomratio END)), 2) AS extprice,"
-             "       COALESCE(coitem_unitcost, itemCost(itemsite_id), 0.0) AS unitcost,"
-             "       ROUND((invcitem_billed * invcitem_qty_invuomratio) *"
-             "             ((invcitem_price / COALESCE(invcitem_price_invuomratio,1.0)) - "
-             "              currtolocal(:curr_id, COALESCE(coitem_unitcost, itemCost(itemsite_id), 0.0), :date)),2) AS margin,"
-             "       CASE WHEN (invcitem_price = 0.0) THEN 100.0"
-             "            ELSE (((invcitem_price - currtolocal(:curr_id, COALESCE(coitem_unitcost, itemCost(itemsite_id), 0.0), :date)) / invcitem_price) * 100.0)"
-             "       END AS marginpercent,"
-             "       'qty' AS invcitem_ordered_xtnumericrole,"
-             "       'qty' AS invcitem_billed_xtnumericrole,"
-             "       'salesprice' AS invcitem_price_xtnumericrole,"
-             "       'curr' AS extprice_xtnumericrole,"
-             "       'cost' AS unitcost_xtnumericrole "
-             "FROM invcitem LEFT OUTER JOIN item on (invcitem_item_id=item_id) "
-             "  LEFT OUTER JOIN uom AS quom ON (invcitem_qty_uom_id=quom.uom_id)"
-             "  LEFT OUTER JOIN uom AS puom ON (invcitem_price_uom_id=puom.uom_id)"
-             "  LEFT OUTER JOIN coitem ON (coitem_id=invcitem_coitem_id)"
-             "  LEFT OUTER JOIN itemsite ON (itemsite_item_id=invcitem_item_id AND itemsite_warehous_id=invcitem_warehous_id)"
-             "WHERE (invcitem_invchead_id=:invchead_id) "
-             "ORDER BY invcitem_linenumber;" );
-  invoiceFillItemList.bindValue(":invchead_id", _invcheadid);
-  invoiceFillItemList.bindValue(":curr_id", _custCurrency->id());
-  invoiceFillItemList.bindValue(":date", _orderDate->date());
-  invoiceFillItemList.exec();
-  if (invoiceFillItemList.lastError().type() != QSqlError::NoError)
-      systemError(this, invoiceFillItemList.lastError().databaseText(), __FILE__, __LINE__);
+  MetaSQLQuery mql = mqlLoad("invoiceItems", "list");
+
+  ParameterList params;
+  params.append("invchead_id", _invcheadid);
+  params.append("curr_id", _custCurrency->id());
+  params.append("date", _orderDate->date());
+  XSqlQuery invoiceFillItemList = mql.toQuery(params);
+
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Invoice Items"),
+                             invoiceFillItemList, __FILE__, __LINE__))
+    return;
 
   _invcitem->clear();
   _invcitem->populate(invoiceFillItemList);
