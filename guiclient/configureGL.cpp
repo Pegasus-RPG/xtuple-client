@@ -193,6 +193,7 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
     default:
       _baseToLocal->setChecked(true);
   }
+  _fxChangeLog->setChecked(_metrics->boolean("FXChangeLog"));
 
   _mandatoryNotes->setChecked(_metrics->boolean("MandatoryGLEntryNotes"));
   _manualFwdUpdate->setChecked(_metrics->boolean("ManualForwardUpdate"));
@@ -811,6 +812,8 @@ bool configureGL::sSave()
     _metrics->set("CurrencyExchangeSense", 1);
   else // if(_baseToLocal->isChecked())
     _metrics->set("CurrencyExchangeSense", 0);
+
+  _metrics->set("FXChangeLog", _fxChangeLog->isChecked());
 
   _metrics->set("MandatoryGLEntryNotes", _mandatoryNotes->isChecked());
   _metrics->set("ManualForwardUpdate", _manualFwdUpdate->isChecked());

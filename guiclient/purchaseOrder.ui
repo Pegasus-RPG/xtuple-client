@@ -154,6 +154,9 @@ to be bound by its terms.</comment>
              </item>
              <item row="3" column="1" colspan="3">
               <widget class="VendorCluster" name="_vendor">
+               <property name="label">
+                <string/>
+               </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>

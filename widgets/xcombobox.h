@@ -67,7 +67,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
       Contracts, CostCategories, Countries,
       Currencies,	CurrenciesNotBase, CustomerCommentTypes,
       CustomerGroups,	CustomerTypes,
-      EmployeeCommentTypes, ExpenseCategories,
+      EmployeeCommentTypes, ExchangeRateCommentTypes, ExpenseCategories,
       FinancialLayouts,	FiscalYears, FreightClasses, Honorifics,
       IncidentCategory, IncidentCommentTypes,
       IncidentPriority,	IncidentResolution,	IncidentSeverity,

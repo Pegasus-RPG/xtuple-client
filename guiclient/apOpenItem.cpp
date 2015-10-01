@@ -15,6 +15,7 @@
 #include <QVariant>
 
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "printApOpenItem.h"
 #include "taxDetail.h"
 
@@ -30,8 +31,9 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::Window
   connect(_vend,           SIGNAL(newId(int)),                     this, SLOT(sPopulateVendInfo(int)));
   connect(_amount,         SIGNAL(editingFinished()),              this, SLOT(sDetermineTaxAmount()));
   connect(_taxLit,         SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
-  connect(_docNumber,      SIGNAL(textEdited(QString)),       this, SLOT(sReleaseNumber()));
-  connect(_usePrepaid,     SIGNAL(toggled(bool)),             this, SLOT(sToggleAccount()));
+  connect(_docNumber,      SIGNAL(textEdited(QString)),            this, SLOT(sReleaseNumber()));
+  connect(_usePrepaid,     SIGNAL(toggled(bool)),                  this, SLOT(sToggleAccount()));
+  connect(_amount,         SIGNAL(valueChanged()),                 this, SLOT(sCalcBalance()));
 
   _cAmount = 0.0;
   _apopenid = -1;
@@ -129,6 +131,7 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
       _docNumber->setEnabled(false);
       _poNumber->setEnabled(false);
       _journalNumber->setEnabled(false);
+      _amount->setCurrencyEditable(false);
       _terms->setEnabled(false);
       _notes->setReadOnly(false);
       _usePrepaid->setEnabled(false);
@@ -175,49 +178,26 @@ void apOpenItem::sSave()
   XSqlQuery saveOpenItem;
   if (_mode == cNew)
   {
-    if (!_docDate->isValid())
-    {
-      QMessageBox::critical( this, tr("Cannot Save A/P Memo"),
-                             tr("<p>You must enter a date for this A/P Memo "
-                                "before you may save it") );
-      _docDate->setFocus();
+    QList<GuiErrorCheck> errors;
+    errors << GuiErrorCheck(!_docDate->isValid(), _docDate,
+                            tr("<p>You must enter a Document Date for this A/P Memo "
+                               "before you may save it"))
+    << GuiErrorCheck(!_dueDate->isValid(), _dueDate,
+                     tr("<p>You must enter a Due Date for this A/P Memo "
+                        "before you may save it"))
+    << GuiErrorCheck(_amount->isZero(), _amount,
+                     tr("<p>You must enter an amount for this A/P Memo "
+                        "before you may save it"))
+    << GuiErrorCheck(_tax->localValue() > _amount->localValue(), _tax,
+                     tr("The tax amount may not be greater than the total A/P Memo amount."))
+    << GuiErrorCheck(!_usePrepaid->isChecked() && !_accntId->isValid(), _accntId,
+                     tr("<p>You must choose a valid Distribution "
+                        "Account Number for this A/P Memo before you "
+                        "may save it."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save A/P Memo"), errors))
       return;
-    }
-
-    if (!_dueDate->isValid())
-    {
-      QMessageBox::critical( this, tr("Cannot Save A/P Memo"),
-                             tr("<p>You must enter a date for this A/P Memo "
-                                "before you may save it") );
-      _dueDate->setFocus();
-      return;
-    }
-
-    if (_amount->isZero())
-    {
-      QMessageBox::critical( this, tr("Cannot Save A/P Memo"),
-                             tr("<p>You must enter an amount for this A/P Memo "
-                                "before you may save it") );
-      _amount->setFocus();
-      return;
-    }
-
-    if(_tax->localValue() > _amount->localValue())
-    {
-      QMessageBox::critical( this, tr("Cannot Save A/P Memo"),
-                             tr("The tax amount may not be greater than the total A/P Memo amount.") );
-      return;
-    }
-
-    if (!_usePrepaid->isChecked() && (!_accntId->isValid()))
-    {
-      QMessageBox::critical( this, tr("Cannot Save A/P Memo"),
-                            tr("<p>You must choose a valid Distribution "
-                               "Account Number for this A/P Memo before you "
-                               "may save it.") );
-      return;
-    }
-
+    
     QString tmpFunctionName;
     QString queryStr;
 
@@ -227,9 +207,9 @@ void apOpenItem::sSave()
       tmpFunctionName = "createAPDebitMemo";
     else
     {
-      systemError(this,
-		  tr("Internal Error: _docType has an invalid document type %1")
-		  .arg(_docType->currentIndex()), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Cannot Save A/P Memo"),
+                           tr("Internal Error: _docType has an invalid document type of %1")
+                           .arg(_docType->currentIndex()), __FILE__, __LINE__);
       return;
     }
 
@@ -311,9 +291,9 @@ void apOpenItem::sSave()
       }
     }
   }
-  else if (saveOpenItem.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Cannot Create A/P Memo"),
+                                saveOpenItem, __FILE__, __LINE__))
   {
-    systemError(this, saveOpenItem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -513,12 +493,10 @@ void apOpenItem::populate()
     populateOpenItem.bindValue(":apopen_id", _apopenid);
     populateOpenItem.bindValue(":other", tr("Other"));
     populateOpenItem.exec();
-    if (populateOpenItem.lastError().type() != QSqlError::NoError)
-	systemError(this, populateOpenItem.lastError().databaseText(), __FILE__, __LINE__);
     _apapply->populate(populateOpenItem, true);
-    if (populateOpenItem.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Information"),
+                                  populateOpenItem, __FILE__, __LINE__))
     {
-      systemError(this, populateOpenItem.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -554,9 +532,9 @@ void apOpenItem::sPopulateDueDate()
     dueq.exec();
     if (dueq.first())
       _dueDate->setDate(dueq.value("duedate").toDate());
-    else if (dueq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Setting Due Date"),
+                                  dueq, __FILE__, __LINE__))
     {
-      systemError(this, dueq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -620,6 +598,7 @@ void apOpenItem::sTaxDetail()
       _docDate->setFocus();
       return;
     }
+
     if (_amount->isZero())
     {
       QMessageBox::critical( this, tr("Cannot set tax amounts"),
@@ -666,9 +645,9 @@ void apOpenItem::sTaxDetail()
       else
         _tax->setLocalValue(taxq.value("tax").toDouble());
     }
-    else if (taxq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Setting Tax Amounts"),
+                                  taxq, __FILE__, __LINE__))
     {
-      systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -709,4 +688,9 @@ void apOpenItem::populateStatus()
            "UNION "
            "SELECT 2 AS status_id, TEXT('On Hold') AS status, TEXT('On Hold') AS status;";
   _status->populate(status, -1);
+}
+
+void apOpenItem::sCalcBalance()
+{
+  _balance->setLocalValue(_amount->localValue() - _paid->localValue());
 }

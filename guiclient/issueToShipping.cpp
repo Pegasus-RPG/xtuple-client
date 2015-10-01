@@ -649,19 +649,17 @@ void issueToShipping::sShip()
   {
     // Reset _order so that lock is released prior to shipping and potentially auto receiving
     // to avoid locking conflicts
-    _transDate->setDate(omfgThis->dbDate());
     _order->setId(-1);
     _order->setFocus();
 
     ParameterList params;
     params.append("shiphead_id", issueShip.value("shiphead_id").toInt());
+    params.append("transdate", _transDate->date());
 
     shipOrder newdlg(this, "", true);
     if (newdlg.set(params) == NoError && newdlg.exec() != XDialog::Rejected)
     {
-      //_transDate->setDate(omfgThis->dbDate());
-      //_order->setId(-1);
-      //_order->setFocus();
+      _transDate->setDate(omfgThis->dbDate());
     }
   }
   else if (issueShip.lastError().type() != QSqlError::NoError)

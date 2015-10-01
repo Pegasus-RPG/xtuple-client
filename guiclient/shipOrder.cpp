@@ -89,6 +89,12 @@ enum SetResponse shipOrder::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("transdate", &valid);
+  if (valid)
+  {
+    _transDate->setDate(param.toDate(), true);
+  }
+  
   param = pParams.value("shiphead_id", &valid);
   if (valid)
   {
@@ -148,6 +154,9 @@ enum SetResponse shipOrder::set(const ParameterList &pParams)
 
 void shipOrder::sShip()
 {
+  // Disconnect button to prevent accidental signals
+  disconnect(_ship,     SIGNAL(clicked()),     this, SLOT(sShip()));
+  
   XSqlQuery shipq;
   shipq.prepare( "UPDATE shiphead "
 	     "   SET shiphead_shipvia=:shiphead_shipvia,"
@@ -164,6 +173,7 @@ void shipOrder::sShip()
   if (shipq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, shipq.lastError().databaseText(), __FILE__, __LINE__);
+    connect(_ship,     SIGNAL(clicked()),     this, SLOT(sShip()));
     return;
   }
 
@@ -197,23 +207,28 @@ void shipOrder::sShip()
       shipq.exec();
       while (shipq.next())
       {
-	// missing transit itemsite is fatal here but not missing dest
-	int transis = itemSite::createItemSite(this,
-					       shipq.value("itemsite_id").toInt(),
-				     shipq.value("tohead_trns_warehous_id").toInt(),
-				     false);
-	int destis  = itemSite::createItemSite(this,
-					       shipq.value("itemsite_id").toInt(),
-				     shipq.value("tohead_dest_warehous_id").toInt(),
-				     true);
-	if (transis <= 0 || destis < 0)
-	  return;
+        // missing transit itemsite is fatal here but not missing dest
+        int transis = itemSite::createItemSite(this,
+                                               shipq.value("itemsite_id").toInt(),
+                                               shipq.value("tohead_trns_warehous_id").toInt(),
+                                               false);
+        int destis  = itemSite::createItemSite(this,
+                                               shipq.value("itemsite_id").toInt(),
+                                               shipq.value("tohead_dest_warehous_id").toInt(),
+                                               true);
+        if (transis <= 0 || destis < 0)
+        {
+          connect(_ship,     SIGNAL(clicked()),     this, SLOT(sShip()));
+          return;
+        }
       }
       if (shipq.lastError().type() != QSqlError::NoError)
       {
         systemError(this, shipq.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+        connect(_ship,     SIGNAL(clicked()),     this, SLOT(sShip()));
+        return;
       }
+      connect(_ship,     SIGNAL(clicked()),     this, SLOT(sShip()));
       sShip();	// beware of endless loop if you change createItemSite err check
       return;	// return because the recursive call cleans up for us
     }
@@ -222,6 +237,7 @@ void shipOrder::sShip()
       rollback.exec();
       systemError(this, storedProcErrorLookup("shipShipment", result),
 		  __FILE__, __LINE__);
+      connect(_ship,     SIGNAL(clicked()),     this, SLOT(sShip()));
       return;
     }
   }
@@ -234,6 +250,7 @@ void shipOrder::sShip()
                     " Please make sure that all your Cost Category and Sales Account Assignments"
                     " are complete and correct.");
     systemError(this, errorStr, __FILE__, __LINE__);
+    connect(_ship,     SIGNAL(clicked()),     this, SLOT(sShip()));
     return;
   }
 
@@ -241,6 +258,7 @@ void shipOrder::sShip()
   if (shipq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, shipq.lastError().databaseText(), __FILE__, __LINE__);
+    connect(_ship,     SIGNAL(clicked()),     this, SLOT(sShip()));
     return;
   }
   // END the transaction
@@ -265,66 +283,70 @@ void shipOrder::sShip()
       int cobmiscid = shipq.value("result").toInt();
       if (cobmiscid < 0)
       {
-	systemError(this,
-	      storedProcErrorLookup("selectUninvoicedShipment", cobmiscid),
-	      __FILE__, __LINE__);
-	return;
+        systemError(this,
+                    storedProcErrorLookup("selectUninvoicedShipment", cobmiscid),
+                    __FILE__, __LINE__);
+        connect(_ship,     SIGNAL(clicked()),     this, SLOT(sShip()));
+        return;
       }
       else if (0 == cobmiscid)
       {
-	QMessageBox::information(this, tr("Already Invoiced"),
-				 tr("<p>This shipment appears to have been "
-				   "invoiced already. It will not be selected "
-				   "for billing again."));
+        QMessageBox::information(this, tr("Already Invoiced"),
+                                 tr("<p>This shipment appears to have been "
+                                    "invoiced already. It will not be selected "
+                                    "for billing again."));
       }
       else if (_create->isChecked())
       {
         shipq.prepare("SELECT createInvoice(:cobmisc_id) AS result;");
-	shipq.bindValue(":cobmisc_id", cobmiscid);
-	shipq.exec();
-	if (shipq.first())
-	{
-	  int result = shipq.value("result").toInt();
-	  if (result < 0)
-	  {
-	    systemError(this,
-		      storedProcErrorLookup("postBillingSelection", result),
-		      __FILE__, __LINE__);
-	    return;
-	  }
-	  ParameterList params;
-	  params.append("invchead_id", result);
-
-	  printInvoice newdlg(this, "", true);
-	  newdlg.set(params);
-	  newdlg.exec();
-
-	  omfgThis->sInvoicesUpdated(result, true);
-	  omfgThis->sSalesOrdersUpdated(_order->id());
-	}
-	else if (shipq.lastError().type() != QSqlError::NoError)
-	{
-	  systemError(this, shipq.lastError().databaseText() +
-		      tr("<p>Although Sales Order %1 was successfully shipped "
-			 "and selected for billing, the Invoice was not "
-			 "created properly. You may need to create an Invoice "
-			 "manually from the Billing Selection.")
-			.arg(_order->id()),
-		      __FILE__, __LINE__);
-	  return;
-	}
-
-	omfgThis->sBillingSelectionUpdated(_order->id(), true);
+        shipq.bindValue(":cobmisc_id", cobmiscid);
+        shipq.exec();
+        if (shipq.first())
+        {
+          int result = shipq.value("result").toInt();
+          if (result < 0)
+          {
+            systemError(this,
+                        storedProcErrorLookup("postBillingSelection", result),
+                        __FILE__, __LINE__);
+            connect(_ship,     SIGNAL(clicked()),     this, SLOT(sShip()));
+            return;
+          }
+          ParameterList params;
+          params.append("invchead_id", result);
+          
+          printInvoice newdlg(this, "", true);
+          newdlg.set(params);
+          newdlg.exec();
+          
+          omfgThis->sInvoicesUpdated(result, true);
+          omfgThis->sSalesOrdersUpdated(_order->id());
+        }
+        else if (shipq.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, shipq.lastError().databaseText() +
+                      tr("<p>Although Sales Order %1 was successfully shipped "
+                         "and selected for billing, the Invoice was not "
+                         "created properly. You may need to create an Invoice "
+                         "manually from the Billing Selection.")
+                      .arg(_order->id()),
+                      __FILE__, __LINE__);
+          connect(_ship,     SIGNAL(clicked()),     this, SLOT(sShip()));
+          return;
+        }
+        
+        omfgThis->sBillingSelectionUpdated(_order->id(), true);
       }
     }
     else if (shipq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, shipq.lastError().databaseText() +
-		  tr("<p>Although Sales Order %1 was successfully shipped, "
-		     "it was not selected for billing. You must manually "
-		     "select this Sales Order for Billing.")
-		    .arg(_order->id()),
-		  __FILE__, __LINE__);
+                  tr("<p>Although Sales Order %1 was successfully shipped, "
+                     "it was not selected for billing. You must manually "
+                     "select this Sales Order for Billing.")
+                  .arg(_order->id()),
+                  __FILE__, __LINE__);
+      connect(_ship,     SIGNAL(clicked()),     this, SLOT(sShip()));
       return;
     }
   }
@@ -332,31 +354,31 @@ void shipOrder::sShip()
   if (_order->isTO() && _receive->isChecked())
   {
     QString recverr = tr("<p>Receiving inventory for this Transfer Order "
-			"failed although Shipping the Order succeeded. "
-			"Manually receive this order using the Enter Order "
-			"Receipt window.");
+                         "failed although Shipping the Order succeeded. "
+                         "Manually receive this order using the Enter Order "
+                         "Receipt window.");
     shipq.exec("BEGIN;");
     ParameterList params;
-
+    
     if (_metrics->boolean("MultiWhs"))
       params.append("MultiWhs");
     params.append("tohead_id",   _order->id());
     params.append("orderid",     _order->id());
     params.append("ordertype",   "TO");
     params.append("shiphead_id", _shipment->id());
-
+    
     MetaSQLQuery recvm = mqlLoad("receipt", "receiveAll");
     shipq = recvm.toQuery(params);
-
+    
     while (shipq.next())
     {
       int result = shipq.value("result").toInt();
       if (result < 0)
       {
-	rollback.exec();
-	systemError(this,
-		    recverr + storedProcErrorLookup("enterReceipt", result),
-		    __FILE__, __LINE__);
+        rollback.exec();
+        systemError(this,
+                    recverr + storedProcErrorLookup("enterReceipt", result),
+                    __FILE__, __LINE__);
       }
       omfgThis->sPurchaseOrderReceiptsUpdated();
     }
@@ -364,28 +386,31 @@ void shipOrder::sShip()
     {
       rollback.exec();
       systemError(this, recverr + "<br>" + shipq.lastError().databaseText(),
-		  __FILE__, __LINE__);
+                  __FILE__, __LINE__);
     }
-
+    
     shipq.exec("COMMIT;");
     if (shipq.lastError().type() != QSqlError::NoError)
     {
       systemError(this,
-		  recverr + "<br>" + shipq.lastError().databaseText(),
-		  __FILE__, __LINE__);
+                  recverr + "<br>" + shipq.lastError().databaseText(),
+                  __FILE__, __LINE__);
     }
-
+    
     ParameterList recvParams;
     recvParams.append("tohead_id", _order->id());
     enterPoReceipt *newdlg = new enterPoReceipt();
     newdlg->set(recvParams);
-
+    
     // to address bug 5680, replace
     // omfgThis->handleNewWindow(newdlg, Qt::ApplicationModal);
     // with
     newdlg->sPost();
     // end of replacement
   }
+  
+  // Reconnect button
+  connect(_ship,     SIGNAL(clicked()),     this, SLOT(sShip()));
 
   if (_captive)
     accept();
@@ -393,7 +418,6 @@ void shipOrder::sShip()
   {
     _order->setId(-1);
     _order->setEnabled(true);
-    sHandleButtons();
     _billToName->clear();
     _shipToName->clear();
     _shipToAddr1->clear();

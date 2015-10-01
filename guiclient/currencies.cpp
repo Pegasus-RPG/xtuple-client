@@ -29,6 +29,7 @@ currencies::currencies(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_curr, SIGNAL(newId(int)), this, SLOT(sSetCommentType()));
   connect(_curr, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
   if (_privileges->check("MaintainCurrencies"))
@@ -185,4 +186,9 @@ void currencies::sPopulateMenu(QMenu* pMenu)
   menuItem = pMenu->addAction(tr("Delete..."));
   connect(menuItem, SIGNAL(triggered()), this, SLOT(sDelete()));
   menuItem->setEnabled(_privileges->check("MaintainCurrencies"));
+}
+
+void currencies::sSetCommentType()
+{
+  _FXcomments->setId(_curr->id());
 }
