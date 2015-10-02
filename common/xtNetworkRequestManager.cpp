@@ -44,15 +44,16 @@ void xtNetworkRequestManager::requestCompleted() {
   _nwrep->close();
   QVariant possibleRedirect = _nwrep->attribute(QNetworkRequest::RedirectionTargetAttribute);
   if(DEBUG){
-      qDebug() << "redirect=" << possibleRedirect.toUrl();
+      qDebug() << "redirect=" << possibleRedirect.isValid();
       qDebug() << "replyError=" << _nwrep->errorString();
       qDebug() << "replyErrorCode=" << _nwrep->error();
   }
-  if(_nwrep->error() == QNetworkReply::NoError){
+  if(_nwrep->error() == QNetworkReply::NoError && !possibleRedirect.isValid()){
+      //success and no redirect
       _nwrep->deleteLater();
       _mutex->unlock();
   }
-  else if(!possibleRedirect.isNull()){
+  else {
       QUrl newUrl = _url.resolved(possibleRedirect.toUrl());
       _nwrep->deleteLater();
       startRequest(newUrl);
