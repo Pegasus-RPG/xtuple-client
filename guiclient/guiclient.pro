@@ -1,9 +1,13 @@
 include( ../global.pri )
 
 TARGET   = xtuple
-CONFIG   += qt warn_on uitools designer help
+CONFIG   += qt warn_on
+isEqual(QT_MAJOR_VERSION, 5) {
+  QT     += help designer uitools
+} else {
+  CONFIG += help designer uitools
+}
 TEMPLATE = app
-QT += designer help uitools
 
 INCLUDEPATH += ../scriptapi \
                ../common \
