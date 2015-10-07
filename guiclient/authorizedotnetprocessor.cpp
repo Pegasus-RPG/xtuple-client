@@ -375,6 +375,8 @@ int  AuthorizeDotNetProcessor::doCharge(const int pccardid, const QString &pcvv,
   if (! preforder.isEmpty())
     APPENDFIELD(request, "x_po_num",   preforder);
 
+  APPENDFIELD(request, "x_invoice_num",   pneworder);
+
   QString response;
 
   returnValue = sendViaHTTP(request, response);
