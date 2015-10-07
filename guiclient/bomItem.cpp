@@ -37,7 +37,7 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   _substituteGroupInt->addButton(_bomDefinedSubstitutes);
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSaveClick()));
-  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(sClose()));
   connect(_item, SIGNAL(typeChanged(const QString&)), this, SLOT(sItemTypeChanged(const QString&)));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sItemIdChanged()));
   connect(_newSubstitution, SIGNAL(clicked()), this, SLOT(sNewSubstitute()));
@@ -147,10 +147,10 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       bomet.exec("SELECT NEXTVAL('bomitem_bomitem_id_seq') AS bomitem_id");
       if (bomet.first())
         _bomitemid = bomet.value("bomitem_id").toInt();
-      else if (bomet.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving BOM Information"),
+                                    bomet, __FILE__, __LINE__))
       {
-	systemError(this, bomet.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+        return UndefinedError;
       }
   
       //Set up configuration tab if parent item is configured or kit
@@ -198,10 +198,10 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       bomet.exec("SELECT NEXTVAL('bomitem_bomitem_id_seq') AS bomitem_id");
       if (bomet.first())
         _bomitemid = bomet.value("bomitem_id").toInt();
-      else if (bomet.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving BOM Information"),
+                                    bomet, __FILE__, __LINE__))
       {
-	systemError(this, bomet.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+        return UndefinedError;
       }
     }
     else if (param.toString() == "edit")
@@ -218,10 +218,10 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       bomet.exec("SELECT NEXTVAL('bomitem_bomitem_id_seq') AS bomitem_id");
       if (bomet.first())
         _bomitemid = bomet.value("bomitem_id").toInt();
-      else if (bomet.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving BOM Information"),
+                                    bomet, __FILE__, __LINE__))
       {
-	systemError(this, bomet.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+        return UndefinedError;
       }
 
       _dates->setStartDate(omfgThis->dbDate());
@@ -377,9 +377,9 @@ void bomItem::sSave()
 //  bomitem.bindValue(":configFlag", QVariant(false));
 
   bomitem.exec();
-  if (bomitem.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving BOM Information"),
+                                bomitem, __FILE__, __LINE__))
   {
-    systemError(this, bomitem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -398,9 +398,9 @@ void bomItem::sSave()
     replace.bindValue(":sourcebomitemid", _sourceBomitemid);
     replace.bindValue(":bomitem_id", _bomitemid);
     replace.exec();
-    if (replace.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving BOM Information"),
+                                  replace, __FILE__, __LINE__))
     {
-      systemError(this, replace.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -415,9 +415,9 @@ void bomItem::sSave()
     replace.bindValue(":bomitem_expires", _dates->startDate());
     replace.bindValue(":sourcebomitemid", _sourceBomitemid);
     replace.exec();
-    if (replace.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving BOM Information"),
+                                  replace, __FILE__, __LINE__))
     {
-      systemError(this, replace.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -447,9 +447,9 @@ void bomItem::sClose()
                "WHERE (bomitemcost_bomitem_id=:bomitem_id);" );
     bomClose.bindValue("bomitem_id", _bomitemid);
     bomClose.exec();
-    if (bomClose.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error cancelling BOM Operation"),
+                                  bomClose, __FILE__, __LINE__))
     {
-      systemError(this, bomClose.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -660,9 +660,9 @@ void bomItem::sDeleteSubstitute()
              "WHERE (bomitemsub_id=:bomitemsub_id);" );
   bomDeleteSubstitute.bindValue(":bomitemsub_id", _bomitemsub->id());
   bomDeleteSubstitute.exec();
-  if (bomDeleteSubstitute.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting BOM Substitute"),
+                                bomDeleteSubstitute, __FILE__, __LINE__))
   {
-    systemError(this, bomDeleteSubstitute.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -681,9 +681,9 @@ void bomItem::sFillSubstituteList()
   bomFillSubstituteList.bindValue(":bomitem_id", _bomitemid);
   bomFillSubstituteList.exec();
   _bomitemsub->populate(bomFillSubstituteList);
-  if (bomFillSubstituteList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving BOM Information"),
+                                bomFillSubstituteList, __FILE__, __LINE__))
   {
-    systemError(this, bomFillSubstituteList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -783,9 +783,9 @@ void bomItem::sFillCostList()
     }
 
     _itemcost->populate(qry, true);
-    if (qry.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving BOM Information"),
+                                  qry, __FILE__, __LINE__))
     {
-      systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -837,9 +837,9 @@ void bomItem::sFillCostList()
                             "",
                             baseKnown ? formatCost(actualCost) : tr("?????"),
                             convert.value("currConcat"));
-    else if (convert.lastError().type() != QSqlError::NoError)
-        systemError(this, convert.lastError().databaseText(), __FILE__, __LINE__);
-
+    else
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving BOM Information"),
+                             convert, __FILE__, __LINE__);
   }
   else
     _itemcost->clear();
@@ -852,8 +852,8 @@ void bomItem::sHandleBomitemCost()
   qry.bindValue(":bomitem_id", _bomitemid);
   qry.bindValue(":enabled", _bomDefinedCosts->isChecked());
   qry.exec();
-  if (qry.lastError().type() != QSqlError::NoError)
-    systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
+  ErrorReporter::error(QtCriticalMsg, this, tr("Error Toggling BOM Cost Setting"),
+                                qry, __FILE__, __LINE__);
   sFillCostList();
 }
 
@@ -904,8 +904,8 @@ void bomItem::sDeleteCost()
   bomDeleteCost.prepare( "DELETE FROM bomitemcost WHERE (bomitemcost_id=:bomitemcost_id);" );
   bomDeleteCost.bindValue(":bomitemcost_id", _itemcost->id());
   bomDeleteCost.exec();
-  if (bomDeleteCost.lastError().type() != QSqlError::NoError)
-    systemError(this, bomDeleteCost.lastError().databaseText(), __FILE__, __LINE__);
+  ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting BOM Cost Component"),
+                                bomDeleteCost, __FILE__, __LINE__);
 
   sFillCostList();
 }

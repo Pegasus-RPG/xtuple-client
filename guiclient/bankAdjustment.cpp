@@ -16,6 +16,7 @@
 #include <QValidator>
 
 #include "guiErrorCheck.h"
+#include "errorReporter.h"
 
 bankAdjustment::bankAdjustment(QWidget* parent, const char* name, Qt::WindowFlags fl)
 : XWidget(parent, name, fl)
@@ -156,9 +157,8 @@ void bankAdjustment::sSave()
   
   if(!bankSave.exec())
   {
-    systemError(this, tr("A System Error occurred at %1::%2.")
-                .arg(__FILE__)
-                .arg(__LINE__) );
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Bank Adjustment"),
+                                    bankSave, __FILE__, __LINE__);
     return;
   }
   
