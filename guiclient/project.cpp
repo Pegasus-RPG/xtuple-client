@@ -36,7 +36,8 @@
 const char *_projectStatuses[] = { "P", "O", "C" };
 
 project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
-    : XDialog(parent, name, modal, fl)
+    : XDialog(parent, name, modal, fl),
+      _prjid(-1)
 {
   setupUi(this);
 
@@ -100,6 +101,28 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   _totalExpBal->setPrecision(omfgThis->moneyVal());
   
   _saved=false;
+
+  QMenu * newMenu = new QMenu;
+  QAction *menuItem;
+  newMenu->addAction(tr("Task..."), this, SLOT(sNewTask()));
+  newMenu->addSeparator();
+  menuItem = newMenu->addAction(tr("Incident"), this, SLOT(sNewIncident()));
+  menuItem->setEnabled(_privileges->check("MaintainPersonalIncidents") ||
+                       _privileges->check("MaintainAllIncidents"));
+  menuItem = newMenu->addAction(tr("Quote"), this, SLOT(sNewQuotation()));
+  menuItem->setEnabled(_privileges->check("MaintainQuotes"));
+  menuItem = newMenu->addAction(tr("Sales Order"), this, SLOT(sNewSalesOrder()));
+  menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
+  menuItem = newMenu->addAction(tr("Purchase Order"),   this, SLOT(sNewPurchaseOrder()));
+  menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
+  menuItem = newMenu->addAction(tr("Work Order"),   this, SLOT(sNewWorkOrder()));
+  menuItem->setEnabled(_privileges->check("MaintainWorkOrders"));
+  _newTask->setMenu(newMenu); 
+
+  QMenu * printMenu = new QMenu;
+  printMenu->addAction(tr("Print Tasks"), this, SLOT(sPrintTasks()));
+  printMenu->addAction(tr("Print Orders"), this, SLOT(sPrintOrders()));
+  _print->setMenu(printMenu);
 }
 
 project::~project()
