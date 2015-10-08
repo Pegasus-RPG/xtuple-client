@@ -20,6 +20,7 @@
 #include "login2.h"
 #include "currcluster.h"
 #include "version.h"
+#include "errorReporter.h"
 
 #define DEBUG false
 
@@ -213,9 +214,9 @@ void company::sSave()
     companySave.exec("SELECT NEXTVAL('company_company_id_seq') AS company_id;");
     if (companySave.first())
       _companyid = companySave.value("company_id").toInt();
-    else if (companySave.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Company"),
+                                  companySave, __FILE__, __LINE__))
     {
-      systemError(this, companySave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     
@@ -302,9 +303,9 @@ void company::sSave()
       companySave.bindValue(":company_unrlzgainloss_accnt_id", _unrlzgainloss->id());
   }
   companySave.exec();
-  if (companySave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Company"),
+                                companySave, __FILE__, __LINE__))
   {
-    systemError(this, companySave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -361,15 +362,15 @@ void company::populate()
     companypopulate.exec();
     if (companypopulate.first())
       _external->setEnabled(companypopulate.value("result").toInt() == 0);
-    else if (companypopulate.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Company Information"),
+                                  companypopulate, __FILE__, __LINE__))
     {
-      systemError(this, companypopulate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
-  else if (companypopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Company Information"),
+                                companypopulate, __FILE__, __LINE__))
   {
-    systemError(this, companypopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sHandleTest();
@@ -441,9 +442,9 @@ void company::sTest()
         return;
       }
     }
-    else if (rmq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Connection Information"),
+                                  rmq, __FILE__, __LINE__))
     {
-      systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -476,14 +477,14 @@ void company::sTest()
         return;
       }
     }
-    else if (rmq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Connection Information"),
+                                  rmq, __FILE__, __LINE__))
     {
-      systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    else if (companyTest.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Connection Information"),
+                                  companyTest, __FILE__, __LINE__))
     {
-      systemError(this, companyTest.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else if (!rmq.first())
@@ -511,9 +512,9 @@ void company::sTest()
       QMessageBox::warning(this, windowTitle(), tr("Test Successful."));
       return;
     }
-    else if (rmq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Connection Information"),
+                                  rmq, __FILE__, __LINE__))
     {
-      systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
@@ -562,11 +563,9 @@ void company::sCurrencyChanged()
                     "  WHERE (company_id=:company_id)));");
         qry.bindValue(":company_id", _companyid);
         qry.exec();
-        if (qry.lastError().type() != QSqlError::NoError)
+        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Changing Currency"),
+                                 qry, __FILE__, __LINE__))
         {
-          systemError(this, tr("A System Error occurred at %1::%2.")
-                      .arg(__FILE__)
-                      .arg(__LINE__) );
           return;
         }
       }
