@@ -45,6 +45,7 @@ public slots:
     virtual void closeEvent( QCloseEvent * pEvent );
     virtual void sPopulateDistDate();
     virtual void sPopulateDueDate();
+    virtual void sUpdateVoucherTax();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );

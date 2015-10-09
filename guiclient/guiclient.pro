@@ -249,12 +249,13 @@ FORMS =   absoluteCalendarItem.ui               \
           dspCountSlipEditList.ui               \
           dspCountTagEditList.ui                \
           dspCreditCardTransactions.ui          \
-          dspFinancialReport.ui                         \
-          dspInvoiceInformation.ui                      \
-          dspMRPDetail.ui                               \
-          dspTax1099.ui                              \
-          dspTaxHistory.ui                              \
-          duplicateAccountNumbers.ui            \
+          dspFinancialReport.ui                 \
+          dspInvoiceInformation.ui              \
+          dspMRPDetail.ui                       \
+          dspTax1099.ui                 \
+          dspTaxHistory.ui              \
+          dspTaxReturn.ui               \
+          duplicateAccountNumbers.ui    \
           editOwners.ui                 \
           empGroup.ui                   \
           empGroups.ui                  \
@@ -814,11 +815,12 @@ HEADERS = ../common/format.h                    \
           dspCountSlipEditList.h                \
           dspCountTagEditList.h                 \
           dspCreditCardTransactions.h           \
-          dspFinancialReport.h                          \
-          dspInvoiceInformation.h                       \
-          dspMRPDetail.h                                \
-          dspTax1099.h                              \
-          dspTaxHistory.h                               \
+          dspFinancialReport.h                  \
+          dspInvoiceInformation.h               \
+          dspMRPDetail.h                        \
+          dspTax1099.h                          \
+          dspTaxHistory.h                       \
+          dspTaxReturn.h                        \
           duplicateAccountNumbers.h             \
           editOwners.h                          \
           empGroup.h                            \
@@ -1429,11 +1431,12 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspCountSlipEditList.cpp              \
           dspCountTagEditList.cpp               \
           dspCreditCardTransactions.cpp         \
-          dspFinancialReport.cpp                        \
-          dspInvoiceInformation.cpp                     \
-          dspMRPDetail.cpp                              \
-          dspTax1099.cpp                              \
-          dspTaxHistory.cpp                             \
+          dspFinancialReport.cpp                \
+          dspInvoiceInformation.cpp             \
+          dspMRPDetail.cpp                      \
+          dspTax1099.cpp                        \
+          dspTaxHistory.cpp                     \
+          dspTaxReturn.cpp                      \
           duplicateAccountNumbers.cpp           \
           editOwners.cpp                        \
           empGroup.cpp                          \
