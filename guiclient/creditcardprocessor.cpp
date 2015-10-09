@@ -43,7 +43,7 @@
 #include "paymentechprocessor.h"
 #include "cybersourceprocessor.h"
 
-#define DEBUG false
+#define DEBUG true
 
 /* TODO: split this into CreditCardProcessor and CreditCardTransaction.
          the _passedAvs and _passedCvv flags are examples of why the
@@ -352,19 +352,16 @@ CreditCardProcessor::CreditCardProcessor()
         if (DEBUG) qDebug() << "adding certificate" << cert;
       }
 #else
-      bool validDate; //isValid deprecated, previously checked to make sure the date was not blackListed and not expired
+      bool isValid;
       QDateTime currentDate = QDateTime::currentDateTime();
-      if(cert->effectiveDate() <= currentDate && currentDate <= cert->expiryDate()) {
-          validDate = true;
-      }
-      else {
-          validDate = false;
-      }
-      if((cert && !validDate) || (cert->isBlacklisted())) {
+      //verify the certificate falls within the active date range and is not blacklisted
+      isValid = cert->effectiveDate() <= currentDate && currentDate <= cert->expiryDate() && !cert->isBlacklisted();
+      if(cert && !isValid) {
           delete cert;
           cert = new QSslCertificate(&certfile, QSsl::Der);
+          isValid = cert->effectiveDate() <= currentDate && currentDate <= cert->expiryDate() && !cert->isBlacklisted();
       }
-      if(cert && validDate) {
+      if(cert && isValid) {
           certs.append(*cert);
           if(DEBUG) qDebug() << "adding certificate" << cert;
       }
