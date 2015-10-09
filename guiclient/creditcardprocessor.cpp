@@ -342,6 +342,7 @@ CreditCardProcessor::CreditCardProcessor()
       if (DEBUG) qDebug() << "opening" << filename;
       QString suffix = QFileInfo(certfile).suffix().toLower();
       QSslCertificate *cert = new QSslCertificate(&certfile, QSsl::Pem);
+#if QT_VERSION < 0x050000
       if (cert && ! cert->isValid()) {
         delete cert;
         cert = new QSslCertificate(&certfile, QSsl::Der);
@@ -350,6 +351,21 @@ CreditCardProcessor::CreditCardProcessor()
         certs.append(*cert);
         if (DEBUG) qDebug() << "adding certificate" << cert;
       }
+#else
+      bool isValid;
+      QDateTime currentDate = QDateTime::currentDateTime();
+      //verify the certificate falls within the active date range and is not blacklisted
+      isValid = cert->effectiveDate() <= currentDate && currentDate <= cert->expiryDate() && !cert->isBlacklisted();
+      if(cert && !isValid) {
+          delete cert;
+          cert = new QSslCertificate(&certfile, QSsl::Der);
+          isValid = cert->effectiveDate() <= currentDate && currentDate <= cert->expiryDate() && !cert->isBlacklisted();
+      }
+      if(cert && isValid) {
+          certs.append(*cert);
+          if(DEBUG) qDebug() << "adding certificate" << cert;
+      }
+#endif
     }
     else
       qDebug() << "opening" << filename << "failed:" << certfile.errorString()
