@@ -48,6 +48,11 @@ void xtNetworkRequestManager::requestCompleted() {
       qDebug() << "replyError=" << _nwrep->errorString();
       qDebug() << "replyErrorCode=" << _nwrep->error();
   }
+  if(_nwrep->error() != QNetworkReply::NoError){
+      qDebug() << "network reply error on request" << _nwrep->error() << _nwrep->errorString();
+      _nwrep->deleteLater();
+      _mutex->unlock();
+  }
   if(_nwrep->error() == QNetworkReply::NoError && !possibleRedirect.isValid()){
       //success and no redirect
       _nwrep->deleteLater();
