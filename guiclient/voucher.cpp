@@ -53,7 +53,7 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_poitem,                   SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this,          SLOT(sPopulateMenu(QMenu*)));
   connect(_amountToDistribute,       SIGNAL(idChanged(int)),                            this,          SLOT(sFillList()));
   connect(_amountDistributed,        SIGNAL(valueChanged()),                            this,          SLOT(sPopulateBalanceDue()));
-  connect(_freight,                  SIGNAL(valueChanged()),                            this,          SLOT(sPopulateBalanceDue()));
+  connect(_freight,                  SIGNAL(valueChanged()),                            this,          SLOT(sPopulateDistributed()));
 
   _terms->setType(XComboBox::APTerms);
   _poNumber->setAllowedStatuses(OrderLineEdit::Open);
@@ -170,6 +170,9 @@ enum SetResponse voucher::set(const ParameterList &pParams)
 //      _documents->setReadOnly(true);
       _charass->setReadOnly(true);
       _close->setText(tr("&Close"));
+      _freight->setEnabled(false);
+      _freightExpcat->setEnabled(false);
+   
       _save->hide();
 
       disconnect(_poitem, SIGNAL(valid(bool)), _distributions, SLOT(setEnabled(bool)));
@@ -330,6 +333,8 @@ bool voucher::sSave()
   _miscDistrib->clear();
   _notes->setText("");
   _charass->setId(-1);
+  _freight->clear();
+  _freightExpcat->setId(-1);
 
   setWindowModified(false);
 
@@ -745,6 +750,7 @@ void voucher::sPopulateDistributed()
 {
   if (_poNumber->isValid())
   {
+    sCalculateTax();
     XSqlQuery getq;
     getq.prepare( "SELECT (COALESCE(dist,0) + COALESCE(freight,0) + COALESCE(tax,0)) AS distrib"
                "  FROM (SELECT SUM(COALESCE(voitem_freight,0)) AS freight"
@@ -764,7 +770,7 @@ void voucher::sPopulateDistributed()
     getq.exec();
     if (getq.first())
     {
-      _amountDistributed->setLocalValue(getq.value("distrib").toDouble());
+      _amountDistributed->setLocalValue(getq.value("distrib").toDouble() + _freight->localValue());
     }
     else if (ErrorReporter::error(QtCriticalMsg, this,
                                   tr("Getting Distributions"),
@@ -775,9 +781,7 @@ void voucher::sPopulateDistributed()
 
 void voucher::sPopulateBalanceDue()
 {
-  sCalculateTax();
   _balance->setLocalValue(_amountToDistribute->localValue() - 
-                          _freight->localValue() - _freighttax - 
                           _amountDistributed->localValue());
 
   if (_balance->isZero())
@@ -785,7 +789,10 @@ void voucher::sPopulateBalanceDue()
   else
     _balance->setPaletteForegroundColor(namedColor("error"));
 
-  _freightExpcat->setEnabled(_freight->localValue() > 0);
+  if (_freight->localValue() <= 0)
+    _freightExpcat->setId(-1);
+
+  _freightExpcat->setEnabled(_freight->localValue() > 0 && _mode != cView);
  
 }
 
@@ -998,10 +1005,12 @@ bool voucher::saveDetail()
 
 void voucher::sCalculateTax()
 {
+  if (_vendid == -1)
+    return;
+
   if (!saveDetail())
     return;
 
-  double _linetax;
   XSqlQuery taxq;
   taxq.prepare( "SELECT ABS(SUM(tax)) AS tax "
                 "FROM ("
@@ -1012,25 +1021,10 @@ void voucher::sCalculateTax()
   taxq.bindValue(":vohead_id", _voheadid);
   taxq.exec();
   if (taxq.first())
-    _linetax = taxq.value("tax").toDouble();
+    _tax->setLocalValue(taxq.value("tax").toDouble());
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Calculating Voucher Tax"),
                                     taxq, __FILE__, __LINE__))
         return;
-
-  taxq.prepare("SELECT COALESCE(ROUND(calculateTax(:vohead_taxzone_id, getfreighttaxtypeid(), "
-               ":vohead_docdate, baseCurrId(), SUM(:vohead_freight)),2),0) AS freighttaxamt;");
-  if (_taxzone->isValid())
-    taxq.bindValue(":vohead_taxzone_id", _taxzone->id());
-  taxq.bindValue(":vohead_docdate", _invoiceDate->date());
-  taxq.bindValue(":vohead_freight", _freight->localValue());  
-  taxq.exec();
-  if (taxq.first())
-    _freighttax = taxq.value("tax").toDouble();
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Calculating Voucher Tax"),
-                                    taxq, __FILE__, __LINE__))
-        return;
-
-  _tax->setLocalValue(_linetax + _freighttax);
 }
 
 void voucher::sTaxDetail()

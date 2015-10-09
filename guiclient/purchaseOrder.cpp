@@ -1622,7 +1622,9 @@ void purchaseOrder::sTaxZoneChanged()
 }
 
 void purchaseOrder::sCalculateTax()
-{  
+{ 
+  if (!_vendor->isValid())
+    return; 
   if (!saveDetail())
     return;
 
@@ -1676,8 +1678,8 @@ bool purchaseOrder::saveDetail()
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Purchase Order"), errors))
     return false;
 
-  XSqlQuery taxq;
-  taxq.prepare( "UPDATE pohead "
+  XSqlQuery updt;
+  updt.prepare( "UPDATE pohead "
                 "SET pohead_warehous_id=:pohead_warehous_id,"
                 "    pohead_vend_id=:pohead_vend_id,"
                 "    pohead_number=:pohead_number,"
@@ -1687,21 +1689,22 @@ bool purchaseOrder::saveDetail()
                 "    pohead_freight = :pohead_freight "
                 "WHERE (pohead_id=:pohead_id);" );
   if (_warehouse->isValid())
-    taxq.bindValue(":pohead_warehous_id", _warehouse->id());
-  taxq.bindValue(":pohead_vend_id", _vendor->id());
-  taxq.bindValue(":pohead_number", _orderNumber->text());
-  taxq.bindValue(":pohead_id", _poheadid);
+    updt.bindValue(":pohead_warehous_id", _warehouse->id());
+  updt.bindValue(":pohead_vend_id", _vendor->id());
+  updt.bindValue(":pohead_number", _orderNumber->text());
+  updt.bindValue(":pohead_id", _poheadid);
   if (_taxZone->isValid())
-    taxq.bindValue(":pohead_taxzone_id", _taxZone->id());
-  taxq.bindValue(":pohead_curr_id", _poCurrency->id());
-  taxq.bindValue(":pohead_orderdate", _orderDate->date());
-  taxq.bindValue(":pohead_freight", _freight->localValue());
-  taxq.exec();
-  if (taxq.lastError().type() != QSqlError::NoError)
+    updt.bindValue(":pohead_taxzone_id", _taxZone->id());
+  updt.bindValue(":pohead_curr_id", _poCurrency->id());
+  updt.bindValue(":pohead_orderdate", _orderDate->date());
+  updt.bindValue(":pohead_freight", _freight->localValue());
+  updt.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("P/O Save Detail"),
+                                    updt, __FILE__, __LINE__))
   {
-    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
+
   return true;
 }
 

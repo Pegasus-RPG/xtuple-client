@@ -62,16 +62,12 @@ protected:
 
 protected slots:
     virtual void languageChange();
-
     virtual void sPopulateMenu( QMenu * pMenu );
-
 
 private:
     int _vendid;
     int _voheadid;
     int _mode;
-    double _freighttax;
-
 };
 
 #endif // VOUCHER_H
