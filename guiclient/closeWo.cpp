@@ -192,12 +192,13 @@ bool closeWo::okToSave()
   }
   else // type not found
   {
-    ErrorReporter::error(QtCriticalMsg, this, tr("Cannot close Work Order %1 because the item does not "
+    ErrorReporter::error(QtCriticalMsg, this,tr("Error Closing Work Order"),
+                         tr("Cannot close Work Order %1 because the item does not "
                          "appear to have an Item Type!  Please check the Item "
                          "definition.  You may need to reset the Type and save "
                          "the Item record.")
                          .arg(_wo->woNumber()),
-                         type, __FILE__, __LINE__);
+                          __FILE__, __LINE__);
     return false;
   }
 
