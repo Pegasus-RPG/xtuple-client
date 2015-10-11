@@ -557,11 +557,9 @@ bool apOpenItem::sInitializeMemo()
   ap.exec();
   if (ap.first())
     _apopenid = ap.value("result").toInt();
-  else if (ap.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, ap.lastError().databaseText(), __FILE__, __LINE__);
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Initializing Memo"),
+                                  ap, __FILE__, __LINE__))
     return false;
-  }
   else
     return false;
     
@@ -577,9 +575,9 @@ bool apOpenItem::sInitializeMemo()
   ap.bindValue(":docNumber", _docNumber->text());
   ap.bindValue(":currId", _amount->id());
   ap.exec();
-  if (ap.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Initializing Memo"),
+                                  ap, __FILE__, __LINE__))
   {
-    systemError(this, ap.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
