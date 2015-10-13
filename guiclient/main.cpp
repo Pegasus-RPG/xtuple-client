@@ -99,6 +99,8 @@
 #include <QTranslator>
 #if QT_VERSION < 0x050000
 #include <QHttp>
+#else
+#include <QUrlQuery>
 #endif
 #include <QUrl>
 
@@ -119,6 +121,7 @@
 #include "scripttoolbox.h"
 #include "xmainwindow.h"
 #include "checkForUpdates.h"
+#include "xtNetworkRequestManager.h"
 
 #include "sysLocale.h"
 
@@ -459,24 +462,31 @@ int main(int argc, char *argv[])
       {
         db = metric.value("db").toString();
       }
-
-#if QT_VERSION < 0x050000  // below removed in qt5, needs to be ported
-      QHttp *http = new QHttp();
-      
+#if QT_VERSION >= 0x050000
+      QUrlQuery urlQuery("https://www.xtuple.org/api/regviolation.php?");
+      urlQuery.addQueryItem("key", rkey);
+      urlQuery.addQueryItem("error", checkPassReason);
+      urlQuery.addQueryItem("name", name);
+      urlQuery.addQueryItem("dbname", dbname);
+      urlQuery.addQueryItem("db", db);
+      urlQuery.addQueryItem("cnt", QString::number(cnt));
+      urlQuery.addQueryItem("tot", QString::number(tot));
+      urlQuery.addQueryItem("ver", _Version);
+      QUrl url = urlQuery.query();
+#else
       QUrl url;
-      url.setPath("/api/regviolation.php");
+      url.setUrl("https://www.xtuple.org/api/regviolation.php");
       url.addQueryItem("key", QUrl::toPercentEncoding(rkey));
-      url.addQueryItem("error", QUrl::toPercentEncoding(checkPassReason));
-      url.addQueryItem("name", QUrl::toPercentEncoding(name));
-      url.addQueryItem("dbname", QUrl::toPercentEncoding(dbname));
+      url.addQueryItem("error", checkPassReason);
+      url.addQueryItem("name", name);
+      url.addQueryItem("dbname", dbname);
       url.addQueryItem("db", QUrl::toPercentEncoding(db));
       url.addQueryItem("cnt", QString::number(cnt));
       url.addQueryItem("tot", QString::number(tot));
       url.addQueryItem("ver", _Version);
-
-      http->setHost("www.xtuple.org");
-      http->get(url.toString());
 #endif
+      QMutex wait;
+      xtNetworkRequestManager _networkManager(url, wait);
       if(forced)
         return 0;
 
