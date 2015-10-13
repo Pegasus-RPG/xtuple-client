@@ -330,13 +330,14 @@ void dspTaxHistory::sHandleFilter()
     if (_sales->isChecked())
     {
       _taxsum->addColumn(tr("Sales %1").arg(base),        _bigMoneyColumn,    Qt::AlignRight,  true,  "salesbase"  );
-      _taxsum->addColumn(tr("Sales Freight %1").arg(base),_bigMoneyColumn,    Qt::AlignRight,  true,  "freightbase"  );
+      _taxsum->addColumn(tr("Sales Freight %1").arg(base),_bigMoneyColumn,    Qt::AlignRight,  true,  "salesfreightbase"  );
       _taxsum->addColumn(tr("Freight Taxed"),             _itemColumn,        Qt::AlignCenter, true, "freighttax"  );
       _taxsum->addColumn(tr("Sales Tax %1").arg(base),    _bigMoneyColumn,    Qt::AlignRight,  true,  "salestaxbase"  );
     }
     if (_purchases->isChecked())
     {
       _taxsum->addColumn(tr("Purchases %1").arg(base),    _bigMoneyColumn,    Qt::AlignRight,  true,  "purchasebase"  );
+      _taxsum->addColumn(tr("Purchase Freight %1").arg(base),_bigMoneyColumn, Qt::AlignRight,  true,  "purchasefreightbase"  );
       _taxsum->addColumn(tr("Purchase Tax %1").arg(base), _bigMoneyColumn,    Qt::AlignRight,  true,  "purchasetaxbase"  );
     }
     if (_sales->isChecked() && _purchases->isChecked())
