@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>614</width>
+    <width>628</width>
     <height>519</height>
    </rect>
   </property>
@@ -216,6 +216,13 @@ to be bound by its terms.</comment>
           <widget class="QCheckBox" name="_enhancedAuth">
            <property name="text">
             <string>Use Enhanced Authentication</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="_ssosOnly">
+           <property name="text">
+            <string>May only use Simple Sales Order</string>
            </property>
           </widget>
          </item>
@@ -712,12 +719,14 @@ to be bound by its terms.</comment>
   <tabstop>_email</tabstop>
   <tabstop>_passwd</tabstop>
   <tabstop>_verify</tabstop>
+  <tabstop>_locale</tabstop>
+  <tabstop>_employee</tabstop>
   <tabstop>_agent</tabstop>
   <tabstop>_createUsers</tabstop>
   <tabstop>_exportContents</tabstop>
   <tabstop>_enhancedAuth</tabstop>
-  <tabstop>_locale</tabstop>
-  <tabstop>_employee</tabstop>
+  <tabstop>_ssosOnly</tabstop>
+  <tabstop>_tab</tabstop>
   <tabstop>_module</tabstop>
   <tabstop>_available</tabstop>
   <tabstop>_add</tabstop>
@@ -725,13 +734,20 @@ to be bound by its terms.</comment>
   <tabstop>_revoke</tabstop>
   <tabstop>_revokeAll</tabstop>
   <tabstop>_granted</tabstop>
-  <tabstop>_tab</tabstop>
-  <tabstop>_availableGroup</tabstop>
-  <tabstop>_addGroup</tabstop>
-  <tabstop>_revokeGroup</tabstop>
-  <tabstop>_grantedGroup</tabstop>
   <tabstop>_close</tabstop>
   <tabstop>_save</tabstop>
+  <tabstop>_active</tabstop>
+  <tabstop>_crmacct</tabstop>
+  <tabstop>_availableGroup</tabstop>
+  <tabstop>_grantedGroup</tabstop>
+  <tabstop>_addGroup</tabstop>
+  <tabstop>_revokeGroup</tabstop>
+  <tabstop>_allSites</tabstop>
+  <tabstop>_selectedSites</tabstop>
+  <tabstop>_availableSite</tabstop>
+  <tabstop>_grantedSite</tabstop>
+  <tabstop>_addSite</tabstop>
+  <tabstop>_revokeSite</tabstop>
  </tabstops>
  <resources/>
  <connections>

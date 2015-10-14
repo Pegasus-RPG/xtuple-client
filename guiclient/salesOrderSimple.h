@@ -24,21 +24,21 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
   public: salesOrderSimple(QWidget *parent = 0, const char *name = 0, Qt::WindowFlags fl = Qt::Window);
     ~salesOrderSimple();
 
+    Q_INVOKABLE virtual bool  sSave();
     Q_INVOKABLE virtual bool  save( bool partial );
-    Q_INVOKABLE virtual void  setViewMode();
     Q_INVOKABLE static void   newSalesOrder( int pCustid, QWidget *parent = 0 );
     Q_INVOKABLE virtual int   id() { return _soheadid; }
-    Q_INVOKABLE virtual int   modeState() const;
 
   public slots:
     virtual SetResponse set(const ParameterList &pParams );
-    virtual void        sSave();
+    virtual void        sSaveClicked();
     virtual void        sSaveLine();
     virtual void        sPopulateMenu(QMenu *pMenu);
     virtual void        populateOrderNumber();
     virtual void        sSetUserEnteredOrderNumber();
     virtual void        sHandleOrderNumber();
     virtual void        sPopulateCustomerInfo( int pCustid );
+    virtual void        sPopulateShiptoInfo();
     virtual void        populate();
     virtual void        sFillItemList();
     virtual void        sCalculateTotal();
@@ -56,13 +56,16 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
     virtual void        sFillCcardList();
     virtual void        sAuthorizeCC();
     virtual void        sChargeCC();
-    virtual void        sReturnStock();
-    virtual void        sIssueStock();
-    virtual void        sIssueLineBalance();
+    virtual void        sCreditAllocate();
+    virtual void        sAllocateCreditMemos();
+    virtual bool        sIssueLineBalance();
+    virtual bool        sShipInvoice();
     virtual void        sEnterCashPayment();
     virtual void        sCalculateTax();
     virtual void        sRecalculatePrice();
+    virtual void        sViewItemWorkbench();
     virtual void        sDelete();
+    virtual void        sEdit();
 
   protected slots:
     virtual void  languageChange();
@@ -71,7 +74,6 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
   signals:
     void populated();
     void newId(int);
-    void newModeState(int);
     void saved(int);
 
   private:
@@ -82,6 +84,7 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
     double  _amountOutstanding;
     double  _amountAllocated;
     double  _taxableSubtotal;
+    double  _creditlmt;
     bool    _userEnteredOrderNumber;
     bool    _ignoreSignals;
     bool    _blanketPos;

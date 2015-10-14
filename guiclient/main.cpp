@@ -119,6 +119,7 @@
 #include "scripttoolbox.h"
 #include "xmainwindow.h"
 #include "checkForUpdates.h"
+#include "salesOrderSimple.h"
 
 #include "sysLocale.h"
 
@@ -741,6 +742,15 @@ int main(int argc, char *argv[])
       qDebug("Failed to initialize woTimeClock window.");
       return -2;
     }
+  }
+  else if (omfgThis->_singleWindow == "salesOrderSimple")
+  {
+    ParameterList params;
+    params.append("mode", "new");
+    
+    salesOrderSimple *newdlg = new salesOrderSimple();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
   }
 
   // Check for the existance of a base currency, if none, one needs to

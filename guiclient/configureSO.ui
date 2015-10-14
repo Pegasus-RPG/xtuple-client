@@ -1472,6 +1472,58 @@ to be bound by its terms.</comment>
                </widget>
               </item>
               <item>
+               <widget class="XCheckBox" name="_ssosRequireInv">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="text">
+                 <string>Require Sufficient Inventory to Ship</string>
+                </property>
+                <property name="forgetful">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XCheckBox" name="_ssosPrintSOAck">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="text">
+                 <string>Print S/O Acknowledgement (Hold only)</string>
+                </property>
+                <property name="forgetful">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XCheckBox" name="_ssosPrintPackList">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="text">
+                 <string>Print Shipping Packing List</string>
+                </property>
+                <property name="forgetful">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XCheckBox" name="_ssosPrintInvoice">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="text">
+                 <string>Print Invoice</string>
+                </property>
+                <property name="forgetful">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
                <spacer name="verticalSpacer_5">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>

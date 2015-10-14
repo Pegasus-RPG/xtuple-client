@@ -226,8 +226,12 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
       _alpha->setChecked(true);
   }
   
-  _enableSSOS->setChecked(_metrics->boolean("EnableSSOS"));
-  _ssosCust->setId(_metrics->value("DefaultSSOSCustId").toInt());
+  _enableSSOS->setChecked(_metrics->boolean("SSOSEnabled"));
+  _ssosCust->setId(_metrics->value("SSOSDefaultCustId").toInt());
+  _ssosRequireInv->setChecked(_metrics->boolean("SSOSRequireInv"));
+  _ssosPrintSOAck->setChecked(_metrics->boolean("SSOSPrintSOAck"));
+  _ssosPrintPackList->setChecked(_metrics->boolean("SSOSPrintPackList"));
+  _ssosPrintInvoice->setChecked(_metrics->boolean("SSOSPrintInvoice"));
   
   adjustSize();
 }
@@ -401,13 +405,21 @@ bool configureSO::sSave()
   
   if (_enableSSOS->isChecked())
   {
-    _metrics->set("EnableSSOS", true);
-    _metrics->set("DefaultSSOSCustId", _ssosCust->id());
+    _metrics->set("SSOSEnabled", true);
+    _metrics->set("SSOSDefaultCustId", _ssosCust->id());
+    _metrics->set("SSOSRequireInv", _ssosRequireInv->isChecked());
+    _metrics->set("SSOSPrintSOAck", _ssosPrintSOAck->isChecked());
+    _metrics->set("SSOSPrintPackList", _ssosPrintPackList->isChecked());
+    _metrics->set("SSOSPrintInvoice", _ssosPrintInvoice->isChecked());
   }
   else
   {
-    _metrics->set("EnableSSOS", false);
-    _metrics->set("DefaultSSOSCustId", -1);
+    _metrics->set("SSOSEnabled", false);
+    _metrics->set("SSOSDefaultCustId", -1);
+    _metrics->set("SSOSRequireInv", false);
+    _metrics->set("SSOSPrintSOAck", false);
+    _metrics->set("SSOSPrintPackList", false);
+    _metrics->set("SSOSPrintInvoice", false);
   }
 
   return true;
