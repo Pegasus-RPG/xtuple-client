@@ -717,16 +717,24 @@ bool user::sPopulate()
       _authCache = (usrq.value("usrpref_value").toString()=="t");
     _enhancedAuth->setChecked(_authCache);
 
-    usrq.prepare( "SELECT usrpref_value "
-                 "  FROM usrpref "
-                 " WHERE ( (usrpref_name = 'window') "
-                 "   AND (usrpref_username=:username) ); ");
-    usrq.bindValue(":username", _cUsername);
-    usrq.exec();
-    _windowCache = "";
-    if(usrq.first())
-      _windowCache = (usrq.value("usrpref_value").toString());
-    _ssosOnly->setChecked(_windowCache=="salesOrderSimple");
+    if (_metrics->boolean("SSOSEnabled"))
+    {
+      usrq.prepare( "SELECT usrpref_value "
+                   "  FROM usrpref "
+                   " WHERE ( (usrpref_name = 'window') "
+                   "   AND (usrpref_username=:username) ); ");
+      usrq.bindValue(":username", _cUsername);
+      usrq.exec();
+      _windowCache = "";
+      if(usrq.first())
+        _windowCache = (usrq.value("usrpref_value").toString());
+      _ssosOnly->setChecked(_windowCache=="salesOrderSimple");
+    }
+    else
+    {
+      _ssosOnly->setChecked(false);
+      _ssosOnly->hide();
+    }
     
     usrq.prepare( "SELECT priv_module "
                "FROM usrpriv, priv "

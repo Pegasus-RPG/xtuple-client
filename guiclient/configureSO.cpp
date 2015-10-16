@@ -227,6 +227,9 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   }
   
   _enableSSOS->setChecked(_metrics->boolean("SSOSEnabled"));
+  _ssosCust->setType(CLineEdit::ActiveCustomers);
+  _ssosCust->setCanEdit(_metrics->boolean("SSOSEnabled"));
+  _ssosCust->setEnabled(_metrics->boolean("SSOSEnabled"));
   _ssosCust->setId(_metrics->value("SSOSDefaultCustId").toInt());
   _ssosRequireInv->setChecked(_metrics->boolean("SSOSRequireInv"));
   _ssosPrintSOAck->setChecked(_metrics->boolean("SSOSPrintSOAck"));

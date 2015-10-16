@@ -84,6 +84,7 @@ salesOrderSimple::salesOrderSimple(QWidget *parent, const char *name, Qt::Window
   connect(_soitem,              SIGNAL(populateMenu(QMenu*,QTreeWidgetItem *)), this,         SLOT(sPopulateMenu(QMenu *)));
   connect(_soitem,              SIGNAL(itemSelected(int)),                      this,         SLOT(sEdit()));
   connect(_subtotal,            SIGNAL(valueChanged()),                         this,         SLOT(sCalculateTotal()));
+  connect(_taxLit,              SIGNAL(leftClickedURL(const QString &)),        this,         SLOT(sTaxDetail()));
   if (_privileges->check("ApplyARMemos"))
     connect(_availCreditLit,    SIGNAL(leftClickedURL(const QString &)),        this,         SLOT(sCreditAllocate()));
 
@@ -249,13 +250,6 @@ enum SetResponse salesOrderSimple:: set(const ParameterList &pParams)
 
 void salesOrderSimple::sSaveClicked()
 {
-  if (_balance->localValue() > _creditlmt &&
-      QMessageBox::question(this, tr("Overapplied?"),
-                            tr("The Balance is more than the Customer's credit limit.  Do you want to continue?"),
-                            QMessageBox::Yes,
-                            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-    return;
-  
   if (save(false))
   {
     ParameterList params;
@@ -277,6 +271,13 @@ void salesOrderSimple::sSaveClicked()
         sAllocateCreditMemos();
       }
 
+      if (_balance->localValue() > _creditlmt &&
+          QMessageBox::question(this, tr("Over Credit Limit?"),
+                                tr("The Balance is more than the Customer's credit limit.  Do you want to continue?"),
+                                QMessageBox::Yes,
+                                QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+        return;
+      
       if (!sIssueLineBalance())
         return;
       
@@ -1395,8 +1396,6 @@ void salesOrderSimple::sCreditAllocate()
 void salesOrderSimple::sAllocateCreditMemos()
 {
   XSqlQuery allocateSales;
-  // Determine the balance I need to select
-  // This is the same as in sCalculateTotal except that the Unallocated amount is not included.
   double  balance      = _balance->localValue();
   if (balance > 0)
   {
@@ -1450,6 +1449,8 @@ void salesOrderSimple::sAllocateCreditMemos()
       else
         systemError(this, allocCM.lastError().databaseText(), __FILE__, __LINE__);
     }
+    
+    _balance->setLocalValue(balance);
   }
 }
 

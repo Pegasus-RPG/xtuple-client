@@ -1460,14 +1460,17 @@ to be bound by its terms.</comment>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
                <widget class="CustCluster" name="_ssosCust">
-                <property name="enabled">
-                 <bool>true</bool>
-                </property>
                 <property name="label">
                  <string>Cash Customer #:</string>
                 </property>
-                <property name="canEdit">
+                <property name="nameVisible">
+                 <bool>true</bool>
+                </property>
+                <property name="descriptionVisible">
                  <bool>false</bool>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
                 </property>
                </widget>
               </item>
