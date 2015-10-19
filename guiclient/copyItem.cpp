@@ -406,7 +406,9 @@ void copyItem::sAddItemsite()
     int result = itemCopy.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("copyItemSite", result), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item Site"),
+                             storedProcErrorLookup("copyItemSite", result),
+                             __FILE__, __LINE__);
       return;
     }
     ParameterList params;
@@ -425,21 +427,23 @@ void copyItem::sAddItemsite()
         int result = itemCopy.value("result").toInt();
         if (result < 0)
         {
-          systemError(this, storedProcErrorLookup("deleteItemSite", result), __FILE__, __LINE__);
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item Site"),
+                                 storedProcErrorLookup("deleteItemSite", result),
+                                 __FILE__, __LINE__);
           return;
         }
       }
-      else if (itemCopy.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item Site"),
+                                    itemCopy, __FILE__, __LINE__))
       {
-        systemError(this, itemCopy.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
     sFillItemsite();
   }
-  else if (itemCopy.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item Site"),
+                                itemCopy, __FILE__, __LINE__))
   {
-    systemError(this, itemCopy.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -541,9 +545,9 @@ void copyItem::sCopy()
   copyCopy.bindValue(":item_listprice", _listPrice->toDouble());
   copyCopy.bindValue(":item_listcost", _listCost->toDouble());
   copyCopy.exec();
-  if (copyCopy.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item"),
+                                copyCopy, __FILE__, __LINE__))
   {
-    systemError(this, copyCopy.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -582,9 +586,9 @@ void copyItem::sCopy()
   copyCopy.bindValue(":rollUp",          "f");
   copyCopy.bindValue(":updateActual",    "t" );
   copyCopy.exec();
-  if (copyCopy.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item"),
+                                copyCopy, __FILE__, __LINE__))
   {
-    systemError(this, copyCopy.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -625,9 +629,9 @@ void copyItem::sCopy()
   copyCopy.bindValue(":lowUser",         "t");
   copyCopy.bindValue(":rollUp",          "f");
   copyCopy.exec();
-  if (copyCopy.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item"),
+                                copyCopy, __FILE__, __LINE__))
   {
-    systemError(this, copyCopy.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
