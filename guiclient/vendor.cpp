@@ -258,7 +258,8 @@ SetResponse vendor::set(const ParameterList &pParams)
   if (valid)
   {
     _number->setEditMode(true);
-    setId(param.toInt());
+//    setId(param.toInt());
+    _number->setId(param.toInt());
     _captive=true;
   }
 

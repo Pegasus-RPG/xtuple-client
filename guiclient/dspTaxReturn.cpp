@@ -44,8 +44,6 @@ dspTaxReturn::dspTaxReturn(QWidget* parent, const char* name, Qt::WindowFlags fl
   _taxdet->addColumn(tr("Journal#"),            _orderColumn,    Qt::AlignRight, false, "taxhist_journalnumber"  );
   _taxdet->addColumn(tr("Name"),                _orderColumn,    Qt::AlignLeft,  false, "name"  );
   _taxdet->addColumn(tr("Tax Code"),            _itemColumn,     Qt::AlignLeft,  true,  "tax"  );
-  _taxdet->addColumn(tr("Tax Type"),            _itemColumn,     Qt::AlignLeft,  false, "taxtype"  );
-  _taxdet->addColumn(tr("Tax Authority"),       _itemColumn,     Qt::AlignLeft,  false, "taxauth"   );
   _taxdet->addColumn(tr("Item#"),               _itemColumn,     Qt::AlignLeft,  true,  "item_number"  );
   _taxdet->addColumn(tr("Description"),         -1,              Qt::AlignLeft,  true,  "description"  );
   _taxdet->addColumn(tr("Qty"),                 _qtyColumn,      Qt::AlignRight, false, "qty"  );
@@ -217,13 +215,13 @@ void dspTaxReturn::sHandleFilter()
   if (_sales->isChecked())
   {
     _taxsum->addColumn(tr("Sales %1").arg(base),        _bigMoneyColumn,    Qt::AlignRight,  true,  "salesbase"  );
-    _taxsum->addColumn(tr("Sales Freight %1").arg(base),_bigMoneyColumn,    Qt::AlignRight,  true,  "freightbase"  );
+    _taxsum->addColumn(tr("Sales Freight %1").arg(base),_bigMoneyColumn,    Qt::AlignRight,  true,  "salesfreightbase"  );
     _taxsum->addColumn(tr("Sales Tax %1").arg(base),    _bigMoneyColumn,    Qt::AlignRight,  true,  "salestaxbase"  );
   }
   if (_purchases->isChecked())
   {
     _taxsum->addColumn(tr("Purchases %1").arg(base),    _bigMoneyColumn,    Qt::AlignRight,  true,  "purchasebase"  );
-    _taxsum->addColumn(tr("Purchases Freight %1").arg(base),_bigMoneyColumn,    Qt::AlignRight,  true,  "freightbase"  );
+    _taxsum->addColumn(tr("Purchases Freight %1").arg(base),_bigMoneyColumn,    Qt::AlignRight,  true,  "purchasefreightbase"  );
     _taxsum->addColumn(tr("Purchase Tax %1").arg(base), _bigMoneyColumn,    Qt::AlignRight,  true,  "purchasetaxbase"  );
   }
   if (_sales->isChecked() && _purchases->isChecked())

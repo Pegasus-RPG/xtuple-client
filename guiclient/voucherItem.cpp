@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -17,10 +17,11 @@
 #include <metasql.h>
 
 #include "mqlutil.h"
+#include "errorReporter.h"
 #include "voucherItemDistrib.h"
 #include "enterPoitemReceipt.h"
 #include "splitReceipt.h"
-#include "taxDetail.h"
+#include "taxBreakdown.h"
 
 voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -28,16 +29,17 @@ voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::Wind
   XSqlQuery voucherItem;
   setupUi(this);
 
-  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_uninvoiced, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(sToggleReceiving(QTreeWidgetItem*)));
-  connect(_uninvoiced, SIGNAL(populateMenu(QMenu*,XTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, XTreeWidgetItem*)));
+  connect(_new,              SIGNAL(clicked()),        this, SLOT(sNew()));
+  connect(_edit,             SIGNAL(clicked()),        this, SLOT(sEdit()));
+  connect(_delete,           SIGNAL(clicked()),        this, SLOT(sDelete()));
+  connect(_save,             SIGNAL(clicked()),        this, SLOT(sSave()));
+  connect(_uninvoiced,       SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(sToggleReceiving(QTreeWidgetItem*)));
+  connect(_uninvoiced,       SIGNAL(populateMenu(QMenu*,XTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, XTreeWidgetItem*)));
+  connect(_freightToVoucher, SIGNAL(editingFinished()), this, SLOT(sCalculateTax()));
   connect(_freightToVoucher, SIGNAL(editingFinished()), this, SLOT(sFillList()));
-  connect(_vodist, SIGNAL(populated()), this, SLOT(sCalculateTax()));
-  connect(_taxtype,	  SIGNAL(newID(int)), this, SLOT(sCalculateTax()));
-  connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
+  connect(_vodist,           SIGNAL(populated()),       this, SLOT(sCalculateTax()));
+  connect(_taxtype,          SIGNAL(newID(int)),        this, SLOT(sCalculateTax()));
+  connect(_taxLit,           SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
 
   _item->setReadOnly(true);
   
@@ -679,7 +681,10 @@ void voucherItem::closeEvent(QCloseEvent * event)
 void voucherItem::sCalculateTax()
 {
   _saved = false;
+  double _taxamount = 0.00;
+  _freighttax = 0.00;
   XSqlQuery calcq;
+  XSqlQuery calcq1;
   calcq.prepare( "SELECT SUM(COALESCE(tax, 0.00)) AS totaltax "
                  "FROM (SELECT calculateTax(vohead_taxzone_id, :taxtype_id, "
 				 " vohead_docdate, vohead_curr_id, vodist_amount) AS tax "
@@ -692,56 +697,37 @@ void voucherItem::sCalculateTax()
   calcq.bindValue(":poitem_id", _poitemid);
   calcq.exec();
   if (calcq.first())
-    _tax->setLocalValue(calcq.value("totaltax").toDouble());
-  else if (calcq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
+    _taxamount = calcq.value("totaltax").toDouble();
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Tax Calculation"),
+                                    calcq, __FILE__, __LINE__))
     return;
-  }
+
+  calcq1.prepare( "SELECT COALESCE(ROUND(SUM(calculateTax(vohead_taxzone_id, getfreighttaxtypeid(), "
+                 "           vohead_docdate, vohead_curr_id, :voitem_freight)),2),0) AS freighttaxamt "
+                 "  FROM vohead "
+                 "  WHERE (vohead_id=:vohead_id);");
+  calcq1.bindValue(":vohead_id", _voheadid);
+  calcq1.bindValue(":voitem_freight", _freightToVoucher->localValue());
+  calcq1.exec();
+  if (calcq1.first())
+    _freighttax = calcq1.value("freighttaxamt").toDouble();
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Tax Calculation"),
+                                    calcq1, __FILE__, __LINE__))
+    return;
+
+  _tax->setLocalValue(_taxamount + _freighttax);
 }
 
 void voucherItem::sTaxDetail()
 {
-  XSqlQuery voucherTaxDetail;
-  voucherTaxDetail.prepare( "SELECT SUM(vodist_amount) AS distamount "
-             "FROM vodist "
-             "WHERE ( (vodist_vohead_id=:vohead_id)"
-             " AND (vodist_poitem_id=:poitem_id) );" );
-  voucherTaxDetail.bindValue(":vohead_id", _voheadid);
-  voucherTaxDetail.bindValue(":poitem_id", _poitemid);
-  voucherTaxDetail.exec();
-  if (voucherTaxDetail.first())
-    _distamount = voucherTaxDetail.value("distamount").toDouble();
-  else if (voucherTaxDetail.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, _rejectedMsg.arg(voucherTaxDetail.lastError().databaseText()),
-                __FILE__, __LINE__);
-    return;
-  }
-
-  taxDetail newdlg(this, "", true);
   ParameterList params;
-  params.append("taxzone_id", _taxzoneid);
-  params.append("taxtype_id", _taxtype->id());
-  params.append("date", _tax->effective());
-  params.append("subtotal", _distamount);
-  params.append("curr_id", _tax->id());
-  params.append("sense", -1);
-  
-  if(cView == _mode)
-    params.append("readOnly");
-  
-  if(_saved == true)
-  {
-	params.append("order_id", _voitemid);
-    params.append("order_type", "VI");
-  }
+  params.append("order_id", _voitemid);
+  params.append("order_type", "VI");
+  // mode => view since there are no fields to hold modified tax data
+  if (_mode == cView)
+    params.append("mode", "view");
 
+  taxBreakdown newdlg(this, "", true);
   newdlg.set(params);
-  
-  if (newdlg.set(params) == NoError && newdlg.exec())
-  {
-    if (_taxtype->id() != newdlg.taxtype())
-      _taxtype->setId(newdlg.taxtype());
-  }
+  newdlg.exec();
 }

@@ -661,11 +661,9 @@ bool arOpenItem::sInitializeMemo()
   ar.exec();
   if (ar.first())
     _aropenid = ar.value("result").toInt();
-  else if (ar.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, ar.lastError().databaseText(), __FILE__, __LINE__);
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Initializing Memo"),
+                                ar, __FILE__, __LINE__))
     return false;
-  }
   else
     return false;
    
@@ -682,9 +680,9 @@ bool arOpenItem::sInitializeMemo()
   ar.bindValue(":docNumber", _docNumber->text());
   ar.bindValue(":currId", _amount->id());
   ar.exec();
-  if (ar.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Initializing Memo"),
+                                ar, __FILE__, __LINE__))
   {
-    systemError(this, ar.lastError().databaseText(), __FILE__, __LINE__);
     reset();
     return false;
   }

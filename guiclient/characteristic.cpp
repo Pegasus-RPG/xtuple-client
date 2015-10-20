@@ -445,9 +445,9 @@ void characteristic::sDelete()
     QMessageBox::critical(this, tr("Error"), tr("This value is in use and can not be deleted."));
     return;
   }
-  else if (qry.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Characteristic Option"),
+                                qry, __FILE__, __LINE__))
   {
-    systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

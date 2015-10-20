@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -26,6 +26,7 @@
 #include "purchaseOrderList.h"
 #include "purchaseOrderItem.h"
 #include "storedProcErrorLookup.h"
+#include "taxBreakdown.h"
 #include "voucherItem.h"
 #include "voucherMiscDistrib.h"
 
@@ -47,10 +48,12 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_edit,                     SIGNAL(clicked()),                                 this,          SLOT(sEditMiscDistribution()));
   connect(_delete,                   SIGNAL(clicked()),                                 this,          SLOT(sDeleteMiscDistribution()));
   connect(_invoiceDate,              SIGNAL(newDate(const QDate&)),                     this,          SLOT(sPopulateDistDate()));
+  connect(_taxLit,                   SIGNAL(leftClickedURL(const QString&)),            this,          SLOT(sTaxDetail()));
   connect(_terms,                    SIGNAL(newID(int)),                                this,          SLOT(sPopulateDueDate()));
   connect(_poitem,                   SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this,          SLOT(sPopulateMenu(QMenu*)));
   connect(_amountToDistribute,       SIGNAL(idChanged(int)),                            this,          SLOT(sFillList()));
   connect(_amountDistributed,        SIGNAL(valueChanged()),                            this,          SLOT(sPopulateBalanceDue()));
+  connect(_freight,                  SIGNAL(valueChanged()),                            this,          SLOT(sPopulateDistributed()));
 
   _terms->setType(XComboBox::APTerms);
   _poNumber->setAllowedStatuses(OrderLineEdit::Open);
@@ -167,6 +170,9 @@ enum SetResponse voucher::set(const ParameterList &pParams)
 //      _documents->setReadOnly(true);
       _charass->setReadOnly(true);
       _close->setText(tr("&Close"));
+      _freight->setEnabled(false);
+      _freightExpcat->setEnabled(false);
+   
       _save->hide();
 
       disconnect(_poitem, SIGNAL(valid(bool)), _distributions, SLOT(setEnabled(bool)));
@@ -223,7 +229,11 @@ bool voucher::sSave()
                           _invoiceNum,
                           tr("<p>You must enter a Vendor Invoice Number "
                              "before you may save this Voucher."))
-   ;
+         << GuiErrorCheck(_freight->localValue() > 0 && !_freightExpcat->isValid(), _freightExpcat,
+                           tr("<p>You must select an Expense Category to post the  "
+                              "freight value to."))
+  ;
+
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Voucher"), errors))
     return false;
 
@@ -267,6 +277,8 @@ bool voucher::sSave()
              "    vohead_invcnumber=:vohead_invcnumber,"
              "    vohead_reference=:vohead_reference,"
              "    vohead_amount=:vohead_amount,"
+             "    vohead_freight=:vohead_freight,"
+             "    vohead_freight_expcat_id=:vohead_freight_expcat,"
              "    vohead_1099=:vohead_1099, "
              "    vohead_curr_id=:vohead_curr_id, "
              "    vohead_notes=:vohead_notes "
@@ -284,6 +296,9 @@ bool voucher::sSave()
   updq.bindValue(":vohead_invcnumber", _invoiceNum->text().trimmed());
   updq.bindValue(":vohead_reference", _reference->text().trimmed());
   updq.bindValue(":vohead_amount", _amountToDistribute->localValue());
+  updq.bindValue(":vohead_freight", _freight->localValue());
+  if (_freightExpcat->isValid())
+    updq.bindValue(":vohead_freight_expcat", _freightExpcat->id());
   updq.bindValue(":vohead_1099", QVariant(_flagFor1099->isChecked()));
   updq.bindValue(":vohead_curr_id", _amountToDistribute->id());
   updq.bindValue(":vohead_notes", _notes->toPlainText());
@@ -318,6 +333,8 @@ bool voucher::sSave()
   _miscDistrib->clear();
   _notes->setText("");
   _charass->setId(-1);
+  _freight->clear();
+  _freightExpcat->setId(-1);
 
   setWindowModified(false);
 
@@ -655,6 +672,8 @@ void voucher::sFillList()
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting P/O Information"),
                              getq, __FILE__, __LINE__))
       return;
+
+    _freight->setId(_amountToDistribute->id());
   }
   else
     _poitem->clear();
@@ -716,6 +735,7 @@ void voucher::sPopulatePoInfo()
     _terms->setId(po.value("pohead_terms_id").toInt());
     _taxzone->setId(po.value("pohead_taxzone_id").toInt());
     _amountToDistribute->setId(po.value("pohead_curr_id").toInt());
+    _freight->setId(po.value("pohead_curr_id").toInt());
     _vendid = po.value("vend_id").toInt();
     _vendor->setText(po.value("vend_number").toString());
     _vendName->setText(po.value("vend_name").toString());
@@ -732,6 +752,7 @@ void voucher::sPopulateDistributed()
 {
   if (_poNumber->isValid())
   {
+    sCalculateTax();
     XSqlQuery getq;
     getq.prepare( "SELECT (COALESCE(dist,0) + COALESCE(freight,0) + COALESCE(tax,0)) AS distrib"
                "  FROM (SELECT SUM(COALESCE(voitem_freight,0)) AS freight"
@@ -751,7 +772,7 @@ void voucher::sPopulateDistributed()
     getq.exec();
     if (getq.first())
     {
-      _amountDistributed->setLocalValue(getq.value("distrib").toDouble());
+      _amountDistributed->setLocalValue(getq.value("distrib").toDouble() + _freight->localValue());
     }
     else if (ErrorReporter::error(QtCriticalMsg, this,
                                   tr("Getting Distributions"),
@@ -762,11 +783,19 @@ void voucher::sPopulateDistributed()
 
 void voucher::sPopulateBalanceDue()
 {
-  _balance->setLocalValue(_amountToDistribute->localValue() - _amountDistributed->localValue());
+  _balance->setLocalValue(_amountToDistribute->localValue() - 
+                          _amountDistributed->localValue());
+
   if (_balance->isZero())
     _balance->setPaletteForegroundColor(QColor("black"));
   else
     _balance->setPaletteForegroundColor(namedColor("error"));
+
+  if (_freight->localValue() <= 0)
+    _freightExpcat->setId(-1);
+
+  _freightExpcat->setEnabled(_freight->localValue() > 0 && _mode != cView);
+ 
 }
 
 void voucher::populateNumber()
@@ -788,7 +817,7 @@ void voucher::populate()
   XSqlQuery vohead;
   vohead.prepare( "SELECT vohead_number, vohead_pohead_id, vohead_taxzone_id, vohead_terms_id,"
                   "       vohead_distdate, vohead_docdate, vohead_duedate,"
-                  "       vohead_invcnumber, vohead_reference,"
+                  "       vohead_invcnumber, vohead_reference, vohead_freight, vohead_freight_expcat_id,"
                   "       vohead_1099, vohead_amount, vohead_curr_id, vohead_notes "
                   "FROM vohead "
                   "WHERE (vohead_id=:vohead_id);" );
@@ -803,6 +832,10 @@ void voucher::populate()
     _amountToDistribute->set(vohead.value("vohead_amount").toDouble(),
                              vohead.value("vohead_curr_id").toInt(),
                              vohead.value("vohead_docdate").toDate(), false);
+    _freight->set(vohead.value("vohead_freight").toDouble(),
+                             vohead.value("vohead_curr_id").toInt(),
+                             vohead.value("vohead_docdate").toDate(), false);
+    _freightExpcat->setId(vohead.value("vohead_freight_expcat_id").toInt());
 
     _distributionDate->setDate(vohead.value("vohead_distdate").toDate(), true);
     _invoiceDate->setDate(vohead.value("vohead_docdate").toDate());
@@ -923,7 +956,7 @@ void voucher::keyPressEvent( QKeyEvent * e )
     e->ignore();
 }
 
-void voucher::saveDetail()
+bool voucher::saveDetail()
 {
   if (_mode != cView)
   {
@@ -939,6 +972,8 @@ void voucher::saveDetail()
                "    vohead_invcnumber=:vohead_invcnumber,"
                "    vohead_reference=:vohead_reference,"
                "    vohead_amount=:vohead_amount,"
+               "    vohead_freight=:vohead_freight,"
+               "    vohead_freight_expcat_id=:vohead_freightexpcat,"
                "    vohead_1099=:vohead_1099, "
                "    vohead_curr_id=:vohead_curr_id, "
                "    vohead_notes=:vohead_notes "
@@ -956,19 +991,65 @@ void voucher::saveDetail()
     updq.bindValue(":vohead_invcnumber", _invoiceNum->text().trimmed());
     updq.bindValue(":vohead_reference", _reference->text().trimmed());
     updq.bindValue(":vohead_amount", _amountToDistribute->localValue());
+    updq.bindValue(":vohead_freight", _freight->localValue());
+    if (_freightExpcat->isValid())
+      updq.bindValue(":vohead_freightexpcat", _freightExpcat->id());
     updq.bindValue(":vohead_1099", QVariant(_flagFor1099->isChecked()));
     updq.bindValue(":vohead_curr_id", _amountToDistribute->id());
     updq.bindValue(":vohead_notes", _notes->toPlainText());
     updq.exec();
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Updating Voucher"),
                              updq, __FILE__, __LINE__))
-      return;
+      return false;
   }
+  return true;
+}
+
+void voucher::sCalculateTax()
+{
+  if (_vendid == -1)
+    return;
+
+  if (!saveDetail())
+    return;
+
+  XSqlQuery taxq;
+  taxq.prepare( "SELECT ABS(SUM(tax)) AS tax "
+                "FROM ("
+                "SELECT ROUND(SUM(taxdetail_tax),2) AS tax "
+                "FROM tax "
+                " JOIN calculateTaxDetailSummary('VO', :vohead_id, 'T') ON (taxdetail_tax_id=tax_id)"
+                "GROUP BY tax_id) AS data;" );
+  taxq.bindValue(":vohead_id", _voheadid);
+  taxq.exec();
+  if (taxq.first())
+    _tax->setLocalValue(taxq.value("tax").toDouble());
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Calculating Voucher Tax"),
+                                    taxq, __FILE__, __LINE__))
+        return;
+}
+
+void voucher::sTaxDetail()
+{
+  if (!saveDetail())
+    return;
+
+  ParameterList params;
+  params.append("order_id", _voheadid);
+  params.append("order_type", "VO");
+  // mode => view since there are no fields to hold modified tax data
+  if (_mode == cView)
+    params.append("mode", "view");
+
+  taxBreakdown newdlg(this, "", true);
+  newdlg.set(params);
+  newdlg.exec();
 }
 
 void voucher::enableWindowModifiedSetting()
 {
   connect(_amountToDistribute,     SIGNAL(valueChanged()), this, SLOT(sDataChanged()));
+  connect(_freight,                SIGNAL(valueChanged()), this, SLOT(sDataChanged()));
   connect(_distributionDate,SIGNAL(newDate(const QDate&)), this, SLOT(sDataChanged()));
   connect(_dueDate,         SIGNAL(newDate(const QDate&)), this, SLOT(sDataChanged()));
   connect(_flagFor1099,             SIGNAL(toggled(bool)), this, SLOT(sDataChanged()));
