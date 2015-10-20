@@ -599,6 +599,7 @@ void voucher::sFillList()
                "         WHERE ( (recv_posted)"
                "           AND (NOT recv_invoiced)"
                "           AND (recv_vohead_id IS NULL)"
+               "           AND (recv_order_type='PO')"
                "           AND (recv_orderitem_id=poitem_id) ) ) AS qtyreceived,"
                "       ( SELECT COALESCE(SUM(poreject_qty), 0)"
                "         FROM poreject"
