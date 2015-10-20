@@ -56,9 +56,8 @@ configureIM::configureIM(QWidget* parent, const char* name, bool /*modal*/, Qt::
 	    "WHERE (orderseq_name='ToNumber');" );
     if (configureconfigureIM.first())
       _toNextNum->setText(configureconfigureIM.value("tonumber").toString());
-    else if (configureconfigureIM.lastError().type() != QSqlError::NoError)
-      systemError(this, configureconfigureIM.lastError().databaseText(), __FILE__, __LINE__);
-
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Next Transfer Order Number"),
+                                  configureconfigureIM, __FILE__, __LINE__))
     _enableToShipping->setChecked(_metrics->boolean("EnableTOShipping"));
     _transferOrderChangeLog->setChecked(_metrics->boolean("TransferOrderChangeLog"));
   }
@@ -126,8 +125,9 @@ configureIM::configureIM(QWidget* parent, const char* name, bool /*modal*/, Qt::
          "SELECT currval('shipment_number_seq') AS shipment_number;");
   if (configureconfigureIM.first())
     _nextShipmentNum->setText(configureconfigureIM.value("shipment_number"));
-  else if (configureconfigureIM.lastError().type() != QSqlError::NoError)
-    systemError(this, configureconfigureIM.lastError().databaseText(), __FILE__, __LINE__);
+  else
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Inventory Settings"),
+                       configureconfigureIM, __FILE__, __LINE__);
 
   _kitInheritCOS->setChecked(_metrics->boolean("KitComponentInheritCOS"));
   _disallowReceiptExcess->setChecked(_metrics->boolean("DisallowReceiptExcessQty"));
@@ -233,14 +233,16 @@ bool configureIM::sSave()
       int result = configureSave.value("result").toInt();
       if (result < 0)
       {
-        systemError(this, storedProcErrorLookup("setNextNumber", result), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Inventory Settings"),
+                                 storedProcErrorLookup("setNextNumber", result),
+                                 __FILE__, __LINE__);
         _toNextNum->setFocus();
         return false;
       }
     }
-    else if (configureSave.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Inventory Settings"),
+                                  configureSave, __FILE__, __LINE__))
     {
-      systemError(this, configureSave.lastError().databaseText(), __FILE__, __LINE__);
       _toNextNum->setFocus();
       return false;
     }
@@ -285,9 +287,9 @@ bool configureIM::sSave()
   configureSave.prepare("SELECT setval('shipment_number_seq', :shipmentnumber);");
   configureSave.bindValue(":shipmentnumber", _nextShipmentNum->text().toInt());
   configureSave.exec();
-  if (configureSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Inventory Settings"),
+                                configureSave, __FILE__, __LINE__))
   {
-    systemError(this, configureSave.lastError().databaseText(), __FILE__, __LINE__);
     _nextShipmentNum->setFocus();
     return false;
   }
