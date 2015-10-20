@@ -303,6 +303,7 @@ FORMS += alarmMaint.ui \
     alarms.ui \
     characteristicAssignment.ui         \
     characteristicswidget.ui            \
+    comment.ui                          \
     contactemail.ui \
     customerselector.ui \
     docAttach.ui \
