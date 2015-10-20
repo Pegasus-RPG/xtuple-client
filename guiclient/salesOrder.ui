@@ -1471,7 +1471,7 @@ to be bound by its terms.</comment>
          <item row="4" column="0">
           <widget class="XURLLabel" name="_allocatedCMLit">
            <property name="text">
-            <string>Allocated Credit:</string>
+            <string>Allocated CM/Invoice:</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
