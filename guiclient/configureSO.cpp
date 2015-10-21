@@ -12,6 +12,7 @@
 
 #include <QSqlError>
 #include <QMessageBox>
+#include <errorReporter.h>
 
 configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::WindowFlags fl)
     : XAbstractConfigure(parent, fl)
@@ -65,9 +66,9 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
     _nextCmNumber->setText(configureconfigureSO.value("cmnumber"));
     _nextInNumber->setText(configureconfigureSO.value("innumber"));
   }
-  else if (configureconfigureSO.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving SO Setting Information"),
+                                configureconfigureSO, __FILE__, __LINE__))
   {
-    systemError(this, configureconfigureSO.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -368,9 +369,9 @@ bool configureSO::sSave()
   configureSave.bindValue(":cmnumber", _nextCmNumber->text().toInt());
   configureSave.bindValue(":innumber", _nextInNumber->text().toInt());
   configureSave.exec();
-  if (configureSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving SO Setting Information"),
+                                configureSave, __FILE__, __LINE__))
   {
-    systemError(this, configureSave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -387,9 +388,9 @@ bool configureSO::sSave()
     configureSave.prepare( "SELECT setNextRaNumber(:ranumber);" );
     configureSave.bindValue(":ranumber", _nextRaNumber->text().toInt());
     configureSave.exec();
-    if (configureSave.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving SO Setting Information"),
+                                  configureSave, __FILE__, __LINE__))
     {
-      systemError(this, configureSave.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
   }

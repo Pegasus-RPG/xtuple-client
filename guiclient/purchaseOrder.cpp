@@ -1663,7 +1663,7 @@ void purchaseOrder::sTaxDetail()
 
 bool purchaseOrder::saveDetail()
 {
-  if (_mode == cView)
+  if (_mode == cView || _poheadid == -1)
     return true;
 
   QList<GuiErrorCheck> errors;
