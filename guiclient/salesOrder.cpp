@@ -3807,7 +3807,7 @@ void salesOrder::populateCMInfo()
   if (cNew != _mode && cEdit != _mode && cView != _mode)
     return;
 
-  // Allocated C/M's
+  // Allocated C/M's and posted Invoices for partial shipments
   populateSales.prepare("SELECT COALESCE(SUM(currToCurr(aropenalloc_curr_id, :curr_id,"
                         "                               aropenalloc_amount, :effective)),0) AS amount"
                         "  FROM aropenalloc JOIN aropen ON (aropen_id=aropenalloc_aropen_id) "
@@ -3822,6 +3822,19 @@ void salesOrder::populateCMInfo()
   else
     _allocatedCM->setLocalValue(0);
 
+  populateSales.prepare("SELECT COALESCE(SUM(currToCurr(invchead_curr_id, :curr_id,"
+                        "                               calcInvoiceAmt(invchead_id), :effective)),0) AS amount"
+                        "  FROM coitem JOIN invcitem ON (invcitem_coitem_id=coitem_id)"
+                        "              JOIN invchead ON (invchead_id=invcitem_invchead_id AND invchead_posted) "
+                        " WHERE (coitem_cohead_id=:doc_id)"
+                        " GROUP BY invchead_curr_id, invchead_id;");
+  populateSales.bindValue(":doc_id",    _soheadid);
+  populateSales.bindValue(":curr_id",   _allocatedCM->id());
+  populateSales.bindValue(":effective", _allocatedCM->effective());
+  populateSales.exec();
+  if (populateSales.first())
+    _allocatedCM->setLocalValue(_allocatedCM->localValue() + populateSales.value("amount").toDouble());
+  
   // Unallocated C/M's
   populateSales.prepare("SELECT SUM(amount) AS f_amount"
                         " FROM (SELECT aropen_id,"
