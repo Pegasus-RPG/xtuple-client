@@ -319,15 +319,15 @@ void creditMemo::sSave()
     return;
   }
 
+  // save the cmhead
+  if (!save())
+    return;
+
   // save address info in case someone wants to use 'em again later
   // but don't make any global changes to the data and ignore errors
   _billToAddr->save(AddressCluster::CHANGEONE);
   _shipToAddr->save(AddressCluster::CHANGEONE);
-
-  // finally save the cmhead
-  if (!save())
-    return;
-
+  
   omfgThis->sCreditMemosUpdated();
 
   _cmheadid = -1;
