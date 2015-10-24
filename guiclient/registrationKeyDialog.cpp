@@ -40,6 +40,8 @@ void registrationKeyDialog::sCheckKey()
   XTupleProductKey pkey(_key->text());
   if(pkey.valid() && pkey.expiration() > QDate::currentDate())
     _select->setEnabled(true);
+  else
+    _select->setEnabled(false);
 }
 
 void registrationKeyDialog::sSelect()
