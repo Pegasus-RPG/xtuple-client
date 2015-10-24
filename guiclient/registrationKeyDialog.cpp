@@ -50,7 +50,7 @@ void registrationKeyDialog::sSelect()
   if(pk.valid())
   {
     XSqlQuery keyq;
-    keyq.prepare("UPDATE metric SET metric_value=:key WHERE metric_name='RegistrationKey';");
+    keyq.prepare("UPDATE metric SET metric_value=UPPER(:key) WHERE metric_name='RegistrationKey';");
     keyq.bindValue(":key", _key->text());
     keyq.exec();
   }
