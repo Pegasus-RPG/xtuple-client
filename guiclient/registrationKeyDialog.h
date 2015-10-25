@@ -32,6 +32,9 @@ public slots:
 protected slots:
     virtual void languageChange();
 
+protected:
+    virtual void closeEvent(QCloseEvent*);
+
 private:
     int _bankaccntid;
     QString _type;

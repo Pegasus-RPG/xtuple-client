@@ -10,7 +10,7 @@
 
 #include "registrationKeyDialog.h"
 #include "xtupleproductkey.h"
-
+#include <QCloseEvent>
 #include <QVariant>
 
 registrationKeyDialog::registrationKeyDialog(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
@@ -74,3 +74,7 @@ void registrationKeyDialog::sClose()
   done(-1);
 }
 
+void registrationKeyDialog::closeEvent(QCloseEvent *pEvent)
+{
+  done(-1);
+}
