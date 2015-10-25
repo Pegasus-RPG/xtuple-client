@@ -17,6 +17,7 @@
 
 #include <parameter.h>
 #include <openreports.h>
+#include "errorReporter.h"
 
 createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl),
@@ -115,9 +116,9 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
         _preassigned = true;
         connect(_lotSerial, SIGNAL(newID(int)), this, SLOT(sLotSerialSelected()));
       }
-      else if (preassign.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+                                    preassign, __FILE__, __LINE__))
       {
-        systemError(this, preassign.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
       else if (createet.value("itemsite_lsseq_id").toInt() != -1)
@@ -132,9 +133,9 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
           _lotSerial->setAllowNull(true);
           _lotSerial->setText(fetchlsnum.value("lotserial").toString());
         }
-        else if (fetchlsnum.lastError().type() != QSqlError::NoError)
+        else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+                                      fetchlsnum, __FILE__, __LINE__))
         {
-          systemError(this, fetchlsnum.lastError().databaseText(), __FILE__, __LINE__);
           return UndefinedError;
         }
       }
@@ -146,9 +147,9 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
                      "WHERE (itemloc_itemsite_id=:itemsite_id);");
         lots.bindValue(":itemsite_id", createet.value("itemsite_id").toInt());
         lots.exec();
-        if (lots.lastError().type() != QSqlError::NoError)
+        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+                                      lots, __FILE__, __LINE__))
         {
-          systemError(this, lots.lastError().databaseText(), __FILE__, __LINE__);
           return UndefinedError;
         }
         else {
@@ -158,9 +159,9 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
         }
       }
     }
-    else if (createet.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+                                  createet, __FILE__, __LINE__))
     {
-      systemError(this, createet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -404,9 +405,9 @@ void createLotSerial::sAssign()
         return;
       }
     }
-    else if (createAssign.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Lot/Serial Information"),
+                                  createAssign, __FILE__, __LINE__))
     {
-      systemError(this, createAssign.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -430,9 +431,9 @@ void createLotSerial::sAssign()
                                   QMessageBox::No  | QMessageBox::Escape) == QMessageBox::No)
           return;
     }
-    else if (createAssign.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Lot/Serial Information"),
+                                  createAssign, __FILE__, __LINE__))
     {
-      systemError(this, createAssign.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -463,9 +464,9 @@ void createLotSerial::sAssign()
     createAssign.bindValue(":warranty", _warranty->date());
   createAssign.bindValue(":itemlocdist_id", _itemlocdistid);
   createAssign.exec();
-  if (createAssign.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Lot/Serial Information"),
+                                createAssign, __FILE__, __LINE__))
   {
-    systemError(this, createAssign.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

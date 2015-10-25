@@ -15,6 +15,7 @@
 #include <QSqlError>
 #include <QValidator>
 #include <QVariant>
+#include "errorReporter.h"
 
 country::country(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -143,9 +144,9 @@ void country::sSave()
 
   countrySave.exec();
 
-  if (countrySave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Country Information"),
+                                countrySave, __FILE__, __LINE__))
   {
-    systemError(this, countrySave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   
@@ -170,9 +171,9 @@ void country::populate()
     _currNumber->setText(countrypopulate.value("country_curr_number").toString());
     _currSymbol->setText(countrypopulate.value("country_curr_symbol").toString());
   }
-  else if (countrypopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Country Information"),
+                                countrypopulate, __FILE__, __LINE__))
   {
-    systemError(this, countrypopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
