@@ -24,6 +24,7 @@ public:
     ~registrationKeyDialog();
 
 public slots:
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sCheckKey();
     virtual void sSelect();
     virtual void sClose();

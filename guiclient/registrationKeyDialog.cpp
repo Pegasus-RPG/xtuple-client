@@ -35,6 +35,18 @@ void registrationKeyDialog::languageChange()
   retranslateUi(this);
 }
 
+enum SetResponse registrationKeyDialog::set(const ParameterList &pParams)
+{
+  QVariant param;
+  bool     valid;
+
+  param = pParams.value("invalid", &valid);
+  if (valid)
+    setWindowTitle(tr("Invalid Registration Key"));
+
+  return NoError;
+}
+
 void registrationKeyDialog::sCheckKey()
 {
   XTupleProductKey pkey(_key->text());
