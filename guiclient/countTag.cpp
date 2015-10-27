@@ -161,7 +161,7 @@ void countTag::sEnter()
   {
 
 //  Make sure that there aren't any unposted Slips for this Tag
-    countEnter.prepare( "=SELECT cntslip_id "
+    countEnter.prepare( "SELECT cntslip_id "
                "FROM cntslip "
                "WHERE ( (NOT cntslip_posted)"
                " AND (cntslip_cnttag_id=:cnttag_id) ) "

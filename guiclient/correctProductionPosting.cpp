@@ -171,10 +171,11 @@ void correctProductionPosting::sCorrect()
     correctCorrect.exec("COMMIT;");
     omfgThis->sWorkOrdersUpdated(_wo->id(), true);
   }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production Correction"),
-                                correctCorrect, __FILE__, __LINE__))
+  else if (correctCorrect.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production Correction"),
+                                    correctCorrect, __FILE__, __LINE__);
     return;
   }
 

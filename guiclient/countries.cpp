@@ -119,9 +119,7 @@ void countries::sDelete()
     countriesDelete.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Country"),
                          countriesDelete, __FILE__, __LINE__);
-    {
-      sFillList();
-    }
+    sFillList();
   }
 }
 
