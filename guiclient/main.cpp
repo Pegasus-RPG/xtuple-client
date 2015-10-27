@@ -367,6 +367,7 @@ int main(int argc, char *argv[])
     bool checkPass = true;
     bool checkLock = false;
     bool expired   = false;
+    bool invalid   = true;
     QString checkPassReason;
     QString rkey = _metrics->value("RegistrationKey");
     XTupleProductKey pkey(rkey);
@@ -425,6 +426,7 @@ int main(int argc, char *argv[])
     else
     {
       checkPass = false;
+      invalid   = true;
       checkPassReason = QObject::tr("<p>The Registration key installed for this system does not appear to be valid.");
     }
     if(!checkPass)
@@ -444,6 +446,18 @@ int main(int argc, char *argv[])
         QMessageBox::critical(0, QObject::tr("Registration Key"), checkPassReason);
         if(!forced)
           return 0;
+      }
+      else if(invalid)
+      {
+        ParameterList params;
+        params.append("invalid");
+        registrationKeyDialog newdlg(0, "", true);
+        newdlg.set(params);
+        if(newdlg.exec() == -1)
+        {
+          QMessageBox::critical(0, QObject::tr("Registration Key"), checkPassReason);
+          return 0;
+        }        
       }
       else
       {
