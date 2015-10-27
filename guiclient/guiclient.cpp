@@ -1114,32 +1114,38 @@ void GUIClient::sSystemMessageAdded()
 {
   emit systemMessageAdded();
 
-  //  Grab any new System Messages
-          XSqlQuery msg;
-          msg.exec( "SELECT msguser_id "
-                    "FROM msg, msguser "
-                    "WHERE ( (msguser_username=getEffectiveXtUser())"
-                    " AND (msguser_msg_id=msg_id)"
-                    " AND (CURRENT_TIMESTAMP BETWEEN msg_scheduled AND msg_expires)"
-                    " AND (msguser_viewed IS NULL) );" );
-          if (msg.first())
-          {
-            ParameterList params;
-            params.append("mode", "acknowledge");
-
-            systemMessage *newdlg = new systemMessage();
-            newdlg->set(params);
-
-            do
-            {
-              ParameterList params;
-              params.append("msguser_id", msg.value("msguser_id").toInt());
-
-              newdlg->set(params);
-              omfgThis->handleNewWindow(newdlg);
-            }
-            while (msg.next());
-          }
+  XSqlQuery msg;
+  msg.exec("SELECT msguser_id"
+           "  FROM msg"
+           "  JOIN msguser ON msguser_msg_id = msg_id"
+           " WHERE msguser_username=getEffectiveXtUser()"
+           "   AND CURRENT_TIMESTAMP BETWEEN msg_scheduled AND msg_expires"
+           "   AND msguser_viewed IS NULL;" );
+  if (msg.first())
+  {
+    ParameterList params;
+    params.append("mode", "acknowledge");
+    do
+    {
+      int id = msg.value("msguser_id").toInt();
+      systemMessage *newdlg = systemMessage::windowForId(id);
+      if (newdlg)
+      {
+        qDebug() << "raising window for id" << id << newdlg;
+        newdlg->show();
+        newdlg->raise();
+        newdlg->activateWindow();
+      }
+      else
+      {
+        qDebug() << "opening new window for id" << id << newdlg;
+        params.append("msguser_id", id);
+        newdlg = new systemMessage();
+        newdlg->set(params);
+        omfgThis->handleNewWindow(newdlg);
+      }
+    } while (msg.next());
+  }
 }
 
 /** @name Data Update Slots
