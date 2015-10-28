@@ -16,6 +16,7 @@
 
 #include "absoluteCalendarItem.h"
 #include "relativeCalendarItem.h"
+#include "errorReporter.h"
 
 static const char *originTypes[] = { "D", "E", "W", "X", "M", "N", "L", "Y", "Z" };
 
@@ -83,9 +84,9 @@ enum SetResponse calendar::set(const ParameterList &pParams)
       calendaret.exec("SELECT NEXTVAL('calhead_calhead_id_seq') AS _calhead_id;");
       if (calendaret.first())
         _calheadid = calendaret.value("_calhead_id").toInt();
-      else if (calendaret.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating New Calendar"),
+                                    calendaret, __FILE__, __LINE__))
       {
-        systemError(this, calendaret.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
     }
@@ -157,9 +158,9 @@ void calendar::sSave()
   calendarSave.bindValue(":calhead_descrip", _descrip->text());
   calendarSave.bindValue(":calhead_origin", originTypes[_origin->currentIndex()]);
   calendarSave.exec();
-  if (calendarSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Calendar"),
+                                calendarSave, __FILE__, __LINE__))
   {
-    systemError(this, calendarSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -229,9 +230,9 @@ void calendar::sDelete()
 
   calendarDelete.bindValue(":xcalitem_id", _calitem->id());
   calendarDelete.exec();
-  if (calendarDelete.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Calendar Item"),
+                                calendarDelete, __FILE__, __LINE__))
   {
-    systemError(this, calendarDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -299,9 +300,9 @@ void calendar::sFillList()
   calendarFillList.bindValue(":calhead_id", _calheadid);
   calendarFillList.exec();
   _calitem->populate(calendarFillList);
-  if (calendarFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Calendar Information"),
+                                calendarFillList, __FILE__, __LINE__))
   {
-    systemError(this, calendarFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -339,9 +340,9 @@ void calendar::populate()
 
     sFillList();
   }
-  else if (calendarpopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Calendar Information"),
+                                calendarpopulate, __FILE__, __LINE__))
   {
-    systemError(this, calendarpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

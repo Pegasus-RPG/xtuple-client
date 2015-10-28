@@ -19,7 +19,7 @@
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "mqlutil.h"
-#include "taxDetail.h"
+#include "taxBreakdown.h"
 #include "itemCharacteristicDelegate.h"
 #include "itemSourceSearch.h"
 #include "itemSourceList.h"
@@ -58,6 +58,7 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   connect(_listPrices, SIGNAL(clicked()), this, SLOT(sVendorListPrices()));
   connect(_taxLit, SIGNAL(leftClickedURL(QString)), this, SLOT(sTaxDetail()));  // new slot added for tax url //
   connect(_extendedPrice, SIGNAL(valueChanged()), this, SLOT(sCalculateTax()));  // new slot added for price //
+  connect(_freight, SIGNAL(valueChanged()), this, SLOT(sCalculateTax()));  // new slot added for line freight //
   connect(_taxtype, SIGNAL(newID(int)), this, SLOT(sCalculateTax()));            // new slot added for taxtype //
 
   _bomRevision->setMode(RevisionLineEdit::Use);
@@ -249,7 +250,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
     }
 
     populate();
-	sCalculateTax();
+    sCalculateTax();
   }
   // connect here and not in the .ui to avoid timing issues at initialization
   connect(_unitPrice, SIGNAL(valueChanged()), this, SLOT(sPopulateExtPrice()));
@@ -1250,13 +1251,15 @@ void purchaseOrderItem::sCalculateTax()
 {
   XSqlQuery calcq;
 
-  calcq.prepare("SELECT calculateTax(pohead_taxzone_id,:taxtype_id,pohead_orderdate,pohead_curr_id,ROUND(:ext,2)) AS tax "
+  calcq.prepare("SELECT COALESCE(calculateTax(pohead_taxzone_id,:taxtype_id,pohead_orderdate,pohead_curr_id,ROUND(:ext,2)),0.00) + "
+                "       COALESCE(calculateTax(pohead_taxzone_id,getfreighttaxtypeid(),pohead_orderdate,pohead_curr_id,ROUND(COALESCE(:frght,0.00),2)), 0.00) AS tax "
                 "FROM pohead "
                 "WHERE (pohead_id=:pohead_id); " );
 
   calcq.bindValue(":pohead_id", _poheadid);
   calcq.bindValue(":taxtype_id", _taxtype->id());
   calcq.bindValue(":ext", _extendedPrice->localValue());
+  calcq.bindValue(":frght", _freight->localValue());
 
   calcq.exec();
   if (calcq.first())
@@ -1271,18 +1274,16 @@ void purchaseOrderItem::sCalculateTax()
 
 void purchaseOrderItem::sTaxDetail()    // new function added from raitem
 {
-  taxDetail newdlg(this, "", true);
-  ParameterList params;
-  params.append("taxzone_id",   _taxzoneid);
-  params.append("taxtype_id",  _taxtype->id());
-  params.append("date", _tax->effective());
-  params.append("curr_id", _tax->id());
-  params.append("subtotal", _extendedPrice->localValue());
-  //params.append("readOnly");
+  if (_poitemid < 0)
+    return;
 
-  if (newdlg.set(params) == NoError && newdlg.exec())
-  {
-    if (_taxtype->id() != newdlg.taxtype())
-      _taxtype->setId(newdlg.taxtype());
-  }
+  ParameterList params;
+  params.append("order_id", _poitemid);
+  params.append("order_type", "PI");
+  if (_mode == cView)
+    params.append("mode", "view");
+
+  taxBreakdown newdlg(this, "", true);
+  newdlg.set(params);
+  newdlg.exec();
 }

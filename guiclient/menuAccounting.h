@@ -142,6 +142,7 @@ class menuAccounting : public QObject
     void sTaxRegistrations();
     void sDspTax1099();
     void sDspTaxHistory();
+    void sDspTaxReturn();
 
     void sReconcileBankaccount();
     void sEnterAdjustment();

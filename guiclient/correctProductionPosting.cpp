@@ -18,6 +18,7 @@
 #include "distributeInventory.h"
 #include "inputManager.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 correctProductionPosting::correctProductionPosting(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -111,9 +112,9 @@ bool correctProductionPosting::okToPost()
                             "instead, adjust shipped quantities."));
     return false;
   }
-  else if (itemtypeq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production Correction"),
+                                itemtypeq, __FILE__, __LINE__))
   {
-    systemError(this, itemtypeq.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -154,8 +155,9 @@ void correctProductionPosting::sCorrect()
     if (result < 0)
     {
       rollback.exec();
-      systemError(this, storedProcErrorLookup("correctProduction", result),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production Correction"),
+                           storedProcErrorLookup("correctProduction", result),
+                           __FILE__, __LINE__);
       return;
     }
 
@@ -172,7 +174,8 @@ void correctProductionPosting::sCorrect()
   else if (correctCorrect.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, correctCorrect.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production Correction"),
+                                    correctCorrect, __FILE__, __LINE__);
     return;
   }
 

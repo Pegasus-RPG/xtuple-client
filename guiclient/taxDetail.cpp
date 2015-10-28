@@ -140,9 +140,9 @@ void taxDetail::sCalculateTax()
               "   taxdetail_tax AS taxdetail_tax, "
               "   taxdetail_taxclass_sequence, 0 AS xtindentrole, "
               "   0 AS taxdetail_tax_xttotalrole, 'salesprice' AS taxdetail_tax_xtnumericrole  "
-              "FROM calculateTaxDetail(<? value(\"taxzone_id\") ?>, <? value(\"taxtype_id\") ?>, "
-			        " <? value(\"date\") ?>, <? value(\"curr_id\") ?>,  "
-			        " <? value(\"subtotal\") ?>) "); 
+              "FROM calculateTaxDetail(<? value('taxzone_id') ?>, <? value('taxtype_id') ?>, "
+			        " <? value('date') ?>, <? value('curr_id') ?>,  "
+			        " <? value('subtotal') ?>) "); 
 			  
   MetaSQLQuery mql(sql);
   taxCalculateTax = mql.toQuery(params);
@@ -179,25 +179,26 @@ void taxDetail::sPopulate()
   params.append("order_type", _ordertype);
   params.append("sense", _sense);
     
-  if(_ordertype == "S" || _ordertype == "Q" || _ordertype == "I" || 
-     _ordertype == "B" || _ordertype == "RA" || _ordertype == "CM" ||
-     _ordertype == "PO" || _ordertype == "VO" || _ordertype == "TO")
+  if(_ordertype == "S"  || _ordertype == "Q"  || _ordertype == "I" || 
+     _ordertype == "B"  || _ordertype == "RA" || _ordertype == "CM" ||
+     _ordertype == "PO" || _ordertype == "VO" || _ordertype == "VI" || 
+     _ordertype == "TO" || _ordertype == "PI" )
   {
    params.append("display_type", _displayType);
    sql = "SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
-         "  round(sum(taxdetail_tax),2) * <? value(\"sense\") ?> as taxdetail_tax, taxdetail_taxclass_sequence, 0 AS xtindentrole, "
+         "  round(sum(taxdetail_tax),2) * <? value('sense') ?> as taxdetail_tax, taxdetail_taxclass_sequence, 0 AS xtindentrole, "
          " 0 AS taxdetail_tax_xttotalrole, 'salesprice' AS taxdetail_tax_xtnumericrole "
-         "FROM calculateTaxDetailSummary(<? value(\"order_type\") ?>, <? value(\"order_id\") ?>, <? value(\"display_type\") ?>) "
+         "FROM calculateTaxDetailSummary(<? value('order_type') ?>, <? value('order_id') ?>, <? value('display_type') ?>) "
 	 "GROUP BY taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, taxdetail_level, taxdetail_taxclass_sequence;";
   }
 
   else if( _ordertype == "II" || _ordertype == "BI" || _ordertype == "CI" || 
-           _ordertype == "TI" || _ordertype == "VI" || _ordertype == "AR" || _ordertype == "AP" )
+           _ordertype == "TI" || _ordertype == "AR" || _ordertype == "AP" )
 
    sql = "SELECT taxdetail_tax_id, taxdetail_tax_code, taxdetail_tax_descrip, "
-         "  taxdetail_tax * <? value(\"sense\") ?> AS taxdetail_tax, taxdetail_taxclass_sequence, taxdetail_level AS xtindentrole, "
+         "  taxdetail_tax * <? value('sense') ?> AS taxdetail_tax, taxdetail_taxclass_sequence, taxdetail_level AS xtindentrole, "
          "  0 AS taxdetail_tax_xttotalrole, 'saleprice' AS taxdetail_tax_xtnumericrole  "
-         "FROM calculateTaxDetailLine(<? value(\"order_type\") ?>, <? value(\"order_id\") ?>); ";
+         "FROM calculateTaxDetailLine(<? value('order_type') ?>, <? value('order_id') ?>); ";
   else
   {  
     sCalculateTax();

@@ -382,7 +382,7 @@ bool configureSO::sSave()
   configureSave.bindValue(":innumber", _nextInNumber->text().toInt());
   configureSave.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving SO Setting Information"),
-                           configureSave, __FILE__, __LINE__))
+                                configureSave, __FILE__, __LINE__))
   {
     return false;
   }
@@ -401,7 +401,7 @@ bool configureSO::sSave()
     configureSave.bindValue(":ranumber", _nextRaNumber->text().toInt());
     configureSave.exec();
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving SO Setting Information"),
-                             configureSave, __FILE__, __LINE__))
+                                  configureSave, __FILE__, __LINE__))
     {
       return false;
     }

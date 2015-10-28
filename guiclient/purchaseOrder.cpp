@@ -49,6 +49,7 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WindowFlags 
   connect(_poitem,                   SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this,          SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_delete,                   SIGNAL(clicked()),                                 this,          SLOT(sDelete()));
   connect(_edit,                     SIGNAL(clicked()),                                 this,          SLOT(sEdit()));
+  connect(_freight,                  SIGNAL(valueChanged()),                            this,          SLOT(sCalculateTax()));
   connect(_freight,                  SIGNAL(valueChanged()),                            this,          SLOT(sCalculateTotals()));
   connect(_new,                      SIGNAL(clicked()),                                 this,          SLOT(sNew()));
   connect(_orderDate,                SIGNAL(newDate(QDate)),                            this,          SLOT(sHandleOrderDate()));
@@ -1621,7 +1622,12 @@ void purchaseOrder::sTaxZoneChanged()
 }
 
 void purchaseOrder::sCalculateTax()
-{  
+{ 
+  if (!_vendor->isValid())
+    return; 
+  if (!saveDetail())
+    return;
+
   XSqlQuery taxq;
   taxq.prepare( "SELECT SUM(tax) AS tax "
                 "FROM ("
@@ -1633,11 +1639,9 @@ void purchaseOrder::sCalculateTax()
   taxq.exec();
   if (taxq.first())
     _tax->setLocalValue(taxq.value("tax").toDouble());
-  else if (taxq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }              
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Calculating P/O Tax"),
+                                    taxq, __FILE__, __LINE__))
+        return;
 }
 
 void purchaseOrder::sTaxDetail()
@@ -1659,7 +1663,7 @@ void purchaseOrder::sTaxDetail()
 
 bool purchaseOrder::saveDetail()
 {
-  if (_mode == cView)
+  if (_mode == cView || _poheadid == -1)
     return true;
 
   QList<GuiErrorCheck> errors;
@@ -1674,8 +1678,8 @@ bool purchaseOrder::saveDetail()
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Purchase Order"), errors))
     return false;
 
-  XSqlQuery taxq;
-  taxq.prepare( "UPDATE pohead "
+  XSqlQuery updt;
+  updt.prepare( "UPDATE pohead "
                 "SET pohead_warehous_id=:pohead_warehous_id,"
                 "    pohead_vend_id=:pohead_vend_id,"
                 "    pohead_number=:pohead_number,"
@@ -1685,21 +1689,22 @@ bool purchaseOrder::saveDetail()
                 "    pohead_freight = :pohead_freight "
                 "WHERE (pohead_id=:pohead_id);" );
   if (_warehouse->isValid())
-    taxq.bindValue(":pohead_warehous_id", _warehouse->id());
-  taxq.bindValue(":pohead_vend_id", _vendor->id());
-  taxq.bindValue(":pohead_number", _orderNumber->text());
-  taxq.bindValue(":pohead_id", _poheadid);
+    updt.bindValue(":pohead_warehous_id", _warehouse->id());
+  updt.bindValue(":pohead_vend_id", _vendor->id());
+  updt.bindValue(":pohead_number", _orderNumber->text());
+  updt.bindValue(":pohead_id", _poheadid);
   if (_taxZone->isValid())
-    taxq.bindValue(":pohead_taxzone_id", _taxZone->id());
-  taxq.bindValue(":pohead_curr_id", _poCurrency->id());
-  taxq.bindValue(":pohead_orderdate", _orderDate->date());
-  taxq.bindValue(":pohead_freight", _freight->localValue());
-  taxq.exec();
-  if (taxq.lastError().type() != QSqlError::NoError)
+    updt.bindValue(":pohead_taxzone_id", _taxZone->id());
+  updt.bindValue(":pohead_curr_id", _poCurrency->id());
+  updt.bindValue(":pohead_orderdate", _orderDate->date());
+  updt.bindValue(":pohead_freight", _freight->localValue());
+  updt.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("P/O Save Detail"),
+                                    updt, __FILE__, __LINE__))
   {
-    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
+
   return true;
 }
 
