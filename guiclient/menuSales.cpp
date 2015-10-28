@@ -397,7 +397,7 @@ void menuSales::addActionsToMenu(actionProperties acts[], unsigned int numElems)
 //  Orders
 void menuSales::sNewSalesOrderSimple()
 {
-  salesOrderSimple::newSalesOrder(-1);
+  salesOrderSimple::newSalesOrder();
 }
 
 void menuSales::sNewSalesOrder()

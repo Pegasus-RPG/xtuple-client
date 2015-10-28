@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>628</width>
-    <height>519</height>
+    <width>659</width>
+    <height>533</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -220,10 +220,29 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="_ssosOnly">
-           <property name="text">
-            <string>May only use Simple Sales Order</string>
+          <widget class="QGroupBox" name="_appAccessGroup">
+           <property name="title">
+            <string/>
            </property>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QRadioButton" name="_useFullApp">
+              <property name="text">
+               <string>May use the full application</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="_ssosOnly">
+              <property name="text">
+               <string>May only use Simple Sales Order</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
         </layout>
@@ -725,7 +744,6 @@ to be bound by its terms.</comment>
   <tabstop>_createUsers</tabstop>
   <tabstop>_exportContents</tabstop>
   <tabstop>_enhancedAuth</tabstop>
-  <tabstop>_ssosOnly</tabstop>
   <tabstop>_tab</tabstop>
   <tabstop>_module</tabstop>
   <tabstop>_available</tabstop>

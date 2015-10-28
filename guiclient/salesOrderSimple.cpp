@@ -81,6 +81,8 @@ salesOrderSimple::salesOrderSimple(QWidget *parent, const char *name, Qt::Window
   connect(_orderNumber,         SIGNAL(editingFinished()),                      this,         SLOT(sHandleOrderNumber()));
   connect(_orderNumber,         SIGNAL(textChanged(const QString &)),           this,         SLOT(sSetUserEnteredOrderNumber()));
   connect(_save,                SIGNAL(clicked()),                              this,         SLOT(sSaveClicked()));
+  connect(_hold,                SIGNAL(clicked()),                              this,         SLOT(sHoldClicked()));
+  connect(_new,                 SIGNAL(clicked()),                              this,         SLOT(newSalesOrder()));
   connect(_soitem,              SIGNAL(populateMenu(QMenu*,QTreeWidgetItem *)), this,         SLOT(sPopulateMenu(QMenu *)));
   connect(_soitem,              SIGNAL(itemSelected(int)),                      this,         SLOT(sEdit()));
   connect(_subtotal,            SIGNAL(valueChanged()),                         this,         SLOT(sCalculateTotal()));
@@ -248,43 +250,51 @@ enum SetResponse salesOrderSimple:: set(const ParameterList &pParams)
   return NoError;
 }
 
+void salesOrderSimple::sHoldClicked()
+{
+  if (save(false))
+  {
+    if (_metrics->boolean("SSOSPrintSOAck"))
+    {
+      ParameterList params;
+      params.append("sohead_id", _soheadid);
+      printSoForm newdlgX(this, "", true);
+      newdlgX.set(params);
+      newdlgX.exec();
+    }
+
+    if (_captive)
+      close();
+    else
+      prepare();
+  }
+}
+
 void salesOrderSimple::sSaveClicked()
 {
   if (save(false))
   {
     ParameterList params;
     params.append("sohead_id", _soheadid);
-
-    if (_hold->isChecked())
+    
+    if (_metrics->boolean("AutoAllocateCreditMemos"))
     {
-      if (_metrics->boolean("SSOSPrintSOAck"))
-      {
-        printSoForm newdlgX(this, "", true);
-        newdlgX.set(params);
-        newdlgX.exec();
-      }
+      sAllocateCreditMemos();
     }
-    else
+    
+    if (_balance->localValue() > _creditlmt)
     {
-      if (_metrics->boolean("AutoAllocateCreditMemos"))
-      {
-        sAllocateCreditMemos();
-      }
-
-      if (_balance->localValue() > _creditlmt &&
-          QMessageBox::question(this, tr("Over Credit Limit?"),
-                                tr("The Balance is more than the Customer's credit limit.  Do you want to continue?"),
-                                QMessageBox::Yes,
-                                QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-        return;
-      
-      if (!sIssueLineBalance())
-        return;
-      
-      if (!sShipInvoice())
-        return;
+      QMessageBox::critical( this, tr("Over Credit Limit"),
+                            tr( "The Balance is more than the Customer's credit limit.  You must post a payment." ) );
+      return;
     }
-
+    
+    if (!sIssueLineBalance())
+      return;
+    
+    if (!sShipInvoice())
+      return;
+    
     if (_captive)
       close();
     else
@@ -429,19 +439,36 @@ void salesOrderSimple::sSaveLine()
                    tr("This UOM for this Item does not allow fractional quantities. Please fix the quantity."))
   ;
   
-  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Sales Order Item"), errors))
-    return;
-  
-  MetaSQLQuery mql = mqlLoad("salesOrderItem", "simple");
-  
   ParameterList params;
   params.append("sohead_id", _soheadid);
   params.append("item_id", _item->id());
   
+  MetaSQLQuery mql = mqlLoad("salesOrderItem", "simple");
+  
+  // check to see if this item can be priced
+  params.append("CheckPriceMode", true);
+  params.append("qtycheck", _qty->toDouble());
+  salesSave = mql.toQuery(params);
+  if (salesSave.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, salesSave.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  else if (salesSave.first())
+  {
+    if (salesSave.value("unitprice").toDouble() < 0.0)
+      errors << GuiErrorCheck(true, _item,
+                              tr("<p>This item is marked as exclusive and "
+                                 "no qualifying price schedule was found. ") );
+  }
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Sales Order Item"), errors))
+    return;
+  
   if (_lineMode == cNew)
   {
     // check to see if this item is already on the order
-    params.append("CheckMode", true);
+    params.append("CheckDupMode", true);
     salesSave = mql.toQuery(params);
     if (salesSave.lastError().type() != QSqlError::NoError)
     {
@@ -665,6 +692,12 @@ void salesOrderSimple::sPopulateCustomerInfo(int pCustid)
       sFillCcardList();
       _creditlmt   = cust.value("cust_creditlmt").toDouble();
       _usesPos     = cust.value("cust_usespos").toBool();
+      if(_usesPos)
+      {
+        _customerPOLit->setTextColor("red");
+      }
+      else
+        _customerPOLit->setTextColor("black");
       _blanketPos  = cust.value("cust_blanketpos").toBool();
       _subtotal->setId(cust.value("cust_curr_id").toInt());
       _tax->setId(cust.value("cust_curr_id").toInt());
@@ -993,7 +1026,6 @@ void salesOrderSimple::prepare()
   _orderNumber->clear();
 
   _cust->setEnabled(true);
-  _hold->setChecked(false);
   _custPONumber->clear();
   _subtotal->clear();
   _tax->clear();
@@ -1775,6 +1807,7 @@ bool salesOrderSimple::sShipInvoice()
   }
 
   params.append("invchead_id", invcheadid);
+  params.append("print");
   
   if (_metrics->boolean("SSOSPrintInvoice"))
   {
@@ -2034,35 +2067,33 @@ void salesOrderSimple::sViewItemWorkbench()
   _item->setFocus();
 }
 
-void salesOrderSimple::newSalesOrder(int pCustid, QWidget *parent)
+void salesOrderSimple::newSalesOrder()
 {
-  // Check for an Item window in new mode already.
-  if (pCustid == -1)
-  {
-    QWidgetList list = omfgThis->windowList();
-    for (int i = 0; i < list.size(); i++)
-    {
-      QWidget *w = list.at(i);
-      if (QString::compare(w->objectName(), "salesOrderSimple new")==0)
-      {
-        w->setFocus();
-        if (omfgThis->showTopLevel())
-        {
-          w->raise();
-          w->activateWindow();
-        }
-        return;
-      }
-    }
-  }
+  // Check for an salesOrderSimple window in new mode already.
+//  if (pCustid == -1)
+//  {
+//    QWidgetList list = omfgThis->windowList();
+//    for (int i = 0; i < list.size(); i++)
+//    {
+//      QWidget *w = list.at(i);
+//      if (QString::compare(w->objectName(), "salesOrderSimple new")==0)
+//      {
+//        w->setFocus();
+//        if (omfgThis->showTopLevel())
+//        {
+//          w->raise();
+//          w->activateWindow();
+//        }
+//        return;
+//      }
+//    }
+//  }
   
   // If none found then create one.
   ParameterList params;
   params.append("mode", "new");
-  if (pCustid != -1)
-    params.append("cust_id", pCustid);
   
-  salesOrderSimple *newdlg = new salesOrderSimple(parent);
+  salesOrderSimple *newdlg = new salesOrderSimple();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

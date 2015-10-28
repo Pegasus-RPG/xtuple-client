@@ -231,6 +231,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _ssosCust->setCanEdit(_metrics->boolean("SSOSEnabled"));
   _ssosCust->setEnabled(_metrics->boolean("SSOSEnabled"));
   _ssosCust->setId(_metrics->value("SSOSDefaultCustId").toInt());
+  _ssosSaleType->setId(_metrics->value("SSOSDefaultSaleTypeId").toInt());
   _ssosRequireInv->setChecked(_metrics->boolean("SSOSRequireInv"));
   _ssosPrintSOAck->setChecked(_metrics->boolean("SSOSPrintSOAck"));
   _ssosPrintPackList->setChecked(_metrics->boolean("SSOSPrintPackList"));
@@ -410,6 +411,7 @@ bool configureSO::sSave()
   {
     _metrics->set("SSOSEnabled", true);
     _metrics->set("SSOSDefaultCustId", _ssosCust->id());
+    _metrics->set("SSOSDefaultSaleTypeId", _ssosSaleType->id());
     _metrics->set("SSOSRequireInv", _ssosRequireInv->isChecked());
     _metrics->set("SSOSPrintSOAck", _ssosPrintSOAck->isChecked());
     _metrics->set("SSOSPrintPackList", _ssosPrintPackList->isChecked());
@@ -419,6 +421,7 @@ bool configureSO::sSave()
   {
     _metrics->set("SSOSEnabled", false);
     _metrics->set("SSOSDefaultCustId", -1);
+    _metrics->set("SSOSDefaultSaleTypeId", -1);
     _metrics->set("SSOSRequireInv", false);
     _metrics->set("SSOSPrintSOAck", false);
     _metrics->set("SSOSPrintPackList", false);

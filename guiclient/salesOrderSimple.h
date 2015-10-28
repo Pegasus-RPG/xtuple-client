@@ -26,11 +26,13 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
 
     Q_INVOKABLE virtual bool  sSave();
     Q_INVOKABLE virtual bool  save( bool partial );
-    Q_INVOKABLE static void   newSalesOrder( int pCustid, QWidget *parent = 0 );
+    Q_INVOKABLE static void   newSalesOrder();
+//  Q_INVOKABLE static void   newSalesOrder( int pCustid, QWidget *parent = 0 );
     Q_INVOKABLE virtual int   id() { return _soheadid; }
 
   public slots:
     virtual SetResponse set(const ParameterList &pParams );
+    virtual void        sHoldClicked();
     virtual void        sSaveClicked();
     virtual void        sSaveLine();
     virtual void        sPopulateMenu(QMenu *pMenu);
