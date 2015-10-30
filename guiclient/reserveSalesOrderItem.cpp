@@ -234,7 +234,7 @@ void reserveSalesOrderItem::populate()
                 "       item_id, warehous_code, uom_name,"
                 "       itemsite_id, qtyAvailable(itemsite_id) AS availableqoh,"
                 "       qtyReserved(itemsite_id) AS totreserved,"
-                "       qtyUnreserved(itemsite_id) AS totunreserved,"
+                "       (qtyAvailable(itemsite_id) - qtyReserved(itemsite_id)) AS totunreserved,"
                 "       coitem_qtyord AS ordered,"
                 "       (coitem_qtyshipped - coitem_qtyreturned) AS shipped,"
                 "       qtyAtShipping(coitem_id) AS atShipping,"
