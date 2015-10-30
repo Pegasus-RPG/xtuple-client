@@ -41,6 +41,7 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
     virtual void        sHandleOrderNumber();
     virtual void        sPopulateCustomerInfo( int pCustid );
     virtual void        sPopulateShiptoInfo();
+    virtual void        sHandleRequiredFields();
     virtual void        populate();
     virtual void        sFillItemList();
     virtual void        sCalculateTotal();
@@ -51,12 +52,8 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
     virtual void        sTaxDetail();
     virtual void        populateCCInfo();
     virtual void        sNewCreditCard();
-    virtual void        sEditCreditCard();
     virtual void        sViewCreditCard();
-    virtual void        sMoveUp();
-    virtual void        sMoveDown();
     virtual void        sFillCcardList();
-    virtual void        sAuthorizeCC();
     virtual void        sChargeCC();
     virtual void        sCreditAllocate();
     virtual void        sAllocateCreditMemos();

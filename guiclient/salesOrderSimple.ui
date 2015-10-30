@@ -452,63 +452,7 @@ to be bound by its terms.</comment>
                <property name="verticalSpacing">
                 <number>0</number>
                </property>
-               <item row="0" column="0">
-                <widget class="QPushButton" name="_newCC">
-                 <property name="text">
-                  <string>New</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QPushButton" name="_editCC">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="text">
-                  <string>Edit</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QPushButton" name="_viewCC">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
-                 <property name="text">
-                  <string>View</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QPushButton" name="_upCC">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
-                 <property name="text">
-                  <string>Move Up</string>
-                 </property>
-                </widget>
-               </item>
                <item row="4" column="0">
-                <widget class="QPushButton" name="_downCC">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
-                 <property name="text">
-                  <string>Move Down</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="0">
                 <spacer>
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
@@ -519,25 +463,19 @@ to be bound by its terms.</comment>
                  <property name="sizeHint" stdset="0">
                   <size>
                    <width>20</width>
-                   <height>20</height>
+                   <height>41</height>
                   </size>
                  </property>
                 </spacer>
                </item>
-               <item row="6" column="0">
-                <widget class="QPushButton" name="_authorize">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
+               <item row="0" column="0">
+                <widget class="QPushButton" name="_newCC">
                  <property name="text">
-                  <string>Authorize</string>
+                  <string>New</string>
                  </property>
                 </widget>
                </item>
-               <item row="7" column="0">
+               <item row="3" column="0">
                 <widget class="QPushButton" name="_charge">
                  <property name="enabled">
                   <bool>false</bool>
@@ -550,7 +488,20 @@ to be bound by its terms.</comment>
                  </property>
                 </widget>
                </item>
-               <item row="8" column="0">
+               <item row="1" column="0">
+                <widget class="QPushButton" name="_viewCC">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
+                 <property name="text">
+                  <string>View</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
                 <spacer>
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
@@ -561,7 +512,7 @@ to be bound by its terms.</comment>
                  <property name="sizeHint" stdset="0">
                   <size>
                    <width>20</width>
-                   <height>41</height>
+                   <height>20</height>
                   </size>
                  </property>
                 </spacer>
@@ -1116,7 +1067,6 @@ to be bound by its terms.</comment>
   <tabstop>_availCredit</tabstop>
   <tabstop>_paymentInformation</tabstop>
   <tabstop>_newCC</tabstop>
-  <tabstop>_editCC</tabstop>
   <tabstop>_CCAmount</tabstop>
   <tabstop>_CCCVV</tabstop>
   <tabstop>_cashTotal</tabstop>
@@ -1159,70 +1109,6 @@ to be bound by its terms.</comment>
    <signal>itemSelected(int)</signal>
    <receiver>_viewCC</receiver>
    <slot>animateClick()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>403</x>
-     <y>387</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>403</x>
-     <y>387</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_cc</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_editCC</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>403</x>
-     <y>387</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>403</x>
-     <y>387</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_cc</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_upCC</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>403</x>
-     <y>387</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>403</x>
-     <y>387</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_cc</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_downCC</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>403</x>
-     <y>387</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>403</x>
-     <y>387</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_cc</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_authorize</receiver>
-   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>403</x>
