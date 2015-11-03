@@ -113,7 +113,7 @@ extern Metricsenc  *_metricsenc;
 enum SetResponse
 {
   NoError, NoError_Cancel, NoError_Run, NoError_Print, NoError_Submit,
-  Error_NoSetup, UndefinedError
+  Error_NoSetup, Error_AlreadyOpen, UndefinedError
 };
 
 
