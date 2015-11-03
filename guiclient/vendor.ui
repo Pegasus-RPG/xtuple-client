@@ -38,7 +38,7 @@ to be bound by its terms.</comment>
            <property name="descriptionVisible">
             <bool>false</bool>
            </property>
-           <property name="canEdit" stdset="0">
+           <property name="canEdit">
             <bool>true</bool>
            </property>
           </widget>
@@ -1460,52 +1460,60 @@ and Purchase Order amounts</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_9">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_10">
-         <item>
-          <widget class="QRadioButton" name="_payablesButton">
-           <property name="text">
-            <string>Payables</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="_creditMemosButton">
-           <property name="text">
-            <string>Credit Memos</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="_apHistoryButton">
-           <property name="text">
-            <string>A/P History</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="_apChecksButton">
-           <property name="text">
-            <string>Checks</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_9">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
+        <widget class="QFrame" name="f_accountingButtonFrame">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <item>
+           <widget class="QRadioButton" name="_payablesButton">
+            <property name="text">
+             <string>Payables</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="_creditMemosButton">
+            <property name="text">
+             <string>Credit Memos</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="_apHistoryButton">
+            <property name="text">
+             <string>A/P History</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="_apChecksButton">
+            <property name="text">
+             <string>Checks</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_9">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item>
         <widget class="QStackedWidget" name="_accountingStack">
