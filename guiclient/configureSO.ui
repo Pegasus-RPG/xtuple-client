@@ -1439,6 +1439,173 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="_ssosTab">
+        <attribute name="title">
+         <string>Simple S/O</string>
+        </attribute>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_7">
+           <item>
+            <widget class="QGroupBox" name="_enableSSOS">
+             <property name="title">
+              <string>Enable Simple S/O</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_6">
+              <item>
+               <widget class="CustCluster" name="_ssosCust">
+                <property name="label">
+                 <string>Cash Customer #:</string>
+                </property>
+                <property name="nameVisible">
+                 <bool>false</bool>
+                </property>
+                <property name="descriptionVisible">
+                 <bool>false</bool>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_8">
+                <item>
+                 <widget class="QLabel" name="_ssosSaleTypeLit">
+                  <property name="text">
+                   <string>Sale Type:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="XComboBox" name="_ssosSaleType">
+                  <property name="type">
+                   <enum>XComboBox::SaleTypes</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_6">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="XCheckBox" name="_ssosRequireInv">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="text">
+                 <string>Require Sufficient Inventory to Ship</string>
+                </property>
+                <property name="forgetful">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XCheckBox" name="_ssosPrintSOAck">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="text">
+                 <string>Print S/O Acknowledgement (Hold only)</string>
+                </property>
+                <property name="forgetful">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XCheckBox" name="_ssosPrintPackList">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="text">
+                 <string>Print Shipping Packing List</string>
+                </property>
+                <property name="forgetful">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XCheckBox" name="_ssosPrintInvoice">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="text">
+                 <string>Print Invoice</string>
+                </property>
+                <property name="forgetful">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>107</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_6">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>313</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -1447,6 +1614,11 @@ to be bound by its terms.</comment>
  </widget>
  <layoutdefault spacing="5" margin="5"/>
  <customwidgets>
+  <customwidget>
+   <class>CustCluster</class>
+   <extends>QWidget</extends>
+   <header>custcluster.h</header>
+  </customwidget>
   <customwidget>
    <class>NumberGenComboBox</class>
    <extends>QComboBox</extends>

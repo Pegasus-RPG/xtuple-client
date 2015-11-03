@@ -38,6 +38,7 @@ class menuSales : public QObject
     menuSales(GUIClient *);
 
   public slots:
+    void sNewSalesOrderSimple();
     void sNewSalesOrder();
     void sSalesOrders();
     void sOpenSalesOrders();

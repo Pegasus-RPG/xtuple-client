@@ -19,6 +19,7 @@
 
 #include "guiclient.h"
 
+#include "salesOrderSimple.h"
 #include "salesOrder.h"
 #include "openSalesOrders.h"
 #include "quotes.h"
@@ -168,6 +169,7 @@ menuSales::menuSales(GUIClient *pParent) :
     
     // Sales | Sales Order
     { "menu",	tr("&Sales Order"),	(char*)ordersMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
+    { "so.newSalesOrderSimple",  tr("&New Simple..."),		SLOT(sNewSalesOrderSimple()),   ordersMenu, "MaintainSimpleSalesOrders", NULL, NULL, _metrics->boolean("SSOSEnabled"), NULL },
     { "so.newSalesOrder", 	     tr("&New..."),		SLOT(sNewSalesOrder()),   ordersMenu, "MaintainSalesOrders", NULL, NULL,	 true, NULL },
     { "so.listOpenSalesOrders",  tr("&List Open..."),	SLOT(sOpenSalesOrders()), ordersMenu, "MaintainSalesOrders ViewSalesOrders", new QPixmap(":/images/listOpenSalesOrders.png"), toolBar,  true, tr("List Open Sales Orders") },
     { "so.listSalesOrders",      tr("&Search Orders..."),	SLOT(sSalesOrders()), ordersMenu, "MaintainSalesOrders ViewSalesOrders", NULL, NULL, true, NULL },
@@ -393,6 +395,11 @@ void menuSales::addActionsToMenu(actionProperties acts[], unsigned int numElems)
 }
 
 //  Orders
+void menuSales::sNewSalesOrderSimple()
+{
+  salesOrderSimple::newSalesOrder();
+}
+
 void menuSales::sNewSalesOrder()
 {
   salesOrder::newSalesOrder(-1);

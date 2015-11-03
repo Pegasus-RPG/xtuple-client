@@ -226,6 +226,18 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
     else if(_metrics->value("SOReservationLocationMethod").toInt() == 3)
       _alpha->setChecked(true);
   }
+  
+  _enableSSOS->setChecked(_metrics->boolean("SSOSEnabled"));
+  _ssosCust->setType(CLineEdit::ActiveCustomers);
+  _ssosCust->setCanEdit(_metrics->boolean("SSOSEnabled"));
+  _ssosCust->setEnabled(_metrics->boolean("SSOSEnabled"));
+  _ssosCust->setId(_metrics->value("SSOSDefaultCustId").toInt());
+  _ssosSaleType->setId(_metrics->value("SSOSDefaultSaleTypeId").toInt());
+  _ssosRequireInv->setChecked(_metrics->boolean("SSOSRequireInv"));
+  _ssosPrintSOAck->setChecked(_metrics->boolean("SSOSPrintSOAck"));
+  _ssosPrintPackList->setChecked(_metrics->boolean("SSOSPrintPackList"));
+  _ssosPrintInvoice->setChecked(_metrics->boolean("SSOSPrintInvoice"));
+  
   adjustSize();
 }
 
@@ -395,6 +407,27 @@ bool configureSO::sSave()
     }
   }
   _metrics->set("EnableReturnAuth", (_enableReturns->isChecked() || !_enableReturns->isCheckable()));
+  
+  if (_enableSSOS->isChecked())
+  {
+    _metrics->set("SSOSEnabled", true);
+    _metrics->set("SSOSDefaultCustId", _ssosCust->id());
+    _metrics->set("SSOSDefaultSaleTypeId", _ssosSaleType->id());
+    _metrics->set("SSOSRequireInv", _ssosRequireInv->isChecked());
+    _metrics->set("SSOSPrintSOAck", _ssosPrintSOAck->isChecked());
+    _metrics->set("SSOSPrintPackList", _ssosPrintPackList->isChecked());
+    _metrics->set("SSOSPrintInvoice", _ssosPrintInvoice->isChecked());
+  }
+  else
+  {
+    _metrics->set("SSOSEnabled", false);
+    _metrics->set("SSOSDefaultCustId", -1);
+    _metrics->set("SSOSDefaultSaleTypeId", -1);
+    _metrics->set("SSOSRequireInv", false);
+    _metrics->set("SSOSPrintSOAck", false);
+    _metrics->set("SSOSPrintPackList", false);
+    _metrics->set("SSOSPrintInvoice", false);
+  }
 
   return true;
 }
