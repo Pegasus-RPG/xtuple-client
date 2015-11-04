@@ -2095,24 +2095,25 @@ void salesOrderItem::sDetermineAvailability( bool p )
     params.append("qty", _availabilityQtyOrdered);
     params.append("origQtyOrd", _originalQtyOrd);
     
+    if (_partialsaved)
+    {
+      params.append("qtyOrdered", _qtyOrdered->toDouble());
+      params.append("supplyOrderQty", _supplyOrderQty->toDouble());
+    }
+    else
+    {
+      params.append("qtyOrdered", 0.0);
+      params.append("supplyOrderQty", 0.0);
+    }
+    
     availability = mql.toQuery(params);
     if (availability.first())
     {
       _onHand->setDouble(availability.value("availableqoh").toDouble());
-      if (_partialsaved)
-      {
-        _allocated->setDouble(availability.value("allocated").toDouble() - _qtyOrdered->toDouble());
-        _unallocated->setDouble(availability.value("unallocated").toDouble() + _qtyOrdered->toDouble());
-        _onOrder->setDouble(availability.value("ordered").toDouble() - _supplyOrderQty->toDouble());
-        _available->setDouble(availability.value("available").toDouble() + _qtyOrdered->toDouble() - _supplyOrderQty->toDouble());
-      }
-      else
-      {
-        _allocated->setDouble(availability.value("allocated").toDouble());
-        _unallocated->setDouble(availability.value("unallocated").toDouble());
-        _onOrder->setDouble(availability.value("ordered").toDouble());
-        _available->setDouble(availability.value("available").toDouble());
-      }
+      _allocated->setDouble(availability.value("allocated").toDouble());
+      _unallocated->setDouble(availability.value("unallocated").toDouble());
+      _onOrder->setDouble(availability.value("ordered").toDouble());
+      _available->setDouble(availability.value("available").toDouble());
       _reserved->setDouble(availability.value("reserved").toDouble());
       _reservable->setDouble(availability.value("reservable").toDouble());
       _leadtime->setText(availability.value("itemsite_leadtime").toString());
