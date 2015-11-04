@@ -119,10 +119,10 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
         _cmheadid = creditet.value("cmhead_id").toInt();
         _documents->setId(_cmheadid);
       }
-      else if (creditet.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                    creditet, __FILE__, __LINE__))
       {
-	systemError(this, creditet.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+        return UndefinedError;
       }
 
       setNumber();
@@ -137,10 +137,10 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
       creditet.bindValue(":cmhead_number",	(!_memoNumber->text().isEmpty() ? _memoNumber->text() : QString("tmp%1").arg(_cmheadid)));
       creditet.bindValue(":cmhead_docdate",	_memoDate->date());
       creditet.exec();
-      if (creditet.lastError().type() != QSqlError::NoError)
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                    creditet, __FILE__, __LINE__))
       {
-	systemError(this, creditet.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+        return UndefinedError;
       }
 
       connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo()));
@@ -230,9 +230,9 @@ void creditMemo::setNumber()
       if (_metrics->value("CMNumberGeneration") == "A")
         _memoNumber->setEnabled(false);
     }
-    else if (creditetNumber.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                  creditetNumber, __FILE__, __LINE__))
     {
-      systemError(this, creditetNumber.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -246,9 +246,9 @@ void creditMemo::setNumber()
       _NumberGen = creditetNumber.value("cmnumber").toInt();
       _memoNumber->setEnabled(false);
     }
-    else if (creditetNumber.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                  creditetNumber, __FILE__, __LINE__))
     {
-      systemError(this, creditetNumber.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -409,9 +409,9 @@ bool creditMemo::save()
   if(_saleType->isValid())
     creditave.bindValue(":cmhead_saletype_id", _saleType->id());
   creditave.exec();
-  if (creditave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Credit Memo Information"),
+                                creditave, __FILE__, __LINE__))
   {
-    systemError(this, creditave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -477,9 +477,9 @@ void creditMemo::sInvoiceList()
       _customerPO->setText(sohead.value("invchead_ponumber"));
       _project->setId(sohead.value("invchead_prj_id").toInt());
     }
-    else if (sohead.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                  sohead, __FILE__, __LINE__))
     {
-      systemError(this, sohead.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -511,9 +511,9 @@ void creditMemo::populateShipto(int pShiptoid)
       _commission->setDouble(query.value("shipto_commission").toDouble() * 100);
       _shippingZone->setId(query.value("shipto_shipzone_id").toInt());
     }
-    else if (query.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Ship To Information"),
+                                  query, __FILE__, __LINE__))
     {
-      systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -574,9 +574,9 @@ void creditMemo::sPopulateCustomerInfo()
         if ((cNew == _mode) && (query.value("shiptoid").toInt() != -1))
           populateShipto(query.value("shiptoid").toInt());
       }
-      else if (query.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Customer Information"),
+                                    query, __FILE__, __LINE__))
       {
-        systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
@@ -607,7 +607,6 @@ qDebug("_numbergen->%d, memo#->%d", _NumberGen, _memoNumber->text().toInt());
          (_metrics->value("CMNumberGeneration") == "M")   ) )
   {
     _memoNumber->setEnabled(false);
-
     XSqlQuery query;
     query.prepare( "SELECT cmhead_id, cmhead_posted "
                    "FROM cmhead "
@@ -650,9 +649,9 @@ qDebug("_numbergen->%d, memo#->%d", _NumberGen, _memoNumber->text().toInt());
       else
         _mode = cEdit;
     }
-    else if (query.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                  query, __FILE__, __LINE__))
     {
-      systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -755,9 +754,9 @@ void creditMemo::sDelete()
       return;
     }
   }
-  else if (creditDelete.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Credit Memo Line Item"),
+                                creditDelete, __FILE__, __LINE__))
   {
-    systemError(this, creditDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -771,9 +770,9 @@ void creditMemo::sDelete()
                "WHERE (cmitem_id=:cmitem_id);" );
     creditDelete.bindValue(":cmitem_id", _cmitem->id());
     creditDelete.exec();
-    if (creditDelete.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Credit Memo Line Item"),
+                                  creditDelete, __FILE__, __LINE__))
     {
-      systemError(this, creditDelete.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -904,9 +903,9 @@ void creditMemo::populate()
 
     sCalculateTax();
   }
-  else if (cmhead.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                cmhead, __FILE__, __LINE__))
   {
-    systemError(this, cmhead.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -923,9 +922,9 @@ void creditMemo::closeEvent(QCloseEvent *pEvent)
     creditcloseEvent.exec();
     if (creditcloseEvent.first())
       ; // TODO: add error checking when function returns int instead of boolean
-    else if (creditcloseEvent.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Credit Memo"),
+                                  creditcloseEvent, __FILE__, __LINE__))
     {
-      systemError(this, creditcloseEvent.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -947,9 +946,9 @@ void creditMemo::sReleaseNumber()
 
   creditReleaseNumber.bindValue(":number", _NumberGen);
   creditReleaseNumber.exec();
-  if (creditReleaseNumber.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Releasing Credit Memo Number"),
+                                creditReleaseNumber, __FILE__, __LINE__))
   {
-    systemError(this, creditReleaseNumber.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -990,9 +989,9 @@ void creditMemo::sCalculateTax()
   taxq.exec();
   if (taxq.first())
     _tax->setLocalValue(taxq.value("tax").toDouble());
-  else if (taxq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Calculating Tax"),
+                                taxq, __FILE__, __LINE__))
   {
-    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   // changing _tax fires sCalculateTotal()

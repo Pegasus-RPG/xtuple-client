@@ -128,9 +128,9 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
       _netUnitPrice->setEffective(creditet.value("cmhead_docdate").toDate());
       _rsnCode->setId(creditet.value("cmhead_rsncode_id").toInt());
     }
-    else if (creditet.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                  creditet, __FILE__, __LINE__))
     {
-      systemError(this, creditet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -156,10 +156,10 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
       creditet.exec();
       if (creditet.first())
         _lineNumber->setText(creditet.value("n_linenumber").toString());
-      else if (creditet.lastError().type() == QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                    creditet, __FILE__, __LINE__))
       {
-	      systemError(this, creditet.lastError().databaseText(), __FILE__, __LINE__);
-	      return UndefinedError;
+        return UndefinedError;
       }
 
       connect(_discountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateFromDiscount()));
@@ -243,9 +243,9 @@ void creditMemoItem::sSave()
     creditSave.exec("SELECT NEXTVAL('cmitem_cmitem_id_seq') AS _cmitem_id");
     if (creditSave.first())
       _cmitemid  = creditSave.value("_cmitem_id").toInt();
-    else if (creditSave.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Credit Memo Item Information"),
+                                  creditSave, __FILE__, __LINE__))
     {
-      systemError(this, creditSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -329,9 +329,9 @@ void creditMemoItem::sSave()
   if (_revAccnt->id() > 0)
     creditSave.bindValue(":cmitem_rev_accnt_id", _revAccnt->id());
   creditSave.exec();
-  if (creditSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Credit Memo Item Information"),
+                                creditSave, __FILE__, __LINE__))
   {
-    systemError(this, creditSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -368,9 +368,9 @@ void creditMemoItem::sPopulateItemInfo()
     _unitCost->setBaseValue(item.value("f_cost").toDouble());
     _taxType->setId(item.value("taxtype_id").toInt());
   }
-  else if (item.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Item Information"),
+                                item, __FILE__, __LINE__))
   {
-    systemError(this, item.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -407,9 +407,9 @@ void creditMemoItem::sPopulateItemInfo()
       _qtyShippedCache = cmitem.value("f_billed").toDouble();
       _qtyShipped->setDouble(cmitem.value("f_billed").toDouble() / _qtyinvuomratio);
     }
-    else if (cmitem.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Item Information"),
+                                  cmitem, __FILE__, __LINE__))
     {
-      systemError(this, cmitem.lastError().databaseText(), __FILE__, __LINE__);
       _salePrice->clear();
       return;
     }
@@ -444,9 +444,9 @@ void creditMemoItem::sPopulateItemsiteInfo()
       _updateInv->setEnabled(true);
     }
   }
-  else if (itemsite.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Item Information"),
+                                itemsite, __FILE__, __LINE__))
   {
-    systemError(this, itemsite.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -516,9 +516,9 @@ void creditMemoItem::populate()
     _listPrices->setEnabled(true);
     _saved=true;
   }
-  else if (cmitem.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Item Information"),
+                                cmitem, __FILE__, __LINE__))
   {
-    systemError(this, cmitem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -678,9 +678,9 @@ void creditMemoItem::sCalculateTax()
   calcq.exec();
   if (calcq.first())
     _tax->setLocalValue(calcq.value("tax").toDouble());
-  else if (calcq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                calcq, __FILE__, __LINE__))
   {
-    systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -814,7 +814,8 @@ void creditMemoItem::sQtyUOMChanged()
     if(invuom.first())
       _qtyinvuomratio = invuom.value("ratio").toDouble();
     else
-      systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                         invuom, __FILE__, __LINE__);
   }
 
   if(_qtyUOM->id() != _invuomid)
@@ -874,7 +875,8 @@ void creditMemoItem::sPriceUOMChanged()
     if(invuom.first())
       _priceinvuomratio = invuom.value("ratio").toDouble();
     else
-      systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                         invuom, __FILE__, __LINE__);
   }
   _ratio=_priceinvuomratio;
 
