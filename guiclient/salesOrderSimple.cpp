@@ -115,6 +115,13 @@ salesOrderSimple::salesOrderSimple(QWidget *parent, const char *name, Qt::Window
   _balance->setEffective(omfgThis->dbDate());
   _availCredit->setEffective(omfgThis->dbDate());
 
+  _item->setType(ItemLineEdit::cSold | ItemLineEdit::cActive);
+  _item->addExtraClause( QString("(item_type IN ('M', 'P'))") );  // ItemLineEdit::item type must be manufactured or purchased
+  _item->addExtraClause( QString("(NOT item_config)") );  // ItemLineEdit::item type must not be configured
+  _item->addExtraClause( QString("(itemsite_active)") );  // ItemLineEdit::cActive doesn't compare against the itemsite record
+  _item->addExtraClause( QString("(itemsite_sold)") );    // ItemLineEdit::cSold doesn't compare against the itemsite record
+  _item->addExtraClause( QString("(itemsite_costmethod != 'J')") );  // ItemLineEdit::itemsite cost method cannot be Job Costed
+
   _soitem->addColumn(tr("Item"),            _itemColumn,           Qt::AlignLeft,   true,  "item_number");
   _soitem->addColumn(tr("Description"),     -1,                    Qt::AlignLeft,   true,  "description");
   _soitem->addColumn(tr("Qty."),            _qtyColumn,            Qt::AlignRight,  true,  "coitem_qtyord");
@@ -716,6 +723,8 @@ void salesOrderSimple::sPopulateCustomerInfo(int pCustid)
     sSave();
     sRecalculatePrice();
     sHandleRequiredFields();
+    _item->addExtraClause( QString("(item_id IN (SELECT custitem FROM custitem(%1, %2, CURRENT_DATE) ) )")
+                          .arg(_cust->id()).arg(_shipTo->id()) );
   }
   else
   {
@@ -729,6 +738,8 @@ void salesOrderSimple::sPopulateShiptoInfo()
   {
     sSave();
     sRecalculatePrice();
+    _item->addExtraClause( QString("(item_id IN (SELECT custitem FROM custitem(%1, %2, CURRENT_DATE) ) )")
+                          .arg(_cust->id()).arg(_shipTo->id()) );
   }
 }
 
