@@ -7,14 +7,14 @@ It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
- <class>statementByCustGroup</class>
- <widget class="QWidget" name="statementByCustGroup">
+ <class>printStatementsByCustomerGroup</class>
+ <widget class="QWidget" name="printStatementsByCustomerGroup">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>551</width>
-    <height>133</height>
+    <width>337</width>
+    <height>78</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,6 +29,9 @@ to be bound by its terms.</comment>
         <widget class="QLabel" name="_custGrpLit">
          <property name="text">
           <string>Customer Group:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
@@ -51,7 +54,10 @@ to be bound by its terms.</comment>
        <item row="1" column="0">
         <widget class="XLabel" name="_asatLit">
          <property name="text">
-          <string>As At:</string>
+          <string>As of:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
@@ -77,18 +83,18 @@ to be bound by its terms.</comment>
  <customwidgets>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>QWidget</extends>
+   <extends></extends>
    <header>datecluster.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
-   <extends>QComboBox</extends>
+   <extends></extends>
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>XLabel</class>
-   <extends>QLabel</extends>
+   <extends></extends>
    <header>xlabel.h</header>
   </customwidget>
  </customwidgets>
