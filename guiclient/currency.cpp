@@ -15,6 +15,7 @@
 #include <QVariant>
 
 #include "currencySelect.h"
+#include "errorReporter.h"
 
 currency::currency(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -57,7 +58,8 @@ bool currency::isBaseSet()
     }
     else if (currencyisBaseSet.lastError().type() != QSqlError::NoError)
     {
-	systemError(this, currencyisBaseSet.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Currency Information"),
+                         currencyisBaseSet, __FILE__, __LINE__);
     }
     return numSet != 0;
 }
@@ -169,9 +171,9 @@ void currency::sSave()
   currencySave.bindValue(":curr_base", QVariant(_currBase->isChecked()));
   currencySave.exec();
 
-  if (currencySave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Currency Information"),
+                                currencySave, __FILE__, __LINE__))
   {
-    systemError(this, currencySave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   
@@ -195,9 +197,9 @@ void currency::populate()
 
     baseOrig = _currBase->isChecked();
   }
-  else if (currencypopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Currency Information"),
+                                currencypopulate, __FILE__, __LINE__))
   {
-    systemError(this, currencypopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -241,9 +243,9 @@ void currency::sSelect()
       _currAbbr->setText(cs.value("country_curr_abbr").toString());
       _currSymbol->setText(cs.value("country_curr_symbol").toString());
     }
-    else if (cs.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Currency Information"),
+                                  cs, __FILE__, __LINE__))
     {
-      systemError(this, cs.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

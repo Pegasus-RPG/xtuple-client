@@ -962,12 +962,13 @@ void customer::sDeleteShipto()
     int result = delq.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("deleteShipTo", result),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Ship To"),
+                             storedProcErrorLookup("deleteShipTo", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Deleting Ship To"),
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Ship To"),
                                 delq, __FILE__, __LINE__))
     return;
 
