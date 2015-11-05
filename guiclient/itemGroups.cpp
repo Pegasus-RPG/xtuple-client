@@ -8,6 +8,8 @@
  * to be bound by its terms.
  */
 
+#include <QMessageBox>
+
 #include "itemGroups.h"
 #include <metasql.h>
 #include <parameter.h>
@@ -47,9 +49,9 @@ itemGroups::itemGroups(QWidget* parent, const char* name, Qt::WindowFlags fl)
     _new->setEnabled(false);
   }
   
-  connect(omfgThis, SIGNAL(itemGroupsUpdated(int, bool)), this, SLOT(sFillList(int)));
+  connect(omfgThis, SIGNAL(itemGroupsUpdated(int, bool)), this, SLOT(sFillList()));
 
-  sFillList(-1);
+  sFillList();
 }
 
 itemGroups::~itemGroups()
@@ -62,21 +64,36 @@ void itemGroups::languageChange()
   retranslateUi(this);
 }
 
+ParameterList itemGroups::getParams()
+{
+  ParameterList p;
+
+  if (_showTopLevel->isChecked())
+    p.append("showTopLevel", true);
+
+  return p;
+}
+
 void itemGroups::sDelete()
 {
-  XSqlQuery itemDelete;
-  itemDelete.prepare( "DELETE FROM itemgrpitem "
-             "WHERE (itemgrpitem_itemgrp_id=:itemgrp_id);"
+  if (QMessageBox::question(this, tr("Really delete this item group?"),
+                            tr("<p>Are you sure you want to delete this item group?"),
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No) == QMessageBox::Yes)
+  {
+    XSqlQuery itemDelete;
+    itemDelete.prepare( "DELETE FROM itemgrpitem "
+                        "WHERE (itemgrpitem_itemgrp_id=:itemgrp_id);"
 
-             "DELETE FROM itemgrpitem "
-             "WHERE ((itemgrpitem_item_id=:itemgrp_id) AND (itemgrpitem_item_type='G'));"
-                                        
-             "DELETE FROM itemgrp "
-             "WHERE (itemgrp_id=:itemgrp_id);" );
-  itemDelete.bindValue(":itemgrp_id", _itemgrp->id());
-  itemDelete.exec();
+                        "DELETE FROM itemgrpitem "
+                        "WHERE ((itemgrpitem_item_id=:itemgrp_id) AND (itemgrpitem_item_type='G'));"
 
-  sFillList(-1);
+                        "DELETE FROM itemgrp "
+                        "WHERE (itemgrp_id=:itemgrp_id);" );
+    itemDelete.bindValue(":itemgrp_id", _itemgrp->id());
+    itemDelete.exec();
+    sFillList();
+  }
 }
 
 
@@ -114,22 +131,8 @@ void itemGroups::sView()
 
 void itemGroups::sFillList()
 {
-  // instead of removing the unused parameter in sFillList(int) I added this function
-  // from what I can tell, everything calls sFillList() with -1, but I know if I remove it
-  // some random piece of code will need to call the function that expects an int parameter
-  sFillList(-1);
-}
-
-void itemGroups::sFillList(int)
-{
   MetaSQLQuery mql = mqlLoad("itemGroups", "detail");
-
-  ParameterList params;
-  if (_showTopLevel->isChecked())
-    params.append("showTopLevel",  true);
-
-  XSqlQuery igrp = mql.toQuery(params);
-
+  XSqlQuery igrp = mql.toQuery(getParams());
   _itemgrp->populate(igrp);
 }
 
