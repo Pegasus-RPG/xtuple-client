@@ -9,8 +9,9 @@
  */
 
 #include "itemGroups.h"
-
+#include <metasql.h>
 #include <parameter.h>
+#include "mqlutil.h"
 #include "itemGroup.h"
 #include "guiclient.h"
 
@@ -26,6 +27,7 @@ itemGroups::itemGroups(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_itemgrp, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
+  connect(_showTopLevel, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
   _itemgrp->setRootIsDecorated(true);
   _itemgrp->addColumn(tr("Name"),            _itemColumn, Qt::AlignLeft, true, "name" );
@@ -110,29 +112,25 @@ void itemGroups::sView()
   omfgThis->handleNewWindow(newdlg);
 }
 
+void itemGroups::sFillList()
+{
+  // instead of removing the unused parameter in sFillList(int) I added this function
+  // from what I can tell, everything calls sFillList() with -1, but I know if I remove it
+  // some random piece of code will need to call the function that expects an int parameter
+  sFillList(-1);
+}
+
 void itemGroups::sFillList(int)
 {
-  _itemgrp->populate("WITH RECURSIVE indentedgroups(id, name, descrip, catalog, depth, path, cycle) AS ( "
-                     "SELECT itemgrp_id AS id, "
-                     "       itemgrp_name AS name, "
-                     "       itemgrp_descrip AS descrip, "
-                     "       itemgrp_catalog AS catalog, "
-                     "       0 AS depth, array[itemgrp_id] AS path, false AS cycle "
-                     "FROM itemgrp "
-                     "UNION ALL "
-                     "SELECT itemgrp_id AS id, "
-                     "       CASE itemgrpitem_item_type WHEN 'I' THEN item_number ELSE itemgrp_name END AS name, "
-                     "       CASE itemgrpitem_item_type WHEN 'I' THEN item_descrip1 ELSE itemgrp_descrip END AS descrip, "
-                     "       NULL AS catalog, "
-                     "       (depth+1) AS depth, (path || itemgrp_id) AS path, (itemgrp_id = any(path)) AS cycle "
-                     "FROM indentedgroups JOIN itemgrpitem ON (itemgrpitem_itemgrp_id=id) "
-                     "  LEFT OUTER JOIN item ON (item_id=itemgrpitem_item_id AND itemgrpitem_item_type='I') "
-                     "  LEFT OUTER JOIN itemgrp ON (itemgrp_id=itemgrpitem_item_id AND itemgrpitem_item_type='G') "
-                     "WHERE (NOT cycle)"
-                     ") "
-                     "SELECT id, name, descrip, catalog, depth AS xtindentrole, path, cycle "
-                     "FROM indentedgroups "
-                     "ORDER BY path, name;");
+  MetaSQLQuery mql = mqlLoad("itemGroups", "detail");
+
+  ParameterList params;
+  if (_showTopLevel->isChecked())
+    params.append("showTopLevel",  true);
+
+  XSqlQuery igrp = mql.toQuery(params);
+
+  _itemgrp->populate(igrp);
 }
 
 void itemGroups::sHandleButtons()

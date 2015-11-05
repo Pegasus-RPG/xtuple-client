@@ -28,6 +28,7 @@ public slots:
     virtual void sNew();
     virtual void sEdit();
     virtual void sView();
+    virtual void sFillList();
     virtual void sFillList(int pId);
     virtual void sHandleButtons();
 
