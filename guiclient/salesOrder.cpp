@@ -3826,8 +3826,7 @@ void salesOrder::populateCMInfo()
                         "                               calcInvoiceAmt(invchead_id), :effective)),0) AS amount"
                         "  FROM coitem JOIN invcitem ON (invcitem_coitem_id=coitem_id)"
                         "              JOIN invchead ON (invchead_id=invcitem_invchead_id AND invchead_posted) "
-                        " WHERE (coitem_cohead_id=:doc_id)"
-                        " GROUP BY invchead_curr_id, invchead_id;");
+                        " WHERE (coitem_cohead_id=:doc_id);");
   populateSales.bindValue(":doc_id",    _soheadid);
   populateSales.bindValue(":curr_id",   _allocatedCM->id());
   populateSales.bindValue(":effective", _allocatedCM->effective());
