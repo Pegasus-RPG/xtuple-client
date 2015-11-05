@@ -32,6 +32,9 @@ employees::employees(QWidget* parent, const char*, Qt::WindowFlags fl)
   setSearchVisible(true);
   setQueryOnStartEnabled(true);
 
+  QString qryEmpGrp = QString( "SELECT  empgrp_id, empgrp_name FROM empgrp;");
+
+  parameterWidget()->appendComboBox(tr("Employee Group"), "emp_group", qryEmpGrp);
   parameterWidget()->append(tr("Show Active Only"), "activeOnly", ParameterWidget::Exists);
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
