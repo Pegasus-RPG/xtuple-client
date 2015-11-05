@@ -16,7 +16,7 @@
 
 
 class printStatementsByCustomerGroup : public printSinglecopyDocument,
-                                       public Ui::statementByCustGroup
+                                       public Ui::printStatementsByCustomerGroup
 {
   Q_OBJECT
 
