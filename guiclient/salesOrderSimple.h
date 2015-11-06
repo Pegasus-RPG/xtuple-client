@@ -42,6 +42,7 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
     virtual void        sPopulateCustomerInfo( int pCustid );
     virtual void        sPopulateShiptoInfo();
     virtual void        sHandleRequiredFields();
+    virtual void        setItemExtraClause();
     virtual void        populate();
     virtual void        sFillItemList();
     virtual void        sCalculateTotal();
