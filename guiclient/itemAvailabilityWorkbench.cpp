@@ -367,6 +367,12 @@ void itemAvailabilityWorkbench::sFillList()
   }
   else if (_tab->currentIndex() == _tab->indexOf(_ordersTab))
   {
+      _salesOrderItemsButton->setEnabled(_sold);
+      _quoteItemsButton->setEnabled(_sold);
+      _customerPricesButton->setEnabled(_sold);
+    if (!_sold){
+      _purchaseOrderItemsButton->setChecked(true);
+    }
     if (_purchaseOrderItemsButton->isChecked())
       _dspPoItemsByItem->sFillList();
     else if (_salesOrderItemsButton->isChecked() && _sold)
