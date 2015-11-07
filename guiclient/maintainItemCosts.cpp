@@ -262,13 +262,18 @@ void maintainItemCosts::sEnterActualCost()
 
 void maintainItemCosts::sCreateUserCost()
 {
-  ParameterList params;
-  params.append("item_id", _item->id());
-  params.append("mode", "new");
+  if (_item->isValid()) {
+    ParameterList params;
+    params.append("item_id", _item->id());
+    params.append("mode", "new");
 
-  itemCost newdlg(this, "", true);
-  if (newdlg.set(params) == NoError && newdlg.exec())
-    sFillList();
+    itemCost newdlg(this, "", true);
+    if (newdlg.set(params) == NoError && newdlg.exec())
+      sFillList();
+  } else {
+    QMessageBox::warning(this, tr("Missing or Invalid Item Number"),
+                           tr("Item Number Required"));
+  }
 }
 
 void maintainItemCosts::sNew()
