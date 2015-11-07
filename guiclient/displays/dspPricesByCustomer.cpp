@@ -29,6 +29,7 @@ dspPricesByCustomer::dspPricesByCustomer(QWidget* parent, const char*, Qt::Windo
   setUseAltId(true);
 
   connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
+  connect(_cust, SIGNAL(newId(int)), this, SLOT(sCustChanged(int)));
 
   list()->addColumn(tr("Schedule"),    _itemColumn,     Qt::AlignLeft,   true,  "schedulename"  );
   list()->addColumn(tr("Source"),      _itemColumn,     Qt::AlignLeft,   true,  "type"  );
@@ -67,6 +68,14 @@ enum SetResponse dspPricesByCustomer::set(const ParameterList &pParams)
     _item->setId(param.toInt());
   
   return NoError;
+}
+
+void dspPricesByCustomer::sCustChanged(int custId)
+{
+  if (!_cust->isValid())
+  {
+    list()->clear();
+  }
 }
 
 void dspPricesByCustomer::sHandleCosts(bool pShowCosts)
