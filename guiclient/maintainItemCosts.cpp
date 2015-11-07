@@ -54,7 +54,7 @@ maintainItemCosts::maintainItemCosts(QWidget* parent, const char* name, Qt::Wind
     if (_privileges->check("CreateCosts"))
     {
       connect(_item, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
-      _new->setEnabled(true);
+      _new->setEnabled(false);  //initially disabled until item entered
     }
 }
 
@@ -356,8 +356,10 @@ void maintainItemCosts::sFillList()
 	systemError(this, convert.lastError().databaseText(), __FILE__, __LINE__);
 
   }
-  else
+  else {
     _itemcost->clear();
+    _new->setEnabled(false);
+  }
 }
 
 void maintainItemCosts::sSelectionChanged()
