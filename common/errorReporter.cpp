@@ -1147,6 +1147,7 @@ const struct {
 //{ "trialbalsync_trialbal_period_id_key",      Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "A XXX already exists with this XXX.") },
 //{ "trialbalsync_trialbalsync_curr_id_fkey",   Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "trialbalsync_trialbalsync_curr_id_fkey",   Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
+  { "unq_prjtype_code",                         Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "A Project Type already exists with this number.") },
   { "uom_uom_name_check",                       Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "The UOM name is required.") },
   { "uom_uom_name_key",                         Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "A UOM already exists with this name.") },
 //{ "uomconv_uomconv_from_uom_id_fkey",         Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
