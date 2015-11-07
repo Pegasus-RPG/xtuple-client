@@ -219,11 +219,11 @@ void group::sSave()
 
   QList<GuiErrorCheck> errors;
   errors << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
-                          tr("You must enter a valid Name for this Group "
+                          tr("You must enter a valid Name for this Role "
                              "before continuing"))
      ;
 
-  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Group"), errors))
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Role"), errors))
     return;
 
   groupSave.prepare( "UPDATE grp "
