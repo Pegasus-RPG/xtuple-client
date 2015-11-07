@@ -319,7 +319,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "separator", NULL, NULL, arFormsMenu, "true", NULL, NULL, true, NULL },
     { "ar.printStatementByCustomer", tr("Print S&tatement by Customer..."), SLOT(sPrintStatementByCustomer()), arFormsMenu, "ViewAROpenItems", NULL, NULL, true , NULL },
     { "ar.printStatementsByCustomerType", tr("Print State&ments by Customer Type..."), SLOT(sPrintStatementsByCustomerType()), arFormsMenu, "ViewAROpenItems", NULL, NULL, true , NULL },
-    { "ar.printStatementsByCustomerGroup", tr("Print Statements by Customer &Group..."), SLOT(sPrintStatementsByCustomerGroup()), arFormsMenu, "ViewAROpenItems", NULL, NULL, true, NULL },
+    { "ar.printStatementsByCustomerGroup", tr("Print Statement by Customer &Group..."), SLOT(sPrintStatementsByCustomerGroup()), arFormsMenu, "ViewAROpenItems", NULL, NULL, true, NULL },
     // Accounting | Accounts Receivable | Reports
     { "menu", tr("&Reports"), (char*)arReportsMenu,	arMenu, "true",	 NULL, NULL, true, NULL },
     { "ar.dspInvoiceInformation", tr("&Invoice Information..."), SLOT(sDspInvoiceInformation()), arReportsMenu, "ViewAROpenItems", NULL, NULL, true , NULL },
