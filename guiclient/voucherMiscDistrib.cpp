@@ -23,6 +23,7 @@ voucherMiscDistrib::voucherMiscDistrib(QWidget* parent, const char* name, bool m
   connect(_taxCode,         SIGNAL(newID(int)),    this, SLOT(sCheck()));
   connect(_accountSelected, SIGNAL(toggled(bool)), this, SLOT(sHandleSelection()));
   connect(_expcatSelected,  SIGNAL(toggled(bool)), this, SLOT(sHandleSelection()));
+  connect(_taxSelected,     SIGNAL(toggled(bool)), this, SLOT(sHandleSelection()));
   
   _account->setType(GLCluster::cRevenue | GLCluster::cExpense |
                     GLCluster::cAsset | GLCluster::cLiability);
@@ -296,4 +297,6 @@ void voucherMiscDistrib::sHandleSelection()
 {
   _taxTypeLit->setEnabled(_accountSelected->isChecked() || _expcatSelected->isChecked());
   _taxType->setEnabled(_accountSelected->isChecked() || _expcatSelected->isChecked());
+  _discountable->setEnabled(_accountSelected->isChecked() || _expcatSelected->isChecked());
+  _discountable->setChecked(_accountSelected->isChecked() || _expcatSelected->isChecked());
 }
