@@ -585,7 +585,7 @@ const struct {
 //{ "itemcost_itemcost_curr_id_fkey",           Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "itemcost_itemcost_curr_id_fkey",           Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "itemcost_itemcost_item_id_fkey",           Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
-//{ "itemcost_itemcost_item_id_fkey",           Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
+{ "itemcost_itemcost_item_id_fkey",             Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "Error Saving Item Costing Information - invalid or missing data") },
 //{ "itemcost_to_curr_symbol",                  Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "itemcost_to_curr_symbol",                  Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
   { "itemgrp_itemgrp_name_check",               Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "The Item Group name is required.") },

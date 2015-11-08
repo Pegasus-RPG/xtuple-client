@@ -259,9 +259,9 @@ void itemCost::sSave()
       }
     }
 
-    if (itemSave.lastError().type() != QSqlError::NoError)  // if EITHER itemSave.exec() failed
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Item Costing Information"),
+                                  itemSave, __FILE__, __LINE__))
     {
-      systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

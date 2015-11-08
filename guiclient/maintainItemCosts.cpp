@@ -54,7 +54,7 @@ maintainItemCosts::maintainItemCosts(QWidget* parent, const char* name, Qt::Wind
     if (_privileges->check("CreateCosts"))
     {
       connect(_item, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
-      _new->setEnabled(true);
+      _new->setEnabled(false);  //initially disabled until item entered
     }
 }
 
@@ -262,13 +262,18 @@ void maintainItemCosts::sEnterActualCost()
 
 void maintainItemCosts::sCreateUserCost()
 {
-  ParameterList params;
-  params.append("item_id", _item->id());
-  params.append("mode", "new");
+  if (_item->isValid()) {
+    ParameterList params;
+    params.append("item_id", _item->id());
+    params.append("mode", "new");
 
-  itemCost newdlg(this, "", true);
-  if (newdlg.set(params) == NoError && newdlg.exec())
-    sFillList();
+    itemCost newdlg(this, "", true);
+    if (newdlg.set(params) == NoError && newdlg.exec())
+      sFillList();
+  } else {
+    QMessageBox::warning(this, tr("Missing or Invalid Item Number"),
+                           tr("Item Number Required"));
+  }
 }
 
 void maintainItemCosts::sNew()
@@ -351,8 +356,10 @@ void maintainItemCosts::sFillList()
 	systemError(this, convert.lastError().databaseText(), __FILE__, __LINE__);
 
   }
-  else
+  else {
     _itemcost->clear();
+    _new->setEnabled(false);
+  }
 }
 
 void maintainItemCosts::sSelectionChanged()
