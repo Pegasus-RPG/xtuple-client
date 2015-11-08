@@ -41,6 +41,23 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
 {
   setupUi(this);
 
+  // populate _projectType only needed once
+  XSqlQuery projectType;
+    projectType.prepare( "SELECT prjtype_id, prjtype_descr FROM prjtype WHERE prjtype_active "
+                         "UNION "
+                         "SELECT prjtype_id, prjtype_descr FROM prjtype "
+                         "JOIN prj ON (prj_prjtype_id=prjtype_id) "
+                         "WHERE (prj_id=:prj_id);" );
+    projectType.bindValue(":prj_id", _prjid);
+    projectType.exec();
+    _projectType->populate(projectType);
+    if (projectType.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, projectType.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
   connect(_buttonBox,     SIGNAL(rejected()),        this, SLOT(sClose()));
@@ -445,21 +462,6 @@ void project::populate()
     _recurring->setParent(projectpopulate.value("prj_recurring_prj_id").isNull() ?
                             _prjid : projectpopulate.value("prj_recurring_prj_id").toInt(),
                           "J");
-  }
-
-  XSqlQuery projectType;
-  projectType.prepare( "SELECT prjtype_id, prjtype_descr FROM prjtype WHERE prjtype_active "
-                       "UNION "
-                       "SELECT prjtype_id, prjtype_descr FROM prjtype "
-                       "JOIN prj ON (prj_prjtype_id=prjtype_id) "
-                       "WHERE (prj_id=:prj_id);" );
-  projectType.bindValue(":prj_id", _prjid);
-  projectType.exec();
-  _projectType->populate(projectType);
-  if (projectType.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, projectType.lastError().databaseText(), __FILE__, __LINE__);
-    return;
   }
 
   sFillTaskList();
