@@ -329,11 +329,13 @@ void quotes::sConvert(int pType)
 void quotes::sConvertSalesOrder()
 {
   sConvert(0);
+  sFillList();
 }
 
 void quotes::sConvertInvoice()
 {
   sConvert(1);
+  sFillList();
 }
 
 void quotes::sCopy()
