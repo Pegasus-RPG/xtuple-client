@@ -32,8 +32,9 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
 
   public slots:
     virtual SetResponse set(const ParameterList &pParams );
+    virtual void        sChangeState();
     virtual void        sHoldClicked();
-    virtual void        sSaveClicked();
+    virtual void        sCompleteOrder();
     virtual void        sSaveLine();
     virtual void        sPopulateMenu(QMenu *pMenu);
     virtual void        populateOrderNumber();
@@ -41,14 +42,15 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
     virtual void        sHandleOrderNumber();
     virtual void        sPopulateCustomerInfo( int pCustid );
     virtual void        sPopulateShiptoInfo();
+    virtual void        sPopulateItemInfo();
     virtual void        sHandleRequiredFields();
+    virtual void        setItemExtraClause();
     virtual void        populate();
     virtual void        sFillItemList();
     virtual void        sCalculateTotal();
     virtual void        prepare();
     virtual void        prepareLine();
     virtual void        closeEvent( QCloseEvent *pEvent );
-    virtual void        sHandleSalesOrderEvent( int pSoheadid, bool );
     virtual void        sTaxDetail();
     virtual void        populateCCInfo();
     virtual void        sNewCreditCard();
@@ -59,6 +61,7 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
     virtual void        sAllocateCreditMemos();
     virtual bool        sIssueLineBalance();
     virtual bool        sShipInvoice();
+    virtual void        sHandleFundsType();
     virtual void        sEnterCashPayment();
     virtual void        sCalculateTax();
     virtual void        sRecalculatePrice();
@@ -92,6 +95,7 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
     int     _soheadid;
     int     _soitemid;
     int     _lineMode;
+    int     _state;
     AppLock _lock;
     int     _mode;
     int     _numSelected;

@@ -156,9 +156,9 @@ to be bound by its terms.</comment>
          <number>0</number>
         </property>
         <item>
-         <widget class="QPushButton" name="_save">
+         <widget class="QPushButton" name="_changeState">
           <property name="text">
-           <string>&amp;Complete Order</string>
+           <string>Enter Payment</string>
           </property>
           <property name="autoDefault">
            <bool>true</bool>
@@ -484,7 +484,7 @@ to be bound by its terms.</comment>
                   <enum>Qt::NoFocus</enum>
                  </property>
                  <property name="text">
-                  <string>Charge</string>
+                  <string>Complete Order</string>
                  </property>
                 </widget>
                </item>
@@ -756,84 +756,6 @@ to be bound by its terms.</comment>
                   </item>
                  </layout>
                 </item>
-                <item row="4" column="0">
-                 <widget class="QLabel" name="_distDateLit">
-                  <property name="text">
-                   <string>Distribution Date:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                  <property name="buddy">
-                   <cstring>_distDate</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="1">
-                 <layout class="QHBoxLayout" name="_5">
-                  <property name="spacing">
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <widget class="DLineEdit" name="_distDate"/>
-                  </item>
-                  <item>
-                   <spacer>
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Expanding</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>25</width>
-                      <height>16</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-                <item row="5" column="0">
-                 <widget class="QLabel" name="_applDateLit">
-                  <property name="text">
-                   <string>Application Date:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                  <property name="buddy">
-                   <cstring>_applDate</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item row="5" column="1">
-                 <layout class="QHBoxLayout" name="_6">
-                  <property name="spacing">
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <widget class="DLineEdit" name="_applDate"/>
-                  </item>
-                  <item>
-                   <spacer>
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Expanding</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>25</width>
-                      <height>16</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
                 <item row="2" column="1">
                  <layout class="QHBoxLayout" name="_7">
                   <property name="spacing">
@@ -877,57 +799,6 @@ to be bound by its terms.</comment>
               </widget>
              </item>
              <item>
-              <widget class="QGroupBox" name="_altAccnt">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::TabFocus</enum>
-               </property>
-               <property name="title">
-                <string>Use Alternate A/R Account</string>
-               </property>
-               <property name="checkable">
-                <bool>true</bool>
-               </property>
-               <property name="checked">
-                <bool>false</bool>
-               </property>
-               <layout class="QGridLayout" name="_8">
-                <item row="0" column="0">
-                 <widget class="QLabel" name="_salescatLit">
-                  <property name="text">
-                   <string>Sales Category:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="XComboBox" name="_salescat">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="2">
-                 <spacer>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
               <spacer name="verticalSpacer_2">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
@@ -947,7 +818,7 @@ to be bound by its terms.</comment>
              <item>
               <widget class="QPushButton" name="_postCash">
                <property name="text">
-                <string>Post Cash Payment</string>
+                <string>Complete Order</string>
                </property>
               </widget>
              </item>
@@ -1076,12 +947,8 @@ to be bound by its terms.</comment>
   <tabstop>_docNumber</tabstop>
   <tabstop>_docDate</tabstop>
   <tabstop>_bankaccnt</tabstop>
-  <tabstop>_distDate</tabstop>
-  <tabstop>_applDate</tabstop>
-  <tabstop>_altAccnt</tabstop>
-  <tabstop>_salescat</tabstop>
   <tabstop>_postCash</tabstop>
-  <tabstop>_save</tabstop>
+  <tabstop>_changeState</tabstop>
   <tabstop>_hold</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_close</tabstop>

@@ -41,20 +41,15 @@
 
 #define ISNEW(mode)   (((mode) & 0x0F) == cNew)
 
-#define cClosed       0x01
-#define cActiveOpen   0x02
-#define cInactiveOpen 0x04
-#define cCanceled     0x08
-
-#define iDontUpdate   1
-#define iAskToUpdate  2
-#define iJustUpdate   3
+#define cLineState      0x01
+#define cPaymentState   0x02
 
 const struct {
     const char * full;
     QString abbr;
     bool    cc;
 } _fundsTypes[] = {
+    { QT_TRANSLATE_NOOP("cashReceipt", "On Account"),       "A", false },
     { QT_TRANSLATE_NOOP("cashReceipt", "Cash"),             "K", false },
     { QT_TRANSLATE_NOOP("cashReceipt", "Check"),            "C", false },
     { QT_TRANSLATE_NOOP("cashReceipt", "Certified Check"),  "T", false },
@@ -71,12 +66,14 @@ salesOrderSimple::salesOrderSimple(QWidget *parent, const char *name, Qt::Window
   connect(_postCash,            SIGNAL(clicked()),                              this,         SLOT(sEnterCashPayment()));
   connect(_cust,                SIGNAL(newId(int)),                             this,         SLOT(sPopulateCustomerInfo(int)));
   connect(_shipTo,              SIGNAL(newId(int)),                             this,         SLOT(sPopulateShiptoInfo()));
+  connect(_item,                SIGNAL(newId(int)),                             this,         SLOT(sPopulateItemInfo()));
+  connect(_fundsType,           SIGNAL(newID(int)),                             this,         SLOT(sHandleFundsType()));
   connect(_newCC,               SIGNAL(clicked()),                              this,         SLOT(sNewCreditCard()));
   connect(_viewCC,              SIGNAL(clicked()),                              this,         SLOT(sViewCreditCard()));
   
   connect(_orderNumber,         SIGNAL(editingFinished()),                      this,         SLOT(sHandleOrderNumber()));
   connect(_orderNumber,         SIGNAL(textChanged(const QString &)),           this,         SLOT(sSetUserEnteredOrderNumber()));
-  connect(_save,                SIGNAL(clicked()),                              this,         SLOT(sSaveClicked()));
+  connect(_changeState,         SIGNAL(clicked()),                              this,         SLOT(sChangeState()));
   connect(_hold,                SIGNAL(clicked()),                              this,         SLOT(sHoldClicked()));
   connect(_new,                 SIGNAL(clicked()),                              this,         SLOT(newSalesOrder()));
   connect(_soitem,              SIGNAL(populateMenu(QMenu*,QTreeWidgetItem *)), this,         SLOT(sPopulateMenu(QMenu *)));
@@ -89,7 +86,6 @@ salesOrderSimple::salesOrderSimple(QWidget *parent, const char *name, Qt::Window
   connect(_qty,                 SIGNAL(editingFinished()),                      this,         SLOT(sSaveLine()));
   connect(_custPONumber,        SIGNAL(editingFinished()),                      this,         SLOT(sHandleRequiredFields()));
   
-  _lineMode = cNew;
   _saved = false;
 
   _soheadid          = -1;
@@ -106,14 +102,15 @@ salesOrderSimple::salesOrderSimple(QWidget *parent, const char *name, Qt::Window
   _CCCVV->setValidator(new QIntValidator(100, 9999, this));
   _authCC = 0.0;
 
-  _applDate->setDate(omfgThis->dbDate(), true);
-  _distDate->setDate(omfgThis->dbDate(), true);
+  _docDate->setDate(omfgThis->dbDate(), true);
 
   _subtotal->setEffective(omfgThis->dbDate());
   _tax->setEffective(omfgThis->dbDate());
   _total->setEffective(omfgThis->dbDate());
   _balance->setEffective(omfgThis->dbDate());
   _availCredit->setEffective(omfgThis->dbDate());
+
+  _item->setType(ItemLineEdit::cSold | ItemLineEdit::cActive);
 
   _soitem->addColumn(tr("Item"),            _itemColumn,           Qt::AlignLeft,   true,  "item_number");
   _soitem->addColumn(tr("Description"),     -1,                    Qt::AlignLeft,   true,  "description");
@@ -137,13 +134,7 @@ salesOrderSimple::salesOrderSimple(QWidget *parent, const char *name, Qt::Window
     _paymentInformation->removeTab(_paymentInformation->indexOf(_creditCardPage));
   }
 
-  for (unsigned int i = 0; i < sizeof(_fundsTypes) / sizeof(_fundsTypes[1]); i++)
-  {
-    _fundsType->append(i, tr(_fundsTypes[i].full), _fundsTypes[i].abbr);
-  }
-    
   _bankaccnt->setType(XComboBox::ARBankAccounts);
-  _salescat->setType(XComboBox::SalesCategoriesActive);
   _qty->setDouble(1.0);
 }
 
@@ -171,10 +162,11 @@ enum SetResponse salesOrderSimple:: set(const ParameterList &pParams)
     {
       setObjectName("salesOrderSimple new");
       _mode = cNew;
+      _lineMode = cNew;
+      _state = cLineState;
+      _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_paymentPage), false);
 
       _cust->setType(CLineEdit::ActiveCustomers);
-
-      connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
     }
   }
 
@@ -251,6 +243,26 @@ enum SetResponse salesOrderSimple:: set(const ParameterList &pParams)
   return NoError;
 }
 
+void salesOrderSimple::sChangeState()
+{
+  if (_state == cLineState)
+  {
+    _state = cPaymentState;
+    _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_lineItemsPage), false);
+    _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_paymentPage), true);
+    _salesOrderInformation->setCurrentIndex(1);
+    _changeState->setText(tr("Enter Line"));
+  }
+  else
+  {
+    _state = cLineState;
+    _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_lineItemsPage), true);
+    _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_paymentPage), false);
+    _salesOrderInformation->setCurrentIndex(0);
+    _changeState->setText(tr("Enter Payment"));
+  }
+}
+
 void salesOrderSimple::sHoldClicked()
 {
   if (save(false))
@@ -263,7 +275,7 @@ void salesOrderSimple::sHoldClicked()
       newdlgX.set(params);
       newdlgX.exec();
     }
-
+    
     if (_captive)
       close();
     else
@@ -271,7 +283,7 @@ void salesOrderSimple::sHoldClicked()
   }
 }
 
-void salesOrderSimple::sSaveClicked()
+void salesOrderSimple::sCompleteOrder()
 {
   if (save(false))
   {
@@ -428,13 +440,22 @@ bool salesOrderSimple::save(bool partial)
 
 void salesOrderSimple::sSaveLine()
 {
+  if (!_item->isValid())
+  {
+    _item->setFocus();
+    return;
+  }
+  
+  if (!(_qty->toDouble() > 0))
+  {
+    _qty->setFocus();
+    _qty->selectAll();
+    return;
+  }
+  
   XSqlQuery salesSave;
   QList<GuiErrorCheck> errors;
   errors
-  << GuiErrorCheck(!_item->isValid(), _item,
-                   tr("<p>You must enter a valid Item before saving this Sales Order Item."))
-  << GuiErrorCheck(!(_qty->toDouble() > 0), _qty,
-                   tr("<p>You must enter a valid Quantity Ordered before saving this Sales Order Item."))
   << GuiErrorCheck((_qty->toDouble() != (double)qRound(_qty->toDouble()) &&
                     _qty->validator()->inherits("QIntValidator")), _qty,
                    tr("This UOM for this Item does not allow fractional quantities. Please fix the quantity."))
@@ -700,6 +721,22 @@ void salesOrderSimple::sPopulateCustomerInfo(int pCustid)
       _balance->setId(cust.value("cust_curr_id").toInt());
       _availCredit->setId(cust.value("cust_curr_id").toInt());
 
+      _fundsType->clear();
+      if (_creditlmt > 0.0)
+      {
+        for (unsigned int i = 0; i < sizeof(_fundsTypes) / sizeof(_fundsTypes[1]); i++)
+        {
+          _fundsType->append(i, tr(_fundsTypes[i].full), _fundsTypes[i].abbr);
+        }
+      }
+      else
+      {
+        for (unsigned int i = 1; i < sizeof(_fundsTypes) / sizeof(_fundsTypes[1]); i++)
+        {
+          _fundsType->append(i, tr(_fundsTypes[i].full), _fundsTypes[i].abbr);
+        }
+      }
+
       if (cust.value("shiptoid").toInt() != -1)
         _shipTo->setId(cust.value("shiptoid").toInt());
       else
@@ -716,6 +753,7 @@ void salesOrderSimple::sPopulateCustomerInfo(int pCustid)
     sSave();
     sRecalculatePrice();
     sHandleRequiredFields();
+    setItemExtraClause();
   }
   else
   {
@@ -729,6 +767,15 @@ void salesOrderSimple::sPopulateShiptoInfo()
   {
     sSave();
     sRecalculatePrice();
+    setItemExtraClause();
+  }
+}
+
+void salesOrderSimple::sPopulateItemInfo()
+{
+  if (_lineMode == cNew && _item->isValid() && _qty->toDouble() > 0.0)
+  {
+    sSaveLine();
   }
 }
 
@@ -746,6 +793,18 @@ void salesOrderSimple::sHandleRequiredFields()
   }
 }
 
+void salesOrderSimple::setItemExtraClause()
+{
+  _item->clearExtraClauseList();
+  _item->addExtraClause( QString("(item_type IN ('M', 'P', 'R'))") );  // ItemLineEdit::item type must be manufactured, purchased, reference
+  _item->addExtraClause( QString("(NOT item_config)") );  // ItemLineEdit::item type must not be configured
+  _item->addExtraClause( QString("(itemsite_active)") );  // ItemLineEdit::cActive doesn't compare against the itemsite record
+  _item->addExtraClause( QString("(itemsite_sold)") );    // ItemLineEdit::cSold doesn't compare against the itemsite record
+  _item->addExtraClause( QString("(itemsite_costmethod != 'J')") );  // ItemLineEdit::itemsite cost method cannot be Job Costed
+  _item->addExtraClause( QString("(item_id IN (SELECT custitem FROM custitem(%1, %2, CURRENT_DATE) ) )")
+                        .arg(_cust->id()).arg(_shipTo->id()) );
+}
+
 void salesOrderSimple::sEdit()
 {
   XSqlQuery soitem;
@@ -756,11 +815,11 @@ void salesOrderSimple::sEdit()
   soitem.exec();
   if (soitem.first())
   {
+    _lineMode = cEdit;
     _soitemid = soitem.value("coitem_id").toInt();
     _item->setItemsiteid(soitem.value("coitem_itemsite_id").toInt());
     _qty->setDouble(soitem.value("coitem_qtyord").toDouble());
     _lineGroup->setTitle(tr("Editing Line"));
-    _lineMode = cEdit;
     _item->setFocus();
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving SO Line Information"),
@@ -945,16 +1004,7 @@ void salesOrderSimple::sCalculateTotal()
     balance = 0;
   _balance->setLocalValue(balance);
   _cashBalance->setLocalValue(balance);
-  _cashReceived->setLocalValue(balance);
-  _CCAmount->setLocalValue(balance);
-  if (balance==0)
-  {
-    _charge->hide();
-  }
-  else
-  {
-    _charge->setVisible(_metrics->boolean("CCEnableCharge"));
-  }
+  sHandleFundsType();
   
   // Unallocated C/M's
   populateSales.prepare("SELECT SUM(amount) AS f_amount"
@@ -1044,13 +1094,15 @@ void salesOrderSimple::prepare()
     ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
                          _lock.lastError(), __FILE__, __LINE__);
 
-  _close->setEnabled(true);
+  _state = cLineState;
+  _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_lineItemsPage), true);
+  _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_paymentPage), false);
   _salesOrderInformation->setCurrentIndex(0);
+  _changeState->setText(tr("Enter Payment"));
 
   _orderNumberGen = 0;
   _orderNumber->clear();
 
-  _cust->setEnabled(true);
   _custPONumber->clear();
   _subtotal->clear();
   _tax->clear();
@@ -1140,12 +1192,6 @@ void salesOrderSimple::closeEvent(QCloseEvent *pEvent)
     omfgThis->sSalesOrdersUpdated(-1);
 
   XWidget::closeEvent(pEvent);
-}
-
-void salesOrderSimple::sHandleSalesOrderEvent(int pSoheadid, bool)
-{
-  if (pSoheadid == _soheadid)
-    sFillItemList();
 }
 
 void salesOrderSimple::sTaxDetail()
@@ -1304,9 +1350,7 @@ void salesOrderSimple::sChargeCC()
   sFillCcardList();
   _CCCVV->clear();
   sCalculateTotal();
-  _close->setEnabled(false);
-  _cust->setEnabled(false);
-  _salesOrderInformation->setCurrentIndex(0);
+  sCompleteOrder();
 }
 
 bool salesOrderSimple::okToProcessCC()
@@ -1812,6 +1856,29 @@ bool salesOrderSimple::sShipInvoice()
   return true;
 }
 
+void salesOrderSimple::sHandleFundsType()
+{
+  if (_fundsType->code() == "A")
+  {
+    _cashReceived->setLocalValue(0.0);
+    _CCAmount->setLocalValue(0.0);
+  }
+  else
+  {
+    _cashReceived->setLocalValue(_balance->localValue());
+    _CCAmount->setLocalValue(_balance->localValue());
+  }
+  
+  if (_balance->localValue() == 0.0)
+  {
+    _charge->hide();
+  }
+  else
+  {
+    _charge->setVisible(_metrics->boolean("CCEnableCharge"));
+  }
+}
+
 void salesOrderSimple::sEnterCashPayment()
 {
   XSqlQuery cashsave;
@@ -1898,16 +1965,13 @@ void salesOrderSimple::sEnterCashPayment()
   cashsave.bindValue(":cashrcpt_docnumber", _docNumber->text());
   cashsave.bindValue(":cashrcpt_docdate", _docDate->date());
   cashsave.bindValue(":cashrcpt_bankaccnt_id", _bankaccnt->id());
-  cashsave.bindValue(":cashrcpt_distdate", _distDate->date());
-  cashsave.bindValue(":cashrcpt_applydate", _applDate->date());
+  cashsave.bindValue(":cashrcpt_distdate", _docDate->date());
+  cashsave.bindValue(":cashrcpt_applydate", _docDate->date());
   cashsave.bindValue(":cashrcpt_notes", "Sales Order Cash Payment");
   cashsave.bindValue(":cashrcpt_usecustdeposit", true);
   cashsave.bindValue(":cashrcpt_discount", 0.0);
   cashsave.bindValue(":cashrcpt_curr_id", _cashReceived->id());
-  if(_altAccnt->isChecked())
-    cashsave.bindValue(":cashrcpt_salescat_id", _salescat->id());
-  else
-    cashsave.bindValue(":cashrcpt_salescat_id", -1);
+  cashsave.bindValue(":cashrcpt_salescat_id", -1);
   cashsave.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating Cash Receipt"),
                            cashsave, __FILE__, __LINE__))
@@ -1985,9 +2049,7 @@ void salesOrderSimple::sEnterCashPayment()
   }
 
   sCalculateTotal();
-  _close->setEnabled(false);
-  _cust->setEnabled(false);
-  _salesOrderInformation->setCurrentIndex(0);
+  sCompleteOrder();
 }
 
 void salesOrderSimple::sRecalculatePrice()
