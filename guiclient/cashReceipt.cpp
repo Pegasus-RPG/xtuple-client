@@ -97,6 +97,8 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _customerSelector->populate(CustomerSelector::SelectedCust | CustomerSelector::SelectedGroup);
   _customerSelector->setCurrentSelection(1);
 
+  _customerSelector->findChild<CustCluster*>("_cust")->setFocus();
+
   _applied->clear();
 
   _CCCVV->setValidator(new QIntValidator(100, 9999, this));
