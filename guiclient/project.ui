@@ -785,7 +785,7 @@ to be bound by its terms.</comment>
        <item>
         <widget class="Comments" name="_comments">
          <property name="type">
-          <number>0</number>
+          <enum>Comments::Project</enum>
          </property>
         </widget>
        </item>
