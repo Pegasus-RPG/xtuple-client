@@ -2664,7 +2664,7 @@ void salesOrderItem::sHandleSupplyOrder()
               if (ordq.first())
               {
                 int result = ordq.value("result").toInt();
-                if (result < 0)
+                if (result != 0)
                 {
                   systemError(this, storedProcErrorLookup("changeWoQty", result), __FILE__, __LINE__);
                   return;
