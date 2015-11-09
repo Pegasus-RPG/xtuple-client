@@ -4343,6 +4343,7 @@ void salesOrderItem::sCancel()
 
   _modified  = false;
   _canceling = false;
+  sNext();
 }
 
 void salesOrderItem::sLookupTax()
