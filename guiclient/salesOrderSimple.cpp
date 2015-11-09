@@ -1333,8 +1333,12 @@ void salesOrderSimple::sChargeCC()
                                         ordernum, refnum, ccpayid,
                                         QString("cohead"), _soheadid);
   if (returnVal < 0)
+  {
     QMessageBox::critical(this, tr("Credit Card Processing Error"),
                           cardproc->errorMsg());
+    _charge->setEnabled(true);
+    return;
+  }
   else if (returnVal > 0)
     QMessageBox::warning(this, tr("Credit Card Processing Warning"),
                          cardproc->errorMsg());
