@@ -688,7 +688,6 @@ void salesOrderSimple::sPopulateCustomerInfo(int pCustid)
                                       "before you may create a new Sales Order "
                                       "for the Customer." ) );
           // set to configured default cash customer
-          _cust->setId(-1);
           _cust->setId(_metrics->value("SSOSDefaultCustId").toInt());
           _cust->setFocus();
           return;
@@ -706,7 +705,6 @@ void salesOrderSimple::sPopulateCustomerInfo(int pCustid)
                                       "Credit Warning before you may create a "
                                       "new Sales Order for the Customer." ) );
           // set to configured default cash customer
-          _cust->setId(-1);
           _cust->setId(_metrics->value("SSOSDefaultCustId").toInt());
           _cust->setFocus();
           return;
@@ -1145,7 +1143,6 @@ void salesOrderSimple::prepare()
   populateOrderNumber();
   
   // set to configured default cash customer
-  _cust->setId(-1);
   _cust->setId(_metrics->value("SSOSDefaultCustId").toInt());
   
   prepareLine();
