@@ -696,8 +696,8 @@ void salesOrderSimple::sPopulateCustomerInfo(int pCustid)
                                       "Customer must be taken off of Credit Hold "
                                       "before you may create a new Sales Order "
                                       "for the Customer." ) );
-          _cust->setId(-1);
-          _shipTo->setCustid(-1);
+          // set to configured default cash customer
+          _cust->setId(_metrics->value("SSOSDefaultCustId").toInt());
           _cust->setFocus();
           return;
         }
@@ -713,8 +713,8 @@ void salesOrderSimple::sPopulateCustomerInfo(int pCustid)
                                       "selected Customer must be taken off of "
                                       "Credit Warning before you may create a "
                                       "new Sales Order for the Customer." ) );
-          _cust->setId(-1);
-          _shipTo->setCustid(-1);
+          // set to configured default cash customer
+          _cust->setId(_metrics->value("SSOSDefaultCustId").toInt());
           _cust->setFocus();
           return;
         }
@@ -1153,8 +1153,10 @@ void salesOrderSimple::prepare()
   
   // set to configured default cash customer
   _cust->setEnabled(true);
-  _cust->setId(-1);
   _cust->setId(_metrics->value("SSOSDefaultCustId").toInt());
+  
+  // save the order
+  sSave();
   
   prepareLine();
   _item->setFocus();
@@ -1876,11 +1878,15 @@ void salesOrderSimple::sHandleFundsType()
   {
     _cashReceived->setLocalValue(0.0);
     _CCAmount->setLocalValue(0.0);
+    _cashReceived->setEnabled(false);
+    _CCAmount->setEnabled(false);
   }
   else
   {
     _cashReceived->setLocalValue(_balance->localValue());
     _CCAmount->setLocalValue(_balance->localValue());
+    _cashReceived->setEnabled(true);
+    _CCAmount->setEnabled(true);
   }
   
   if (_balance->localValue() == 0.0)
@@ -1900,6 +1906,21 @@ void salesOrderSimple::sEnterCashPayment()
     return;
   
   XSqlQuery cashsave;
+
+  // check for on account
+  if (_fundsType->code() == "A")
+  {
+    sCalculateTotal();
+    sCompleteOrder();
+    return;
+  }
+  
+  if (_cashReceived->localValue() == 0.0)
+  {
+    QMessageBox::critical( this, tr("Zero Amount Received"),
+                          tr( "You cannot post a zero payment." ) );
+    return;
+  }
 
   if (_cashReceived->localValue() >  _balance->localValue() &&
       QMessageBox::question(this, tr("Change?"),
