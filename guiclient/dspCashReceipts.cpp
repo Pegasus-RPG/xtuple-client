@@ -20,6 +20,7 @@
 #include "arOpenItem.h"
 #include "cashReceipt.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 dspCashReceipts::dspCashReceipts(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspCashReceipts", fl)
@@ -278,10 +279,10 @@ void dspCashReceipts::sPostCashrcpt()
   dspPostCashrcpt.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
   if (dspPostCashrcpt.first())
     journalNumber = dspPostCashrcpt.value("journalnumber").toInt();
-  else if (dspPostCashrcpt.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt"),
+                                dspPostCashrcpt, __FILE__, __LINE__))
   {
-    systemError(this, dspPostCashrcpt.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+      return;
   }
 
   dspPostCashrcpt.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
@@ -293,15 +294,17 @@ void dspCashReceipts::sPostCashrcpt()
     int result = dspPostCashrcpt.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("postCashReceipt", result),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt"),
+                               storedProcErrorLookup("postCashReceipt", result),
+                               __FILE__, __LINE__);
       tx.exec("ROLLBACK;");
       return;
     }
   }
   else if (dspPostCashrcpt.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, dspPostCashrcpt.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt"),
+                         dspPostCashrcpt, __FILE__, __LINE__);
     tx.exec("ROLLBACK;");
     return;
   }
@@ -329,14 +332,15 @@ void dspCashReceipts::sReversePosted()
       int result = dspReversePosted.value("result").toInt();
       if (result < 0)
       {
-        systemError(this, storedProcErrorLookup("reverseCashReceipt", result),
-                         __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Reversing Posted Cash Receipt"),
+                               storedProcErrorLookup("reverseCashReceipt", result),
+                               __FILE__, __LINE__);
         return;
       }
     }
-    else if (dspReversePosted.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Reversing Posted Cash Receipt"),
+                                  dspReversePosted, __FILE__, __LINE__))
     {
-      systemError(this, dspReversePosted.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     sFillList();
