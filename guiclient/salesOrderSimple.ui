@@ -302,6 +302,69 @@ to be bound by its terms.</comment>
            <property name="spacing">
             <number>0</number>
            </property>
+           <item row="2" column="2">
+            <widget class="CurrCluster" name="_total">
+             <property name="currencyEditable" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="currencyVisible">
+              <bool>true</bool>
+             </property>
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="_totalLit">
+             <property name="text">
+              <string>Total:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="_balanceLit">
+             <property name="text">
+              <string>Balance:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="XURLLabel" name="_taxLit">
+             <property name="text">
+              <string>Tax:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="_subtotalLit">
+             <property name="text">
+              <string>Subtotal:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="CurrCluster" name="_tax">
+             <property name="currencyEditable" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
            <item row="0" column="2">
             <widget class="CurrCluster" name="_subtotal">
              <property name="currencyEditable" stdset="0">
@@ -322,92 +385,6 @@ to be bound by its terms.</comment>
              </property>
              <property name="enabled">
               <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="XURLLabel" name="_taxLit">
-             <property name="text">
-              <string>Tax:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="_balanceLit">
-             <property name="text">
-              <string>Balance:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="_subtotalLit">
-             <property name="text">
-              <string>Subtotal:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="_totalLit">
-             <property name="text">
-              <string>Total:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="2">
-            <widget class="CurrCluster" name="_availCredit">
-             <property name="currencyEditable" stdset="0">
-              <bool>false</bool>
-             </property>
-             <property name="currencyVisible">
-              <bool>true</bool>
-             </property>
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="CurrCluster" name="_total">
-             <property name="currencyEditable" stdset="0">
-              <bool>false</bool>
-             </property>
-             <property name="currencyVisible">
-              <bool>true</bool>
-             </property>
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <widget class="CurrCluster" name="_tax">
-             <property name="currencyEditable" stdset="0">
-              <bool>false</bool>
-             </property>
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0">
-            <widget class="XURLLabel" name="_availCreditLit">
-             <property name="text">
-              <string>Available Credit:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -636,7 +613,14 @@ to be bound by its terms.</comment>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0">
+                <item row="3" column="1">
+                 <widget class="CurrCluster" name="_cashReceived">
+                  <property name="baseVisible">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
                  <widget class="QLabel" name="_cashReceivedLit">
                   <property name="text">
                    <string>Amount Received:</string>
@@ -647,9 +631,25 @@ to be bound by its terms.</comment>
                  </widget>
                 </item>
                 <item row="2" column="1">
-                 <widget class="CurrCluster" name="_cashReceived">
-                  <property name="baseVisible">
+                 <widget class="CurrCluster" name="_availCredit">
+                  <property name="currencyEditable" stdset="0">
+                   <bool>false</bool>
+                  </property>
+                  <property name="currencyVisible">
                    <bool>true</bool>
+                  </property>
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="XURLLabel" name="_availCreditLit">
+                  <property name="text">
+                   <string>Available Credit:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                   </property>
                  </widget>
                 </item>
@@ -935,7 +935,6 @@ to be bound by its terms.</comment>
   <tabstop>_tax</tabstop>
   <tabstop>_total</tabstop>
   <tabstop>_balance</tabstop>
-  <tabstop>_availCredit</tabstop>
   <tabstop>_paymentInformation</tabstop>
   <tabstop>_newCC</tabstop>
   <tabstop>_CCAmount</tabstop>
