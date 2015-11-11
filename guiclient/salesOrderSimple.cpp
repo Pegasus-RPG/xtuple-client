@@ -247,7 +247,15 @@ void salesOrderSimple::sChangeState()
 {
   if (_state == cLineState)
   {
+    if (!_cust->isValid())
+    {
+      QMessageBox::critical( this, tr("Invalid Customer"),
+                            tr( "You must enter a valid Customer before entering a payment." ) );
+      _cust->setFocus();
+      return;
+    }
     _state = cPaymentState;
+    _cust->setEnabled(false);
     _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_lineItemsPage), false);
     _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_paymentPage), true);
     _salesOrderInformation->setCurrentIndex(1);
@@ -256,6 +264,7 @@ void salesOrderSimple::sChangeState()
   else
   {
     _state = cLineState;
+    _cust->setEnabled(true);
     _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_lineItemsPage), true);
     _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_paymentPage), false);
     _salesOrderInformation->setCurrentIndex(0);
@@ -1143,6 +1152,7 @@ void salesOrderSimple::prepare()
   populateOrderNumber();
   
   // set to configured default cash customer
+  _cust->setEnabled(true);
   _cust->setId(_metrics->value("SSOSDefaultCustId").toInt());
   
   // save the order
@@ -1304,6 +1314,10 @@ void salesOrderSimple::sFillCcardList()
 
 void salesOrderSimple::sChargeCC()
 {
+  // save the order checking for errors
+  if (!save(false))
+    return;
+  
   if (!okToProcessCC())
     return;
 
@@ -1887,6 +1901,10 @@ void salesOrderSimple::sHandleFundsType()
 
 void salesOrderSimple::sEnterCashPayment()
 {
+  // save the order checking for errors
+  if (!save(false))
+    return;
+  
   XSqlQuery cashsave;
 
   // check for on account
