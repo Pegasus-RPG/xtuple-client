@@ -2661,18 +2661,9 @@ void salesOrderItem::sHandleSupplyOrder()
               ordq.bindValue(":wo_id", _supplyOrderId);
               ordq.bindValue(":qty", valqty);
               ordq.exec();
-              if (ordq.first())
+              if (ErrorReporter::error(QtCriticalMsg, this, tr("Change Work Order Quantity"),
+                                            ordq, __FILE__, __LINE__))
               {
-                int result = ordq.value("result").toInt();
-                if (result != 0)
-                {
-                  systemError(this, storedProcErrorLookup("changeWoQty", result), __FILE__, __LINE__);
-                  return;
-                }
-              }
-              else if (ordq.lastError().type() != QSqlError::NoError)
-              {
-                systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
                 return;
               }
             }

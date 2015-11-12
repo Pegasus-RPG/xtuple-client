@@ -568,19 +568,9 @@ bool returnAuthorizationItem::sSave()
           returnSave.bindValue(":wo_id", _orderId);
           returnSave.bindValue(":qty", _qtyAuth->toDouble() * _qtyinvuomratio);
           returnSave.exec();
-          if (returnSave.first())
+          if (ErrorReporter::error(QtCriticalMsg, this, tr("Change Work Order Quantity"),
+                                   returnSave, __FILE__, __LINE__))
           {
-            int result = returnSave.value("result").toInt();
-            if (result < 0)
-            {
-              systemError(this, storedProcErrorLookup("changeWoQty", result),
-              __FILE__, __LINE__);
-              reject();
-            }
-          }
-          else if (returnSave.lastError().type() != QSqlError::NoError)
-          {
-            systemError(this, returnSave.lastError().databaseText(), __FILE__, __LINE__);
             reject();
           }
         }

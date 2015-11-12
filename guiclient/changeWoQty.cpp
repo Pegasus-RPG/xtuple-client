@@ -133,6 +133,11 @@ void changeWoQty::sChangeQty()
   changeChangeQty.bindValue(":wo_id", _wo->id());
   changeChangeQty.bindValue(":qty", newQty);
   changeChangeQty.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Change Work Order Quantity"),
+                           changeChangeQty, __FILE__, __LINE__))
+  {
+    return;
+  }
 
   if (_postComment->isChecked())
   {

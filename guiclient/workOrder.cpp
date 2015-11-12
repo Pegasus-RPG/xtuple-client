@@ -1278,9 +1278,9 @@ void workOrder::sChangeParentQty()
       workChangeParentQty.bindValue(":qty", newQty);
       workChangeParentQty.bindValue(":sense", _sense);
       workChangeParentQty.exec();
-      if (workChangeParentQty.lastError().type() != QSqlError::NoError)
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Change Work Order Quantity"),
+                               workChangeParentQty, __FILE__, __LINE__))
       {
-        systemError(this, workChangeParentQty.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
       else
