@@ -1001,7 +1001,7 @@ bool vendor::sPopulate()
     sFillTaxregList();
 
     _comments->setId(_crmacctid);
-    _documents->setId(_crmacctid);
+    _documents->setId(_vendid);
     _address->setSearchAcct(_crmacctid);
     _charass->setId(_vendid);
 

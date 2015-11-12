@@ -1122,7 +1122,7 @@ and Purchase Order amounts</string>
        <item>
         <widget class="Documents" name="_documents">
          <property name="type">
-          <enum>Documents::CRMAccount</enum>
+          <enum>Documents::Vendor</enum>
          </property>
         </widget>
        </item>
