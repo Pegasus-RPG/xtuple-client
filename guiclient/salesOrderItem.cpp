@@ -662,18 +662,19 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
 
     if (ISQUOTE(_mode))
       setSales.prepare("SELECT a.quitem_id AS id"
-                "  FROM quitem AS a, quitem as b"
-                " WHERE ((a.quitem_quhead_id=b.quitem_quhead_id)"
-                "   AND  (b.quitem_id=:id))"
-                " ORDER BY a.quitem_linenumber "
-                " LIMIT 1;");
+                       "  FROM quitem AS a, quitem as b"
+                       " WHERE ((a.quitem_quhead_id=b.quitem_quhead_id)"
+                       "   AND  (b.quitem_id=:id))"
+                       " ORDER BY a.quitem_linenumber "
+                       " LIMIT 1;");
     else
       setSales.prepare("SELECT a.coitem_id AS id"
-                "  FROM coitem AS a, coitem AS b"
-                " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
-                "   AND  (b.coitem_id=:id))"
-                " ORDER BY a.coitem_linenumber, a.coitem_subnumber"
-                " LIMIT 1;");
+                       "  FROM coitem AS a, coitem AS b"
+                       " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
+                       "   AND  (a.coitem_status != 'X')"
+                       "   AND  (b.coitem_id=:id))"
+                       " ORDER BY a.coitem_linenumber, a.coitem_subnumber"
+                       " LIMIT 1;");
     setSales.bindValue(":id", _soitemid);
     setSales.exec();
     if (!setSales.first() || setSales.value("id").toInt() == _soitemid)
@@ -686,18 +687,19 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
 
     if (ISQUOTE(_mode))
       setSales.prepare("SELECT a.quitem_id AS id"
-                "  FROM quitem AS a, quitem as b"
-                " WHERE ((a.quitem_quhead_id=b.quitem_quhead_id)"
-                "   AND  (b.quitem_id=:id))"
-                " ORDER BY a.quitem_linenumber DESC"
-                " LIMIT 1;");
+                       "  FROM quitem AS a, quitem as b"
+                       " WHERE ((a.quitem_quhead_id=b.quitem_quhead_id)"
+                       "   AND  (b.quitem_id=:id))"
+                       " ORDER BY a.quitem_linenumber DESC"
+                       " LIMIT 1;");
     else
       setSales.prepare("SELECT a.coitem_id AS id"
-                "  FROM coitem AS a, coitem AS b"
-                " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
-                "   AND  (b.coitem_id=:id))"
-                " ORDER BY a.coitem_linenumber DESC, a.coitem_subnumber DESC"
-                " LIMIT 1;");
+                       "  FROM coitem AS a, coitem AS b"
+                       " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
+                       "   AND  (a.coitem_status != 'X')"
+                       "   AND  (b.coitem_id=:id))"
+                       " ORDER BY a.coitem_linenumber DESC, a.coitem_subnumber DESC"
+                       " LIMIT 1;");
     setSales.bindValue(":id", _soitemid);
     setSales.exec();
     if (setSales.first() && setSales.value("id").toInt() == _soitemid)
@@ -4062,23 +4064,23 @@ void salesOrderItem::sNext()
 
   if (ISQUOTE(_mode))
     salesNext.prepare("SELECT a.quitem_id AS id, 0 AS sub"
-              "  FROM quitem AS a, quitem as b"
-              " WHERE ((a.quitem_quhead_id=b.quitem_quhead_id)"
-              "   AND  (a.quitem_linenumber > b.quitem_linenumber)"
-              "   AND  (b.quitem_id=:id))"
-              " ORDER BY a.quitem_linenumber"
-              " LIMIT 1;");
+                      "  FROM quitem AS a, quitem as b"
+                      " WHERE ((a.quitem_quhead_id=b.quitem_quhead_id)"
+                      "   AND  (a.quitem_linenumber > b.quitem_linenumber)"
+                      "   AND  (b.quitem_id=:id))"
+                      " ORDER BY a.quitem_linenumber"
+                      " LIMIT 1;");
   else
     salesNext.prepare("SELECT a.coitem_id AS id, a.coitem_subnumber AS sub"
-              "  FROM coitem AS a, coitem AS b"
-              " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
-	      "   AND  (a.coitem_status <> 'X')"
-              "   AND ((a.coitem_linenumber > b.coitem_linenumber)"
-              "    OR ((a.coitem_linenumber = b.coitem_linenumber)"
-              "   AND  (a.coitem_subnumber > b.coitem_subnumber)))"
-              "   AND  (b.coitem_id=:id))"
-              " ORDER BY a.coitem_linenumber, a.coitem_subnumber"
-              " LIMIT 1;");
+                      "  FROM coitem AS a, coitem AS b"
+                      " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
+                      "   AND  (a.coitem_status <> 'X')"
+                      "   AND ((a.coitem_linenumber > b.coitem_linenumber)"
+                      "    OR ((a.coitem_linenumber = b.coitem_linenumber)"
+                      "   AND  (a.coitem_subnumber > b.coitem_subnumber)))"
+                      "   AND  (b.coitem_id=:id))"
+                      " ORDER BY a.coitem_linenumber, a.coitem_subnumber"
+                      " LIMIT 1;");
   salesNext.bindValue(":id", _soitemid);
   salesNext.exec();
   if (salesNext.first())
@@ -4329,11 +4331,18 @@ void salesOrderItem::sCancel()
 
   clear();
   prepare();
-  _prev->setEnabled(true);
   _item->setFocus();
 
   _modified  = false;
   _canceling = false;
+  if (_prev->isEnabled())
+  {
+    sPrev();
+  }
+  else
+  {
+    sNext();
+  }
 }
 
 void salesOrderItem::sLookupTax()
