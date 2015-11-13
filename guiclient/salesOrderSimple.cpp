@@ -41,9 +41,6 @@
 
 #define ISNEW(mode)   (((mode) & 0x0F) == cNew)
 
-#define cLineState      0x01
-#define cPaymentState   0x02
-
 const struct {
     const char * full;
     QString abbr;
@@ -73,7 +70,7 @@ salesOrderSimple::salesOrderSimple(QWidget *parent, const char *name, Qt::Window
   
   connect(_orderNumber,         SIGNAL(editingFinished()),                      this,         SLOT(sHandleOrderNumber()));
   connect(_orderNumber,         SIGNAL(textChanged(const QString &)),           this,         SLOT(sSetUserEnteredOrderNumber()));
-  connect(_changeState,         SIGNAL(clicked()),                              this,         SLOT(sChangeState()));
+  connect(_salesOrderInformation, SIGNAL(currentChanged(int)),                  this,         SLOT(sChangeState(int)));
   connect(_hold,                SIGNAL(clicked()),                              this,         SLOT(sHoldClicked()));
   connect(_new,                 SIGNAL(clicked()),                              this,         SLOT(newSalesOrder()));
   connect(_soitem,              SIGNAL(populateMenu(QMenu*,QTreeWidgetItem *)), this,         SLOT(sPopulateMenu(QMenu *)));
@@ -163,8 +160,6 @@ enum SetResponse salesOrderSimple:: set(const ParameterList &pParams)
       setObjectName("salesOrderSimple new");
       _mode = cNew;
       _lineMode = cNew;
-      _state = cLineState;
-      _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_paymentPage), false);
 
       _cust->setType(CLineEdit::ActiveCustomers);
     }
@@ -243,9 +238,9 @@ enum SetResponse salesOrderSimple:: set(const ParameterList &pParams)
   return NoError;
 }
 
-void salesOrderSimple::sChangeState()
+void salesOrderSimple::sChangeState(int pState)
 {
-  if (_state == cLineState)
+  if (pState == 1) // payment tab
   {
     if (!_cust->isValid())
     {
@@ -254,21 +249,11 @@ void salesOrderSimple::sChangeState()
       _cust->setFocus();
       return;
     }
-    _state = cPaymentState;
     _cust->setEnabled(false);
-    _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_lineItemsPage), false);
-    _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_paymentPage), true);
-    _salesOrderInformation->setCurrentIndex(1);
-    _changeState->setText(tr("Enter Line"));
   }
-  else
+  else // line tab
   {
-    _state = cLineState;
     _cust->setEnabled(true);
-    _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_lineItemsPage), true);
-    _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_paymentPage), false);
-    _salesOrderInformation->setCurrentIndex(0);
-    _changeState->setText(tr("Enter Payment"));
   }
 }
 
@@ -336,8 +321,6 @@ bool salesOrderSimple::save(bool partial)
   QList<GuiErrorCheck> errors;
   errors << GuiErrorCheck(!_cust->isValid(), _cust,
                           tr("You must select a Customer for this order before you may save it.") )
-//         << GuiErrorCheck((_shipTo->id() == -1), _shipTo,
-//                          tr("You must select a Ship-To for this order before you may save it.") )
          << GuiErrorCheck(!partial && _total->localValue() < 0, _cust,
                           tr("<p>The Total must be a positive value.") )
          << GuiErrorCheck(!partial && _soitem->topLevelItemCount() == 0, _item,
@@ -405,14 +388,10 @@ bool salesOrderSimple::save(bool partial)
   
   if ((_mode == cNew) && _saved)
   {
-//    QMessageBox::warning( this, tr("Debug"),
-//                         tr( "Editing..." ) );
     params.append("EditMode", true);
   }
   else if (_mode == cNew)
   {
-//    QMessageBox::warning( this, tr("Debug"),
-//                         tr( "Inserting..." ) );
     params.append("NewMode", true);
   }
   saveSales = mql.toQuery(params);
@@ -508,16 +487,12 @@ void salesOrderSimple::sSaveLine()
     }
     else if (salesSave.first())
     {
-//      QMessageBox::warning( this, tr("Debug"),
-//                            tr( "Duplicate item found..." ) );
       params.append("id", salesSave.value("coitem_id").toInt());
       params.append("qtyord", (salesSave.value("coitem_qtyord").toDouble() + _qty->toDouble()));
       params.append("EditMode", true);
     }
     else
     {
-//      QMessageBox::warning( this, tr("Debug"),
-//                           tr( "Duplicate item NOT found..." ) );
       params.append("id", _soitemid);
       params.append("qtyord", _qty->toDouble());
       params.append("NewMode", true);
@@ -1103,11 +1078,7 @@ void salesOrderSimple::prepare()
     ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
                          _lock.lastError(), __FILE__, __LINE__);
 
-  _state = cLineState;
-  _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_lineItemsPage), true);
-  _salesOrderInformation->setTabEnabled(_salesOrderInformation->indexOf(_paymentPage), false);
   _salesOrderInformation->setCurrentIndex(0);
-  _changeState->setText(tr("Enter Payment"));
 
   _orderNumberGen = 0;
   _orderNumber->clear();
@@ -1881,24 +1852,22 @@ void salesOrderSimple::sHandleFundsType()
   if (_fundsType->code() == "A")
   {
     _cashReceived->setLocalValue(0.0);
-    _CCAmount->setLocalValue(0.0);
     _cashReceived->setEnabled(false);
-    _CCAmount->setEnabled(false);
   }
   else
   {
     _cashReceived->setLocalValue(_balance->localValue());
-    _CCAmount->setLocalValue(_balance->localValue());
     _cashReceived->setEnabled(true);
-    _CCAmount->setEnabled(true);
   }
   
   if (_balance->localValue() == 0.0)
   {
+    _CCAmount->setLocalValue(0.0);
     _charge->hide();
   }
   else
   {
+    _CCAmount->setLocalValue(_balance->localValue());
     _charge->setVisible(_metrics->boolean("CCEnableCharge"));
   }
 }

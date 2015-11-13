@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>613</width>
+    <width>710</width>
     <height>773</height>
    </rect>
   </property>
@@ -155,16 +155,6 @@ to be bound by its terms.</comment>
         <property name="spacing">
          <number>0</number>
         </property>
-        <item>
-         <widget class="QPushButton" name="_changeState">
-          <property name="text">
-           <string>Enter Payment</string>
-          </property>
-          <property name="autoDefault">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="QPushButton" name="_hold">
           <property name="text">
@@ -461,7 +451,7 @@ to be bound by its terms.</comment>
                   <enum>Qt::NoFocus</enum>
                  </property>
                  <property name="text">
-                  <string>Complete Order</string>
+                  <string>Charge CC and Complete Order</string>
                  </property>
                 </widget>
                </item>
@@ -818,7 +808,7 @@ to be bound by its terms.</comment>
              <item>
               <widget class="QPushButton" name="_postCash">
                <property name="text">
-                <string>Complete Order</string>
+                <string>Post Payment and Complete Order</string>
                </property>
               </widget>
              </item>
@@ -941,13 +931,13 @@ to be bound by its terms.</comment>
   <tabstop>_CCCVV</tabstop>
   <tabstop>_cashTotal</tabstop>
   <tabstop>_cashBalance</tabstop>
+  <tabstop>_availCredit</tabstop>
   <tabstop>_cashReceived</tabstop>
   <tabstop>_fundsType</tabstop>
   <tabstop>_docNumber</tabstop>
   <tabstop>_docDate</tabstop>
   <tabstop>_bankaccnt</tabstop>
   <tabstop>_postCash</tabstop>
-  <tabstop>_changeState</tabstop>
   <tabstop>_hold</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_close</tabstop>

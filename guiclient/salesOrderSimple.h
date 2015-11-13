@@ -32,7 +32,7 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
 
   public slots:
     virtual SetResponse set(const ParameterList &pParams );
-    virtual void        sChangeState();
+    virtual void        sChangeState( int pState );
     virtual void        sHoldClicked();
     virtual void        sCompleteOrder();
     virtual void        sSaveLine();
@@ -95,7 +95,6 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
     int     _soheadid;
     int     _soitemid;
     int     _lineMode;
-    int     _state;
     AppLock _lock;
     int     _mode;
     int     _numSelected;
