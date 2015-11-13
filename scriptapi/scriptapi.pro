@@ -61,11 +61,15 @@ HEADERS += setupscriptapi.h \
     qiconproto.h \
     qiodeviceproto.h \
     qitemdelegateproto.h \
+    qjsondocumentproto.h \
+    qjsonobjectproto.h \
+    qjsonvalueproto.h \
     qlayoutproto.h \
     qlayoutitemproto.h \
     qmainwindowproto.h \
     qmenuproto.h \
     qmessageboxsetup.h \
+    qnetworkaccessmanagerproto.h \
     qnetworkreplyproto.h \
     qnetworkrequestproto.h \
     qobjectproto.h \
@@ -120,7 +124,10 @@ HEADERS += setupscriptapi.h \
     womatlclustersetup.h \
     xdateeditsetup.h \
     ../widgets/xt.h \
-    xvariantsetup.h
+    xvariantsetup.h \
+    xwebsync_p.h \
+    xwebsync.h \
+    xwebsyncproto.h
 
 SOURCES += setupscriptapi.cpp \
     include.cpp \
@@ -163,11 +170,15 @@ SOURCES += setupscriptapi.cpp \
     qiconproto.cpp \
     qiodeviceproto.cpp \
     qitemdelegateproto.cpp \
+    qjsondocumentproto.cpp \
+    qjsonobjectproto.cpp \
+    qjsonvalueproto.cpp \
     qlayoutitemproto.cpp \
     qlayoutproto.cpp \
     qmainwindowproto.cpp \
     qmenuproto.cpp \
     qmessageboxsetup.cpp \
+    qnetworkaccessmanagerproto.cpp \
     qnetworkreplyproto.cpp \
     qnetworkrequestproto.cpp \
     qobjectproto.cpp \
@@ -222,7 +233,9 @@ SOURCES += setupscriptapi.cpp \
     womatlclustersetup.cpp \
     xdateeditsetup.cpp \
     ../widgets/xt.cpp \
-    xvariantsetup.cpp
+    xvariantsetup.cpp \
+    xwebsync.cpp \
+    xwebsyncproto.cpp
 
 QT += core \
     sql \

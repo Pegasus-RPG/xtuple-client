@@ -67,11 +67,15 @@
 #include "qiconproto.h"
 #include "qiodeviceproto.h"
 #include "qitemdelegateproto.h"
+#include "qjsondocumentproto.h"
+#include "qjsonobjectproto.h"
+#include "qjsonvalueproto.h"
 #include "qlayoutitemproto.h"
 #include "qlayoutproto.h"
 #include "qmainwindowproto.h"
 #include "qmenuproto.h"
 #include "qmessageboxsetup.h"
+#include "qnetworkaccessmanagerproto.h"
 #include "qnetworkreplyproto.h"
 #include "qnetworkrequestproto.h"
 #include "qobjectproto.h"
@@ -121,6 +125,9 @@
 #include "xsqlqueryproto.h"
 #include "xtreewidget.h"
 #include "xvariantsetup.h"
+#include "xwebsync_p.h"
+#include "xwebsync.h"
+#include "xwebsyncproto.h"
 
 /*! \defgroup scriptapi The xTuple ERP Scripting API
 
@@ -191,12 +198,16 @@ void setupScriptApi(QScriptEngine *engine)
   setupQIconProto(engine);
   setupQIODeviceProto(engine);
   setupQItemDelegateProto(engine);
+  setupQJsonDocumentProto(engine);
+  setupQJsonObjectProto(engine);
+  setupQJsonValueProto(engine);
   setupQLayoutItemProto(engine);
   setupQLayoutProto(engine);
   setupQMainWindowProto(engine);
   setupQMenuProto(engine);
   setupQMessageBox(engine);
   setupQNetworkAccessManagerProto(engine);
+  setupQNetworkAccessManagerCoreProto(engine);
   setupQNetworkReplyProto(engine);
   setupQNetworkRequestProto(engine);
   setupQObjectProto(engine);
@@ -247,4 +258,5 @@ void setupScriptApi(QScriptEngine *engine)
   setupXTreeWidget(engine);
   setupXTreeWidgetItem(engine);
   setupXVariant(engine);
+  setupXWebSyncProto(engine);
 }

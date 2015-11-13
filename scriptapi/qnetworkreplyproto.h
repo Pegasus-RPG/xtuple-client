@@ -11,6 +11,7 @@
 #ifndef __QNETWORKREPLYPROTO_H__
 #define __QNETWORKREPLYPROTO_H__
 
+#include <QList>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
@@ -37,6 +38,7 @@ class QNetworkReplyProto : public QObject, public QScriptable
     Q_INVOKABLE int       error() const;
     Q_INVOKABLE bool      hasRawHeader(const QByteArray &headerName)   const;
     Q_INVOKABLE QVariant  header(QNetworkRequest::KnownHeaders header) const;
+    Q_INVOKABLE void      ignoreSslErrors(const QList<QSslError> & errors);
     Q_INVOKABLE QNetworkAccessManager           *manager()   const;
     Q_INVOKABLE QNetworkAccessManager::Operation operation() const;
     Q_INVOKABLE QByteArray        rawHeader(const QByteArray &headerName) const;
