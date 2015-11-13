@@ -70,6 +70,7 @@ const struct {
  // { "changeSOTaxAuth", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Tax Authority was not found."),	0, "" },
   { "changeTOTax", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Transfer Order was not found."),	0, "" },
   { "changeTOTaxAuth", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Tax Authority was not found."),	0, "" },
+  { "changeWoQty", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Work Order is closed and cannot be changed."),	0, "" },
 
   { "closeAccountingPeriod", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Accounting Period cannot be "
 				    "closed because it is already closed."),
