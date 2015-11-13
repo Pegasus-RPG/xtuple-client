@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -386,6 +386,7 @@ void vendor::setViewMode()
   _match->setEnabled(false);
   _newTaxreg->setEnabled(false);
   _comments->setReadOnly(true);
+  _documents->setReadOnly(true);
   _charass->setReadOnly(true);
 
   _achGroup->setEnabled(false);
@@ -1000,6 +1001,7 @@ bool vendor::sPopulate()
     sFillTaxregList();
 
     _comments->setId(_crmacctid);
+    _documents->setId(_vendid);
     _address->setSearchAcct(_crmacctid);
     _charass->setId(_vendid);
 
@@ -1375,6 +1377,7 @@ void vendor::clear()
   _accountType->setCurrentIndex(0);
 
   _comments->setId(-1);
+  _documents->setId(-1);
   _charass->setId(-1);
   _tabs->setCurrentIndex(0);
   
