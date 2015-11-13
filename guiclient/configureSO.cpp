@@ -413,6 +413,15 @@ bool configureSO::sSave()
   
   if (_enableSSOS->isChecked())
   {
+    if(!_ssosCust->isValid())
+    {
+      QMessageBox::critical(this, tr("No Customer selected"),
+                           tr("<p>You must select a Cash Customer # "
+                              "if Simple S/O is enabled."));
+      _ssosCust->setFocus();
+      return false;
+    }
+    
     _metrics->set("SSOSEnabled", true);
     _metrics->set("SSOSDefaultCustId", _ssosCust->id());
     _metrics->set("SSOSDefaultSaleTypeId", _ssosSaleType->id());

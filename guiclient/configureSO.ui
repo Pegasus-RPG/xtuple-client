@@ -1451,7 +1451,7 @@ to be bound by its terms.</comment>
              <item>
               <widget class="QCheckBox" name="_enableSSOS">
                <property name="text">
-                <string>Enable SSOS</string>
+                <string>Enable Simple S/O</string>
                </property>
               </widget>
              </item>
