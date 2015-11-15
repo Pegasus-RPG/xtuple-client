@@ -1238,7 +1238,7 @@ and Purchase Order amounts</string>
               <enum>Qt::StrongFocus</enum>
              </property>
              <property name="type">
-              <number>0</number>
+              <enum>Comments::CRMAccount</enum>
              </property>
             </widget>
            </item>

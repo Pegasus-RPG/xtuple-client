@@ -60,11 +60,13 @@ public slots:
     virtual void sDeleteTaxreg();
     virtual void sHandleButtons();
     virtual void sNumberEdited();
+    virtual void sSaveAndNewComment();
 
     virtual void sNext();
     virtual void sPrevious();
 
     virtual void clear();
+    virtual void close();
     virtual void sNumberEditable(bool);
     virtual void sPrepare();
 
@@ -93,6 +95,7 @@ protected:
 
 private:
     int _mode;
+    int _tempMode;
     int _vendid;
     int _crmacctid;
     int _NumberGen;
