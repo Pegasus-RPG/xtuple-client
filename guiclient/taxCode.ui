@@ -155,12 +155,12 @@ to be bound by its terms.</comment>
         </layout>
        </item>
        <item row="6" column="1">
-        <widget class="QGroupBox" name="_vat">
+        <widget class="QGroupBox" name="_autoApplyMemo">
          <property name="toolTip">
-          <string>Value Added Tax code</string>
+          <string>Tax automatically applied to Memo depending on Tax Zone</string>
          </property>
          <property name="title">
-          <string>VAT Tax Code</string>
+          <string>Auto Apply to Memos</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -172,22 +172,22 @@ to be bound by its terms.</comment>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_7">
             <item>
-             <widget class="QCheckBox" name="_vatPurchases">
+             <widget class="QCheckBox" name="_autoAP">
               <property name="toolTip">
-               <string>VAT taxation applicable to Purchases</string>
+               <string>Taxation applicable to A/P Memos</string>
               </property>
               <property name="text">
-               <string>Purchases</string>
+               <string>A/P Memos</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="_vatSales">
+             <widget class="QCheckBox" name="_autoAR">
               <property name="toolTip">
-               <string>VAT taxation applicable to Sales</string>
+               <string>Taxation applicable to A/R Memos</string>
               </property>
               <property name="text">
-               <string>Sales</string>
+               <string>A/R Memos</string>
               </property>
              </widget>
             </item>

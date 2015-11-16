@@ -42,7 +42,7 @@ public slots:
     virtual void sView();
     virtual void sExpire();
     virtual void sClose();
-    virtual void sSetVAT();
+    virtual void sSetMemo();
 
 protected slots:
     virtual void languageChange();
