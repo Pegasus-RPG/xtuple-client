@@ -4650,7 +4650,7 @@ void salesOrder::sEnterCashPayment()
   cashsave.bindValue(":cashrcpt_distdate", _distDate->date());
   cashsave.bindValue(":cashrcpt_applydate", _applDate->date());
   cashsave.bindValue(":cashrcpt_notes", "Sales Order Cash Payment");
-  cashsave.bindValue(":cashrcpt_usecustdeposit", true);
+  cashsave.bindValue(":cashrcpt_usecustdeposit", _metrics->boolean("EnableCustomerDeposits"));
   cashsave.bindValue(":cashrcpt_discount", 0.0);
   cashsave.bindValue(":cashrcpt_curr_id", _cashReceived->id());
   if(_altAccnt->isChecked())
