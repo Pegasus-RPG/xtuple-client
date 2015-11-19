@@ -18,6 +18,7 @@
 
 #include "currdisplay.h"
 #include "mqlutil.h"
+#include "errorReporter.h"
 
 dspTaxHistory::dspTaxHistory(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -265,9 +266,9 @@ void dspTaxHistory::sFillList()
     _taxsum->populate(dspFillList);
   else
     _taxdet->populate(dspFillList);
-  if (dspFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Tax History Information"),
+                                dspFillList, __FILE__, __LINE__))
   {
-    systemError(this, dspFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

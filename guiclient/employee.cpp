@@ -400,9 +400,9 @@ void employee::sReleaseNumber()
   employeeReleaseNumber.prepare("SELECT releaseCRMAccountNumber(:number);");
   employeeReleaseNumber.bindValue(":number", _NumberGen);
   employeeReleaseNumber.exec();
-  if (employeeReleaseNumber.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Releasing Account Number"),
+                                employeeReleaseNumber, __FILE__, __LINE__))
   {
-    systemError(this, employeeReleaseNumber.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
