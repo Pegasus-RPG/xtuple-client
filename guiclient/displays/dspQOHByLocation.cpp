@@ -30,7 +30,7 @@ dspQOHByLocation::dspQOHByLocation(QWidget* parent, const char*, Qt::WindowFlags
 
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sPopulateLocations()));
 
-  omfgThis->inputManager()->notify(cBCLocation, this, this, SLOT(set(int)));
+  omfgThis->inputManager()->notify(cBCLocation, this, this, SLOT(setLocation(int)));
 
   _location->setAllowNull(true);
   _asOf->setDate(omfgThis->dbDate(), true);
@@ -72,17 +72,7 @@ enum SetResponse dspQOHByLocation::set(const ParameterList &pParams)
   param = pParams.value("location_id", &valid);
   if (valid)
   {
-    XSqlQuery qq;
-    qq.prepare( "SELECT location_warehous_id "
-                "FROM location "
-                "WHERE (location_id=:location_id);" );
-    qq.bindValue(":location_id", param.toInt());
-    qq.exec();
-    if (qq.first())
-    {
-      _warehouse->setId(qq.value("location_warehous_id").toInt());
-      _location->setId(param.toInt());
-    }
+    setLocation(param.toInt());
   }
   
   if (pParams.inList("run"))
@@ -92,6 +82,21 @@ enum SetResponse dspQOHByLocation::set(const ParameterList &pParams)
   }
 
   return NoError;
+}
+
+void dspQOHByLocation::setLocation(int pId)
+{
+  XSqlQuery qq;
+  qq.prepare( "SELECT location_warehous_id "
+              "FROM location "
+              "WHERE (location_id=:location_id);" );
+  qq.bindValue(":location_id", pId);
+  qq.exec();
+  if (qq.first())
+  {
+    _warehouse->setId(qq.value("location_warehous_id").toInt());
+    _location->setId(pId);
+  }
 }
 
 void dspQOHByLocation::sPopulateLocations()
