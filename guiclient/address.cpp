@@ -22,7 +22,6 @@
 
 #include "addresscluster.h"
 #include "contact.h"
-#include "inputManager.h"
 #include "mqlutil.h"
 #include "shipTo.h"
 #include "vendor.h"
