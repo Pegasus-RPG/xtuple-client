@@ -695,6 +695,7 @@ void salesOrderSimple::sPopulateCustomerInfo(int pCustid)
         }
       }
 
+      _shipTo->setCustid(pCustid);
       sFillCcardList();
       _creditlmt   = cust.value("cust_creditlmt").toDouble();
       _usesPos     = cust.value("cust_usespos").toBool();
