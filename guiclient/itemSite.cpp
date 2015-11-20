@@ -476,6 +476,61 @@ bool itemSite::sSave()
       errors << GuiErrorCheck(true, _active,
                               tr("This Item Site is used in an active order and must be marked as active."));
     }
+    if (_metrics->boolean("MultiWhs"))
+    {
+      itemSave.prepare("SELECT raitem_id "
+                       "FROM raitem "
+                       "WHERE ((raitem_itemsite_id=:itemsite_id)"
+                       "  AND  (raitem_status<>'C')) "
+                       "UNION "
+                       "SELECT planord_id "
+                       "FROM planord "
+                       "WHERE (planord_itemsite_id=:itemsite_id)"
+                       "UNION "
+                       "SELECT planreq_id "
+                       "FROM planreq "
+                       "WHERE (planreq_itemsite_id=:itemsite_id)"
+                       "LIMIT 1; ");
+      itemSave.bindValue(":itemsite_id", _itemsiteid);
+      itemSave.exec();
+      if (itemSave.first())
+      {
+        errors << GuiErrorCheck(true, _active,
+                                tr("This Item Site is used in an active order and must be marked as active."));
+      }
+    }
+  }
+  
+  if(_costJob->isChecked() && !_wasCostJob)
+  {
+    itemSave.prepare("SELECT coitem_id "
+                     "FROM coitem "
+                     "WHERE ((coitem_itemsite_id=:itemsite_id)"
+                     "  AND  (coitem_status NOT IN ('X','C'))) "
+                     "UNION "
+                     "SELECT wo_id "
+                     "FROM wo "
+                     "WHERE ((wo_itemsite_id=:itemsite_id)"
+                     "  AND  (wo_status<>'C')) "
+                     "UNION "
+                     "SELECT womatl_id "
+                     "FROM womatl, wo "
+                     "WHERE ((womatl_itemsite_id=:itemsite_id)"
+                     "  AND  (wo_id=womatl_wo_id)"
+                     "  AND  (wo_status<>'C')) "
+                     "UNION "
+                     "SELECT poitem_id "
+                     "FROM poitem "
+                     "WHERE ((poitem_itemsite_id=:itemsite_id)"
+                     "  AND  (poitem_status<>'C')) "
+                     "LIMIT 1; ");
+    itemSave.bindValue(":itemsite_id", _itemsiteid);
+    itemSave.exec();
+    if (itemSave.first())
+    {
+      errors << GuiErrorCheck(true, _costJob,
+                              tr("This Item Site is used in an active order and cannot be changed to Job Costing Method."));
+    }
     
     if (_metrics->boolean("MultiWhs"))
     {
@@ -496,8 +551,8 @@ bool itemSite::sSave()
       itemSave.exec();
       if (itemSave.first())         
       { 
-        errors << GuiErrorCheck(true, _active,
-                                tr("This Item Site is used in an active order and must be marked as active."));
+        errors << GuiErrorCheck(true, _costJob,
+                                tr("This Item Site is used in an active order and cannot be changed to Job Costing Method."));
       }
     }
   }
@@ -1345,6 +1400,7 @@ void itemSite::populate()
     else
       _perishable->setEnabled(false);
 
+    _wasCostJob = false;
     if(itemsite.value("itemsite_costmethod").toString() == "N")
       _costNone->setChecked(true);
     else if(itemsite.value("itemsite_costmethod").toString() == "A")
@@ -1352,7 +1408,10 @@ void itemSite::populate()
     else if(itemsite.value("itemsite_costmethod").toString() == "S")
       _costStd->setChecked(true);
     else if(itemsite.value("itemsite_costmethod").toString() == "J")
+    {
       _costJob->setChecked(true);
+      _wasCostJob = true;
+    }
 
     _costcat->setId(itemsite.value("itemsite_costcat_id").toInt());
     _costcatid = itemsite.value("itemsite_costcat_id").toInt();
