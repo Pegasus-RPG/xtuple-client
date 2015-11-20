@@ -22,6 +22,7 @@
 #include "enterPoitemReturn.h"
 #include "storedProcErrorLookup.h"
 #include "postPoReturnCreditMemo.h"
+#include "errorReporter.h"
 
 enterPoReturn::enterPoReturn(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -113,9 +114,9 @@ void enterPoReturn::sPost()
                                         tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
         createMemo = true;
   }
-  else if (enterPost.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Return"),
+                                enterPost, __FILE__, __LINE__))
   {
-    systemError(this, enterPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -181,16 +182,17 @@ void enterPoReturn::sPost()
     result = enterPost.value("result").toInt();
     if (result < 0)
     {
-      rollback.exec();
-      systemError(this, storedProcErrorLookup("postPoReturns", result),
-		  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Return"),
+                             storedProcErrorLookup("postPoReturns", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
   else if (enterPost.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, enterPost.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Return"),
+                         enterPost, __FILE__, __LINE__);
     return;
   }
 
@@ -272,9 +274,9 @@ void enterPoReturn::sFillList()
       _returnAddr->setId(enterFillList.value("addr_id").toInt());
 	  _dropShip->setChecked(enterFillList.value("pohead_dropship").toBool());
 	}
-    else if (enterFillList.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving P/O Item Information"),
+                                  enterFillList, __FILE__, __LINE__))
     {
-      systemError(this, enterFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -314,9 +316,9 @@ void enterPoReturn::sFillList()
     MetaSQLQuery mql(sql);
     enterFillList = mql.toQuery(params);
     _poitem->populate(enterFillList);
-    if (enterFillList.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving P/O Item Information"),
+                                  enterFillList, __FILE__, __LINE__))
     {
-      systemError(this, enterFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -336,9 +338,10 @@ void enterPoReturn::closeEvent(QCloseEvent *pEvent)
                "                          AND (poitem_pohead_id=:pohead_id) ) ) );" );
     entercloseEvent.bindValue(":pohead_id", _po->id());
     entercloseEvent.exec();
-    if (entercloseEvent.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving P/O Return Information"),
+                                  entercloseEvent, __FILE__, __LINE__))
     {
-      systemError(this, entercloseEvent.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
   }
 

@@ -15,6 +15,7 @@
 #include <QSqlError>
 
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 enterPoitemReturn::enterPoitemReturn(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -73,7 +74,8 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
     enteret.exec();
     if (enteret.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, enteret.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving P/O Item Information"),
+                           enteret, __FILE__, __LINE__);
       return UndefinedError;
     }
     _receipts->clear();
@@ -121,15 +123,15 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
           _toReturn->setText(enteret.value("qtytoreturn").toString());
           _returned = enteret.value("qtytoreturn").toDouble();
         }
-      else if (enteret.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving P/O Item Information"),
+                                    enteret, __FILE__, __LINE__))
       {
-	systemError(this, enteret.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+        return UndefinedError;
       }
     }
-    if (enteret.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving P/O Item Information123"),
+                                  enteret, __FILE__, __LINE__))
     {
-      systemError(this, enteret.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -208,9 +210,9 @@ void enterPoitemReturn::sReturn()
       return;
     }
   }
-  else if (enterReturn.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Return Information"),
+                                enterReturn, __FILE__, __LINE__))
   {
-    systemError(this, enterReturn.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
