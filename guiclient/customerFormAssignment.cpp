@@ -179,12 +179,18 @@ void customerFormAssignment::populate()
       _customerTypes->setId(customerpopulate.value("custform_custtype_id").toInt());
     }
 
-    _invoiceForm->setCode(customerpopulate.value("custform_invoice_report_name").toString());
-    _creditMemoForm->setCode(customerpopulate.value("custform_creditmemo_report_name").toString());
-    _statementForm->setCode(customerpopulate.value("custform_statement_report_name").toString());
-    _quoteForm->setCode(customerpopulate.value("custform_quote_report_name").toString());
-    _packingListForm->setCode(customerpopulate.value("custform_packinglist_report_name").toString());
-    _soPickListForm->setCode(customerpopulate.value("custform_sopicklist_report_name").toString());
+    if (customerpopulate.value("custform_invoice_report_name").toString() != NULL)
+      _invoiceForm->setCode(customerpopulate.value("custform_invoice_report_name").toString());
+    if (customerpopulate.value("custform_creditmemo_report_name").toString() != NULL)
+      _creditMemoForm->setCode(customerpopulate.value("custform_creditmemo_report_name").toString());
+    if (customerpopulate.value("custform_statement_report_name").toString() != NULL)
+      _statementForm->setCode(customerpopulate.value("custform_statement_report_name").toString());
+    if (customerpopulate.value("custform_quote_report_name").toString() != NULL)
+      _quoteForm->setCode(customerpopulate.value("custform_quote_report_name").toString());
+    if (customerpopulate.value("custform_packinglist_report_name").toString() != NULL)
+      _packingListForm->setCode(customerpopulate.value("custform_packinglist_report_name").toString());
+    if (customerpopulate.value("custform_sopicklist_report_name").toString() != NULL)
+      _soPickListForm->setCode(customerpopulate.value("custform_sopicklist_report_name").toString());
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Form Assignment Information"),
                                 customerpopulate, __FILE__, __LINE__))
