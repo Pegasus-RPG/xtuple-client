@@ -428,7 +428,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     // Accounting | Tax | Reports
     { "menu",			tr("&Reports"),	                (char*)taxReportsMenu,		taxMenu,	"true",			    NULL, NULL, true, NULL },
     { "gl.dspTaxHistory",	tr("&Tax History..."),           SLOT(sDspTaxHistory()),        taxReportsMenu, "ViewTaxReconciliations",   NULL, NULL, true, NULL },
-    { "gl.dspTaxReturn",	tr("&VAT Tax Return..."),        SLOT(sDspTaxReturn()),         taxReportsMenu, "ViewTaxReconciliations",   NULL, NULL, true, NULL },
+    { "gl.dspTaxReturn",	tr("&Tax Return..."),            SLOT(sDspTaxReturn()),         taxReportsMenu, "ViewTaxReconciliations",   NULL, NULL, true, NULL },
     { "gl.dspTax1099",	tr("&Info for 1099..."),                 SLOT(sDspTax1099()),           taxReportsMenu, "ViewTaxReconciliations",   NULL, NULL, true, NULL },
     
     { "separator",		  NULL,					NULL,					mainMenu,		"true",					       NULL, NULL, true, NULL },

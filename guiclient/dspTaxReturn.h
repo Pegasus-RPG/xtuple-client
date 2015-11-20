@@ -29,8 +29,6 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
     virtual void sFillList();
-    virtual void sHandleFilter();
-    virtual void sHandleType();
 
 protected slots:
     virtual void languageChange();

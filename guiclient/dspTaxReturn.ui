@@ -13,12 +13,12 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1062</width>
-    <height>466</height>
+    <width>940</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>VAT Tax Return</string>
+   <string>Tax Return</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_7">
    <item row="0" column="0">
@@ -60,123 +60,6 @@ to be bound by its terms.</comment>
            </item>
           </layout>
          </item>
-         <item row="4" column="3">
-          <widget class="QGroupBox" name="_dateGroup">
-           <property name="title">
-            <string>Date Range</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_2">
-            <item row="1" column="0">
-             <widget class="DateCluster" name="_dates">
-              <property name="focusPolicy">
-               <enum>Qt::StrongFocus</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="4" column="2">
-          <widget class="QGroupBox" name="_typeGroup">
-           <property name="title">
-            <string>Type</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_5">
-            <item row="0" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <property name="spacing">
-               <number>12</number>
-              </property>
-              <item>
-               <widget class="QRadioButton" name="_summary">
-                <property name="text">
-                 <string>Summary</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="_detail">
-                <property name="text">
-                 <string>Detail</string>
-                </property>
-                <property name="checked">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_5">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>0</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="3" column="2">
-          <widget class="QGroupBox" name="_showGroup">
-           <property name="title">
-            <string>Show</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_8">
-            <item row="0" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
-              <property name="spacing">
-               <number>12</number>
-              </property>
-              <item>
-               <widget class="XCheckBox" name="_sales">
-                <property name="text">
-                 <string>Sales</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-                <property name="forgetful">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XCheckBox" name="_purchases">
-                <property name="text">
-                 <string>Purchases</string>
-                </property>
-                <property name="forgetful">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_3">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>0</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
          <item row="3" column="3">
           <widget class="QGroupBox" name="_basisGroup">
            <property name="title">
@@ -197,6 +80,22 @@ to be bound by its terms.</comment>
              <widget class="QRadioButton" name="_distDate">
               <property name="text">
                <string>Distribution Date</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="3" column="2">
+          <widget class="QGroupBox" name="_dateGroup">
+           <property name="title">
+            <string>Date Range</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="1" column="0">
+             <widget class="DateCluster" name="_dates">
+              <property name="focusPolicy">
+               <enum>Qt::StrongFocus</enum>
               </property>
              </widget>
             </item>
@@ -348,16 +247,6 @@ to be bound by its terms.</comment>
           <item>
            <widget class="XTreeWidget" name="_taxsum"/>
           </item>
-          <item>
-           <widget class="XTreeWidget" name="_taxdet">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
          </layout>
         </item>
        </layout>
@@ -375,40 +264,30 @@ to be bound by its terms.</comment>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
-   <class>XCheckBox</class>
-   <extends>QCheckBox</extends>
-   <header>xcheckbox.h</header>
-  </customwidget>
-  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>XLabel</class>
-   <extends>QLabel</extends>
+   <extends>QComboBox</extends>
    <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
+   <extends>QComboBox</extends>
    <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>_taxAuth</tabstop>
-  <tabstop>_sales</tabstop>
-  <tabstop>_purchases</tabstop>
   <tabstop>_docDate</tabstop>
   <tabstop>_distDate</tabstop>
-  <tabstop>_summary</tabstop>
-  <tabstop>_detail</tabstop>
   <tabstop>_dates</tabstop>
   <tabstop>_query</tabstop>
   <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
   <tabstop>_taxsum</tabstop>
-  <tabstop>_taxdet</tabstop>
  </tabstops>
  <resources/>
  <connections>
