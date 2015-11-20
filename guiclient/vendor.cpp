@@ -175,6 +175,11 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_address, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _contact1, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
 
+// Have to override comment *New* button and possibly force Vendor save first
+  QWidget* _newComment = _comments->findChild<QWidget*>("_newComment");
+  disconnect(_newComment, SIGNAL(clicked()), _comments, SLOT(sNew()));
+  connect(_newComment,    SIGNAL(clicked()),      this, SLOT(sSaveAndNewComment()));
+
   _defaultCurr->setLabel(_defaultCurrLit);
 
   QRegExp tmpregex = QRegExp(_metrics->value("EFTAccountRegex"));
@@ -306,6 +311,7 @@ SetResponse vendor::set(const ParameterList &pParams)
     {
       setViewMode();
     }
+    _tempMode = _mode;
   }
 
   if(_metrics->value("CRMAccountNumberGeneration") == "A")
@@ -508,7 +514,7 @@ bool vendor::sSave()
   }
 
   QString sql;
-  if (_mode == cEdit)
+  if (_mode == cEdit || _tempMode == cEdit)
   {
     sql = "UPDATE vendinfo "
           "SET vend_number=<? value(\"vend_number\") ?>,"
@@ -694,9 +700,27 @@ bool vendor::sSave()
     return false;
   }
 
-
   XSqlQuery commit("COMMIT;");
-  
+
+  // We also need to find out the CRMAcct in case of adding Comments
+  if (_mode == cNew && _crmacctid == -1)
+  {
+    sql = "SELECT crmacct_id FROM crmacct WHERE (crmacct_vend_id = <? value('vend_id') ?>);";
+    MetaSQLQuery mql(sql);
+    XSqlQuery crma = mql.toQuery(params);
+    if (crma.first())
+    {
+      _crmacctid = crma.value("crmacct_id").toInt();
+    }
+    else if (crma.lastError().type() != QSqlError::NoError)
+    {
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Vendor CRM Account"),
+                         crma, __FILE__, __LINE__);
+      return false;
+    }
+  }
+  _tempMode = cEdit;
+
   return true;
 }
 
@@ -1405,6 +1429,9 @@ void vendor::sPrepare()
   {
     _vendid = idq.value("vend_id").toInt();
     emit newId(_vendid);
+    
+    _charass->setId(_vendid);
+    _documents->setId(_vendid);
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting new id"),
                                 idq, __FILE__, __LINE__))
@@ -1429,6 +1456,34 @@ void vendor::sPrepare()
   }
   
   _NumberGen = _number->number().toInt();
+}
+
+void vendor::close()
+{
+  if (cNew == _mode && _tempMode == cEdit)
+  {
+    XSqlQuery delq;
+    delq.prepare("DELETE FROM vendinfo WHERE (vend_id=:vend_id);");
+    delq.bindValue(":vend_id", _vendid);
+    delq.exec();
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting"),
+                           delq, __FILE__, __LINE__))
+      return;
+    omfgThis->sVendorsUpdated();
+    // Clean out CRM Acct but only if not used elsewhere
+    delq.prepare("DELETE FROM crmacct WHERE ((crmacct_number=:vend_number) "
+                      "                 AND ((crmacct_cust_id IS NULL)  "
+                      "                  AND (crmacct_competitor_id IS NULL) "
+                      "                  AND (crmacct_partner_id IS NULL)    "
+                      "                  AND (crmacct_prospect_id IS NULL)   "
+                      "                  AND (crmacct_taxauth_id IS NULL))); ");
+    delq.bindValue(":vend_number", _number->number().trimmed().toUpper());
+    delq.exec();
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting"),
+                           delq, __FILE__, __LINE__))
+      return;
+  }
+  XWidget::close();
 }
 
 void vendor::closeEvent(QCloseEvent *pEvent)
@@ -1519,4 +1574,15 @@ void vendor::sCrmAccount()
   crmaccount *newdlg = new crmaccount();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
+}
+
+void vendor::sSaveAndNewComment()
+{
+  if (_mode == cNew && _crmacctid == -1)
+  { 
+    if (!sSave())
+      return;
+    _comments->setId(_crmacctid);
+  }
+  _comments->sNew();
 }
