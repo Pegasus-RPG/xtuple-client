@@ -182,6 +182,7 @@ void enterPoReturn::sPost()
     result = enterPost.value("result").toInt();
     if (result < 0)
     {
+      rollback.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Return"),
                              storedProcErrorLookup("postPoReturns", result),
                              __FILE__, __LINE__);
