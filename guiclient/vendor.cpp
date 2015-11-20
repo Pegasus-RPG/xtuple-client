@@ -251,14 +251,6 @@ SetResponse vendor::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("crmacct_id", &valid);
-  if (valid)
-  {
-    _number->setEditMode(true);
-    sLoadCrmAcct(param.toInt());
-    _captive=true;
-  }
-
   param = pParams.value("vend_id", &valid);
   if (valid)
   {
@@ -314,6 +306,14 @@ SetResponse vendor::set(const ParameterList &pParams)
     _tempMode = _mode;
   }
 
+  param = pParams.value("crmacct_id", &valid);
+  if (valid)
+  {
+    _number->setEditMode(true);
+    sLoadCrmAcct(param.toInt());
+    _captive=true;
+  }
+  
   if(_metrics->value("CRMAccountNumberGeneration") == "A")
     _number->setEnabled(false);
 
