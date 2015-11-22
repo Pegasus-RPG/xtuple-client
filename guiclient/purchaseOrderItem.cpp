@@ -1249,27 +1249,30 @@ void purchaseOrderItem::sVendorListPrices()
 
 void purchaseOrderItem::sCalculateTax()
 {
-  XSqlQuery calcq;
-
-  calcq.prepare("SELECT COALESCE(calculateTax(pohead_taxzone_id,:taxtype_id,pohead_orderdate,pohead_curr_id,ROUND(:ext,2)),0.00) + "
-                "       COALESCE(calculateTax(pohead_taxzone_id,getfreighttaxtypeid(),pohead_orderdate,pohead_curr_id,ROUND(COALESCE(:frght,0.00),2)), 0.00) AS tax "
+  QString sql("SELECT COALESCE(calculateTax(pohead_taxzone_id,<? value('taxtype_id') ?>,pohead_orderdate,pohead_curr_id,ROUND(<? value('ext') ?>,2)),0.00) + "
+                "       <? if exists('freight') ?> "
+                "       COALESCE(calculateTax(pohead_taxzone_id,getfreighttaxtypeid(),pohead_orderdate,pohead_curr_id,ROUND(COALESCE(<? value('freight') ?>,0.00),2)), 0.00) "
+                "       <? else ?> 0 <? endif ?> AS tax "
                 "FROM pohead "
-                "WHERE (pohead_id=:pohead_id); " );
+                "WHERE (pohead_id=<? value('pohead_id') ?>); " );
 
-  calcq.bindValue(":pohead_id", _poheadid);
-  calcq.bindValue(":taxtype_id", _taxtype->id());
-  calcq.bindValue(":ext", _extendedPrice->localValue());
-  calcq.bindValue(":frght", _freight->localValue());
+  MetaSQLQuery  mql(sql);
+  ParameterList params;
+  params.append("pohead_id", _poheadid);
+  params.append("taxtype_id", _taxtype->id());
+  params.append("ext", _extendedPrice->localValue());
+  if (_freight->localValue() > 0)
+    params.append("freight", _freight->localValue());
 
-  calcq.exec();
+  XSqlQuery calcq = mql.toQuery(params);
   if (calcq.first())
     _tax->setLocalValue(calcq.value("tax").toDouble());
-
   else if (calcq.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  } 
+      ErrorReporter::error(QtCriticalMsg, this, tr("P/O Tax Calculation"),
+                         calcq.lastError(), __FILE__, __LINE__);
+      return;
+  }
 }
 
 void purchaseOrderItem::sTaxDetail()    // new function added from raitem
