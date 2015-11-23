@@ -1267,12 +1267,9 @@ void purchaseOrderItem::sCalculateTax()
   XSqlQuery calcq = mql.toQuery(params);
   if (calcq.first())
     _tax->setLocalValue(calcq.value("tax").toDouble());
-  else if (calcq.lastError().type() != QSqlError::NoError)
-  {
-      ErrorReporter::error(QtCriticalMsg, this, tr("P/O Tax Calculation"),
-                         calcq.lastError(), __FILE__, __LINE__);
-      return;
-  }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("P/O Tax Calculation"),
+                         calcq, __FILE__, __LINE__))
+    return;
 }
 
 void purchaseOrderItem::sTaxDetail()    // new function added from raitem
