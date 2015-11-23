@@ -67,6 +67,7 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspPurchaseReqsByItem.ui \
            displays/dspPurchaseReqsByPlannerCode.ui \
            displays/dspQOH.ui \
+           displays/dspQOHByZone.ui \
            displays/dspQOHByLocation.ui \
            displays/dspQuotesByCustomer.ui \
            displays/dspQuotesByItem.ui \
@@ -186,6 +187,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspPurchaseReqsByItem.h \
            displays/dspPurchaseReqsByPlannerCode.h \
            displays/dspQOH.h \
+           displays/dspQOHByZone.h \
            displays/dspQOHByLocation.h \
            displays/dspQuotesByCustomer.h \
            displays/dspQuotesByItem.h \
@@ -317,6 +319,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspPurchaseReqsByItem.cpp \
            displays/dspPurchaseReqsByPlannerCode.cpp \
            displays/dspQOH.cpp \
+           displays/dspQOHByZone.cpp \
            displays/dspQOHByLocation.cpp \
            displays/dspQuotesByCustomer.cpp \
            displays/dspQuotesByItem.cpp \

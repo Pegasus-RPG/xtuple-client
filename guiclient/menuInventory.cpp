@@ -91,6 +91,7 @@
 #include "dspBacklog.h"
 #include "dspValidLocationsByItem.h"
 #include "dspQOH.h"
+#include "dspQOHByZone.h"
 #include "dspQOHByLocation.h"
 #include "dspInventoryLocator.h"
 #include "dspSlowMovingInventoryByClassCode.h"
@@ -326,6 +327,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
 
     //  Inventory | Reports | Quantities On Hand
     { "im.dspQOH",                    tr("&Quantities On Hand..."),                             SLOT(sDspQOH()),                reportsMenu, "ViewQOH",      NULL, NULL, true, NULL },
+    { "im.dspQOHByZone",              tr("&Quantities On Hand By &Zone..."),                    SLOT(sDspQOHByZone()),          reportsMenu, "ViewQOH",      NULL, NULL, true, NULL },
     { "im.dspQOHByLocation",          tr("Quantities On Hand By &Location..."),                 SLOT(sDspQOHByLocation()),      reportsMenu, "ViewQOH",      NULL, NULL, true, NULL },
 
     { "im.dspLocationLotSerialDetail",tr("&Location/Lot/Serial # Detail..."),SLOT(sDspLocationLotSerialDetail()),       reportsMenu,    "ViewQOH",      NULL, NULL, _metrics->boolean("LotSerialControl"), NULL },
@@ -869,6 +871,11 @@ void menuInventory::sDspValidLocationsByItem()
 void menuInventory::sDspQOH()
 {
   omfgThis->handleNewWindow(new dspQOH());
+}
+
+void menuInventory::sDspQOHByZone()
+{
+  omfgThis->handleNewWindow(new dspQOHByZone());
 }
 
 void menuInventory::sDspQOHByLocation()

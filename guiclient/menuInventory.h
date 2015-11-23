@@ -112,6 +112,7 @@ class menuInventory : public QObject
 
     void sDspValidLocationsByItem();
     void sDspQOH();
+    void sDspQOHByZone();
     void sDspQOHByLocation();
     void sDspLocationLotSerialDetail();
     void sDspSlowMovingInventoryByClassCode();
