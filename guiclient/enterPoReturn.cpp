@@ -134,10 +134,11 @@ void enterPoReturn::sPost()
   }
   if (0 > saveResult)	// NOT else if
   {
-    systemError(this, tr("<p>There was an error saving this address (%1). "
-			 "Check the database server log for errors.")
-		      .arg(saveResult),
-		__FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Data"),
+                         tr("%1: There was an error saving P/O Return Information. "
+                            "Check the database server log for errors.")
+                         .arg(windowTitle()),
+                         __FILE__,__LINE__);
   }
 
   // print while we can still differentiate current from previous returns

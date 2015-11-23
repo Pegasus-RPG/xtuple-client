@@ -131,9 +131,9 @@ enum SetResponse contract::set(const ParameterList &pParams)
         _contrctid = itemet.value("contrct_id").toInt();
         _documents->setId(_contrctid);
       }
-      else if (itemet.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Contract Information"),
+                                    itemet, __FILE__, __LINE__))
       {
-        systemError(this, itemet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
       _captive = true;
@@ -181,9 +181,9 @@ enum SetResponse contract::set(const ParameterList &pParams)
       itemet.exec("SELECT NEXTVAL('contrct_contrct_id_seq') AS contrct_id;");
       if (itemet.first())
         _contrctid = itemet.value("contrct_id").toInt();
-      else if (itemet.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Contract Information"),
+                                    itemet, __FILE__, __LINE__))
       {
-        systemError(this, itemet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
       
@@ -266,9 +266,9 @@ bool contract::sSave()
                               tr("A Contract already exists for the Vendor,\n"
                                  "Contract Number you have specified."));
     }
-    else if (itemSave.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Contract Information"),
+                                  itemSave, __FILE__, __LINE__))
     {
-      systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
   }
@@ -304,9 +304,9 @@ bool contract::sSave()
   itemSave.bindValue(":contrct_descrip", _descrip->text());
   itemSave.bindValue(":contrct_note", _notes->toPlainText());
   itemSave.exec();
-  if (itemSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Contract Information"),
+                                itemSave, __FILE__, __LINE__))
   {
-    systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -378,9 +378,9 @@ void contract::sFillList()
 
   itemsrcFillList = mql.toQuery(params);
   _itemSource->populate(itemsrcFillList, true);
-  if (itemsrcFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Contract Information"),
+                                itemsrcFillList, __FILE__, __LINE__))
   {
-    systemError(this, itemsrcFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -507,13 +507,16 @@ void contract::sDeletePo()
   unpostedDelete.bindValue(":pohead_id", _itemSource->altId());
   unpostedDelete.exec();
   if (unpostedDelete.first() && ! unpostedDelete.value("result").toBool())
-       systemError(this, tr("<p>Only Unposted Purchase Orders may be "
-                            "deleted. Check the status of Purchase Order "
-                            "%1. If it is 'U' then contact your system "
-                            "Administrator.").arg(_itemSource->currentItem()->rawValue("poitem_ordnumber").toString()),
-                   __FILE__, __LINE__);
+       ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Contract"),
+                       tr("%1: <p>Only Unposted Purchase Orders may be "
+                          "deleted.  Check the status of Purchase Order "
+                          "%2.  If it is 'U' then contact your system "
+                          "Administrator").arg(windowTitle(),
+                           _itemSource->currentItem()->rawValue("poitem_ordnumber").toString()),
+                           __FILE__,__LINE__);
   else if (unpostedDelete.lastError().type() != QSqlError::NoError)
-    systemError(this, unpostedDelete.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Purchase Order"),
+                       unpostedDelete, __FILE__, __LINE__);
 
   sFillList();
 }
@@ -540,13 +543,16 @@ void contract::sReleasePo()
   unpostedRelease.bindValue(":pohead_id", _itemSource->altId());
   unpostedRelease.exec();
   if (unpostedRelease.first() && (unpostedRelease.value("result").toInt() < 0))
-    systemError(this, tr("<p>Only Unrelease Purchase Orders may be "
-                         "released. Check the status of Purchase Order "
-                         "%1. If it is 'U' then contact your system "
-                         "Administrator.").arg(_itemSource->currentItem()->rawValue("poitem_ordnumber").toString()),
-                __FILE__, __LINE__);
+     ErrorReporter::error(QtCriticalMsg, this, tr("Error Releasing Purchase Order"),
+                       tr("%1: <p>Only Unreleased Purchase Orders may be "
+                          "released.  Check the status of Purchard Order "
+                          "%2.  If it is 'U' then contact your system "
+                          "Administrator").arg(windowTitle(),
+                          _itemSource->currentItem()->rawValue("poitem_ordnumber").toString()),
+                          __FILE__,__LINE__);
   else if (unpostedRelease.lastError().type() != QSqlError::NoError)
-    systemError(this, unpostedRelease.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Releasing Purchase Order"),
+                       unpostedRelease, __FILE__, __LINE__);
   
   sFillList();
 }
@@ -671,9 +677,9 @@ void contract::populate()
     _notes->setText(contrctQ.value("contrct_note").toString());
 	sFillList();
   }
-  else if (contrctQ.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Contract Information"),
+                                contrctQ, __FILE__, __LINE__))
   {
-    systemError(this, contrctQ.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -687,9 +693,9 @@ void contract::sRejected()
                "WHERE (contrct_id=:contrct_id);" );
     itemRejected.bindValue(":contrct_id", _contrctid);
     itemRejected.exec();
-    if (itemRejected.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Rejecting Contract Information"),
+                                  itemRejected, __FILE__, __LINE__))
     {
-      systemError(this, itemRejected.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

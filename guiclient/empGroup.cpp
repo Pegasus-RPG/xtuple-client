@@ -57,9 +57,9 @@ void empGroup::setVisible(bool visible)
 
   else if (! userHasPriv(_mode))
   {
-    systemError(this,
-		tr("You do not have sufficient privilege to view this window"),
-		__FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Privilege Error"),
+                         tr("%1: Insufficient Privileges to View/Edit Employee Groups")
+                         .arg(windowTitle()),__FILE__,__LINE__);
     reject();
   }
   else

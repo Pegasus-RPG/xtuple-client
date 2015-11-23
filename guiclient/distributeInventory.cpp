@@ -202,9 +202,9 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
               fromlots.bindValue(":itemlocdist_series", itemlocSeries);
               fromlots.bindValue(":itemlocdist_id", itemloc.value("itemlocdist_id"));
               fromlots.exec();
-              if (fromlots.lastError().type() != QSqlError::NoError)
+              if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Retrieving Lot/Serial Information"),
+                                            fromlots, __FILE__, __LINE__))
               {
-                systemError(0, fromlots.lastError().databaseText(), __FILE__, __LINE__);
                 return XDialog::Rejected;
               }
             }
@@ -226,9 +226,9 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
             autocreatels.exec();
             if (autocreatels.first())
               params.append("itemlocseries", autocreatels.value("itemlocseries").toInt());
-            else if (autocreatels.lastError().type() != QSqlError::NoError)
+            else if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Retrieving Lot/Serial Information"),
+                                          autocreatels, __FILE__, __LINE__))
             {
-              systemError(0, autocreatels.lastError().databaseText(), __FILE__, __LINE__);
               return XDialog::Rejected;
             }
           }
@@ -332,9 +332,9 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
       post.prepare( "SELECT distributeItemlocSeries(:itemlocdist_series) AS result;");
       post.bindValue(":itemlocdist_series", ildsList.at(i));
       post.exec();
-      if (post.lastError().type() != QSqlError::NoError)
+      if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Retrieving Lot/Serial Information"),
+                                    post, __FILE__, __LINE__))
       {
-        systemError(0, post.lastError().databaseText(), __FILE__, __LINE__);
         return XDialog::Rejected;
       }
     }
@@ -344,9 +344,9 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
       post.prepare("SELECT distributeToLocations(:itemlocdist_id) AS result;");
       post.bindValue(":itemlocdist_id", ildList.at(i));
       post.exec();
-      if (post.lastError().type() != QSqlError::NoError)
+      if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Retrieving Lot/Serial Information"),
+                                    post, __FILE__, __LINE__))
       {
-        systemError(0, post.lastError().databaseText(), __FILE__, __LINE__);
         return XDialog::Rejected;
       }
     }
@@ -361,9 +361,9 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
             QMessageBox::warning( 0, tr("Inventory Distribution"), 
         tr("There was an error posting the transaction.  Contact your administrator") );
     }
-    else if (post.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Retrieving Lot/Serial Information"),
+                                  post, __FILE__, __LINE__))
     {
-      systemError(0, post.lastError().databaseText(), __FILE__, __LINE__);
       return XDialog::Rejected;
     }
   }
@@ -428,9 +428,9 @@ void distributeInventory::populate()
     else
       _bcQty->clear();
   }
-  else if (distributepopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+                                distributepopulate, __FILE__, __LINE__))
   {
-    systemError(this, distributepopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -545,12 +545,13 @@ bool distributeInventory::sDefault()
         int result = distributeDefault.value("result").toInt();
         if (result < 0)
         {
-          systemError(this, storedProcErrorLookup("distributetodefault", result),
-                      __FILE__, __LINE__);
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+                                 storedProcErrorLookup("distributetodefault", result),
+                                 __FILE__, __LINE__);
           return false;
         }
       }
-      else if (ErrorReporter::error(QtWarningMsg, this, tr("Distribute Default Location"),
+      else if (ErrorReporter::error(QtWarningMsg, this, tr("Error Retrieving Lot/Serial Information"),
                               distributeDefault, __FILE__, __LINE__))
       {
         return false;
@@ -648,15 +649,15 @@ void distributeInventory::sFillList()
     distributeFillList = mql.toQuery(params);
 
     _itemloc->populate(distributeFillList, true);
-    if (distributeFillList.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+                                  distributeFillList, __FILE__, __LINE__))
     {
-      systemError(this, distributeFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
-  else if (distributeFillList.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+                                distributeFillList, __FILE__, __LINE__))
   {
-    systemError(this, distributeFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -691,9 +692,9 @@ void distributeInventory::sBcDistribute()
 
   if(!distributeBcDistribute.first())
   {
-    if (distributeBcDistribute.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+                                  distributeBcDistribute, __FILE__, __LINE__))
     {
-      systemError(this, distributeBcDistribute.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     QMessageBox::warning(this, tr("No Match Found"),
@@ -821,11 +822,11 @@ void distributeInventory::sChangeDefaultLocation()
    query.bindValue(":itemsite_id", _itemsite_id);
    query.exec();
    sFillList();
-   if (query.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-      }
+   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating Item Site Information"),
+                                 query, __FILE__, __LINE__))
+   {
+     return;
+   }
 }
 
 void distributeInventory::updateZoneList()
