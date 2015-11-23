@@ -24,6 +24,7 @@
 #include "guiclient.h"
 #include "mqlutil.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -150,9 +151,9 @@ void dspCheckRegister::sFillList()
   
   dspFillList = mql.toQuery(params);
   _check->populate(dspFillList, true);
-  if (dspFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Check Register Information"),
+                                dspFillList, __FILE__, __LINE__))
   {
-    systemError(this, dspFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -195,9 +196,9 @@ void dspCheckRegister::sFillList()
     _total->setDouble(dspFillList.value("amount").toDouble());
     _totalCurr->setText(dspFillList.value("currAbbr").toString());
   }
-  else if (dspFillList.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Check Register Information"),
+                                dspFillList, __FILE__, __LINE__))
   {
-    systemError(this, dspFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -248,14 +249,15 @@ void dspCheckRegister::sVoidPosted()
       int result = dspVoidPosted.value("result").toInt();
       if (result < 0)
       {
-	systemError(this, storedProcErrorLookup("voidPostedCheck", result),
-			    __FILE__, __LINE__);
-	return;
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Voiding Posted Check"),
+                               storedProcErrorLookup("voidPostedCheck", result),
+                               __FILE__, __LINE__);
+        return;
       }
     }
-    else if (dspVoidPosted.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Voiding Posted Check"),
+                                  dspVoidPosted, __FILE__, __LINE__))
     {
-      systemError(this, dspVoidPosted.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
