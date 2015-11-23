@@ -67,11 +67,12 @@ TarFile::TarFile(const QByteArray & bytes)
       continue;
 
     QString magic(head.magic);
-    if(magic != "ustar  ")
+    if(magic.trimmed() != "ustar")
       return;
 
     name = QString(head.name);
     str = QString(head.size);
+    str.remove(sizeof head.size, sizeof head);
     size = str.toLong(&valid, 8);
 
     if(head.typeflag == TYPE_REGULAR_ALT)
