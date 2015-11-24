@@ -237,6 +237,24 @@ void characteristicAssignment::sSave()
       return;
     }
   }
+  if (_mode == cNew)
+  {
+    characteristicSave.prepare("SELECT EXISTS(SELECT true FROM charass "
+                               "WHERE ((charass_char_id=:charass_char_id) "
+                               "  AND (charass_target_id=:charass_target_id) "
+                               "  AND (charass_target_type=:charass_target_type))) AND "
+                               " (SELECT char_unique FROM char where char_id=:charass_char_id) as char_unique;");
+    characteristicSave.bindValue(":charass_target_id", _targetId);
+    characteristicSave.bindValue(":charass_target_type", _d->targetType);
+    characteristicSave.bindValue(":charass_char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), _d->idCol)));
+    characteristicSave.exec();
+    if (characteristicSave.first() && characteristicSave.value("char_unique").toBool())
+    {
+      QMessageBox::critical(this, tr("Unique Characterisitc"), tr("This characteristic has been defined as unique.\n"
+                                                  "You cannot use this characteristic more than once in this context."));
+      return;
+    }
+  }
 
   if (_mode == cNew)
   {
