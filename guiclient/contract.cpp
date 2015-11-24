@@ -545,7 +545,7 @@ void contract::sReleasePo()
   if (unpostedRelease.first() && (unpostedRelease.value("result").toInt() < 0))
      ErrorReporter::error(QtCriticalMsg, this, tr("Error Releasing Purchase Order"),
                        tr("%1: <p>Only Unreleased Purchase Orders may be "
-                          "released.  Check the status of Purchard Order "
+                          "released.  Check the status of Purchase Order "
                           "%2.  If it is 'U' then contact your system "
                           "Administrator").arg(windowTitle(),
                           _itemSource->currentItem()->rawValue("poitem_ordnumber").toString()),

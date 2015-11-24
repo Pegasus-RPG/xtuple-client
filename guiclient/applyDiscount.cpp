@@ -144,7 +144,7 @@ void applyDiscount::populate()
 void applyDiscount::sViewVoucher()
 {
   XSqlQuery applyViewVoucher;
-  applyViewVoucher.prepare("=SELECT vohead_id, COALESCE(pohead_id, -1) AS pohead_id"
+  applyViewVoucher.prepare("SELECT vohead_id, COALESCE(pohead_id, -1) AS pohead_id"
             "  FROM apopen, vohead LEFT OUTER JOIN pohead ON (vohead_pohead_id=pohead_id)"
             " WHERE((vohead_number=apopen_docnumber)"
             "   AND (apopen_id=:apopen_id));");

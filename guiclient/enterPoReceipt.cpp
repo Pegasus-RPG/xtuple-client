@@ -298,10 +298,10 @@ void enterPoReceipt::sPost()
       int result = postLine.value("result").toInt();
       if (result < 0 && result != -11) // ignore -11 as it just means there was no inventory
       {
+        rollback.exec();
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Receipt Information"),
                                storedProcErrorLookup("postReceipt", result),
                                __FILE__, __LINE__);
-        rollback.exec();
         return;
       }
   
@@ -325,10 +325,11 @@ void enterPoReceipt::sPost()
         issue.bindValue(":itemlocseries", postLine.value("result").toInt());
         issue.bindValue(":id",  qi.value("recv_id").toInt());
         issue.exec();
-        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Receipt Information"),
-                                      issue, __FILE__, __LINE__))
+        if (issue.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Receipt Information"),
+                                                issue, __FILE__, __LINE__);
           return;
         }
       }
