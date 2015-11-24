@@ -11,12 +11,16 @@
 #ifndef __QJSONDOCUMENTPROTO_H__
 #define __QJSONDOCUMENTPROTO_H__
 
+#include <QtScript>
+
+void setupQJsonDocumentProto(QScriptEngine *engine);
+
+#if QT_VERSION >= 0x050000
 #include <QByteArray>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonParseError>
-#include <QtScript>
 #include <QVariant>
 
 Q_DECLARE_METATYPE(QJsonDocument*)
@@ -24,7 +28,6 @@ Q_DECLARE_METATYPE(QJsonDocument*)
 Q_DECLARE_METATYPE(enum QJsonDocument::JsonFormat)
 Q_DECLARE_METATYPE(enum QJsonDocument::DataValidation)
 
-void setupQJsonDocumentProto(QScriptEngine *engine);
 QScriptValue constructQJsonDocument(QScriptContext *context, QScriptEngine *engine);
 
 class QJsonDocumentProto : public QObject, public QScriptable
@@ -56,4 +59,5 @@ class QJsonDocumentProto : public QObject, public QScriptable
     Q_INVOKABLE QJsonDocument  fromVariant(const QVariant & variant);
 };
 
+#endif
 #endif

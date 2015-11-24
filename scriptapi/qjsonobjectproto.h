@@ -11,12 +11,15 @@
 #ifndef __QJSONOBJECTPROTO_H__
 #define __QJSONOBJECTPROTO_H__
 
+#include <QtScript>
+void setupQJsonObjectProto(QScriptEngine *engine);
+
+#if QT_VERSION >= 0x050000
 #include <QJsonValue>
 #include <QJsonValueRef>
 #include <QJsonObject>
 #include <QString>
 #include <QStringList>
-#include <QtScript>
 #include <QVariantHash>
 #include <QVariantMap>
 
@@ -25,7 +28,6 @@ Q_DECLARE_METATYPE(QJsonObject*)
 Q_DECLARE_METATYPE(QJsonObject::iterator)
 Q_DECLARE_METATYPE(QJsonObject::const_iterator)
 
-void setupQJsonObjectProto(QScriptEngine *engine);
 QScriptValue constructQJsonObject(QScriptContext *context, QScriptEngine *engine);
 
 class QJsonObjectProto : public QObject, public QScriptable
@@ -69,4 +71,5 @@ class QJsonObjectProto : public QObject, public QScriptable
     Q_INVOKABLE QJsonObject                   fromVariantMap(const QVariantMap & map);
 };
 
+#endif
 #endif

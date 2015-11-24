@@ -113,26 +113,6 @@ QString XWebSync::title() const
 */
 
 /*!
-  \property XWebSync::test
-  \brief the test of the XWebSync
- */
-/*
-void XWebSync::setTest(const QJsonObject &test)
-{
-  Q_D(XWebSync);
-  if (d->test != test) {
-      d->test = test;
-      emit testChanged(d->test);
-  }
-}
-
-QJsonObject XWebSync::test() const
-{
-  Q_D(const XWebSync);
-  return d->test;
-}
-*/
-/*!
   \fn void XWebSync::testChanged(QJsonObject &test)
 
   This signal is emitted whenever the test of the web sync changes.
@@ -140,15 +120,6 @@ QJsonObject XWebSync::test() const
 
   \sa XWebSync::test()
 */
-
-/*!
-  \brief the title of the XWebSync
- */
-//void XWebSync::execute()
-//{
-//  Q_D(XWebSync);
-//  emit executeRequest();
-//}
 
 /*!
   \fn void XWebSync::executeRequest()

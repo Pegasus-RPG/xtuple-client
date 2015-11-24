@@ -125,8 +125,6 @@
 #include "xsqlqueryproto.h"
 #include "xtreewidget.h"
 #include "xvariantsetup.h"
-#include "xwebsync_p.h"
-#include "xwebsync.h"
 #include "xwebsyncproto.h"
 
 /*! \defgroup scriptapi The xTuple ERP Scripting API

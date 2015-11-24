@@ -12,17 +12,27 @@
 
 #include <QObject>
 
+#if QT_VERSION >= 0x050000
 QScriptValue XWebSynctoScriptValue(QScriptEngine *engine, QJsonObject const &item)
 {
-  //return engine->newQObject(item);
   return engine->newVariant(QVariant(&item));
 }
 
 void XWebSyncfromScriptValue(const QScriptValue &obj, QJsonObject &item)
 {
-  //item = qobject_cast<QJsonValue*>(obj.toQObject());
   item = QVariant(obj.toVariant()).toJsonObject();
 }
+#else
+QScriptValue XWebSynctoScriptValue(QScriptEngine *engine, QVariant const &item)
+{
+  return engine->newVariant(item);
+}
+
+void XWebSyncfromScriptValue(const QScriptValue &obj, QVariant &item)
+{
+  item = QVariant(obj.toVariant());
+}
+#endif
 
 void setupXWebSyncProto(QScriptEngine *engine)
 {
@@ -77,13 +87,3 @@ QString XWebSyncProto::title() const
     return item->title();
   return QString();
 }
-
-/*
-QJsonObject XWebSyncProto::test() const
-{
-  XWebSync *item = qscriptvalue_cast<XWebSync*>(thisObject());
-  if (item)
-    return item->test();
-  return QJsonObject();
-}
-*/

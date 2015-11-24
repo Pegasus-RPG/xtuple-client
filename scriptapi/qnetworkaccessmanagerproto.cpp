@@ -12,6 +12,7 @@
 
 #include <QNetworkAccessManager>
 
+// TODO: either complete this or remove it. we don't need this if all we're looking for is signals
 void setupQNetworkAccessManagerCoreProto(QScriptEngine *engine)
 {
   QScriptValue replyproto = engine->newQObject(new QNetworkAccessManagerProto(engine));
@@ -21,11 +22,4 @@ void setupQNetworkAccessManagerCoreProto(QScriptEngine *engine)
 QNetworkAccessManagerProto::QNetworkAccessManagerProto(QObject *parent)
   : QObject(parent)
 {
-}
-
-void QNetworkAccessManagerProto::sslErrors(QNetworkReply * reply, const QList<QSslError> & errors)
-{
-  QNetworkAccessManager *item = qscriptvalue_cast<QNetworkAccessManager*>(thisObject());
-  if (item)
-    item->sslErrors(reply, errors);
 }

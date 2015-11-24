@@ -11,7 +11,6 @@
 #ifndef __XWEBSYNC_P_H__
 #define __XWEBSYNC_P_H__
 
-#include <QJsonObject>
 #include <QString>
 
 class XWebSyncPrivate
@@ -21,7 +20,6 @@ class XWebSyncPrivate
     QString data;
     QString query;
     QString title;
-    //QJsonObject test;
 };
 
 #endif
