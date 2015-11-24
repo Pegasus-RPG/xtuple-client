@@ -38,6 +38,7 @@ protected slots:
 private:
     int _mode;
     int _charassid;
+    int _originalchar;
     int _targetId;
 
     CharacteristicAssignmentPrivate *_d;

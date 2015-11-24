@@ -162,6 +162,7 @@ int characteristicAssignment::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
+      _originalchar = _charassid;
     }
     else if (param.toString() == "view")
     {
@@ -237,7 +238,10 @@ void characteristicAssignment::sSave()
       return;
     }
   }
-  if (_mode == cNew)
+  if (_mode == cNew || 
+      (_mode == cEdit && 
+       _originalchar != _char->model()->data(_char->model()->index(_char->currentIndex(), _d->idCol)) )
+     )
   {
     characteristicSave.prepare("SELECT EXISTS(SELECT true FROM charass "
                                "WHERE ((charass_char_id=:charass_char_id) "
