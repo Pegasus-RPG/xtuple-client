@@ -369,7 +369,7 @@ void woMaterialItem::sItemIdChanged()
   sPopulateUOM();
 
   XSqlQuery uom;
-  uom.prepare("SELECT item_inv_uom_id, item_type "
+  uom.prepare("SELECT item_inv_uom_id, item_type, item_picklist "
               "  FROM item"
               " WHERE(item_id=:item_id);");
   uom.bindValue(":item_id", _item->id());
@@ -379,24 +379,26 @@ void woMaterialItem::sItemIdChanged()
     _invuomid = uom.value("item_inv_uom_id").toInt();
     _uom->setId(_invuomid);
     if (uom.value("item_type").toString() != "T" && uom.value("item_type").toString() != "R")
-	{
-	  if (_qtyPer->text().length() == 0)
-	  {
-	    _qtyFxd->setDouble(0.0);
-		_qtyPer->setDouble(1.0);
-	  }
-	}
-	else
-	{
-	  if (_qtyPer->text().length() == 0)
-	  {
-	    _qtyFxd->setDouble(1.0);
-		_qtyPer->setDouble(0.0);
-	  }
-	}
-	
-	if (_scrap->text().length() == 0)
-	  _scrap->setDouble(0.0);
+    {
+      if (_qtyPer->text().length() == 0)
+      {
+        _qtyFxd->setDouble(0.0);
+        _qtyPer->setDouble(1.0);
+      }
+    }
+    else
+    {
+      if (_qtyPer->text().length() == 0)
+      {
+        _qtyFxd->setDouble(1.0);
+        _qtyPer->setDouble(0.0);
+      }
+    }
+    
+    if (_scrap->text().length() == 0)
+      _scrap->setDouble(0.0);
+    
+    _pickList->setChecked(uom.value("item_picklist").toBool());
   }
 }
 
