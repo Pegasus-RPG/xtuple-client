@@ -250,7 +250,7 @@ void characteristicAssignment::sSave()
     characteristicSave.exec();
     if (characteristicSave.first() && characteristicSave.value("char_unique").toBool())
     {
-      QMessageBox::critical(this, tr("Unique Characterisitc"), tr("This characteristic has been defined as unique.\n"
+      QMessageBox::critical(this, tr("Unique Characteristic"), tr("This characteristic has been defined as unique.\n"
                                                   "You cannot use this characteristic more than once in this context."));
       return;
     }
