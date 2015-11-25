@@ -555,6 +555,22 @@ bool itemSite::sSave()
                                 tr("This Item Site is used in an active order and cannot be changed to Job Costing Method."));
       }
     }
+    
+    if ((_itemType != 'P' && _itemType != 'O'))
+    {
+      itemSave.prepare("SELECT bomitem_id "
+                       "FROM bomitem "
+                       "WHERE (bomitem_item_id=:item_id) "
+                       "  AND (bomitem_expires > CURRENT_DATE)"
+                       "LIMIT 1; ");
+      itemSave.bindValue(":item_id", _item->id());
+      itemSave.exec();
+      if (itemSave.first())
+      {
+        errors << GuiErrorCheck(true, _costJob,
+                                tr("This Item is used in a BOM and cannot be changed to Job Costing Method."));
+      }
+    }
   }
   
   int _supplyItemsiteId = -1;
