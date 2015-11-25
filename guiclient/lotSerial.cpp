@@ -55,6 +55,20 @@ void lotSerial::languageChange()
     retranslateUi(this);
 }
 
+enum SetResponse lotSerial::set(const ParameterList &pParams)
+{
+  QVariant param;
+  bool     valid;
+
+  param = pParams.value("ls_id", &valid);
+  if (valid)
+  {
+    _lotSerial->setId(param.toInt());
+  }
+  
+  return NoError;
+}
+
 void lotSerial::populate()
 {
   XSqlQuery lotpopulate;
