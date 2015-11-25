@@ -194,11 +194,13 @@ void enterPoitemReceipt::populate()
   }
   else
   {
-    systemError(this, tr("<p>Incomplete Parameter List: "
-			 "_orderitem_id=%1, _ordertype=%2, _mode=%3.")
-                       .arg(_orderitemid)
-                       .arg(_ordertype)
-                       .arg(_mode) );
+    ErrorReporter::error(QtCriticalMsg, this, tr("Incomplete Parameter List"),
+                         tr("%1:  <p>_orderitem_id=%2, _ordertype=%3, _mode=%4")
+                         .arg(windowTitle())
+                         .arg(_orderitemid)
+                         .arg(_ordertype)
+                         .arg(_mode),
+                         __FILE__,__LINE__);
     return;
   }
   if (enterpopulate.first())

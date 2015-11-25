@@ -321,8 +321,9 @@ void assignLotSerial::sPrint()
     if (presetPrinter.isEmpty()) {
       if (orReport::beginMultiPrint(&printer, userCanceled) == false) {
         if(!userCanceled) {
-          systemError(this, tr("<p>Could not initialize printing system for "
-                               "multiple reports."));
+          ErrorReporter::error(QtCriticalMsg, this, tr("Printing Error"),
+                               tr("%1: Could not initialize printing system for "
+                                  "multiple reports.").arg(windowTitle()),__FILE__,__LINE__);
           return;
         }
       }
