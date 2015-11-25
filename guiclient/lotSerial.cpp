@@ -60,6 +60,12 @@ enum SetResponse lotSerial::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("item_id", &valid);
+  if (valid)
+  {
+    _item->setId(param.toInt());
+  }
+  
   param = pParams.value("ls_id", &valid);
   if (valid)
   {
