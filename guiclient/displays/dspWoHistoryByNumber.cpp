@@ -112,8 +112,8 @@ bool dspWoHistoryByNumber::setParams(ParameterList &params)
 {
   if(_woNumber->text().isEmpty())
   {
-    QMessageBox::warning( this, tr("Invalid Work Order Number"),                                                   
-                      tr( "You must enter a work order number for this report." ) );                               
+    QMessageBox::warning( this, tr("Invalid Work Order Pattern"),
+                      tr( "You must enter a work order pattern for this report." ) );
     _woNumber->setFocus();
     return false;
   }
