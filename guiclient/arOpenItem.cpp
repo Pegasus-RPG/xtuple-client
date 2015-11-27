@@ -316,7 +316,8 @@ void arOpenItem::sSave()
   arSave.bindValue(":aropen_notes",          _notes->toPlainText());
   arSave.bindValue(":aropen_rsncode_id", _rsnCode->id());
   arSave.bindValue(":curr_id", _amount->id());
-  arSave.bindValue(":taxzone", _taxzone->id());
+  if (_taxzone->isValid())
+    arSave.bindValue(":taxzone", _taxzone->id());
 
   if(_useAltPrepaid->isChecked() && _altSalescatidSelected->isChecked())
     arSave.bindValue(":aropen_salescat_id", _altSalescatid->id());
