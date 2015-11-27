@@ -17,6 +17,7 @@
 
 #include "image.h"
 #include "guiclient.h"
+#include "errorReporter.h"
 
 images::images(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -95,9 +96,9 @@ void images::sDelete()
              "WHERE (image_id=:image_id);" );
   imagesDelete.bindValue(":image_id", _image->id());
   imagesDelete.exec();
-  if (imagesDelete.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Selected Image"),
+                                imagesDelete, __FILE__, __LINE__))
   {
-    systemError(this, imagesDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -116,9 +117,9 @@ void images::sFillList()
          "   AND  (relnamespace=pg_namespace.oid))"
          "ORDER BY image_name;" );
   _image->populate(imagesFillList);
-  if (imagesFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Image Information"),
+                                imagesFillList, __FILE__, __LINE__))
   {
-    systemError(this, imagesFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
