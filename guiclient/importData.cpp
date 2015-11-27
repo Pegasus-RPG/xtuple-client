@@ -282,7 +282,6 @@ bool importData::importOne(const QString &pFileName, int pType)
   {
     if (! ImportHelper::importCSV(pFileName, errmsg))
     {
-      systemError(this, errmsg);
       ErrorReporter::error(QtCriticalMsg, this, tr("CSV Import Error"),
                            tr("%1: %2 ").arg(windowTitle(),errmsg),__FILE__,__LINE__);
       return false;
