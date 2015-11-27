@@ -14,10 +14,13 @@
 #include <QMessageBox>
 #include <QSqlError>
 
+#include <metasql.h>
+
 #include "apCreditMemoApplication.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "storedProcErrorLookup.h"
+#include "mqlutil.h"
 
 applyAPCreditMemo::applyAPCreditMemo(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -198,44 +201,14 @@ void applyAPCreditMemo::populate()
                                 applypopulate, __FILE__, __LINE__));
 
 
-  applypopulate.prepare( "SELECT apopen_id,"
-             "       CASE WHEN (apopen_doctype='V') THEN :voucher"
-             "            WHEN (apopen_doctype='D') THEN :debitMemo"
-             "       END AS doctype,"
-             "       apopen_docnumber,"
-             "       apopen_docdate, apopen_duedate,"
-             "       (apopen_amount - apopen_paid - COALESCE(selected,0.0) -"
-             "          COALESCE(prepared,0.0)) AS openamount,"
-	           "       currConcat(apopen_curr_id) AS opencurrabbr, "
-             "       apcreditapply_amount, "
-	           "       currConcat(apcreditapply_curr_id) AS appliedcurrabbr,"
-             "       'curr' AS openamount_xtnumericrole,"
-             "       'curr' AS apcreditapply_amount_xtnumericrole"
-             "  FROM apopen LEFT OUTER JOIN apcreditapply "
-             "         ON ( (apcreditapply_source_apopen_id=:parentApopenid) AND (apcreditapply_target_apopen_id=apopen_id) ) "
-             "       LEFT OUTER JOIN (SELECT apopen_id AS selected_apopen_id,"
-             "                             SUM(currToCurr(apselect_curr_id, apopen_curr_id, apselect_amount + apselect_discount, apselect_date)) AS selected"
-             "                        FROM apselect JOIN apopen ON (apselect_apopen_id=apopen_id)"
-             "                       GROUP BY apopen_id) AS sub1"
-             "         ON (apopen_id=selected_apopen_id)"
-             "       LEFT OUTER JOIN (SELECT apopen_id AS prepared_apopen_id,"
-             "                               SUM(checkitem_amount + checkitem_discount) AS prepared"
-             "                          FROM checkhead JOIN checkitem ON (checkitem_checkhead_id=checkhead_id)"
-             "                                     JOIN apopen ON (checkitem_apopen_id=apopen_id)"
-             "                         WHERE ((NOT checkhead_posted)"
-             "                           AND  (NOT checkhead_void))"
-             "                         GROUP BY apopen_id) AS sub2"
-             "         ON (prepared_apopen_id=apopen_id)"
-             " WHERE ( (apopen_doctype IN ('V', 'D'))"
-             "   AND   (apopen_open)"
-             "   AND   ((apopen_amount - apopen_paid - COALESCE(selected,0.0) - COALESCE(prepared,0.0)) > 0.0)"
-             "   AND   (apopen_vend_id=:vend_id) ) "
-             " ORDER BY apopen_duedate, apopen_docnumber;" );
-  applypopulate.bindValue(":parentApopenid", _apopenid);
-  applypopulate.bindValue(":vend_id", _vend->id());
-  applypopulate.bindValue(":voucher", tr("Voucher"));
-  applypopulate.bindValue(":debitMemo", tr("Debit Memo"));
-  applypopulate.exec();
+  MetaSQLQuery mql = mqlLoad("applyAPMemo", "details");
+  ParameterList params;
+  params.append("parentApopenid", _apopenid);
+  params.append("vend_id", _vend->id());
+  params.append("voucher", tr("Voucher"));
+  params.append("debitMemo", tr("Debit Memo"));
+
+  applypopulate = mql.toQuery(params);
   _apopen->populate(applypopulate);
   ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving A/P Information"),
                                 applypopulate, __FILE__, __LINE__);

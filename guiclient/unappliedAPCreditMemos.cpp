@@ -19,6 +19,7 @@
 
 #include "applyAPCreditMemo.h"
 #include "apOpenItem.h"
+#include "mqlutil.h"
 
 unappliedAPCreditMemos::unappliedAPCreditMemos(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -113,38 +114,7 @@ void unappliedAPCreditMemos::sView()
 void unappliedAPCreditMemos::sFillList()
 {
   XSqlQuery unappliedFillList;
-  MetaSQLQuery mql(
-             "SELECT apopen_id, apopen_docnumber,"
-             "       (vend_number || '-' || vend_name) AS vendor,"
-             "       apopen_amount, (apopen_amount / apopen_curr_rate) AS base_amount, "
-             "       apopen_paid, (apopen_paid / apopen_curr_rate) AS base_applied, "
-             "       (apopen_amount - apopen_paid) AS balance,"
-             "       (apopen_amount - apopen_paid) / apopen_curr_rate AS basebalance,"
-             "	     currConcat(apopen_curr_id) AS currAbbr,"
-             "       'curr' AS apopen_amount_xtnumericrole,"
-             "       'curr' AS apopen_paid_xtnumericrole,"
-             "       'curr' AS balance_xtnumericrole,"
-             "       'curr' AS basebalance_xtnumericrole,"
-             "       'curr' AS base_amount_xtnumericrole,"
-             "       'curr' AS base_applied_xtnumericrole,"
-             "       0 AS basebalance_xttotalrole, "
-             "       0 AS base_amount_xttotalrole, "
-             "       0 AS base_applied_xttotalrole "
-             "FROM apopen, vendinfo "
-             "WHERE ( (apopen_doctype='C')"
-             " AND (apopen_open)"
-             " AND (apopen_vend_id=vend_id)"
-             "<? if exists(\"vend_id\") ?>"
-             " AND (vend_id=<? value(\"vend_id\") ?>)"
-             "<? elseif exists(\"vendtype_id\") ?>"
-             " AND (vend_vendtype_id=<? value(\"vendtype_id\") ?>)"
-             "<? elseif exists(\"vendtype_pattern\") ?>"
-             " AND (vend_vendtype_id IN (SELECT vendtype_id"
-             "                           FROM vendtype"
-             "                           WHERE (vendtype_code ~ <? value(\"vendtype_pattern\") ?>)))"
-             "<? endif ?>"
-             ") "
-             "ORDER BY apopen_docnumber;" );
+  MetaSQLQuery mql = mqlLoad("unappliedAPMemos", "list");
   ParameterList params;
   if (! setParams(params))
     return;
