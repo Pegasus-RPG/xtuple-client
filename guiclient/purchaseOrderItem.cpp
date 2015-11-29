@@ -1272,10 +1272,17 @@ void purchaseOrderItem::sCalculateTax()
     return;
 }
 
-void purchaseOrderItem::sTaxDetail()    // new function added from raitem
+void purchaseOrderItem::sTaxDetail()
 {
   if (_poitemid < 0)
     return;
+
+  if (_mode == cNew)
+  {
+    QMessageBox::information( this, tr("Tax Breakdown"),
+                    tr("<p>Please save the Purchase Order Item before viewing the tax breakdown."));
+    return;
+  }
 
   ParameterList params;
   params.append("order_id", _poitemid);
