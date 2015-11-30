@@ -742,6 +742,7 @@ void salesOrderSimple::sPopulateCustomerInfo(int pCustid)
   }
   else
   {
+    _shipTo->setId(-1);
     _shipTo->setCustid(-1);
   }
 }
