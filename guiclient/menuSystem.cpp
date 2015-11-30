@@ -146,7 +146,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.printAlignmentPage",	tr("Print &Alignment Page..."),	SLOT(sPrintAlignment()),	sysUtilsMenu,	"true",	NULL,	NULL,	true	},
 
     // Setup
-    { "sys.setup",	tr(SETUPMENUITEM),	SLOT(sSetup()),	systemMenu,	"true",	NULL,	NULL,	true	},
+    { "sys.setup",	tr("&Setup..."),	SLOT(sSetup()),	systemMenu,	"true",	NULL,	NULL,	true	},
     { "separator",		NULL,				NULL,				systemMenu,	"true",	NULL,	NULL,	true	},
     { "sys.exit",	tr("E&xit xTuple ERP..."), SLOT(sExit()),				systemMenu,	"true",	NULL,	NULL,	true	},
 
