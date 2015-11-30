@@ -360,9 +360,9 @@ bool salesOrderSimple::save(bool partial)
         errors << GuiErrorCheck(true, _custPONumber,
                                 tr("<p>This Customer does not use Blanket P/O "
                                    "Numbers and the P/O Number you entered has "
-                                   "already been used for another Sales Order."
-                                   "Please verify the P/O Number and either"
-                                   "enter a new P/O Number or add to the"
+                                   "already been used for another Sales Order. "
+                                   "Please verify the P/O Number and either "
+                                   "enter a new P/O Number or add to the "
                                    "existing Sales Order." ) );
       }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Customer PO Information"),
