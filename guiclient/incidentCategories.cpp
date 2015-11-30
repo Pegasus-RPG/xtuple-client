@@ -83,11 +83,12 @@ void incidentCategories::sFillList()
 void incidentCategories::sDelete()
 {
   XSqlQuery incidentDelete;
-  incidentDelete.prepare( "DELETE FROM incdtcat "
+  incidentDelete.prepare( "=DELETE FROM incdtcat "
              "WHERE (incdtcat_id=:incdtcat_id);" );
   incidentDelete.bindValue(":incdtcat_id", _incidentCategories->id());
   incidentDelete.exec();
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Selected Incident Category"),
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Selected Incident Category %1")
+                               .arg(_incidentCategories->currentItem()->text("incdtcat_name")),
                                incidentDelete, __FILE__, __LINE__))
   {
     return;
