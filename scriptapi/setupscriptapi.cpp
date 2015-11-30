@@ -102,6 +102,7 @@
 #include "qvalidatorproto.h"
 #include "qwebframeproto.h"
 #include "qwebpageproto.h"
+#include "qwebsocketprotocolproto.h"
 #include "qwebviewproto.h"
 #include "qwidgetproto.h"
 #include "ralineeditsetup.h"
@@ -232,6 +233,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQValidatorProto(engine);
   setupQWebFrameProto(engine);
   setupQWebPageProto(engine);
+  setupQWebSocketProtocolProto(engine);
   setupQWebViewProto(engine);
   setupQWidgetProto(engine);
   setupRaLineEdit(engine);

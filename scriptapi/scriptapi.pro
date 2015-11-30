@@ -95,6 +95,7 @@ HEADERS += setupscriptapi.h \
     qvalidatorproto.h \
     qwebframeproto.h \
     qwebpageproto.h \
+    qwebsocketprotocolproto.h \
     qwebviewproto.h \
     qwidgetproto.h \
     xdatawidgetmapperproto.h \
@@ -204,6 +205,7 @@ SOURCES += setupscriptapi.cpp \
     qvalidatorproto.cpp \
     qwebframeproto.cpp \
     qwebpageproto.cpp \
+    qwebsocketprotocolproto.cpp \
     qwebviewproto.cpp \
     qwidgetproto.cpp \
     xdatawidgetmapperproto.cpp \
