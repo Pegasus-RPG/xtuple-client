@@ -83,7 +83,7 @@ void incidentCategories::sFillList()
 void incidentCategories::sDelete()
 {
   XSqlQuery incidentDelete;
-  incidentDelete.prepare( "=DELETE FROM incdtcat "
+  incidentDelete.prepare( "DELETE FROM incdtcat "
              "WHERE (incdtcat_id=:incdtcat_id);" );
   incidentDelete.bindValue(":incdtcat_id", _incidentCategories->id());
   incidentDelete.exec();
