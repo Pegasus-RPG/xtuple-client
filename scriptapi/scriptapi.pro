@@ -105,6 +105,7 @@ HEADERS += setupscriptapi.h \
     qwebsocketcorsauthenticatorproto.h \
     qwebsocketproto.h             \
     qwebsocketprotocolproto.h     \
+    qwebsocketserverproto.h       \
     qwebviewproto.h \
     qwidgetproto.h \
     xdatawidgetmapperproto.h \
@@ -217,6 +218,7 @@ SOURCES += setupscriptapi.cpp \
     qwebsocketcorsauthenticatorproto.cpp \
     qwebsocketproto.cpp           \
     qwebsocketprotocolproto.cpp   \
+    qwebsocketserverproto.cpp     \
     qwebviewproto.cpp \
     qwidgetproto.cpp \
     xdatawidgetmapperproto.cpp \

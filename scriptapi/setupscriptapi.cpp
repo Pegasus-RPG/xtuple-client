@@ -105,6 +105,7 @@
 #include "qwebsocketcorsauthenticatorproto.h"
 #include "qwebsocketproto.h"
 #include "qwebsocketprotocolproto.h"
+#include "qwebsocketserverproto.h"
 #include "qwebviewproto.h"
 #include "qwidgetproto.h"
 #include "ralineeditsetup.h"
@@ -238,6 +239,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQWebSocketCorsAuthenticatorProto(engine);
   setupQWebSocketProto(engine);
   setupQWebSocketProtocolProto(engine);
+  setupQWebSocketServerProto(engine);
   setupQWebViewProto(engine);
   setupQWidgetProto(engine);
   setupRaLineEdit(engine);
