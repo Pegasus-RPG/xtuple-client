@@ -586,6 +586,31 @@ bool itemSite::sSave()
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Item Site"), errors))
     return false;
+
+  if (_controlMethod->currentIndex() < 2)
+  {
+    itemSave.prepare("SELECT EXISTS(SELECT 1 "
+                     "              FROM itemsite "
+                     "              WHERE ((itemsite_item_id = :itemsite_item_id) "
+                     "                 AND (itemsite_warehous_id <> :itemsite_id) "
+                     "                 AND (itemsite_controlmethod IN ('L','S'))));");
+    itemSave.bindValue(":itemsite_id", _itemsiteid);
+    itemSave.bindValue(":itemsite_item_id", _item->id());
+    itemSave.exec();
+    if (itemSave.first())
+    {
+      if(itemSave.value("exists").toBool())
+      {
+        if ( QMessageBox::question(this, tr("Confirm Lot/Serial?"),
+                                 tr( "<p>This Item Site has not been marked as lot/serial "
+				    "enabled, yet other sites for item %1 are.\n "
+				    "Do you wish to continue and save the Item Site? ").arg(_item->number()),
+				  QMessageBox::Yes,
+				  QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+           return true;
+      }
+    }
+  }
   
   XSqlQuery newItemSite;
     
