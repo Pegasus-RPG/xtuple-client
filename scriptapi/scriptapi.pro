@@ -102,6 +102,7 @@ HEADERS += setupscriptapi.h \
     qvalidatorproto.h \
     qwebframeproto.h \
     qwebpageproto.h \
+    qwebsocketcorsauthenticatorproto.h \
     qwebsocketproto.h             \
     qwebsocketprotocolproto.h     \
     qwebviewproto.h \
@@ -213,6 +214,7 @@ SOURCES += setupscriptapi.cpp \
     qvalidatorproto.cpp \
     qwebframeproto.cpp \
     qwebpageproto.cpp \
+    qwebsocketcorsauthenticatorproto.cpp \
     qwebsocketproto.cpp           \
     qwebsocketprotocolproto.cpp   \
     qwebviewproto.cpp \
