@@ -11,7 +11,7 @@
 #include "qwebsocketcorsauthenticatorproto.h"
 
 #if QT_VERSION < 0x050000
-void setupQJsonDocumentProto(QScriptEngine *engine)
+void setupQWebSocketCorsAuthenticatorProto(QScriptEngine *engine)
 {
   Q_UNUSED(engine);
 }
