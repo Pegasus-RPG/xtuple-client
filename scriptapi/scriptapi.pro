@@ -4,6 +4,13 @@ TEMPLATE = lib
 CONFIG += qt \
     warn_on \
     staticlib
+
+QT += core network printsupport script sql webkit webkitwidgets widgets xml
+
+greaterThan (QT_MAJOR_VERSION, 4) {
+  QT += websockets
+}
+
 DBFILE = scriptapi.db
 LANGUAGE = C++
 INCLUDEPATH += $${XTUPLE_DIR}/common          $${XTUPLE_BLD}/common \
@@ -238,13 +245,3 @@ SOURCES += setupscriptapi.cpp \
     xvariantsetup.cpp \
     xwebsync.cpp \
     xwebsyncproto.cpp
-
-QT += core \
-    sql \
-    xml \
-    script \
-    network \
-    webkit \
-    webkitwidgets \
-    widgets \
-    printsupport

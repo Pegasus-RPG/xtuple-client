@@ -21,8 +21,8 @@ void setupQJsonValueProto(QScriptEngine *engine);
 #include <QString>
 #include <QVariant>
 
+Q_DECLARE_METATYPE(QJsonValue)
 Q_DECLARE_METATYPE(QJsonValue*)
-
 Q_DECLARE_METATYPE(enum QJsonValue::Type)
 
 QScriptValue constructQJsonValue(QScriptContext *context, QScriptEngine *engine);

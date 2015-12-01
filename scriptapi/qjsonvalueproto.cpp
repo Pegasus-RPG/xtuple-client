@@ -9,6 +9,7 @@
  */
 
 #include "qjsonvalueproto.h"
+#include "qjsonobjectproto.h"
 
 #if QT_VERSION < 0x050000
 void setupQJsonValueProto(QScriptEngine *engine)
@@ -17,19 +18,20 @@ void setupQJsonValueProto(QScriptEngine *engine)
 }
 
 #else
-QScriptValue QJsonValuetoScriptValue(QScriptEngine *engine, QJsonValue::Type const &type)
+QScriptValue QJsonValueToScriptValue(QScriptEngine *engine, QJsonValue* const &in)
 {
-  return engine->newVariant(QVariant(&type));
+  QJsonObject obj = in->toObject();
+  return QJsonObjectToScriptValue(engine, &obj);
 }
 
-void QJsonValuefromScriptValue(const QScriptValue &obj, QJsonValue::Type &type)
+void QJsonValueFromScriptValue(const QScriptValue &obj, QJsonValue* &out)
 {
-  type = qscriptvalue_cast<QJsonValue::Type>(obj);
+  out = dynamic_cast<QJsonValue*>(obj.toQObject());
 }
 
 void setupQJsonValueProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QJsonValuetoScriptValue, QJsonValuefromScriptValue);
+  qScriptRegisterMetaType(engine, QJsonValueToScriptValue, QJsonValueFromScriptValue);
 
   QScriptValue proto = engine->newQObject(new QJsonValueProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QJsonValue*>(), proto);
@@ -40,14 +42,13 @@ void setupQJsonValueProto(QScriptEngine *engine)
   engine->globalObject().setProperty("QJsonValue",  constructor);
 }
 
-QScriptValue constructQJsonValue(QScriptContext *context,
-                                    QScriptEngine  *engine)
+QScriptValue constructQJsonValue(QScriptContext *context, QScriptEngine *engine)
 {
   Q_UNUSED(context);
   QJsonValue *obj = new QJsonValue();
 
   if (context->argumentCount() >= 1)
-    *obj = QJsonValue::fromVariant(context->argument(0));
+    *obj = QJsonValue::fromVariant(context->argument(0).toVariant());
   return engine->toScriptValue(obj);
 }
 
@@ -205,7 +206,7 @@ QJsonValue & QJsonValueProto::operator=(const QJsonValue & other)
   QJsonValue *item = qscriptvalue_cast<QJsonValue*>(thisObject());
   if (item)
     return item->operator=(other);
-  return QJsonValue();
+  return *(new QJsonValue());
 }
 
 bool QJsonValueProto::operator==(const QJsonValue & other) const

@@ -16,6 +16,8 @@
 void setupQWebSocketProtocolProto(QScriptEngine *engine);
 
 #if QT_VERSION >= 0x050000
+#include <QtWebSockets> // don't know why <QWebSocketProtocol> doesn't exist, at least on Mac
+
 Q_DECLARE_METATYPE(enum QWebSocketProtocol::CloseCode)
 Q_DECLARE_METATYPE(enum QWebSocketProtocol::Version)
 #endif

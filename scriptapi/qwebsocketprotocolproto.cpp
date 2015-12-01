@@ -10,10 +10,6 @@
 
 #include "qwebsocketprotocolproto.h"
 
-#if QT_VERSION >= 0x050000
-#include <QWebSocketProtocol>
-#endif
-
 void setupQWebSocketProtocolProto(QScriptEngine *engine)
 {
   QScriptValue obj = engine->newObject();

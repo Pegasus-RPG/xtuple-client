@@ -20,28 +20,41 @@ void setupQJsonObjectProto(QScriptEngine *engine)
 
 #include <QJsonObject>
 
-QScriptValue QJsonObjecttoScriptValue(QScriptEngine *engine, QJsonObject::iterator const &iterator)
+QScriptValue QJsonObjectToScriptValue(QScriptEngine *engine, QJsonObject* const &in)
 {
-  //return engine->newQObject(item);
-  return engine->newVariant(QVariant(&iterator));
+  QScriptValue obj = engine->toScriptValue(in->toVariantMap());
+  return obj;
 }
 
-void QJsonObjectfromScriptValue(const QScriptValue &obj, QJsonObject::iterator &iterator)
+void QJsonObjectFromScriptValue(const QScriptValue &obj, QJsonObject* &out)
 {
-  //item = qobject_cast<QJsonObject*>(obj.toQObject());
-  iterator = qscriptvalue_cast<QJsonObject::iterator>(obj);
+  out = dynamic_cast<QJsonObject*>(obj.toQObject());
+}
+
+static QScriptValue fromVariantHash(QScriptContext *context, QScriptEngine *engine)
+{
+  QJsonObject obj = QJsonObject::fromVariantHash(context->argument(0).toVariant().toHash());
+  return QJsonObjectToScriptValue(engine, &obj);
+}
+
+static QScriptValue fromVariantMap(QScriptContext *context, QScriptEngine *engine)
+{
+  QJsonObject obj = QJsonObject::fromVariantMap(context->argument(0).toVariant().toMap());
+  return QJsonObjectToScriptValue(engine, &obj);
 }
 
 void setupQJsonObjectProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QJsonObjecttoScriptValue, QJsonObjectfromScriptValue);
+  qScriptRegisterMetaType(engine, QJsonObjectToScriptValue, QJsonObjectFromScriptValue);
 
   QScriptValue proto = engine->newQObject(new QJsonObjectProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QJsonObject*>(), proto);
 
-  QScriptValue constructor = engine->newFunction(constructQJsonObject,
-                                                 proto);
-  engine->globalObject().setProperty("QJsonObject",  constructor);
+  QScriptValue constructor = engine->newFunction(constructQJsonObject, proto);
+  proto.setProperty("fromVariantHash", engine->newFunction(fromVariantHash));
+  proto.setProperty("fromVariantMap",  engine->newFunction(fromVariantMap));
+
+  engine->globalObject().setProperty("QJsonObject", constructor);
 }
 
 QScriptValue constructQJsonObject(QScriptContext * context,
@@ -60,6 +73,7 @@ QJsonObjectProto::QJsonObjectProto(QObject *parent)
 {
 }
 
+#ifdef Use_QJsonObjectIterators
 QJsonObject::iterator QJsonObjectProto::begin()
 {
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
@@ -99,6 +113,7 @@ QJsonObject::const_iterator QJsonObjectProto::constFind(const QString & key) con
     return item->constFind(key);
   return QJsonObject::const_iterator();
 }
+#endif
 
 bool QJsonObjectProto::contains(const QString & key) const
 {
@@ -124,6 +139,7 @@ bool QJsonObjectProto::empty() const
   return false;
 }
 
+#ifdef Use_QJsonObjectIterators
 QJsonObject::iterator QJsonObjectProto::end()
 {
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
@@ -171,6 +187,7 @@ QJsonObject::iterator QJsonObjectProto::insert(const QString & key, const QJsonV
     return item->insert(key, value);
   return QJsonObject::iterator();
 }
+#endif
 
 bool QJsonObjectProto::isEmpty() const
 {
@@ -251,12 +268,12 @@ bool QJsonObjectProto::operator!=(const QJsonObject & other) const
   return false;
 }
 
-QJsonObject & QJsonObjectProto::operator=(const QJsonObject & other)
+QJsonObject &QJsonObjectProto::operator=(const QJsonObject & other)
 {
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
   if (item)
     return item->operator=(other);
-  return QJsonObject();
+  return *(new QJsonObject());
 }
 
 bool QJsonObjectProto::operator==(const QJsonObject & other) const
@@ -280,16 +297,6 @@ QJsonValueRef QJsonObjectProto::operator[](const QString & key)
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
   if (item)
     return item->operator[](key);
-  return QJsonValueRef();
-}
-
-QJsonObject QJsonObjectProto::fromVariantHash(const QVariantHash & hash)
-{
-  return QJsonObject::fromVariantHash(hash);
-}
-
-QJsonObject QJsonObjectProto::fromVariantMap(const QVariantMap & map)
-{
-  return QJsonObject::fromVariantMap(map);
+  return QJsonValueRef(new QJsonObject(), 0);
 }
 #endif

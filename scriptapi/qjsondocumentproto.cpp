@@ -151,7 +151,7 @@ QJsonDocument & QJsonDocumentProto::operator=(const QJsonDocument & other)
   QJsonDocument *item = qscriptvalue_cast<QJsonDocument*>(thisObject());
   if (item)
     return item->operator=(other);
-  return QJsonDocument();
+  return *(new QJsonDocument());
 }
 
 bool QJsonDocumentProto::operator==(const QJsonDocument & other) const
