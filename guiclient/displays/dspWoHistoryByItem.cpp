@@ -100,8 +100,8 @@ bool dspWoHistoryByItem::setParams(ParameterList & params)
   {
     if (! _item->isValid())
     {
-      QMessageBox::warning(this, tr("Invalid Item"),
-                           tr("Enter a valid Item."));
+      QMessageBox::warning(this, tr("Invalid Item Number"),
+                           tr("You must enter a valid item number for this report."));
       _item->setFocus();
       return false;
     }
