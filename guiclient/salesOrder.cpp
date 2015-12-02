@@ -1905,6 +1905,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
     _shipToAddr->clear();
     _shipToCntct->clear();
     _billToCntct->clear();
+    _billToName->clear();
   }
 }
 
