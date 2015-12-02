@@ -113,10 +113,11 @@ enum SetResponse group::set(const ParameterList &pParams)
                  "VALUES( :grp_id, :grp_id, '' );" );
       groupet.bindValue(":grp_id", _grpid);
       groupet.exec();
-      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Group Information"),
-                                    groupet, __FILE__, __LINE__))
+      if (groupet.lastError().type() != QSqlError::NoError)
       {
         groupet.exec("ROLLBACK;");
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Group Information"),
+                             groupet, __FILE__, __LINE__);
         _trapClose = false;
         return UndefinedError;
       }
