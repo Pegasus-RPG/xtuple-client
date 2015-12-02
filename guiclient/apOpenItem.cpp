@@ -259,7 +259,8 @@ void apOpenItem::sSave()
   saveOpenItem.bindValue(":apopen_notes",   _notes->toPlainText());
   saveOpenItem.bindValue(":curr_id", _amount->id());
   saveOpenItem.bindValue(":apopen_terms_id", _terms->id());
-  saveOpenItem.bindValue(":apopen_taxzone_id", _taxzone->id());
+  if (_taxzone->isValid())
+    saveOpenItem.bindValue(":apopen_taxzone_id", _taxzone->id());
   QString temp;
   if (_status->id() == 1)
     temp = "O" ;
