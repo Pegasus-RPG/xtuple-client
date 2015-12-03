@@ -162,7 +162,6 @@ int characteristicAssignment::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _originalchar = _charassid;
     }
     else if (param.toString() == "view")
     {
@@ -238,27 +237,6 @@ void characteristicAssignment::sSave()
       return;
     }
   }
-  if (_mode == cNew || 
-      (_mode == cEdit && 
-       _originalchar != _char->model()->data(_char->model()->index(_char->currentIndex(), _d->idCol)) )
-     )
-  {
-    characteristicSave.prepare("SELECT EXISTS(SELECT true FROM charass "
-                               "WHERE ((charass_char_id=:charass_char_id) "
-                               "  AND (charass_target_id=:charass_target_id) "
-                               "  AND (charass_target_type=:charass_target_type))) AND "
-                               " (SELECT char_unique FROM char where char_id=:charass_char_id) as char_unique;");
-    characteristicSave.bindValue(":charass_target_id", _targetId);
-    characteristicSave.bindValue(":charass_target_type", _d->targetType);
-    characteristicSave.bindValue(":charass_char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), _d->idCol)));
-    characteristicSave.exec();
-    if (characteristicSave.first() && characteristicSave.value("char_unique").toBool())
-    {
-      QMessageBox::critical(this, tr("Unique Characteristic"), tr("This characteristic has been defined as unique.\n"
-                                                  "You cannot use this characteristic more than once in this context."));
-      return;
-    }
-  }
 
   if (_mode == cNew)
   {
@@ -292,6 +270,9 @@ void characteristicAssignment::sSave()
   characteristicSave.bindValue(":charass_price", _listprice->toDouble());
   characteristicSave.bindValue(":charass_default", QVariant(_default->isChecked()));
   characteristicSave.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Saving Characteristic"),
+                           characteristicSave, __FILE__, __LINE__))
+    return;
 
   done(_charassid);
 }
