@@ -105,6 +105,9 @@ enum SetResponse group::set(const ParameterList &pParams)
         return UndefinedError;
       }
 
+      XSqlQuery rollback;
+      rollback.prepare("ROLLBACK;");
+
       _mode = cNew;
       _trapClose = true;
       groupet.exec("BEGIN;");
@@ -115,7 +118,7 @@ enum SetResponse group::set(const ParameterList &pParams)
       groupet.exec();
       if (groupet.lastError().type() != QSqlError::NoError)
       {
-        groupet.exec("ROLLBACK;");
+        rollback.exec();
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Group Information"),
                              groupet, __FILE__, __LINE__);
         _trapClose = false;
