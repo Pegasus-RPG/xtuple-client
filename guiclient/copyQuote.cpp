@@ -83,6 +83,7 @@ void copyQuote::sCopy()
   if (copyCopy.first())
   {
     int quheadid = copyCopy.value("quhead_id").toInt();
+    omfgThis->sQuotesUpdated(-1);
     done(quheadid);
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Could not Copy Quote"),
