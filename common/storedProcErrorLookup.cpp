@@ -1109,27 +1109,37 @@ const struct {
   { "postGLSeriesNoSumm", -4, "", -4, "postGLSeries" },
   { "postGLSeriesNoSumm", -5, "", -5, "postGLSeries" },
 
+  { "postIntoInvBalance", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup",
+                                                "No accounting period exists for invhist_id %1, transaction date %2" ),
+    0, "" },
+  { "postIntoInvBalance", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup",
+                                                "Average costed Item with negative balance for invhist_id %1, transaction date %2" ),
+    0, "" },
+  
   { "postInvoice",  -1, "", -1, "insertIntoGLSeries" },
   { "postInvoice",  -4, "", -4, "insertIntoGLSeries" },
   { "postInvoice",  -5, "", -5, "postGLSeries" },
   { "postInvoice", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because it has "
-			   "already been posted."),		 0, "" },
+                                          "already been posted."),		 0, "" },
   { "postInvoice", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because the Sales "
-			   "Account was not found."),		 0, "" },
+                                          "Account was not found."),		 0, "" },
   { "postInvoice", -12, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because there was an "
-			   "error processing Line Item taxes."), 0, "" },
+                                          "error processing Line Item taxes."), 0, "" },
   { "postInvoice", -13, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because there was an "
-			   "error processing Misc. Line Item taxes."), 0, "" },
+                                          "error processing Misc. Line Item taxes."), 0, "" },
   { "postInvoice", -14, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because the Freight "
-			   "Account was not found."),		 0, "" },
+                                          "Account was not found."),		 0, "" },
   { "postInvoice", -15, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because there was an "
-			   "error processing Freight taxes."),	 0, "" },
+                                          "error processing Freight taxes."),	 0, "" },
   { "postInvoice", -16, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because there was an "
-			   "error processing Tax Adjustments."), 0, "" },
+                                          "error processing Tax Adjustments."), 0, "" },
   { "postInvoice", -17, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because the A/R "
-			   "Account was not found."),		 0, "" },
-
-
+                                          "Account was not found."),		 0, "" },
+  
+  { "postInvHist", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup",
+                                         "Post into Inventory Balance for invhist_id=%1 was unsuccessful" ),
+    0, "" },
+  
   { "postInvTrans",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not post an inventory transaction because"
 			       " the Item Site has no Control Method or the "
 			       "Item has an Item Type of Reference."),
