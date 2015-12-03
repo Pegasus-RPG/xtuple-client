@@ -412,10 +412,9 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
     _endOfTime = _GGUIClient.value("eot").toDate();
   }
   else
-    systemError( this, tr( "A Critical Error occurred at %1::%2.\n"
-                           "Please immediately log out and contact your Systems Adminitrator." )
-                       .arg(__FILE__)
-                       .arg(__LINE__) );
+    ErrorReporter::error(QtCriticalMsg, this, tr("Critical Error"),
+                        tr("Please immediately log out and contact your "
+                           "Systems Administrator"),_GGUIClient, __FILE__, __LINE__);
 
   /*  TODO: either separate validators for extprice, purchprice, and salesprice
             or replace every field that uses _moneyVal, _negMoneyVal, _priceVal, and _costVal
@@ -636,7 +635,8 @@ bool GUIClient::singleCurrency()
   if (currCount.first())
     retValue = (currCount.value("count").toInt() <= 1);
   else
-    systemError(this, currCount.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Currency Information"),
+                       currCount, __FILE__, __LINE__);
   return retValue;
 }
 

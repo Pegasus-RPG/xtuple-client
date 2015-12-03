@@ -17,6 +17,7 @@
 
 #include "glcluster.h"
 #include <openreports.h>
+#include "errorReporter.h"
 
 glTransaction::glTransaction(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -180,11 +181,12 @@ void glTransaction::sPost()
       _amount->setFocus();
     }
   }
-  else if (glPost.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting G/L Transaction"),
+                                glPost, __FILE__, __LINE__))
   {
-    systemError(this, glPost.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+     return;
   }
+
 }
 
 void glTransaction::clear()

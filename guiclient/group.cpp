@@ -99,11 +99,14 @@ enum SetResponse group::set(const ParameterList &pParams)
       groupet.exec("SELECT NEXTVAL('grp_grp_id_seq') AS grp_id;");
       if (groupet.first())
         _grpid = groupet.value("grp_id").toInt();
-      else if (groupet.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Group Information"),
+                                    groupet, __FILE__, __LINE__))
       {
-        systemError(this, groupet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
+
+      XSqlQuery rollback;
+      rollback.prepare("ROLLBACK;");
 
       _mode = cNew;
       _trapClose = true;
@@ -115,8 +118,9 @@ enum SetResponse group::set(const ParameterList &pParams)
       groupet.exec();
       if (groupet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, groupet.lastError().databaseText(), __FILE__, __LINE__);
-        groupet.exec("ROLLBACK;");
+        rollback.exec();
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Group Information"),
+                             groupet, __FILE__, __LINE__);
         _trapClose = false;
         return UndefinedError;
       }
@@ -234,9 +238,9 @@ void group::sSave()
   groupSave.bindValue(":grp_name", _name->text());
   groupSave.bindValue(":grp_descrip", _description->text().trimmed());
   groupSave.exec();
-  if (groupSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Group"),
+                                groupSave, __FILE__, __LINE__))
   {
-    systemError(this, groupSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -275,9 +279,9 @@ void group::sModuleSelected(const QString &pModule)
   avail.bindValue(":grpid", _grpid);
   avail.exec();
   _available->populate(avail);
-  if (avail.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Group Information"),
+                                avail, __FILE__, __LINE__))
   {
-    systemError(this, avail.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -292,9 +296,9 @@ void group::sModuleSelected(const QString &pModule)
   grppriv.bindValue(":priv_module", _module->currentText());
   grppriv.exec();
   _granted->populate(grppriv);
-  if (grppriv.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Group Information"),
+                                grppriv, __FILE__, __LINE__))
   {
-    systemError(this, grppriv.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -311,14 +315,15 @@ void group::sAdd()
     int result = groupAdd.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("grantPrivGroup", result),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Granting Privilege"),
+                             storedProcErrorLookup("grantPrivGroup", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (groupAdd.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Granting Privilege "),
+                                groupAdd, __FILE__, __LINE__))
   {
-    systemError(this, groupAdd.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -338,14 +343,15 @@ void group::sAddAll()
     int result = groupAddAll.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("grantAllModulePrivGroup", result),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Granting All Privileges"),
+                             storedProcErrorLookup("grantAllModulePrivGroup", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (groupAddAll.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Granting All Privileges"),
+                                groupAddAll, __FILE__, __LINE__))
   {
-    systemError(this, groupAddAll.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -365,14 +371,15 @@ void group::sRevoke()
     int result = groupRevoke.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("revokePrivGroup", result),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Revoking Privilege"),
+                             storedProcErrorLookup("revokePrivGroup", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (groupRevoke.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Revoking Privilege"),
+                                groupRevoke, __FILE__, __LINE__))
   {
-    systemError(this, groupRevoke.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -392,14 +399,15 @@ void group::sRevokeAll()
     int result = groupRevokeAll.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("revokeAllModulePrivGroup", result),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Revoking All Privileges"),
+                             storedProcErrorLookup("revokeAllModulePrivGroup", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (groupRevokeAll.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Revoking All Privileges"),
+                                groupRevokeAll, __FILE__, __LINE__))
   {
-    systemError(this, groupRevokeAll.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -445,9 +453,9 @@ void group::populate()
       sModuleSelected(_module->itemText(0));
     }
   }
-  else if (grouppopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Role Information"),
+                                grouppopulate, __FILE__, __LINE__))
   {
-    systemError(this, grouppopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   
