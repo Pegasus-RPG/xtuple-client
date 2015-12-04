@@ -2790,7 +2790,7 @@ void salesOrder::sFillItemList()
     _shipDateCache = fillSales.value("shipdate").toDate();
     _shipDate->setDate(_shipDateCache);
 
-    if (ISNEW(_mode))
+    if (ISNEW(_mode) && !_packDate->isValid())
       _packDate->setDate(fillSales.value("shipdate").toDate());
   }
   else if (fillSales.lastError().type() != QSqlError::NoError)
