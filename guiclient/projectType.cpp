@@ -90,7 +90,7 @@ void projectType::sClose()
     typeClose.bindValue(":prjtype_id", _prjtypeid);
     typeClose.exec();
 
-    ErrorReporter::error(QtCriticalMsg, this tr("Error Deleting Project Type"),
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Project Type"),
                               typeClose, __FILE__, __LINE__);
   }
 
