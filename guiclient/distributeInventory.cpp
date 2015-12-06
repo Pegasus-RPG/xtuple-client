@@ -142,7 +142,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
         // a predefined lot#/expdate to use. If so assign that information
         // with itemlocdist_qty and move on. otherwise do the normal dialog
         // to ask the user for that information.
-        if(itemloc.value("itemsite_controlmethod").toString() == "L" && !pPresetLotnum.isEmpty())
+        if((itemloc.value("itemsite_controlmethod").toString() == "L") || (itemloc.value("itemsite_controlmethod").toString() == "S") && !pPresetLotnum.isEmpty())
         {
           query.exec("SELECT nextval('itemloc_series_seq') AS _itemloc_series;");
           if(query.first())

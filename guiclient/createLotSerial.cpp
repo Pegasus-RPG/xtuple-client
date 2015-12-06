@@ -102,12 +102,10 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
                         "FROM lsdetail JOIN ls ON (ls_id=lsdetail_ls_id) "
                         "WHERE ( (lsdetail_source_number=:docnumber) "
                         "AND (lsdetail_source_type=:transtype) "
-                        "AND (lsdetail_itemsite_id=:itemsite) "
                         "AND (lsdetail_qtytoassign > 0) ) "
                         "GROUP BY 2,3");
       preassign.bindValue(":transtype", createet.value("invhist_transtype").toString());
       preassign.bindValue(":docnumber", createet.value("invhist_ordnumber").toString());
-      preassign.bindValue(":itemsite", createet.value("itemsite_id").toInt());
       preassign.exec();
       if (preassign.first())
       {
