@@ -16,6 +16,7 @@
 
 #include "currencySelect.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 currency::currency(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -115,40 +116,20 @@ void currency::sSave()
   XSqlQuery currencySave;
   sConfirmBaseFlag();
 
-  if (_currName->text().isEmpty())
-  {
-    QMessageBox::critical(this, tr("Name Required")
-                      .arg(__FILE__)
-                      .arg(__LINE__),
-		      tr("Currency name is required."));
-    _currName->setFocus();
-    return;
-  }
-
-  if (_currAbbr->text().isEmpty() && _currSymbol->text().isEmpty())
-  {
-    QMessageBox::critical(this, tr("Symbol or Abbreviation Required")
-                      .arg(__FILE__)
-                      .arg(__LINE__),
-		      tr("Either the currency symbol or abbreviation must be "
-		         "supplied.\n(Both would be better.)")
-		      );
-    _currSymbol->setFocus();
-    return;
-  }
-  
-  if (_currAbbr->text().length() > 3)
-  {
-    QMessageBox::critical(this, tr("Abbreviation Too Long")
-                      .arg(__FILE__)
-                      .arg(__LINE__),
-		      tr("The currency abbreviation must have "
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_currName->text().trimmed().isEmpty(), _currName,
+                          tr("Currency name is required."))
+         << GuiErrorCheck(_currAbbr->text().trimmed().isEmpty()
+                       && _currSymbol->text().trimmed().isEmpty(), _currSymbol,
+                          tr("Either the currency symbol or abbreviation must be "
+		              "supplied.\n(Both would be better)."))
+         << GuiErrorCheck(_currAbbr->text().length() > 3, _currAbbr,
+                          tr("The currency abbreviation must have "
 		         "3 or fewer characters.\n"
-			 "ISO abbreviations are exactly 3 characters long.")
-		      );
+			 "ISO abbreviations are exactly 3 characters long."))
+    ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Currency"), errors))
     return;
-  }
-
   
   if (_mode == cNew)
   {
@@ -166,9 +147,9 @@ void currency::sSave()
     currencySave.bindValue(":curr_id", _currid);
    }
   
-  currencySave.bindValue(":curr_name", _currName->text());
-  currencySave.bindValue(":curr_symbol", _currSymbol->text());
-  currencySave.bindValue(":curr_abbr", _currAbbr->text());
+  currencySave.bindValue(":curr_name", _currName->text().trimmed());
+  currencySave.bindValue(":curr_symbol", _currSymbol->text().trimmed());
+  currencySave.bindValue(":curr_abbr", _currAbbr->text().trimmed());
   currencySave.bindValue(":curr_base", QVariant(_currBase->isChecked()));
   currencySave.exec();
 
