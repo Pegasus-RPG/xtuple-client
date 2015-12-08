@@ -773,6 +773,7 @@ const struct {
   { "priv_priv_name_key",                       Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "A Privilege already exists with this name.") },
   { "prj_prj_number_check",                     Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "The Project number is required.") },
   { "prj_prj_number_key",                       Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "A Project already exists with this number.") },
+  { "prj_prj_prjtype_id_fkey",                  Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "Cannot delete the Project Type because Projects of this type exist.") },
 //{ "prj_prj_recurring_prj_id_fkey",            Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "prj_prj_recurring_prj_id_fkey",            Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "prj_prj_status_check",                     Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },

@@ -12,6 +12,7 @@
 
 #include <parameter.h>
 #include "projectType.h"
+#include "errorReporter.h"
 #include "guiclient.h"
 
 projectTypes::projectTypes(QWidget* parent, const char* name, Qt::WindowFlags fl)
@@ -63,6 +64,9 @@ void projectTypes::sDelete()
              "WHERE (prjtype_id=:prjtype_id);" );
   typeDelete.bindValue(":prjtype_id", _projecttype->id());
   typeDelete.exec();
+
+  ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Project Type"),
+                            typeDelete, __FILE__, __LINE__);
 
   sFillList();
 }
