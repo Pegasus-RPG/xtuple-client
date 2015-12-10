@@ -361,7 +361,7 @@ void quotes::sCopy()
     }
   }
   if(lastid != -1)
-    omfgThis->sQuotesUpdated(lastid);
+    omfgThis->sQuotesUpdated(-1);
 }
 
 void quotes::sCopyToCustomer()
@@ -381,7 +381,7 @@ void quotes::sCopyToCustomer()
       }
     }
     if(lastid != -1)
-      omfgThis->sQuotesUpdated(lastid);
+      omfgThis->sQuotesUpdated(-1);
 }
 
 void quotes::sNew()
