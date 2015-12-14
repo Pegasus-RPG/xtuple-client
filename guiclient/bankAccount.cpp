@@ -24,6 +24,7 @@ bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::Wind
   connect(_bankName,SIGNAL(textChanged(QString)), this, SLOT(sNameChanged(QString)));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_transmitGroup,  SIGNAL(toggled(bool)), this, SLOT(sHandleTransmitGroup()));
+  connect(_type,  SIGNAL(currentIndexChanged(int)), this, SLOT(sHandleType()));
 
   _nextCheckNum->setValidator(omfgThis->orderVal());
 
@@ -482,4 +483,12 @@ void bankAccount::sHandleTransmitGroup()
 {
   _accountNumber->setValidator(_transmitGroup->isChecked() ?
                                                        _accountValidator : 0);
+}
+
+void bankAccount::sHandleType()
+{
+  if (_type->currentIndex() == 2)
+    _assetAccountLit->setText(tr("Liability Account"));
+  else
+    _assetAccountLit->setText(tr("Asset Account"));
 }
