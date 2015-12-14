@@ -102,7 +102,9 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
                         "FROM lsdetail JOIN ls ON (ls_id=lsdetail_ls_id) "
                         "WHERE ( (lsdetail_source_number=:docnumber) "
                         "AND (lsdetail_source_type=:transtype) "
-                        "AND (lsdetail_itemsite_id=:itemsite) "
+                        "AND (lsdetail_itemsite_id IN (SELECT itemsite_id FROM itemsite "
+                        "                              WHERE itemsite_item_id = (SELECT itemsite_item_id "
+                        "                               FROM itemsite WHERE itemsite_id = :itemsite))) "
                         "AND (lsdetail_qtytoassign > 0) ) "
                         "GROUP BY 2,3");
       preassign.bindValue(":transtype", createet.value("invhist_transtype").toString());
