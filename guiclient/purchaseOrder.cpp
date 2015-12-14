@@ -1214,7 +1214,7 @@ void purchaseOrder::sHandleVendor(int pVendid)
                "       cntct_id, cntct_honorific, cntct_first_name,"
                "       cntct_middle, cntct_last_name, cntct_suffix,"
                "       cntct_phone, cntct_title, cntct_fax, cntct_email,"
-               "       vend_terms_id, vend_curr_id,"
+               "       vend_terms_id, vend_curr_id, vend_pocomments,"
                "       vend_fobsource, vend_fob, vend_shipvia,"
                "       vend_name,"
                "       COALESCE(vend_addr_id, -1) AS vendaddrid,"
@@ -1234,6 +1234,9 @@ void purchaseOrder::sHandleVendor(int pVendid)
       _poCurrency->setId(vq.value("vend_curr_id").toInt());
       _terms->setId(vq.value("vend_terms_id").toInt());
       _shipVia->setText(vq.value("vend_shipvia"));
+
+      if (vq.value("vend_pocomments").toString() != "")
+        _notes->setText(vq.value("vend_pocomments").toString());
 
       if (vq.value("vend_fobsource").toString() == "V")
       {
