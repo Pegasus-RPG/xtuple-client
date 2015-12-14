@@ -20,9 +20,9 @@ to be bound by its terms.</comment>
   <property name="windowTitle">
    <string>Sales Credit Memo (Return) Item</string>
   </property>
-  <layout class="QGridLayout">
+  <layout class="QGridLayout" name="gridLayout_6">
    <item row="0" column="0">
-    <layout class="QGridLayout">
+    <layout class="QGridLayout" name="gridLayout_7">
      <property name="leftMargin">
       <number>12</number>
      </property>
@@ -149,7 +149,7 @@ to be bound by its terms.</comment>
        <property name="title">
         <string/>
        </property>
-       <layout class="QGridLayout">
+       <layout class="QGridLayout" name="gridLayout_8">
         <item row="0" column="1">
          <widget class="QGroupBox" name="_itemGroup">
           <property name="title">
@@ -170,7 +170,7 @@ to be bound by its terms.</comment>
             </spacer>
            </item>
            <item row="0" column="1">
-            <layout class="QGridLayout">
+            <layout class="QGridLayout" name="gridLayout_9">
              <item row="0" column="0">
               <widget class="QLabel" name="_warehouseLit">
                <property name="text">
@@ -203,7 +203,7 @@ to be bound by its terms.</comment>
             </layout>
            </item>
            <item row="0" column="0">
-            <widget class="ItemCluster" name="_item">
+            <widget class="ItemCluster" name="_item" native="true">
              <property name="focusPolicy">
               <enum>Qt::StrongFocus</enum>
              </property>
@@ -256,7 +256,7 @@ to be bound by its terms.</comment>
            </item>
            <item row="2" column="1">
             <widget class="XComboBox" name="_salescat">
-             <property name="allowNull">
+             <property name="allowNull" stdset="0">
               <bool>true</bool>
              </property>
              <property name="type">
@@ -326,7 +326,7 @@ to be bound by its terms.</comment>
        <property name="title">
         <string/>
        </property>
-       <layout class="QGridLayout">
+       <layout class="QGridLayout" name="gridLayout_a">
         <item row="0" column="0">
          <widget class="QLabel" name="_rsnCodeLit">
           <property name="frameShape">
@@ -342,7 +342,7 @@ to be bound by its terms.</comment>
         </item>
         <item row="0" column="1">
          <widget class="XComboBox" name="_rsnCode">
-          <property name="allowNull">
+          <property name="allowNull" stdset="0">
            <bool>true</bool>
           </property>
           <property name="type">
@@ -374,7 +374,7 @@ to be bound by its terms.</comment>
        <property name="title">
         <string/>
        </property>
-       <layout class="QGridLayout">
+       <layout class="QGridLayout" name="gridLayout_b">
         <item row="0" column="0">
          <widget class="QLabel" name="_qtyReturnedLit">
           <property name="text">
@@ -505,7 +505,7 @@ to be bound by its terms.</comment>
        <property name="title">
         <string/>
        </property>
-       <layout class="QGridLayout">
+       <layout class="QGridLayout" name="gridLayout_c">
         <item row="0" column="0">
          <widget class="QLabel" name="_discountFromSalePrcntLit">
           <property name="text">
@@ -551,18 +551,18 @@ to be bound by its terms.</comment>
         <item row="1" column="1" colspan="2">
          <layout class="QHBoxLayout">
           <item>
-           <widget class="CurrCluster" name="_netUnitPrice">
+           <widget class="CurrCluster" name="_netUnitPrice" native="true">
             <property name="minimumSize">
              <size>
               <width>160</width>
               <height>0</height>
              </size>
             </property>
-            <property name="format">
-             <enum>CurrDisplay::SalesPrice</enum>
-            </property>
             <property name="currencyEditable" stdset="0">
              <bool>false</bool>
+            </property>
+            <property name="format">
+             <enum>CurrDisplay::SalesPrice</enum>
             </property>
            </widget>
           </item>
@@ -584,6 +584,22 @@ to be bound by its terms.</comment>
              <string>...</string>
             </property>
            </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </item>
@@ -624,17 +640,17 @@ to be bound by its terms.</comment>
          </widget>
         </item>
         <item row="3" column="1" colspan="2">
-         <widget class="CurrCluster" name="_extendedPrice">
+         <widget class="CurrCluster" name="_extendedPrice" native="true">
           <property name="format">
            <enum>CurrDisplay::ExtPrice</enum>
+          </property>
+          <property name="enabled">
+           <bool>false</bool>
           </property>
           <property name="currencyEditable" stdset="0">
            <bool>false</bool>
           </property>
-          <property name="currencyVisible">
-           <bool>false</bool>
-          </property>
-          <property name="enabled">
+          <property name="currencyVisible" stdset="0">
            <bool>false</bool>
           </property>
          </widget>
@@ -651,7 +667,7 @@ to be bound by its terms.</comment>
         <attribute name="title">
          <string>Detail</string>
         </attribute>
-        <layout class="QGridLayout">
+        <layout class="QGridLayout" name="gridLayout_d">
          <item row="0" column="0">
           <widget class="QGroupBox" name="_costsGroup">
            <property name="title">
@@ -708,11 +724,11 @@ to be bound by its terms.</comment>
                  </widget>
                 </item>
                 <item row="2" column="1">
-                 <widget class="CurrDisplay" name="_salePrice">
+                 <widget class="CurrDisplay" name="_salePrice" native="true">
                   <property name="format">
                    <enum>CurrDisplay::SalesPrice</enum>
                   </property>
-                  <property name="localControl">
+                  <property name="localControl" stdset="0">
                    <bool>false</bool>
                   </property>
                  </widget>
@@ -734,11 +750,8 @@ to be bound by its terms.</comment>
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="CurrDisplay" name="_listPrice">
-                  <property name="format">
-                   <enum>CurrDisplay::Cost</enum>
-                  </property>
-                  <property name="localControl">
+                 <widget class="CurrDisplay" name="_listPrice" native="true">
+                  <property name="localControl" stdset="0">
                    <bool>false</bool>
                   </property>
                  </widget>
@@ -760,11 +773,11 @@ to be bound by its terms.</comment>
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="CurrDisplay" name="_unitCost">
+                 <widget class="CurrDisplay" name="_unitCost" native="true">
                   <property name="format">
                    <enum>CurrDisplay::Cost</enum>
                   </property>
-                  <property name="localControl">
+                  <property name="localControl" stdset="0">
                    <bool>false</bool>
                   </property>
                  </widget>
@@ -817,10 +830,10 @@ to be bound by its terms.</comment>
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
-                  <property name="allowNull">
+                  <property name="allowNull" stdset="0">
                    <bool>true</bool>
                   </property>
-                  <property name="nullStr">
+                  <property name="nullStr" stdset="0">
                    <string>None</string>
                   </property>
                   <property name="type">
@@ -848,7 +861,7 @@ to be bound by its terms.</comment>
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="CurrCluster" name="_tax">
+                 <widget class="CurrCluster" name="_tax" native="true">
                   <property name="format">
                    <enum>CurrDisplay::SalesPrice</enum>
                   </property>
@@ -919,7 +932,7 @@ to be bound by its terms.</comment>
         <attribute name="title">
          <string>Notes</string>
         </attribute>
-        <layout class="QGridLayout">
+        <layout class="QGridLayout" name="gridLayout_e">
          <item row="0" column="0">
           <widget class="XTextEdit" name="_comments"/>
          </item>
@@ -937,7 +950,7 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item>
-        <widget class="GLCluster" name="_revAccnt"/>
+        <widget class="GLCluster" name="_revAccnt" native="true"/>
        </item>
        <item>
         <spacer name="horizontalSpacer_3">
@@ -961,11 +974,6 @@ to be bound by its terms.</comment>
  <layoutdefault spacing="5" margin="5"/>
  <customwidgets>
   <customwidget>
-   <class>CurrCluster</class>
-   <extends>CurrDisplay</extends>
-   <header>currcluster.h</header>
-  </customwidget>
-  <customwidget>
    <class>CurrDisplay</class>
    <extends>QWidget</extends>
    <header>currcluster.h</header>
@@ -979,11 +987,6 @@ to be bound by its terms.</comment>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>WComboBox</class>
-   <extends>XComboBox</extends>
-   <header>wcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
@@ -1010,23 +1013,36 @@ to be bound by its terms.</comment>
    <extends>QTextEdit</extends>
    <header>xtextedit.h</header>
   </customwidget>
+  <customwidget>
+   <class>CurrCluster</class>
+   <extends>CurrDisplay</extends>
+   <header>currcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WComboBox</class>
+   <extends>XComboBox</extends>
+   <header>wcombobox.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_warehouse</tabstop>
-  <tabstop>_rsnCode</tabstop>
+  <tabstop>_item</tabstop>
   <tabstop>_qtyReturned</tabstop>
+  <tabstop>_updateInv</tabstop>
   <tabstop>_qtyToCredit</tabstop>
   <tabstop>_qtyUOM</tabstop>
-  <tabstop>_discountFromSale</tabstop>
-  <tabstop>_netUnitPrice</tabstop>
   <tabstop>_pricingUOM</tabstop>
-  <tabstop>_extendedPrice</tabstop>
+  <tabstop>_itemSelected</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>_taxType</tabstop>
-  <tabstop>_tax</tabstop>
   <tabstop>_comments</tabstop>
+  <tabstop>_miscSelected</tabstop>
+  <tabstop>_itemNumber</tabstop>
+  <tabstop>_warehouse</tabstop>
+  <tabstop>_itemDescrip</tabstop>
+  <tabstop>_taxType</tabstop>
+  <tabstop>_rsnCode</tabstop>
   <tabstop>_close</tabstop>
   <tabstop>_save</tabstop>
+  <tabstop>_salescat</tabstop>
  </tabstops>
  <resources/>
  <connections>

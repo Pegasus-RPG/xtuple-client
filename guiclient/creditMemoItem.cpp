@@ -81,6 +81,7 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
     _warehouse->hide();
   }
 
+  _item->setFocus();
   adjustSize();
 }
 
