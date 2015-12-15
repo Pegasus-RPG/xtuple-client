@@ -17,6 +17,7 @@
 #include "absoluteCalendarItem.h"
 #include "relativeCalendarItem.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 static const char *originTypes[] = { "D", "E", "W", "X", "M", "N", "L", "Y", "Z" };
 
@@ -105,20 +106,20 @@ enum SetResponse calendar::set(const ParameterList &pParams)
 void calendar::sSave()
 {
   XSqlQuery calendarSave;
-  if(_name->text().length() == 0)
-  {
-    QMessageBox::critical(this, tr("Calendar Name Required"),
-      tr("You must enter a Calendar Name to continue.") );
-    _name->setFocus();
+
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                          tr("You must enter a valid Calendar Name."))
+    ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Calendar"), errors))
     return;
-  }
 
   calendarSave.prepare("SELECT calhead_id"
             "  FROM calhead"
             " WHERE((calhead_id != :calhead_id)"
             "   AND (calhead_name=:calhead_name))");
   calendarSave.bindValue(":calhead_id",       _calheadid);
-  calendarSave.bindValue(":calhead_name",   _name->text());
+  calendarSave.bindValue(":calhead_name",   _name->text().trimmed());
   calendarSave.exec();
   if(calendarSave.first())
   {
@@ -154,7 +155,7 @@ void calendar::sSave()
   }
 
   calendarSave.bindValue(":calhead_id", _calheadid);
-  calendarSave.bindValue(":calhead_name", _name->text());
+  calendarSave.bindValue(":calhead_name", _name->text().trimmed());
   calendarSave.bindValue(":calhead_descrip", _descrip->text());
   calendarSave.bindValue(":calhead_origin", originTypes[_origin->currentIndex()]);
   calendarSave.exec();

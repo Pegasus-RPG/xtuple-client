@@ -40,7 +40,7 @@ employees::employees(QWidget* parent, const char*, Qt::WindowFlags fl)
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
   parameterWidget()->applyDefaultFilterSet();
 
-  connect(omfgThis, SIGNAL(employeesUpdated(int)),     this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(employeeUpdated(int)),     this, SLOT(sFillList()));
 
   list()->addColumn(tr("Site"),   _whsColumn,  Qt::AlignLeft, true, "warehous_code");
   list()->addColumn(tr("Active"), _ynColumn,   Qt::AlignLeft, true, "emp_active");

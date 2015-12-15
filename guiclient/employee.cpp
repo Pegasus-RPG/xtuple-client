@@ -268,9 +268,9 @@ bool employee::sSave(const bool pClose)
     return false;
 
   QList<GuiErrorCheck> errors;
-  errors << GuiErrorCheck(_code->text().isEmpty(), _code,
+  errors << GuiErrorCheck(_code->text().trimmed().isEmpty(), _code,
                           tr("You must enter a valid Employee Code."))
-         << GuiErrorCheck(_number->text().isEmpty(), _number,
+         << GuiErrorCheck(_number->text().trimmed().isEmpty(), _number,
                           tr("You must enter an Employee Number."))
          << GuiErrorCheck(dupCode, _code,
                           tr("An Employee already exists for the Code specified."))
@@ -341,7 +341,7 @@ bool employee::sSave(const bool pClose)
     upsq.bindValue(":emp_id", _empid);
   }
 
-  upsq.bindValue(":code",           _code->text());
+  upsq.bindValue(":code",           _code->text().trimmed());
   upsq.bindValue(":number",         _number->text());
   upsq.bindValue(":active",         _active->isChecked());
   if (_contact->isValid())
