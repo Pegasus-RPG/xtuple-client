@@ -4667,7 +4667,7 @@ void salesOrderItem::sHandleButton()
   else if (_historySalesButton->isChecked())
     _historyStack->setCurrentWidget(_historySalesPage);
 
-  if ((_item->itemType() == "K"))
+  if (ISORDER(_mode) && _item->itemType() == "K")
   {
     int lineNum, headId;
     XSqlQuery firstQry;
