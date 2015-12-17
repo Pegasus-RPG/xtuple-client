@@ -73,7 +73,7 @@ bool dspBOMBase::setParams(ParameterList &params)
 {
   if(!_item->isValid())
   {
-    QMessageBox::warning(this, tr("Enter A Valid Item Number"),
+    QMessageBox::warning(this, tr("Enter a valid Item Number"),
       tr("You must enter a valid item number.") );
     return false;
   }
