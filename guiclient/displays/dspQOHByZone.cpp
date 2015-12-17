@@ -46,7 +46,7 @@ dspQOHByZone::dspQOHByZone(QWidget* parent, const char*, Qt::WindowFlags fl)
     list()->addColumn(tr("Site"),               _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
   list()->addColumn(tr("Zone"),               _whsColumn,  Qt::AlignCenter, true,  "whsezone_name" );
   list()->addColumn(tr("Item Number"),        _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
-  list()->addColumn(tr("Description"),        -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
+  list()->addColumn(tr("Description"),        -1,          Qt::AlignLeft,   true,  "item_descrip1"   );
   list()->addColumn(tr("UOM"),                _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
   list()->addColumn(tr("Location"),           _itemColumn, Qt::AlignLeft,   false, "location_descrip" );
   list()->addColumn(tr("QOH"),                _qtyColumn,  Qt::AlignRight,  true,  "qoh"  );
