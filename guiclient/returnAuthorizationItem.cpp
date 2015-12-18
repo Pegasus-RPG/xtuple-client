@@ -72,8 +72,6 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_saleDiscountFromSale, SIGNAL(editingFinished()),                    this, SLOT(sCalculateSaleFromDiscount()));
   connect(_extendedPrice,        SIGNAL(valueChanged()),                 this, SLOT(sCalculateTax()));
   connect(_item,                 SIGNAL(newId(int)),                     this, SLOT(sPopulateItemInfo()));
-  connect(_item,                 SIGNAL(warehouseIdChanged(int)),        this, SLOT(sPopulateItemsiteInfo()));
-  connect(_shipWhs,              SIGNAL(newID(int)),                     this, SLOT(sPopulateItemsiteInfo()));
   connect(_listPrices,           SIGNAL(clicked()),                      this, SLOT(sListPrices()));
   connect(_saleListPrices,       SIGNAL(clicked()),                      this, SLOT(sSaleListPrices()));
   connect(_netUnitPrice,         SIGNAL(valueChanged()),                 this, SLOT(sCalculateDiscountPrcnt()));
@@ -722,12 +720,16 @@ void returnAuthorizationItem::sPopulateItemInfo()
   if (_costmethod == "J")
     _createOrder->setChecked(true);
 
+  disconnect(_shipWhs,              SIGNAL(newID(int)),                     this, SLOT(sPopulateItemsiteInfo()));
   _warehouse->findItemsites(_item->id());
   _shipWhs->findItemsites(_item->id());
   if(_preferredWarehousid > 0)
     _warehouse->setId(_preferredWarehousid);
   if(_preferredShipWarehousid > 0)
     _shipWhs->setId(_preferredShipWarehousid);
+  connect(_shipWhs,              SIGNAL(newID(int)),                     this, SLOT(sPopulateItemsiteInfo()));
+  
+  sPopulateItemsiteInfo();
 }
 
 void returnAuthorizationItem::sPopulateItemsiteInfo()
