@@ -93,11 +93,11 @@ void pricingScheduleAssignment::sAssign()
                         "WHERE ( (ipsass_ipshead_id=:ipsass_ipshead_id)"
                         "  AND   (ipsass_cust_id=:ipsass_cust_id)"
                         "  AND   (ipsass_shipto_id=:ipsass_shipto_id)"
-                        "  AND   (ipsass_shipto_pattern=:ipsass_shipto_pattern)"
+                        "  AND   (COALESCE(ipsass_shipto_pattern, '')=COALESCE(:ipsass_shipto_pattern,''))"
                         "  AND   (ipsass_custtype_id=:ipsass_custtype_id)"
-                        "  AND   (ipsass_custtype_pattern=:ipsass_custtype_pattern)"
-                        "  AND   (ipsass_shipzone_id=:ipsass_shipzone_id)"
-                        "  AND   (ipsass_saletype_id=:ipsass_saletype_id) );" );
+                        "  AND   (COALESCE(ipsass_custtype_pattern,'')=COALESCE(:ipsass_custtype_pattern,''))"
+                        "  AND   (COALESCE(ipsass_shipzone_id, -1)=COALESCE(:ipsass_shipzone_id, -1))"
+                        "  AND   (COALESCE(ipsass_saletype_id, -1)=COALESCE(:ipsass_saletype_id, -1)) );" );
 
   pricingAssign.bindValue(":ipsass_ipshead_id", _ipshead->id());
 
