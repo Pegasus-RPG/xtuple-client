@@ -164,6 +164,7 @@ enum SetResponse transferOrderItem::set(const ParameterList &pParams)
 
       _save->setEnabled(false);
       _next->setText(tr("New"));
+      _cancel->setEnabled(false);
       _comments->setReadOnly(true);
       _item->setReadOnly(false);
 
@@ -870,9 +871,8 @@ void transferOrderItem::populate()
     return;
   }
 
-  if( (cNew == _mode) || ((cEdit == _mode) &&
-			  (item.value("toitem_status").toString() == "O")) )
-    _cancel->setEnabled(_shippedToDate->toDouble()==0.0);
+  if( (cEdit == _mode) && (item.value("toitem_status").toString() == "O") )
+    _cancel->setEnabled(true);
   else
     _cancel->setEnabled(false);
 }
