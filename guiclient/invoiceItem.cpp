@@ -112,9 +112,9 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       _price->setEffective(invoiceet.value("invchead_invcdate").toDate());
       sPriceGroup();
     }
-    else if (invoiceet.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Invoice Line Item Information"),
+                                  invoiceet, __FILE__, __LINE__))
     {
-      systemError(this, invoiceet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -136,9 +136,9 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       invoiceet.exec("SELECT NEXTVAL('invcitem_invcitem_id_seq') AS invcitem_id;");
       if (invoiceet.first())
         _invcitemid = invoiceet.value("invcitem_id").toInt();
-      else if (invoiceet.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Adding New Line Item"),
+                                    invoiceet, __FILE__, __LINE__))
       {
-        systemError(this, invoiceet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
 
@@ -149,10 +149,10 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       invoiceet.exec();
       if (invoiceet.first())
         _lineNumber->setText(invoiceet.value("linenumber").toString());
-      else if (invoiceet.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Adding New Line Item"),
+                                    invoiceet, __FILE__, __LINE__))
       {
-	    systemError(this, invoiceet.lastError().databaseText(), __FILE__, __LINE__);
-	    return UndefinedError;
+        return UndefinedError;
       }
 
       connect(_billed, SIGNAL(editingFinished()), this, SLOT(sDeterminePrice()));
@@ -296,9 +296,9 @@ void invoiceItem::sSave()
     invoiceSave.bindValue(":invcitem_rev_accnt_id", _altRevAccnt->id());
 
   invoiceSave.exec();
-  if (invoiceSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Invoice Line Item Information"),
+                                invoiceSave, __FILE__, __LINE__))
   {
-    systemError(this, invoiceSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   _saved = true;
@@ -396,9 +396,9 @@ void invoiceItem::populate()
       _qtyUOM->setEnabled(false);
     }
   }
-  else if (invcitem.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Invoice Line Item Information"),
+                                invcitem, __FILE__, __LINE__))
   {
-    systemError(this, invcitem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -410,9 +410,9 @@ void invoiceItem::populate()
   invcitem.exec();
   if (invcitem.first())
     _tax->setLocalValue(invcitem.value("lineTaxTotal").toDouble());
-  else if (invcitem.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Invoice Line Item Information"),
+                                invcitem, __FILE__, __LINE__))
   {
-    systemError(this, invcitem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -475,9 +475,9 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
       // TODO: should this check itemsite_controlmethod == N?
       _trackqoh = (invoicePopulateItemInfo.value("itemsite_costmethod").toString() != "J");
     }
-    else if (invoicePopulateItemInfo.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Invoice Line Item Information"),
+                                  invoicePopulateItemInfo, __FILE__, __LINE__))
     {
-      systemError(this, invoicePopulateItemInfo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -534,9 +534,9 @@ void invoiceItem::sDeterminePrice()
       _custPrice->setLocalValue(price);
       _price->setLocalValue(price);
     }
-    else if (itemprice.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Determining Item Price"),
+                                  itemprice, __FILE__, __LINE__))
     {
-      systemError(this, itemprice.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -678,7 +678,8 @@ void invoiceItem::sQtyUOMChanged()
     if(invuom.first())
       _qtyinvuomratio = invuom.value("ratio").toDouble();
     else
-      systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Changing Quantity UOM"),
+                         invuom, __FILE__, __LINE__);
   }
 
   if(_qtyUOM->id() != _invuomid)
@@ -740,7 +741,8 @@ void invoiceItem::sPriceUOMChanged()
     if(invuom.first())
       _priceinvuomratio = invuom.value("ratio").toDouble();
     else
-      systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Changing Price UOM"),
+                         invuom, __FILE__, __LINE__);
   }
 
   XSqlQuery item;
@@ -779,9 +781,9 @@ void invoiceItem::sHandleUpdateInv()
     {
       _updateInv->setEnabled(true);
     }
-    else if (invq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Invoice Line Item Information"),
+                                  invq, __FILE__, __LINE__))
     {
-      systemError(this, invq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
@@ -833,9 +835,9 @@ void invoiceItem::sLookupTax()
     _tax->setLocalValue(taxcal.value("taxamount").toDouble());
 	_saved = false;
   }
-  else if (taxcal.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Calculating Line Item Tax"),
+                                taxcal, __FILE__, __LINE__))
   {
-    systemError(this, taxcal.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
