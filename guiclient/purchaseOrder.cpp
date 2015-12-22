@@ -1234,9 +1234,7 @@ void purchaseOrder::sHandleVendor(int pVendid)
       _poCurrency->setId(vq.value("vend_curr_id").toInt());
       _terms->setId(vq.value("vend_terms_id").toInt());
       _shipVia->setText(vq.value("vend_shipvia"));
-
-      if (vq.value("vend_pocomments").toString() != "")
-        _notes->setText(vq.value("vend_pocomments").toString());
+      _notes->setText(vq.value("vend_pocomments").toString());
 
       if (vq.value("vend_fobsource").toString() == "V")
       {
