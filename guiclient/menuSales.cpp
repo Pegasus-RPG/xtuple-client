@@ -67,6 +67,7 @@
 
 #include "dspSalesOrders.h"
 #include "dspSalesOrdersByItem.h"
+#include "dspReturnAuthorizationsByItem.h"
 #include "dspQuotesByCustomer.h"
 #include "dspQuotesByItem.h"
 #include "dspInventoryAvailability.h"
@@ -130,6 +131,7 @@ menuSales::menuSales(GUIClient *pParent) :
   lookupMenu = new QMenu(parent);
   lookupQuoteMenu = new QMenu(parent);
   lookupSoMenu = new QMenu(parent);
+  lookupRaMenu = new QMenu(parent);
   formsMenu = new QMenu(parent);
   reportsMenu = new QMenu(parent);
   analysisMenu = new QMenu(parent);
@@ -151,6 +153,7 @@ menuSales::menuSales(GUIClient *pParent) :
   lookupMenu->setObjectName("menu.sales.lookup");
   lookupQuoteMenu->setObjectName("menu.sales.lookupquote");
   lookupSoMenu->setObjectName("menu.sales.lookupso");
+  lookupRaMenu->setObjectName("menu.sales.lookupra");
   formsMenu->setObjectName("menu.sales.forms");
   reportsMenu->setObjectName("menu.sales.reports");
   analysisMenu->setObjectName("menu.sales.analysis");
@@ -230,7 +233,11 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.listSalesOrders",      tr("&Search Orders..."),	SLOT(sSalesOrders()), lookupSoMenu, "MaintainSalesOrders ViewSalesOrders", NULL, NULL, true, NULL },
     { "so.dspSalesOrderLookupByItem", tr("by &Item..."),	SLOT(sDspOrderLookupByItem()), lookupSoMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },
     
-    { "separator",	NULL,	NULL,	lookupMenu,	"true",		NULL, NULL, true, NULL }, 
+    // Sales | Lookup | Return Auth. Lookup
+    { "menu",	tr("&Return Auth."),           (char*)lookupRaMenu,	lookupMenu,	"true",	NULL, NULL, _metrics->boolean("EnableReturnAuth"), NULL },
+    { "so.dspReturnAuthLookupByItem", tr("by &Item..."),	SLOT(sDspReturnAuthLookupByItem()), lookupRaMenu, "ViewReturns",	NULL, NULL, true, NULL },
+    
+    { "separator",	NULL,	NULL,	lookupMenu,	"true",		NULL, NULL, true, NULL },
     { "so.dspSalesOrderStatus", tr("Sales Order S&tatus..."),	SLOT(sDspSalesOrderStatus()), lookupMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },   
   
     // Sales | Forms
@@ -653,6 +660,11 @@ void menuSales::sDspReservations()
 void menuSales::sDspOrderLookupByItem()
 {
   omfgThis->handleNewWindow(new dspSalesOrdersByItem());
+}
+
+void menuSales::sDspReturnAuthLookupByItem()
+{
+  omfgThis->handleNewWindow(new dspReturnAuthorizationsByItem());
 }
 
 void menuSales::sDspQuoteLookupByCustomer()

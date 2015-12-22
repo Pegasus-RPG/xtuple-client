@@ -87,6 +87,7 @@ class menuSales : public QObject
     void sDspOrderLookupByItem();
     void sDspQuoteLookupByCustomer();
     void sDspQuoteLookupByItem();
+    void sDspReturnAuthLookupByItem();
     void sDspInventoryAvailability();
     void sDspInventoryAvailabilityByCustomerType();
     void sDspInventoryAvailabilityBySalesOrder();
@@ -147,6 +148,7 @@ class menuSales : public QObject
     QMenu *lookupMenu;
     QMenu *lookupQuoteMenu;
     QMenu *lookupSoMenu;
+    QMenu *lookupRaMenu;
     QMenu *formsMenu;
     QMenu *analysisMenu;
     QMenu *reportsMenu;
