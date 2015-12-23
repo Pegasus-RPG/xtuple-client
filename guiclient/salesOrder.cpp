@@ -5502,8 +5502,6 @@ bool salesOrder::creditLimitCheck()
   {
     customerCurrent = creditCheck.value("creditcheck_bookings").toDouble() + 
                       creditCheck.value("creditcheck_aropen").toDouble();
-    if (_mode == cNew)
-      customerCurrent += _balance->localValue();
 
     // The Credit Check
     if (customerCurrent <= creditCheck.value("creditcheck_limit").toDouble())
