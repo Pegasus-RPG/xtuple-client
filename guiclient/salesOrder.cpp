@@ -152,7 +152,8 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
   connect(_shipToAddr,          SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _shipToCntct, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
 
-  _saved = false;
+  _saved  = false;
+  _saving = false;
 
   setFreeFormShipto(false);
 
@@ -170,6 +171,13 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
   _captive       = false;
 
   _ignoreSignals = true;
+
+  _holdType->append(0, tr("None"),     "N");
+  _holdType->append(1, tr("Credit"),   "C");
+  _holdType->append(2, tr("Shipping"), "S");
+  _holdType->append(3, tr("Packing"),  "P");
+  if (_metrics->boolean("EnableReturnAuth"))
+    _holdType->append(4, tr("Return"),   "R");
 
   _orderCurrency->setLabel(_orderCurrencyLit);
 
@@ -262,9 +270,6 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
     _shippingWhseLit->hide();
     _warehouse->hide();
   }
-
-  if (!_metrics->boolean("EnableReturnAuth"))
-    _holdType->removeItem(4);
 
   if (!_metrics->boolean("CCAccept") || !_privileges->check("ProcessCreditCards"))
   {
@@ -700,6 +705,8 @@ int salesOrder::modeType() const
 
 void salesOrder::sSave()
 {
+  _saving = true;
+
   if (save(false))
   {
     if (_printSO->isChecked())
@@ -734,6 +741,8 @@ void salesOrder::sSave()
 void salesOrder::sSaveAndAdd()
 {
   XSqlQuery saveSales;
+  _saving = true;
+
   if (save(false))
   {
     saveSales.prepare("SELECT addToPackingListBatch(:sohead_id) AS result;");
@@ -873,6 +882,34 @@ bool salesOrder::save(bool partial)
           systemError(this, saveSales.lastError().databaseText(), __FILE__, __LINE__);
           return false;
         }
+      }
+    }
+
+//  S/O Credit Check 
+    if (_saving && _metrics->boolean("CreditCheckSOOnSave"))
+    {
+      if (!creditLimitCheck() && _holdType->code() != "C")
+      {
+        _holdType->setCode("C");
+
+        if (_privileges->check("CreateSOForHoldCustomer"))
+        {
+            if (QMessageBox::question(this, tr("Sales Order Credit Check"),
+                            tr("<p>The customer has exceeded their credit limit "
+                               "and this order has been placed on Credit Hold.\n"
+                               "Do you wish to continue saving the order?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+              return false;
+        }
+        else
+        {
+          errors << GuiErrorCheck(true, _cust,
+                                tr("<p>The customer has exceeded their credit limit "
+                                   "and you have insufficient privileges to complete "
+                                   "this order. You will need to edit the order to ensure "
+                                   "it falls within the credit limit or obtain a payment first." ) );
+        } 
       }
     }
   }
@@ -1232,16 +1269,7 @@ bool salesOrder::save(bool partial)
   if (_expire->isValid())
     saveSales.bindValue(":expire", _expire->date());
 
-  if (_holdType->currentIndex() == 0)
-    saveSales.bindValue(":holdtype", "N");
-  else if (_holdType->currentIndex() == 1)
-    saveSales.bindValue(":holdtype", "C");
-  else if (_holdType->currentIndex() == 2)
-    saveSales.bindValue(":holdtype", "S");
-  else if (_holdType->currentIndex() == 3)
-    saveSales.bindValue(":holdtype", "P");
-  else if (_holdType->currentIndex() == 4)
-    saveSales.bindValue(":holdtype", "R");
+  saveSales.bindValue(":holdtype", _holdType->code());
 
   if(_shippingZone->isValid())
     saveSales.bindValue(":shipzone_id", _shippingZone->id());
@@ -1732,7 +1760,7 @@ void salesOrder::sPopulateFOB(int pWarehousid)
 // Is the first SELECT here responsible for the bug where the Currency kept disappearing?
 void salesOrder::sPopulateCustomerInfo(int pCustid)
 {
-  _holdType->setCurrentIndex(0);
+  _holdType->setCode("N");
 
   if (_cust->isValid())
   {
@@ -1826,10 +1854,10 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
         }
 
         if ( (cust.value("cust_creditstatus").toString() == "H") || (cust.value("cust_creditstatus").toString() == "W") )
-          _holdType->setCurrentIndex(1);
+          _holdType->setCode("C");
       }
 
-      if (_holdType->currentIndex() > 0 && !_privileges->check("OverrideSOHoldType"))
+      if (_holdType->code() != "N" && !_privileges->check("OverrideSOHoldType"))
         _holdType->setEnabled(false);
       else
         _holdType->setEnabled(true);
@@ -2541,17 +2569,12 @@ void salesOrder::populate()
       _shipVia->setText(so.value("cohead_shipvia"));
 
       _fob->setText(so.value("cohead_fob"));
+      _holdType->setCode(so.value("cohead_holdtype").toString());
+      if (_holdType->code() != "N" && !_privileges->check("OverrideSOHoldType"))
+        _holdType->setEnabled(false);
+      else
+        _holdType->setEnabled(true);
 
-      if (so.value("cohead_holdtype").toString() == "N")
-        _holdType->setCurrentIndex(0);
-      else if (so.value("cohead_holdtype").toString() == "C")
-        _holdType->setCurrentIndex(1);
-      else if (so.value("cohead_holdtype").toString() == "S")
-        _holdType->setCurrentIndex(2);
-      else if (so.value("cohead_holdtype").toString() == "P")
-        _holdType->setCurrentIndex(3);
-      else if (so.value("cohead_holdtype").toString() == "R")
-        _holdType->setCurrentIndex(4);
 
       _miscCharge->setLocalValue(so.value("cohead_misc").toDouble());
       _miscChargeDescription->setText(so.value("cohead_misc_descrip"));
@@ -3120,7 +3143,8 @@ void salesOrder::clear()
   _shipVia->setCurrentIndex(-1);
   _shippingCharges->setCurrentIndex(-1);
   _shippingForm->setCurrentIndex(-1);
-  _holdType->setCurrentIndex(0);
+  _holdType->setCode("N");
+  _holdType->setEnabled(true);
   _calcfreight   = _metrics->boolean("CalculateFreight");
   _freightCache  = 0;
   disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
@@ -5461,3 +5485,33 @@ void salesOrder::sViewItemWorkbench()
     }
   }
 }
+
+bool salesOrder::creditLimitCheck()
+{
+  XSqlQuery creditCheck;
+  double    customerCurrent;
+
+  creditCheck.prepare("SELECT * FROM creditlimitcheck(:cust_id);");
+  creditCheck.bindValue(":cust_id", _cust->id());
+  creditCheck.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Sales Order Credit Check"),
+                           creditCheck, __FILE__, __LINE__))
+    return false;
+  
+  if (creditCheck.first())
+  {
+    customerCurrent = creditCheck.value("creditcheck_bookings").toDouble() + 
+                      creditCheck.value("creditcheck_aropen").toDouble();
+    if (_mode == cNew)
+      customerCurrent += _balance->localValue();
+
+    // The Credit Check
+    if (customerCurrent <= creditCheck.value("creditcheck_limit").toDouble())
+      return true;
+    else
+      return false;
+  }
+
+  return false;
+}
+
