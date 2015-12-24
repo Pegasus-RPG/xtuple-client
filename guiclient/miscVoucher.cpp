@@ -38,6 +38,7 @@ miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_save,                 SIGNAL(clicked()),                      this, SLOT(sSave()));
   connect(_voucherNumber,        SIGNAL(editingFinished()),              this, SLOT(sHandleVoucherNumber()));
   connect(_taxzone,              SIGNAL(newID(int)),                     this, SLOT(sUpdateVoucherTax()));
+  connect(_distributionDate,     SIGNAL(newDate(const QDate&)),          this, SLOT(sDistributionDateUpdated()));
 
   _terms->setType(XComboBox::APTerms);
 
@@ -640,6 +641,13 @@ void miscVoucher::sPopulateDueDate()
                                   dateq, __FILE__, __LINE__))
       return;
   }
+}
+
+void miscVoucher::sDistributionDateUpdated()
+{
+  sUpdateVoucherTax();
+  sFillMiscList();
+  sPopulateDistributed();
 }
 
 void miscVoucher::sUpdateVoucherTax()
