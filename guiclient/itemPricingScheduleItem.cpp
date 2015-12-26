@@ -348,10 +348,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
                                    "You may not create duplicate Pricing Schedule Items." ) );
         return;
       }
-      else if (itemSave.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                    itemSave, __FILE__, __LINE__))
       {
-        systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                  __FILE__, __LINE__);
         done(-1);
       }
     }
@@ -379,10 +378,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
                                    "You may not create duplicate Pricing Schedule Items." ) );
         return;
       }
-      else if (itemSave.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                    itemSave, __FILE__, __LINE__))
       {
-        systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                  __FILE__, __LINE__);
         done(-1);
       }
     }
@@ -406,10 +404,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
                                    "You may not create duplicate Pricing Schedule Items." ) );
         return;
       }
-      else if (itemSave.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                    itemSave, __FILE__, __LINE__))
       {
-        systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                  __FILE__, __LINE__);
         done(-1);
       }
     }
@@ -439,10 +436,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
                                  "You may not create duplicate Pricing Schedule Items." ) );
       return;
     }
-    else if (itemSave.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                  itemSave, __FILE__, __LINE__))
     {
-      systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                __FILE__, __LINE__);
       done(-1);
     }
   }
@@ -454,10 +450,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
       itemSave.exec("SELECT NEXTVAL('ipsitem_ipsitem_id_seq') AS ipsitem_id;");
       if (itemSave.first())
         _ipsitemid = itemSave.value("ipsitem_id").toInt();
-      else if (itemSave.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                    itemSave, __FILE__, __LINE__))
       {
-        systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                  __FILE__, __LINE__);
         done(-1);
       }
 
@@ -479,10 +474,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
       itemSave.exec("SELECT NEXTVAL('ipsfreight_ipsfreight_id_seq') AS ipsfreight_id;");
       if (itemSave.first())
         _ipsfreightid = itemSave.value("ipsfreight_id").toInt();
-      else if (itemSave.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                    itemSave, __FILE__, __LINE__))
       {
-        systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                  __FILE__, __LINE__);
         done(-1);
       }
 
@@ -584,11 +578,10 @@ void itemPricingScheduleItem::sSave( bool pClose)
       itemSave.bindValue(":ipsitem_qty_uom_id", qry.value("item_inv_uom_id"));
       itemSave.bindValue(":ipsitem_price_uom_id", qry.value("item_price_uom_id"));
     }
-    else if (qry.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                  qry, __FILE__, __LINE__))
     {
-      systemError(this, _rejectedMsg.arg(qry.lastError().databaseText()),
-                __FILE__, __LINE__);
-      done(-1);
+      done(1);
     }
   }
 
@@ -604,10 +597,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
       itemSave.bindValue(":ipsitem_qty_uom_id", qry.value("item_inv_uom_id"));
       itemSave.bindValue(":ipsitem_price_uom_id", qry.value("item_price_uom_id"));
     }
-    else if (qry.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                  qry, __FILE__, __LINE__))
     {
-      systemError(this, _rejectedMsg.arg(qry.lastError().databaseText()),
-                __FILE__, __LINE__);
       done(-1);
     }
   }
@@ -630,11 +622,10 @@ void itemPricingScheduleItem::sSave( bool pClose)
   if (_selectedShipViaFreight->isChecked())
     itemSave.bindValue(":ipsfreight_shipvia", _shipViaFreight->currentText());
   itemSave.exec();
-  if (itemSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                itemSave, __FILE__, __LINE__))
   {
-	systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                  __FILE__, __LINE__);
-        done(-1);
+    done(-1);
   }
 
   if (pClose)
@@ -718,11 +709,10 @@ void itemPricingScheduleItem::populate()
       else
         _allShipViasFreight->setChecked(true);
     }
-    else if (itempopulate.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Pricing Schedule Information"),
+                                  itempopulate, __FILE__, __LINE__))
     {
-       systemError(this, _rejectedMsg.arg(itempopulate.lastError().databaseText()),
-                  __FILE__, __LINE__);
-        done(-1);
+      done(-1);
     }
   }
   else
@@ -780,11 +770,10 @@ void itemPricingScheduleItem::populate()
 
       sUpdateMargins();
     }
-    else if (itempopulate.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Pricing Schedule Information"),
+                                  itempopulate, __FILE__, __LINE__))
     {
-	systemError(this, _rejectedMsg.arg(itempopulate.lastError().databaseText()),
-                  __FILE__, __LINE__);
-        done(-1);
+      done(-1);
     }
   }
   sFillList();
@@ -1113,11 +1102,10 @@ void itemPricingScheduleItem::sDelete()
             "WHERE (ipsitemchar_id=:ipsitemchar_id);");
   itemDelete.bindValue(":ipsitemchar_id", _charprice->id());
   itemDelete.exec();
-  if (itemDelete.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Pricing Schedule Information"),
+                                itemDelete, __FILE__, __LINE__))
   {
-	systemError(this, _rejectedMsg.arg(itemDelete.lastError().databaseText()),
-                  __FILE__, __LINE__);
-        done(-1);
+    done(-1);
   }
   sFillList();
 }
@@ -1132,11 +1120,10 @@ void itemPricingScheduleItem::sFillList()
             "AND (ipsitemchar_ipsitem_id=:ipsitem_id)); ");
   itemFillList.bindValue(":ipsitem_id", _ipsitemid);
   itemFillList.exec();
-  if (itemFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Pricing Schedule Information"),
+                                itemFillList, __FILE__, __LINE__))
   {
-	systemError(this, _rejectedMsg.arg(itemFillList.lastError().databaseText()),
-                  __FILE__, __LINE__);
-        done(-1);
+    done(-1);
   }
   _charprice->populate(itemFillList);
 }

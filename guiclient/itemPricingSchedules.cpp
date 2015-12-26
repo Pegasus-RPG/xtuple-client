@@ -15,6 +15,7 @@
 #include <QSqlError>
 #include <parameter.h>
 #include "itemPricingSchedule.h"
+#include "errorReporter.h"
 
 itemPricingSchedules::itemPricingSchedules(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -111,8 +112,8 @@ void itemPricingSchedules::sCopy()
     sFillList();
   }
   else if (itemCopy.lastError().type() != QSqlError::NoError)
-	systemError(this,itemCopy.lastError().databaseText(),
-                  __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item Pricing Schedule"),
+                       itemCopy, __FILE__, __LINE__);
 }
 
 void itemPricingSchedules::sView()
@@ -184,7 +185,8 @@ void itemPricingSchedules::sDeleteExpired()
   itemDeleteExpired.prepare("SELECT deleteexpiredips() AS result;");
   itemDeleteExpired.exec();
   if (itemDeleteExpired.lastError().type() != QSqlError::NoError)
-	systemError(this,itemDeleteExpired.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Item Pricing Schedule"),
+                       itemDeleteExpired, __FILE__, __LINE__);
 	
   sFillList();
 }
