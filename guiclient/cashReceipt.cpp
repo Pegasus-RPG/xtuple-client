@@ -962,6 +962,7 @@ bool cashReceipt::save(bool partial)
 
 void cashReceipt::sFillApplyList()
 {
+  // Customer Group selected
   if (_customerSelector->isSelectedGroup())
   {
       _aropen->clear();
@@ -969,6 +970,7 @@ void cashReceipt::sFillApplyList()
       if (_mode == cNew)
         activateButtons();
   }
+  // Valid Customer selected
   if (_customerSelector->isSelectedCust() && _customerSelector->isValid())
   {
     if (_mode == cNew)
@@ -1042,6 +1044,12 @@ void cashReceipt::sFillApplyList()
       return;
     }
   }
+  // Invalid Customer selected
+  if (_customerSelector->isSelectedCust() && !_customerSelector->isValid())
+  {
+    _aropen->clear();
+  }
+
   _received->setCurrencyEditable(_applied->isZero() && _miscDistribs->isZero());
 
 }
