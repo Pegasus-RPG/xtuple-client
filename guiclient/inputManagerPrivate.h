@@ -60,14 +60,6 @@ class InputManagerPrivate : public QObject
     QString             _buffer;
 
     void dispatchScan(int type);
-    void dispatchWorkOrderOperation();
-    void dispatchPurchaseOrderLineItem();
-    void dispatchSalesOrderLineItem();
-    void dispatchTransferOrderLineItem();
-    void dispatchItemSite();
-    void dispatchUPCCode();
-    void dispatchLocationIssue();
-    void dispatchLocationContents();
 
     void         addToEventList(QString prefix, int type, int length1, int length2, int length3, QString descrip, QString query);
     ReceiverItem findReceiver(int pMask);
