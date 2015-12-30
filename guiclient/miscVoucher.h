@@ -46,6 +46,7 @@ public slots:
     virtual void sPopulateDistDate();
     virtual void sPopulateDueDate();
     virtual void sUpdateVoucherTax();
+    virtual void sDistributionDateUpdated();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );
