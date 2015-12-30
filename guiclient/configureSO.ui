@@ -306,7 +306,7 @@ to be bound by its terms.</comment>
             <layout class="QVBoxLayout" name="verticalLayout">
              <item>
               <layout class="QGridLayout" name="gridLayout_2">
-               <item row="2" column="0">
+               <item row="3" column="0">
                 <widget class="QGroupBox" name="groupBox_4">
                  <property name="title">
                   <string>Change Log</string>
@@ -350,6 +350,13 @@ to be bound by its terms.</comment>
                 </widget>
                </item>
                <item row="1" column="0" colspan="2">
+                <widget class="QCheckBox" name="_creditCheckSO">
+                 <property name="text">
+                  <string>Perform Credit Limit check on S/O Save</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0" colspan="2">
                 <widget class="QGroupBox" name="groupBox_2">
                  <property name="title">
                   <string>Date Control</string>
@@ -385,7 +392,7 @@ to be bound by its terms.</comment>
                  </layout>
                 </widget>
                </item>
-               <item row="2" column="1" colspan="2">
+               <item row="3" column="1" colspan="2">
                 <widget class="QGroupBox" name="groupBox_3">
                  <property name="title">
                   <string>Ship Control</string>
@@ -422,7 +429,7 @@ to be bound by its terms.</comment>
                  </layout>
                 </widget>
                </item>
-               <item row="3" column="0" colspan="3">
+               <item row="4" column="0" colspan="3">
                 <widget class="QGroupBox" name="groupBox_5">
                  <property name="title">
                   <string>Return Control</string>
@@ -445,14 +452,14 @@ to be bound by its terms.</comment>
                  </layout>
                 </widget>
                </item>
-               <item row="4" column="0" colspan="2">
+               <item row="5" column="0" colspan="2">
                 <widget class="QCheckBox" name="_quoteafterSO">
                  <property name="text">
                   <string>Show Quotes After Converted</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="2">
+               <item row="2" column="2">
                 <widget class="QGroupBox" name="_enableReservations">
                  <property name="title">
                   <string>Enable Reservations</string>
@@ -552,7 +559,7 @@ to be bound by its terms.</comment>
                  </layout>
                 </widget>
                </item>
-               <item row="4" column="2">
+               <item row="5" column="2">
                 <widget class="QCheckBox" name="_lineItemsSO">
                  <property name="text">
                   <string>Display Sales Order Line Items Tab by Default</string>
