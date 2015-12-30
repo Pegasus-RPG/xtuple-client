@@ -312,6 +312,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _supplyOrderScheduledDateCache = QDate();
   _supplyOrderDropShipCache = false;
   _supplyOverridePriceCache = 0.0;
+  _supplyConnectionsCache = false;
   _itemsrc = -1;
   _taxzoneid   = -1;
   _initialMode = -1;
@@ -868,7 +869,7 @@ void salesOrderItem::prepare()
 
 void salesOrderItem::clear()
 {
-  if (_supplyOrderId > -1)
+  if (_supplyConnectionsCache)
   {
     disconnect(_woIndentedList,    SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateWoMenu(QMenu*, QTreeWidgetItem*)));
     disconnect(_woIndentedList,    SIGNAL(itemSelected(int)),            _supplyWoEdit, SLOT(animateClick()));
@@ -888,6 +889,7 @@ void salesOrderItem::clear()
   _partialsaved = false;
   _supplyOrderType = "";
   _supplyOrderId = -1;
+  _supplyConnectionsCache = false;
   _createSupplyOrder->setChecked(false);
   _item->setReadOnly(false);
   _warehouse->setEnabled(true);
@@ -3471,6 +3473,7 @@ void salesOrderItem::sPopulateOrderInfo()
     //  connect(_supplyOrderDueDate,SIGNAL(newDate(const QDate &)),       this, SLOT(sHandleSupplyOrder()));
     connect(_supplyOverridePrice,SIGNAL(editingFinished()),           this, SLOT(sHandleSupplyOrder()));
     connect(_supplyDropShip,    SIGNAL(toggled(bool)),                this, SLOT(sHandleSupplyOrder()));
+    _supplyConnectionsCache = true;
   }
   else
   {
