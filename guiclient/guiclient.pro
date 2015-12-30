@@ -2,8 +2,12 @@ include( ../global.pri )
 
 TARGET   = xtuple
 CONFIG   += qt warn_on
+
+QT += xml sql script scripttools network
+QT += webkit xmlpatterns printsupport webkitwidgets
+
 isEqual(QT_MAJOR_VERSION, 5) {
-  QT     += help designer uitools
+  QT     += help designer uitools quick
 } else {
   CONFIG += help designer uitools
 }
@@ -899,6 +903,7 @@ HEADERS = ../common/format.h                    \
           incidentSeverity.h            \
           incidentWorkbench.h           \
           inputManager.h                \
+          inputManagerPrivate.h         \
           invoice.h                     \
           invoiceItem.h                 \
           invoiceList.h                 \
@@ -1882,9 +1887,6 @@ SOURCES = absoluteCalendarItem.cpp              \
 
 include( displays/displays.pri )
 include( hunspell.pri )
-
-QT += xml sql script scripttools network quick
-QT += webkit xmlpatterns printsupport webkitwidgets
 
 RESOURCES += guiclient.qrc $${OPENRPT_IMAGE_DIR}/OpenRPTMetaSQL.qrc
 

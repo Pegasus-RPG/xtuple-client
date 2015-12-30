@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -2457,47 +2457,12 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   mainwindowval.setProperty("cNoReportDefinition", QScriptValue(engine, cNoReportDefinition),
                         QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
-  QScriptValue inputmanagerval = engine->newQObject(_inputManager);
-  engine->globalObject().setProperty("InputManager", inputmanagerval);
-
-  // #defines from inputmanager.h
-  inputmanagerval.setProperty("cBCWorkOrder", QScriptValue(engine, cBCWorkOrder),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCWorkOrderMaterial", QScriptValue(engine, cBCWorkOrderMaterial),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCWorkOrderOperation", QScriptValue(engine, cBCWorkOrderOperation),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCSalesOrder", QScriptValue(engine, cBCSalesOrder),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCSalesOrderLineItem", QScriptValue(engine, cBCSalesOrderLineItem),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCItemSite", QScriptValue(engine, cBCItemSite),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCItem", QScriptValue(engine, cBCItem),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCUPCCode", QScriptValue(engine, cBCUPCCode),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCEANCode", QScriptValue(engine, cBCEANCode),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCCountTag", QScriptValue(engine, cBCCountTag),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCLocation", QScriptValue(engine, cBCLocation),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCLocationIssue", QScriptValue(engine, cBCLocationIssue),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCLocationContents", QScriptValue(engine, cBCLocationContents),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCUser", QScriptValue(engine, cBCUser),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCTransferOrder", QScriptValue(engine, cBCTransferOrder),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCTransferOrderLineItem", QScriptValue(engine, cBCTransferOrderLineItem),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCLotSerialNumber", QScriptValue(engine, cBCLotSerialNumber),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
   setupScriptApi(engine);
   setupSetupApi(engine);
+
+  // TODO: Make all classes work this way instead of setup* as above?
+  // TODO: This interface sets this instance as the global. we can do better.
+  _inputManager->scriptAPI(engine, "InputManager");
 }
 
 void GUIClient::addDocumentWatch(QString path, int id)
