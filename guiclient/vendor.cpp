@@ -1460,7 +1460,7 @@ void vendor::sPrepare()
 
 void vendor::close()
 {
-  if (cNew == _mode && _tempMode == cEdit)
+  if (cNew == _mode && _tempMode == cEdit && _crmacctid == -1)
   {
     XSqlQuery delq;
     delq.prepare("DELETE FROM vendinfo WHERE (vend_id=:vend_id);");
