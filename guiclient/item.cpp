@@ -435,6 +435,8 @@ void item::saveCore()
                           tr("You must select an Inventory Unit of Measure for this Item before continuing."))
          << GuiErrorCheck(_classcode->id() == -1, _classcode,
                           tr("You must select a Class Code before continuing."))
+         << GuiErrorCheck(_itemNumber->text().trimmed() == "", _itemNumber,
+                          tr("You must enter an Item Number before continuing."))
   ;
   
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Item"), errors))
