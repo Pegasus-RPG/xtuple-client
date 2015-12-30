@@ -102,8 +102,11 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
   else
       _markupLit->setText(tr("Markup Percent (Inventory Cost):"));
 
-  _rejectedMsg = tr("The application has encountered an error and must "
+/*  Not used anywhere in the code
+   _rejectedMsg = tr("The application has encountered an error and must "
                     "stop editing this Pricing Schedule.\n%1");
+*/
+
 }
 
 itemPricingScheduleItem::~itemPricingScheduleItem()

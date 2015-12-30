@@ -797,9 +797,8 @@ void invoice::postInvoice()
      xrate.exec();
      if (xrate.lastError().type() != QSqlError::NoError)
      {
-       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Invoice #%1\n%2")
-                            .arg(_invoiceNumber->text())
-                            .arg(xrate.lastError().databaseText()),
+       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Invoice #%1\n")
+                            .arg(_invoiceNumber->text()),
                             xrate, __FILE__, __LINE__);
      }
      else if (!xrate.first() || xrate.value("curr_rate").isNull())
@@ -1491,8 +1490,6 @@ bool invoice::sCheckInvoiceNumber()
     }
     else
     {
-        QMessageBox::critical( this, tr("Regression Testing"),
-                               tr("Regression Test -->1") );
       XSqlQuery checkq;
       checkq.prepare("SELECT invchead_invcnumber"
                      "  FROM invchead"

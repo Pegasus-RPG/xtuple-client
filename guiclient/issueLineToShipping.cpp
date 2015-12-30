@@ -170,11 +170,15 @@ void issueLineToShipping::sIssue()
             "<? endif ?>" ;
         MetaSQLQuery errm(errs);
         issueIssue = errm.toQuery(errp);
-        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Item"),
-                                          issueIssue, __FILE__, __LINE__))
-        {
-          return;
-        }
+        if (! issueIssue.first() && issueIssue.lastError().type() != QSqlError::NoError)
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Item"),
+                                 issueIssue, __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Item"),
+                                 storedProcErrorLookup("sufficientInventoryToShipItem", result)
+                                 .arg(issueIssue.value("item_number").toString())
+                                 .arg(issueIssue.value("warehous_code").toString()),
+                                 __FILE__, __LINE__);
+        return;
       }
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Item"),
@@ -254,6 +258,7 @@ void issueLineToShipping::sIssue()
 
       if (itemlocSeries < 0)
       {
+        rollback.exec();
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production"),
                                storedProcErrorLookup("postProduction", itemlocSeries),
                                __FILE__, __LINE__);
@@ -301,6 +306,7 @@ void issueLineToShipping::sIssue()
     int result = issue.value("result").toInt();
     if (result < 0)
     {
+      rollback.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Item"),
                              storedProcErrorLookup("issueToShipping", result),
                              __FILE__, __LINE__);

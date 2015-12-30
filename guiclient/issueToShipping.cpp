@@ -367,23 +367,26 @@ bool issueToShipping::sufficientItemInventory(int porderitemid)
                        "   AND  (toitem_tohead_id=tohead_id)"
                        "   AND  (toitem_id=<? value(\"toitem_id\") ?>));"
                        "<? endif ?>" ;
-        MetaSQLQuery errm(errs);
-        issueufficientItemInventory = errm.toQuery(errp);
-        if (! issueufficientItemInventory.first() && issueufficientItemInventory.lastError().type() != QSqlError::NoError)
-          ErrorReporter::error(QtCriticalMsg, this, tr("Insufficient Inventory To Ship"),
-                             issueufficientItemInventory, __FILE__, __LINE__);
-        ErrorReporter::error(QtCriticalMsg, this, tr("Insufficient Inventory To Ship"),
-                                 storedProcErrorLookup("sufficientInventoryToShipItem", result),
-                                 __FILE__, __LINE__);
-        return false;
-      }
-    }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Insufficient Inventory To Ship"),
+         MetaSQLQuery errm(errs);
+         issueufficientItemInventory = errm.toQuery(errp);
+         if (! issueufficientItemInventory.first() && issueufficientItemInventory.lastError().type() != QSqlError::NoError)
+           ErrorReporter::error(QtCriticalMsg, this, tr("Insufficient Inventory To Ship"),
+                              issueufficientItemInventory, __FILE__, __LINE__);
+
+         ErrorReporter::error(QtCriticalMsg, this, tr("Insufficient Inventory To Ship"),
+                                  storedProcErrorLookup("sufficientInventoryToShipItem", result)
+                                  .arg(issueufficientItemInventory.value("item_number").toString())
+                                  .arg(issueufficientItemInventory.value("warehous_code").toString()),
+                                  __FILE__, __LINE__);
+         return false;
+       }
+     }
+     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Insufficient Inventory To Ship"),
                                   issueufficientItemInventory, __FILE__, __LINE__))
-    {
-      return false;
-    }
-  }
+     {
+       return false;
+     }
+   }
 
   return true;
 }
@@ -826,7 +829,7 @@ void issueToShipping::sFillList()
   else
   {
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
-                         tr("Window:%1:/n Unrecognized order type %2")
+                         tr("Window:%1:\n Unrecognized order type %2")
                          .arg(windowTitle())
                          .arg(_order->type()),__FILE__,__LINE__);
     return;
