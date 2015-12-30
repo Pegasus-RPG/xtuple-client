@@ -139,6 +139,7 @@ enum SetResponse incident::set(const ParameterList &pParams)
         _alarms->setId(_incdtid);
         _recurring->setParent(_incdtid, "INCDT");
         _print->hide();
+        _project->setAllowedStatuses(ProjectLineEdit::Concept |  ProjectLineEdit::InProcess);
       }
       else
       {
