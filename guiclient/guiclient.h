@@ -83,11 +83,6 @@ class XWidget;
 
 // Possible return values from submitReport
 #define cNoReportDefinition   -2
-#ifdef Q_OS_MAC
-#define SETUPMENUITEM "&xSetup"
-#else
-#define SETUPMENUITEM "&Setup"
-#endif
 
 int  systemError(QWidget *, const QString &);
 int  systemError(QWidget *, const QString &, const QString &, const int);
@@ -241,10 +236,10 @@ class GUIClient : public QMainWindow
 
     void loadScriptGlobals(QScriptEngine * engine);
 
-    #ifdef Q_OS_MAC
-    		void updateMacDockMenu(QWidget *w);
-    		void removeFromMacDockMenu(QWidget *w);
-    	#endif
+#ifdef Q_OS_MAC
+    void updateMacDockMenu(QWidget *w);
+    void removeFromMacDockMenu(QWidget *w);
+#endif
 
     //check hunspell is ready
     Q_INVOKABLE bool hunspell_ready();
