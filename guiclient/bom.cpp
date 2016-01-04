@@ -263,6 +263,7 @@ bool BOM::save(bool partial)
     emit newMode(_mode);
   }
 
+  omfgThis->sBOMsUpdated(_bomheadid, true);
   return true;
 }
 
