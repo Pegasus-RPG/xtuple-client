@@ -718,9 +718,9 @@ void item::sSave()
   itemSave.exec();
   while (itemSave.next())
     knownunits.append(itemSave.value("uom_id").toString());
-  if (itemSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Information"),
+                                itemSave, __FILE__, __LINE__))
   {
-    systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -737,9 +737,9 @@ void item::sSave()
   QStringList missingunitnames;
   while (itemSave.next())
     missingunitnames.append(itemSave.value("uom_name").toString());
-  if (itemSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Information"),
+                                itemSave, __FILE__, __LINE__))
   {
-    systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   if (missingunitnames.size() > 0)
@@ -850,7 +850,8 @@ void item::sSave()
     XSqlQuery itemTrxn;
     itemTrxn.exec("ROLLBACK;");
     _inTransaction = false;
-    systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Information"),
+                         itemSave, __FILE__, __LINE__);
     return;
   }
 
@@ -1802,9 +1803,9 @@ void item::sFillListItemtax()
   itemFillListItemtax.bindValue(":any", tr("Any"));
   itemFillListItemtax.exec();
   _itemtax->populate(itemFillListItemtax, _itemtax->id());
-  if (itemFillListItemtax.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Information"),
+                                itemFillListItemtax, __FILE__, __LINE__))
   {
-    systemError(this, itemFillListItemtax.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -1847,8 +1848,9 @@ void item::sDeleteUOM()
     int result = itemDeleteUOM.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("deleteItemUOMConv", result),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Item UOM Conversion Information"),
+                             storedProcErrorLookup("deleteItemUOMConv", result),
+                             __FILE__, __LINE__);
       return;
     }
   }

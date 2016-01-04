@@ -258,7 +258,8 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
         }
         else if (newItemsiteid.lastError().type() != QSqlError::NoError)
         {
-          systemError(this, newItemsiteid.lastError().databaseText(), __FILE__, __LINE__);
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Site Information"),
+                               newItemsiteid, __FILE__, __LINE__);
         }
       }
     }
@@ -444,9 +445,9 @@ bool itemSite::sSave()
                                 QMessageBox::No) == QMessageBox::No)
         return false;
     }
-    else if (itemSave.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving ItemSite Information"),
+                                  itemSave, __FILE__, __LINE__))
     {
-      systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
   }
@@ -875,11 +876,11 @@ bool itemSite::sSave()
   }
   if (_sequence->isValid())
     newItemSite.bindValue(":itemsite_lsseq_id", _sequence->id());
-  
+
   newItemSite.exec();
-  if (newItemSite.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving ItemSite Information"),
+                                newItemSite, __FILE__, __LINE__))
   {
-    systemError(this, newItemSite.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
     
@@ -1549,9 +1550,9 @@ void itemSite::populate()
 
     _updates = true;
   }
-  else if (itemsite.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving ItemSite Information"),
+                                itemsite, __FILE__, __LINE__))
   {
-    systemError(this, itemsite.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   emit populated();
@@ -1565,9 +1566,10 @@ void itemSite::clear()
     _itemsiteid = newItemsiteid.value("_itemsite_id").toInt();
     emit newId(_itemsiteid);
   }
-  else if (newItemsiteid.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Clearing Previous ItemSite Information"),
+                                newItemsiteid, __FILE__, __LINE__))
   {
-    systemError(this, newItemsiteid.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
   if (_item->id() != -1)
     _item->setFocus();
@@ -1668,9 +1670,9 @@ int itemSite::createItemSite(QWidget* pparent, int pitemsiteid, int pwhsid, bool
   whsq.exec();
   if (whsq.first())
     whs = whsq.value("warehous_code").toString();
-  else if (whsq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, pparent, tr("Error Creating Item Site"),
+                                whsq, __FILE__, __LINE__))
   {
-    systemError(pparent, whsq.lastError().databaseText(), __FILE__, __LINE__);
     return -100;
   }
   else
@@ -1715,11 +1717,12 @@ int itemSite::createItemSite(QWidget* pparent, int pitemsiteid, int pwhsid, bool
       {
 	itemsiteid = isq.value("result").toInt();
 	if (itemsiteid < 0)
-	{
-	  systemError(pparent, storedProcErrorLookup("copyItemSite", itemsiteid),
-		      __FILE__, __LINE__);
-	  return itemsiteid;
-	}
+    {
+        ErrorReporter::error(QtCriticalMsg, pparent, tr("Error Creating Item Site"),
+                             storedProcErrorLookup("copyItemSite", itemsiteid),
+                             __FILE__, __LINE__);
+        return itemsiteid;
+    }
 	if (peditResult)
 	{
 	  itemSite newdlg(pparent, "", true);
@@ -1735,25 +1738,27 @@ int itemSite::createItemSite(QWidget* pparent, int pitemsiteid, int pwhsid, bool
 	    {
 	      int result = isq.value("result").toInt();
 	      if (result < 0)
-	      {
-		systemError(pparent, storedProcErrorLookup("deleteItemsite", result), __FILE__, __LINE__);
-		return result;
-	      }
+          {
+            ErrorReporter::error(QtCriticalMsg, pparent, tr("Error Creating Item Site"),
+                                   storedProcErrorLookup("deleteItemSite", result),
+                                   __FILE__, __LINE__);
+            return result;
+          }
 	    }
-	    else if (isq.lastError().type() != QSqlError::NoError)
-	    {
-	      systemError(pparent, isq.lastError().databaseText(), __FILE__, __LINE__);
-	      return -100;
-	    }
+        else if (ErrorReporter::error(QtCriticalMsg, pparent, tr("Error Creating Item Site"),
+                                      isq, __FILE__, __LINE__))
+        {
+          return -100;
+        }
             return -1; // user cancelled
 	  }
 	}
 	return itemsiteid;
       } // end if successfully copied an itemsite
-      else if (isq.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, pparent, tr("Error Creating Item Site"),
+                                    isq, __FILE__, __LINE__))
       {
-	systemError(pparent, isq.lastError().databaseText(), __FILE__, __LINE__);
-	return -100;
+        return -100;
       }
     }
     else if (! isq.value("itemsite_active").toBool())
@@ -1769,11 +1774,11 @@ int itemSite::createItemSite(QWidget* pparent, int pitemsiteid, int pwhsid, bool
 		  "WHERE itemsite_id=:itemsiteid;");
 	isq.bindValue(":itemsiteid", itemsiteid);
 	isq.exec();
-	if (isq.lastError().type() != QSqlError::NoError)
-	{
-	  systemError(pparent, isq.lastError().databaseText(), __FILE__, __LINE__);
-	  return -100;
-	}
+    if (ErrorReporter::error(QtCriticalMsg, pparent, tr("Error Creating Item Site"),
+                                  isq, __FILE__, __LINE__))
+    {
+      return -100;
+    }
 	return itemsiteid;
       }
       else
@@ -1784,15 +1789,15 @@ int itemSite::createItemSite(QWidget* pparent, int pitemsiteid, int pwhsid, bool
       }
     }
   }
-  else if (isq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, pparent, tr("Error Creating Item Site"),
+                                isq, __FILE__, __LINE__))
   {
-    systemError(pparent, isq.lastError().databaseText(), __FILE__, __LINE__);
     return -100;
   }
 
   systemError(pparent, tr("<p>There was a problem checking or creating an "
-		       "Item Site for this Transfer Order Item."),
-		      __FILE__, __LINE__);
+               "Item Site for this Transfer Order Item."),
+              __FILE__, __LINE__);
   return -90;	// catchall: we didn't successfully find/create an itemsite
 }
 

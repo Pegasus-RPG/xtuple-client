@@ -53,7 +53,6 @@ private:
     int _ipsitemid;
     int _ipsfreightid;
     int _invuomid;
-    QString _rejectedMsg;
 
 };
 

@@ -22,6 +22,7 @@
 #include "itemSite.h"
 #include "parameterwidget.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 itemSites::itemSites(QWidget* parent, const char*, Qt::WindowFlags fl)
     : display(parent, "itemSites", fl)
@@ -165,7 +166,9 @@ void itemSites::sCopy()
     int result = itemCopy.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("copyItemSite", result), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item Site"),
+                             storedProcErrorLookup("copyItemSite", result),
+                             __FILE__, __LINE__);
       return;
     }
     ParameterList params;
@@ -184,21 +187,23 @@ void itemSites::sCopy()
         int result = itemCopy.value("result").toInt();
         if (result < 0)
         {
-          systemError(this, storedProcErrorLookup("deleteItemSite", result), __FILE__, __LINE__);
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item Site"),
+                                 storedProcErrorLookup("deleteItemSite", result),
+                                 __FILE__, __LINE__);
           return;
         }
       }
-      else if (itemCopy.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item Site"),
+                                    itemCopy, __FILE__, __LINE__))
       {
-        systemError(this, itemCopy.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
     sFillList();
   }
-  else if (itemCopy.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item Site"),
+                                itemCopy, __FILE__, __LINE__))
   {
-    systemError(this, itemCopy.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -221,14 +226,16 @@ void itemSites::sDelete()
     int result = itemDelete.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("deleteItemSite", result), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Item Site"),
+                             storedProcErrorLookup("deleteItemSite", result),
+                             __FILE__, __LINE__);
       return;
     }
     sFillList();
   }
-  else if (itemDelete.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Item Site"),
+                                itemDelete, __FILE__, __LINE__))
   {
-    systemError(this, itemDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
