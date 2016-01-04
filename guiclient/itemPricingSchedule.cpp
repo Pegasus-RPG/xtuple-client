@@ -123,7 +123,7 @@ enum SetResponse itemPricingSchedule::set(const ParameterList &pParams)
 
   if (_mode == cNew)
   {
-    itemet.exec("=SELECT NEXTVAL('ipshead_ipshead_id_seq') AS ipshead_id;");
+    itemet.exec("SELECT NEXTVAL('ipshead_ipshead_id_seq') AS ipshead_id;");
     if (itemet.first())
       _ipsheadid = itemet.value("ipshead_id").toInt();
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Pricing Information"),
