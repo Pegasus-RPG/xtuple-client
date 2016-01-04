@@ -279,6 +279,10 @@ void Action::init(QWidget *pParent, const char *pName, const QString &pDisplayNa
   if(!pEnabled.isEmpty())
     setData(pEnabled);
   __menuEvaluate(this);
+  if (QRegExp(".*\\.setup").exactMatch(pName))
+  {
+    setMenuRole(QAction::NoRole);
+  }
 }
 
 /** @class xTupleGuiClientInterface
