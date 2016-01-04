@@ -131,7 +131,7 @@ void itemGroups::sView()
 
 void itemGroups::sFillList()
 {
-  MetaSQLQuery mql = mqlLoad("itemGroups", "detail");
+  MetaSQLQuery mql = mqlLoad("itemgroups", "detail");
   XSqlQuery igrp = mql.toQuery(getParams());
   _itemgrp->populate(igrp);
 }
