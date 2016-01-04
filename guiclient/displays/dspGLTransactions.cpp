@@ -270,6 +270,8 @@ bool dspGLTransactions::setParams(ParameterList &params)
       params.append("accnt_number", num.value("accnt_number").toString());
   }
 
+  params.append("showUsernames"); // report only?
+
   param = params.value("accnt_id", &valid);
   if (valid)
   {
