@@ -890,17 +890,21 @@ bool salesOrder::save(bool partial)
     {
       if (!creditLimitCheck() && _holdType->code() != "C")
       {
-        _holdType->setCode("C");
-
         if (_privileges->check("CreateSOForHoldCustomer"))
         {
-            if (QMessageBox::question(this, tr("Sales Order Credit Check"),
-                            tr("<p>The customer has exceeded their credit limit "
-                               "and this order has been placed on Credit Hold.\n"
-                               "Do you wish to continue saving the order?"),
-                            QMessageBox::Yes,
-                            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-              return false;
+          if (QMessageBox::question(this, tr("Sales Order Credit Check"),
+                          tr("<p>The customer has exceeded their credit limit "
+                             "and this order will be placed on Credit Hold.\n"
+                             "Do you wish to continue saving the order?"),
+                          QMessageBox::Yes,
+                          QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+          {
+            _holdType->setCode("C");
+          }
+          else
+          {
+            return false;
+          }
         }
         else
         {
