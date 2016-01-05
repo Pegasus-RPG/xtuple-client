@@ -155,7 +155,7 @@ void XMainWindow::showEvent(QShowEvent *event)
       omfgThis->_windowList.append(this);
       statusBar()->show();
       QRect r(pos, lsize);
-      if (DEBUG) qDebug() << availableGeometry << "¿contains?" << r;
+      if (DEBUG) qDebug() << availableGeometry << "contains?" << r;
       if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool()) {
 	if (DEBUG) qDebug() << "move" << pos;
         move(pos);
