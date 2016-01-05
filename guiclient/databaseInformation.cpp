@@ -53,6 +53,13 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   _disallowMismatchClient->setChecked(_metrics->boolean("DisallowMismatchClientVersion"));
   _checkForUpdates->setChecked(_metrics->boolean("CheckForUpdates"));
   _forceLicense->setChecked(_metrics->boolean("ForceLicenseLimit"));
+  _passwdReset->setChecked(_metrics->boolean("EnforcePasswordReset"));
+
+  if(_passwdReset->isChecked())
+  {
+    int days = _metrics->value("PasswordResetDays").toInt();
+    _passwdDays->setValue(days);
+  }
   
   QString access = _metrics->value("AllowedUserLogins");
   if("AdminOnly" == access)
@@ -118,6 +125,10 @@ bool databaseInformation::sSave()
   _metrics->set("DisallowMismatchClientVersion", _disallowMismatchClient->isChecked());
   _metrics->set("CheckForUpdates", _checkForUpdates->isChecked());
   _metrics->set("ForceLicenseLimit", _forceLicense->isChecked());
+  _metrics->set("EnforcePasswordReset", _passwdReset->isChecked());
+
+  if(_passwdReset->isChecked())
+    _metrics->set("PasswordResetDays", _passwdDays->value());
 
   _metrics->set("updateTickInterval", _interval->value());
 
