@@ -710,11 +710,6 @@ void display::sFillList()
   sFillList(ParameterList());
 }
 
-void display::sFillList(int, bool)
-{
-  sFillList(ParameterList());
-}
-
 void display::sFillList(ParameterList pParams, bool forceSetParams)
 {
   emit fillListBefore();
