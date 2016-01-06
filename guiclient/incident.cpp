@@ -148,6 +148,11 @@ enum SetResponse incident::set(const ParameterList &pParams)
                                    "\n%1" ).arg(incidentet.lastError().text()));
         reject();
       }
+      // Characteristics update incident history so we have to save the incident first
+      // when adding a characteristic in new mode otherwise we get foreign key errors
+      QPushButton *newbutton = _charass->findChild<QPushButton*>("_newCharacteristic");
+      disconnect(newbutton, SIGNAL(clicked()), _charass, SLOT(sNew()));
+      connect(newbutton, SIGNAL(clicked()), this, SLOT(sNewCharacteristic()));
     }
     else if (param.toString() == "edit")
     {
@@ -582,6 +587,13 @@ void incident::populate()
 void incident::sCRMAcctChanged(const int newid)
 {
   _cntct->setSearchAcct(newid);
+}
+
+void incident::sNewCharacteristic()
+{
+  if (! save(false))
+    return;
+  _charass->sNew();
 }
 
 void incident::sNewTodoItem()
