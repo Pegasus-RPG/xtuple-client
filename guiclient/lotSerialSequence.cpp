@@ -155,7 +155,7 @@ void lotSerialSequence::sSave()
   if(lotSave.first())
   {
     QMessageBox::warning( this, tr("Cannot Save Sequence Number"),
-                          tr("You may not rename this Sequence number with the entered name as it is in use by another Planner code.") );
+                          tr("You may not rename this Sequence number with the entered name as it is already in use.") );
     _number->setFocus();
     return;
   }
