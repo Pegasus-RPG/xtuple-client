@@ -252,44 +252,30 @@ void checkForUpdates::cancelDownload()
 
 void checkForUpdates::downloadFinished()
 {
-  int result = QDialog::Accepted;
   if (DEBUG) qDebug() << "downloadFinished() entered";
-
-    if(downloadRequestAborted)
-    {
-        if(file)
-        {
-            file->close();
-            file->remove();
-            delete file;
-            file = 0;
-        }
-        reply->deleteLater();
-        progressDialog->hide();
-        _ok->setEnabled(true);
-        return;
-    }
-
+  if(!downloadRequestAborted)
+  {
     downloadReadyRead();
-    progressDialog->hide();
-    _ok->setEnabled(true);
     file->flush();
-    file->close();
 
     if(reply->error())
-    {
       QMessageBox::information(this, tr("Download Failed"),
                                tr("Failed: %1").arg(reply->errorString()));
-    }
-    else {
+    else
       startUpdate();
-    }
+  }
+  reply->deleteLater();
+  reply = 0;
+  progressDialog->hide();
+  _ok->setEnabled(true);
 
-    reply->deleteLater();
-    reply = 0;
-
+  if(file)
+  {
+    file->close();
+    file->remove();
     delete file;
     file = 0;
+  }
 
   if (DEBUG) qDebug() << "downloadFinished() returning";
 }

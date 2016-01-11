@@ -46,7 +46,7 @@ void taxRegistration::languageChange()
   retranslateUi(this);
 }
 
-enum SetResponse taxRegistration::set(const ParameterList pParams)
+enum SetResponse taxRegistration::set(const ParameterList& pParams)
 {
   XSqlQuery taxet;
   XDialog::set(pParams);

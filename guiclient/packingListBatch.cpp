@@ -34,14 +34,17 @@ packingListBatch::packingListBatch(QWidget* parent, const char* name, Qt::Window
 
   connect(_add,		     SIGNAL(clicked()), this, SLOT(sAddSO()));
   connect(_addTO,	     SIGNAL(clicked()), this, SLOT(sAddTO()));
-  connect(_autoUpdate,	 SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
+  connect(_autoUpdate,	     SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
   connect(_delete,	     SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_deletePrinted,    SIGNAL(clicked()), this, SLOT(sClearPrinted()));
   connect(_pack, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_printBatch,       SIGNAL(clicked()), this, SLOT(sPrintBatch()));
   connect(_printEditList,    SIGNAL(clicked()), this, SLOT(sPrintEditList()));
   connect(_printPackingList, SIGNAL(clicked()), this, SLOT(sPrintPackingList()));
-  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
+  connect(_warehouse,        SIGNAL(updated()), this, SLOT(sFillList()));
+  connect(_creditHold,       SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_packHold,       SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_shipHold,       SIGNAL(clicked()), this, SLOT(sFillList()));
 
   setAcceptDrops(true);
 
@@ -51,6 +54,7 @@ packingListBatch::packingListBatch(QWidget* parent, const char* name, Qt::Window
   _pack->addColumn(tr("Customer #"),    _itemColumn,  Qt::AlignLeft,   true, "number"   );
   _pack->addColumn(tr("Customer Name"), -1,           Qt::AlignLeft,   true, "name"   );
   _pack->addColumn(tr("Ship Via"),      80,           Qt::AlignLeft,   true, "shipvia");
+  _pack->addColumn(tr("Pack Date"),     80,           Qt::AlignLeft,   true, "packdate");
   _pack->addColumn(tr("Hold Type"),     _dateColumn,  Qt::AlignCenter, true, "f_holdtype" );
   _pack->addColumn(tr("Printed"),       _dateColumn,  Qt::AlignCenter, true, "pack_printed" );
 
@@ -199,6 +203,13 @@ void packingListBatch::setParams(ParameterList & params)
   params.append("pack",		tr("Pack"));
   params.append("return",	tr("Return"));
   params.append("other",	tr("Other"));
+
+  if (_creditHold->isChecked())
+    params.append("showCredit", true);
+  if (_packHold->isChecked())
+    params.append("showPack", true);
+  if (_shipHold->isChecked())
+    params.append("showShip", true);
 }
 
 void packingListBatch::sPrintEditList()

@@ -344,7 +344,7 @@ void ContactWidget::setChanged()
   _changed=true;
 }
 
-void ContactWidget::setId(const int pId)
+void ContactWidget::setId(const int pId, const QString&)
 {
     if (pId == _id)
 	return;
@@ -564,7 +564,7 @@ void ContactWidget::setDataWidgetMap(XDataWidgetMapper* m)
 }
 
 
-void ContactWidget::setName(const QString& p)
+void ContactWidget::setName(int, const QString& p)
 {
   int firstSpace = p.indexOf(" ");
   if (firstSpace > 0)
@@ -1137,7 +1137,7 @@ void ContactList::sFillList()
                    "  LEFT OUTER JOIN crmacct ON (cntct_crmacct_id = crmacct_id)"
                    " WHERE cntct_active"
                    "<? if exists('crmacctid') ?>"
-                   " AND (cntct_crmacct_id=<? value('crmacctid') ?>)"
+                   " AND ( (crmacct_id=<? value('crmacctid') ?>) OR (crmacct_parent_id=<? value('crmacctid') ?>) )"
                    "<? endif ?>"
                    " ORDER BY cntct_last_name, cntct_first_name;");
   ParameterList params;
@@ -1305,7 +1305,7 @@ void ContactSearch::sFillList()
                    "  LEFT OUTER JOIN crmacct ON (cntct_crmacct_id = crmacct_id)"
                    " WHERE true"
                    "<? if exists('crmacctid') ?>"
-                   "  AND (cntct_crmacct_id=<? value('crmacctid') ?>)"
+                   "  AND ( (crmacct_id=<? value('crmacctid') ?>) OR (crmacct_parent_id=<? value('crmacctid') ?>) )"
                    "<? endif ?>"
                    "<? if not exists('searchInactive') ?> "
                    "  AND cntct_active "
@@ -1315,27 +1315,27 @@ void ContactSearch::sFillList()
                    "  <? if exists('searchFirst') ?> "
                    "     COALESCE(TRIM(cntct_first_name),'') || ' ' "
                    "  <? else ?>"
-                   "    E'\n' "
+                   "    '\n' "
                    "  <? endif ?>"
                    "  <? if exists('searchLast') ?> "
-                   "     || COALESCE(TRIM(cntct_last_name),'') || E'\n' "
+                   "     || COALESCE(TRIM(cntct_last_name),'') || '\n' "
                    "  <? endif ?>"
                    "  <? if exists('searchCRMAcct') ?> "
-                   "     || COALESCE(crmacct_name,'') || E'\n' "
+                   "     || COALESCE(crmacct_name,'') || '\n' "
                    "  <? endif ?>"
                    "  <? if exists('searchTitle') ?> "
-                   "     || COALESCE(cntct_title,'') || E'\n' "
+                   "     || COALESCE(cntct_title,'') || '\n' "
                    "  <? endif ?>"
                    "  <? if exists('searchPhones') ?> "
-                   "    || COALESCE(cntct_phone,'') || E'\n' "
-                   "    || COALESCE(cntct_phone2,'') || E'\n' "
-                   "    || COALESCE(cntct_fax,'') || E'\n' "
+                   "    || COALESCE(cntct_phone,'') || '\n' "
+                   "    || COALESCE(cntct_phone2,'') || '\n' "
+                   "    || COALESCE(cntct_fax,'') || '\n' "
                    "  <? endif ?>"
                    "  <? if exists('searchEmail') ?> "
-                   "     || COALESCE(cntct_email,'') || E'\n' "
+                   "     || COALESCE(cntct_email,'') || '\n' "
                    "  <? endif ?>"
                    "  <? if exists('searchWebAddr') ?> "
-                   "     || COALESCE(cntct_webaddr,'') || E'\n' "
+                   "     || COALESCE(cntct_webaddr,'') || '\n' "
                    "  <? endif ?>"
                    "  ~* <? value('searchText') ?> ) "
                    "<? endif ?>"

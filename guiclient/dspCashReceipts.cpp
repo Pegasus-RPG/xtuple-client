@@ -20,6 +20,7 @@
 #include "arOpenItem.h"
 #include "cashReceipt.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 dspCashReceipts::dspCashReceipts(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspCashReceipts", fl)
@@ -31,18 +32,18 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char*, Qt::WindowFlags f
   setMetaSQLOptions("cashReceipts", "detail");
   setNewVisible(true);
   setUseAltId(true);
-  setParameterWidgetVisible(true);
+  setParameterWidgetVisible(false);
   
-  QString qryType = QString("SELECT  1, '%1' UNION "
-                            "SELECT  2, '%2' UNION "
-                            "SELECT  3, '%3' UNION "
-                            "SELECT  4, '%4' UNION "
-                            "SELECT  5, '%5' UNION "
-                            "SELECT  6, '%6' UNION "
-                            "SELECT  7, '%7' UNION "
-                            "SELECT  8, '%8' UNION "
-                            "SELECT  9, '%9' UNION "
-                            "SELECT  10, '%10'")
+  QString qryType = QString("SELECT  1, '%1', 'K' UNION "
+                            "SELECT  2, '%2', 'C' UNION "
+                            "SELECT  3, '%3', 'T'  UNION "
+                            "SELECT  4, '%4', 'M' UNION "
+                            "SELECT  5, '%5', 'V' UNION "
+                            "SELECT  6, '%6', 'A' UNION "
+                            "SELECT  7, '%7', 'D' UNION "
+                            "SELECT  8, '%8', 'O' UNION "
+                            "SELECT  9, '%9', 'W' UNION "
+                            "SELECT  10, '%10', 'R'")
   .arg(tr("Cash"))
   .arg(tr("Check"))
   .arg(tr("Cert. Check"))
@@ -54,7 +55,7 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char*, Qt::WindowFlags f
   .arg(tr("Wire Trans."))
   .arg(tr("Other"));
 
-  parameterWidget()->appendComboBox(tr("Funds Type"), "fundstype_id", qryType);
+  _fundsType->populate(qryType);
 
   connect(_applications, SIGNAL(toggled(bool)), list(), SLOT(clear()));
 
@@ -100,6 +101,8 @@ bool dspCashReceipts::setParams(ParameterList &pParams)
 
   _customerSelector->appendValue(pParams);
   _dates->appendValue(pParams);
+  if (_fundsType->isValid())
+    pParams.append("fundstype", _fundsType->code());
   pParams.append("creditMemo", tr("Credit Memo"));
   pParams.append("debitMemo", tr("Debit Memo"));
   pParams.append("cashdeposit", tr("Customer Deposit"));
@@ -276,10 +279,10 @@ void dspCashReceipts::sPostCashrcpt()
   dspPostCashrcpt.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
   if (dspPostCashrcpt.first())
     journalNumber = dspPostCashrcpt.value("journalnumber").toInt();
-  else if (dspPostCashrcpt.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt"),
+                                dspPostCashrcpt, __FILE__, __LINE__))
   {
-    systemError(this, dspPostCashrcpt.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+      return;
   }
 
   dspPostCashrcpt.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
@@ -291,15 +294,17 @@ void dspCashReceipts::sPostCashrcpt()
     int result = dspPostCashrcpt.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("postCashReceipt", result),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt"),
+                               storedProcErrorLookup("postCashReceipt", result),
+                               __FILE__, __LINE__);
       tx.exec("ROLLBACK;");
       return;
     }
   }
   else if (dspPostCashrcpt.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, dspPostCashrcpt.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt"),
+                         dspPostCashrcpt, __FILE__, __LINE__);
     tx.exec("ROLLBACK;");
     return;
   }
@@ -327,14 +332,15 @@ void dspCashReceipts::sReversePosted()
       int result = dspReversePosted.value("result").toInt();
       if (result < 0)
       {
-        systemError(this, storedProcErrorLookup("reverseCashReceipt", result),
-                         __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Reversing Posted Cash Receipt"),
+                               storedProcErrorLookup("reverseCashReceipt", result),
+                               __FILE__, __LINE__);
         return;
       }
     }
-    else if (dspReversePosted.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Reversing Posted Cash Receipt"),
+                                  dspReversePosted, __FILE__, __LINE__))
     {
-      systemError(this, dspReversePosted.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     sFillList();

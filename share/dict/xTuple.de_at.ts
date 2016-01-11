@@ -1206,6 +1206,150 @@ Address:</source>
         <source>User Account</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>[Pick a Document Type]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation type="unfinished">Adresse</translation>
+    </message>
+    <message>
+        <source>Breeder BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Breeder BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account</source>
+        <translation type="unfinished">Konto</translation>
+    </message>
+    <message>
+        <source>Contact</source>
+        <translation type="unfinished">Kontakt</translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">Kunde</translation>
+    </message>
+    <message>
+        <source>Employee</source>
+        <translation type="unfinished">Angestelle(r)</translation>
+    </message>
+    <message>
+        <source>Incident</source>
+        <translation type="unfinished">Vorgang</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation type="unfinished">Artikel</translation>
+    </message>
+    <message>
+        <source>Item Site</source>
+        <translation type="unfinished">Lagerort</translation>
+    </message>
+    <message>
+        <source>Item Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished">Standort</translation>
+    </message>
+    <message>
+        <source>Lot/Serial</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opportunity</source>
+        <translation type="unfinished">Oportunität</translation>
+    </message>
+    <message>
+        <source>Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Purchase Order</source>
+        <translation type="unfinished">Bestellung</translation>
+    </message>
+    <message>
+        <source>Purchase Order Item</source>
+        <translation type="unfinished">Bestellposition</translation>
+    </message>
+    <message>
+        <source>Return Authorization</source>
+        <translation type="unfinished">Rückgabegenehmigung</translation>
+    </message>
+    <message>
+        <source>Return Authorization Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quote</source>
+        <translation type="unfinished">Angebot</translation>
+    </message>
+    <message>
+        <source>Quote Item</source>
+        <translation type="unfinished">Angebotsartikel</translation>
+    </message>
+    <message>
+        <source>Sales Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sales Order Item</source>
+        <translation type="unfinished">Kundenauftragsartikel</translation>
+    </message>
+    <message>
+        <source>Time Attendance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To-Do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vendor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished">Lager</translation>
+    </message>
+    <message>
+        <source>Work Order</source>
+        <translation type="unfinished">Arbeitsauftrag</translation>
+    </message>
+    <message>
+        <source>Project Task</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConfigAuthorizeDotNetProcessor</name>
@@ -3830,10 +3974,6 @@ Please immediately log out and contact your Systems Adminitrator.</source>
 <context>
     <name>OrderLineEdit</name>
     <message>
-        <source>This order is being edited in another window or by another user.  Please try again later.</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Order</source>
         <translation>Auftrag</translation>
     </message>
@@ -3848,10 +3988,6 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <message>
         <source>Orders</source>
         <translation>Aufträge</translation>
-    </message>
-    <message>
-        <source>Order locked</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>A System Error Occurred at %1::%2.</source>
@@ -3872,6 +4008,10 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <message>
         <source>Order %1 has an invalid status %2.</source>
         <translation>Auftrag %1 hat einen ungültigen Status %2.</translation>
+    </message>
+    <message>
+        <source>Locking Error</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4448,6 +4588,10 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>All User Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Counting Users</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10712,10 +10856,6 @@ Are you sure that you want to save this change?</source>
         <translation></translation>
     </message>
     <message>
-        <source>You must enter a value before saving this Item Characteristic.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You can not use the same characteristic for date type characteristics more than once in this context.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10761,6 +10901,10 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Error Getting Characteristic Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a value before saving this Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -28215,7 +28359,7 @@ Total</source>
     </message>
     <message>
         <source>Completed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erledigt</translation>
     </message>
     <message>
         <source>Hrs. Budget</source>
@@ -46712,11 +46856,11 @@ You must reassign the Locales for these Users before you may delete the selected
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;The database server is at version %1 but xTuple ERP only supports %2 to %3.&lt;/p&gt;&lt;p&gt;Continue anyway?&lt;/p&gt;</source>
+        <source>Invalid Database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid Database</source>
+        <source>&lt;p&gt;The database server is at version %1 but xTuple ERP only supports from %2 up to but not including %3.&lt;/p&gt;&lt;p&gt;Continue anyway?&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -53273,28 +53417,28 @@ post Vouchers.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Selected Cust. Ship-To Pattern:</source>
+        <source>Pricing Schedule:</source>
+        <translation>Preisplan:</translation>
+    </message>
+    <message>
+        <source>Customer Type Pattern</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Selected Customer:</source>
-        <translation>Ausgewählter Kunde:</translation>
+        <source>Customer Ship-To</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Selected Customer Type:</source>
-        <translation>Ausgewälter Kundentype:</translation>
+        <source>Customer Ship-To Pattern</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Selected Customer Ship-To:</source>
-        <translation>Ausgewählte Kunden Versand-Adresse:</translation>
+        <source>Customer Type</source>
+        <translation type="unfinished">Kundentyp</translation>
     </message>
     <message>
-        <source>Customer Type Pattern:</source>
-        <translation>Kundentype Muster:</translation>
-    </message>
-    <message>
-        <source>Pricing Schedule:</source>
-        <translation>Preisplan:</translation>
+        <source>Customer</source>
+        <translation type="unfinished">Kunde</translation>
     </message>
 </context>
 <context>
@@ -55215,7 +55359,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Completed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erledigt</translation>
     </message>
     <message>
         <source>Hrs. Budget</source>
@@ -55615,7 +55759,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Completed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erledigt</translation>
     </message>
     <message>
         <source>AssignedTo</source>
@@ -57098,6 +57242,14 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
     </message>
     <message>
         <source>&lt;p&gt;You must enter a Project for this order item before you may save it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh the Order Items list immediately on save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh Order</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -64729,6 +64881,10 @@ Are you sure you want to do this?</source>
         <source>Checking Privileges</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Applying all Credits</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>selectShippedOrders</name>
@@ -70992,7 +71148,7 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
     </message>
     <message>
         <source>Completed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erledigt</translation>
     </message>
     <message>
         <source>Owner</source>

@@ -19,6 +19,7 @@
 
 #include "guiclient.h"
 
+#include "salesOrderSimple.h"
 #include "salesOrder.h"
 #include "openSalesOrders.h"
 #include "quotes.h"
@@ -34,6 +35,7 @@
 #include "selectShippedOrders.h"
 #include "selectOrderForBilling.h"
 #include "dspBillingSelections.h"
+#include "invoice.h"
 #include "createInvoices.h"
 #include "unpostedInvoices.h"
 #include "reprintInvoices.h"
@@ -65,6 +67,7 @@
 
 #include "dspSalesOrders.h"
 #include "dspSalesOrdersByItem.h"
+#include "dspReturnAuthorizationsByItem.h"
 #include "dspQuotesByCustomer.h"
 #include "dspQuotesByItem.h"
 #include "dspInventoryAvailability.h"
@@ -128,6 +131,7 @@ menuSales::menuSales(GUIClient *pParent) :
   lookupMenu = new QMenu(parent);
   lookupQuoteMenu = new QMenu(parent);
   lookupSoMenu = new QMenu(parent);
+  lookupRaMenu = new QMenu(parent);
   formsMenu = new QMenu(parent);
   reportsMenu = new QMenu(parent);
   analysisMenu = new QMenu(parent);
@@ -149,6 +153,7 @@ menuSales::menuSales(GUIClient *pParent) :
   lookupMenu->setObjectName("menu.sales.lookup");
   lookupQuoteMenu->setObjectName("menu.sales.lookupquote");
   lookupSoMenu->setObjectName("menu.sales.lookupso");
+  lookupRaMenu->setObjectName("menu.sales.lookupra");
   formsMenu->setObjectName("menu.sales.forms");
   reportsMenu->setObjectName("menu.sales.reports");
   analysisMenu->setObjectName("menu.sales.analysis");
@@ -167,6 +172,7 @@ menuSales::menuSales(GUIClient *pParent) :
     
     // Sales | Sales Order
     { "menu",	tr("&Sales Order"),	(char*)ordersMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
+    { "so.newSalesOrderSimple",  tr("&New Simple..."),		SLOT(sNewSalesOrderSimple()),   ordersMenu, "MaintainSimpleSalesOrders", NULL, NULL, _metrics->boolean("SSOSEnabled"), NULL },
     { "so.newSalesOrder", 	     tr("&New..."),		SLOT(sNewSalesOrder()),   ordersMenu, "MaintainSalesOrders", NULL, NULL,	 true, NULL },
     { "so.listOpenSalesOrders",  tr("&List Open..."),	SLOT(sOpenSalesOrders()), ordersMenu, "MaintainSalesOrders ViewSalesOrders", new QPixmap(":/images/listOpenSalesOrders.png"), toolBar,  true, tr("List Open Sales Orders") },
     { "so.listSalesOrders",      tr("&Search Orders..."),	SLOT(sSalesOrders()), ordersMenu, "MaintainSalesOrders ViewSalesOrders", NULL, NULL, true, NULL },
@@ -183,10 +189,11 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.dspBillingSelections",	     tr("Billing &Approvals..."),	SLOT(sDspBillingSelections()), billingInvoicesMenu, "SelectBilling", new QPixmap(":/images/billingSelections"), toolBar, true, tr("Billing Approvals") },
     { "so.createInvoices",	     tr("&Create Invoices..."),	SLOT(sCreateInvoices()), billingInvoicesMenu, "SelectBilling",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	billingInvoicesMenu,	"true",		NULL, NULL, true, NULL },
+    { "so.createInvoice", tr("&New Invoice..."), SLOT(sCreateInvoice()), billingInvoicesMenu, "MaintainMiscInvoices", NULL, NULL, true , NULL },
     { "so.listUnpostedInvoices",	     tr("&List Unposted Invoices..."),	SLOT(sUnpostedInvoices()), billingInvoicesMenu, "SelectBilling",	NULL, NULL,  true, NULL },
     { "so.postInvoices",		     tr("Post &Invoices..."),		SLOT(sPostInvoices()), billingInvoicesMenu, "PostMiscInvoices",	NULL, NULL, true, NULL },
 
-    // Sales | Billing | Return
+    // Sales | Billing | Credit Memos
     { "menu",	tr("&Return"), (char*)billingCreditMemosMenu,	billingMenu,	"true",	NULL, NULL, true, NULL },
     { "so.newCreditMemo",		     tr("&New..."),		SLOT(sNewCreditMemo()), billingCreditMemosMenu, "MaintainCreditMemos",	NULL, NULL, true, NULL },
     { "so.listUnpostedCreditMemos",	     tr("&List Unposted..."),	SLOT(sUnpostedCreditMemos()), billingCreditMemosMenu, "MaintainCreditMemos ViewCreditMemos",	NULL, NULL, true, NULL },
@@ -226,7 +233,11 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.listSalesOrders",      tr("&Search Orders..."),	SLOT(sSalesOrders()), lookupSoMenu, "MaintainSalesOrders ViewSalesOrders", NULL, NULL, true, NULL },
     { "so.dspSalesOrderLookupByItem", tr("by &Item..."),	SLOT(sDspOrderLookupByItem()), lookupSoMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },
     
-    { "separator",	NULL,	NULL,	lookupMenu,	"true",		NULL, NULL, true, NULL }, 
+    // Sales | Lookup | Return Auth. Lookup
+    { "menu",	tr("&Return Auth."),           (char*)lookupRaMenu,	lookupMenu,	"true",	NULL, NULL, _metrics->boolean("EnableReturnAuth"), NULL },
+    { "so.dspReturnAuthLookupByItem", tr("by &Item..."),	SLOT(sDspReturnAuthLookupByItem()), lookupRaMenu, "ViewReturns",	NULL, NULL, true, NULL },
+    
+    { "separator",	NULL,	NULL,	lookupMenu,	"true",		NULL, NULL, true, NULL },
     { "so.dspSalesOrderStatus", tr("Sales Order S&tatus..."),	SLOT(sDspSalesOrderStatus()), lookupMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },   
   
     // Sales | Forms
@@ -391,6 +402,11 @@ void menuSales::addActionsToMenu(actionProperties acts[], unsigned int numElems)
 }
 
 //  Orders
+void menuSales::sNewSalesOrderSimple()
+{
+  salesOrderSimple::newSalesOrder();
+}
+
 void menuSales::sNewSalesOrder()
 {
   salesOrder::newSalesOrder(-1);
@@ -455,6 +471,11 @@ void menuSales::sSelectOrderForBilling()
 void menuSales::sDspBillingSelections()
 {
   omfgThis->handleNewWindow(new dspBillingSelections());
+}
+
+void menuSales::sCreateInvoice()
+{
+  invoice::newInvoice(-1);
 }
 
 void menuSales::sCreateInvoices()
@@ -639,6 +660,11 @@ void menuSales::sDspReservations()
 void menuSales::sDspOrderLookupByItem()
 {
   omfgThis->handleNewWindow(new dspSalesOrdersByItem());
+}
+
+void menuSales::sDspReturnAuthLookupByItem()
+{
+  omfgThis->handleNewWindow(new dspReturnAuthorizationsByItem());
 }
 
 void menuSales::sDspQuoteLookupByCustomer()

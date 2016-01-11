@@ -26,6 +26,7 @@ public:
 
 public slots:
     virtual enum SetResponse set(const ParameterList&);
+    virtual void sHandleQuoteEvent( int pQuheadid, bool );
     virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
     virtual void sPrint();
     virtual void sConvert(int);

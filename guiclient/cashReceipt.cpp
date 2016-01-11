@@ -13,9 +13,8 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
-
+#include <QDebug>
 #include <metasql.h>
-#include <stdlib.h>
 
 #include "cashReceiptItem.h"
 #include "cashReceiptMiscDistrib.h"
@@ -49,7 +48,11 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
 
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo(int)));
+
+  connect(_customerSelector, SIGNAL(newState(int)), this, SLOT(sPopulateCustomerInfo(int)));
+  connect(_customerSelector, SIGNAL(newCustId(int)), this, SLOT(sPopulateCustomerInfo(int)));
+  connect(_customerSelector, SIGNAL(newCustGroupId(int)), this, SLOT(sPopulateCustomerInfo(int)));
+
   connect(_received, SIGNAL(editingFinished()), this, SLOT(sUpdateBalance()));
   connect(_applyToBalance, SIGNAL(clicked()), this, SLOT(sApplyToBalance()));
   connect(_apply, SIGNAL(clicked()), this, SLOT(sApply()));
@@ -77,6 +80,8 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   else
   {
     connect(_newCC, SIGNAL(clicked()), this, SLOT(sNewCreditCard()));
+    connect(_customerSelector, SIGNAL(validCust(bool)), _newCC, SLOT(setEnabled(bool)));
+    connect(_customerSelector, SIGNAL(validCustGroup(bool)), _newCC, SLOT(setEnabled(bool)));
     connect(_editCC, SIGNAL(clicked()), this, SLOT(sEditCreditCard()));
     connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
     connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
@@ -88,13 +93,20 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   bg->addButton(_balCreditMemo);
   bg->addButton(_balCustomerDeposit);
 
+  //Set up CustomerSelector widget
+  _customerSelector->populate(CustomerSelector::SelectedCust | CustomerSelector::SelectedGroup);
+  _customerSelector->setCurrentSelection(1);
+
+  _customerSelector->findChild<CustCluster*>("_cust")->setFocus();
+
   _applied->clear();
 
   _CCCVV->setValidator(new QIntValidator(100, 9999, this));
 
-  _cust->setType(CLineEdit::ActiveCustomers);
   _bankaccnt->setType(XComboBox::ARBankAccounts);
   _salescat->setType(XComboBox::SalesCategoriesActive);
+
+
 
   _aropen->addColumn(tr("Doc. Type"), -1,              Qt::AlignCenter, true, "doctype");
   _aropen->addColumn(tr("Doc. #"),    _orderColumn,    Qt::AlignCenter, true, "aropen_docnumber");
@@ -108,6 +120,9 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _aropen->addColumn(tr("Discount"),  _moneyColumn,    Qt::AlignRight , true, "discount" );
   _aropen->addColumn(tr("All Pending"),_moneyColumn,   Qt::AlignRight,  true, "pending");
   _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "pending_curr");
+  // Add Customer to AR List
+  _aropen->addColumn(tr("Customer"),  -1,              Qt::AlignLeft, true, "cust_number");
+  _aropen->addColumn(tr("Customer Name"),  -1,         Qt::AlignLeft, true, "cust_name");
 
   _cashrcptmisc->addColumn(tr("Account #"), _itemColumn,     Qt::AlignCenter, true, "account");
   _cashrcptmisc->addColumn(tr("Notes"),     -1,              Qt::AlignLeft,  true, "firstline");
@@ -167,9 +182,147 @@ void cashReceipt::languageChange()
   retranslateUi(this);
 }
 
+void cashReceipt::activateButtons(bool c)
+{
+  _save->setEnabled(c);
+  _add->setEnabled(c);
+  _applyToBalance->setEnabled(c);
+}
+
+void cashReceipt::sPopulateCustomerInfo(int)
+{
+  activateButtons(_customerSelector->isValid());
+  if (_mode == cNew)
+  {
+    XSqlQuery cust;
+    QString sql;
+    ParameterList pList;
+
+    _customerSelector->appendValue(pList);
+
+    if (_customerSelector->isSelectedCust())
+      sql= "SELECT cust_curr_id FROM custinfo WHERE cust_id = <? value('cust_id') ?>;";
+    else
+      sql = "SELECT cust_curr_id FROM custinfo JOIN custgrpitem on cust_id=custgrpitem_cust_id "
+            "WHERE custgrpitem_custgrp_id =<? value ('custgrp_id') ?> LIMIT 1;";
+
+    MetaSQLQuery mql(sql);
+    cust = mql.toQuery(pList);
+    if (cust.first())
+      _received->setId(cust.value("cust_curr_id").toInt());
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error populating Customer Info"),
+                                  cust, __FILE__, __LINE__))
+      return;
+  }
+  sFillApplyList();
+}
+
+void cashReceipt::grpFillApplyList()
+{
+
+  ParameterList qparams = getParams();
+  MetaSQLQuery dbquery = mqlLoad("arOpenApplications", "detail");
+  XSqlQuery db;
+  db = dbquery.toQuery(qparams);
+  if (db.first())
+    _aropen->populate(db, true);
+
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Loading Customer Group Information"),
+                                db, __FILE__, __LINE__))
+  {
+    return;
+  }
+
+  XSqlQuery apply;
+  QString sql2 = "SELECT SUM(COALESCE(cashrcptitem_amount, 0)) AS total FROM cashrcptitem "
+                 "WHERE (cashrcptitem_cashrcpt_id=<? value('cashrcpt_id') ?>);";
+  MetaSQLQuery mql2(sql2);
+  apply = mql2.toQuery(getParams());
+  if (apply.first())
+    _applied->setLocalValue(apply.value("total").toDouble());
+  apply.prepare("select max(aropen_docdate) AS mindate FROM aropen, cashrcptitem "
+                "WHERE cashrcptitem_aropen_id=aropen_id AND cashrcptitem_cashrcpt_id=:id;");
+  apply.bindValue(":id", _cashrcptid);
+  apply.exec();
+  if (apply.first())
+  {
+    _mindate = apply.value("mindate").toDate();
+    if (_mindate > _applDate->date())
+      _applDate->setDate(_mindate);
+  }
+  XSqlQuery discount;
+  QString sql3 = "SELECT SUM(COALESCE(cashrcptitem_discount, 0.00)) AS disc "
+                 "FROM cashrcptitem WHERE (cashrcptitem_cashrcpt_id=<? value('cashrcpt_id') ?>);";
+  MetaSQLQuery mql3(sql3);
+  discount = mql3.toQuery(getParams());
+  if (discount.first())
+    _discount->setLocalValue(discount.value("disc").toDouble());
+}
+
+ParameterList cashReceipt::getParams()
+{
+  ParameterList p;
+
+  _customerSelector->appendValue(p); //cust_id or cust_grp_id
+  p.append("amount", _received->localValue());
+  p.append("applDate", _applDate->date());
+  p.append("bankaccnt_id", _bankaccnt->id());
+  p.append("cashdeposit", tr("Customer Deposit"));
+  p.append("cashrcpt_id", _cashrcptid);
+  p.append("cashrcptmisc_id", _cashrcptmisc->id());
+  p.append("creditMemo", tr("Credit Memo"));
+  p.append("curr_id", _received->id());
+  p.append("custSelector", _customerSelector->selectCode());
+  p.append("debitMemo", tr("Debit Memo"));
+  p.append("discount", _discount->localValue());
+  p.append("distDate", _distDate->date());
+  p.append("docdate", _docDate->date());
+  p.append("docnumber", _docNumber->text());
+  p.append("effective", _received->effective());
+  p.append("fundstype", _fundsType->code());
+  p.append("invoice", tr("Invoice"));
+  p.append("notes", _notes->toPlainText());//_notes.plainText
+  if (!_credits->isChecked())
+    p.append("noCredits", true);
+  p.append("number", _number->text());
+  p.append("salescat_id", _salescat->id());
+  p.append("usecustdeposit", _balCustomerDeposit->isChecked());//->checked()?
+
+  return p;
+}
+
+
+void cashReceipt::updateCustomerGroup()
+{
+  if (_customerSelector->isSelectedGroup() &&
+      (_mode == cNew || _mode == cEdit))
+  {
+
+    QString sql="UPDATE cashrcpt SET cashrcpt_custgrp_id=<? value ('custgrp_id') ?> "
+                "WHERE cashrcpt_number = <? value('number') ?>;";
+    XSqlQuery query;
+    MetaSQLQuery mql(sql);
+    query = mql.toQuery(getParams());
+    if (query.first())
+    {
+      sql="SELECT cashrcpt_id FROM cashrcpt WHERE cashrcpt_number=<? value('number') ?>;";
+      XSqlQuery query2;
+      MetaSQLQuery mql2(sql);
+      query2 = mql2.toQuery(getParams());
+      if (query2.first())
+        _cashrcptid = query.value("cashrcpt_id").toInt();
+    }
+    if((ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating Customer Group"),
+                             query, __FILE__, __LINE__)))
+      return;
+  }
+  else
+    return;
+}
+
 enum SetResponse cashReceipt::set(const ParameterList &pParams)
 {
-  XSqlQuery cashet;
+  XSqlQuery cashet, d;
   XWidget::set(pParams);
   QVariant param;
   bool     valid;
@@ -180,7 +333,6 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
     _cashrcptid = param.toInt();
     populate();
   }
-
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -192,18 +344,20 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       cashet.exec("SELECT fetchCashRcptNumber() AS number;");
       if (cashet.first())
         _number->setText(cashet.value("number").toString());
-      else if (cashet.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Cash Receipts Information"),
+                                    cashet, __FILE__, __LINE__))
       {
-        systemError(this, cashet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
 
       cashet.exec("SELECT NEXTVAL('cashrcpt_cashrcpt_id_seq') AS cashrcpt_id;");
       if (cashet.first())
-        _cashrcptid = cashet.value("cashrcpt_id").toInt();
-      else if (cashet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, cashet.lastError().databaseText(), __FILE__, __LINE__);
+        _cashrcptid = cashet.value("cashrcpt_id").toInt();
+      }
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Cash Receipts Information"),
+                                    cashet, __FILE__, __LINE__))
+      {
         return UndefinedError;
       }
 
@@ -215,15 +369,59 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       _mode = cEdit;
 	  _transType = cEdit;
 
-      _cust->setReadOnly(true);
-
+      param = pParams.value("cashrcpt_id", &valid);
+      if (valid)
+      {
+        _cashrcptid = param.toInt();
+        QString sql = "SELECT * from cashrcpt WHERE cashrcpt_id = <? value('cashrcpt_id') ?>";
+        MetaSQLQuery mql(sql);
+        d = mql.toQuery(pParams);
+        if (d.first())
+        {
+          if (d.value("cashrcpt_cust_id").toInt() > 0)
+          {
+             _customerSelector->setCustId(d.value("cashrcpt_cust_id").toInt());
+          }
+          else
+          {
+            _customerSelector->setCustGroupId(d.value("cashrcpt_custgrp_id").toInt());
+          }
+          _save->setEnabled(true);
+        }
+        _received->setEnabled(true);
+        _fundsType->setEnabled(true);
+        _docNumber->setEnabled(true);
+        _docDate->setEnabled(true);
+        _bankaccnt->setEnabled(true);
+        _distDate->setEnabled(true);
+        _applDate->setEnabled(true);
+        activateButtons(true);
+      }
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
-	  _transType = cView;
+      _transType = cView;
 
-      _cust->setReadOnly(true);
+      param = pParams.value("cashrcpt_id", &valid);
+      if (valid)
+      {
+        _cashrcptid = param.toInt();
+        QString sql = "SELECT * from cashrcpt WHERE cashrcpt_id = <? value('cashrcpt_id') ?>";
+        MetaSQLQuery mql(sql);
+        d = mql.toQuery(pParams);
+        if (d.first())
+        {
+          if (d.value("cashrcpt_cust_id").toInt() > 0)
+          {
+            _customerSelector->setCustId(d.value("cashrcpt_cust_id").toInt());
+          }
+          else
+          {
+            _customerSelector->setCustGroupId(d.value("cashrcpt_custgrp_id").toInt());
+          }
+        }
+      }
       _received->setEnabled(false);
       _fundsType->setEnabled(false);
       _docNumber->setEnabled(false);
@@ -244,9 +442,9 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       _altAccnt->setEnabled(false);
       _newCC->setEnabled(false);
       _editCC->setEnabled(false);
+      _customerSelector->setEnabled(false);
       disconnect(_cashrcptmisc, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       disconnect(_cashrcptmisc, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-
     }
 
     // if this cash receipt was by credit card cash then prevent changes
@@ -269,8 +467,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
 
   param = pParams.value("cust_id", &valid);
   if(cNew == _mode && valid)
-    _cust->setId(param.toInt());
-
+      _customerSelector->setCustId(param.toInt());
   param = pParams.value("docnumber", & valid);
   if (valid)
     _searchDocNum->setText(param.toString());
@@ -278,22 +475,28 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
   return NoError;
 }
 
+
 void cashReceipt::sApplyToBalance()
 {
+
   if(!save(true))
     return;
 
   XSqlQuery applyToBal;
+
   applyToBal.prepare( "UPDATE cashrcpt "
              "SET cashrcpt_cust_id=:cust_id, "
              "    cashrcpt_curr_id=:curr_id, "
              "    cashrcpt_docdate=:docdate "
              "WHERE (cashrcpt_id=:cashrcpt_id);" );
-  applyToBal.bindValue(":cust_id", _cust->id());
+  _customerSelector->bindValue(applyToBal);
   applyToBal.bindValue(":cashrcpt_id", _cashrcptid);
   applyToBal.bindValue(":curr_id", _received->id());
   applyToBal.bindValue(":docdate", _docDate->date());
   applyToBal.exec();
+  if((ErrorReporter::error(QtCriticalMsg, this, tr("Error Applying Cash Receipt To Balance"),
+                           applyToBal, __FILE__, __LINE__)))
+    return;
 
   applyToBal.prepare("SELECT applyCashReceiptToBalance(:cashrcpt_id, "
                      "             :amount, :curr_id, :inclCredits) AS result;");
@@ -302,20 +505,20 @@ void cashReceipt::sApplyToBalance()
   applyToBal.bindValue(":curr_id", _received->id());
   applyToBal.bindValue(":inclCredits", _credits->isChecked());
   applyToBal.exec();
-  if (applyToBal.lastError().type() != QSqlError::NoError)
-      systemError(this, applyToBal.lastError().databaseText(), __FILE__, __LINE__);
+  ErrorReporter::error(QtCriticalMsg, this, tr("Error Applying Cash Receipt To Balance"),
+                       applyToBal, __FILE__, __LINE__);
 
+  updateCustomerGroup();
   sFillApplyList();
 }
 
 void cashReceipt::sApply()
 {
+
   if(_mode == cNew)
   {
     if(!save(true))
-	{
       return;
-	}
   }
 
   bool update  = false;
@@ -348,6 +551,8 @@ void cashReceipt::sApply()
       update = true;
   }
 
+  updateCustomerGroup();
+
   if (update)
     sFillApplyList();
 }
@@ -363,11 +568,15 @@ void cashReceipt::sApplyLineBalance()
                       "    cashrcpt_curr_id=:curr_id, "
                       "    cashrcpt_docdate=:docdate "
                       "WHERE (cashrcpt_id=:cashrcpt_id);" );
-  applyToBal.bindValue(":cust_id", _cust->id());
+
+  _customerSelector->bindValue(applyToBal);
   applyToBal.bindValue(":cashrcpt_id", _cashrcptid);
   applyToBal.bindValue(":curr_id", _received->id());
   applyToBal.bindValue(":docdate", _docDate->date());
   applyToBal.exec();
+  if((ErrorReporter::error(QtCriticalMsg, this, tr("Error Applying Cash Receipt To Line Balance"),
+                           applyToBal, __FILE__, __LINE__)))
+    return;
 
   XSqlQuery applyq;
   applyq.prepare("SELECT applycashreceiptlinebalance(:cashrcpt_id,"
@@ -407,6 +616,7 @@ void cashReceipt::sApplyLineBalance()
         break;
       }
     }
+
   }
 
   if (! crediterr)
@@ -435,12 +645,13 @@ void cashReceipt::sApplyLineBalance()
       }
     }
   }
-
+  updateCustomerGroup();
   sFillApplyList();
 }
 
 void cashReceipt::sClear()
 {
+
   XSqlQuery cashClear;
   QList<XTreeWidgetItem*> list = _aropen->selectedItems();
   XTreeWidgetItem *cursor = 0;
@@ -453,30 +664,34 @@ void cashReceipt::sClear()
     cashClear.bindValue(":cashrcpt_id", _cashrcptid);
     cashClear.bindValue(":aropen_id", cursor->id());
     cashClear.exec();
-    if (cashClear.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Clearning Cash Receipt"),
+                                  cashClear, __FILE__, __LINE__))
     {
-      systemError(this, cashClear.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
 
-  sFillApplyList();
   sUpdateBalance();
+  updateCustomerGroup();
+  sFillApplyList();
 }
 
 void cashReceipt::sAdd()
 {
   if(_mode == cNew)
+  {
+    if (_customerSelector->isSelectedGroup())
+      sApply();
+
     if(!save(true))
       return;
+  }
 
-  ParameterList params;
+  ParameterList params = getParams();
   params.append("mode", "new");
-  params.append("cashrcpt_id", _cashrcptid);
-  params.append("curr_id", _received->id());
-  params.append("effective", _received->effective());
 
   cashReceiptMiscDistrib newdlg(this, "", true);
+
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -485,11 +700,8 @@ void cashReceipt::sAdd()
 
 void cashReceipt::sEdit()
 {
-  ParameterList params;
+  ParameterList params = getParams();
   params.append("mode", "edit");
-  params.append("cashrcptmisc_id", _cashrcptmisc->id());
-  params.append("curr_id", _received->id());
-  params.append("effective", _received->effective());
 
   cashReceiptMiscDistrib newdlg(this, "", true);
   newdlg.set(params);
@@ -505,9 +717,9 @@ void cashReceipt::sDelete()
              "WHERE (cashrcptmisc_id=:cashrcptmisc_id);" );
   cashDelete.bindValue(":cashrcptmisc_id", _cashrcptmisc->id());
   cashDelete.exec();
-  if (cashDelete.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Miscellaneous Distribution"),
+                                cashDelete, __FILE__, __LINE__))
   {
-    systemError(this, cashDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -527,22 +739,24 @@ void cashReceipt::close()
       int result = cashclose.value("result").toInt();
       if (result < 0)
       {
-        systemError(this, storedProcErrorLookup("deleteCashRcpt", result));
-        return;
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Cash Receipt"),
+                               storedProcErrorLookup("deleteCashRcpt", result),
+                               __FILE__, __LINE__);
+          return;
       }
     }
-    else if (cashclose.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Cash Receipt"),
+                                  cashclose, __FILE__, __LINE__))
     {
-      systemError(this, cashclose.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
     cashclose.prepare("SELECT releaseCashRcptNumber(:number);");
     cashclose.bindValue(":number", _number->text().toInt());
     cashclose.exec();
-    if (cashclose.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Cash Receipt"),
+                                  cashclose, __FILE__, __LINE__))
     {
-      systemError(this, cashclose.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -552,6 +766,15 @@ void cashReceipt::close()
 
 void cashReceipt::sSave()
 {
+  if (_received->localValue() == 0.00 &&
+      QMessageBox::question(this, tr("Invalid amount"),
+                            tr("It appears that the amount received has not been specified"
+                               " or is equal to zero. Do you want to save the current "
+                               "cash receipt anyway?"),
+                               QMessageBox::Yes,
+                               QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+      return;
+
   if (save(false))
   {
     omfgThis->sCashReceiptsUpdated(_cashrcptid, true);
@@ -559,6 +782,7 @@ void cashReceipt::sSave()
 
     close();
   }
+  updateCustomerGroup();
 }
 
 bool cashReceipt::save(bool partial)
@@ -586,9 +810,9 @@ bool cashReceipt::save(bool partial)
     _bankaccnt_curr_id = cashave.value("bankaccnt_curr_id").toInt();
     _bankaccnt_currAbbr = cashave.value("currAbbr").toString();
   }
-  else if (cashave.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Cash Receipt"),
+                                cashave, __FILE__, __LINE__))
   {
-    systemError(this, cashave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -663,22 +887,24 @@ bool cashReceipt::save(bool partial)
   if (!_distDate->isValid())
     _distDate->setDate(omfgThis->dbDate());
 
+  QString sql;
   if (_mode == cNew)
-    cashave.prepare( "INSERT INTO cashrcpt "
-                    "( cashrcpt_id, cashrcpt_cust_id, cashrcpt_distdate, cashrcpt_amount,"
+    sql = "INSERT INTO cashrcpt "
+                    "( cashrcpt_id, cashrcpt_cust_id, cashrcpt_custgrp_id, cashrcpt_distdate, cashrcpt_amount,"
                     "  cashrcpt_fundstype, cashrcpt_bankaccnt_id, cashrcpt_curr_id, "
                     "  cashrcpt_usecustdeposit, cashrcpt_docnumber, cashrcpt_docdate, "
                     "  cashrcpt_notes, cashrcpt_salescat_id, cashrcpt_number, cashrcpt_applydate, "
                     "  cashrcpt_discount, cashrcpt_alt_curr_rate ) "
                     "VALUES "
-                    "( :cashrcpt_id, :cashrcpt_cust_id, :cashrcpt_distdate, :cashrcpt_amount,"
+                    "( :cashrcpt_id, :cashrcpt_cust_id, :cashrcpt_custgrp_id, :cashrcpt_distdate, :cashrcpt_amount,"
                     "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :curr_id, "
                     "  :cashrcpt_usecustdeposit, :cashrcpt_docnumber, :cashrcpt_docdate, "
                     "  :cashrcpt_notes, :cashrcpt_salescat_id, :cashrcpt_number, :cashrcpt_applydate, "
-                    "  :cashrcpt_discount, ROUND(:cashrcpt_alt_curr_rate, 8) );" );
+                    "  :cashrcpt_discount, ROUND(:cashrcpt_alt_curr_rate, 8) );";
   else
-    cashave.prepare( "UPDATE cashrcpt "
+    sql= "UPDATE cashrcpt "
                     "SET cashrcpt_cust_id=:cashrcpt_cust_id,"
+                    "    cashrcpt_custgrp_id=:cashrcpt_custgrp_id,"
                     "    cashrcpt_amount=:cashrcpt_amount,"
                     "    cashrcpt_fundstype=:cashrcpt_fundstype,"
                     "    cashrcpt_docnumber=:cashrcpt_docnumber,"
@@ -693,11 +919,15 @@ bool cashReceipt::save(bool partial)
                     "    cashrcpt_discount=:cashrcpt_discount, "
                     "    cashrcpt_alt_curr_rate= ROUND(:cashrcpt_alt_curr_rate, 8), "
                     "    cashrcpt_curr_rate=null " // force a curr rate re-evaluation
-                    "WHERE (cashrcpt_id=:cashrcpt_id);" );
+                    "WHERE (cashrcpt_id=:cashrcpt_id);";
 
+  cashave.prepare(sql);
   cashave.bindValue(":cashrcpt_id", _cashrcptid);
   cashave.bindValue(":cashrcpt_number", _number->text());
-  cashave.bindValue(":cashrcpt_cust_id", _cust->id());
+  if (_customerSelector->isSelectedGroup())
+    cashave.bindValue(":cashrcpt_custgrp_id", _customerSelector->custGroupId());
+  else if (_customerSelector->isSelectedCust())
+    cashave.bindValue(":cashrcpt_cust_id", _customerSelector->custId());
   cashave.bindValue(":cashrcpt_amount", _received->localValue());
   cashave.bindValue(":cashrcpt_fundstype", _fundsType->code());
   cashave.bindValue(":cashrcpt_docnumber", _docNumber->text());
@@ -721,60 +951,42 @@ bool cashReceipt::save(bool partial)
       cashave.bindValue(":cashrcpt_alt_curr_rate", _exchRate->toDouble());
   }
   cashave.exec();
-  if (cashave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Cash Receipt"),
+                                cashave, __FILE__, __LINE__))
   {
-    systemError(this, cashave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
   _mode=cEdit;
   return true;
 }
 
-void cashReceipt::sPopulateCustomerInfo(int)
-{
-  if (_mode == cNew)
-  {
-    XSqlQuery cust;
-    cust.prepare("SELECT cust_curr_id FROM custinfo WHERE cust_id = :cust_id;");
-    cust.bindValue(":cust_id", _cust->id());
-    cust.exec();
-    if (cust.first())
-      _received->setId(cust.value("cust_curr_id").toInt());
-    else if (cust.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-
-  sFillApplyList();
-}
-
 void cashReceipt::sFillApplyList()
 {
-  if (_cust->isValid())
+  // Customer Group selected
+  if (_customerSelector->isSelectedGroup())
   {
-    _cust->setReadOnly(true);
-
+      _aropen->clear();
+      grpFillApplyList();
+      if (_mode == cNew)
+        activateButtons();
+  }
+  // Valid Customer selected
+  if (_customerSelector->isSelectedCust() && _customerSelector->isValid())
+  {
+    if (_mode == cNew)
+      activateButtons();
     _aropen->clear();
     MetaSQLQuery mql = mqlLoad("arOpenApplications", "detail");
-    ParameterList params;
-    params.append("cashrcpt_id", _cashrcptid);
-    params.append("cust_id",     _cust->id());
-    params.append("debitMemo",   tr("Debit Memo"));
-    params.append("invoice",     tr("Invoice"));
-    params.append("creditMemo",  tr("Credit Memo"));
-    params.append("cashdeposit", tr("Customer Deposit"));
+    ParameterList params = getParams();
     if (_posted)
       params.append("posted", true);
-    else if (!_credits->isChecked())
-      params.append("noCredits");
+
     XSqlQuery apply;
     apply = mql.toQuery(params);
     _aropen->populate(apply, true);
-    if (apply.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Cash Receipt Information"),
+                                  apply, __FILE__, __LINE__))
     {
-      systemError(this, apply.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -798,9 +1010,9 @@ void cashReceipt::sFillApplyList()
     apply.exec();
     if (apply.first())
       _applied->setLocalValue(apply.value("total").toDouble());
-    else if (apply.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Cash Receipt Information"),
+                                  apply, __FILE__, __LINE__))
     {
-      systemError(this, apply.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -814,32 +1026,36 @@ void cashReceipt::sFillApplyList()
         _applDate->setDate(_mindate);
     }
 
-	XSqlQuery discount ;
+    XSqlQuery discount ;
 
-	discount.prepare( "SELECT SUM(COALESCE(cashrcptitem_discount, 0.00)) AS disc "
+    discount.prepare( "SELECT SUM(COALESCE(cashrcptitem_discount, 0.00)) AS disc "
                       "FROM cashrcptitem "
                       "WHERE (cashrcptitem_cashrcpt_id=:cashrcpt_id);" );
     discount.bindValue(":cashrcpt_id", _cashrcptid);
-	discount.exec();
+    discount.exec();
     if (discount.first())
-	{
-      _discount->setLocalValue(discount.value("disc").toDouble());
-	  sUpdateBalance();
-	}
-    else if (discount.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, discount.lastError().databaseText(), __FILE__, __LINE__);
+      _discount->setLocalValue(discount.value("disc").toDouble());
+      sUpdateBalance();
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Cash Receipt Information"),
+                                  discount, __FILE__, __LINE__))
+    {
       return;
     }
-
   }
+  // Invalid Customer selected
+  if (_customerSelector->isSelectedCust() && !_customerSelector->isValid())
+  {
+    _aropen->clear();
+  }
+
   _received->setCurrencyEditable(_applied->isZero() && _miscDistribs->isZero());
 
 }
 
 void cashReceipt::sFillMiscList()
 {
-  XSqlQuery cashFillMiscList;
   XSqlQuery misc;
   misc.prepare("SELECT cashrcptmisc_id,"
                "       formatGLAccount(cashrcptmisc_accnt_id) AS account,"
@@ -851,9 +1067,9 @@ void cashReceipt::sFillMiscList()
   misc.bindValue(":cashrcpt_id", _cashrcptid);
   misc.exec();
   _cashrcptmisc->populate(misc);
-  if (misc.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Cash Receipts Information"),
+                                misc, __FILE__, __LINE__))
   {
-    systemError(this, cashFillMiscList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -864,9 +1080,9 @@ void cashReceipt::sFillMiscList()
   misc.exec();
   if (misc.first())
     _miscDistribs->setLocalValue(misc.value("total").toDouble());
-  else if (misc.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Cash Receipt Information"),
+                                misc, __FILE__, __LINE__))
   {
-    systemError(this, cashFillMiscList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
@@ -892,10 +1108,11 @@ void cashReceipt::populate()
              "FROM cashrcpt "
              "WHERE (cashrcpt_id=:cashrcpt_id);" );
   cashpopulate.bindValue(":cashrcpt_id", _cashrcptid);
+
   cashpopulate.exec();
   if (cashpopulate.first())
   {
-    _cust->setId(cashpopulate.value("cashrcpt_cust_id").toInt());
+    _customerSelector->setCustId(cashpopulate.value("cashrcpt_cust_id").toInt());
     _number->setText(cashpopulate.value("cashrcpt_number").toString());
     _received->set(cashpopulate.value("cashrcpt_amount").toDouble(),
                    cashpopulate.value("cashrcpt_curr_id").toInt(),
@@ -929,15 +1146,14 @@ void cashReceipt::populate()
 
     _origFunds = cashpopulate.value("cashrcpt_fundstype").toString();
     _fundsType->setCode(_origFunds);
-    _cust->setId(cashpopulate.value("cashrcpt_cust_id").toInt());
 
     sFillApplyList();
     sFillMiscList();
     setCreditCard();
   }
-  else if (cashpopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Cash Receipt Information"),
+                                cashpopulate, __FILE__, __LINE__))
   {
-    systemError(this, cashpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -969,10 +1185,11 @@ void cashReceipt::sChangeCurrency( int newId)
                 "    cashrcpt_curr_rate=null "
                 "WHERE (cashrcpt_id=:cashrcpt_id);" );
     id.bindValue(":cashrcpt_id", _cashrcptid);
+
     id.bindValue(":curr_id", newId);
     id.exec();
-    if (id.lastError().type() != QSqlError::NoError)
-      systemError(this, id.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Switching Currencies"),
+                         id, __FILE__, __LINE__);
   }
 }
 
@@ -1003,9 +1220,9 @@ void cashReceipt::setCreditCard()
                               "complete."));
       return;
     }
-  else if (bankq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving CC Data"),
+                                bankq, __FILE__, __LINE__))
   {
-    systemError(this, bankq.lastError().text(), __FILE__, __LINE__);
     return;
   }
   else
@@ -1019,7 +1236,7 @@ void cashReceipt::setCreditCard()
   }
 
   cashetCreditCard.prepare( "SELECT expireCreditCard(:cust_id, setbytea(:key)) AS result;");
-  cashetCreditCard.bindValue(":cust_id", _cust->id());
+  _customerSelector->bindValue(cashetCreditCard);
   cashetCreditCard.bindValue(":key", omfgThis->_key);
   cashetCreditCard.exec();
   if (cashetCreditCard.first())
@@ -1027,20 +1244,21 @@ void cashReceipt::setCreditCard()
     int result = cashetCreditCard.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("expireCreditCard", result),
-		  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving CC Data"),
+                           storedProcErrorLookup("expireCreditCard", result),
+                           __FILE__, __LINE__);
       return;
     }
   }
-  else if (cashetCreditCard.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving CC Data"),
+                                cashetCreditCard, __FILE__, __LINE__))
   {
-    systemError(this, cashetCreditCard.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   MetaSQLQuery mql = mqlLoad("creditCards", "detail");
   ParameterList params;
-  params.append("cust_id",    _cust->id());
+  params.append("cust_id", _customerSelector->custId());
   params.append("ccard_type", _fundsType->code());
   params.append("masterCard", tr("MasterCard"));
   params.append("visa",       tr("VISA"));
@@ -1051,9 +1269,9 @@ void cashReceipt::setCreditCard()
   params.append("activeonly", true);
   cashetCreditCard = mql.toQuery(params);
   _cc->populate(cashetCreditCard);
-  if (cashetCreditCard.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving CC Data"),
+                                cashetCreditCard, __FILE__, __LINE__))
   {
-    systemError(this, cashetCreditCard.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   if (_cc->topLevelItemCount() == 1)
@@ -1064,7 +1282,7 @@ void cashReceipt::sNewCreditCard()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("cust_id", _cust->id());
+  _customerSelector->appendValue(params);
 
   creditCard newdlg(this, "", true);
   newdlg.set(params);
@@ -1078,7 +1296,7 @@ void cashReceipt::sEditCreditCard()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("cust_id", _cust->id());
+  _customerSelector->appendValue(params);
   params.append("ccard_id", _cc->id());
 
   creditCard newdlg(this, "", true);
@@ -1092,7 +1310,7 @@ void cashReceipt::sViewCreditCard()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("cust_id", _cust->id());
+  _customerSelector->appendValue(params);
   params.append("ccard_id", _cc->id());
 
   creditCard newdlg(this, "", true);
@@ -1152,9 +1370,9 @@ void cashReceipt::sHandleAltExchRate()
       _exchRate->setDouble(currRate.value("_currrate").toDouble());
       _gainLoss->setBaseValue(0.0);
     }
-    else if (currRate.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Alt Exch Rate Data"),
+                                  currRate, __FILE__, __LINE__))
     {
-      systemError(this, currRate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -1186,9 +1404,9 @@ void cashReceipt::sUpdateGainLoss()
     {
       _gainLoss->setBaseValue(gainLoss.value("gainloss").toDouble());
     }
-    else if (gainLoss.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Setting Alt Exch Rate"),
+                                  gainLoss, __FILE__, __LINE__))
     {
-      systemError(this, gainLoss.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

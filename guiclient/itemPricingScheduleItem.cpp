@@ -102,8 +102,11 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
   else
       _markupLit->setText(tr("Markup Percent (Inventory Cost):"));
 
-  _rejectedMsg = tr("The application has encountered an error and must "
+/*  Not used anywhere in the code
+   _rejectedMsg = tr("The application has encountered an error and must "
                     "stop editing this Pricing Schedule.\n%1");
+*/
+
 }
 
 itemPricingScheduleItem::~itemPricingScheduleItem()
@@ -348,10 +351,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
                                    "You may not create duplicate Pricing Schedule Items." ) );
         return;
       }
-      else if (itemSave.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                    itemSave, __FILE__, __LINE__))
       {
-        systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                  __FILE__, __LINE__);
         done(-1);
       }
     }
@@ -379,10 +381,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
                                    "You may not create duplicate Pricing Schedule Items." ) );
         return;
       }
-      else if (itemSave.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                    itemSave, __FILE__, __LINE__))
       {
-        systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                  __FILE__, __LINE__);
         done(-1);
       }
     }
@@ -406,10 +407,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
                                    "You may not create duplicate Pricing Schedule Items." ) );
         return;
       }
-      else if (itemSave.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                    itemSave, __FILE__, __LINE__))
       {
-        systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                  __FILE__, __LINE__);
         done(-1);
       }
     }
@@ -439,10 +439,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
                                  "You may not create duplicate Pricing Schedule Items." ) );
       return;
     }
-    else if (itemSave.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                  itemSave, __FILE__, __LINE__))
     {
-      systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                __FILE__, __LINE__);
       done(-1);
     }
   }
@@ -454,10 +453,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
       itemSave.exec("SELECT NEXTVAL('ipsitem_ipsitem_id_seq') AS ipsitem_id;");
       if (itemSave.first())
         _ipsitemid = itemSave.value("ipsitem_id").toInt();
-      else if (itemSave.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                    itemSave, __FILE__, __LINE__))
       {
-        systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                  __FILE__, __LINE__);
         done(-1);
       }
 
@@ -479,10 +477,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
       itemSave.exec("SELECT NEXTVAL('ipsfreight_ipsfreight_id_seq') AS ipsfreight_id;");
       if (itemSave.first())
         _ipsfreightid = itemSave.value("ipsfreight_id").toInt();
-      else if (itemSave.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                    itemSave, __FILE__, __LINE__))
       {
-        systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                  __FILE__, __LINE__);
         done(-1);
       }
 
@@ -584,11 +581,10 @@ void itemPricingScheduleItem::sSave( bool pClose)
       itemSave.bindValue(":ipsitem_qty_uom_id", qry.value("item_inv_uom_id"));
       itemSave.bindValue(":ipsitem_price_uom_id", qry.value("item_price_uom_id"));
     }
-    else if (qry.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                  qry, __FILE__, __LINE__))
     {
-      systemError(this, _rejectedMsg.arg(qry.lastError().databaseText()),
-                __FILE__, __LINE__);
-      done(-1);
+      done(1);
     }
   }
 
@@ -604,10 +600,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
       itemSave.bindValue(":ipsitem_qty_uom_id", qry.value("item_inv_uom_id"));
       itemSave.bindValue(":ipsitem_price_uom_id", qry.value("item_price_uom_id"));
     }
-    else if (qry.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                  qry, __FILE__, __LINE__))
     {
-      systemError(this, _rejectedMsg.arg(qry.lastError().databaseText()),
-                __FILE__, __LINE__);
       done(-1);
     }
   }
@@ -630,11 +625,10 @@ void itemPricingScheduleItem::sSave( bool pClose)
   if (_selectedShipViaFreight->isChecked())
     itemSave.bindValue(":ipsfreight_shipvia", _shipViaFreight->currentText());
   itemSave.exec();
-  if (itemSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Pricing Schedule Information"),
+                                itemSave, __FILE__, __LINE__))
   {
-	systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                  __FILE__, __LINE__);
-        done(-1);
+    done(-1);
   }
 
   if (pClose)
@@ -718,11 +712,10 @@ void itemPricingScheduleItem::populate()
       else
         _allShipViasFreight->setChecked(true);
     }
-    else if (itempopulate.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Pricing Schedule Information"),
+                                  itempopulate, __FILE__, __LINE__))
     {
-       systemError(this, _rejectedMsg.arg(itempopulate.lastError().databaseText()),
-                  __FILE__, __LINE__);
-        done(-1);
+      done(-1);
     }
   }
   else
@@ -780,11 +773,10 @@ void itemPricingScheduleItem::populate()
 
       sUpdateMargins();
     }
-    else if (itempopulate.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Pricing Schedule Information"),
+                                  itempopulate, __FILE__, __LINE__))
     {
-	systemError(this, _rejectedMsg.arg(itempopulate.lastError().databaseText()),
-                  __FILE__, __LINE__);
-        done(-1);
+      done(-1);
     }
   }
   sFillList();
@@ -793,37 +785,7 @@ void itemPricingScheduleItem::populate()
 void itemPricingScheduleItem::sUpdateCosts(int pItemid)
 {
   // Get list of active, valid Selling UOMs
-  MetaSQLQuery muom = mqlLoad("uoms", "item");
-
-  ParameterList params;
-  params.append("uomtype", "Selling");
-  params.append("item_id", pItemid);
-
-  // Also have to factor UOMs previously used on Pricing Item now inactive
-  if (_ipsitemid != -1)
-  {
-    XSqlQuery pruom;
-    pruom.prepare("SELECT ipsitem_qty_uom_id, ipsitem_price_uom_id "
-                "  FROM ipsiteminfo"
-                " WHERE(ipsitem_id=:ipsitem_id);");
-    pruom.bindValue(":ipsitem_id", _ipsitemid);
-    pruom.exec();
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Sales Pricing UOMs"),
-                         pruom, __FILE__, __LINE__))
-      return;
-    else if (pruom.first())
-    {
-      params.append("uom_id", pruom.value("ipsitem_qty_uom_id"));
-      params.append("uom_id2", pruom.value("ipsitem_price_uom_id"));
-    }
-  }
-  XSqlQuery uom = muom.toQuery(params);
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting UOMs"),
-                         uom, __FILE__, __LINE__))
-    return;
-
-  _qtyUOM->populate(uom);
-  _priceUOM->populate(uom);
+  sPopulateUOM();
 
   XSqlQuery cost;
   cost.prepare( "SELECT item_inv_uom_id, item_price_uom_id,"
@@ -934,8 +896,89 @@ void itemPricingScheduleItem::sTypeChanged(bool pChecked)
   }
 }
 
+void itemPricingScheduleItem::sPopulateUOM()
+{
+  // Get list of active, valid Selling UOMs
+  MetaSQLQuery muom = mqlLoad("uoms", "item");
+  
+  ParameterList params;
+  params.append("uomtype", "Selling");
+  params.append("item_id", _item->id());
+  
+  // Include Global UOMs
+  if (_privileges->check("MaintainUOMs"))
+  {
+    params.append("includeGlobal", true);
+    params.append("global", tr("-Global"));
+  }
+  
+  // Also have to factor UOMs previously used on Pricing Item now inactive
+  if (_ipsitemid != -1)
+  {
+    XSqlQuery pruom;
+    pruom.prepare("SELECT ipsitem_qty_uom_id, ipsitem_price_uom_id "
+                  "  FROM ipsiteminfo"
+                  " WHERE(ipsitem_id=:ipsitem_id);");
+    pruom.bindValue(":ipsitem_id", _ipsitemid);
+    pruom.exec();
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Sales Pricing UOMs"),
+                             pruom, __FILE__, __LINE__))
+      return;
+    else if (pruom.first())
+    {
+      params.append("uom_id", pruom.value("ipsitem_qty_uom_id"));
+      params.append("uom_id2", pruom.value("ipsitem_price_uom_id"));
+    }
+  }
+  
+  XSqlQuery uom = muom.toQuery(params);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting UOMs"),
+                           uom, __FILE__, __LINE__))
+    return;
+  
+  int saveqtyuomid = _qtyUOM->id();
+  int savepriceuomid = _priceUOM->id();
+  disconnect(_qtyUOM,     SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+  disconnect(_priceUOM,   SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+  _qtyUOM->populate(uom);
+  _priceUOM->populate(uom);
+  _qtyUOM->setId(saveqtyuomid);
+  _priceUOM->setId(savepriceuomid);
+  connect(_qtyUOM,     SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+  connect(_priceUOM,   SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+}
+
 void itemPricingScheduleItem::sQtyUOMChanged()
 {
+  // Check for Global UOM Conversion that must be setup for Item
+  if (_qtyUOM->code() == "G")
+  {
+    if (QMessageBox::question(this, tr("Use Global UOM?"),
+                              tr("<p>This Global UOM Conversion is not setup for this Item."
+                                 "<p>Do you want to add this UOM conversion to this Item?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+    {
+      // create itemuomconv and itemuom
+      XSqlQuery adduom;
+      adduom.prepare("SELECT createItemUomConv(:item_id, :uom_id, :uom_type) AS result;");
+      adduom.bindValue(":item_id", _item->id());
+      adduom.bindValue(":uom_id", _qtyUOM->id());
+      adduom.bindValue(":uom_type", "Selling");
+      adduom.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Creating Item UOM Conv"),
+                               adduom, __FILE__, __LINE__))
+        return;
+      
+      // repopulate uom comboboxes
+      sPopulateUOM();
+    }
+    else
+    {
+      _qtyUOM->setId(_invuomid);
+    }
+  }
+  
   if(_qtyUOM->id() != _invuomid)
   {
     _priceUOM->setId(_qtyUOM->id());
@@ -943,6 +986,7 @@ void itemPricingScheduleItem::sQtyUOMChanged()
   }
   else
     _priceUOM->setEnabled(true);
+  
   sPriceUOMChanged();
 }
 
@@ -951,6 +995,34 @@ void itemPricingScheduleItem::sPriceUOMChanged()
   if(_priceUOM->id() == -1 || _qtyUOM->id() == -1)
     return;
 
+  // Check for Global UOM Conversion that must be setup for Item
+  if (_priceUOM->code() == "G")
+  {
+    if (QMessageBox::question(this, tr("Use Global UOM?"),
+                              tr("<p>This Global UOM Conversion is not setup for this Item."
+                                 "<p>Do you want to add this UOM conversion to this Item?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+    {
+      XSqlQuery adduom;
+      adduom.prepare("SELECT createItemUomConv(:item_id, :uom_id, :uom_type) AS result;");
+      adduom.bindValue(":item_id", _item->id());
+      adduom.bindValue(":uom_id", _priceUOM->id());
+      adduom.bindValue(":uom_type", "Selling");
+      adduom.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Creating Item UOM Conv"),
+                               adduom, __FILE__, __LINE__))
+        return;
+      
+      // repopulate uom comboboxes
+      sPopulateUOM();
+    }
+    else
+    {
+      _priceUOM->setId(_invuomid);
+    }
+  }
+  
   XSqlQuery cost;
   cost.prepare( "SELECT "
                 "       itemuomtouomratio(item_id, :qtyuomid, :priceuomid) AS ratio,"
@@ -1033,11 +1105,10 @@ void itemPricingScheduleItem::sDelete()
             "WHERE (ipsitemchar_id=:ipsitemchar_id);");
   itemDelete.bindValue(":ipsitemchar_id", _charprice->id());
   itemDelete.exec();
-  if (itemDelete.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Pricing Schedule Information"),
+                                itemDelete, __FILE__, __LINE__))
   {
-	systemError(this, _rejectedMsg.arg(itemDelete.lastError().databaseText()),
-                  __FILE__, __LINE__);
-        done(-1);
+    done(-1);
   }
   sFillList();
 }
@@ -1052,11 +1123,10 @@ void itemPricingScheduleItem::sFillList()
             "AND (ipsitemchar_ipsitem_id=:ipsitem_id)); ");
   itemFillList.bindValue(":ipsitem_id", _ipsitemid);
   itemFillList.exec();
-  if (itemFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Pricing Schedule Information"),
+                                itemFillList, __FILE__, __LINE__))
   {
-	systemError(this, _rejectedMsg.arg(itemFillList.lastError().databaseText()),
-                  __FILE__, __LINE__);
-        done(-1);
+    done(-1);
   }
   _charprice->populate(itemFillList);
 }

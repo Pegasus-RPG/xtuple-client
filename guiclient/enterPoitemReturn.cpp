@@ -15,6 +15,7 @@
 #include <QSqlError>
 
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 enterPoitemReturn::enterPoitemReturn(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -40,9 +41,6 @@ enterPoitemReturn::enterPoitemReturn(QWidget* parent, const char* name, bool mod
   _receipts->addColumn(tr("G/L Post Date"),   _dateColumn,	Qt::AlignCenter, true, "recv_gldistdate");
   _receipts->addColumn(tr("Returnable Qty."), 100,		Qt::AlignRight,  true, "returnable");
   _receipts->addColumn(tr("Purchase Cost"),   -1,		Qt::AlignRight,  true, "recv_purchcost");
-  _receiptsLit->hide();
-  _receiptsLine->hide();
-  _receipts->hide();
 }
 
 enterPoitemReturn::~enterPoitemReturn()
@@ -76,28 +74,12 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
     enteret.exec();
     if (enteret.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, enteret.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving P/O Item Information"),
+                           enteret, __FILE__, __LINE__);
       return UndefinedError;
     }
     _receipts->clear();
     _receipts->populate(enteret);
-
-    enteret.prepare(	"SELECT CASE WHEN itemsite_costmethod='A' THEN true ELSE false END AS costmethod_average "
-                "FROM poitem LEFT OUTER JOIN itemsite ON (poitem_itemsite_id = itemsite_id) "
-                "WHERE poitem_id = :poitem_id;");
-    enteret.bindValue(":poitem_id", _poitemid);
-    enteret.exec();
-    if (enteret.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, enteret.lastError().databaseText(), __FILE__, __LINE__);
-      return UndefinedError;
-    }
-    if (enteret.first())
-    {
-      _receipts->setVisible(enteret.value("costmethod_average").toBool() && _metrics->boolean("AllowReceiptCostOverride"));
-      _receiptsLit->setVisible(enteret.value("costmethod_average").toBool() && _metrics->boolean("AllowReceiptCostOverride"));
-      _receiptsLine->setVisible(enteret.value("costmethod_average").toBool() && _metrics->boolean("AllowReceiptCostOverride"));
-    }
 
     enteret.prepare( "SELECT pohead_number, poitem_linenumber,"
                "       COALESCE(itemsite_id, -1) AS itemsiteid,"
@@ -141,18 +123,23 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
           _toReturn->setText(enteret.value("qtytoreturn").toString());
           _returned = enteret.value("qtytoreturn").toDouble();
         }
-      else if (enteret.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving P/O Item Information"),
+                                    enteret, __FILE__, __LINE__))
       {
-	systemError(this, enteret.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+        return UndefinedError;
       }
     }
-    if (enteret.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving P/O Item Information123"),
+                                  enteret, __FILE__, __LINE__))
     {
-      systemError(this, enteret.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
+
+  param = pParams.value("poreject_rma", &valid);
+  if (valid)
+    _rmAuthority = param.toString();
+
 
   return NoError;
 }
@@ -205,10 +192,11 @@ void enterPoitemReturn::sReturn()
     }
   }
 
-  enterReturn.prepare("SELECT enterPoReturn(:poitem_id, :qty, :rjctcode_id, :recv_id) AS result;");
+  enterReturn.prepare("SELECT enterPoReturn(:poitem_id, :qty, :rjctcode_id, :recv_id, :rma) AS result;");
   enterReturn.bindValue(":poitem_id", _poitemid);
   enterReturn.bindValue(":qty", _toReturn->toDouble());
   enterReturn.bindValue(":rjctcode_id", _rejectCode->id());
+  enterReturn.bindValue(":rma", _rmAuthority);
   if (_receipts->id() != -1)
     enterReturn.bindValue(":recv_id", _receipts->id());
   enterReturn.exec();
@@ -222,9 +210,9 @@ void enterPoitemReturn::sReturn()
       return;
     }
   }
-  else if (enterReturn.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Return Information"),
+                                enterReturn, __FILE__, __LINE__))
   {
-    systemError(this, enterReturn.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

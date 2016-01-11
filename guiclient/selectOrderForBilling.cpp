@@ -249,7 +249,7 @@ void selectOrderForBilling::sSoList()
   params.append("sohead_id", _so->id());
 
   if (_showClosed->isChecked())
-    params.append("soType", (cSoOpen || cSoClosed));
+    params.append("soType", (cSoOpen | cSoClosed));
   else
     params.append("soType", cSoOpen);
 

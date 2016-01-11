@@ -140,7 +140,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _woIndentedList->addColumn(tr("Ord/Req."),        _qtyColumn,     Qt::AlignRight     , true,   "qtyordreq");
   _woIndentedList->addColumn(tr("UOM"),             _uomColumn,     Qt::AlignLeft      , true,   "wodata_qtyuom");
   _woIndentedList->addColumn(tr("Issued"),          _qtyColumn,     Qt::AlignRight     , true,   "qtyiss");
-  _woIndentedList->addColumn(tr("Scrap"),           _prcntColumn,   Qt::AlignRight     , false,  "scrap");
+  _woIndentedList->addColumn(tr("Scrap"),           _qtyColumn,     Qt::AlignRight     , false,  "scrap");
   _woIndentedList->addColumn(tr("Received"),        _qtyColumn,     Qt::AlignRight     , true,   "qtyrcv");
   _woIndentedList->addColumn(tr("Available QOH"),   _qtyColumn,     Qt::AlignRight     , false,  "qoh");
   _woIndentedList->addColumn(tr("Short"),           _qtyColumn,     Qt::AlignRight     , false,  "short");
@@ -924,7 +924,7 @@ void workOrder::sFillList()
     "           'qty' AS short_xtnumericrole, "
     "           'qty' AS setup_xtnumericrole,"
     "           'qty' AS run_xtnumericrole,"
-    "           'scrap' AS scrap_xtnumericrole, "
+    "           'qty' AS scrap_xtnumericrole, "
     "           wodata_level AS xtindentrole "
     "    FROM indentedwo(:wo_id, :showops, :showmatl, :showindent) ");
   workFillList.prepare(sql);
@@ -1278,9 +1278,9 @@ void workOrder::sChangeParentQty()
       workChangeParentQty.bindValue(":qty", newQty);
       workChangeParentQty.bindValue(":sense", _sense);
       workChangeParentQty.exec();
-      if (workChangeParentQty.lastError().type() != QSqlError::NoError)
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Change Work Order Quantity"),
+                               workChangeParentQty, __FILE__, __LINE__))
       {
-        systemError(this, workChangeParentQty.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
       else

@@ -293,20 +293,35 @@ QString postProduction::handleIssueToParentAfterPost(int itemlocSeries)
 {
   QString result = QString::null;
   XSqlQuery issueq;
+  
+  // Find invhist_id.  May not be found if control method is 'None'
+  int invhistid = -1;
+  issueq.prepare("SELECT invhist_id "
+                 "FROM invhist "
+                 "WHERE (invhist_series=:itemlocseries)"
+                 "  AND (invhist_transtype='RM');");
+  issueq.bindValue(":itemlocseries", itemlocSeries);
+  issueq.exec();
+  if (issueq.first())
+  {
+    invhistid = issueq.value("invhist_id").toInt();
+  }
+  else if (issueq.lastError().type() != QSqlError::NoError)
+    result = issueq.lastError().databaseText();
 
   // If this is a child W/O and the originating womatl
   // is auto issue then issue this receipt to the parent W/O
   issueq.prepare("SELECT issueWoMaterial(womatl_id, :qty,"
-                 "       :itemlocseries, NOW(), invhist_id ) AS result "
-                 "FROM wo, womatl, invhist "
+                 "       :itemlocseries, NOW(), :invhist_id ) AS result "
+                 "FROM wo, womatl "
                  "WHERE (wo_id=:wo_id)"
                  "  AND (womatl_id=wo_womatl_id)"
-                 "  AND (womatl_issuewo)"
-                 "  AND (invhist_series=:itemlocseries)"
-                 "  AND (invhist_transtype='RM');");
+                 "  AND (womatl_issuewo);");
   issueq.bindValue(":itemlocseries", itemlocSeries);
   issueq.bindValue(":wo_id", _wo->id());
   issueq.bindValue(":qty", _qty->toDouble());
+  if (invhistid > 0)
+    issueq.bindValue(":invhist_id", invhistid);
   issueq.exec();
   if (issueq.first())
   {
@@ -327,18 +342,18 @@ QString postProduction::handleIssueToParentAfterPost(int itemlocSeries)
   // If this is a W/O for a Job Cost item and the parent is a S/O
   // then issue this receipt to the S/O
   issueq.prepare("SELECT issueToShipping('SO', coitem_id, :qty,"
-                 "       :itemlocseries, NOW(), invhist_id) AS result "
-                 "FROM wo, itemsite, coitem, invhist "
+                 "       :itemlocseries, NOW(), :invhist_id) AS result "
+                 "FROM wo, itemsite, coitem "
                  "WHERE (wo_id=:wo_id)"
                  "  AND (wo_ordtype='S')"
                  "  AND (itemsite_id=wo_itemsite_id)"
                  "  AND (itemsite_costmethod='J')"
-                 "  AND (coitem_id=wo_ordid)"
-                 "  AND (invhist_series=:itemlocseries)"
-                 "  AND (invhist_transtype='RM');");
+                 "  AND (coitem_id=wo_ordid);");
   issueq.bindValue(":itemlocseries", itemlocSeries);
   issueq.bindValue(":wo_id", _wo->id());
   issueq.bindValue(":qty", _qty->toDouble());
+  if (invhistid > 0)
+    issueq.bindValue(":invhist_id", invhistid);
   issueq.exec();
   if (issueq.first())
   {

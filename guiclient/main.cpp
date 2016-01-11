@@ -99,6 +99,8 @@
 #include <QTranslator>
 #if QT_VERSION < 0x050000
 #include <QHttp>
+#else
+#include <QUrlQuery>
 #endif
 #include <QUrl>
 
@@ -119,6 +121,8 @@
 #include "scripttoolbox.h"
 #include "xmainwindow.h"
 #include "checkForUpdates.h"
+#include "salesOrderSimple.h"
+#include "xtNetworkRequestManager.h"
 
 #include "sysLocale.h"
 
@@ -364,6 +368,7 @@ int main(int argc, char *argv[])
     bool checkPass = true;
     bool checkLock = false;
     bool expired   = false;
+    bool invalid   = false;
     QString checkPassReason;
     QString rkey = _metrics->value("RegistrationKey");
     XTupleProductKey pkey(rkey);
@@ -422,6 +427,7 @@ int main(int argc, char *argv[])
     else
     {
       checkPass = false;
+      invalid   = true;
       checkPassReason = QObject::tr("<p>The Registration key installed for this system does not appear to be valid.");
     }
     if(!checkPass)
@@ -442,6 +448,18 @@ int main(int argc, char *argv[])
         if(!forced)
           return 0;
       }
+      else if(invalid)
+      {
+        ParameterList params;
+        params.append("invalid");
+        registrationKeyDialog newdlg(0, "", true);
+        newdlg.set(params);
+        if(newdlg.exec() == -1)
+        {
+          QMessageBox::critical(0, QObject::tr("Registration Key"), checkPassReason);
+          return 0;
+        }        
+      }
       else
       {
         if(QMessageBox::critical(0, QObject::tr("Registration Key"), QObject::tr("%1\n<p>Would you like to continue anyway?").arg(checkPassReason), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
@@ -459,24 +477,31 @@ int main(int argc, char *argv[])
       {
         db = metric.value("db").toString();
       }
-
-#if QT_VERSION < 0x050000  // below removed in qt5, needs to be ported
-      QHttp *http = new QHttp();
-      
+#if QT_VERSION >= 0x050000
+      QUrlQuery urlQuery("https://www.xtuple.org/api/regviolation.php?");
+      urlQuery.addQueryItem("key", rkey);
+      urlQuery.addQueryItem("error", checkPassReason);
+      urlQuery.addQueryItem("name", name);
+      urlQuery.addQueryItem("dbname", dbname);
+      urlQuery.addQueryItem("db", db);
+      urlQuery.addQueryItem("cnt", QString::number(cnt));
+      urlQuery.addQueryItem("tot", QString::number(tot));
+      urlQuery.addQueryItem("ver", _Version);
+      QUrl url = urlQuery.query();
+#else
       QUrl url;
-      url.setPath("/api/regviolation.php");
+      url.setUrl("https://www.xtuple.org/api/regviolation.php");
       url.addQueryItem("key", QUrl::toPercentEncoding(rkey));
-      url.addQueryItem("error", QUrl::toPercentEncoding(checkPassReason));
-      url.addQueryItem("name", QUrl::toPercentEncoding(name));
-      url.addQueryItem("dbname", QUrl::toPercentEncoding(dbname));
+      url.addQueryItem("error", checkPassReason);
+      url.addQueryItem("name", name);
+      url.addQueryItem("dbname", dbname);
       url.addQueryItem("db", QUrl::toPercentEncoding(db));
       url.addQueryItem("cnt", QString::number(cnt));
       url.addQueryItem("tot", QString::number(tot));
       url.addQueryItem("ver", _Version);
-
-      http->setHost("www.xtuple.org");
-      http->get(url.toString());
 #endif
+      QMutex wait;
+      xtNetworkRequestManager _networkManager(url, wait);
       if(forced)
         return 0;
 
@@ -741,6 +766,15 @@ int main(int argc, char *argv[])
       qDebug("Failed to initialize woTimeClock window.");
       return -2;
     }
+  }
+  else if (omfgThis->_singleWindow == "salesOrderSimple")
+  {
+    ParameterList params;
+    params.append("mode", "new");
+    
+    salesOrderSimple *newdlg = new salesOrderSimple();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
   }
 
   // Check for the existance of a base currency, if none, one needs to

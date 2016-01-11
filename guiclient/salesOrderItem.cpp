@@ -61,6 +61,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   connect(_save,              SIGNAL(clicked()),                    this, SLOT(sSaveClicked()));
   connect(_scheduledDate,     SIGNAL(newDate(const QDate &)),       this, SLOT(sHandleScheduleDate()));
   connect(_showAvailability,  SIGNAL(toggled(bool)),                this, SLOT(sDetermineAvailability()));
+  connect(_asOfScheddate,     SIGNAL(toggled(bool)),                this, SLOT(sDetermineAvailability()));
   connect(_showIndented,      SIGNAL(toggled(bool)),                this, SLOT(sDetermineAvailability()));
   connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemsiteInfo()));
   connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sDetermineAvailability()));
@@ -96,8 +97,10 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
 #endif
 
   _leadTime              = 999;
+  _saletypeid            = -1;
   _shiptoid              = -1;
   _shiptoname            = "";
+  _shipzoneid            = -1;
   _preferredWarehouseid  = -1;
   _modified              = false;
   _canceling             = false;
@@ -113,6 +116,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _invuomid              = -1;
   _invIsFractional       = false;
   _qtyreserved           = 0.0;
+  _qtyatshipping         = 0.0;
   _priceType             = "N";  // default to nominal
   _priceMode             = "D";  // default to discount
 
@@ -125,6 +129,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _availabilityLastWarehousid  = -1;
   _availabilityLastSchedDate   = QDate();
   _availabilityLastShow        = false;
+  _availabilityLastAsOf        = true;
   _availabilityQtyOrdered      = 0.0;
 
   _charVars << -1 << -1 << -1 << 0 << -1 << omfgThis->dbDate();
@@ -136,6 +141,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
 
   _taxtype->setEnabled(_privileges->check("OverrideTax"));
 
+  _availability->setRootIsDecorated(true);
   _availability->addColumn(tr("#"),             _seqColumn, Qt::AlignCenter,true, "seqnumber");
   _availability->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,  true, "item_number");
   _availability->addColumn(tr("Description"),           -1, Qt::AlignLeft,  true, "item_descrip");
@@ -145,6 +151,8 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _availability->addColumn(tr("On Order"),      _qtyColumn, Qt::AlignRight, true, "ordered");
   _availability->addColumn(tr("Available QOH"), _qtyColumn, Qt::AlignRight, true, "availableqoh");
   _availability->addColumn(tr("Availability"),  _qtyColumn, Qt::AlignRight, true, "totalavail");
+  _availability->setIndentation(10);
+  _availability->setPopulateLinear();
 
   _itemsrcp->addColumn(tr("Vendor #"),    _itemColumn, Qt::AlignLeft, true, "vend_number");
   _itemsrcp->addColumn(tr("Vendor Name"),          -1, Qt::AlignLeft, true, "vend_name");
@@ -304,6 +312,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _supplyOrderScheduledDateCache = QDate();
   _supplyOrderDropShipCache = false;
   _supplyOverridePriceCache = 0.0;
+  _supplyConnectionsCache = false;
   _itemsrc = -1;
   _taxzoneid   = -1;
   _initialMode = -1;
@@ -364,6 +373,14 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
   param = pParams.value("taxzone_id", &valid);
   if (valid)
     _taxzoneid = param.toInt();
+
+  param = pParams.value("shipzone_id", &valid);
+  if (valid)
+    _shipzoneid = param.toInt();
+
+  param = pParams.value("saletype_id", &valid);
+  if (valid)
+    _saletypeid = param.toInt();
 
   param = pParams.value("cust_id", &valid);
   if (valid)
@@ -454,7 +471,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _mode = cNew;
 
       _save->setEnabled(false);
-      _next->setText(tr("New"));
+      _next->setEnabled(false);
       _comments->setType(Comments::SalesOrderItem);
       _comments->setReadOnly(false);
       _item->setReadOnly(false);
@@ -501,7 +518,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       setWindowTitle(tr("Quote Item"));
 
       _save->setEnabled(false);
-      _next->setText(tr("New"));
+      _next->setEnabled(false);
       _comments->setType(Comments::QuoteItem);
       _comments->setReadOnly(true);
       _cancel->hide();
@@ -646,18 +663,19 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
 
     if (ISQUOTE(_mode))
       setSales.prepare("SELECT a.quitem_id AS id"
-                "  FROM quitem AS a, quitem as b"
-                " WHERE ((a.quitem_quhead_id=b.quitem_quhead_id)"
-                "   AND  (b.quitem_id=:id))"
-                " ORDER BY a.quitem_linenumber "
-                " LIMIT 1;");
+                       "  FROM quitem AS a, quitem as b"
+                       " WHERE ((a.quitem_quhead_id=b.quitem_quhead_id)"
+                       "   AND  (b.quitem_id=:id))"
+                       " ORDER BY a.quitem_linenumber "
+                       " LIMIT 1;");
     else
       setSales.prepare("SELECT a.coitem_id AS id"
-                "  FROM coitem AS a, coitem AS b"
-                " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
-                "   AND  (b.coitem_id=:id))"
-                " ORDER BY a.coitem_linenumber, a.coitem_subnumber"
-                " LIMIT 1;");
+                       "  FROM coitem AS a, coitem AS b"
+                       " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
+                       "   AND  (a.coitem_status != 'X')"
+                       "   AND  (b.coitem_id=:id))"
+                       " ORDER BY a.coitem_linenumber, a.coitem_subnumber"
+                       " LIMIT 1;");
     setSales.bindValue(":id", _soitemid);
     setSales.exec();
     if (!setSales.first() || setSales.value("id").toInt() == _soitemid)
@@ -670,18 +688,19 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
 
     if (ISQUOTE(_mode))
       setSales.prepare("SELECT a.quitem_id AS id"
-                "  FROM quitem AS a, quitem as b"
-                " WHERE ((a.quitem_quhead_id=b.quitem_quhead_id)"
-                "   AND  (b.quitem_id=:id))"
-                " ORDER BY a.quitem_linenumber DESC"
-                " LIMIT 1;");
+                       "  FROM quitem AS a, quitem as b"
+                       " WHERE ((a.quitem_quhead_id=b.quitem_quhead_id)"
+                       "   AND  (b.quitem_id=:id))"
+                       " ORDER BY a.quitem_linenumber DESC"
+                       " LIMIT 1;");
     else
       setSales.prepare("SELECT a.coitem_id AS id"
-                "  FROM coitem AS a, coitem AS b"
-                " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
-                "   AND  (b.coitem_id=:id))"
-                " ORDER BY a.coitem_linenumber DESC, a.coitem_subnumber DESC"
-                " LIMIT 1;");
+                       "  FROM coitem AS a, coitem AS b"
+                       " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
+                       "   AND  (a.coitem_status != 'X')"
+                       "   AND  (b.coitem_id=:id))"
+                       " ORDER BY a.coitem_linenumber DESC, a.coitem_subnumber DESC"
+                       " LIMIT 1;");
     setSales.bindValue(":id", _soitemid);
     setSales.exec();
     if (setSales.first() && setSales.value("id").toInt() == _soitemid)
@@ -846,13 +865,11 @@ void salesOrderItem::prepare()
       }
     }
   }
-  _modified = false;
-  _partialsaved = false;
 }
 
 void salesOrderItem::clear()
 {
-  if (_supplyOrderId > -1)
+  if (_supplyConnectionsCache)
   {
     disconnect(_woIndentedList,    SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateWoMenu(QMenu*, QTreeWidgetItem*)));
     disconnect(_woIndentedList,    SIGNAL(itemSelected(int)),            _supplyWoEdit, SLOT(animateClick()));
@@ -868,8 +885,11 @@ void salesOrderItem::clear()
     disconnect(_supplyDropShip,    SIGNAL(toggled(bool)),                this, SLOT(sHandleSupplyOrder()));
   }
 
+  _modified = false;
+  _partialsaved = false;
   _supplyOrderType = "";
   _supplyOrderId = -1;
+  _supplyConnectionsCache = false;
   _createSupplyOrder->setChecked(false);
   _item->setReadOnly(false);
   _warehouse->setEnabled(true);
@@ -940,6 +960,8 @@ void salesOrderItem::sSave(bool pPartial)
                           tr("<p>You must select a valid Site before saving this Sales Order Item."))
          << GuiErrorCheck(!(_qtyOrdered->toDouble() > 0), _qtyOrdered,
                           tr("<p>You must enter a valid Quantity Ordered before saving this Sales Order Item."))
+         << GuiErrorCheck((_qtyOrdered->toDouble() < _qtyatshipping), _qtyOrdered,
+                          tr("<p>You must enter a Quantity Ordered equal to or greater than the Quantity At Shipping."))
          << GuiErrorCheck((_qtyOrdered->toDouble() != (double)qRound(_qtyOrdered->toDouble()) &&
                            _qtyOrdered->validator()->inherits("QIntValidator")), _qtyOrdered,
                           tr("This UOM for this Item does not allow fractional quantities. Please fix the quantity."))
@@ -1603,6 +1625,8 @@ void salesOrderItem::sListPrices()
   ParameterList params;
   params.append("cust_id", _custid);
   params.append("shipto_id", _shiptoid);
+  params.append("shipzone_id", _shipzoneid);
+  params.append("saletype_id", _saletypeid);
   params.append("item_id", _item->id());
   params.append("warehous_id", _warehouse->id());
   params.append("qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
@@ -1703,7 +1727,7 @@ void salesOrderItem::sDeterminePrice(bool force)
     _charVars.replace(QTY, _qtyOrdered->toDouble() * _qtyinvuomratio);
 
     QModelIndex idx1, idx2, idx3;
-    salesDeterminePrice.prepare("SELECT itemcharprice(:item_id,:char_id,:value,:cust_id,:shipto_id,:qty,:curr_id,:effective,:asof)::numeric(16,4) AS price;");
+    salesDeterminePrice.prepare("SELECT itemcharprice(:item_id,:char_id,:value,:cust_id,:shipto_id,:qty,:curr_id,:effective,:asof,:shipzone_id,:saletype_id)::numeric(16,4) AS price;");
 
     for (int i = 0; i < _itemchar->rowCount(); i++)
     {
@@ -1715,6 +1739,8 @@ void salesOrderItem::sDeterminePrice(bool force)
       salesDeterminePrice.bindValue(":value", _itemchar->data(idx2, Qt::DisplayRole));
       salesDeterminePrice.bindValue(":cust_id", _custid);
       salesDeterminePrice.bindValue(":shipto_id", _shiptoid);
+      salesDeterminePrice.bindValue(":shipzone_id", _shipzoneid);
+      salesDeterminePrice.bindValue(":saletype_id", _saletypeid);
       salesDeterminePrice.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
       salesDeterminePrice.bindValue(":curr_id", _customerPrice->id());
       salesDeterminePrice.bindValue(":effective", _customerPrice->effective());
@@ -1746,9 +1772,11 @@ void salesOrderItem::sDeterminePrice(bool force)
   XSqlQuery itemprice;
   itemprice.prepare( "SELECT * FROM "
                      "itemIpsPrice(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
-                     "             :curr_id, :effective, :asof, :warehouse);" );
+                     "             :curr_id, :effective, :asof, :warehouse, :shipzone_id, :saletype_id);" );
   itemprice.bindValue(":cust_id", _custid);
   itemprice.bindValue(":shipto_id", _shiptoid);
+  itemprice.bindValue(":shipzone_id", _shipzoneid);
+  itemprice.bindValue(":saletype_id", _saletypeid);
   itemprice.bindValue(":qty", _qtyOrdered->toDouble());
   itemprice.bindValue(":qtyUOM", _qtyUOM->id());
   itemprice.bindValue(":priceUOM", _priceUOM->id());
@@ -1824,38 +1852,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
   _itemchar->removeRows(0, _itemchar->rowCount());
   if (pItemid != -1)
   {
-    // Get list of active, valid Selling UOMs
-    MetaSQLQuery muom = mqlLoad("uoms", "item");
-
-    ParameterList params;
-    params.append("uomtype", "Selling");
-    params.append("item_id", pItemid);
-
-    // Also have to factor UOMs previously used on Sales Order now inactive
-    if (_soitemid != -1)
-    {
-      XSqlQuery souom;
-      souom.prepare("SELECT coitem_qty_uom_id, coitem_price_uom_id "
-                "  FROM coitem"
-                " WHERE(coitem_id=:coitem_id);");
-      souom.bindValue(":coitem_id", _soitemid);
-      souom.exec();
-      if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Sales Order UOMs"),
-                           souom, __FILE__, __LINE__))
-        return;
-      else if (souom.first())
-      {
-        params.append("uom_id", souom.value("coitem_qty_uom_id"));
-        params.append("uom_id2", souom.value("coitem_price_uom_id"));
-      }
-    }
-    XSqlQuery uom = muom.toQuery(params);
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting UOMs"),
-                           uom, __FILE__, __LINE__))
-      return;
-
-    _qtyUOM->populate(uom);
-    _priceUOM->populate(uom);
+    sPopulateUOM();
 
     //  Grab the price for this item/customer/qty
     salesPopulateItemInfo.prepare( "SELECT item_type, item_config, uom_name,"
@@ -1934,18 +1931,23 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
     disconnect( _itemchar,  SIGNAL(itemChanged(QStandardItem *)), this, SLOT(sRecalcAvailability()));
 
     // Populate customer part number if any
-    salesPopulateItemInfo.prepare( "SELECT itemalias_number "
-              "FROM itemalias"
-              " JOIN item ON (item_id=itemalias_item_id)"
-              " LEFT OUTER JOIN crmacct ON (itemalias_crmacct_id=crmacct_id)"
-              "WHERE (item_id=:item_id)"
-              "  AND (crmacct_cust_id=:cust_id OR itemalias_crmacct_id IS NULL);" );
-    salesPopulateItemInfo.bindValue(":item_id", _item->id());
-    salesPopulateItemInfo.bindValue(":cust_id", _custid);
-    salesPopulateItemInfo.exec();
-    if (salesPopulateItemInfo.first())
+    if (_customerPN->text().trimmed().length() == 0)
     {
-       _customerPN->setText(salesPopulateItemInfo.value("itemalias_number").toString());
+      salesPopulateItemInfo.prepare("SELECT itemalias_number,"
+                                    "       CASE WHEN (itemalias_crmacct_id IS NOT NULL) THEN 0"
+                                    "            ELSE 1 END AS orderby "
+                                    "FROM itemalias"
+                                    " LEFT OUTER JOIN crmacct ON (itemalias_crmacct_id=crmacct_id)"
+                                    "WHERE (itemalias_item_id=:item_id)"
+                                    "  AND (crmacct_cust_id=:cust_id OR itemalias_crmacct_id IS NULL) "
+                                    "ORDER BY orderby, itemalias_number;" );
+      salesPopulateItemInfo.bindValue(":item_id", _item->id());
+      salesPopulateItemInfo.bindValue(":cust_id", _custid);
+      salesPopulateItemInfo.exec();
+      if (salesPopulateItemInfo.first())
+      {
+        _customerPN->setText(salesPopulateItemInfo.value("itemalias_number").toString());
+      }
     }
 
     // Populate Characteristics
@@ -2055,15 +2057,20 @@ void salesOrderItem::sDetermineAvailability( bool p )
         (_warehouse->id()==_availabilityLastWarehousid) &&
         (_scheduledDate->date()==_availabilityLastSchedDate) &&
         (_showAvailability->isChecked()==_availabilityLastShow) &&
+        (_asOfScheddate->isChecked()==_availabilityLastAsOf) &&
         (_showIndented->isChecked()==_availabilityLastShowIndent) &&
         ((_qtyOrdered->toDouble() * _qtyinvuomratio)==_availabilityQtyOrdered) &&
         (!p) )
     return;
+  
+  if (_partialsaved)
+    sSave(true);
 
   _availabilityLastItemid      = _item->id();
   _availabilityLastWarehousid  = _warehouse->id();
   _availabilityLastSchedDate   = _scheduledDate->date();
   _availabilityLastShow        = _showAvailability->isChecked();
+  _availabilityLastAsOf        = _asOfScheddate->isChecked();
   _availabilityLastShowIndent  = _showIndented->isChecked();
   _availabilityQtyOrdered      = (_qtyOrdered->toDouble() * _qtyinvuomratio);
 
@@ -2072,39 +2079,37 @@ void salesOrderItem::sDetermineAvailability( bool p )
   if (_item->isValid() && _warehouse->isValid() && _scheduledDate->isValid() && _showAvailability->isChecked())
   {
     XSqlQuery availability;
-    QString sql = "SELECT itemsite_id,"
-                  "       availableqoh,"
-                  "       allocated,"
-                  "       (noNeg(availableqoh - allocated)) AS unallocated,"
-                  "       ordered,"
-                  "       (availableqoh - allocated + ordered) AS available,"
-                  "       reserved,"
-                  "       reservable,"
-                  "       itemsite_leadtime "
-                  "FROM ( SELECT itemsite_id, qtyAvailable(itemsite_id) AS availableqoh,"
-                  "              qtyAllocated(itemsite_id, DATE(<? value('date') ?>)) AS allocated,"
-                  "              qtyOrdered(itemsite_id, DATE(<? value('date') ?>)) AS ordered, "
-                  "<? if exists('includeReservations') ?>"
-                  "              COALESCE((SELECT coitem_qtyreserved"
-                  "                        FROM coitem"
-                  "                        WHERE coitem_id=<? value('soitem_id') ?>), 0.0) AS reserved,"
-                  "              (qtyAvailable(itemsite_id) - qtyreserved(itemsite_id)) AS reservable,"
-                  "<? else ?>"
-                  "              0.0 AS reserved,"
-                  "              0.0 AS reservable,"
-                  "<? endif ?>"
-                  "              itemsite_leadtime "
-                  "       FROM itemsite, item "
-                  "       WHERE ((itemsite_item_id=item_id)"
-                  "        AND (item_id=<? value('item_id') ?>)"
-                  "        AND (itemsite_warehous_id=<? value('warehous_id') ?>)) ) AS data;";
+    MetaSQLQuery mql = mqlLoad("salesOrderItem", "avail");
     ParameterList params;
-    params.append("date", _scheduledDate->date());
+    if (_asOfScheddate->isChecked())
+    {
+      params.append("date", _scheduledDate->date());
+      params.append("offset", 0);
+    }
+    else
+    {
+      params.append("date", omfgThis->dbDate());
+      params.append("offset", _leadTime);
+    }
     params.append("item_id", _item->id());
     params.append("warehous_id", _warehouse->id());
     params.append("soitem_id", _soitemid);
     params.append("includeReservations", (ISORDER(_mode) && _metrics->boolean("EnableSOReservations")));
-    MetaSQLQuery mql(sql);
+
+    params.append("qty", _availabilityQtyOrdered);
+    params.append("origQtyOrd", _originalQtyOrd);
+    
+    if (_partialsaved)
+    {
+      params.append("qtyOrdered", _qtyOrdered->toDouble());
+      params.append("supplyOrderQty", _supplyOrderQty->toDouble());
+    }
+    else
+    {
+      params.append("qtyOrdered", 0.0);
+      params.append("supplyOrderQty", 0.0);
+    }
+    
     availability = mql.toQuery(params);
     if (availability.first())
     {
@@ -2126,81 +2131,31 @@ void salesOrderItem::sDetermineAvailability( bool p )
       {
         if (_showIndented->isChecked())
         {
-          QString sql(
-            "SELECT itemsite_id, reorderlevel,"
-            "       bomdata_bomwork_level,"
-            "       bomdata_bomwork_id,"
-            "       bomdata_bomwork_parent_id,"
-            "       bomdata_bomwork_seqnumber AS seqnumber,"
-            "       bomdata_item_number AS item_number,"
-            "       bomdata_itemdescription AS item_descrip,"
-            "       bomdata_uom_name AS uom_name,"
-            "       pendalloc,"
-            "       ordered,"
-            "       availableqoh, "
-            "       (totalalloc + pendalloc) AS totalalloc,"
-            "       (availableqoh + ordered - (totalalloc + pendalloc)) AS totalavail,"
-            "       'qty' AS pendalloc_xtnumericrole,"
-            "       'qty' AS ordered_xtnumericrole,"
-            "       'qty' AS availableqoh_xtnumericrole,"
-            "       'qty' AS totalalloc_xtnumericrole,"
-            "       'qty' AS totalavail_xtnumericrole,"
-            "       CASE WHEN availableqoh < pendalloc THEN 'error'"
-            "            WHEN (availableqoh + ordered - (totalalloc + pendalloc)) < 0  THEN 'error'"
-            "            WHEN (availableqoh + ordered - (totalalloc + pendalloc)) < reorderlevel THEN 'warning'"
-            "       END AS qtforegroundrole,"
-            "       bomdata_bomwork_level - 1 AS xtindentrole "
-            "  FROM ( SELECT itemsite_id,"
-            "                CASE WHEN(itemsite_useparams)"
-            "                     THEN itemsite_reorderlevel"
-            "                     ELSE 0.0"
-            "                     END AS reorderlevel,"
-            "                ib.*, "
-            "                ((bomdata_qtyfxd::NUMERIC + bomdata_qtyper::NUMERIC * :qty) * (1 + bomdata_scrap::NUMERIC))"
-            "                                       AS pendalloc,"
-            "                (qtyAllocated(itemsite_id, DATE(:schedDate)) -"
-            "                             ((bomdata_qtyfxd::NUMERIC + bomdata_qtyper::NUMERIC * :origQtyOrd) *"
-            "                              (1 + bomdata_scrap::NUMERIC)))"
-            "                                       AS totalalloc,"
-            "                qtyAvailable(itemsite_id) AS availableqoh,"
-            "                qtyOrdered(itemsite_id, DATE(:schedDate))"
-            "                                                AS ordered"
-            "           FROM indentedBOM(:item_id, "
-            "                            getActiveRevId('BOM', :item_id),"
-            "                            0,0) ib LEFT OUTER JOIN"
-            "                itemsite ON ((itemsite_item_id=bomdata_item_id)"
-            "                         AND (itemsite_warehous_id=:warehous_id))"
-            "          WHERE (bomdata_item_id > 0)");
+          MetaSQLQuery mql = mqlLoad("salesOrderItem", "indentedbomavail");
 
           if (_item->isConfigured())  // For configured items limit to bomitems associated with selected characteristic values
           {
             QModelIndex charidx;
             QModelIndex valueidx;
-
-            sql +=  "        AND ((bomdata_char_id IS NULL) ";
-
+            QStringList clauses;
+            
+            clauses.append("(bomdata_char_id IS NULL)");
+            
             for (int i = 0; i < _itemchar->rowCount(); i++)
             {
               charidx  = _itemchar->index(i, CHAR_ID);
               valueidx = _itemchar->index(i, CHAR_VALUE);
-              sql     += QString(" OR ((bomdata_char_id=%1) AND (bomdata_value='%2'))")
-                         .arg(_itemchar->data(charidx, Qt::UserRole).toString())
-                         .arg(_itemchar->data(valueidx, Qt::DisplayRole).toString().replace("'", "''"));
+              clauses.append(QString("((bomdata_char_id=%1) AND (bomdata_value='%2'))")
+                             .arg(_itemchar->data(charidx, Qt::UserRole).toString())
+                             .arg(_itemchar->data(valueidx, Qt::DisplayRole).toString().replace("'", "''")));
             }
-
-            sql +=  " ) ";
+            if (clauses.count())
+              params.append("charClause", clauses.join(" OR ").prepend(" AND (").append(")"));
           }
+          else
+            params.append("charClause", "");
 
-          sql += "       ) AS data "
-                 "ORDER BY bomworkSequence(bomdata_bomwork_id);";
-
-          availability.prepare(sql);
-          availability.bindValue(":item_id",        _item->id());
-          availability.bindValue(":warehous_id",    _warehouse->id());
-          availability.bindValue(":qty",            _availabilityQtyOrdered);
-          availability.bindValue(":schedDate",      _scheduledDate->date());
-          availability.bindValue(":origQtyOrd",     _originalQtyOrd);
-          availability.exec();
+          availability = mql.toQuery(params);
           _availability->populate(availability);
           if (availability.lastError().type() != QSqlError::NoError)
           {
@@ -2211,68 +2166,31 @@ void salesOrderItem::sDetermineAvailability( bool p )
         }
         else
         {
-          int     itemsiteid = availability.value("itemsite_id").toInt();
-          QString sql("SELECT itemsiteid, reorderlevel,"
-                      "       bomitem_seqnumber AS seqnumber, item_number, "
-                      "       item_descrip, uom_name,"
-                      "       pendalloc, "
-                      "       ordered, "
-                      "       availableqoh, "
-                      "       (totalalloc + pendalloc) AS totalalloc,"
-                      "       (availableqoh + ordered - (totalalloc + pendalloc)) AS totalavail,"
-                      "       'qty' AS pendalloc_xtnumericrole,"
-                      "       'qty' AS ordered_xtnumericrole,"
-                      "       'qty' AS availableqoh_xtnumericrole,"
-                      "       'qty' AS totalalloc_xtnumericrole,"
-                      "       'qty' AS totalavail_xtnumericrole,"
-                      "       CASE WHEN availableqoh < pendalloc THEN 'error'"
-                      "            WHEN (availableqoh + ordered - (totalalloc + pendalloc)) < 0  THEN 'error'"
-                      "            WHEN (availableqoh + ordered - (totalalloc + pendalloc)) < reorderlevel THEN 'warning'"
-                      "       END AS qtforegroundrole "
-                      "FROM ( SELECT cs.itemsite_id AS itemsiteid,"
-                      "              CASE WHEN(cs.itemsite_useparams) THEN cs.itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
-                      "              bomitem_seqnumber, item_number,"
-                      "              (item_descrip1 || ' ' || item_descrip2) AS item_descrip, uom_name,"
-                      "              itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, (bomitem_qtyfxd + bomitem_qtyper * :qty) * (1 + bomitem_scrap)) AS pendalloc,"
-                      "              (qtyAllocated(cs.itemsite_id, DATE(:schedDate)) - itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, (bomitem_qtyfxd + bomitem_qtyper * :origQtyOrd) * (1 + bomitem_scrap))) AS totalalloc,"
-                      "              qtyAvailable(cs.itemsite_id) AS availableqoh,"
-                      "              qtyOrdered(cs.itemsite_id, DATE(:schedDate)) AS ordered "
-                      "       FROM item, bomitem LEFT OUTER JOIN"
-                      "            itemsite AS cs ON ((cs.itemsite_warehous_id=:warehous_id)"
-                      "                           AND (cs.itemsite_item_id=bomitem_item_id)),"
-                      "            uom,"
-                      "            itemsite AS ps "
-                      "       WHERE ( (bomitem_item_id=item_id)"
-                      "        AND (item_inv_uom_id=uom_id)"
-                      "        AND (bomitem_parent_item_id=ps.itemsite_item_id)"
-                      "        AND (bomitem_rev_id=getActiveRevId('BOM',bomitem_parent_item_id))"
-                      "        AND (:schedDate BETWEEN bomitem_effective AND (bomitem_expires-1))");
+          MetaSQLQuery mql = mqlLoad("salesOrderItem", "bomavail");
 
           if (_item->isConfigured())  // For configured items limit to bomitems associated with selected characteristic values
           {
             QModelIndex charidx;
             QModelIndex valueidx;
-
-            sql +=  "        AND ((bomitem_char_id IS NULL) ";
-
+            QStringList clauses;
+            
+            clauses.append("(bomitem_char_id IS NULL)");
+            
             for (int i = 0; i < _itemchar->rowCount(); i++)
             {
               charidx  = _itemchar->index(i, CHAR_ID);
               valueidx = _itemchar->index(i, CHAR_VALUE);
-              sql     += QString(" OR ((bomitem_char_id=%1) AND (bomitem_value='%2'))").arg(_itemchar->data(charidx, Qt::UserRole).toString()).arg(_itemchar->data(valueidx, Qt::DisplayRole).toString().replace("'", "''"));
+              clauses.append(QString("((bomitem_char_id=%1) AND (bomitem_value='%2'))")
+                             .arg(_itemchar->data(charidx, Qt::UserRole).toString())
+                             .arg(_itemchar->data(valueidx, Qt::DisplayRole).toString().replace("'", "''")));
             }
-
-            sql +=  " ) ";
+            if (clauses.count())
+              params.append("charClause", clauses.join(" OR ").prepend(" AND (").append(")"));
           }
-          sql +=  "        AND (ps.itemsite_id=:itemsite_id) ) ) AS data "
-                  "ORDER BY bomitem_seqnumber;";
-          availability.prepare(sql);
-          availability.bindValue(":itemsite_id", itemsiteid);
-          availability.bindValue(":warehous_id", _warehouse->id());
-          availability.bindValue(":qty", _availabilityQtyOrdered);
-          availability.bindValue(":schedDate", _scheduledDate->date());
-          availability.bindValue(":origQtyOrd", _originalQtyOrd);
-          availability.exec();
+          else
+            params.append("charClause", "");
+          
+          availability = mql.toQuery(params);
           _availability->populate(availability);
           if (availability.lastError().type() != QSqlError::NoError)
           {
@@ -2286,7 +2204,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
     }
     else if (availability.lastError().type() != QSqlError::NoError)
     {
-            systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -2747,18 +2665,9 @@ void salesOrderItem::sHandleSupplyOrder()
               ordq.bindValue(":wo_id", _supplyOrderId);
               ordq.bindValue(":qty", valqty);
               ordq.exec();
-              if (ordq.first())
+              if (ErrorReporter::error(QtCriticalMsg, this, tr("Change Work Order Quantity"),
+                                            ordq, __FILE__, __LINE__))
               {
-                int result = ordq.value("result").toInt();
-                if (result < 0)
-                {
-                  systemError(this, storedProcErrorLookup("changeWoQty", result), __FILE__, __LINE__);
-                  return;
-                }
-              }
-              else if (ordq.lastError().type() != QSqlError::NoError)
-              {
-                systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
                 return;
               }
             }
@@ -3564,6 +3473,7 @@ void salesOrderItem::sPopulateOrderInfo()
     //  connect(_supplyOrderDueDate,SIGNAL(newDate(const QDate &)),       this, SLOT(sHandleSupplyOrder()));
     connect(_supplyOverridePrice,SIGNAL(editingFinished()),           this, SLOT(sHandleSupplyOrder()));
     connect(_supplyDropShip,    SIGNAL(toggled(bool)),                this, SLOT(sHandleSupplyOrder()));
+    _supplyConnectionsCache = true;
   }
   else
   {
@@ -3922,6 +3832,7 @@ void salesOrderItem::populate()
           "       coitem_promdate AS promdate,"
           "       coitem_substitute_item_id, coitem_prcost,"
           "       qtyAtShipping(coitem_id) AS qtyatshipping,"
+          "       kitAtShipping(coitem_id) AS kitatshipping,"
           "       coitem_taxtype_id,"
           "       coitem_cos_accnt_id, coitem_rev_accnt_id, "
           "       coitem_warranty, coitem_qtyreserved, locale_qty_scale, "
@@ -3957,7 +3868,7 @@ void salesOrderItem::populate()
             "       quitem_price_invuomratio AS price_invuomratio,"
             "       quitem_promdate AS promdate,"
             "       -1 AS coitem_substitute_item_id, quitem_prcost AS coitem_prcost,"
-            "       0.0 AS qtyatshipping,"
+            "       0.0 AS qtyatshipping, 0.0 AS kitatshipping,"
             "       quitem_taxtype_id AS coitem_taxtype_id, quitem_dropship, quitem_itemsrc_id"
             "       locale_qty_scale, quhead_number AS ordnumber "
             "  FROM item, uom, quhead, locale "
@@ -4076,8 +3987,10 @@ void salesOrderItem::populate()
     _warehouse->setId(item.value("warehous_id").toInt());
     _warehouse->setEnabled(false);
 
+    _qtyatshipping = item.value("qtyatshipping").toDouble() + item.value("qtyshipped").toDouble();
+    double _kitatshipping = item.value("kitatshipping").toDouble();
     if ( (cView != _mode) && (item.value("coitem_status").toString() == "O") )
-      _cancel->setEnabled((item.value("qtyshipped").toDouble()==0.0) && (item.value("qtyatshipping").toDouble()==0.0));
+      _cancel->setEnabled((_qtyatshipping + _kitatshipping)==0.0);
     else
       _cancel->setEnabled(false);
   }
@@ -4154,23 +4067,23 @@ void salesOrderItem::sNext()
 
   if (ISQUOTE(_mode))
     salesNext.prepare("SELECT a.quitem_id AS id, 0 AS sub"
-              "  FROM quitem AS a, quitem as b"
-              " WHERE ((a.quitem_quhead_id=b.quitem_quhead_id)"
-              "   AND  (a.quitem_linenumber > b.quitem_linenumber)"
-              "   AND  (b.quitem_id=:id))"
-              " ORDER BY a.quitem_linenumber"
-              " LIMIT 1;");
+                      "  FROM quitem AS a, quitem as b"
+                      " WHERE ((a.quitem_quhead_id=b.quitem_quhead_id)"
+                      "   AND  (a.quitem_linenumber > b.quitem_linenumber)"
+                      "   AND  (b.quitem_id=:id))"
+                      " ORDER BY a.quitem_linenumber"
+                      " LIMIT 1;");
   else
     salesNext.prepare("SELECT a.coitem_id AS id, a.coitem_subnumber AS sub"
-              "  FROM coitem AS a, coitem AS b"
-              " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
-	      "   AND  (a.coitem_status <> 'X')"
-              "   AND ((a.coitem_linenumber > b.coitem_linenumber)"
-              "    OR ((a.coitem_linenumber = b.coitem_linenumber)"
-              "   AND  (a.coitem_subnumber > b.coitem_subnumber)))"
-              "   AND  (b.coitem_id=:id))"
-              " ORDER BY a.coitem_linenumber, a.coitem_subnumber"
-              " LIMIT 1;");
+                      "  FROM coitem AS a, coitem AS b"
+                      " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
+                      "   AND  (a.coitem_status <> 'X')"
+                      "   AND ((a.coitem_linenumber > b.coitem_linenumber)"
+                      "    OR ((a.coitem_linenumber = b.coitem_linenumber)"
+                      "   AND  (a.coitem_subnumber > b.coitem_subnumber)))"
+                      "   AND  (b.coitem_id=:id))"
+                      " ORDER BY a.coitem_linenumber, a.coitem_subnumber"
+                      " LIMIT 1;");
   salesNext.bindValue(":id", _soitemid);
   salesNext.exec();
   if (salesNext.first())
@@ -4421,11 +4334,18 @@ void salesOrderItem::sCancel()
 
   clear();
   prepare();
-  _prev->setEnabled(true);
   _item->setFocus();
 
   _modified  = false;
   _canceling = false;
+  if (_prev->isEnabled())
+  {
+    sPrev();
+  }
+  else
+  {
+    sNext();
+  }
 }
 
 void salesOrderItem::sLookupTax()
@@ -4472,8 +4392,99 @@ void salesOrderItem::sTaxDetail()
   }
 }
 
+void salesOrderItem::sPopulateUOM()
+{
+  if (_item->id() != -1)
+  {
+    // Get list of active, valid Selling UOMs
+    MetaSQLQuery muom = mqlLoad("uoms", "item");
+    
+    ParameterList params;
+    params.append("uomtype", "Selling");
+    params.append("item_id", _item->id());
+    
+    // Include Global UOMs
+    if (_privileges->check("MaintainUOMs"))
+    {
+      params.append("includeGlobal", true);
+      params.append("global", tr("-Global"));
+    }
+    
+    // Also have to factor UOMs previously used on Sales Order/Quote now inactive
+    if (_soitemid != -1)
+    {
+      XSqlQuery souom;
+      if (ISORDER(_mode))
+        souom.prepare("SELECT coitem_qty_uom_id AS qtyuomid,"
+                      "       coitem_price_uom_id AS priceuomid "
+                      "  FROM coitem"
+                      " WHERE(coitem_id=:soitem_id);");
+      else
+        souom.prepare("SELECT quitem_qty_uom_id AS qtyuomid,"
+                      "       quitem_price_uom_id AS priceuomid "
+                      "  FROM quitem"
+                      " WHERE(quitem_id=:soitem_id);");
+      souom.bindValue(":soitem_id", _soitemid);
+      souom.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Sales Order UOMs"),
+                               souom, __FILE__, __LINE__))
+        return;
+      else if (souom.first())
+      {
+        params.append("uom_id", souom.value("qtyuomid"));
+        params.append("uom_id2", souom.value("priceuomid"));
+      }
+    }
+
+    XSqlQuery uom = muom.toQuery(params);
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting UOMs"),
+                             uom, __FILE__, __LINE__))
+      return;
+    
+    int saveqtyuomid = _qtyUOM->id();
+    int savepriceuomid = _priceUOM->id();
+    disconnect(_qtyUOM,   SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+    disconnect(_priceUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+    _qtyUOM->populate(uom);
+    _priceUOM->populate(uom);
+    _qtyUOM->setId(saveqtyuomid);
+    _priceUOM->setId(savepriceuomid);
+    connect(_qtyUOM,   SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+    connect(_priceUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+  }
+}
+    
 void salesOrderItem::sQtyUOMChanged()
 {
+  // Check for Global UOM Conversion that must be setup for Item
+  if (_qtyUOM->code() == "G")
+  {
+    if (QMessageBox::question(this, tr("Use Global UOM?"),
+                              tr("<p>This Global UOM Conversion is not setup for this Item."
+                                 "<p>Do you want to add this UOM conversion to this Item?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+    {
+      // create itemuomconv and itemuom
+      XSqlQuery adduom;
+      adduom.prepare("SELECT createItemUomConv(:item_id, :uom_id, :uom_type) AS result;");
+      adduom.bindValue(":item_id", _item->id());
+      adduom.bindValue(":uom_id", _qtyUOM->id());
+      adduom.bindValue(":uom_type", "Selling");
+      adduom.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Creating Item UOM Conv"),
+                               adduom, __FILE__, __LINE__))
+        return;
+      
+      // repopulate uom comboboxes
+      sPopulateUOM();
+    }
+    else
+    {
+      _qtyUOM->setId(_invuomid);
+    }
+  }
+  
   if (_qtyUOM->id() == _invuomid)
   {
     _qtyinvuomratio = 1.0;
@@ -4509,7 +4520,6 @@ void salesOrderItem::sQtyUOMChanged()
   else
     _priceUOM->setEnabled(true);
   _priceUOM->setId(_qtyUOM->id());
-//  sCalculateExtendedPrice();
   sDeterminePrice(true);
 
   if (_qtyOrdered->toDouble() != (double)qRound(_qtyOrdered->toDouble()) &&
@@ -4529,6 +4539,34 @@ void salesOrderItem::sPriceUOMChanged()
   if (_priceUOM->id() == -1 || _qtyUOM->id() == -1)
     return;
 
+  // Check for Global UOM Conversion that must be setup for Item
+  if (_priceUOM->code() == "G")
+  {
+    if (QMessageBox::question(this, tr("Use Global UOM?"),
+                              tr("<p>This Global UOM Conversion is not setup for this Item."
+                                 "<p>Do you want to add this UOM conversion to this Item?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+    {
+      XSqlQuery adduom;
+      adduom.prepare("SELECT createItemUomConv(:item_id, :uom_id, :uom_type) AS result;");
+      adduom.bindValue(":item_id", _item->id());
+      adduom.bindValue(":uom_id", _priceUOM->id());
+      adduom.bindValue(":uom_type", "Selling");
+      adduom.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Creating Item UOM Conv"),
+                               adduom, __FILE__, __LINE__))
+        return;
+      
+      // repopulate uom comboboxes
+      sPopulateUOM();
+    }
+    else
+    {
+      _priceUOM->setId(_invuomid);
+    }
+  }
+  
   if (_priceUOM->id() == _invuomid)
     _priceinvuomratio = 1.0;
   else
@@ -4632,7 +4670,7 @@ void salesOrderItem::sHandleButton()
   else if (_historySalesButton->isChecked())
     _historyStack->setCurrentWidget(_historySalesPage);
 
-  if ((_item->itemType() == "K"))
+  if (ISORDER(_mode) && _item->itemType() == "K")
   {
     int lineNum, headId;
     XSqlQuery firstQry;

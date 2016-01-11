@@ -143,13 +143,15 @@ void cashReceiptsEditList::sDelete()
     int result = cashDelete.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("deleteCashRcpt", result));
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Cash Receipt Entry"),
+                             storedProcErrorLookup("deleteCashRcpt", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (cashDelete.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Cash Receipt Entry"),
+                                cashDelete, __FILE__, __LINE__))
   {
-    systemError(this, cashDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();
@@ -181,9 +183,9 @@ void cashReceiptsEditList::sPost()
   cashPost.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
   if (cashPost.first())
     journalNumber = cashPost.value("journalnumber").toInt();
-  else if (cashPost.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt Entry"),
+                                cashPost, __FILE__, __LINE__))
   {
-    systemError(this, cashPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -222,16 +224,17 @@ void cashReceiptsEditList::sPost()
       int result = cashPost.value("result").toInt();
       if (result < 0)
       {
-        systemError(this, storedProcErrorLookup("postCashReceipt", result),
-                    __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt Entry"),
+                               storedProcErrorLookup("postCashReceipt", result),
+                               __FILE__, __LINE__);
         tx.exec("ROLLBACK;");
         return;
       }
     }
-    else if (cashPost.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt Entry"),
+                                  cashPost, __FILE__, __LINE__))
     {
-      systemError(this, cashPost.lastError().databaseText(), __FILE__, __LINE__);
-      tx.exec("ROLLBACK;");
+      tx.exec("ROLLBACK");
       return;
     }
   }

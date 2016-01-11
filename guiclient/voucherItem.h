@@ -52,7 +52,7 @@ private:
     int _taxzoneid;
     bool _inTransaction;
     bool _saved;
-    double _distamount;
+    double _freighttax;
     QString _rejectedMsg;
 };
 

@@ -175,8 +175,7 @@ void XComboBox::init()
   _data = new XComboBoxPrivate(this);
 
   setAllowNull(false);
-  setMaximumWidth(200);
-
+  setSizeAdjustPolicy(AdjustToContents);
   connect(this, SIGNAL(activated(int)), this, SLOT(sHandleNewIndex(int)));
 
 #ifdef Q_OS_MAC
@@ -217,6 +216,7 @@ void XComboBox::init()
   insertEditor(CustomerGroups,"customerGroups","MaintainCustomerGroups");
   insertEditor(CustomerTypes,"customerTypes","MaintainCustomerTypes");
   insertEditor(EmployeeCommentTypes,"commentTypes","MaintainCommentTypes");
+  insertEditor(ExchangeRateCommentTypes,"commentTypes","MaintainCommentTypes");
   insertEditor(ExpenseCategories,"expenseCategories","MaintainCustomerTypes");
   insertEditor(FinancialLayouts,"financialLayouts","MaintainFinancialLayouts");
   insertEditor(FiscalYears,"accountingYearPeriods","MaintainAccountingPeriods");
@@ -766,6 +766,14 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
+    case ExchangeRateCommentTypes:
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
+                  "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
+                  "              JOIN source ON (source_id=cmnttypesource_source_id) "
+                  "WHERE (source_name='FX')"
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
+      break;
+
     case IncidentCommentTypes:
       query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
@@ -1183,10 +1191,6 @@ void XComboBox::setType(XComboBoxTypes pType)
   }
 
   populate(query);
-
-  // Resize combobox _selection_view_ to fit retrieved contents
-  int _width = this->minimumSizeHint().width();
-  view()->setMinimumWidth(_width);
 
   switch (pType)
   {

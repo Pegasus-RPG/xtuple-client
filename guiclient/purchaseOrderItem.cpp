@@ -19,7 +19,7 @@
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "mqlutil.h"
-#include "taxDetail.h"
+#include "taxBreakdown.h"
 #include "itemCharacteristicDelegate.h"
 #include "itemSourceSearch.h"
 #include "itemSourceList.h"
@@ -58,6 +58,7 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   connect(_listPrices, SIGNAL(clicked()), this, SLOT(sVendorListPrices()));
   connect(_taxLit, SIGNAL(leftClickedURL(QString)), this, SLOT(sTaxDetail()));  // new slot added for tax url //
   connect(_extendedPrice, SIGNAL(valueChanged()), this, SLOT(sCalculateTax()));  // new slot added for price //
+  connect(_freight, SIGNAL(valueChanged()), this, SLOT(sCalculateTax()));  // new slot added for line freight //
   connect(_taxtype, SIGNAL(newID(int)), this, SLOT(sCalculateTax()));            // new slot added for taxtype //
 
   _bomRevision->setMode(RevisionLineEdit::Use);
@@ -136,10 +137,6 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
-  bool     haveQty  = false;
-  bool     haveDate = false;
-
-
 
   param = pParams.value("vend_id", &valid);
   if (valid)
@@ -253,7 +250,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
     }
 
     populate();
-	sCalculateTax();
+    sCalculateTax();
   }
   // connect here and not in the .ui to avoid timing issues at initialization
   connect(_unitPrice, SIGNAL(valueChanged()), this, SLOT(sPopulateExtPrice()));
@@ -377,15 +374,12 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
 
     if (_item->isValid())
       sDeterminePrice();
-
-    haveQty = true;
   }
 
   param = pParams.value("dueDate", &valid);
   if (valid)
   {
     _dueDate->setDate(param.toDate());
-    haveDate = true;
   }
 
   param = pParams.value("prj_id", &valid);
@@ -880,6 +874,8 @@ void purchaseOrderItem::sSave()
     clear();
     prepare();
     _item->setFocus();
+    if (_orderRefresh->isChecked())
+      omfgThis->sPurchaseOrdersUpdated(_poheadid, true);
   }
   else
     done(_poitemid);
@@ -1253,41 +1249,48 @@ void purchaseOrderItem::sVendorListPrices()
 
 void purchaseOrderItem::sCalculateTax()
 {
-  XSqlQuery calcq;
-
-  calcq.prepare("SELECT calculateTax(pohead_taxzone_id,:taxtype_id,pohead_orderdate,pohead_curr_id,ROUND(:ext,2)) AS tax "
+  QString sql("SELECT COALESCE(calculateTax(pohead_taxzone_id,<? value('taxtype_id') ?>,pohead_orderdate,pohead_curr_id,ROUND(<? value('ext') ?>,2)),0.00) + "
+                "       <? if exists('freight') ?> "
+                "       COALESCE(calculateTax(pohead_taxzone_id,getfreighttaxtypeid(),pohead_orderdate,pohead_curr_id,ROUND(COALESCE(<? value('freight') ?>,0.00),2)), 0.00) "
+                "       <? else ?> 0 <? endif ?> AS tax "
                 "FROM pohead "
-                "WHERE (pohead_id=:pohead_id); " );
+                "WHERE (pohead_id=<? value('pohead_id') ?>); " );
 
-  calcq.bindValue(":pohead_id", _poheadid);
-  calcq.bindValue(":taxtype_id", _taxtype->id());
-  calcq.bindValue(":ext", _extendedPrice->localValue());
+  MetaSQLQuery  mql(sql);
+  ParameterList params;
+  params.append("pohead_id", _poheadid);
+  params.append("taxtype_id", _taxtype->id());
+  params.append("ext", _extendedPrice->localValue());
+  if (_freight->localValue() > 0)
+    params.append("freight", _freight->localValue());
 
-  calcq.exec();
+  XSqlQuery calcq = mql.toQuery(params);
   if (calcq.first())
     _tax->setLocalValue(calcq.value("tax").toDouble());
-
-  else if (calcq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("P/O Tax Calculation"),
+                         calcq, __FILE__, __LINE__))
     return;
-  } 
 }
 
-void purchaseOrderItem::sTaxDetail()    // new function added from raitem
+void purchaseOrderItem::sTaxDetail()
 {
-  taxDetail newdlg(this, "", true);
-  ParameterList params;
-  params.append("taxzone_id",   _taxzoneid);
-  params.append("taxtype_id",  _taxtype->id());
-  params.append("date", _tax->effective());
-  params.append("curr_id", _tax->id());
-  params.append("subtotal", _extendedPrice->localValue());
-  //params.append("readOnly");
+  if (_poitemid < 0)
+    return;
 
-  if (newdlg.set(params) == NoError && newdlg.exec())
+  if (_mode == cNew)
   {
-    if (_taxtype->id() != newdlg.taxtype())
-      _taxtype->setId(newdlg.taxtype());
+    QMessageBox::information( this, tr("Tax Breakdown"),
+                    tr("<p>Please save the Purchase Order Item before viewing the tax breakdown."));
+    return;
   }
+
+  ParameterList params;
+  params.append("order_id", _poitemid);
+  params.append("order_type", "PI");
+  if (_mode == cView)
+    params.append("mode", "view");
+
+  taxBreakdown newdlg(this, "", true);
+  newdlg.set(params);
+  newdlg.exec();
 }

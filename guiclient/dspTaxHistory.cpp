@@ -18,6 +18,7 @@
 
 #include "currdisplay.h"
 #include "mqlutil.h"
+#include "errorReporter.h"
 
 dspTaxHistory::dspTaxHistory(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -97,7 +98,7 @@ enum SetResponse dspTaxHistory::set(const ParameterList &pParams)
     
   param = pParams.value("endDate", &valid);
   if (valid)
-    _dates->setStartDate(param.toDate());
+    _dates->setEndDate(param.toDate());
 
   if (pParams.inList("run"))
   {
@@ -138,7 +139,10 @@ bool dspTaxHistory::setParams(ParameterList &params)
     params.append("cashbasedtax", true);
   
   if (_summary->isChecked())
+  {
     params.append("type", "summary");
+    params.append("summary");
+  }
   else
     params.append("type", "detail");
     
@@ -181,9 +185,6 @@ bool dspTaxHistory::setParams(ParameterList &params)
     }
   }
     
-  if (_summary->isChecked())
-    params.append("summary");
-    
   if ((_showOnlyGroup->isCheckable() && _showOnlyGroup->isChecked()) || 
        _summary->isChecked())
   {
@@ -224,6 +225,7 @@ bool dspTaxHistory::setParams(ParameterList &params)
   params.append("sales",tr("Sales"));
   params.append("purchase",tr("Purchase"));
   params.append("voucher",tr("Voucher"));
+  params.append("check",tr("Misc. Check"));
 
   return true;
 }
@@ -264,9 +266,9 @@ void dspTaxHistory::sFillList()
     _taxsum->populate(dspFillList);
   else
     _taxdet->populate(dspFillList);
-  if (dspFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Tax History Information"),
+                                dspFillList, __FILE__, __LINE__))
   {
-    systemError(this, dspFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -329,13 +331,14 @@ void dspTaxHistory::sHandleFilter()
     if (_sales->isChecked())
     {
       _taxsum->addColumn(tr("Sales %1").arg(base),        _bigMoneyColumn,    Qt::AlignRight,  true,  "salesbase"  );
-      _taxsum->addColumn(tr("Sales Freight %1").arg(base),_bigMoneyColumn,    Qt::AlignRight,  true,  "freightbase"  );
+      _taxsum->addColumn(tr("Sales Freight %1").arg(base),_bigMoneyColumn,    Qt::AlignRight,  true,  "salesfreightbase"  );
       _taxsum->addColumn(tr("Freight Taxed"),             _itemColumn,        Qt::AlignCenter, true, "freighttax"  );
       _taxsum->addColumn(tr("Sales Tax %1").arg(base),    _bigMoneyColumn,    Qt::AlignRight,  true,  "salestaxbase"  );
     }
     if (_purchases->isChecked())
     {
       _taxsum->addColumn(tr("Purchases %1").arg(base),    _bigMoneyColumn,    Qt::AlignRight,  true,  "purchasebase"  );
+      _taxsum->addColumn(tr("Purchase Freight %1").arg(base),_bigMoneyColumn, Qt::AlignRight,  true,  "purchasefreightbase"  );
       _taxsum->addColumn(tr("Purchase Tax %1").arg(base), _bigMoneyColumn,    Qt::AlignRight,  true,  "purchasetaxbase"  );
     }
     if (_sales->isChecked() && _purchases->isChecked())

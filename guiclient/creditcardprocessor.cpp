@@ -9,6 +9,7 @@
  */
 
 #include <QApplication>
+#include <QDir>
 #include <QFile>
 #include <QMessageBox>
 #include <QProcess>
@@ -327,6 +328,52 @@ CreditCardProcessor::CreditCardProcessor()
   _cvvCodes.append(new FraudCheckResult('S', NotAvail,     tr("CVV should be on the card but was not supplied")));
   _cvvCodes.append(new FraudCheckResult('U', Unsupported,  tr("Card issuing bank was not certified for CVV")));
   _cvvCodes.append(new FraudCheckResult('X', Unsupported,  tr("Card Verification is not supported for this processor or card type")));
+
+  QSslConfiguration config = QSslConfiguration::defaultConfiguration();
+  config.setProtocol(QSsl::SecureProtocols);
+  QList<QSslCertificate> certs = config.caCertificates();
+  QDir certDir(QApplication::applicationDirPath() + "/certificates");
+  if (DEBUG) qDebug() << "looking for certificates in" << certDir;
+  foreach (QString filename, certDir.entryList(QDir::Files | QDir::Readable)) {
+    if (DEBUG) qDebug() << "checking" << filename;
+    QFile certfile(certDir.path() + "/" + filename);
+    if (certfile.open(QIODevice::ReadOnly))
+    {
+      if (DEBUG) qDebug() << "opening" << filename;
+      QString suffix = QFileInfo(certfile).suffix().toLower();
+      QSslCertificate *cert = new QSslCertificate(&certfile, QSsl::Pem);
+#if QT_VERSION < 0x050000
+      if (cert && ! cert->isValid()) {
+        delete cert;
+        cert = new QSslCertificate(&certfile, QSsl::Der);
+      }
+      if (cert->isValid()) {
+        certs.append(*cert);
+        if (DEBUG) qDebug() << "adding certificate" << cert;
+      }
+#else
+      bool isValid;
+      QDateTime currentDate = QDateTime::currentDateTime();
+      //verify the certificate falls within the active date range and is not blacklisted
+      isValid = cert->effectiveDate() <= currentDate && currentDate <= cert->expiryDate() && !cert->isBlacklisted();
+      if(cert && !isValid) {
+          delete cert;
+          cert = new QSslCertificate(&certfile, QSsl::Der);
+          isValid = cert->effectiveDate() <= currentDate && currentDate <= cert->expiryDate() && !cert->isBlacklisted();
+      }
+      if(cert && isValid) {
+          certs.append(*cert);
+          if(DEBUG) qDebug() << "adding certificate" << cert;
+      }
+#endif
+    }
+    else
+      qDebug() << "opening" << filename << "failed:" << certfile.errorString()
+               << certfile.error();
+    certfile.close();
+  }
+  config.setCaCertificates(certs);
+  QSslConfiguration::setDefaultConfiguration(config);
 }
 
 CreditCardProcessor::~CreditCardProcessor()
@@ -1340,7 +1387,7 @@ int CreditCardProcessor::reversePreauthorized(const double pamount, const int pc
                    "    cashrcpt_fundstype=ccpay_cardtype,"
                    "    cashrcpt_bankaccnt_id=ccbank_bankaccnt_id,"
                    "    cashrcpt_distdate=CURRENT_DATE,"
-                   "    cashrcpt_notes=cashrcpt || E'\\n' || :notes, "
+                   "    cashrcpt_notes=cashrcpt || '\n' || :notes, "
                    "    cashrcpt_curr_id=:curr_id,"
                    "    cashrcpt_usecustdeposit=:custdeposit "
                    "  FROM ccpay"
@@ -1372,9 +1419,7 @@ int CreditCardProcessor::reversePreauthorized(const double pamount, const int pc
                     "    AND (payco_cohead_id=:payco_cohead_id));");
     else
     {
-      cashq.prepare("INSERT INTO payco (payco_ccpay_id, payco_cohead_id, payco_amount, payco_curr_id) "
-                    " VALUES (:payco_ccpay_id, :payco_cohead_id,"
-                    "  :payco_amount, :payco_curr_id);");
+      cashq.prepare(_paycoInsertStmt);
       cashq.bindValue(":payco_amount",    pamount);
       cashq.bindValue(":payco_curr_id",   pcurrid);
     }
@@ -1595,14 +1640,13 @@ int CreditCardProcessor::checkCreditCard(const int pccid, const QString &pcvv, Q
     _errorMsg = errorMsg(-98);
     return -98;
   }
-  else if (pcvv.isEmpty())
+  else if (pcvv.isEmpty() && _metrics->value("CCCVVCheck").contains(QRegExp("^[FW]$")))
   {
     if (QMessageBox::question(0,
 	      tr("Confirm No CVV Code"),
               tr("<p>You must confirm that you wish to proceed "
                  "without a CVV code. Would you like to continue?"),
-              QMessageBox::Yes | QMessageBox::Default,
-              QMessageBox::No  | QMessageBox::Escape ) == QMessageBox::No)
+              QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
     {
       _errorMsg = errorMsg(-75);
       return -75;

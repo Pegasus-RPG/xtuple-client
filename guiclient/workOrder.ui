@@ -126,7 +126,7 @@ to be bound by its terms.</comment>
           <item>
            <widget class="WComboBox" name="_warehouse">
             <property name="type">
-             <enum>WComboBox::Supply</enum>
+             <enum>WComboBox::WOSupply</enum>
             </property>
            </widget>
           </item>
@@ -559,7 +559,7 @@ to be bound by its terms.</comment>
            <property name="title">
             <string>Show</string>
            </property>
-           <layout class="QGridLayout" name="gridLayout">
+           <layout class="QGridLayout" name="gridLayout_34">
             <item row="0" column="0">
              <layout class="QHBoxLayout" name="horizontalLayout">
               <property name="spacing">

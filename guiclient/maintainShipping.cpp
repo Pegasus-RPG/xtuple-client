@@ -242,7 +242,7 @@ void maintainShipping::sPrintShippingForm()
 void maintainShipping::sIssueStock()
 {
   ParameterList params;
-  if (_ship->currentItem()->rawValue("ordertype").toString() == "SO")
+  if (_ship->currentItem()->rawValue("ordertype").toString() == "SO Item")
 	  params.append("sohead_id", _ship->id());
   else if (_ship->currentItem()->rawValue("ordertype").toString() == "TO")
     params.append("tohead_id", _ship->id());

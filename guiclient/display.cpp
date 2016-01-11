@@ -29,6 +29,7 @@
 #include <previewdialog.h>
 
 #include "../scriptapi/parameterlistsetup.h"
+#include "errorReporter.h"
 
 class displayPrivate : public Ui::display
 {
@@ -709,6 +710,11 @@ void display::sFillList()
   sFillList(ParameterList());
 }
 
+void display::sFillList(int, bool)
+{
+  sFillList(ParameterList());
+}
+
 void display::sFillList(ParameterList pParams, bool forceSetParams)
 {
   emit fillListBefore();
@@ -723,14 +729,16 @@ void display::sFillList(ParameterList pParams, bool forceSetParams)
   MetaSQLQuery mql = MQLUtil::mqlLoad(_data->metasqlGroup, _data->metasqlName, errorString, &ok);
   if(!ok)
   {
-    systemError(this, errorString, __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Information"),
+                         errorString, __FILE__, __LINE__);
     return;
   }
   XSqlQuery xq = mql.toQuery(pParams);
   _data->_list->populate(xq, itemid, _data->_useAltId);
   if (xq.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, xq.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Information"),
+                           xq, __FILE__, __LINE__);
     return;
   }
   emit fillListAfter();

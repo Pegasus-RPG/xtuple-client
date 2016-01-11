@@ -82,6 +82,7 @@ public slots:
     virtual void sPreview();
     virtual void sPreview(ParameterList, bool = false);
     virtual void sFillList();
+    virtual void sFillList(int, bool = false);
     virtual void sFillList(ParameterList, bool = false);
     virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
 

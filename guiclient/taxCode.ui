@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>421</height>
+    <height>508</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,19 +25,6 @@ to be bound by its terms.</comment>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QLabel" name="_codeLit">
-         <property name="text">
-          <string>Code:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy">
-          <cstring>_code</cstring>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="1" rowspan="2">
         <layout class="QVBoxLayout">
          <property name="spacing">
@@ -104,6 +91,19 @@ to be bound by its terms.</comment>
          </property>
         </widget>
        </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="_codeLit">
+         <property name="text">
+          <string>Code:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy">
+          <cstring>_code</cstring>
+         </property>
+        </widget>
+       </item>
        <item row="2" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
@@ -153,6 +153,61 @@ to be bound by its terms.</comment>
           </spacer>
          </item>
         </layout>
+       </item>
+       <item row="6" column="1">
+        <widget class="QGroupBox" name="_autoApplyMemo">
+         <property name="toolTip">
+          <string>Tax automatically applied to Memo depending on Tax Zone</string>
+         </property>
+         <property name="title">
+          <string>Auto Apply to Memos</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="QCheckBox" name="_autoAP">
+              <property name="toolTip">
+               <string>Taxation applicable to A/P Memos</string>
+              </property>
+              <property name="text">
+               <string>A/P Memos</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_autoAR">
+              <property name="toolTip">
+               <string>Taxation applicable to A/R Memos</string>
+              </property>
+              <property name="text">
+               <string>A/R Memos</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item row="4" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -325,7 +380,16 @@ to be bound by its terms.</comment>
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
        <number>0</number>
       </property>
       <item row="0" column="0">

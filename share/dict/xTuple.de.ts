@@ -1207,6 +1207,150 @@ anschrift</translation>
         <source>User Account</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>[Pick a Document Type]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation type="unfinished">Adresse</translation>
+    </message>
+    <message>
+        <source>Breeder BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Breeder BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account</source>
+        <translation type="unfinished">Konto</translation>
+    </message>
+    <message>
+        <source>Contact</source>
+        <translation type="unfinished">Kontakt</translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">Kunde</translation>
+    </message>
+    <message>
+        <source>Employee</source>
+        <translation type="unfinished">Mitarbeiter/-in</translation>
+    </message>
+    <message>
+        <source>Incident</source>
+        <translation type="unfinished">Zwischenfall</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation type="unfinished">Artikel</translation>
+    </message>
+    <message>
+        <source>Item Site</source>
+        <translation type="unfinished">Artikelstandort</translation>
+    </message>
+    <message>
+        <source>Item Source</source>
+        <translation type="unfinished">Artikelquelle</translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lot/Serial</source>
+        <translation type="unfinished">Charge/Serie</translation>
+    </message>
+    <message>
+        <source>Opportunity</source>
+        <translation type="unfinished">Verkaufschance</translation>
+    </message>
+    <message>
+        <source>Project</source>
+        <translation type="unfinished">Projekt</translation>
+    </message>
+    <message>
+        <source>Purchase Order</source>
+        <translation type="unfinished">Einkaufsauftrag</translation>
+    </message>
+    <message>
+        <source>Purchase Order Item</source>
+        <translation type="unfinished">Einkaufsauftrag Artikel</translation>
+    </message>
+    <message>
+        <source>Return Authorization</source>
+        <translation type="unfinished">Rückgabe-Berechtigung</translation>
+    </message>
+    <message>
+        <source>Return Authorization Item</source>
+        <translation type="unfinished">Rückgabe-Berechtigung Artikel</translation>
+    </message>
+    <message>
+        <source>Quote</source>
+        <translation type="unfinished">Angebot</translation>
+    </message>
+    <message>
+        <source>Quote Item</source>
+        <translation type="unfinished">Angebotsartikel</translation>
+    </message>
+    <message>
+        <source>Sales Order</source>
+        <translation type="unfinished">Verkaufsauftrag</translation>
+    </message>
+    <message>
+        <source>Sales Order Item</source>
+        <translation type="unfinished">Verkaufsauftrag Artikel</translation>
+    </message>
+    <message>
+        <source>Time Attendance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To-Do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order</source>
+        <translation type="unfinished">Transfer-Auftrag</translation>
+    </message>
+    <message>
+        <source>Transfer Order Item</source>
+        <translation type="unfinished">Transfer-Auftrag Artikel</translation>
+    </message>
+    <message>
+        <source>Vendor</source>
+        <translation type="unfinished">Anbieter</translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished">Standort</translation>
+    </message>
+    <message>
+        <source>Work Order</source>
+        <translation type="unfinished">Fertigungsauftrag</translation>
+    </message>
+    <message>
+        <source>Project Task</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConfigAuthorizeDotNetProcessor</name>
@@ -2158,7 +2302,7 @@ Was möchten Sie tun?</translation>
     </message>
     <message>
         <source>Email</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">eMail</translation>
     </message>
     <message>
         <source>Address</source>
@@ -3864,14 +4008,6 @@ Bitte loggen Sie sich sofort aus und kontaktieren Sie Ihren Systemadministrator.
         <translation>%1::sSearch() noch nicht definiert</translation>
     </message>
     <message>
-        <source>Order locked</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This order is being edited in another window or by another user.  Please try again later.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Orders</source>
         <translation>Aufträge</translation>
     </message>
@@ -3894,6 +4030,10 @@ Bitte loggen Sie sich sofort aus und kontaktieren Sie Ihren Systemadministrator.
     <message>
         <source>Order %1 has an invalid status %2.</source>
         <translation>Auftrag %1 hat einen ungültigen Status %2.</translation>
+    </message>
+    <message>
+        <source>Locking Error</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4470,6 +4610,10 @@ Bitte loggen Sie sich sofort aus und kontaktieren Sie Ihren Systemadministrator.
     </message>
     <message>
         <source>All User Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Counting Users</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8476,7 +8620,7 @@ Wollen Sie diese Änderung wirklich speichern?</translation>
     </message>
     <message>
         <source>Invoice #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rechnung Nr.</translation>
     </message>
     <message>
         <source>Invoice Date</source>
@@ -10755,10 +10899,6 @@ Wollen Sie diese Änderung wirklich speichern?</translation>
         <translation>Vorgabe</translation>
     </message>
     <message>
-        <source>You must enter a value before saving this Item Characteristic.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Item Characteristic</source>
         <translation>Artikeleigenschaft</translation>
     </message>
@@ -10800,6 +10940,10 @@ Wollen Sie diese Änderung wirklich speichern?</translation>
     </message>
     <message>
         <source>Error Getting Characteristic Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a value before saving this Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -15038,7 +15182,7 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>Received</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erhalten</translation>
     </message>
     <message>
         <source>Returned</source>
@@ -22196,7 +22340,7 @@ Möchten Sie die Rechnung trotzdem verbuchen?</translation>
     </message>
     <message>
         <source>Ordered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bestellt</translation>
     </message>
     <message>
         <source>Shipped</source>
@@ -22531,11 +22675,11 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Ordered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bestellt</translation>
     </message>
     <message>
         <source>Unit Price</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Einzelpreis</translation>
     </message>
     <message>
         <source>Ext. Price</source>
@@ -22681,7 +22825,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Doc. #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dok. Nr.</translation>
     </message>
     <message>
         <source>Sales Rep.</source>
@@ -27185,7 +27329,7 @@ Total</source>
     </message>
     <message>
         <source>Unit Price</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Einzelpreis</translation>
     </message>
     <message>
         <source>Edit...</source>
@@ -31833,7 +31977,7 @@ Total</source>
     </message>
     <message>
         <source>Invoice #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rechnung Nr.</translation>
     </message>
     <message>
         <source>Shipping Zone</source>
@@ -31861,7 +32005,7 @@ Total</source>
     </message>
     <message>
         <source>Unit Price</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Einzelpreis</translation>
     </message>
     <message>
         <source>Currency</source>
@@ -31873,7 +32017,7 @@ Total</source>
     </message>
     <message>
         <source>Doc. #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dok. Nr.</translation>
     </message>
     <message>
         <source>Edit...</source>
@@ -32051,7 +32195,7 @@ Total</source>
     </message>
     <message>
         <source>Ordered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bestellt</translation>
     </message>
     <message>
         <source>Scheduled</source>
@@ -34471,7 +34615,7 @@ Total</source>
     </message>
     <message>
         <source>Received</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erhalten</translation>
     </message>
     <message>
         <source>Issued</source>
@@ -35330,7 +35474,7 @@ Total</source>
     </message>
     <message>
         <source>Ordered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bestellt</translation>
     </message>
     <message>
         <source>Work Center</source>
@@ -35438,7 +35582,7 @@ Total</source>
     </message>
     <message>
         <source>Received</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erhalten</translation>
     </message>
     <message>
         <source>Due Date</source>
@@ -46856,11 +47000,11 @@ Sie müssen die Sprachumgebungen dieser Benutzer erneut zuweisen, bevor Sie die 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;The database server is at version %1 but xTuple ERP only supports %2 to %3.&lt;/p&gt;&lt;p&gt;Continue anyway?&lt;/p&gt;</source>
+        <source>Invalid Database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid Database</source>
+        <source>&lt;p&gt;The database server is at version %1 but xTuple ERP only supports from %2 up to but not including %3.&lt;/p&gt;&lt;p&gt;Continue anyway?&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -50679,7 +50823,7 @@ Version %2
     </message>
     <message>
         <source>Total</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Endsumme</translation>
     </message>
     <message>
         <source>Margin</source>
@@ -53423,10 +53567,6 @@ Der Systemadministrator dieses Programms muß das korrigieren, bevor Sie Bezugsb
 <context>
     <name>pricingScheduleAssignment</name>
     <message>
-        <source>Selected Customer Type:</source>
-        <translation type="unfinished">Ausgewählte Kundenart:</translation>
-    </message>
-    <message>
         <source>Cannot Save Pricing Schedule Assignment</source>
         <translation>Kann Zuweisung Preisbildungszeitplan nicht speichern</translation>
     </message>
@@ -53439,10 +53579,6 @@ Der Systemadministrator dieses Programms muß das korrigieren, bevor Sie Bezugsb
         <translation>&lt;p&gt;Diese Zuweisung Preisbildungszeitplan existiert bereits.</translation>
     </message>
     <message>
-        <source>Selected Customer:</source>
-        <translation>Ausgewählter Kunde:</translation>
-    </message>
-    <message>
         <source>Pricing Schedule Assignment</source>
         <translation>Zuweiung Preisbildungszeitplan</translation>
     </message>
@@ -53451,20 +53587,28 @@ Der Systemadministrator dieses Programms muß das korrigieren, bevor Sie Bezugsb
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Selected Customer Ship-To:</source>
-        <translation>Ausgewählter Kunde &apos;Liefern an&apos;:</translation>
-    </message>
-    <message>
-        <source>Selected Cust. Ship-To Pattern:</source>
-        <translation>Ausgewähltes Kunden &apos;Liefern an&apos;-Schema:</translation>
-    </message>
-    <message>
-        <source>Customer Type Pattern:</source>
-        <translation>Kundenart Schema:</translation>
-    </message>
-    <message>
         <source>Pricing Schedule:</source>
         <translation>Preisbildungszeitplan:</translation>
+    </message>
+    <message>
+        <source>Customer Type Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer Ship-To</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer Ship-To Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer Type</source>
+        <translation type="unfinished">Kundenart</translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">Kunde</translation>
     </message>
 </context>
 <context>
@@ -55604,7 +55748,7 @@ Sie können mit diesem Schlüssel keine Produktkategorie erstellen.</translation
     </message>
     <message>
         <source>Total</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Endsumme</translation>
     </message>
 </context>
 <context>
@@ -56261,7 +56405,7 @@ Sie können mit diesem Schlüssel keine Produktkategorie erstellen.</translation
     </message>
     <message>
         <source>Total</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Endsumme</translation>
     </message>
 </context>
 <context>
@@ -57273,6 +57417,14 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
         <source>&lt;p&gt;You must enter a Project for this order item before you may save it.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Refresh the Order Items list immediately on save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh Order</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>purchaseOrderList</name>
@@ -57834,7 +57986,7 @@ Möchten Sie die gewählten Rechnungsdatensätze wirklich löschen?</translation
     </message>
     <message>
         <source>Total</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Endsumme</translation>
     </message>
     <message>
         <source>Copy to Cust./Prospect</source>
@@ -63037,11 +63189,11 @@ Sie müssen diese Rechungsposten erst neu zuweisen, bevor Sie die gewählte Umsa
     </message>
     <message>
         <source>Received</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erhalten</translation>
     </message>
     <message>
         <source>Doc. #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dok. Nr.</translation>
     </message>
     <message>
         <source>Alternate Cost of Sales Account:</source>
@@ -63114,7 +63266,7 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <source>Unit Price</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Einzelpreis</translation>
     </message>
     <message>
         <source>Base Ext. Price</source>
@@ -63202,7 +63354,7 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <source>Invoice #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rechnung Nr.</translation>
     </message>
     <message>
         <source>Vendor Name</source>
@@ -64928,6 +65080,10 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Checking Privileges</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Applying all Credits</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -76908,7 +77064,7 @@ Sie müssen diese Anbieter erst neu zuweisen, bevor Sie die gewählte Anbieterar
     </message>
     <message>
         <source>Unit Price</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Einzelpreis</translation>
     </message>
     <message>
         <source>Amt. To Voucher:</source>

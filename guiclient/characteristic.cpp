@@ -69,7 +69,7 @@ class characteristicPrivate {
                   "  FROM source"
                   "  JOIN pg_class c on source_table = relname AND relkind = 'r'"
                   "  JOIN pg_namespace n on relnamespace = n.oid"
-                  "  JOIN regexp_split_to_table(buildSearchPath(), E',\\s*') sp"
+                  "  JOIN regexp_split_to_table(buildSearchPath(), ',\\s*') sp"
                   "       on nspname = sp"
                   " WHERE source_charass not in ('', 'CT')" // bug 25940
                   " ORDER BY source_descrip;");
@@ -209,6 +209,7 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
       _d->setMode(cView);
       _name->setEnabled(false);
       _search->setEnabled(false);
+      _unique->setEnabled(false);
       _useGroup->setEnabled(false);
       _order->setEnabled(false);
       _mask->setEnabled(false);
@@ -272,11 +273,11 @@ void characteristic::sSave()
     characteristicSave.prepare( "INSERT INTO char "
                "( char_id, char_name, char_options, char_attributes,"
                "  char_notes, char_mask, char_validator, char_type, "
-               "  char_order, char_search ) "
+               "  char_order, char_search, char_unique ) "
                "VALUES "
                "( :char_id, :char_name, :char_options, :char_attributes,"
                "  :char_notes, :char_mask, :char_validator, :char_type, "
-               "  :char_order, :char_search );" );
+               "  :char_order, :char_search, :char_unique );" );
 
     characteristicSave.bindValue(":char_type", _type->currentIndex());
   }
@@ -289,7 +290,8 @@ void characteristic::sSave()
                "    char_mask=:char_mask,"
                "    char_validator=:char_validator, "
                "    char_order=:char_order, "
-               "    char_search=:char_search "
+               "    char_search=:char_search, "
+               "    char_unique=:char_unique "
                "WHERE (char_id=:char_id);" );
 
   characteristicSave.bindValue(":char_id", _d->charid);
@@ -305,6 +307,7 @@ void characteristic::sSave()
     characteristicSave.bindValue(":char_validator",   _validator->currentText());
   characteristicSave.bindValue(":char_order", _order->value());
   characteristicSave.bindValue(":char_search", QVariant(_search->isChecked()));
+  characteristicSave.bindValue(":char_unique", QVariant(_unique->isChecked()));
   characteristicSave.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Characteristic"),
                            characteristicSave, __FILE__, __LINE__))
@@ -366,6 +369,7 @@ void characteristic::populate()
     _type->setEnabled(false);
     _order->setValue(charq.value("char_order").toInt());
     _search->setChecked(charq.value("char_search").toBool());
+    _unique->setChecked(charq.value("char_unique").toBool());
   }
   else if (ErrorReporter::error(QtCriticalMsg, this,
                            tr("Error Getting Characteristic"),
@@ -445,9 +449,9 @@ void characteristic::sDelete()
     QMessageBox::critical(this, tr("Error"), tr("This value is in use and can not be deleted."));
     return;
   }
-  else if (qry.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Characteristic Option"),
+                                qry, __FILE__, __LINE__))
   {
-    systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

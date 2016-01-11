@@ -36,9 +36,27 @@
 const char *_projectStatuses[] = { "P", "O", "C" };
 
 project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
-    : XDialog(parent, name, modal, fl)
+    : XDialog(parent, name, modal, fl),
+      _prjid(-1)
 {
   setupUi(this);
+
+  // populate _projectType only needed once
+  XSqlQuery projectType;
+    projectType.prepare( "SELECT prjtype_id, prjtype_descr FROM prjtype WHERE prjtype_active "
+                         "UNION "
+                         "SELECT prjtype_id, prjtype_descr FROM prjtype "
+                         "JOIN prj ON (prj_prjtype_id=prjtype_id) "
+                         "WHERE (prj_id=:prj_id);" );
+    projectType.bindValue(":prj_id", _prjid);
+    projectType.exec();
+    _projectType->populate(projectType);
+    if (projectType.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, projectType.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
 
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
@@ -46,6 +64,7 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   connect(_buttonBox,     SIGNAL(accepted()),        this, SLOT(sSave()));
   connect(_queryTasks,    SIGNAL(clicked()),         this, SLOT(sFillTaskList()));
   connect(_newTask,       SIGNAL(clicked()),         this, SLOT(sNewTask()));
+  connect(_print,         SIGNAL(clicked()),         this, SLOT(sPrintTasks()));
   connect(_editTask,      SIGNAL(clicked()),         this, SLOT(sEditTask()));
   connect(_viewTask,      SIGNAL(clicked()),         this, SLOT(sViewTask()));
   connect(_deleteTask,    SIGNAL(clicked()),         this, SLOT(sDeleteTask()));
@@ -56,6 +75,11 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   connect(_showPo, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
   connect(_showWo, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
   connect(_showIn, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
+
+  connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillTaskList()));
+  connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sFillTaskList()));
+  connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillTaskList()));
+  connect(omfgThis, SIGNAL(purchaseOrdersUpdated(int, bool)), this, SLOT(sFillTaskList()));
 
   _charass->setType("PROJ");
 
@@ -116,8 +140,6 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   printMenu->addAction(tr("Print Tasks"), this, SLOT(sPrintTasks()));
   printMenu->addAction(tr("Print Orders"), this, SLOT(sPrintOrders()));
   _print->setMenu(printMenu);
-
-  populate();
 }
 
 project::~project()
@@ -200,6 +222,28 @@ enum SetResponse project::set(const ParameterList &pParams)
       connect(_prjtask, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
       connect(_prjtask, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
       connect(_prjtask, SIGNAL(itemSelected(int)), _editTask, SLOT(animateClick()));
+
+      QMenu * newMenu = new QMenu;
+      QAction *menuItem;
+      newMenu->addAction(tr("Task..."), this, SLOT(sNewTask()));
+      newMenu->addSeparator();
+      menuItem = newMenu->addAction(tr("Incident"), this, SLOT(sNewIncident()));
+      menuItem->setEnabled(_privileges->check("MaintainPersonalIncidents") ||
+                       _privileges->check("MaintainAllIncidents"));
+      menuItem = newMenu->addAction(tr("Quote"), this, SLOT(sNewQuotation()));
+      menuItem->setEnabled(_privileges->check("MaintainQuotes"));
+      menuItem = newMenu->addAction(tr("Sales Order"), this, SLOT(sNewSalesOrder()));
+      menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
+      menuItem = newMenu->addAction(tr("Purchase Order"),   this, SLOT(sNewPurchaseOrder()));
+      menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
+      menuItem = newMenu->addAction(tr("Work Order"),   this, SLOT(sNewWorkOrder()));
+      menuItem->setEnabled(_privileges->check("MaintainWorkOrders"));
+      _newTask->setMenu(newMenu);
+
+      QMenu * printMenu = new QMenu;
+      printMenu->addAction(tr("Print Tasks"), this, SLOT(sPrintTasks()));
+      printMenu->addAction(tr("Print Orders"), this, SLOT(sPrintOrders()));
+      _print->setMenu(printMenu);
     }
     else if (param.toString() == "view")
     {
@@ -230,6 +274,11 @@ enum SetResponse project::set(const ParameterList &pParams)
       _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Save));
       _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Cancel));
       _buttonBox->addButton(QDialogButtonBox::Close);
+
+      QMenu * printMenu = new QMenu;
+      printMenu->addAction(tr("Print Tasks"), this, SLOT(sPrintTasks()));
+      printMenu->addAction(tr("Print Orders"), this, SLOT(sPrintOrders()));
+      _print->setMenu(printMenu);
     }
   }
     
@@ -252,6 +301,7 @@ void project::sHandleButtons(bool valid)
 
 void project::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
 {
+  Q_UNUSED(selected);
   QAction *menuItem;
 
   if(_prjtask->altId() == 5)
@@ -412,21 +462,6 @@ void project::populate()
     _recurring->setParent(projectpopulate.value("prj_recurring_prj_id").isNull() ?
                             _prjid : projectpopulate.value("prj_recurring_prj_id").toInt(),
                           "J");
-  }
-
-  XSqlQuery projectType;
-  projectType.prepare( "SELECT prjtype_id, prjtype_descr FROM prjtype WHERE prjtype_active "
-                       "UNION "
-                       "SELECT prjtype_id, prjtype_descr FROM prjtype "
-                       "JOIN prj ON (prj_prjtype_id=prjtype_id) "
-                       "WHERE (prj_id=:prj_id);" );
-  projectType.bindValue(":prj_id", _prjid);
-  projectType.exec();
-  _projectType->populate(projectType);
-  if (projectType.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, projectType.lastError().databaseText(), __FILE__, __LINE__);
-    return;
   }
 
   sFillTaskList();
@@ -771,32 +806,38 @@ void project::sFillTaskList()
 
 // Populate Task List
   MetaSQLQuery mqltask = mqlLoad("orderActivityByProject", "detail");
-  
-  params.append("so", tr("Sales Order"));
-  params.append("wo", tr("Work Order"));
-  params.append("po", tr("Purchase Order"));
-  params.append("pr", tr("Purchase Request"));
-  params.append("sos", tr("Sales Orders"));
-  params.append("wos", tr("Work Orders"));
-  params.append("pos", tr("Purchase Orders"));
-  params.append("prs", tr("Purchase Requests"));
-  params.append("quote", tr("Quote"));
-  params.append("quotes", tr("Quotes"));
-  params.append("invoice", tr("Invoice"));
-  params.append("invoices", tr("Invoices"));
-  params.append("open", tr("Open"));
-  params.append("closed", tr("Closed"));
-  params.append("converted", tr("Converted"));
-  params.append("canceled", tr("Canceled"));
-  params.append("expired", tr("Expired"));
-  params.append("unposted", tr("Unposted"));
-  params.append("posted", tr("Posted"));
-  params.append("exploded", tr("Exploded"));
-  params.append("released", tr("Released"));
-  params.append("planning", tr("Concept"));
-  params.append("inprocess", tr("In Process"));
-  params.append("complete", tr("Complete"));
+
+  params.append("assigned",   tr("Assigned"));
+  params.append("canceled",   tr("Canceled"));
+  params.append("closed",     tr("Closed"));
+  params.append("complete",   tr("Complete"));
+  params.append("confirmed",  tr("Confirmed"));
+  params.append("converted",  tr("Converted"));
+  params.append("expired",    tr("Expired"));
+  params.append("exploded",   tr("Exploded"));
+  params.append("feedback",   tr("Feedback"));
+  params.append("inprocess",  tr("In Process"));
+  params.append("invoice",    tr("Invoice"));
+  params.append("invoices",   tr("Invoices"));
+  params.append("new",        tr("New"));
+  params.append("open",       tr("Open"));
+  params.append("planning",   tr("Concept"));
+  params.append("po",         tr("Purchase Order"));
+  params.append("pos",        tr("Purchase Orders"));
+  params.append("posted",     tr("Posted"));
+  params.append("pr",         tr("Purchase Request"));
+  params.append("prs",        tr("Purchase Requests"));
+  params.append("quote",      tr("Quote"));
+  params.append("quotes",     tr("Quotes"));
+  params.append("released",   tr("Released"));
+  params.append("resolved",   tr("Resolved"));
+  params.append("so",         tr("Sales Order"));
+  params.append("sos",        tr("Sales Orders"));
+  params.append("unposted",   tr("Unposted"));
   params.append("unreleased", tr("Unreleased"));
+  params.append("wo",         tr("Work Order"));
+  params.append("wos",        tr("Work Orders"));
+
   params.append("total", tr("Total"));
 
   if(_showSo->isChecked())
@@ -870,7 +911,6 @@ void project::sNewQuotation()
   salesOrder *newdlg = new salesOrder(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
-  sFillTaskList();
 }
 
 void project::sNewSalesOrder()
@@ -882,7 +922,6 @@ void project::sNewSalesOrder()
   salesOrder *newdlg = new salesOrder(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
-  sFillTaskList();
 }
 
 
@@ -895,7 +934,6 @@ void project::sNewPurchaseOrder()
   purchaseOrder *newdlg = new purchaseOrder(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
-  sFillTaskList();
 }
 
 void project::sNewWorkOrder()
@@ -907,7 +945,6 @@ void project::sNewWorkOrder()
   workOrder *newdlg = new workOrder(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
-  sFillTaskList();
 }
 
 void project::sEditOrder()

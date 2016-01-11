@@ -1206,6 +1206,150 @@ Address:</source>
         <source>User Account</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>[Pick a Document Type]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation type="unfinished">Aadress</translation>
+    </message>
+    <message>
+        <source>Breeder BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Breeder BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account</source>
+        <translation type="unfinished">Konto</translation>
+    </message>
+    <message>
+        <source>Contact</source>
+        <translation type="unfinished">Kontakt</translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">Klient</translation>
+    </message>
+    <message>
+        <source>Employee</source>
+        <translation type="unfinished">Töötaja</translation>
+    </message>
+    <message>
+        <source>Incident</source>
+        <translation type="unfinished">Intsident</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation type="unfinished">Artikkel</translation>
+    </message>
+    <message>
+        <source>Item Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Item Source</source>
+        <translation type="unfinished">Artikli päritolu</translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lot/Serial</source>
+        <translation type="unfinished">Lot/Seeria</translation>
+    </message>
+    <message>
+        <source>Opportunity</source>
+        <translation type="unfinished">Võimalus</translation>
+    </message>
+    <message>
+        <source>Project</source>
+        <translation type="unfinished">Projekt</translation>
+    </message>
+    <message>
+        <source>Purchase Order</source>
+        <translation type="unfinished">Ostutellimus</translation>
+    </message>
+    <message>
+        <source>Purchase Order Item</source>
+        <translation type="unfinished">Ostutell. artikkel</translation>
+    </message>
+    <message>
+        <source>Return Authorization</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Return Authorization Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quote</source>
+        <translation type="unfinished">Hinnapakkumine</translation>
+    </message>
+    <message>
+        <source>Quote Item</source>
+        <translation type="unfinished">Hinnapakkumise art.</translation>
+    </message>
+    <message>
+        <source>Sales Order</source>
+        <translation type="unfinished">Müügitellimus</translation>
+    </message>
+    <message>
+        <source>Sales Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Time Attendance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To-Do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order</source>
+        <translation type="unfinished">Saateleht</translation>
+    </message>
+    <message>
+        <source>Transfer Order Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vendor</source>
+        <translation type="unfinished">Tarnija</translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished">Asukoht</translation>
+    </message>
+    <message>
+        <source>Work Order</source>
+        <translation type="unfinished">Töötellimus</translation>
+    </message>
+    <message>
+        <source>Project Task</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConfigAuthorizeDotNetProcessor</name>
@@ -3838,14 +3982,6 @@ Please immediately log out and contact your Systems Adminitrator.</source>
         <translation>Tellimus</translation>
     </message>
     <message>
-        <source>This order is being edited in another window or by another user.  Please try again later.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Order locked</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Orders</source>
         <translation>Tellimused</translation>
     </message>
@@ -3872,6 +4008,10 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <message>
         <source>Order %1 has an invalid status %2.</source>
         <translation>Tellimusel %1 on vigane staatus %2.</translation>
+    </message>
+    <message>
+        <source>Locking Error</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4450,6 +4590,10 @@ Please immediately log out and contact your Systems Adminitrator.</source>
         <source>All User Accounts</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error Counting Users</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QueryItem</name>
@@ -4507,7 +4651,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>Notes:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Märge:</translation>
     </message>
     <message>
         <source>[ Select a schema ]</source>
@@ -4594,7 +4738,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>Notes:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Märge:</translation>
     </message>
     <message>
         <source>&lt;p&gt;The Query Set has not yet been saved to the database. You must save it before adding queries.&lt;/p&gt;&lt;p&gt;Would you like to save before continuing?&lt;/p&gt;</source>
@@ -8429,7 +8573,7 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Cust. #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Klient Nr</translation>
     </message>
     <message>
         <source>Cust. Name</source>
@@ -9254,7 +9398,7 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Valuuta</translation>
     </message>
     <message>
         <source>Effective</source>
@@ -10716,10 +10860,6 @@ Are you sure that you want to save this change?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You must enter a value before saving this Item Characteristic.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>No Characteristic Selected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10761,6 +10901,10 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Error Getting Characteristic Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a value before saving this Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11537,7 +11681,7 @@ You may not create duplicate Forms.</source>
     </message>
     <message>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muuda...</translation>
     </message>
     <message>
         <source>Description</source>
@@ -13491,7 +13635,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Pricing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hinnakujundus</translation>
     </message>
     <message>
         <source>Print Sales Order on Save by Default</source>
@@ -14633,7 +14777,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muuda...</translation>
     </message>
     <message>
         <source>Delete Contact Merg?</source>
@@ -14756,7 +14900,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Attach</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kinnista...</translation>
     </message>
     <message>
         <source>Show Active Contacts Only</source>
@@ -14964,7 +15108,7 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikli number</translation>
     </message>
     <message>
         <source>Description</source>
@@ -15131,7 +15275,7 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muuda...</translation>
     </message>
     <message>
         <source>View...</source>
@@ -17571,7 +17715,7 @@ Item: %2 - %3</source>
     </message>
     <message>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Valuuta</translation>
     </message>
     <message>
         <source>Name/Description</source>
@@ -18449,7 +18593,7 @@ Item: %2 - %3</source>
     </message>
     <message>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muuda...</translation>
     </message>
     <message>
         <source>Abbreviation</source>
@@ -21754,7 +21898,7 @@ This Item is already selected for payment.</source>
     </message>
     <message>
         <source>You may not view or edit this Sales Order as it references a Site for which you have not been granted privileges.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sa ei saa vaadata või muuta käesolevat Müügitellimust, sest see viitab asukohale, kuhu sulle ei ole antud privileege.</translation>
     </message>
     <message>
         <source>Credit Card Processing Note</source>
@@ -21993,7 +22137,7 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muuda...</translation>
     </message>
     <message>
         <source>Invalid Item</source>
@@ -22084,7 +22228,7 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mõõtüh.</translation>
     </message>
     <message>
         <source>Shipped</source>
@@ -22124,7 +22268,7 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>Ext. Price</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Laiendatud hind</translation>
     </message>
     <message>
         <source>Balance</source>
@@ -22160,7 +22304,7 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Valuuta</translation>
     </message>
 </context>
 <context>
@@ -22387,7 +22531,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Valuuta</translation>
     </message>
     <message>
         <source>Ord. Date</source>
@@ -22395,7 +22539,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Order #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tellimuse Nr</translation>
     </message>
     <message>
         <source>Item</source>
@@ -22455,7 +22599,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Cust. #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Klient Nr</translation>
     </message>
     <message>
         <source>View Sales Order Item...</source>
@@ -22463,11 +22607,11 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Ext. Price</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Laiendatud hind</translation>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikli number</translation>
     </message>
     <message>
         <source>Edit Sales Order Item...</source>
@@ -22597,7 +22741,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Cust. #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Klient Nr</translation>
     </message>
     <message>
         <source>Invoice #</source>
@@ -22697,11 +22841,11 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Ext. Price</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Laiendatud hind</translation>
     </message>
     <message>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Valuuta</translation>
     </message>
     <message>
         <source>Base Ext. Price</source>
@@ -23139,7 +23283,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mõõtüh.</translation>
     </message>
     <message>
         <source>Costed Bill of Materials</source>
@@ -23163,7 +23307,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Scrap %</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Praak %</translation>
     </message>
     <message>
         <source>Qty. Per</source>
@@ -23215,7 +23359,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikli number</translation>
     </message>
 </context>
 <context>
@@ -25679,7 +25823,7 @@ Total</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mõõtüh.</translation>
     </message>
     <message>
         <source>Vendor #</source>
@@ -25815,7 +25959,7 @@ Total</source>
     </message>
     <message>
         <source>Available</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Saadaval:</translation>
     </message>
     <message>
         <source>OUT Level</source>
@@ -26305,7 +26449,7 @@ Total</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mõõtüh.</translation>
     </message>
     <message>
         <source>Transaction Time</source>
@@ -26329,7 +26473,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikli number</translation>
     </message>
     <message>
         <source>Item Group Pattern</source>
@@ -26337,7 +26481,7 @@ Total</source>
     </message>
     <message>
         <source>Order #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tellimuse Nr</translation>
     </message>
     <message>
         <source>View Work Order Information...</source>
@@ -26456,7 +26600,7 @@ Total</source>
     </message>
     <message>
         <source>Lot/Serial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lot/Seeria</translation>
     </message>
 </context>
 <context>
@@ -27045,7 +27189,7 @@ Total</source>
     </message>
     <message>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muuda...</translation>
     </message>
     <message>
         <source>Show Inactive</source>
@@ -27069,7 +27213,7 @@ Total</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mõõtüh.</translation>
     </message>
     <message>
         <source>Vendor #</source>
@@ -27157,7 +27301,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikli number</translation>
     </message>
     <message>
         <source>&apos;Always&apos;</source>
@@ -28011,7 +28155,7 @@ Total</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mõõtüh.</translation>
     </message>
     <message>
         <source>Closed</source>
@@ -28135,7 +28279,7 @@ Total</source>
     </message>
     <message>
         <source>Quotes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hinnapakkumised</translation>
     </message>
     <message>
         <source>Description</source>
@@ -28825,7 +28969,7 @@ Total</source>
     </message>
     <message>
         <source>Purchase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ost</translation>
     </message>
     <message>
         <source>Site</source>
@@ -28901,7 +29045,7 @@ Total</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mõõtüh.</translation>
     </message>
     <message>
         <source>Edit Order...</source>
@@ -28925,7 +29069,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikli number</translation>
     </message>
     <message>
         <source>Planned Orders</source>
@@ -30020,7 +30164,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikli number</translation>
     </message>
     <message>
         <source>Partial</source>
@@ -30059,7 +30203,7 @@ Total</source>
     </message>
     <message>
         <source>Dist. Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Veo kuupäev</translation>
     </message>
     <message>
         <source>Currency</source>
@@ -30242,7 +30386,7 @@ Total</source>
     </message>
     <message>
         <source>Dist. Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Veo kuupäev</translation>
     </message>
     <message>
         <source>Rcpt. Cost</source>
@@ -30967,7 +31111,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikli number</translation>
     </message>
     <message>
         <source>Enter Misc. Count...</source>
@@ -30983,7 +31127,7 @@ Total</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mõõtüh.</translation>
     </message>
     <message>
         <source>None</source>
@@ -31066,7 +31210,7 @@ Total</source>
     <name>dspQOHByLocation</name>
     <message>
         <source>As of Date:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alates kuupäevast:</translation>
     </message>
     <message>
         <source>Location</source>
@@ -31652,11 +31796,11 @@ Total</source>
     </message>
     <message>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Valuuta</translation>
     </message>
     <message>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muuda...</translation>
     </message>
     <message>
         <source>Invoice End Date</source>
@@ -31664,7 +31808,7 @@ Total</source>
     </message>
     <message>
         <source>Ext. Price</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Laiendatud hind</translation>
     </message>
     <message>
         <source>Invc. Date</source>
@@ -31772,7 +31916,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikli number</translation>
     </message>
     <message>
         <source>Sales Order</source>
@@ -31954,7 +32098,7 @@ Total</source>
     </message>
     <message>
         <source>Order #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tellimuse Nr</translation>
     </message>
     <message>
         <source>Ordered</source>
@@ -31970,7 +32114,7 @@ Total</source>
     </message>
     <message>
         <source>Ship-to</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Saata:</translation>
     </message>
     <message>
         <source>Cust. P/O #</source>
@@ -31978,7 +32122,7 @@ Total</source>
     </message>
     <message>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muuda...</translation>
     </message>
     <message>
         <source>View...</source>
@@ -32030,7 +32174,7 @@ Total</source>
     </message>
     <message>
         <source>You may not view or edit this Sales Order as it references a Site for which you have not been granted privileges.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sa ei saa vaadata või muuta käesolevat Müügitellimust, sest see viitab asukohale, kuhu sulle ei ole antud privileege.</translation>
     </message>
 </context>
 <context>
@@ -33596,7 +33740,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikli number</translation>
     </message>
     <message>
         <source>Site</source>
@@ -33608,11 +33752,11 @@ Total</source>
     </message>
     <message>
         <source>Cust. #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Klient Nr</translation>
     </message>
     <message>
         <source>UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mõõtüh.</translation>
     </message>
     <message>
         <source>Description</source>
@@ -33893,7 +34037,7 @@ Total</source>
     </message>
     <message>
         <source>Cust. #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Klient Nr</translation>
     </message>
     <message>
         <source>Product Category</source>
@@ -33945,7 +34089,7 @@ Total</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mõõtüh.</translation>
     </message>
     <message>
         <source>Customer Group Pattern</source>
@@ -33953,7 +34097,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikli number</translation>
     </message>
     <message>
         <source>Prod. Cat.</source>
@@ -34374,7 +34518,7 @@ Total</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikli number</translation>
     </message>
     <message>
         <source>Item Group Pattern</source>
@@ -35229,7 +35373,7 @@ Total</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mõõtüh.</translation>
     </message>
     <message>
         <source>&lt;p&gt;The Work Order that you selected to delete is a child of another Work Order.  If you delete the selected Work Order then the Work Order Materials Requirements for the Component Item will remain but the Work Order to relieve that demand will not. Are you sure that you want to delete the selected Work Order?</source>
@@ -35261,7 +35405,7 @@ Total</source>
     </message>
     <message>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muuda...</translation>
     </message>
     <message>
         <source>Inventory Availability...</source>
@@ -35913,7 +36057,7 @@ Total</source>
     </message>
     <message>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muuda...</translation>
     </message>
     <message>
         <source>Code</source>
@@ -39335,7 +39479,7 @@ but you may deactivate it.</source>
     </message>
     <message>
         <source>Notes:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Märge:</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -41716,11 +41860,11 @@ Are you sure that you want to Implode the selected Work Order?</source>
     </message>
     <message>
         <source>Lot/Serial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lot/Seeria</translation>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikli number</translation>
     </message>
     <message>
         <source>Lot/Serial Pattern</source>
@@ -41740,7 +41884,7 @@ Are you sure that you want to Implode the selected Work Order?</source>
     </message>
     <message>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muuda...</translation>
     </message>
     <message>
         <source>Item</source>
@@ -43558,7 +43702,7 @@ You may not create duplicate Item Aliases.</source>
     </message>
     <message>
         <source>Quotes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hinnapakkumised</translation>
     </message>
     <message>
         <source>Customer Prices</source>
@@ -45109,7 +45253,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     </message>
     <message>
         <source>UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mõõtüh.</translation>
     </message>
     <message>
         <source>&amp;Item Sites:</source>
@@ -45704,7 +45848,7 @@ already exists for this Item Source.</source>
     </message>
     <message>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muuda...</translation>
     </message>
     <message>
         <source>Delete...</source>
@@ -45716,7 +45860,7 @@ already exists for this Item Source.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mõõtüh.</translation>
     </message>
     <message>
         <source>&amp;Delete</source>
@@ -46283,7 +46427,7 @@ You may edit the existing Substitution but you may not create a duplicate.</sour
     </message>
     <message>
         <source>Ship-to</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Saata:</translation>
     </message>
     <message>
         <source>Until</source>
@@ -46303,7 +46447,7 @@ You may edit the existing Substitution but you may not create a duplicate.</sour
     </message>
     <message>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muuda...</translation>
     </message>
     <message>
         <source>Minute</source>
@@ -46704,11 +46848,11 @@ You must reassign the Locales for these Users before you may delete the selected
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;The database server is at version %1 but xTuple ERP only supports %2 to %3.&lt;/p&gt;&lt;p&gt;Continue anyway?&lt;/p&gt;</source>
+        <source>Invalid Database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid Database</source>
+        <source>&lt;p&gt;The database server is at version %1 but xTuple ERP only supports from %2 up to but not including %3.&lt;/p&gt;&lt;p&gt;Continue anyway?&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -49784,7 +49928,7 @@ Versioon %2
     </message>
     <message>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muuda...</translation>
     </message>
     <message>
         <source>Delete MetaSQL?</source>
@@ -50438,7 +50582,7 @@ Versioon %2
     </message>
     <message>
         <source>Order #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tellimuse Nr</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -50776,7 +50920,7 @@ Versioon %2
     </message>
     <message>
         <source>Ext. Price</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Laiendatud hind</translation>
     </message>
     <message>
         <source>Opportunity</source>
@@ -50888,7 +51032,7 @@ Versioon %2
     </message>
     <message>
         <source>Sales</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Müügid</translation>
     </message>
     <message>
         <source>Convert</source>
@@ -50896,7 +51040,7 @@ Versioon %2
     </message>
     <message>
         <source>Attach</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kinnista...</translation>
     </message>
     <message>
         <source>To-Do&apos;s</source>
@@ -53263,32 +53407,32 @@ post Vouchers.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Selected Customer:</source>
-        <translation>Valitud klient:</translation>
-    </message>
-    <message>
-        <source>Selected Customer Type:</source>
-        <translation>Valitud klienditüüp:</translation>
-    </message>
-    <message>
         <source>Pricing Schedule Assignment</source>
         <translation>Hinnakujunduse ajakava omistamised</translation>
-    </message>
-    <message>
-        <source>Selected Customer Ship-To:</source>
-        <translation>Valitud klient saata:</translation>
-    </message>
-    <message>
-        <source>Customer Type Pattern:</source>
-        <translation>Klienditüübi mudel:</translation>
     </message>
     <message>
         <source>Pricing Schedule:</source>
         <translation>Hinnakujunduse ajakava:</translation>
     </message>
     <message>
-        <source>Selected Cust. Ship-To Pattern:</source>
-        <translation>Valitud klient saata mudel:</translation>
+        <source>Customer Type Pattern</source>
+        <translation type="unfinished">Klienditüübi mudel:</translation>
+    </message>
+    <message>
+        <source>Customer Ship-To</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer Ship-To Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">Klient</translation>
     </message>
 </context>
 <context>
@@ -55189,7 +55333,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mõõtüh.</translation>
     </message>
     <message>
         <source>Value</source>
@@ -55369,7 +55513,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Quotes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hinnapakkumised</translation>
     </message>
     <message>
         <source>Invoice</source>
@@ -55838,7 +55982,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mõõtüh.</translation>
     </message>
     <message>
         <source>Value</source>
@@ -56022,7 +56166,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Quotes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hinnapakkumised</translation>
     </message>
     <message>
         <source>Invoice</source>
@@ -57094,6 +57238,14 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
         <source>&lt;p&gt;You must enter a Project for this order item before you may save it.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Refresh the Order Items list immediately on save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh Order</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>purchaseOrderList</name>
@@ -57451,7 +57603,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     </message>
     <message>
         <source>Quotes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hinnapakkumised</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -57463,7 +57615,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     </message>
     <message>
         <source>Order #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tellimuse Nr</translation>
     </message>
     <message>
         <source>Scheduled</source>
@@ -57582,7 +57734,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     </message>
     <message>
         <source>Quotes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hinnapakkumised</translation>
     </message>
     <message>
         <source>Edit...</source>
@@ -58053,7 +58205,7 @@ You must purge these records before you may delete the selected Reason Code.</so
     </message>
     <message>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Valuuta</translation>
     </message>
     <message>
         <source>JS</source>
@@ -58081,7 +58233,7 @@ You must purge these records before you may delete the selected Reason Code.</so
     </message>
     <message>
         <source>Base Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lähet kogus</translation>
     </message>
     <message>
         <source>Cleared Payments:</source>
@@ -58750,7 +58902,7 @@ You may not create duplicate Calendar Items.</source>
     </message>
     <message>
         <source>Cust. #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Klient Nr</translation>
     </message>
     <message>
         <source>C/M #</source>
@@ -58793,7 +58945,7 @@ You may not create duplicate Calendar Items.</source>
     </message>
     <message>
         <source>Cust. #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Klient Nr</translation>
     </message>
     <message>
         <source>Error Getting Invoices</source>
@@ -60086,7 +60238,7 @@ You must Recall this Work Order before Rescheduling it.</source>
     </message>
     <message>
         <source>Lot/Serial</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lot/Seeria</translation>
     </message>
     <message>
         <source>&amp;New</source>
@@ -62890,7 +63042,7 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Valuuta</translation>
     </message>
     <message>
         <source>Ext. Cost</source>
@@ -62974,7 +63126,7 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <source>Ext. Price</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Laiendatud hind</translation>
     </message>
     <message>
         <source>Qty Break</source>
@@ -63191,7 +63343,7 @@ Would you like to save them now?</source>
     </message>
     <message>
         <source>Available</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Saadaval:</translation>
     </message>
     <message>
         <source>Order#</source>
@@ -63392,7 +63544,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muuda...</translation>
     </message>
     <message>
         <source>View...</source>
@@ -64723,6 +64875,10 @@ Are you sure you want to do this?</source>
         <source>Checking Privileges</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Applying all Credits</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>selectShippedOrders</name>
@@ -64882,7 +65038,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Purchase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ost</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -64918,7 +65074,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Sales</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Müügid</translation>
     </message>
     <message>
         <source>Cost Categories</source>
@@ -65118,7 +65274,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Accounting</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Raamatupidamine</translation>
     </message>
 </context>
 <context>
@@ -68747,7 +68903,7 @@ Period %3</source>
     </message>
     <message>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Valuuta</translation>
     </message>
     <message>
         <source>Company %1 does not appear to have all required Accounts defined. The data cannot safely be synchronized.</source>
@@ -72587,7 +72743,7 @@ otherwise a new one will be created.</source>
     </message>
     <message>
         <source>Cust. #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Klient Nr</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -73009,7 +73165,7 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>Ship-to</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Saata:</translation>
     </message>
     <message>
         <source>Delete Selected Invoices</source>
@@ -74233,7 +74389,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     </message>
     <message>
         <source>Available</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Saadaval:</translation>
     </message>
     <message>
         <source>Show Future</source>
@@ -75566,7 +75722,7 @@ and Purchase Order amounts</source>
     </message>
     <message>
         <source>Notes:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Märge:</translation>
     </message>
     <message>
         <source>Order Notes:</source>
@@ -76922,7 +77078,7 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     </message>
     <message>
         <source>Notes:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Märge:</translation>
     </message>
     <message>
         <source>Amount to Distribute:</source>
@@ -77478,7 +77634,7 @@ that the selected Work Order does.</source>
     </message>
     <message>
         <source>Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Artikli number</translation>
     </message>
 </context>
 <context>

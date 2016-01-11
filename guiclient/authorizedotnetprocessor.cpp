@@ -40,7 +40,7 @@ AuthorizeDotNetProcessor::AuthorizeDotNetProcessor() : CreditCardProcessor()
 {
   _company = "Authorize.Net";
   _defaultLivePort   = 443;
-  _defaultLiveServer = "https://secure.authorize.net/gateway/transact.dll";
+  _defaultLiveServer = "https://secure2.authorize.net/gateway/transact.dll";
   _defaultTestPort   = 443;
   _defaultTestServer = "https://test.authorize.net/gateway/transact.dll";
 
@@ -374,6 +374,8 @@ int  AuthorizeDotNetProcessor::doCharge(const int pccardid, const QString &pcvv,
 
   if (! preforder.isEmpty())
     APPENDFIELD(request, "x_po_num",   preforder);
+
+  APPENDFIELD(request, "x_invoice_num",   pneworder);
 
   QString response;
 

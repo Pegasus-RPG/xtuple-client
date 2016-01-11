@@ -462,9 +462,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
   QString query;
   QString filterValue;
   QDate today = QDate::currentDate();
-  int xid, init_filter_id;
-
-  init_filter_id = filter_id;
+  int xid;
 
   clearFilters();
 
@@ -550,7 +548,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         XComboBox *mybox = qobject_cast<XComboBox*>(test->widget());
         if (mybox)
           mybox->setCurrentIndex(mybox->findText(key));
-	
+
         found = getFilterWidget(windowIdx);
 
         int widgetType = tempFilterList[2].toInt();
@@ -1468,7 +1466,8 @@ void ParameterWidget::save()
   params.append("classname", classname);
   if (_shared)
     params.append("shared", true);
-
+  if (!_x_privileges->check("AllowSharedFilterEdit"))
+    params.append("disableshare", true);
   filterSave newdlg(this);
   newdlg.set(params);
   filter_id = newdlg.exec();
@@ -2007,4 +2006,3 @@ void setupParameterWidget(QScriptEngine *engine)
 
   engine->globalObject().setProperty("ParameterWidget", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }
-

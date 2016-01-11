@@ -14,6 +14,7 @@
 #include <QSqlError>
 #include <QValidator>
 #include <QVariant>
+#include "errorReporter.h"
 
 bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -23,6 +24,7 @@ bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::Wind
   connect(_bankName,SIGNAL(textChanged(QString)), this, SLOT(sNameChanged(QString)));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_transmitGroup,  SIGNAL(toggled(bool)), this, SLOT(sHandleTransmitGroup()));
+  connect(_type,  SIGNAL(currentIndexChanged(int)), this, SLOT(sHandleType()));
 
   _nextCheckNum->setValidator(omfgThis->orderVal());
 
@@ -58,8 +60,9 @@ bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::Wind
       defaultOriginValue.remove("-");
       _defaultOrigin->setText(defaultOriginValue);
     }
-    else if (bankbankAccount.lastError().type() != QSqlError::NoError)
-      systemError(this, bankbankAccount.lastError().databaseText(), __FILE__, __LINE__);
+    else
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Account Information"),
+                                  bankbankAccount, __FILE__, __LINE__);
 
     if (omfgThis->_key.isEmpty())
       _transmitTab->setEnabled(false);
@@ -132,6 +135,7 @@ enum SetResponse bankAccount::set(const ParameterList &pParams)
 
 void bankAccount::sCheck()
 {
+
   XSqlQuery bankCheck;
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length()))
@@ -149,9 +153,9 @@ void bankAccount::sCheck()
 
       _name->setEnabled(false);
     }
-    else if (bankCheck.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Account Information"),
+                                  bankCheck, __FILE__, __LINE__))
     {
-      systemError(this, bankCheck.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -395,9 +399,9 @@ void bankAccount::sSave()
     bankSave.bindValue(":bankaccnt_type", "R");
 
   bankSave.exec();
-  if (bankSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Bank Account"),
+                                bankSave, __FILE__, __LINE__))
   {
-    systemError(this, bankSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -461,9 +465,10 @@ void bankAccount::populate()
     else if (bankpopulate.value("bankaccnt_type").toString() == "R")
       _type->setCurrentIndex(2);
   }
-  else if (bankpopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this,
+                          tr("Error Retrieving Bank Account Information"),
+                          bankpopulate, __FILE__, __LINE__))
   {
-    systemError(this, bankpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -478,4 +483,12 @@ void bankAccount::sHandleTransmitGroup()
 {
   _accountNumber->setValidator(_transmitGroup->isChecked() ?
                                                        _accountValidator : 0);
+}
+
+void bankAccount::sHandleType()
+{
+  if (_type->currentIndex() == 2)
+    _assetAccountLit->setText(tr("Liability Account"));
+  else
+    _assetAccountLit->setText(tr("Asset Account"));
 }

@@ -3921,16 +3921,6 @@
   <context>
     <name>CharacteristicsMasterList</name>
     <message>
-      <width>50</width>
-      <source>Lot/Serial</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>50</width>
-      <source>Options</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
       <width>95</width>
       <source>Name</source>
       <translation type="unfinished"/>
@@ -3938,11 +3928,6 @@
     <message>
       <width>200</width>
       <source>may be used for</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>50</width>
-      <source>Attributes</source>
       <translation type="unfinished"/>
     </message>
     <message>
@@ -3956,28 +3941,8 @@
       <translation type="unfinished"/>
     </message>
     <message>
-      <width>50</width>
-      <source>Items</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>50</width>
-      <source>Items</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
       <width>200</width>
       <source>may be used for</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>50</width>
-      <source>Attributes</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>50</width>
-      <source>Options</source>
       <translation type="unfinished"/>
     </message>
     <message>
@@ -3988,11 +3953,6 @@
     <message>
       <width>80</width>
       <source>Notes</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>50</width>
-      <source>Lot/Serial</source>
       <translation type="unfinished"/>
     </message>
     <message>
@@ -9762,6 +9722,11 @@
     <message>
       <width>105</width>
       <source>Reference</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>40</width>
+      <source>Deleted</source>
       <translation type="unfinished"/>
     </message>
     <message>
@@ -28260,6 +28225,64 @@
     <message>
       <width>85</width>
       <source>Report Date:</source>
+      <translation type="unfinished"/>
+    </message>
+  </context>
+  <context>
+    <name>UserPrivileges</name>
+    <message>
+      <width>540</width>
+      <source>User Privileges</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>70</width>
+      <source>Username:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>155</width>
+      <source>Role Assigned:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>85</width>
+      <source>Description:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>85</width>
+      <source>Privilege:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>85</width>
+      <source>Module:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>70</width>
+      <source>Username:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>85</width>
+      <source>Description:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>85</width>
+      <source>Role:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>100</width>
+      <source>Report Date:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>100</width>
+      <source>Page:</source>
       <translation type="unfinished"/>
     </message>
   </context>

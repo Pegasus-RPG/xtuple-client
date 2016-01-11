@@ -91,6 +91,7 @@
 #include "dspBacklog.h"
 #include "dspValidLocationsByItem.h"
 #include "dspQOH.h"
+#include "dspQOHByZone.h"
 #include "dspQOHByLocation.h"
 #include "dspInventoryLocator.h"
 #include "dspSlowMovingInventoryByClassCode.h"
@@ -104,6 +105,7 @@
 #include "dspTimePhasedUsageStatisticsByItem.h"
 
 #include "printItemLabelsByClassCode.h"
+#include "printToForm.h"
 
 #include "warehouses.h"
 #include "warehouse.h"
@@ -315,6 +317,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     // Inventory | Forms
     { "menu",                           tr("&Forms"),                (char*)formsMenu,                    mainMenu,  "true",            NULL, NULL, true, NULL },
     { "im.printItemLabelsByClassCode",  tr("Print &Item Labels..."), SLOT(sPrintItemLabelsByClassCode()), formsMenu, "ViewItemSites",   NULL, NULL, true, NULL },
+    { "im.printTOForms",  tr("Print &T/O Forms..."), SLOT(sPrintToForms()), formsMenu, "MaintainTransferOrders",   NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
 
     //  Inventory | Reports
     { "menu",                           tr("&Reports"),                   (char*)reportsMenu,                   mainMenu,       "true", NULL, NULL, true, NULL },
@@ -324,6 +327,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
 
     //  Inventory | Reports | Quantities On Hand
     { "im.dspQOH",                    tr("&Quantities On Hand..."),                             SLOT(sDspQOH()),                reportsMenu, "ViewQOH",      NULL, NULL, true, NULL },
+    { "im.dspQOHByZone",              tr("&Quantities On Hand By &Zone..."),                    SLOT(sDspQOHByZone()),          reportsMenu, "ViewQOH",      NULL, NULL, true, NULL },
     { "im.dspQOHByLocation",          tr("Quantities On Hand By &Location..."),                 SLOT(sDspQOHByLocation()),      reportsMenu, "ViewQOH",      NULL, NULL, true, NULL },
 
     { "im.dspLocationLotSerialDetail",tr("&Location/Lot/Serial # Detail..."),SLOT(sDspLocationLotSerialDetail()),       reportsMenu,    "ViewQOH",      NULL, NULL, _metrics->boolean("LotSerialControl"), NULL },
@@ -869,6 +873,11 @@ void menuInventory::sDspQOH()
   omfgThis->handleNewWindow(new dspQOH());
 }
 
+void menuInventory::sDspQOHByZone()
+{
+  omfgThis->handleNewWindow(new dspQOHByZone());
+}
+
 void menuInventory::sDspQOHByLocation()
 {
   omfgThis->handleNewWindow(new dspQOHByLocation());
@@ -927,6 +936,11 @@ void menuInventory::sDspTimePhasedUsageStatisticsByItem()
 void menuInventory::sPrintItemLabelsByClassCode()
 {
   printItemLabelsByClassCode(parent, "", true).exec();
+}
+
+void menuInventory::sPrintToForms()
+{
+  printToForm(parent, "", true).exec();
 }
 
 

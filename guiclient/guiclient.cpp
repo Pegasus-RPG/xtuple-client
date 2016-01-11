@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -48,6 +48,8 @@
 #include "xdialog.h"
 #include "errorLog.h"
 #include "errorReporter.h"
+#include "login2.h"
+#include "storedProcErrorLookup.h"
 
 #include "systemMessage.h"
 #include "menuProducts.h"
@@ -89,6 +91,9 @@ class Preferences;
 class Privileges;
 class Metricsenc;
 
+#ifdef Q_OS_MAC
+  extern void qt_mac_set_dock_menu(QMenu *menu);
+#endif
 /** @addtogroup globals Global Variables and Functions
 
     @brief
@@ -274,6 +279,10 @@ void Action::init(QWidget *pParent, const char *pName, const QString &pDisplayNa
   if(!pEnabled.isEmpty())
     setData(pEnabled);
   __menuEvaluate(this);
+  if (QRegExp(".*\\.setup").exactMatch(pName))
+  {
+    setMenuRole(QAction::NoRole);
+  }
 }
 
 /** @class xTupleGuiClientInterface
@@ -407,10 +416,9 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
     _endOfTime = _GGUIClient.value("eot").toDate();
   }
   else
-    systemError( this, tr( "A Critical Error occurred at %1::%2.\n"
-                           "Please immediately log out and contact your Systems Adminitrator." )
-                       .arg(__FILE__)
-                       .arg(__LINE__) );
+    ErrorReporter::error(QtCriticalMsg, this, tr("Critical Error"),
+                        tr("Please immediately log out and contact your "
+                           "Systems Administrator"),_GGUIClient, __FILE__, __LINE__);
 
   /*  TODO: either separate validators for extprice, purchprice, and salesprice
             or replace every field that uses _moneyVal, _negMoneyVal, _priceVal, and _costVal
@@ -570,6 +578,10 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
                     availableGeometry.top()));
     move(pos);
   }
+  #ifdef Q_OS_MAC
+    _menu = new QMenu(this);
+    updateMacDockMenu(this);
+  #endif
 
   setDocumentMode(true);
 
@@ -627,7 +639,8 @@ bool GUIClient::singleCurrency()
   if (currCount.first())
     retValue = (currCount.value("count").toInt() <= 1);
   else
-    systemError(this, currCount.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Currency Information"),
+                       currCount, __FILE__, __LINE__);
   return retValue;
 }
 
@@ -1023,21 +1036,46 @@ void GUIClient::sTick()
       emit(tick());
       __intervalCount = 0;
     }
-
-    _tick.singleShot(60000, this, SLOT(sTick()));
   }
   else
   {
     // Check to make sure we are not in the middle of an aborted transaction
     // before we go doing something rash.
-    if(tickle.lastError().databaseText().contains("current transaction is aborted"))
-      return;
-    systemError(this, tr("<p>You have been disconnected from the database server.  "
-                          "This is usually caused by an interruption in your "
-                          "network.  Please exit the application and restart."
-                          "<br><pre>%1</pre>" )
-                      .arg(tickle.lastError().databaseText()));
+    if (!QSqlDatabase::database().isOpen())
+    {
+      if  (QMessageBox::question(this, tr("Database disconnected"),
+                                tr("It appears that you have been disconnected from the "
+                                   "database. Select Yes to try to reconnect or "
+                                   "No to terminate the application."),
+                                   QMessageBox::Yes,
+                                   QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+        qApp->quit();
+      else
+      {
+        if (QSqlDatabase::database().open())
+        {
+          QString loginqry ="SELECT login() AS result, CURRENT_USER AS user;";
+          XSqlQuery login( loginqry );
+          if (login.first())
+          {
+            int result = login.value("result").toInt();
+            if (result < 0)
+            {
+              QMessageBox::critical(this, tr("Error Relogging to the Database"),
+                                    storedProcErrorLookup("login", result));
+              return;
+            }
+          }
+          else if (login.lastError().type() != QSqlError::NoError)
+            QMessageBox::critical(this, tr("System Error"),
+                                  tr("A System Error occurred at %1::%2:\n%3")
+                                    .arg(__FILE__).arg(__LINE__)
+                                    .arg(login.lastError().databaseText()));
+        }
+      }
+    }
   }
+  _tick.singleShot(30000, this, SLOT(sTick()));
 }
 
 /** @brief Make the error button in the main window's status bar visible.
@@ -1080,32 +1118,38 @@ void GUIClient::sSystemMessageAdded()
 {
   emit systemMessageAdded();
 
-  //  Grab any new System Messages
-          XSqlQuery msg;
-          msg.exec( "SELECT msguser_id "
-                    "FROM msg, msguser "
-                    "WHERE ( (msguser_username=getEffectiveXtUser())"
-                    " AND (msguser_msg_id=msg_id)"
-                    " AND (CURRENT_TIMESTAMP BETWEEN msg_scheduled AND msg_expires)"
-                    " AND (msguser_viewed IS NULL) );" );
-          if (msg.first())
-          {
-            ParameterList params;
-            params.append("mode", "acknowledge");
-
-            systemMessage newdlg(this, "", true);
-            newdlg.set(params);
-
-            do
-            {
-              ParameterList params;
-              params.append("msguser_id", msg.value("msguser_id").toInt());
-
-              newdlg.set(params);
-              newdlg.exec();
-            }
-            while (msg.next());
-          }
+  XSqlQuery msg;
+  msg.exec("SELECT msguser_id"
+           "  FROM msg"
+           "  JOIN msguser ON msguser_msg_id = msg_id"
+           " WHERE msguser_username=getEffectiveXtUser()"
+           "   AND CURRENT_TIMESTAMP BETWEEN msg_scheduled AND msg_expires"
+           "   AND msguser_viewed IS NULL;" );
+  if (msg.first())
+  {
+    ParameterList params;
+    params.append("mode", "acknowledge");
+    do
+    {
+      int id = msg.value("msguser_id").toInt();
+      systemMessage *newdlg = systemMessage::windowForId(id);
+      if (newdlg)
+      {
+        qDebug() << "raising window for id" << id << newdlg;
+        newdlg->show();
+        newdlg->raise();
+        newdlg->activateWindow();
+      }
+      else
+      {
+        qDebug() << "opening new window for id" << id << newdlg;
+        params.append("msguser_id", id);
+        newdlg = new systemMessage();
+        newdlg->set(params);
+        omfgThis->handleNewWindow(newdlg);
+      }
+    } while (msg.next());
+  }
 }
 
 /** @name Data Update Slots
@@ -1774,7 +1818,6 @@ void GUIClient::sCustomCommand()
     QString cmd = GCustomCommand.value("cmd_executable").toString();
     if(cmd.toLower() == "!customuiform")
     {
-      bool haveParams = false;
       ParameterList params;
       bool asDialog = false;
       QString asName;
@@ -1826,7 +1869,6 @@ void GUIClient::sCustomCommand()
             var = XVariant::decode(type, value);
           if(active)
           {
-            haveParams = true;
             params.append(name, var);
           }
 // end copied code from OpenRPT/renderapp
@@ -2058,6 +2100,11 @@ void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloa
 {
   // TODO:  replace this function with a centralized openWindow function
   // used by toolbox, guiclient interface, and core windows
+
+  #ifdef Q_OS_MAC
+    	updateMacDockMenu(w);
+  #endif
+  
   if(!w->isModal())
   {
     if (w->parentWidget())
@@ -2414,47 +2461,12 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   mainwindowval.setProperty("cNoReportDefinition", QScriptValue(engine, cNoReportDefinition),
                         QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
-  QScriptValue inputmanagerval = engine->newQObject(_inputManager);
-  engine->globalObject().setProperty("InputManager", inputmanagerval);
-
-  // #defines from inputmanager.h
-  inputmanagerval.setProperty("cBCWorkOrder", QScriptValue(engine, cBCWorkOrder),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCWorkOrderMaterial", QScriptValue(engine, cBCWorkOrderMaterial),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCWorkOrderOperation", QScriptValue(engine, cBCWorkOrderOperation),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCSalesOrder", QScriptValue(engine, cBCSalesOrder),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCSalesOrderLineItem", QScriptValue(engine, cBCSalesOrderLineItem),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCItemSite", QScriptValue(engine, cBCItemSite),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCItem", QScriptValue(engine, cBCItem),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCUPCCode", QScriptValue(engine, cBCUPCCode),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCEANCode", QScriptValue(engine, cBCEANCode),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCCountTag", QScriptValue(engine, cBCCountTag),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCLocation", QScriptValue(engine, cBCLocation),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCLocationIssue", QScriptValue(engine, cBCLocationIssue),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCLocationContents", QScriptValue(engine, cBCLocationContents),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCUser", QScriptValue(engine, cBCUser),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCTransferOrder", QScriptValue(engine, cBCTransferOrder),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCTransferOrderLineItem", QScriptValue(engine, cBCTransferOrderLineItem),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  inputmanagerval.setProperty("cBCLotSerialNumber", QScriptValue(engine, cBCLotSerialNumber),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
   setupScriptApi(engine);
   setupSetupApi(engine);
+
+  // TODO: Make all classes work this way instead of setup* as above?
+  // TODO: This interface sets this instance as the global. we can do better.
+  _inputManager->scriptAPI(engine, "InputManager");
 }
 
 void GUIClient::addDocumentWatch(QString path, int id)
@@ -2677,3 +2689,30 @@ void GUIClient::sEmitNotifyHeard(const QString &note)
     else if(note == "messagePosted")
         emit messageNotify();
 }
+#ifdef Q_OS_MAC
+    void GUIClient::updateMacDockMenu(QWidget *w)
+    {
+        QAction *action = new QAction(w);
+        action->setText(w->windowTitle());
+
+        _menu->addAction(action);
+
+        qt_mac_set_dock_menu(_menu);
+
+        connect(action, SIGNAL(triggered()), w, SLOT(hide()));
+        connect(action, SIGNAL(triggered()), w, SLOT(show()));
+    }
+
+    void GUIClient::removeFromMacDockMenu(QWidget *w)
+    {
+        foreach (QAction *action, _menu->actions())
+        {
+            if(action->text().compare(w->windowTitle()) == 0)
+            {
+                _menu->removeAction(action);
+            }
+        }
+
+        qt_mac_set_dock_menu(_menu);
+    }
+#endif

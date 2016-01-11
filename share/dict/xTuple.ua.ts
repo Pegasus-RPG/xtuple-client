@@ -1206,6 +1206,150 @@ Address:</source>
         <source>User Account</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>[Pick a Document Type]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation type="unfinished">Адреса</translation>
+    </message>
+    <message>
+        <source>Breeder BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Breeder BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOM Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Head</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Router Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Account</source>
+        <translation type="unfinished">Рахунок</translation>
+    </message>
+    <message>
+        <source>Contact</source>
+        <translation type="unfinished">Контакт</translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">Клієнт</translation>
+    </message>
+    <message>
+        <source>Employee</source>
+        <translation type="unfinished">Працівник</translation>
+    </message>
+    <message>
+        <source>Incident</source>
+        <translation type="unfinished">Подія</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation type="unfinished">Продукт</translation>
+    </message>
+    <message>
+        <source>Item Site</source>
+        <translation type="unfinished">Продуктова Площадка</translation>
+    </message>
+    <message>
+        <source>Item Source</source>
+        <translation type="unfinished">Джерело Продукту</translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished">Розміщення</translation>
+    </message>
+    <message>
+        <source>Lot/Serial</source>
+        <translation type="unfinished">Лот/Серія</translation>
+    </message>
+    <message>
+        <source>Opportunity</source>
+        <translation type="unfinished">Угода</translation>
+    </message>
+    <message>
+        <source>Project</source>
+        <translation type="unfinished">Проект</translation>
+    </message>
+    <message>
+        <source>Purchase Order</source>
+        <translation type="unfinished">Замовлення на Купівлю</translation>
+    </message>
+    <message>
+        <source>Purchase Order Item</source>
+        <translation type="unfinished">Продукт Замовлення на Купівлю</translation>
+    </message>
+    <message>
+        <source>Return Authorization</source>
+        <translation type="unfinished">Акт Повернення</translation>
+    </message>
+    <message>
+        <source>Return Authorization Item</source>
+        <translation type="unfinished">Запис Акту Повернення</translation>
+    </message>
+    <message>
+        <source>Quote</source>
+        <translation type="unfinished">Пропозиція</translation>
+    </message>
+    <message>
+        <source>Quote Item</source>
+        <translation type="unfinished">Пропозиція Позиції</translation>
+    </message>
+    <message>
+        <source>Sales Order</source>
+        <translation type="unfinished">Замовл. на Продаж</translation>
+    </message>
+    <message>
+        <source>Sales Order Item</source>
+        <translation type="unfinished">Запис Замовл. на Продаж</translation>
+    </message>
+    <message>
+        <source>Time Attendance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To-Do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transfer Order</source>
+        <translation type="unfinished">Наряд на Переміщення</translation>
+    </message>
+    <message>
+        <source>Transfer Order Item</source>
+        <translation type="unfinished">Запис Наряду на Переміщення</translation>
+    </message>
+    <message>
+        <source>Vendor</source>
+        <translation type="unfinished">Постачальник</translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished">Площадка</translation>
+    </message>
+    <message>
+        <source>Work Order</source>
+        <translation type="unfinished">Робочий Наряд</translation>
+    </message>
+    <message>
+        <source>Project Task</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConfigAuthorizeDotNetProcessor</name>
@@ -2744,7 +2888,7 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Engineering Reference</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Технічні Подробиці</translation>
     </message>
     <message>
         <source>Name</source>
@@ -3842,16 +3986,8 @@ Please immediately log out and contact your Systems Adminitrator.</source>
         <translation type="unfinished">%1::sSearch() ще не визначено</translation>
     </message>
     <message>
-        <source>Order locked</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Orders</source>
         <translation>Замовлення</translation>
-    </message>
-    <message>
-        <source>This order is being edited in another window or by another user.  Please try again later.</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>A System Error Occurred at %1::%2.</source>
@@ -3872,6 +4008,10 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <message>
         <source>Order %1 has an invalid status %2.</source>
         <translation>Замовлення %1 має невірний статус %2.</translation>
+    </message>
+    <message>
+        <source>Locking Error</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4448,6 +4588,10 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>All User Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Counting Users</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10720,10 +10864,6 @@ Are you sure that you want to save this change?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You must enter a value before saving this Item Characteristic.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;List Price:</source>
         <translation>&amp;Прейскурантна Ціна:</translation>
     </message>
@@ -10761,6 +10901,10 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Error Getting Characteristic Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a value before saving this Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -28830,7 +28974,7 @@ Total</source>
     </message>
     <message>
         <source>Release Order...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Виписка Наряду...</translation>
     </message>
     <message>
         <source>Type</source>
@@ -28902,7 +29046,7 @@ Total</source>
     </message>
     <message>
         <source>Delete Order...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Видалити Наряд...</translation>
     </message>
     <message>
         <source>Item</source>
@@ -40690,7 +40834,7 @@ The file is not an image, an unknown image format or is corrupt</source>
     </message>
     <message>
         <source>Engineering Reference</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Технічні Подробиці</translation>
     </message>
 </context>
 <context>
@@ -46705,11 +46849,11 @@ You must reassign the Locales for these Users before you may delete the selected
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;The database server is at version %1 but xTuple ERP only supports %2 to %3.&lt;/p&gt;&lt;p&gt;Continue anyway?&lt;/p&gt;</source>
+        <source>Invalid Database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid Database</source>
+        <source>&lt;p&gt;The database server is at version %1 but xTuple ERP only supports from %2 up to but not including %3.&lt;/p&gt;&lt;p&gt;Continue anyway?&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -53246,20 +53390,8 @@ post Vouchers.</source>
 <context>
     <name>pricingScheduleAssignment</name>
     <message>
-        <source>Customer Type Pattern:</source>
-        <translation type="unfinished">Шаблон Типу Клієнта:</translation>
-    </message>
-    <message>
         <source>&lt;p&gt;You must select a Pricing Schedule.</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Selected Cust. Ship-To Pattern:</source>
-        <translation>Вибрати Шаблон Отримувача:</translation>
-    </message>
-    <message>
-        <source>Selected Customer Type:</source>
-        <translation>Вибраний Тип Клієнта:</translation>
     </message>
     <message>
         <source>A System Error occurred at %1::%2.</source>
@@ -53278,16 +53410,28 @@ post Vouchers.</source>
         <translation>Призначення Графіку Цін</translation>
     </message>
     <message>
-        <source>Selected Customer:</source>
-        <translation>Вибраний Клієнт:</translation>
-    </message>
-    <message>
-        <source>Selected Customer Ship-To:</source>
-        <translation>Вибраний Клієнт Отримувач:</translation>
-    </message>
-    <message>
         <source>Pricing Schedule:</source>
         <translation>Графік Цін:</translation>
+    </message>
+    <message>
+        <source>Customer Type Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer Ship-To</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer Ship-To Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer Type</source>
+        <translation type="unfinished">Тип Клієнта</translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">Клієнт</translation>
     </message>
 </context>
 <context>
@@ -57091,6 +57235,14 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
     </message>
     <message>
         <source>&lt;p&gt;You must enter a Project for this order item before you may save it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh the Order Items list immediately on save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh Order</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -64722,6 +64874,10 @@ Are you sure you want to do this?</source>
         <source>Checking Privileges</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Applying all Credits</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>selectShippedOrders</name>
@@ -69850,7 +70006,7 @@ You first need to Revoke those Tax Codes.</source>
     </message>
     <message>
         <source>Expire</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Закінчується</translation>
     </message>
     <message>
         <source>&lt;p&gt;Are you sure you want to delete this Tax Code Rate ?</source>

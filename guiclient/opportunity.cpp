@@ -122,10 +122,6 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-
-      _comments->setReadOnly(true);
-      _documents->setReadOnly(true);
-      _charass->setReadOnly(true);
       
       param = pParams.value("crmacct_id", &valid);
       if (valid)
@@ -138,6 +134,8 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
       {
         _opheadid = opportunityet.value("result").toInt();
         _charass->setId(_opheadid);
+        _documents->setId(_opheadid);
+        _comments->setId(_opheadid);
       }
       else if(opportunityet.lastError().type() != QSqlError::NoError)
       {
@@ -472,7 +470,7 @@ void opportunity::sNewTodoItem()
 
   todoItem newdlg(this, 0, true);
   newdlg.set(params);
-  if (!newdlg.exec() == XDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillTodoList();
 }
 
@@ -484,7 +482,7 @@ void opportunity::sEditTodoItem()
 
   todoItem newdlg(this, 0, true);
   newdlg.set(params);
-  if (!newdlg.exec() == XDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillTodoList();
 }
 
@@ -1031,7 +1029,6 @@ void opportunity::sPopulateSalesMenu(QMenu *pMenu)
 {
   bool editPriv = false;
   bool viewPriv = false;
-  bool convertPriv = false;
 
   if(_salesList->currentItem())
   {
@@ -1042,9 +1039,6 @@ void opportunity::sPopulateSalesMenu(QMenu *pMenu)
     viewPriv = (cNew == _mode || cEdit == _mode) && (
       (0 == _salesList->currentItem()->altId() && _privileges->check("ViewQuotes")) ||
       (1 == _salesList->currentItem()->altId() && _privileges->check("ViewSalesOrders")) );
-
-    convertPriv = (cNew == _mode || cEdit == _mode) &&
-      (0 == _salesList->currentItem()->altId() && _privileges->check("ConvertQuotes"));
   }
 
   QAction *menuItem;

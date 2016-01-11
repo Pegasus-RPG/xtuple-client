@@ -18,6 +18,7 @@
 #include "distributeInventory.h"
 #include "inputManager.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 adjustmentTrans::adjustmentTrans(QWidget* parent, const char * name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -79,7 +80,6 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
   int      invhistid = -1;
-  bool     noQty     = true;
 
   param = pParams.value("itemsite_id", &valid);
   if (valid)
@@ -99,10 +99,9 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
     _qty->setDouble(param.toDouble());
     _qty->setEnabled(false);
     _afterQty->setDouble(param.toDouble());
+
     _absolute->setChecked(true);
     _adjustmentTypeGroup->setEnabled(false);
-
-    noQty = false;
   }
 
   param = pParams.value("invhist_id", &valid);
@@ -151,10 +150,10 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
         _notes->setText(setAdjustment.value("invhist_comments").toString());
         _item->setItemsiteid(setAdjustment.value("invhist_itemsite_id").toInt());
       }
-      else if (setAdjustment.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Transaction"),
+                                    setAdjustment, __FILE__, __LINE__))
       {
-	systemError(this, setAdjustment.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+          return UndefinedError;
       }
 
     }
@@ -231,13 +230,14 @@ void adjustmentTrans::sPost()
     if (result < 0)
     {
       rollback.exec();
-      systemError(this, storedProcErrorLookup("invAdjustment", result),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
+                           storedProcErrorLookup("invAdjustment", result),
+                           __FILE__, __LINE__);
     }
-    else if (adjustmentPost.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
+                                  adjustmentPost, __FILE__, __LINE__))
     {
-      systemError(this, adjustmentPost.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+        return;
     }
 
     if (distributeInventory::SeriesAdjust(adjustmentPost.value("result").toInt(), this) == XDialog::Rejected)
@@ -265,19 +265,19 @@ void adjustmentTrans::sPost()
       _item->setFocus();
     }
   }
-  else if (adjustmentPost.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
+                                adjustmentPost, __FILE__, __LINE__))
   {
-    rollback.exec();
-    systemError(this, adjustmentPost.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+      return;
   }
   else
   {
     rollback.exec();
-    systemError( this,
-                tr("<p>No transaction was done because Item %1 "
-                   "was not found at Site %2.")
-                .arg(_item->itemNumber()).arg(_warehouse->currentText()));
+    ErrorReporter::error(QtCriticalMsg, this, tr("Post Transaction Cancelled"),
+                         tr("<p>No transaction was done because Item %1 "
+                            "was not found at Site %2.")
+                         .arg(_item->itemNumber()).arg(_warehouse->currentText()),
+                         __FILE__, __LINE__);
   }
 }
 
@@ -315,10 +315,10 @@ void adjustmentTrans::sPopulateQOH()
       else
         _qty->setValidator(new QIntValidator(this));
     }
-    else if (populateAdjustment.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Information"),
+                                  populateAdjustment, __FILE__, __LINE__))
     {
-      systemError(this, populateAdjustment.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+        return;
     }
 
     sPopulateQty();

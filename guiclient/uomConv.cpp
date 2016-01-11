@@ -181,7 +181,7 @@ void uomConv::sToChanged()
 void uomConv::sCheck()
 {
   XSqlQuery uomCheck;
-  if ( (_mode == cNew) )
+  if (_mode == cNew)
   {
     uomCheck.prepare( "SELECT uomconv_id"
                "  FROM uomconv"

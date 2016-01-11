@@ -15,7 +15,10 @@
 #include <QSqlError>
 #include <QValidator>
 #include <QVariant>
+#include <metasql.h>
 
+#include "mqlutil.h"
+#include "errorReporter.h"
 #include "creditMemoItem.h"
 #include "invoiceList.h"
 #include "storedProcErrorLookup.h"
@@ -116,10 +119,10 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
         _cmheadid = creditet.value("cmhead_id").toInt();
         _documents->setId(_cmheadid);
       }
-      else if (creditet.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                    creditet, __FILE__, __LINE__))
       {
-	systemError(this, creditet.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+        return UndefinedError;
       }
 
       setNumber();
@@ -134,10 +137,10 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
       creditet.bindValue(":cmhead_number",	(!_memoNumber->text().isEmpty() ? _memoNumber->text() : QString("tmp%1").arg(_cmheadid)));
       creditet.bindValue(":cmhead_docdate",	_memoDate->date());
       creditet.exec();
-      if (creditet.lastError().type() != QSqlError::NoError)
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                    creditet, __FILE__, __LINE__))
       {
-	systemError(this, creditet.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+        return UndefinedError;
       }
 
       connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo()));
@@ -227,9 +230,9 @@ void creditMemo::setNumber()
       if (_metrics->value("CMNumberGeneration") == "A")
         _memoNumber->setEnabled(false);
     }
-    else if (creditetNumber.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                  creditetNumber, __FILE__, __LINE__))
     {
-      systemError(this, creditetNumber.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -243,9 +246,9 @@ void creditMemo::setNumber()
       _NumberGen = creditetNumber.value("cmnumber").toInt();
       _memoNumber->setEnabled(false);
     }
-    else if (creditetNumber.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                  creditetNumber, __FILE__, __LINE__))
     {
-      systemError(this, creditetNumber.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -316,15 +319,15 @@ void creditMemo::sSave()
     return;
   }
 
+  // save the cmhead
+  if (!save())
+    return;
+
   // save address info in case someone wants to use 'em again later
   // but don't make any global changes to the data and ignore errors
   _billToAddr->save(AddressCluster::CHANGEONE);
   _shipToAddr->save(AddressCluster::CHANGEONE);
-
-  // finally save the cmhead
-  if (!save())
-    return;
-
+  
   omfgThis->sCreditMemosUpdated();
 
   _cmheadid = -1;
@@ -406,9 +409,9 @@ bool creditMemo::save()
   if(_saleType->isValid())
     creditave.bindValue(":cmhead_saletype_id", _saleType->id());
   creditave.exec();
-  if (creditave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Credit Memo Information"),
+                                creditave, __FILE__, __LINE__))
   {
-    systemError(this, creditave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -474,9 +477,9 @@ void creditMemo::sInvoiceList()
       _customerPO->setText(sohead.value("invchead_ponumber"));
       _project->setId(sohead.value("invchead_prj_id").toInt());
     }
-    else if (sohead.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                  sohead, __FILE__, __LINE__))
     {
-      systemError(this, sohead.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -508,9 +511,9 @@ void creditMemo::populateShipto(int pShiptoid)
       _commission->setDouble(query.value("shipto_commission").toDouble() * 100);
       _shippingZone->setId(query.value("shipto_shipzone_id").toInt());
     }
-    else if (query.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Ship To Information"),
+                                  query, __FILE__, __LINE__))
     {
-      systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -571,9 +574,9 @@ void creditMemo::sPopulateCustomerInfo()
         if ((cNew == _mode) && (query.value("shiptoid").toInt() != -1))
           populateShipto(query.value("shiptoid").toInt());
       }
-      else if (query.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Customer Information"),
+                                    query, __FILE__, __LINE__))
       {
-        systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
@@ -604,7 +607,6 @@ qDebug("_numbergen->%d, memo#->%d", _NumberGen, _memoNumber->text().toInt());
          (_metrics->value("CMNumberGeneration") == "M")   ) )
   {
     _memoNumber->setEnabled(false);
-
     XSqlQuery query;
     query.prepare( "SELECT cmhead_id, cmhead_posted "
                    "FROM cmhead "
@@ -647,9 +649,9 @@ qDebug("_numbergen->%d, memo#->%d", _NumberGen, _memoNumber->text().toInt());
       else
         _mode = cEdit;
     }
-    else if (query.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                  query, __FILE__, __LINE__))
     {
-      systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -752,9 +754,9 @@ void creditMemo::sDelete()
       return;
     }
   }
-  else if (creditDelete.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Credit Memo Line Item"),
+                                creditDelete, __FILE__, __LINE__))
   {
-    systemError(this, creditDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -768,9 +770,9 @@ void creditMemo::sDelete()
                "WHERE (cmitem_id=:cmitem_id);" );
     creditDelete.bindValue(":cmitem_id", _cmitem->id());
     creditDelete.exec();
-    if (creditDelete.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Credit Memo Line Item"),
+                                  creditDelete, __FILE__, __LINE__))
     {
-      systemError(this, creditDelete.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -780,38 +782,15 @@ void creditMemo::sDelete()
 
 void creditMemo::sFillList()
 {
-  XSqlQuery creditFillList;
-  creditFillList.prepare( "SELECT cmitem_id, cmitem_linenumber, item_number,"
-             "       (item_descrip1 || ' ' || item_descrip2) AS description,"
-             "       warehous_code, quom.uom_name AS qtyuom,"
-             "       cmitem_qtyreturned, cmitem_qtycredit,"
-             "       puom.uom_name AS priceuom,"
-             "       cmitem_unitprice,"
-             "       (cmitem_qtycredit * cmitem_qty_invuomratio) *"
-             "        (cmitem_unitprice / cmitem_price_invuomratio) AS extprice,"
-             "       'qty' AS cmitem_qtyreturned_xtnumericrole,"
-             "       'qty' AS cmitem_qtycredit_xtnumericrole,"
-             "       'salesprice' AS cmitem_unitprice_xtnumericrole,"
-             "       'curr' AS extprice_xtnumericrole "
-             "FROM cmitem, itemsite, item, whsinfo, uom AS quom, uom AS puom "
-             "WHERE ( (cmitem_itemsite_id=itemsite_id)"
-             " AND (cmitem_qty_uom_id=quom.uom_id)"
-             " AND (cmitem_price_uom_id=puom.uom_id)"
-             " AND (itemsite_item_id=item_id)"
-             " AND (itemsite_warehous_id=warehous_id)"
-             " AND (cmitem_cmhead_id=:cmhead_id) ) "
-             "ORDER BY cmitem_linenumber;" );
-  creditFillList.bindValue(":cmhead_id", _cmheadid);
-  creditFillList.exec();
-  if (creditFillList.lastError().type() != QSqlError::NoError)
-      systemError(this, creditFillList.lastError().databaseText(), __FILE__, __LINE__);
+  MetaSQLQuery mql = mqlLoad("creditMemoItems", "list");
 
-  _cmitem->populate(creditFillList);
-  if (creditFillList.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, creditFillList.lastError().databaseText(), __FILE__, __LINE__);
+  ParameterList params;
+  params.append("cmhead_id", _cmheadid);
+  XSqlQuery creditFillList = mql.toQuery(params);
+  _cmitem->populate(creditFillList, true);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Credit Memo Items"),
+                             creditFillList, __FILE__, __LINE__))
     return;
-  }
 
   sCalculateSubtotal();
   sCalculateTax();
@@ -824,10 +803,10 @@ void creditMemo::sCalculateSubtotal()
 //  Determine the subtotal and line item tax
   XSqlQuery query;
   query.prepare( "SELECT SUM(round((cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio), 2)) AS subtotal "
-                 "FROM cmitem, itemsite, item "
-                 "WHERE ( (cmitem_itemsite_id=itemsite_id)"
-                 " AND (itemsite_item_id=item_id)"
-                 " AND (cmitem_cmhead_id=:cmhead_id) );" );
+                 "FROM cmitem "
+                 "LEFT OUTER JOIN itemsite ON (cmitem_itemsite_id=itemsite_id) "
+                 "LEFT OUTER JOIN item ON (itemsite_item_id=item_id) "
+                 "WHERE (cmitem_cmhead_id=:cmhead_id);" );
   query.bindValue(":cmhead_id", _cmheadid);
   query.exec();
   if (query.first())
@@ -924,9 +903,9 @@ void creditMemo::populate()
 
     sCalculateTax();
   }
-  else if (cmhead.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                cmhead, __FILE__, __LINE__))
   {
-    systemError(this, cmhead.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -943,9 +922,9 @@ void creditMemo::closeEvent(QCloseEvent *pEvent)
     creditcloseEvent.exec();
     if (creditcloseEvent.first())
       ; // TODO: add error checking when function returns int instead of boolean
-    else if (creditcloseEvent.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Credit Memo"),
+                                  creditcloseEvent, __FILE__, __LINE__))
     {
-      systemError(this, creditcloseEvent.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -967,9 +946,9 @@ void creditMemo::sReleaseNumber()
 
   creditReleaseNumber.bindValue(":number", _NumberGen);
   creditReleaseNumber.exec();
-  if (creditReleaseNumber.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Releasing Credit Memo Number"),
+                                creditReleaseNumber, __FILE__, __LINE__))
   {
-    systemError(this, creditReleaseNumber.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -1010,9 +989,9 @@ void creditMemo::sCalculateTax()
   taxq.exec();
   if (taxq.first())
     _tax->setLocalValue(taxq.value("tax").toDouble());
-  else if (taxq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Calculating Tax"),
+                                taxq, __FILE__, __LINE__))
   {
-    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   // changing _tax fires sCalculateTotal()

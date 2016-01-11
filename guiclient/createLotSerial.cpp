@@ -17,6 +17,7 @@
 
 #include <parameter.h>
 #include <openreports.h>
+#include "errorReporter.h"
 
 createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl),
@@ -101,7 +102,9 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
                         "FROM lsdetail JOIN ls ON (ls_id=lsdetail_ls_id) "
                         "WHERE ( (lsdetail_source_number=:docnumber) "
                         "AND (lsdetail_source_type=:transtype) "
-                        "AND (lsdetail_itemsite_id=:itemsite) "
+                        "AND (lsdetail_itemsite_id IN (SELECT itemsite_id FROM itemsite "
+                        "                              WHERE itemsite_item_id = (SELECT itemsite_item_id "
+                        "                               FROM itemsite WHERE itemsite_id = :itemsite))) "
                         "AND (lsdetail_qtytoassign > 0) ) "
                         "GROUP BY 2,3");
       preassign.bindValue(":transtype", createet.value("invhist_transtype").toString());
@@ -115,9 +118,9 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
         _preassigned = true;
         connect(_lotSerial, SIGNAL(newID(int)), this, SLOT(sLotSerialSelected()));
       }
-      else if (preassign.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+                                    preassign, __FILE__, __LINE__))
       {
-        systemError(this, preassign.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
       else if (createet.value("itemsite_lsseq_id").toInt() != -1)
@@ -132,9 +135,9 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
           _lotSerial->setAllowNull(true);
           _lotSerial->setText(fetchlsnum.value("lotserial").toString());
         }
-        else if (fetchlsnum.lastError().type() != QSqlError::NoError)
+        else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+                                      fetchlsnum, __FILE__, __LINE__))
         {
-          systemError(this, fetchlsnum.lastError().databaseText(), __FILE__, __LINE__);
           return UndefinedError;
         }
       }
@@ -146,9 +149,9 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
                      "WHERE (itemloc_itemsite_id=:itemsite_id);");
         lots.bindValue(":itemsite_id", createet.value("itemsite_id").toInt());
         lots.exec();
-        if (lots.lastError().type() != QSqlError::NoError)
+        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+                                      lots, __FILE__, __LINE__))
         {
-          systemError(this, lots.lastError().databaseText(), __FILE__, __LINE__);
           return UndefinedError;
         }
         else {
@@ -158,9 +161,9 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
         }
       }
     }
-    else if (createet.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+                                  createet, __FILE__, __LINE__))
     {
-      systemError(this, createet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -204,11 +207,11 @@ void createLotSerial::sHandleCharacteristics()
     if (_lotsFound)
     {
         XSqlQuery charQuery;
-        charQuery.prepare(QString("SELECT char.char_type, charass.charass_value "
+        charQuery.prepare(QString("SELECT DISTINCT char.char_name, char.char_type, charass.charass_value "
                           " FROM charass INNER JOIN char ON charass.charass_char_id=char.char_id "
                           " WHERE charass.charass_target_type='LS' AND "
                           " charass.charass_target_id=%1 "
-                          " ORDER BY charass.charass_id ASC").arg(ls_id));
+                          " ORDER BY char.char_name ASC").arg(ls_id));
         success = charQuery.exec();
         if (!success)
         {
@@ -279,7 +282,6 @@ void createLotSerial::clearCharacteristics()
 void createLotSerial::sAssign()
 {
   XSqlQuery createAssign;
-  int  lsid=-1;
   
   if (_lotSerial->currentText().isEmpty())
   {
@@ -405,9 +407,9 @@ void createLotSerial::sAssign()
         return;
       }
     }
-    else if (createAssign.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Lot/Serial Information"),
+                                  createAssign, __FILE__, __LINE__))
     {
-      systemError(this, createAssign.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -430,11 +432,10 @@ void createLotSerial::sAssign()
                                   QMessageBox::Yes | QMessageBox::Default,
                                   QMessageBox::No  | QMessageBox::Escape) == QMessageBox::No)
           return;
-      lsid=createAssign.value("ls_id").toInt();
     }
-    else if (createAssign.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Lot/Serial Information"),
+                                  createAssign, __FILE__, __LINE__))
     {
-      systemError(this, createAssign.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -465,9 +466,9 @@ void createLotSerial::sAssign()
     createAssign.bindValue(":warranty", _warranty->date());
   createAssign.bindValue(":itemlocdist_id", _itemlocdistid);
   createAssign.exec();
-  if (createAssign.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Lot/Serial Information"),
+                                createAssign, __FILE__, __LINE__))
   {
-    systemError(this, createAssign.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

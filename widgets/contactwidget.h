@@ -220,7 +220,7 @@ public slots:
          virtual void setNumber(QString p);
   inline virtual void clearExtraClause()	        { }
          virtual void findDuplicates();
-  inline virtual void setExtraClause(const QString&)    { }
+  inline virtual void setExtraClause(const QString&, const QString&)    { }
   inline virtual void setAddress(const int p)           { _address->setId(p); }
   inline virtual void setActive(const bool p)           { _active->setChecked(p); }
          virtual void setChange(QString p);
@@ -264,10 +264,10 @@ public slots:
   virtual void	setActiveVisible(const bool);
   virtual void	setAddressVisible(const bool);
   virtual void	setEmailVisible(const bool);
-  virtual void	setId(const int);
+  virtual void	setId(const int, const QString& = QString::null);
   virtual void	setInitialsVisible(const bool);
   virtual void	setMinimalLayout(const bool);
-  virtual void	setName(const QString& p);
+  virtual void	setName(int, const QString& p);
   virtual void	setPhonesVisible(const bool);
   virtual void	setSearchAcct(const int);
   virtual void	setWebaddrVisible(const bool);

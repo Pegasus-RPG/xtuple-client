@@ -287,6 +287,10 @@ bool printSinglecopyDocument::sPrintOneDoc(XSqlQuery *docq)
 
   return printedOk;
 }
+void	 printSinglecopyDocument::sPopulate(XSqlQuery*)
+{
+	sPopulate();
+}
 
 void printSinglecopyDocument::sPopulate()
 {

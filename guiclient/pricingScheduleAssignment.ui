@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>691</width>
-    <height>291</height>
+    <width>670</width>
+    <height>315</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,21 +26,43 @@ to be bound by its terms.</comment>
      <item>
       <widget class="QGroupBox" name="_customerGroup">
        <layout class="QGridLayout" name="gridLayout">
-        <property name="margin">
+        <property name="leftMargin">
          <number>5</number>
         </property>
-        <item row="0" column="0">
-         <widget class="QRadioButton" name="_selectedCustomer">
+        <property name="topMargin">
+         <number>5</number>
+        </property>
+        <property name="rightMargin">
+         <number>5</number>
+        </property>
+        <property name="bottomMargin">
+         <number>5</number>
+        </property>
+        <item row="6" column="0">
+         <widget class="QRadioButton" name="_selectedShipZone">
           <property name="text">
-           <string>Selected Customer:</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
+           <string>Shipping Zone</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="CustCluster" name="_cust">
+        <item row="4" column="1">
+         <widget class="XComboBox" name="_customerTypes">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="CustCluster" name="_shiptoPatternCust">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="label">
            <string/>
           </property>
@@ -55,12 +77,12 @@ to be bound by its terms.</comment>
         <item row="1" column="0">
          <widget class="QRadioButton" name="_selectedCustomerShipto">
           <property name="text">
-           <string>Selected Customer Ship-To:</string>
+           <string>Customer Ship-To</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="XComboBox" name="_customerShipto">
+        <item row="1" column="2">
+         <widget class="XComboBox" name="_shiptoId">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -69,54 +91,107 @@ to be bound by its terms.</comment>
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QRadioButton" name="_customerTypePattern">
+          <property name="text">
+           <string>Customer Type Pattern</string>
           </property>
          </widget>
         </item>
         <item row="2" column="0">
          <widget class="QRadioButton" name="_selectedShiptoPattern">
           <property name="text">
-           <string>Selected Cust. Ship-To Pattern:</string>
+           <string>Customer Ship-To Pattern</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
+        <item row="2" column="2">
          <widget class="XLineEdit" name="_shiptoPattern">
           <property name="enabled">
            <bool>false</bool>
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="4" column="0">
          <widget class="QRadioButton" name="_selectedCustomerType">
           <property name="text">
-           <string>Selected Customer Type:</string>
+           <string>Customer Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="CustCluster" name="_shiptoIdCust">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="label">
+           <string/>
+          </property>
+          <property name="nameVisible">
+           <bool>false</bool>
+          </property>
+          <property name="descriptionVisible">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="XLineEdit" name="_customerType">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QRadioButton" name="_selectedCustomer">
+          <property name="text">
+           <string>Customer</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="XComboBox" name="_customerTypes">
-          <property name="enabled">
+         <widget class="CustCluster" name="_cust">
+          <property name="label">
+           <string/>
+          </property>
+          <property name="nameVisible">
            <bool>false</bool>
           </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+          <property name="descriptionVisible">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
-        <item row="4" column="0">
-         <widget class="QRadioButton" name="_customerTypePattern">
+        <item row="7" column="0">
+         <widget class="QRadioButton" name="_selectedSaleType">
           <property name="text">
-           <string>Customer Type Pattern:</string>
+           <string>Sale Type</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
-         <widget class="XLineEdit" name="_customerType">
+        <item row="6" column="1">
+         <widget class="XComboBox" name="_shipZone">
           <property name="enabled">
            <bool>false</bool>
+          </property>
+          <property name="type">
+           <enum>XComboBox::ShippingZones</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="XComboBox" name="_saleType">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="type">
+           <enum>XComboBox::SaleTypes</enum>
           </property>
          </widget>
         </item>
@@ -206,34 +281,39 @@ to be bound by its terms.</comment>
  <customwidgets>
   <customwidget>
    <class>CustCluster</class>
-   <extends>QWidget</extends>
+   <extends></extends>
    <header>custcluster.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
-   <extends>QComboBox</extends>
+   <extends></extends>
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
+   <extends></extends>
    <header>xlineedit.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_selectedCustomerShipto</tabstop>
+  <tabstop>_shiptoIdCust</tabstop>
+  <tabstop>_shiptoId</tabstop>
+  <tabstop>_selectedShiptoPattern</tabstop>
+  <tabstop>_shiptoPatternCust</tabstop>
+  <tabstop>_shiptoPattern</tabstop>
   <tabstop>_selectedCustomer</tabstop>
   <tabstop>_cust</tabstop>
-  <tabstop>_selectedCustomerShipto</tabstop>
-  <tabstop>_customerShipto</tabstop>
-  <tabstop>_selectedShiptoPattern</tabstop>
-  <tabstop>_shiptoPattern</tabstop>
   <tabstop>_selectedCustomerType</tabstop>
   <tabstop>_customerTypes</tabstop>
   <tabstop>_customerTypePattern</tabstop>
   <tabstop>_customerType</tabstop>
+  <tabstop>_selectedShipZone</tabstop>
+  <tabstop>_selectedSaleType</tabstop>
+  <tabstop>_shipZone</tabstop>
+  <tabstop>_saleType</tabstop>
   <tabstop>_ipshead</tabstop>
-  <tabstop>_buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -288,7 +368,7 @@ to be bound by its terms.</comment>
   <connection>
    <sender>_selectedCustomerShipto</sender>
    <signal>toggled(bool)</signal>
-   <receiver>_customerShipto</receiver>
+   <receiver>_shiptoId</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -330,6 +410,70 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>344</x>
      <y>36</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_selectedCustomerShipto</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_shiptoIdCust</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>129</x>
+     <y>64</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>352</x>
+     <y>63</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_selectedShiptoPattern</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_shiptoPatternCust</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>129</x>
+     <y>96</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>352</x>
+     <y>95</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_selectedShipZone</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_shipZone</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>129</x>
+     <y>96</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>352</x>
+     <y>95</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_selectedSaleType</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_saleType</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>129</x>
+     <y>96</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>352</x>
+     <y>95</y>
     </hint>
    </hints>
   </connection>
