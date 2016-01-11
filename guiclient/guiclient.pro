@@ -1,9 +1,17 @@
 include( ../global.pri )
 
 TARGET   = xtuple
-CONFIG   += qt warn_on uitools designer help
 TEMPLATE = app
-QT += designer help uitools
+
+CONFIG += qt warn_on
+QT     += xml sql script scripttools network \
+          webkit xmlpatterns printsupport webkitwidgets
+lessThan(QT_MAJOR_VERSION, 5) {
+  CONFIG += uitools designer help
+} else {
+  QT     += designer help quick uitools websockets
+}
+
 
 INCLUDEPATH += ../scriptapi \
                ../common \
@@ -1858,10 +1866,5 @@ SOURCES = absoluteCalendarItem.cpp              \
 include( displays/displays.pri )
 include( hunspell.pri )
 
-QT += xml sql script scripttools network quick
-QT += webkit xmlpatterns printsupport webkitwidgets
-
 RESOURCES += guiclient.qrc $${OPENRPT_IMAGE_DIR}/OpenRPTMetaSQL.qrc
-
-#CONFIG += debug
 

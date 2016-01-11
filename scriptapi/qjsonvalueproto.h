@@ -11,18 +11,20 @@
 #ifndef __QJSONVALUEPROTO_H__
 #define __QJSONVALUEPROTO_H__
 
+#include <QtScript>
+void setupQJsonValueProto(QScriptEngine *engine);
+
+#if QT_VERSION >= 0x050000
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QString>
-#include <QtScript>
 #include <QVariant>
 
+Q_DECLARE_METATYPE(QJsonValue)
 Q_DECLARE_METATYPE(QJsonValue*)
-
 Q_DECLARE_METATYPE(enum QJsonValue::Type)
 
-void setupQJsonValueProto(QScriptEngine *engine);
 QScriptValue constructQJsonValue(QScriptContext *context, QScriptEngine *engine);
 
 class QJsonValueProto : public QObject, public QScriptable
@@ -56,4 +58,5 @@ class QJsonValueProto : public QObject, public QScriptable
     Q_INVOKABLE QJsonValue        fromVariant(const QVariant & variant);
 };
 
+#endif
 #endif

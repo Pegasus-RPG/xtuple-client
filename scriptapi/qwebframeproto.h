@@ -34,7 +34,11 @@
 #include <QWebSecurityOrigin>
 
 Q_DECLARE_METATYPE(QWebFrame*)
+
+#if QT_VERSION >= 0x050000
 Q_DECLARE_METATYPE(enum QWebFrame::ValueOwnership)
+#endif
+Q_DECLARE_METATYPE(enum QWebFrame::RenderLayer)
 
 void setupQWebFrameProto(QScriptEngine *engine);
 QScriptValue constructQWebFrame(QScriptContext *context, QScriptEngine *engine);
@@ -46,7 +50,9 @@ class QWebFrameProto : public QObject, public QScriptable
   public:
     QWebFrameProto(QObject *parent);
 
+#if QT_VERSION >= 0x050000
     Q_INVOKABLE void                          addToJavaScriptWindowObject(const QString & name, QObject * object, QWebFrame::ValueOwnership own = QWebFrame::QtOwnership);
+#endif
     Q_INVOKABLE QUrl                          baseUrl() const;
     Q_INVOKABLE QList<QWebFrame *>            childFrames() const;
     Q_INVOKABLE QSize                         contentsSize() const;
@@ -65,7 +71,7 @@ class QWebFrameProto : public QObject, public QScriptable
     Q_INVOKABLE QWebFrame                    *parentFrame() const;
     Q_INVOKABLE QPoint                        pos() const;
     Q_INVOKABLE void                          render(QPainter * painter, const QRegion & clip = QRegion());
-    Q_INVOKABLE void                          render(QPainter * painter, QWebFrame::RenderLayers layer, const QRegion & clip = QRegion());
+    Q_INVOKABLE void                          render(QPainter * painter, int layer, const QRegion & clip = QRegion());
     Q_INVOKABLE QUrl                          requestedUrl() const;
     Q_INVOKABLE void                          scroll(int dx, int dy);
     Q_INVOKABLE QRect                         scrollBarGeometry(Qt::Orientation orientation) const;

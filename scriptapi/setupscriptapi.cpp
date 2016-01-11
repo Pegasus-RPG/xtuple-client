@@ -102,6 +102,10 @@
 #include "qvalidatorproto.h"
 #include "qwebframeproto.h"
 #include "qwebpageproto.h"
+#include "qwebsocketcorsauthenticatorproto.h"
+#include "qwebsocketproto.h"
+#include "qwebsocketprotocolproto.h"
+#include "qwebsocketserverproto.h"
 #include "qwebviewproto.h"
 #include "qwidgetproto.h"
 #include "ralineeditsetup.h"
@@ -125,8 +129,6 @@
 #include "xsqlqueryproto.h"
 #include "xtreewidget.h"
 #include "xvariantsetup.h"
-#include "xwebsync_p.h"
-#include "xwebsync.h"
 #include "xwebsyncproto.h"
 
 /*! \defgroup scriptapi The xTuple ERP Scripting API
@@ -234,6 +236,10 @@ void setupScriptApi(QScriptEngine *engine)
   setupQValidatorProto(engine);
   setupQWebFrameProto(engine);
   setupQWebPageProto(engine);
+  setupQWebSocketCorsAuthenticatorProto(engine);
+  setupQWebSocketProto(engine);
+  setupQWebSocketProtocolProto(engine);
+  setupQWebSocketServerProto(engine);
   setupQWebViewProto(engine);
   setupQWidgetProto(engine);
   setupRaLineEdit(engine);

@@ -9,7 +9,7 @@
  */
 
 #ifndef __QNETWORKACCESSMANAGERPROTO_H__
-#define __QNETWORKACCESSMANAGER_H__
+#define __QNETWORKACCESSMANAGERPROTO_H__
 
 #include <QList>
 #include <QNetworkAccessManager>
@@ -30,7 +30,6 @@ class QNetworkAccessManagerProto : public QObject, public QScriptable
   public:
     QNetworkAccessManagerProto(QObject *parent);
 
-    Q_INVOKABLE void      sslErrors(QNetworkReply * reply, const QList<QSslError> & errors);
 };
 
 #endif

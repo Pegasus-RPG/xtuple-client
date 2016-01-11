@@ -12,7 +12,6 @@
 #define __XWEBSYNC_H__
 
 #include <QObject>
-#include <QJsonObject>
 
 class XWebSyncPrivate;
 
@@ -22,7 +21,6 @@ class XWebSync : public QObject
   Q_PROPERTY(QString data READ data WRITE setData NOTIFY dataChanged)
   Q_PROPERTY(QString query READ query WRITE setQuery NOTIFY queryChanged)
   Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
-  //Q_PROPERTY(QJsonObject test READ test WRITE setTest NOTIFY testChanged)
 
   public:
     explicit XWebSync(QObject *parent = 0);
@@ -31,21 +29,15 @@ class XWebSync : public QObject
     void setData(const QString &data);
     void setQuery(const QString &query);
     void setTitle(const QString &title);
-    //void setTest(const QJsonObject &test);
     QString data() const;
     QString query() const;
     QString title() const;
-    //QJsonObject test() const;
-
-  //public Q_SLOTS:
-  //  void execute();
 
   Q_SIGNALS:
     void executeRequest();
     void dataChanged(const QString &data);
     void queryChanged(const QString &query);
     void titleChanged(const QString &title);
-    //void testChanged(const QJsonObject &test);
 
   private:
     Q_DISABLE_COPY(XWebSync)

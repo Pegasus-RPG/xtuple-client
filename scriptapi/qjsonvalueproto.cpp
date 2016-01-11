@@ -9,22 +9,29 @@
  */
 
 #include "qjsonvalueproto.h"
+#include "qjsonobjectproto.h"
 
-QScriptValue QJsonValuetoScriptValue(QScriptEngine *engine, QJsonValue::Type const &type)
+#if QT_VERSION < 0x050000
+void setupQJsonValueProto(QScriptEngine *engine)
 {
-  //return engine->newQObject(item);
-  return engine->newVariant(QVariant(&type));
+  Q_UNUSED(engine); // do nothing
 }
 
-void QJsonValuefromScriptValue(const QScriptValue &obj, QJsonValue::Type &type)
+#else
+QScriptValue QJsonValueToScriptValue(QScriptEngine *engine, QJsonValue* const &in)
 {
-  //item = qobject_cast<QJsonValue*>(obj.toQObject());
-  type = qscriptvalue_cast<QJsonValue::Type>(obj);
+  QJsonObject obj = in->toObject();
+  return QJsonObjectToScriptValue(engine, &obj);
+}
+
+void QJsonValueFromScriptValue(const QScriptValue &obj, QJsonValue* &out)
+{
+  out = dynamic_cast<QJsonValue*>(obj.toQObject());
 }
 
 void setupQJsonValueProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QJsonValuetoScriptValue, QJsonValuefromScriptValue);
+  qScriptRegisterMetaType(engine, QJsonValueToScriptValue, QJsonValueFromScriptValue);
 
   QScriptValue proto = engine->newQObject(new QJsonValueProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QJsonValue*>(), proto);
@@ -35,17 +42,13 @@ void setupQJsonValueProto(QScriptEngine *engine)
   engine->globalObject().setProperty("QJsonValue",  constructor);
 }
 
-QScriptValue constructQJsonValue(QScriptContext * /*context*/,
-                                    QScriptEngine  *engine)
+QScriptValue constructQJsonValue(QScriptContext *context, QScriptEngine *engine)
 {
-  QJsonValue *obj = 0;
-  /* if (context->argumentCount() ...)
-  else if (something bad)
-    context->throwError(QScriptContext::UnknownError,
-                        "Could not find an appropriate QJsonValueconstructor");
-  else
-  */
-    obj = new QJsonValue();
+  Q_UNUSED(context);
+  QJsonValue *obj = new QJsonValue();
+
+  if (context->argumentCount() >= 1)
+    *obj = QJsonValue::fromVariant(context->argument(0).toVariant());
   return engine->toScriptValue(obj);
 }
 
@@ -203,8 +206,7 @@ QJsonValue & QJsonValueProto::operator=(const QJsonValue & other)
   QJsonValue *item = qscriptvalue_cast<QJsonValue*>(thisObject());
   if (item)
     return item->operator=(other);
-  // TODO: What should be returned here?
-  //return QJsonValue();
+  return *(new QJsonValue());
 }
 
 bool QJsonValueProto::operator==(const QJsonValue & other) const
@@ -217,10 +219,7 @@ bool QJsonValueProto::operator==(const QJsonValue & other) const
 
 QJsonValue QJsonValueProto::fromVariant(const QVariant & variant)
 {
-  QJsonValue *item = qscriptvalue_cast<QJsonValue*>(thisObject());
-  if (item)
-    return item->fromVariant(variant);
-  // TODO: What should be returned here?
-  //return QJsonValue();
+  return QJsonValue::fromVariant(variant);
 }
 
+#endif

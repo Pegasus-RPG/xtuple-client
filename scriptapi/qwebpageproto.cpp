@@ -248,86 +248,87 @@ void QWebPageProto::setActualVisibleContentRect(const QRect & rect) const
 {
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
-    return item->setActualVisibleContentRect(rect);
+    item->setActualVisibleContentRect(rect);
 }
 
 void QWebPageProto::setContentEditable(bool editable)
 {
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
-    return item->setContentEditable(editable);
+    item->setContentEditable(editable);
 }
 
 void QWebPageProto::setFeaturePermission(QWebFrame * frame, QWebPage::Feature feature, QWebPage::PermissionPolicy policy)
 {
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
-    return item->setFeaturePermission(frame, feature, policy);
+    item->setFeaturePermission(frame, feature, policy);
 }
 
 void QWebPageProto::setForwardUnsupportedContent(bool forward)
 {
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
-    return item->setForwardUnsupportedContent(forward);
+    item->setForwardUnsupportedContent(forward);
 }
 
 void QWebPageProto::setLinkDelegationPolicy(QWebPage::LinkDelegationPolicy policy)
 {
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
-    return item->setLinkDelegationPolicy(policy);
+    item->setLinkDelegationPolicy(policy);
 }
 
 void QWebPageProto::setNetworkAccessManager(QNetworkAccessManager * manager)
 {
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
-    return item->setNetworkAccessManager(manager);
+    item->setNetworkAccessManager(manager);
 }
 
 void QWebPageProto::setPalette(const QPalette & palette)
 {
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
-    return item->setPalette(palette);
+    item->setPalette(palette);
 }
 
 void QWebPageProto::setPluginFactory(QWebPluginFactory * factory)
 {
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
-    return item->setPluginFactory(factory);
+    item->setPluginFactory(factory);
 }
 
 void QWebPageProto::setPreferredContentsSize(const QSize & size) const
 {
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
-    return item->setPreferredContentsSize(size);
+    item->setPreferredContentsSize(size);
 }
 
 void QWebPageProto::setView(QWidget * view)
 {
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
-    return item->setView(view);
+    item->setView(view);
 }
 
 void QWebPageProto::setViewportSize(const QSize & size) const
 {
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
-    return item->setViewportSize(size);
+    item->setViewportSize(size);
 }
 
-/* TODO - Qt docs only have (VisibilityState), not assigned to a var. */
-void QWebPageProto::setVisibilityState(QWebPage::VisibilityState)
+#if QT_VERSION >= 0x050000
+void QWebPageProto::setVisibilityState(QWebPage::VisibilityState state)
 {
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
-    return item->setVisibilityState(item->visibilityState());
+    item->setVisibilityState(state);
 }
+#endif
 
 QWebSettings* QWebPageProto::settings() const
 {
@@ -389,7 +390,7 @@ void QWebPageProto::triggerAction(QWebPage::WebAction action, bool checked)
 {
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
-    return item->triggerAction(action, checked);
+    item->triggerAction(action, checked);
 }
 
 QUndoStack* QWebPageProto::undoStack() const
@@ -404,7 +405,7 @@ void QWebPageProto::updatePositionDependentActions(const QPoint & pos)
 {
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
-    return item->updatePositionDependentActions(pos);
+    item->updatePositionDependentActions(pos);
 }
 
 QWidget* QWebPageProto::view() const
@@ -431,10 +432,12 @@ QSize QWebPageProto::viewportSize() const
   return QSize();
 }
 
+#if QT_VERSION >= 0x050000
 QWebPage::VisibilityState QWebPageProto::visibilityState() const
 {
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->visibilityState();
-  return QWebPage::VisibilityState();
+  return QWebPage::VisibilityStateVisible; // don't know the best default
 }
+#endif

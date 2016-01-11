@@ -4,6 +4,13 @@ TEMPLATE = lib
 CONFIG += qt \
     warn_on \
     staticlib
+
+QT += core network printsupport script sql webkit webkitwidgets widgets xml
+
+greaterThan (QT_MAJOR_VERSION, 4) {
+  QT += websockets
+}
+
 DBFILE = scriptapi.db
 LANGUAGE = C++
 INCLUDEPATH += $${XTUPLE_DIR}/common          $${XTUPLE_BLD}/common \
@@ -95,6 +102,10 @@ HEADERS += setupscriptapi.h \
     qvalidatorproto.h \
     qwebframeproto.h \
     qwebpageproto.h \
+    qwebsocketcorsauthenticatorproto.h \
+    qwebsocketproto.h             \
+    qwebsocketprotocolproto.h     \
+    qwebsocketserverproto.h       \
     qwebviewproto.h \
     qwidgetproto.h \
     xdatawidgetmapperproto.h \
@@ -204,6 +215,10 @@ SOURCES += setupscriptapi.cpp \
     qvalidatorproto.cpp \
     qwebframeproto.cpp \
     qwebpageproto.cpp \
+    qwebsocketcorsauthenticatorproto.cpp \
+    qwebsocketproto.cpp           \
+    qwebsocketprotocolproto.cpp   \
+    qwebsocketserverproto.cpp     \
     qwebviewproto.cpp \
     qwidgetproto.cpp \
     xdatawidgetmapperproto.cpp \
@@ -236,13 +251,3 @@ SOURCES += setupscriptapi.cpp \
     xvariantsetup.cpp \
     xwebsync.cpp \
     xwebsyncproto.cpp
-
-QT += core \
-    sql \
-    xml \
-    script \
-    network \
-    webkit \
-    webkitwidgets \
-    widgets \
-    printsupport

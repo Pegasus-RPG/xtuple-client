@@ -10,41 +10,57 @@
 
 #include "qjsonobjectproto.h"
 
-#include <QJsonObject>
-
-QScriptValue QJsonObjecttoScriptValue(QScriptEngine *engine, QJsonObject::iterator const &iterator)
+#if QT_VERSION < 0x050000
+void setupQJsonObjectProto(QScriptEngine *engine)
 {
-  //return engine->newQObject(item);
-  return engine->newVariant(QVariant(&iterator));
+  // do nothing
 }
 
-void QJsonObjectfromScriptValue(const QScriptValue &obj, QJsonObject::iterator &iterator)
+#else
+
+#include <QJsonObject>
+
+QScriptValue QJsonObjectToScriptValue(QScriptEngine *engine, QJsonObject* const &in)
 {
-  //item = qobject_cast<QJsonObject*>(obj.toQObject());
-  iterator = qscriptvalue_cast<QJsonObject::iterator>(obj);
+  QScriptValue obj = engine->toScriptValue(in->toVariantMap());
+  return obj;
+}
+
+void QJsonObjectFromScriptValue(const QScriptValue &obj, QJsonObject* &out)
+{
+  out = dynamic_cast<QJsonObject*>(obj.toQObject());
+}
+
+static QScriptValue fromVariantHash(QScriptContext *context, QScriptEngine *engine)
+{
+  QJsonObject obj = QJsonObject::fromVariantHash(context->argument(0).toVariant().toHash());
+  return QJsonObjectToScriptValue(engine, &obj);
+}
+
+static QScriptValue fromVariantMap(QScriptContext *context, QScriptEngine *engine)
+{
+  QJsonObject obj = QJsonObject::fromVariantMap(context->argument(0).toVariant().toMap());
+  return QJsonObjectToScriptValue(engine, &obj);
 }
 
 void setupQJsonObjectProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QJsonObjecttoScriptValue, QJsonObjectfromScriptValue);
+  qScriptRegisterMetaType(engine, QJsonObjectToScriptValue, QJsonObjectFromScriptValue);
 
   QScriptValue proto = engine->newQObject(new QJsonObjectProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QJsonObject*>(), proto);
 
-  QScriptValue constructor = engine->newFunction(constructQJsonObject,
-                                                 proto);
-  engine->globalObject().setProperty("QJsonObject",  constructor);
+  QScriptValue constructor = engine->newFunction(constructQJsonObject, proto);
+  proto.setProperty("fromVariantHash", engine->newFunction(fromVariantHash));
+  proto.setProperty("fromVariantMap",  engine->newFunction(fromVariantMap));
+
+  engine->globalObject().setProperty("QJsonObject", constructor);
 }
 
 QScriptValue constructQJsonObject(QScriptContext * context,
                                     QScriptEngine  *engine)
 {
   QJsonObject *obj = 0;
-  /* TODO QVariant::QJsonObject doesn't exist
-   * https://github.com/qtproject/qtbase/blob/dev/src/corelib/kernel/qvariant.h#L125-L191
-  if (context->argumentCount() == 1 && context->argument(0).isVariant() &&
-        context->argument(0).toVariant().type() == QVariant::QJsonObject)
-  */
   if (context->argumentCount() == 1 && context->argument(0).isVariant())
     obj = new QJsonObject(context->argument(0).toVariant().toJsonObject());
   else
@@ -57,12 +73,13 @@ QJsonObjectProto::QJsonObjectProto(QObject *parent)
 {
 }
 
+#ifdef Use_QJsonObjectIterators
 QJsonObject::iterator QJsonObjectProto::begin()
 {
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
   if (item)
     return item->begin();
-  // TODO: What to return here:
+  return QJsonObject::iterator();
 }
 
 QJsonObject::const_iterator QJsonObjectProto::begin() const
@@ -70,7 +87,7 @@ QJsonObject::const_iterator QJsonObjectProto::begin() const
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
   if (item)
     return item->begin();
-  // TODO: What to return here:
+  return QJsonObject::const_iterator();
 }
 
 QJsonObject::const_iterator QJsonObjectProto::constBegin() const
@@ -78,7 +95,7 @@ QJsonObject::const_iterator QJsonObjectProto::constBegin() const
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
   if (item)
     return item->constBegin();
-  // TODO: What to return here:
+  return QJsonObject::const_iterator();
 }
 
 QJsonObject::const_iterator QJsonObjectProto::constEnd() const
@@ -86,7 +103,7 @@ QJsonObject::const_iterator QJsonObjectProto::constEnd() const
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
   if (item)
     return item->constEnd();
-  // TODO: What to return here:
+  return QJsonObject::const_iterator();
 }
 
 QJsonObject::const_iterator QJsonObjectProto::constFind(const QString & key) const
@@ -94,8 +111,9 @@ QJsonObject::const_iterator QJsonObjectProto::constFind(const QString & key) con
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
   if (item)
     return item->constFind(key);
-  // TODO: What to return here:
+  return QJsonObject::const_iterator();
 }
+#endif
 
 bool QJsonObjectProto::contains(const QString & key) const
 {
@@ -121,12 +139,13 @@ bool QJsonObjectProto::empty() const
   return false;
 }
 
+#ifdef Use_QJsonObjectIterators
 QJsonObject::iterator QJsonObjectProto::end()
 {
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
   if (item)
     return item->end();
-  // TODO: What to return here:
+  return QJsonObject::iterator();
 }
 
 QJsonObject::const_iterator QJsonObjectProto::end() const
@@ -134,7 +153,7 @@ QJsonObject::const_iterator QJsonObjectProto::end() const
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
   if (item)
     return item->end();
-  // TODO: What to return here:
+  return QJsonObject::const_iterator();
 }
 
 QJsonObject::iterator QJsonObjectProto::erase(QJsonObject::iterator it)
@@ -142,7 +161,7 @@ QJsonObject::iterator QJsonObjectProto::erase(QJsonObject::iterator it)
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
   if (item)
     return item->erase(it);
-  // TODO: What to return here:
+  return QJsonObject::iterator();
 }
 
 QJsonObject::iterator QJsonObjectProto::find(const QString & key)
@@ -150,7 +169,7 @@ QJsonObject::iterator QJsonObjectProto::find(const QString & key)
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
   if (item)
     return item->find(key);
-  // TODO: What to return here:
+  return QJsonObject::iterator();
 }
 
 QJsonObject::const_iterator QJsonObjectProto::find(const QString & key) const
@@ -158,7 +177,7 @@ QJsonObject::const_iterator QJsonObjectProto::find(const QString & key) const
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
   if (item)
     return item->find(key);
-  // TODO: What to return here:
+  return QJsonObject::const_iterator();
 }
 
 QJsonObject::iterator QJsonObjectProto::insert(const QString & key, const QJsonValue & value)
@@ -166,8 +185,9 @@ QJsonObject::iterator QJsonObjectProto::insert(const QString & key, const QJsonV
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
   if (item)
     return item->insert(key, value);
-  // TODO: What to return here:
+  return QJsonObject::iterator();
 }
+#endif
 
 bool QJsonObjectProto::isEmpty() const
 {
@@ -197,7 +217,7 @@ void QJsonObjectProto::remove(const QString & key)
 {
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
   if (item)
-    return item->remove(key);
+    item->remove(key);
 }
 
 int QJsonObjectProto::size() const
@@ -216,8 +236,6 @@ QJsonValue QJsonObjectProto::take(const QString & key)
   return QJsonValue();
 }
 
-/*
- * TODO: error: 'class QJsonObject' has no member named 'toVariantHash'
 QVariantHash QJsonObjectProto::toVariantHash() const
 {
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
@@ -225,7 +243,6 @@ QVariantHash QJsonObjectProto::toVariantHash() const
     return item->toVariantHash();
   return QVariantHash();
 }
-*/
 
 QVariantMap QJsonObjectProto::toVariantMap() const
 {
@@ -251,13 +268,12 @@ bool QJsonObjectProto::operator!=(const QJsonObject & other) const
   return false;
 }
 
-QJsonObject & QJsonObjectProto::operator=(const QJsonObject & other)
+QJsonObject &QJsonObjectProto::operator=(const QJsonObject & other)
 {
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
   if (item)
     return item->operator=(other);
-  // TODO: What should be returned here?
-  //return QJsonObject();
+  return *(new QJsonObject());
 }
 
 bool QJsonObjectProto::operator==(const QJsonObject & other) const
@@ -281,26 +297,6 @@ QJsonValueRef QJsonObjectProto::operator[](const QString & key)
   QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
   if (item)
     return item->operator[](key);
-  // TODO: What should be returned here?
-  //return QJsonValueRef();
+  return QJsonValueRef(new QJsonObject(), 0);
 }
-
-/*
- * TODO: error: 'class QJsonObject' has no member named 'fromVariantHash'
-QJsonObject QJsonObjectProto::fromVariantHash(const QVariantHash & hash)
-{
-  QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
-  if (item)
-    return item->fromVariantHash(hash);
-  // TODO: What should be returned here?
-  //return QJsonObject();
-}
-*/
-
-QJsonObject QJsonObjectProto::fromVariantMap(const QVariantMap & map)
-{
-  QJsonObject *item = qscriptvalue_cast<QJsonObject*>(thisObject());
-  if (item)
-    return item->fromVariantMap(map);
-  return QJsonObject();
-}
+#endif

@@ -52,6 +52,7 @@ void setupQWebFrameProto(QScriptEngine *engine)
 QScriptValue constructQWebFrame(QScriptContext * context,
                                     QScriptEngine  *engine)
 {
+  Q_UNUSED(context);
   QWebFrame *obj = 0;
 
   return engine->toScriptValue(obj);
@@ -62,12 +63,14 @@ QWebFrameProto::QWebFrameProto(QObject *parent)
 {
 }
 
+#if QT_VERSION >= 0x050000
 void QWebFrameProto::addToJavaScriptWindowObject(const QString & name, QObject * object, QWebFrame::ValueOwnership own)
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
-    return item->addToJavaScriptWindowObject(name, object, own);
+    item->addToJavaScriptWindowObject(name, object, own);
 }
+#endif
 
 QUrl QWebFrameProto::baseUrl() const
 {
@@ -141,7 +144,6 @@ bool QWebFrameProto::hasFocus() const
   return false;
 }
 
-/* TODO - else no `item` return what? */
 QWebHitTestResult QWebFrameProto::hitTestContent(const QPoint & pos) const
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
@@ -162,14 +164,14 @@ void QWebFrameProto::load(const QUrl & url)
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
-    return item->load(url);
+    item->load(url);
 }
 
 void QWebFrameProto::load(const QNetworkRequest & req, QNetworkAccessManager::Operation operation, const QByteArray & body)
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
-    return item->load(req, operation, body);
+    item->load(req, operation, body);
 }
 
 QMultiMap<QString, QString> QWebFrameProto::metaData() const
@@ -208,14 +210,14 @@ void QWebFrameProto::render(QPainter * painter, const QRegion & clip)
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
-    return item->render(painter, clip);
+    item->render(painter, clip);
 }
 
-void QWebFrameProto::render(QPainter * painter, QWebFrame::RenderLayers layer, const QRegion & clip)
+void QWebFrameProto::render(QPainter * painter, int layer, const QRegion & clip)
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
-    return item->render(painter, layer, clip);
+    item->render(painter, QWebFrame::RenderLayer(layer), clip);
 }
 
 QUrl QWebFrameProto::requestedUrl() const
@@ -262,7 +264,7 @@ Qt::ScrollBarPolicy QWebFrameProto::scrollBarPolicy(Qt::Orientation orientation)
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->scrollBarPolicy(orientation);
-  return Qt::ScrollBarPolicy();
+  return Qt::ScrollBarAsNeeded;
 }
 
 int QWebFrameProto::scrollBarValue(Qt::Orientation orientation) const
@@ -285,78 +287,82 @@ void QWebFrameProto::scrollToAnchor(const QString & anchor)
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
-    return item->scrollToAnchor(anchor);
+    item->scrollToAnchor(anchor);
 }
 
-/* TODO - else no `item` return what? */
 QWebSecurityOrigin QWebFrameProto::securityOrigin() const
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->securityOrigin();
+#if QT_VERSION >= 0x050000
+  return QWebSecurityOrigin(QUrl());
+#else
+  return QWebSecurityOrigin(QWebSecurityOrigin::allOrigins().first()); // TODO: what's better?
+#endif
 }
 
 void QWebFrameProto::setContent(const QByteArray & data, const QString & mimeType, const QUrl & baseUrl)
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
-    return item->setContent(data, mimeType, baseUrl);
+    item->setContent(data, mimeType, baseUrl);
 }
 
 void QWebFrameProto::setFocus()
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
-    return item->setFocus();
+    item->setFocus();
 }
 
 void QWebFrameProto::setHtml(const QString & html, const QUrl & baseUrl)
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
-    return item->setHtml(html, baseUrl);
+    item->setHtml(html, baseUrl);
 }
 
 void QWebFrameProto::setScrollBarPolicy(Qt::Orientation orientation, Qt::ScrollBarPolicy policy)
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
-    return item->setScrollBarPolicy(orientation, policy);
+    item->setScrollBarPolicy(orientation, policy);
 }
 
 void QWebFrameProto::setScrollBarValue(Qt::Orientation orientation, int value)
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
-    return item->setScrollBarValue(orientation, value);
+    item->setScrollBarValue(orientation, value);
 }
 
 void QWebFrameProto::setScrollPosition(const QPoint & pos)
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
-    return item->setScrollPosition(pos);
+    item->setScrollPosition(pos);
 }
 
 void QWebFrameProto::setTextSizeMultiplier(qreal factor)
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
-    return item->setTextSizeMultiplier(factor);
+    item->setTextSizeMultiplier(factor);
 }
 
 void QWebFrameProto::setUrl(const QUrl & url)
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
-    return item->setUrl(url);
+    item->setUrl(url);
 }
 
 void QWebFrameProto::setZoomFactor(qreal factor)
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
-    return item->setZoomFactor(factor);
+    item->setZoomFactor(factor);
 }
 
 qreal QWebFrameProto::textSizeMultiplier() const
@@ -419,5 +425,5 @@ void QWebFrameProto::print(QPrinter * printer) const
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
-    return item->print(printer);
+    item->print(printer);
 }

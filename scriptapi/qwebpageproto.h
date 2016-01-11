@@ -43,7 +43,9 @@ Q_DECLARE_METATYPE(enum QWebPage::Feature)
 Q_DECLARE_METATYPE(enum QWebPage::FindFlag)
 Q_DECLARE_METATYPE(enum QWebPage::LinkDelegationPolicy)
 Q_DECLARE_METATYPE(enum QWebPage::PermissionPolicy)
+#if QT_VERSION >= 0x050000
 Q_DECLARE_METATYPE(enum QWebPage::VisibilityState)
+#endif
 Q_DECLARE_METATYPE(enum QWebPage::WebAction)
 
 void setupQWebPageProto(QScriptEngine *engine);
@@ -89,7 +91,9 @@ class QWebPageProto : public QObject, public QScriptable
     Q_INVOKABLE void                            setPreferredContentsSize(const QSize & size) const;
     Q_INVOKABLE void                            setView(QWidget * view);
     Q_INVOKABLE void                            setViewportSize(const QSize & size) const;
+#if QT_VERSION >= 0x050000
     Q_INVOKABLE void                            setVisibilityState(QWebPage::VisibilityState);
+#endif
     Q_INVOKABLE QWebSettings                   *settings() const;
     Q_INVOKABLE virtual bool                    shouldInterruptJavaScript();
     Q_INVOKABLE QStringList                     supportedContentTypes() const;
@@ -103,7 +107,9 @@ class QWebPageProto : public QObject, public QScriptable
     Q_INVOKABLE QWidget                        *view() const;
     Q_INVOKABLE QWebPage::ViewportAttributes    viewportAttributesForSize(const QSize & availableSize) const;
     Q_INVOKABLE QSize                           viewportSize() const;
+#if QT_VERSION >= 0x050000
     Q_INVOKABLE QWebPage::VisibilityState       visibilityState() const;
+#endif
 };
 
 #endif

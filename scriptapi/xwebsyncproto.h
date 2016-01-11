@@ -11,7 +11,6 @@
 #ifndef __XWEBSYNCPROTO_H__
 #define __XWEBSYNCPROTO_H__
 
-#include <QJsonObject>
 #include <QtScript>
 
 #include <xwebsync.h>
@@ -31,7 +30,6 @@ class XWebSyncProto : public QObject, public QScriptable
     Q_INVOKABLE QString data() const;
     Q_INVOKABLE QString query() const;
     Q_INVOKABLE QString title() const;
-    //Q_INVOKABLE QJsonObject test() const;
 };
 
 #endif

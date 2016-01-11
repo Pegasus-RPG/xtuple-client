@@ -10,6 +10,12 @@
 
 #include "qjsondocumentproto.h"
 
+#if QT_VERSION < 0x050000
+void setupQJsonDocumentProto(QScriptEngine *engine)
+{
+  // do nothing
+}
+#else
 #include <QJsonDocument>
 
 void setupQJsonDocumentProto(QScriptEngine *engine)
@@ -26,11 +32,6 @@ QScriptValue constructQJsonDocument(QScriptContext * context,
                                     QScriptEngine  *engine)
 {
   QJsonDocument *obj = 0;
-  /* TODO QVariant::QJsonDocument doesn't exist
-   * https://github.com/qtproject/qtbase/blob/dev/src/corelib/kernel/qvariant.h#L125-L191
-  if (context->argumentCount() == 1 && context->argument(0).isVariant() &&
-        context->argument(0).toVariant().type() == QVariant::QJsonDocument)
-  */
   if (context->argumentCount() == 1 && context->argument(0).isVariant())
     obj = new QJsonDocument(context->argument(0).toVariant().toJsonDocument());
   else
@@ -103,14 +104,14 @@ void QJsonDocumentProto::setArray(const QJsonArray & array)
 {
   QJsonDocument *item = qscriptvalue_cast<QJsonDocument*>(thisObject());
   if (item)
-    return item->setArray(array);
+    item->setArray(array);
 }
 
 void QJsonDocumentProto::setObject(const QJsonObject & object)
 {
   QJsonDocument *item = qscriptvalue_cast<QJsonDocument*>(thisObject());
   if (item)
-    return item->setObject(object);
+    item->setObject(object);
 }
 
 QByteArray QJsonDocumentProto::toBinaryData() const
@@ -150,8 +151,7 @@ QJsonDocument & QJsonDocumentProto::operator=(const QJsonDocument & other)
   QJsonDocument *item = qscriptvalue_cast<QJsonDocument*>(thisObject());
   if (item)
     return item->operator=(other);
-  // TODO: What should be returned here?
-  //return QJsonDocument();
+  return *(new QJsonDocument());
 }
 
 bool QJsonDocumentProto::operator==(const QJsonDocument & other) const
@@ -193,3 +193,4 @@ QJsonDocument QJsonDocumentProto::fromVariant(const QVariant & variant)
     return item->fromVariant(variant);
   return QJsonDocument();
 }
+#endif
