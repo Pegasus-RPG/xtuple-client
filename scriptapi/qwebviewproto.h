@@ -36,6 +36,7 @@ class QWebViewProto : public QObject, public QScriptable
 
   public:
     QWebViewProto(QObject *parent);
+    virtual ~QWebViewProto();
 
     Q_INVOKABLE bool                    findText(const QString &subString, QWebPage::FindFlags options = 0);
     Q_INVOKABLE bool                    hasSelection() const;

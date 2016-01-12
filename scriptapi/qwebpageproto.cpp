@@ -39,6 +39,7 @@ void QWebPagefromScriptValue(const QScriptValue &obj, QWebPage* &item)
 void setupQWebPageProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QWebPagetoScriptValue, QWebPagefromScriptValue);
+  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QWebPageProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebPage*>(), proto);
@@ -47,9 +48,16 @@ void setupQWebPageProto(QScriptEngine *engine)
                                                  proto);
   engine->globalObject().setProperty("QWebPage",  constructor);
 
-  constructor.setProperty("DontDelegateLinks",      QScriptValue(engine, QWebPage::DontDelegateLinks),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("DelegateExternalLinks",  QScriptValue(engine, QWebPage::DelegateExternalLinks),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  constructor.setProperty("DelegateAllLinks",       QScriptValue(engine, QWebPage::DelegateAllLinks),       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  // enum QWebPage::LinkDelegationPolicy
+  constructor.setProperty("DontDelegateLinks",      QScriptValue(engine, QWebPage::DontDelegateLinks),      permanent);
+  constructor.setProperty("DelegateExternalLinks",  QScriptValue(engine, QWebPage::DelegateExternalLinks),  permanent);
+  constructor.setProperty("DelegateAllLinks",       QScriptValue(engine, QWebPage::DelegateAllLinks),       permanent);
+
+  // enum QWebPage::VisibilityState
+  constructor.setProperty("VisibilityStateVisible",   QScriptValue(engine, QWebPage::DelegateAllLinks), permanent);
+  constructor.setProperty("VisibilityStateHidden",    QScriptValue(engine, QWebPage::DelegateAllLinks), permanent);
+  constructor.setProperty("VisibilityStatePrerender", QScriptValue(engine, QWebPage::DelegateAllLinks), permanent);
+  constructor.setProperty("VisibilityStateUnloaded",  QScriptValue(engine, QWebPage::DelegateAllLinks), permanent);
 }
 
 QScriptValue constructQWebPage(QScriptContext * context,

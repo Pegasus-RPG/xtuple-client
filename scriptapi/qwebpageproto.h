@@ -57,6 +57,7 @@ class QWebPageProto : public QObject, public QScriptable
 
   public:
     QWebPageProto(QObject *parent);
+    ~QWebPageProto();
 
     Q_INVOKABLE QAction                        *action(QWebPage::WebAction action) const;
     Q_INVOKABLE quint64                         bytesReceived() const;
