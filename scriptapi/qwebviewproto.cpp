@@ -55,6 +55,9 @@ QWebViewProto::QWebViewProto(QObject *parent)
     : QObject(parent)
 {
 }
+QWebViewProto::~QWebViewProto()
+{
+}
 
 bool QWebViewProto::hasSelection() const
 {

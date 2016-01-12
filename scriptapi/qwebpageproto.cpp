@@ -75,6 +75,9 @@ QWebPageProto::QWebPageProto(QObject *parent)
     : QObject(parent)
 {
 }
+QWebPageProto::~QWebPageProto()
+{
+}
 
 QAction* QWebPageProto::action(QWebPage::WebAction action) const
 {
