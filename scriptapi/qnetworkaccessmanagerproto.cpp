@@ -24,15 +24,16 @@ void QNetworkAccessManagerfromScriptValue(const QScriptValue &obj, QNetworkAcces
 void setupQNetworkAccessManagerProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QNetworkAccessManagertoScriptValue, QNetworkAccessManagerfromScriptValue);
+  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QNetworkAccessManagerProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QNetworkAccessManager*>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQNetworkAccessManager, proto);
   engine->globalObject().setProperty("QNetworkAccessManager",  constructor);
-  proto.setProperty("UnknownAccessibility",    QScriptValue(engine, QNetworkAccessManager::UnknownAccessibility),    permanent);
-  proto.setProperty("NotAccessible", QScriptValue(engine, QNetworkAccessManager::NotAccessible), permanent);
-  proto.setProperty("Accessible", QScriptValue(engine, QNetworkAccessManager::Accessible), permanent);
+  proto.setProperty("UnknownAccessibility", QScriptValue(engine, QNetworkAccessManager::UnknownAccessibility),  permanent);
+  proto.setProperty("NotAccessible",        QScriptValue(engine, QNetworkAccessManager::NotAccessible),         permanent);
+  proto.setProperty("Accessible",           QScriptValue(engine, QNetworkAccessManager::Accessible),            permanent);
 }
 QScriptValue constructQNetworkAccessManager(QScriptContext *context, QScriptEngine *engine)
 {
@@ -139,7 +140,7 @@ QNetworkAccessManager::NetworkAccessibility QNetworkAccessManagerProto::networkA
   QNetworkAccessManager *item = qscriptvalue_cast<QNetworkAccessManager*>(thisObject());
   if (item)
     return item->networkAccessible();
-  return QNetworkAccessManager::NetworkAccessibility;
+  return QNetworkAccessManager::UnknownAccessibility;
 }
 
 QNetworkReply *QNetworkAccessManagerProto::post(const QNetworkRequest & request, QIODevice * data)
@@ -235,7 +236,7 @@ void QNetworkAccessManagerProto::setCookieJar(QNetworkCookieJar * cookieJar)
     item->setCookieJar(cookieJar);
 }
 
-void QNetworkAccessManagerProto::setNetworkAccessible(NetworkAccessibility accessible)
+void QNetworkAccessManagerProto::setNetworkAccessible(QNetworkAccessManager::NetworkAccessibility accessible)
 {
   QNetworkAccessManager *item = qscriptvalue_cast<QNetworkAccessManager*>(thisObject());
   if (item)

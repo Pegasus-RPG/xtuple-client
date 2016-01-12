@@ -11,6 +11,10 @@
 #ifndef __QNETWORKACCESSMANAGERPROTO_H__
 #define __QNETWORKACCESSMANAGERPROTO_H__
 
+#include <QScriptEngine>
+
+void setupQNetworkAccessManagerProto(QScriptEngine *engine);
+
 #include <QAbstractNetworkCache>
 #include <QList>
 #include <QNetworkAccessManager>
@@ -26,6 +30,8 @@
 class QByteArray;
 
 Q_DECLARE_METATYPE(QNetworkAccessManager*)
+
+QScriptValue constructQNetworkAccessManager(QScriptContext *context, QScriptEngine *engine);
 
 void setupQNetworkAccessManagerProto(QScriptEngine *engine);
 
@@ -64,7 +70,7 @@ class QNetworkAccessManagerProto : public QObject, public QScriptable
     Q_INVOKABLE void                                            setCache(QAbstractNetworkCache * cache);
     Q_INVOKABLE void                                            setConfiguration(const QNetworkConfiguration & config);
     Q_INVOKABLE void                                            setCookieJar(QNetworkCookieJar * cookieJar);
-    Q_INVOKABLE void                                            setNetworkAccessible(NetworkAccessibility accessible);
+    Q_INVOKABLE void                                            setNetworkAccessible(QNetworkAccessManager::NetworkAccessibility accessible);
     Q_INVOKABLE void                                            setProxy(const QNetworkProxy & proxy);
     Q_INVOKABLE void                                            setProxyFactory(QNetworkProxyFactory * factory);
 #if QT_VERSION >= 0x050000
