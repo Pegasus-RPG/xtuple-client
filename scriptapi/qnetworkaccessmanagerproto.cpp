@@ -69,12 +69,14 @@ QAbstractNetworkCache *QNetworkAccessManagerProto::cache() const
   return 0;
 }
 
+#if QT_VERSION >= 0x050000
 void QNetworkAccessManagerProto::clearAccessCache()
 {
   QNetworkAccessManager *item = qscriptvalue_cast<QNetworkAccessManager*>(thisObject());
   if (item)
     item->clearAccessCache();
 }
+#endif
 
 QNetworkConfiguration QNetworkAccessManagerProto::configuration() const
 {
@@ -84,6 +86,7 @@ QNetworkConfiguration QNetworkAccessManagerProto::configuration() const
   return QNetworkConfiguration();
 }
 
+#if QT_VERSION >= 0x050000
 void QNetworkAccessManagerProto::connectToHost(const QString & hostName, quint16 port)
 {
   QNetworkAccessManager *item = qscriptvalue_cast<QNetworkAccessManager*>(thisObject());
@@ -97,6 +100,7 @@ void QNetworkAccessManagerProto::connectToHostEncrypted(const QString & hostName
   if (item)
     item->connectToHostEncrypted(hostName, port, sslConfiguration);
 }
+#endif
 
 QNetworkCookieJar *QNetworkAccessManagerProto::cookieJar() const
 {
@@ -252,6 +256,7 @@ void QNetworkAccessManagerProto::setProxyFactory(QNetworkProxyFactory * factory)
     item->setProxyFactory(factory);
 }
 
+#if QT_VERSION >= 0x050000
 QStringList QNetworkAccessManagerProto::supportedSchemes() const
 {
   QNetworkAccessManager *item = qscriptvalue_cast<QNetworkAccessManager*>(thisObject());
@@ -259,3 +264,4 @@ QStringList QNetworkAccessManagerProto::supportedSchemes() const
     return item->supportedSchemes();
   return QStringList();
 }
+#endif
