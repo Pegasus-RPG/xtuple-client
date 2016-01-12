@@ -209,7 +209,6 @@ void setupScriptApi(QScriptEngine *engine)
   setupQMenuProto(engine);
   setupQMessageBox(engine);
   setupQNetworkAccessManagerProto(engine);
-  setupQNetworkAccessManagerCoreProto(engine);
   setupQNetworkReplyProto(engine);
   setupQNetworkRequestProto(engine);
   setupQObjectProto(engine);
