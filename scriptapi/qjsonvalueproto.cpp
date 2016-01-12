@@ -32,6 +32,7 @@ void QJsonValueFromScriptValue(const QScriptValue &obj, QJsonValue* &out)
 void setupQJsonValueProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QJsonValueToScriptValue, QJsonValueFromScriptValue);
+  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QJsonValueProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QJsonValue*>(), proto);
@@ -40,6 +41,7 @@ void setupQJsonValueProto(QScriptEngine *engine)
   QScriptValue constructor = engine->newFunction(constructQJsonValue,
                                                  proto);
   engine->globalObject().setProperty("QJsonValue",  constructor);
+  proto.setProperty("Undefined", QScriptValue(engine, QJsonValue::Undefined),  permanent);
 }
 
 QScriptValue constructQJsonValue(QScriptContext *context, QScriptEngine *engine)
@@ -54,6 +56,10 @@ QScriptValue constructQJsonValue(QScriptContext *context, QScriptEngine *engine)
 
 QJsonValueProto::QJsonValueProto(QObject *parent)
     : QObject(parent)
+{
+}
+
+QJsonValueProto::~QJsonValueProto()
 {
 }
 
@@ -190,7 +196,7 @@ QJsonValue::Type QJsonValueProto::type() const
   QJsonValue *item = qscriptvalue_cast<QJsonValue*>(thisObject());
   if (item)
     return item->type();
-  return QJsonValue::Type();
+  return QJsonValue::Undefined;
 }
 
 bool QJsonValueProto::operator!=(const QJsonValue & other) const

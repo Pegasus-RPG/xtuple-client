@@ -43,6 +43,7 @@ class QJsonObjectProto : public QObject, public QScriptable
 
   public:
     QJsonObjectProto(QObject *parent = 0);
+    ~QJsonObjectProto();
 
 #ifdef Use_QJsonObjectIterators
     Q_INVOKABLE QJsonObject::iterator         begin();
@@ -72,7 +73,7 @@ class QJsonObjectProto : public QObject, public QScriptable
     Q_INVOKABLE QVariantMap                   toVariantMap() const;
     Q_INVOKABLE QJsonValue                    value(const QString & key) const;
     Q_INVOKABLE bool                          operator!=(const QJsonObject & other) const;
-    Q_INVOKABLE QJsonObject &                 operator=(const QJsonObject & other);
+    Q_INVOKABLE QJsonObject                  &operator=(const QJsonObject & other);
     Q_INVOKABLE bool                          operator==(const QJsonObject & other) const;
     Q_INVOKABLE QJsonValue                    operator[](const QString & key) const;
     Q_INVOKABLE QJsonValueRef                 operator[](const QString & key);

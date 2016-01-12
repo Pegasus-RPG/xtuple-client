@@ -73,6 +73,10 @@ QJsonObjectProto::QJsonObjectProto(QObject *parent)
 {
 }
 
+QJsonObjectProto::~QJsonObjectProto()
+{
+}
+
 #ifdef Use_QJsonObjectIterators
 QJsonObject::iterator QJsonObjectProto::begin()
 {

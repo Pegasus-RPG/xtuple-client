@@ -36,6 +36,7 @@ class QJsonDocumentProto : public QObject, public QScriptable
 
   public:
     QJsonDocumentProto(QObject *parent = 0);
+    ~QJsonDocumentProto();
 
     Q_INVOKABLE QJsonArray            array() const;
     Q_INVOKABLE bool                  isArray() const;
@@ -43,7 +44,7 @@ class QJsonDocumentProto : public QObject, public QScriptable
     Q_INVOKABLE bool                  isNull() const;
     Q_INVOKABLE bool                  isObject() const;
     Q_INVOKABLE QJsonObject           object() const;
-    Q_INVOKABLE const char *          rawData(int * size) const;
+    Q_INVOKABLE const char           *rawData(int * size) const;
     Q_INVOKABLE void                  setArray(const QJsonArray & array);
     Q_INVOKABLE void                  setObject(const QJsonObject & object);
     Q_INVOKABLE QByteArray            toBinaryData() const;

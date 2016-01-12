@@ -44,6 +44,10 @@ QJsonDocumentProto::QJsonDocumentProto(QObject *parent)
 {
 }
 
+QJsonDocumentProto::~QJsonDocumentProto()
+{
+}
+
 QJsonArray QJsonDocumentProto::array() const
 {
   QJsonDocument *item = qscriptvalue_cast<QJsonDocument*>(thisObject());

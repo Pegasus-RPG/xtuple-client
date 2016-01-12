@@ -33,6 +33,7 @@ class QJsonValueProto : public QObject, public QScriptable
 
   public:
     QJsonValueProto(QObject *parent = 0);
+    ~QJsonValueProto();
 
     Q_INVOKABLE bool              isArray() const;
     Q_INVOKABLE bool              isBool() const;
