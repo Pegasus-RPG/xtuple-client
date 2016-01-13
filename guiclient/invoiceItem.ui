@@ -982,6 +982,7 @@ to be bound by its terms.</comment>
   <tabstop>_item</tabstop>
   <tabstop>_warehouse</tabstop>
   <tabstop>_miscSelected</tabstop>
+  <tabstop>_itemNumber</tabstop>
   <tabstop>_itemDescrip</tabstop>
   <tabstop>_salescat</tabstop>
   <tabstop>_custPn</tabstop>
@@ -995,7 +996,6 @@ to be bound by its terms.</comment>
   <tabstop>_taxtype</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
-  <tabstop>_itemNumber</tabstop>
   <tabstop>_tab</tabstop>
   <tabstop>_notes</tabstop>
  </tabstops>
