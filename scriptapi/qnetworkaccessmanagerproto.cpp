@@ -45,12 +45,12 @@ QScriptValue constructQNetworkAccessManager(QScriptContext *context, QScriptEngi
   return engine->toScriptValue(obj);
 }
 
-QNetworkAccessManager::QNetworkAccessManager(QObject *parent)
+QNetworkAccessManagerProto::QNetworkAccessManagerProto(QObject *parent)
     : QObject(parent)
 {
 }
 
-QNetworkAccessManager::~QNetworkAccessManager()
+QNetworkAccessManagerProto::~QNetworkAccessManagerProto()
 {
 }
 
