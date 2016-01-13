@@ -11,6 +11,9 @@
 #include "qwebviewproto.h"
 
 #include <QAction>
+#include <QIcon>
+#include <QPrinter>
+#include <QUrl>
 #include <QWebHistory>
 #include <QWebSettings>
 #include <QWebView>
@@ -27,7 +30,7 @@ void QWebViewfromScriptValue(const QScriptValue &obj, QWebView* &item)
 
 void setupQWebViewProto(QScriptEngine *engine)
 {
- qScriptRegisterMetaType(engine, QWebViewtoScriptValue, QWebViewfromScriptValue);
+  qScriptRegisterMetaType(engine, QWebViewtoScriptValue, QWebViewfromScriptValue);
 
   QScriptValue proto = engine->newQObject(new QWebViewProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebView*>(), proto);
@@ -52,6 +55,17 @@ QWebViewProto::QWebViewProto(QObject *parent)
     : QObject(parent)
 {
 }
+QWebViewProto::~QWebViewProto()
+{
+}
+
+bool QWebViewProto::hasSelection() const
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->hasSelection();
+  return false;
+}
 
 bool QWebViewProto::findText(const QString &subString, QWebPage::FindFlags options)
 {
@@ -67,6 +81,22 @@ QWebHistory* QWebViewProto::history() const
   if (item)
     return item->history();
   return 0;
+}
+
+QIcon QWebViewProto::icon() const
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->icon();
+  return QIcon();
+}
+
+bool QWebViewProto::isModified() const
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->isModified();
+  return false;
 }
 
 void QWebViewProto::load(const QUrl &url)
@@ -99,6 +129,30 @@ QAction* QWebViewProto::pageAction(QWebPage::WebAction action)  const
   return 0;
 }
 
+QPainter::RenderHints QWebViewProto::renderHints() const
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->renderHints();
+  return QPainter::RenderHints();
+}
+
+QString QWebViewProto::selectedHtml() const
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->selectedHtml();
+  return QString();
+}
+
+QString QWebViewProto::selectedText() const
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->selectedText();
+  return QString();
+}
+
 void QWebViewProto::setContent(const QByteArray &data, const QString &mimeType, const QUrl &baseUrl)
 {
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
@@ -120,6 +174,20 @@ void QWebViewProto::setPage(QWebPage *page)
     item->setPage(page);
 }
 
+void QWebViewProto::setRenderHint(QPainter::RenderHint hint, bool enabled)
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    item->setRenderHint(hint, enabled);
+}
+
+void QWebViewProto::setRenderHints(QPainter::RenderHints hints)
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    item->setRenderHints(hints);
+}
+
 void QWebViewProto::setTextSizeMultiplier(qreal factor)
 {
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
@@ -135,12 +203,34 @@ QWebSettings* QWebViewProto::settings() const
   return 0;
 }
 
+void QWebViewProto::setUrl(const QUrl & url)
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    item->setUrl(url);
+}
+
+void QWebViewProto::setZoomFactor(qreal factor)
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    item->setZoomFactor(factor);
+}
+
 qreal QWebViewProto::textSizeMultiplier() const
 {
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->textSizeMultiplier();
   return qreal();
+}
+
+QString QWebViewProto::title() const
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->title();
+  return QString();
 }
 
 void QWebViewProto::triggerPageAction(QWebPage::WebAction action, bool checked)
@@ -150,4 +240,53 @@ void QWebViewProto::triggerPageAction(QWebPage::WebAction action, bool checked)
     item->triggerPageAction(action, checked);
 }
 
+QUrl QWebViewProto::url() const
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->url();
+  return QUrl();
+}
 
+qreal QWebViewProto::zoomFactor() const
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->zoomFactor();
+  return qreal();
+}
+
+void QWebViewProto::back()
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->back();
+}
+
+void QWebViewProto::forward()
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->forward();
+}
+
+void QWebViewProto::print(QPrinter * printer) const
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->print(printer);
+}
+
+void QWebViewProto::reload()
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->reload();
+}
+
+void QWebViewProto::stop()
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->stop();
+}

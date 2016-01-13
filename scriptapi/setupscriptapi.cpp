@@ -67,13 +67,18 @@
 #include "qiconproto.h"
 #include "qiodeviceproto.h"
 #include "qitemdelegateproto.h"
+#include "qjsondocumentproto.h"
+#include "qjsonobjectproto.h"
+#include "qjsonvalueproto.h"
 #include "qlayoutitemproto.h"
 #include "qlayoutproto.h"
 #include "qmainwindowproto.h"
 #include "qmenuproto.h"
 #include "qmessageboxsetup.h"
+#include "qnetworkaccessmanagerproto.h"
 #include "qnetworkreplyproto.h"
 #include "qnetworkrequestproto.h"
+#include "qobjectproto.h"
 #include "qprinterproto.h"
 #include "qprocessproto.h"
 #include "qprocessenvironmentproto.h"
@@ -95,7 +100,12 @@
 #include "queryset.h"
 #include "qurlproto.h"
 #include "qvalidatorproto.h"
+#include "qwebframeproto.h"
 #include "qwebpageproto.h"
+#include "qwebsocketcorsauthenticatorproto.h"
+#include "qwebsocketproto.h"
+#include "qwebsocketprotocolproto.h"
+#include "qwebsocketserverproto.h"
 #include "qwebviewproto.h"
 #include "qwidgetproto.h"
 #include "ralineeditsetup.h"
@@ -119,6 +129,7 @@
 #include "xsqlqueryproto.h"
 #include "xtreewidget.h"
 #include "xvariantsetup.h"
+#include "xwebsyncproto.h"
 
 /*! \defgroup scriptapi The xTuple ERP Scripting API
 
@@ -189,6 +200,9 @@ void setupScriptApi(QScriptEngine *engine)
   setupQIconProto(engine);
   setupQIODeviceProto(engine);
   setupQItemDelegateProto(engine);
+  setupQJsonDocumentProto(engine);
+  setupQJsonObjectProto(engine);
+  setupQJsonValueProto(engine);
   setupQLayoutItemProto(engine);
   setupQLayoutProto(engine);
   setupQMainWindowProto(engine);
@@ -197,6 +211,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQNetworkAccessManagerProto(engine);
   setupQNetworkReplyProto(engine);
   setupQNetworkRequestProto(engine);
+  setupQObjectProto(engine);
   setupQPrinterProto(engine);
   setupQProcessProto(engine);
   setupQProcessEnvironmentProto(engine);
@@ -218,7 +233,12 @@ void setupScriptApi(QScriptEngine *engine)
   setupQuerySet(engine);
   setupQUrlProto(engine);
   setupQValidatorProto(engine);
+  setupQWebFrameProto(engine);
   setupQWebPageProto(engine);
+  setupQWebSocketCorsAuthenticatorProto(engine);
+  setupQWebSocketProto(engine);
+  setupQWebSocketProtocolProto(engine);
+  setupQWebSocketServerProto(engine);
   setupQWebViewProto(engine);
   setupQWidgetProto(engine);
   setupRaLineEdit(engine);
@@ -243,4 +263,5 @@ void setupScriptApi(QScriptEngine *engine)
   setupXTreeWidget(engine);
   setupXTreeWidgetItem(engine);
   setupXVariant(engine);
+  setupXWebSyncProto(engine);
 }

@@ -4,13 +4,20 @@ TEMPLATE = lib
 CONFIG += qt \
     warn_on \
     staticlib
+
+QT += core network printsupport script sql webkit webkitwidgets widgets xml
+
+greaterThan (QT_MAJOR_VERSION, 4) {
+  QT += websockets webchannel
+}
+
 DBFILE = scriptapi.db
 LANGUAGE = C++
 INCLUDEPATH += $${XTUPLE_DIR}/common          $${XTUPLE_BLD}/common \
                $${XTUPLE_DIR}/widgets         $${XTUPLE_BLD}/widgets \
                $${XTUPLE_DIR}/widgets/tmp/lib $${XTUPLE_BLD}/widgets/tmp/lib \
                $${XTUPLE_DIR}/scriptapi       $${XTUPLE_BLD}/scriptapi \
-	       
+
 
 INCLUDEPATH = $$unique(INCLUDEPATH)
 DEPENDPATH += $${INCLUDEPATH}
@@ -61,13 +68,18 @@ HEADERS += setupscriptapi.h \
     qiconproto.h \
     qiodeviceproto.h \
     qitemdelegateproto.h \
+    qjsondocumentproto.h \
+    qjsonobjectproto.h \
+    qjsonvalueproto.h \
     qlayoutproto.h \
     qlayoutitemproto.h \
     qmainwindowproto.h \
     qmenuproto.h \
     qmessageboxsetup.h \
+    qnetworkaccessmanagerproto.h \
     qnetworkreplyproto.h \
     qnetworkrequestproto.h \
+    qobjectproto.h \
     qprinterproto.h \
     qprocessproto.h     \
     qprocessenvironmentproto.h     \
@@ -88,7 +100,12 @@ HEADERS += setupscriptapi.h \
     qtsetup.h \
     qurlproto.h \
     qvalidatorproto.h \
+    qwebframeproto.h \
     qwebpageproto.h \
+    qwebsocketcorsauthenticatorproto.h \
+    qwebsocketproto.h             \
+    qwebsocketprotocolproto.h     \
+    qwebsocketserverproto.h       \
     qwebviewproto.h \
     qwidgetproto.h \
     xdatawidgetmapperproto.h \
@@ -118,7 +135,10 @@ HEADERS += setupscriptapi.h \
     womatlclustersetup.h \
     xdateeditsetup.h \
     ../widgets/xt.h \
-    xvariantsetup.h
+    xvariantsetup.h \
+    xwebsync_p.h \
+    xwebsync.h \
+    xwebsyncproto.h
 
 SOURCES += setupscriptapi.cpp \
     include.cpp \
@@ -161,13 +181,18 @@ SOURCES += setupscriptapi.cpp \
     qiconproto.cpp \
     qiodeviceproto.cpp \
     qitemdelegateproto.cpp \
+    qjsondocumentproto.cpp \
+    qjsonobjectproto.cpp \
+    qjsonvalueproto.cpp \
     qlayoutitemproto.cpp \
     qlayoutproto.cpp \
     qmainwindowproto.cpp \
     qmenuproto.cpp \
     qmessageboxsetup.cpp \
+    qnetworkaccessmanagerproto.cpp \
     qnetworkreplyproto.cpp \
     qnetworkrequestproto.cpp \
+    qobjectproto.cpp \
     qprinterproto.cpp \
     qprocessproto.cpp \
     qprocessenvironmentproto.cpp \
@@ -188,7 +213,12 @@ SOURCES += setupscriptapi.cpp \
     qtsetup.cpp \
     qurlproto.cpp \
     qvalidatorproto.cpp \
+    qwebframeproto.cpp \
     qwebpageproto.cpp \
+    qwebsocketcorsauthenticatorproto.cpp \
+    qwebsocketproto.cpp           \
+    qwebsocketprotocolproto.cpp   \
+    qwebsocketserverproto.cpp     \
     qwebviewproto.cpp \
     qwidgetproto.cpp \
     xdatawidgetmapperproto.cpp \
@@ -218,14 +248,6 @@ SOURCES += setupscriptapi.cpp \
     womatlclustersetup.cpp \
     xdateeditsetup.cpp \
     ../widgets/xt.cpp \
-    xvariantsetup.cpp
-
-QT += core \
-    sql \
-    xml \
-    script \
-    network \
-    webkit \
-    webkitwidgets \
-    widgets \
-    printsupport 
+    xvariantsetup.cpp \
+    xwebsync.cpp \
+    xwebsyncproto.cpp

@@ -7,10 +7,11 @@ QT += xml sql script scripttools network
 QT += webkit xmlpatterns printsupport webkitwidgets
 
 isEqual(QT_MAJOR_VERSION, 5) {
-  QT     += help designer uitools quick
+  QT     += help designer uitools quick websockets webchannel
 } else {
   CONFIG += help designer uitools
 }
+
 TEMPLATE = app
 
 INCLUDEPATH += ../scriptapi \
@@ -1889,6 +1890,4 @@ include( displays/displays.pri )
 include( hunspell.pri )
 
 RESOURCES += guiclient.qrc $${OPENRPT_IMAGE_DIR}/OpenRPTMetaSQL.qrc
-
-#CONFIG += debug
 

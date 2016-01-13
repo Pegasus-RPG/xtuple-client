@@ -59,7 +59,7 @@ bool QNetworkReplyProto::hasRawHeader(const QByteArray &headerName) const
   if (item)
     return item->hasRawHeader(headerName);
   return false;
-}    
+}
 
 QVariant QNetworkReplyProto::header(QNetworkRequest::KnownHeaders header) const
 {
@@ -67,6 +67,13 @@ QVariant QNetworkReplyProto::header(QNetworkRequest::KnownHeaders header) const
   if (item)
     return item->header(header);
   return QVariant();
+}
+
+void QNetworkReplyProto::ignoreSslErrors(const QList<QSslError> & errors)
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    item->ignoreSslErrors(errors);
 }
 
 QNetworkAccessManager *QNetworkReplyProto::manager() const
@@ -139,7 +146,7 @@ QSslConfiguration QNetworkReplyProto::sslConfiguration() const
     return item->sslConfiguration();
   return QSslConfiguration();
 }
-#endif 
+#endif
 
 QUrl QNetworkReplyProto::url() const
 {
