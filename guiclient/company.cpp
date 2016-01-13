@@ -21,6 +21,7 @@
 #include "currcluster.h"
 #include "version.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 #define DEBUG false
 
@@ -110,44 +111,22 @@ enum SetResponse company::set(const ParameterList &pParams)
 void company::sSave()
 {
   XSqlQuery companySave;
-  if (_number->text().length() == 0)
-  {
-      QMessageBox::warning( this, tr("Cannot Save Company"),
-                            tr("You must enter a valid Number.") );
-      _number->setFocus();
-      return;
-  }
-  
-  struct {
-    bool	condition;
-    QString	msg;
-    QWidget*	widget;
-  } error[] = {
-    { _external->isChecked() && _extServer->text().isEmpty(),
-      tr("<p>You must enter a Server if this is an external Company."),
-      _extServer
-    },
-    { _external->isChecked() && _extPort->value() == 0,
-      tr("<p>You must enter a Port if this is an external Company."),
-      _extPort
-    },
-    { _external->isChecked() && _extDB->text().isEmpty(),
-      tr("<p>You must enter a Database if this is an external Company."),
-      _extDB
-    },
-    { true, "", NULL }
-  }; // error[]
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_number->text().trimmed().isEmpty(), _number,
+                          tr("You must enter a valid Number.") )
+         << GuiErrorCheck(_external->isChecked() && _extServer->text().trimmed().isEmpty(),
+                          _extServer, 
+                          tr("<p>You must enter a Server if this is an external Company.") )
+         << GuiErrorCheck(_external->isChecked() && _extPort->value() == 0,
+                          _extPort, 
+                          tr("<p>You must enter a Port if this is an external Company.") )
+         << GuiErrorCheck(_external->isChecked() && _extDB->text().trimmed().isEmpty(),
+                          _extDB, 
+                          tr("<p>You must enter a Database if this is an external Company.") )
+  ;
 
-  int errIndex;
-  for (errIndex = 0; ! error[errIndex].condition; errIndex++)
-    ;
-  if (! error[errIndex].msg.isEmpty())
-  {
-    QMessageBox::critical(this, tr("Cannot Save Company"),
-			  error[errIndex].msg);
-    error[errIndex].widget->setFocus();
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Company"), errors))
     return;
-  }
 
   companySave.prepare("SELECT company_id"
             "  FROM company"
@@ -156,58 +135,32 @@ void company::sSave()
   companySave.bindValue(":company_id",       _companyid);
   companySave.bindValue(":company_number",   _number->text());
   companySave.exec();
-  if(companySave.first())
-  {
-    QMessageBox::critical(this, tr("Duplicate Company Number"),
-      tr("A Company Number already exists for the one specified.") );
-    _number->setFocus();
-    return;
-  }
 
-  if (_yearend->isValid() &&
-      _companyid != _yearend->companyId())
-  {
-    QMessageBox::critical(this, tr("Company Account Mismatch"),
-                          tr("The Retained Earnings Account must belong to this Company.") );
-    _yearend->setFocus();
-    return;
-  }
+  errors << GuiErrorCheck(companySave.first(), _number,
+                          tr("A Company Number already exists for the one specified.") );
 
-  if (_gainloss->isValid() &&
-      _companyid != _gainloss->companyId())
-  {
-    QMessageBox::critical(this, tr("Company Account Mismatch"),
-                          tr("The Currency Gain/Loss Account must belong to this Company.") );
-    _gainloss->setFocus();
+  if (GuiErrorCheck::reportErrors(this, tr("Duplicate Company Number"), errors))
     return;
-  }
 
-  if (_discrepancy->isValid() &&
-      _companyid != _discrepancy->companyId())
-  {
-    QMessageBox::critical(this, tr("Company Account Mismatch"),
-                          tr("The G/L Discrepancy Account must belong to this Company.") );
-    _discrepancy->setFocus();
-    return;
-  }
+  errors << GuiErrorCheck(_yearend->isValid() && _companyid != _yearend->companyId(),
+                          _yearend,
+                          tr("The Retained Earnings Account must belong to this Company.") )
+         << GuiErrorCheck(_gainloss->isValid() && _companyid != _gainloss->companyId(),
+                          _gainloss,
+                          tr("The Currency Gain/Loss Account must belong to this Company.") )
+         << GuiErrorCheck(_discrepancy->isValid() && _companyid != _discrepancy->companyId(),
+                          _discrepancy,
+                          tr("The G/L Discrepancy Account must belong to this Company.") )
+         << GuiErrorCheck(_unassigned->isValid() && _companyid != _unassigned->companyId(),
+                          _unassigned,
+                          tr("The Unassigned G/L Account must belong to this Company.") )
+         << GuiErrorCheck(_unrlzgainloss->isValid() && _companyid != _unrlzgainloss->companyId(),
+                          _unrlzgainloss,
+                          tr("The Unrealized Currency Gain/LossL Account must belong to this Company.") )
+  ;
 
-  if (_unassigned->isValid() &&
-      _companyid != _unassigned->companyId())
-  {
-    QMessageBox::critical(this, tr("Company Account Mismatch"),
-                          tr("The Unassigned G/L Account must belong to this Company.") );
-    _unassigned->setFocus();
+  if (GuiErrorCheck::reportErrors(this, tr("Company Account Mismatch"), errors))
     return;
-  }
-
-  if (_unrlzgainloss->isValid() &&
-      _companyid != _unrlzgainloss->companyId())
-  {
-    QMessageBox::critical(this, tr("Company Account Mismatch"),
-                          tr("The Unrealized Currency Gain/Loss Account must belong to this Company.") );
-    _unrlzgainloss->setFocus();
-    return;
-  }
 
   if (_mode == cNew)
   {
@@ -282,7 +235,7 @@ void company::sSave()
   }
   
   companySave.bindValue(":company_id",       _companyid);
-  companySave.bindValue(":company_number",   _number->text());
+  companySave.bindValue(":company_number",   _number->text().trimmed());
   companySave.bindValue(":company_descrip",  _descrip->toPlainText());
   companySave.bindValue(":company_external", _external->isChecked());
   companySave.bindValue(":company_server",   _extServer->text());
