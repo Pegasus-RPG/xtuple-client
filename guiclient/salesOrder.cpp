@@ -1985,7 +1985,7 @@ void salesOrder::populateShipto(int pShiptoid)
       _shippingZone->setId(shipto.value("shipto_shipzone_id").toInt());
       _shippingComments->setText(shipto.value("shipto_shipcomments").toString());
       _orderComments->setText(shipto.value("shipto_comments").toString());
-      if ( (ISNEW(_mode)) && (shipto.value("shipto_taxzone_id").toInt() > 0) )
+      if (shipto.value("shipto_taxzone_id").toInt() > 0)
         _taxZone->setId(shipto.value("shipto_taxzone_id").toInt());
       _ignoreSignals=false;
     }
