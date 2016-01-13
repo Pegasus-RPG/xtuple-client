@@ -319,6 +319,13 @@ bool user::save()
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Setting Password"),
                              usrq, __FILE__, __LINE__))
       return false;
+    usrq.prepare("SELECT setUserPreference(:username, 'PasswordResetDate', :passdate);");
+    usrq.bindValue(":username", username);
+    usrq.bindValue(":passdate", QDate::currentDate());
+    usrq.exec();
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Saving User Account"),
+                             usrq, __FILE__, __LINE__))
+      return false;
   }
 
   usrq.prepare("SELECT setUserPreference(:username, 'DisableExportContents', :export),"
