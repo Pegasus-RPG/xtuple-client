@@ -8,7 +8,7 @@ CONFIG += qt \
 QT += core network printsupport script sql webkit webkitwidgets widgets xml
 
 greaterThan (QT_MAJOR_VERSION, 4) {
-  QT += websockets
+  QT += websockets webchannel
 }
 
 DBFILE = scriptapi.db
