@@ -1501,10 +1501,10 @@ void vendor::closeEvent(QCloseEvent *pEvent)
 
 void vendor::sHandleButtons()
 {
-  if (_generalButton->isChecked())
-    _settingsStack->setCurrentWidget(_generalPage);
-  else
+  if (_taxButton->isChecked())
     _settingsStack->setCurrentWidget(_taxPage);
+  else
+    _settingsStack->setCurrentWidget(_generalPage);
 
   if (_mainButton->isChecked())
     _addressStack->setCurrentWidget(_mainPage);
