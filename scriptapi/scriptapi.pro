@@ -109,7 +109,6 @@ HEADERS += setupscriptapi.h \
     qwebviewproto.h \
     qwidgetproto.h \
     xdatawidgetmapperproto.h \
-    xnetworkaccessmanager.h \
     xsqltablemodelproto.h \
     xsqlqueryproto.h \
     addressclustersetup.h \

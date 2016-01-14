@@ -124,7 +124,6 @@
 #include "xdatawidgetmapperproto.h"
 #include "xdateeditsetup.h"
 #include "xdoccopysetter.h"
-#include "xnetworkaccessmanager.h"
 #include "xsqltablemodelproto.h"
 #include "xsqlqueryproto.h"
 #include "xtreewidget.h"
