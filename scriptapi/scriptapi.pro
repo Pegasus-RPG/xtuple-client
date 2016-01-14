@@ -221,7 +221,6 @@ SOURCES += setupscriptapi.cpp \
     qwebviewproto.cpp \
     qwidgetproto.cpp \
     xdatawidgetmapperproto.cpp \
-    xnetworkaccessmanager.cpp \
     xsqltablemodelproto.cpp \
     xsqlqueryproto.cpp \
     addressclustersetup.cpp \
