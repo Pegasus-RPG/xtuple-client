@@ -21,6 +21,7 @@
 #include "dspItemCostDetail.h"
 #include "mqlutil.h"
 #include "itemCost.h"
+#include "errorReporter.h"
 
 maintainItemCosts::maintainItemCosts(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -199,7 +200,8 @@ void maintainItemCosts::sPost()
   maintainPost.bindValue(":item_id", _itemcost->id());
   maintainPost.exec();
   if (maintainPost.lastError().type() != QSqlError::NoError)
-      systemError(this, maintainPost.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cost Information"),
+                       maintainPost, __FILE__, __LINE__);
 
   sFillList();
 }
@@ -215,9 +217,9 @@ void maintainItemCosts::sDelete()
   maintainDelete.exec();
   if (maintainDelete.first())
     stdCost = maintainDelete.value("itemcost_stdcost").toDouble();
-  else if (maintainDelete.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Cost Information"),
+                                maintainDelete, __FILE__, __LINE__))
   {
-    systemError(this, maintainDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -242,7 +244,8 @@ void maintainItemCosts::sDelete()
   maintainDelete.bindValue(":itemcost_id", _itemcost->id());
   maintainDelete.exec();
   if (maintainDelete.lastError().type() != QSqlError::NoError)
-    systemError(this, maintainDelete.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Cost Information"),
+                                maintainDelete, __FILE__, __LINE__);
 
   sFillList();
 }
@@ -353,7 +356,8 @@ void maintainItemCosts::sFillList()
 			    baseKnown ? formatCost(actualCost) : tr("?????"),
 			    convert.value("currConcat"));
     else if (convert.lastError().type() != QSqlError::NoError)
-	systemError(this, convert.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Cost Information"),
+                                convert, __FILE__, __LINE__);
 
   }
   else {

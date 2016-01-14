@@ -797,7 +797,8 @@ int main(int argc, char *argv[])
       }
       else
       {
-        systemError(0, baseCurrency.lastError().databaseText(), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, omfgThis, QObject::tr("Error Retrieving Base Currency Information"),
+                             baseCurrency, __FILE__, __LINE__);
         // need to figure out appropriate return code for this...unusual error
         return -1;
       }
@@ -805,7 +806,8 @@ int main(int argc, char *argv[])
   }
   else
   {
-    systemError(0, baseCurrency.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, omfgThis, QObject::tr("Error Retrieving Base Currency Information"),
+                           baseCurrency, __FILE__, __LINE__);
     // need to figure out appropriate return code for this...unusual error
     return -1;
   }
