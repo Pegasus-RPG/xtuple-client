@@ -52,6 +52,9 @@ class InputManager : public QObject
   public slots:
     void sRemove(QObject *);
 
+  signals:
+    void gotBarCode(int type, int id);
+
   protected:
     bool eventFilter(QObject *, QEvent *);
 
