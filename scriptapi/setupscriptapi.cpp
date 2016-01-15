@@ -101,6 +101,7 @@
 #include "queryset.h"
 #include "qurlproto.h"
 #include "qvalidatorproto.h"
+#include "qwebchannelproto.h"
 #include "qwebframeproto.h"
 #include "qwebpageproto.h"
 #include "qwebsocketcorsauthenticatorproto.h"
@@ -234,6 +235,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQuerySet(engine);
   setupQUrlProto(engine);
   setupQValidatorProto(engine);
+  setupQWebChannelProto(engine);
   setupQWebFrameProto(engine);
   setupQWebPageProto(engine);
   setupQWebSocketCorsAuthenticatorProto(engine);
