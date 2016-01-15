@@ -134,6 +134,7 @@ void InputManagerPrivate::addToEventList(QString prefix, int type, int length1, 
 InputManager::InputManager()
 {
   _private = new InputManagerPrivate(this);
+  connect(_private, SIGNAL(gotBarCode(int, int)), this, SIGNAL(gotBarCode(int, int)));
 }
 
 // TODO: treat _receivers as a stack, not a queue
@@ -390,7 +391,11 @@ QString InputManagerPrivate::queryFieldName(int barcodeType, int receiverType)
     case cBCTransferOrderLineItem:
     case cBCUser:
     case cBCWorkOrder:
+      result = "id";
+      break;
     case cBCWorkOrderOperation:
+      result = "altid";
+      break;
     case cBCUPCCode:
     case cBCLocationIssue:
     case cBCLocationContents:
@@ -462,6 +467,7 @@ void InputManagerPrivate::dispatchScan(int type)
       if (DEBUG)
         qDebug() << receiver.target() << methodName.toLatin1().data() << q.value(fieldName).toInt();
       (void)QMetaObject::invokeMethod(receiver.target(), methodName.toLatin1().data(), arg1);
+      emit gotBarCode(type, q.value(fieldName).toInt());
     }
     else if (q.lastError().type() != QSqlError::NoError)
       message(tr("Error Scanning %1: %2").arg(descrip, q.lastError().text()), 1000);
