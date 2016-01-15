@@ -16,35 +16,11 @@
 void setupQWebChannelProto(QScriptEngine *engine);
 
 #if QT_VERSION >= 0x050000
-
-#include <QHash>
 #include <QWebChannel>
 
 Q_DECLARE_METATYPE(QWebChannel*)
 
 QScriptValue constructQWebChannel(QScriptContext *context, QScriptEngine *engine);
-class QWebChannelProto :public QObject, public QScriptable
-{
-  Q_OBJECT
-
-  public:
-    QWebChannelProto(QObject *parent = 0);
-    Q_INVOKABLE ~QWebChannelProto();
-
-    Q_INVOKABLE bool                          blockUpdates() const;
-    Q_INVOKABLE void                          deregisterObject(QObject * object);
-    Q_INVOKABLE void                          registerObject(const QString & id, QObject * object);
-    Q_INVOKABLE void                          registerObjects(const QHash<QString, QObject *> & objects);
-    Q_INVOKABLE QHash<QString, QObject *>     registeredObjects() const;
-    Q_INVOKABLE void                          setBlockUpdates(bool block);
-
-  public slots:
-
-    void connectTo(QWebChannelAbstractTransport * transport);
-    void disconnectFrom(QWebChannelAbstractTransport * transport);
-
-};
-
 #endif
 
 #endif
