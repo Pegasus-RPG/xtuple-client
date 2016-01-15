@@ -31,27 +31,31 @@ class QNetworkReplyProto : public QObject, public QScriptable
 
   public:
     QNetworkReplyProto(QObject *parent);
+    ~QNetworkReplyProto();
 
-    Q_INVOKABLE void      abort() const;
-    Q_INVOKABLE QVariant  attribute(const QNetworkRequest::Attribute &code) const;
-    Q_INVOKABLE void      close();
-    Q_INVOKABLE int       error() const;
-    Q_INVOKABLE bool      hasRawHeader(const QByteArray &headerName)   const;
-    Q_INVOKABLE QVariant  header(QNetworkRequest::KnownHeaders header) const;
-    Q_INVOKABLE void      ignoreSslErrors(const QList<QSslError> & errors);
-    Q_INVOKABLE QNetworkAccessManager           *manager()   const;
-    Q_INVOKABLE QNetworkAccessManager::Operation operation() const;
-    Q_INVOKABLE QByteArray        rawHeader(const QByteArray &headerName) const;
-    Q_INVOKABLE QList<QByteArray> rawHeaderList()    const;
-    Q_INVOKABLE qint64            readBufferSize()   const;
-    Q_INVOKABLE QNetworkRequest   request()          const;
-    Q_INVOKABLE void              setReadBufferSize(qint64 size);
+    Q_INVOKABLE QVariant                          attribute(const QNetworkRequest::Attribute &code) const;
+    Q_INVOKABLE void                              close();
+    Q_INVOKABLE QNetworkReply::NetworkError       error() const;
+    Q_INVOKABLE bool                              hasRawHeader(const QByteArray &headerName) const;
+    Q_INVOKABLE QVariant                          header(QNetworkRequest::KnownHeaders header) const;
+    Q_INVOKABLE void                              ignoreSslErrors(const QList<QSslError> & errors);
+    Q_INVOKABLE bool                              isFinished() const;
+    Q_INVOKABLE bool                              isRunning() const;
+    Q_INVOKABLE QNetworkAccessManager            *manager() const;
+    Q_INVOKABLE QNetworkAccessManager::Operation  operation() const;
+    Q_INVOKABLE QByteArray                        rawHeader(const QByteArray &headerName) const;
+    Q_INVOKABLE QList<QByteArray>                 rawHeaderList() const;
+    // TODO: How to expose this?
+    //Q_INVOKABLE const QList<RawHeaderPair>       &rawHeaderPairs() const;
+    Q_INVOKABLE qint64                            readBufferSize() const;
+    Q_INVOKABLE QNetworkRequest                   request() const;
+    Q_INVOKABLE void                              setReadBufferSize(qint64 size);
 #ifndef QT_NO_OPENSSL
-    Q_INVOKABLE void              setSslConfiguration(const QSslConfiguration &config);
-    Q_INVOKABLE QSslConfiguration sslConfiguration() const;
+    Q_INVOKABLE void                              setSslConfiguration(const QSslConfiguration &config);
+    Q_INVOKABLE QSslConfiguration                 sslConfiguration() const;
 #endif
-    Q_INVOKABLE QString           toString()         const;
-    Q_INVOKABLE QUrl              url()              const;
+    Q_INVOKABLE QString                           toString() const;
+    Q_INVOKABLE QUrl                              url() const;
 
     // now for the QIODevice API
     Q_INVOKABLE qint64      bytesAvailable()        const;
@@ -85,6 +89,10 @@ class QNetworkReplyProto : public QObject, public QScriptable
     Q_INVOKABLE qint64      write(const char * data, qint64 maxSize);
     Q_INVOKABLE qint64      write(const QByteArray &byteArray);
     Q_INVOKABLE qint64      write(const QString &string);
+
+  public Q_SLOTS:
+    Q_INVOKABLE void                              abort() const;
+    Q_INVOKABLE void                              ignoreSslErrors();
 };
 
 #endif

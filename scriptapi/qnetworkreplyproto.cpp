@@ -12,14 +12,32 @@
 
 #include <QNetworkReply>
 
+QScriptValue QNetworkReplytoScriptValue(QScriptEngine *engine, QNetworkReply* const &item)
+{
+  return engine->newQObject(item);
+}
+
+void QNetworkReplyfromScriptValue(const QScriptValue &obj, QNetworkReply* &item)
+{
+  item = qobject_cast<QNetworkReply*>(obj.toQObject());
+}
+
 void setupQNetworkReplyProto(QScriptEngine *engine)
 {
-  QScriptValue replyproto = engine->newQObject(new QNetworkReplyProto(engine));
-  engine->setDefaultPrototype(qMetaTypeId<QNetworkReply*>(), replyproto);
+  qScriptRegisterMetaType(engine, QNetworkReplytoScriptValue, QNetworkReplyfromScriptValue);
+  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+
+  QScriptValue proto = engine->newQObject(new QNetworkReplyProto(engine));
+  engine->setDefaultPrototype(qMetaTypeId<QNetworkReply*>(), proto);
+
+  proto.setProperty("UnknownNetworkError",    QScriptValue(engine, QNetworkReply::UnknownNetworkError),    permanent);
 }
 
 QNetworkReplyProto::QNetworkReplyProto(QObject *parent)
   : QObject(parent)
+{
+}
+QNetworkReplyProto::~QNetworkReplyProto()
 {
 }
 
@@ -45,13 +63,14 @@ void QNetworkReplyProto::close()
     item->close();
 }
 
-int QNetworkReplyProto::error() const
+QNetworkReply::NetworkError QNetworkReplyProto::error() const
 {
   QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
   if (item)
     return item->error();
-  return (QNetworkReply::UnknownNetworkError);
+  return QNetworkReply::NetworkError();
 }
+
 
 bool QNetworkReplyProto::hasRawHeader(const QByteArray &headerName) const
 {
@@ -69,11 +88,34 @@ QVariant QNetworkReplyProto::header(QNetworkRequest::KnownHeaders header) const
   return QVariant();
 }
 
+void QNetworkReplyProto::ignoreSslErrors()
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    item->ignoreSslErrors();
+}
+
 void QNetworkReplyProto::ignoreSslErrors(const QList<QSslError> & errors)
 {
   QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
   if (item)
     item->ignoreSslErrors(errors);
+}
+
+bool QNetworkReplyProto::isFinished() const
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->isFinished();
+  return false;
+}
+
+bool QNetworkReplyProto::isRunning() const
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->isRunning();
+  return false;
 }
 
 QNetworkAccessManager *QNetworkReplyProto::manager() const
@@ -107,6 +149,17 @@ QList<QByteArray> QNetworkReplyProto::rawHeaderList() const
     return item->rawHeaderList();
   return QList<QByteArray>();
 }
+
+/*
+// TODO: How to expose this?
+const QList<RawHeaderPair> & QNetworkReplyProto::rawHeaderPairs() const
+{
+  QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
+  if (item)
+    return item->rawHeaderPairs();
+  return *(const QList<RawHeaderPair>);
+}
+*/
 
 qint64 QNetworkReplyProto::readBufferSize() const
 {
