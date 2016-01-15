@@ -36,8 +36,8 @@ void setupQWebSocketServerProto(QScriptEngine *engine)
 
   QScriptValue constructor = engine->newFunction(constructQWebSocketServer, proto);
   engine->globalObject().setProperty("QWebSocketServer",  constructor);
-  proto.setProperty("SecureMode",    QScriptValue(engine, QWebSocketServer::SecureMode),    permanent);
-  proto.setProperty("NonSecureMode", QScriptValue(engine, QWebSocketServer::NonSecureMode), permanent);
+  constructor.setProperty("SecureMode",    QScriptValue(engine, QWebSocketServer::SecureMode),    permanent);
+  constructor.setProperty("NonSecureMode", QScriptValue(engine, QWebSocketServer::NonSecureMode), permanent);
 }
 
 QScriptValue constructQWebSocketServer(QScriptContext *context, QScriptEngine *engine)
