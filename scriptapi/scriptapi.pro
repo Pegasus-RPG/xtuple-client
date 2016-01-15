@@ -101,7 +101,7 @@ HEADERS += setupscriptapi.h \
     qtsetup.h \
     qurlproto.h \
     qvalidatorproto.h \
-    qwebchanelproto.h \
+    qwebchannelproto.h \
     qwebframeproto.h \
     qwebpageproto.h \
     qwebsocketcorsauthenticatorproto.h \
@@ -215,7 +215,7 @@ SOURCES += setupscriptapi.cpp \
     qtsetup.cpp \
     qurlproto.cpp \
     qvalidatorproto.cpp \
-    qwebchanelproto.cpp \
+    qwebchannelproto.cpp \
     qwebframeproto.cpp \
     qwebpageproto.cpp \
     qwebsocketcorsauthenticatorproto.cpp \
