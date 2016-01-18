@@ -53,6 +53,7 @@ dspBriefSalesHistory::dspBriefSalesHistory(QWidget* parent, const char*, Qt::Win
   list()->addColumn(tr("Name"),                -1,              Qt::AlignLeft,   true,  "cust_name"   );
   list()->addColumn(tr("Cust. Type"),          _orderColumn,    Qt::AlignLeft,   true,  "custtype_code"   );
   list()->addColumn(tr("Doc. #"),              _orderColumn,    Qt::AlignLeft,   true,  "cohist_ordernumber"   );
+  list()->addColumn(tr("Cust. P/O #"),         _orderColumn,    Qt::AlignLeft,   false, "cohist_ponumber");
   list()->addColumn(tr("Invoice #"),           _orderColumn,    Qt::AlignLeft,   true,  "invoicenumber"   );
   list()->addColumn(tr("Ord. Date"),           _dateColumn,     Qt::AlignCenter, true,  "cohist_orderdate" );
   list()->addColumn(tr("Invc. Date"),          _dateColumn,     Qt::AlignCenter, true,  "cohist_invcdate" );
