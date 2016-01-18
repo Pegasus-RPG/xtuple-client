@@ -14,6 +14,8 @@
 #include <QSqlError>
 
 #include <parameter.h>
+#include <metasql.h>
+#include "mqlutil.h"
 
 #include "image.h"
 #include "guiclient.h"
@@ -109,6 +111,10 @@ void images::sFillList()
 {
   XSqlQuery imagesFillList;
   // Do not select image_data into the list
+  MetaSQLQuery mql = mqlLoad("images", "list");
+  ParameterList params;
+  imagesFillList = mql.toQuery(params);
+  /*
   imagesFillList.exec("SELECT image_id, image_name, image_descrip, LENGTH(image_data) AS image_size, "
          "       CASE WHEN nspname='public' THEN ''"
          "            ELSE nspname END AS nspname"
@@ -116,6 +122,7 @@ void images::sFillList()
          " WHERE ((image.tableoid=pg_class.oid)"
          "   AND  (relnamespace=pg_namespace.oid))"
          "ORDER BY image_name;" );
+*/
   _image->populate(imagesFillList);
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Image Information"),
                                 imagesFillList, __FILE__, __LINE__))
