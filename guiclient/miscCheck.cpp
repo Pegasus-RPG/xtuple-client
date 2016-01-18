@@ -206,8 +206,9 @@ void miscCheck::sSave()
     _checkid = check.value("result").toInt();
     if (_checkid < 0)
     {
-      systemError(this, storedProcErrorLookup("createCheck", _checkid),
-		  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Check Information"),
+                             storedProcErrorLookup("createCheck", _checkid),
+                             __FILE__, __LINE__);
       return;
     }
     check.prepare( "SELECT checkhead_number "
@@ -225,15 +226,15 @@ void miscCheck::sSave()
                                 .arg(check.value("checkhead_number").toString()) );
 */
     }
-    else if (check.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Check Information"),
+                                  check, __FILE__, __LINE__))
     {
-      systemError(this, check.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
-  else if (check.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Check Information"),
+                                check, __FILE__, __LINE__))
   {
-    systemError(this, check.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -258,9 +259,9 @@ void miscCheck::sPopulateBankInfo(int pBankaccntid)
     {
       _amount->setId(checkNumber.value("bankaccnt_curr_id").toInt());
     }
-    else if (miscPopulateBankInfo.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Information"),
+                                  checkNumber, __FILE__, __LINE__))
     {
-      systemError(this, checkNumber.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -428,11 +429,11 @@ void miscCheck::sCreditMemoSelected()
       if (_mode == cNew)
         _amount->setLocalValue(miscCreditMemoSelected.value("amount").toDouble());
     }
-    else if (miscCreditMemoSelected.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Check Information"),
+                                  miscCreditMemoSelected, __FILE__, __LINE__))
     {
-      systemError(this, miscCreditMemoSelected.lastError().databaseText(), __FILE__, __LINE__);
       return;
-    } 
+    }
   }
   else
   {

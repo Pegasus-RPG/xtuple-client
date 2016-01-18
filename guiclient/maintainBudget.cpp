@@ -17,6 +17,7 @@
 #include <xlistbox.h>
 #include <glcluster.h>
 #include <openreports.h>
+#include "errorReporter.h"
 
 maintainBudget::maintainBudget(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -145,9 +146,9 @@ void maintainBudget::sSave()
     maintainSave.exec();
     if(maintainSave.first())
       _budgheadid = maintainSave.value("result").toInt();
-    else
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Budget Information"),
+                                  maintainSave, __FILE__, __LINE__))
     {
-      systemError(this, maintainSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -161,7 +162,8 @@ void maintainBudget::sSave()
   maintainSave.bindValue(":descrip", _descrip->text());
   if(!maintainSave.exec())
   {
-    systemError(this, maintainSave.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Budget Information"),
+                         maintainSave, __FILE__, __LINE__);
     return;
   }
 
@@ -170,7 +172,8 @@ void maintainBudget::sSave()
   maintainSave.bindValue(":budghead_id", _budgheadid);
   if(!maintainSave.exec())
   {
-    systemError(this, maintainSave.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Budget Information"),
+                           maintainSave, __FILE__, __LINE__);
     return;
   }
 

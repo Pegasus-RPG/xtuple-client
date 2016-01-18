@@ -17,6 +17,7 @@
 
 #include <openreports.h>
 #include <comments.h>
+#include <errorReporter.h>
 
 lotSerial::lotSerial(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -111,9 +112,9 @@ void lotSerial::populate()
     _notes->setText(lotpopulate.value("ls_notes").toString());
     _changed=false;
   }
-  else if (lotpopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+                                lotpopulate, __FILE__, __LINE__))
   {
-    systemError(this, lotpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();
@@ -128,9 +129,9 @@ void lotSerial::sSave()
   lotSave.bindValue(":notes",_notes->toPlainText());
   lotSave.bindValue(":ls_id", _lotSerial->id());
   lotSave.exec();
-  if (lotSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Lot/Serial Information"),
+                                lotSave, __FILE__, __LINE__))
   {
-    systemError(this, lotSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   _notes->clear();
@@ -182,9 +183,9 @@ void lotSerial::sDeleteReg()
              "AND (charass_target_id=:lsreg_id))" );
   lotDeleteReg.bindValue(":lsreg_id", _reg->id());
   lotDeleteReg.exec();
-  if (lotDeleteReg.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Lot/Serial Information"),
+                                lotDeleteReg, __FILE__, __LINE__))
   {
-    systemError(this, lotDeleteReg.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -207,9 +208,9 @@ void lotSerial::sFillList()
   lotFillList.exec();
   _reg->clear();
   _reg->populate(lotFillList);
-  if (lotFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+                                lotFillList, __FILE__, __LINE__))
   {
-    systemError(this, lotFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -236,9 +237,9 @@ void lotSerial::sPrint()
     else
       params.append("label", serial);
   }
-  else if (lotPrint.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+                                lotPrint, __FILE__, __LINE__))
   {
-    systemError(this, lotPrint.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else {
