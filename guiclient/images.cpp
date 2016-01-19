@@ -34,6 +34,7 @@ images::images(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_image, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+  connect(_showSize, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _image->addColumn(tr("Name"),  _itemColumn, Qt::AlignLeft, true, "image_name");
   _image->addColumn(tr("Description"),    -1, Qt::AlignLeft, true, "image_descrip");
@@ -109,9 +110,13 @@ void images::sDelete()
 
 void images::sFillList()
 {
+  _image->setColumnHidden(_image->column("image_size"), !_showSize->isChecked());
   XSqlQuery imagesFillList;
   MetaSQLQuery mql = mqlLoad("images", "list");
   ParameterList params;
+  if (_showSize->isChecked())
+    params.append("displayImageSize", true);
+
   imagesFillList = mql.toQuery(params);
   _image->populate(imagesFillList);
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Image Information"),
