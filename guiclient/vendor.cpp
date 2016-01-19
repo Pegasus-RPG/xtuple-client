@@ -1516,12 +1516,12 @@ void vendor::sHandleButtons()
   else
     _remarksStack->setCurrentWidget(_commentsPage);
   
-  if (_summaryButton->isChecked())
-    _ordersStack->setCurrentWidget(_summaryPage);
-  else if (_purchaseOrdersButton->isChecked())
+  if (_purchaseOrdersButton->isChecked())
     _ordersStack->setCurrentWidget(_purchaseOrdersPage);
-  else
+  else if (_receiptsReturnsButton->isChecked())
     _ordersStack->setCurrentWidget(_receiptsReturnsPage);
+  else
+    _ordersStack->setCurrentWidget(_summaryPage);
   
   if (_payablesButton->isChecked())
     _accountingStack->setCurrentWidget(_payablesPage);
