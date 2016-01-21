@@ -23,6 +23,7 @@
 #include "glclustersetup.h"
 #include "include.h"
 #include "itemlineeditsetup.h"
+#include "jsconsole.h"
 #include "metasqlhighlighterproto.h"
 #include "orderlineeditsetup.h"
 #include "orreportproto.h"
@@ -156,6 +157,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupGLCluster(engine);
   setupInclude(engine);
   setupItemLineEdit(engine);
+  setupJSConsole(engine);
   setupMetaSQLHighlighterProto(engine);
   setupOrderLineEdit(engine);
   setupOrReportProto(engine);

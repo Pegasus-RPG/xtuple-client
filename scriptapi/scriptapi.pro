@@ -123,6 +123,7 @@ HEADERS += setupscriptapi.h \
     documentssetup.h \
     glclustersetup.h \
     itemlineeditsetup.h \
+    jsconsole.h \
     orderlineeditsetup.h \
     parametereditproto.h \
     parametergroupsetup.h \
@@ -237,6 +238,7 @@ SOURCES += setupscriptapi.cpp \
     documentssetup.cpp \
     glclustersetup.cpp \
     itemlineeditsetup.cpp \
+    jsconsole.cpp \
     orderlineeditsetup.cpp \
     parametereditproto.cpp \
     parametergroupsetup.cpp \
