@@ -10,8 +10,28 @@
 
 #include "qwebsocketprotocolproto.h"
 
+QScriptValue CloseCodeToScriptValue(QScriptEngine *engine, const QWebSocketProtocol::CloseCode &item)
+{
+  return engine->newVariant(item);
+}
+void CloseCodeFromScriptValue(const QScriptValue &obj, QWebSocketProtocol::CloseCode &item)
+{
+  item = (QWebSocketProtocol::CloseCode)obj.toInt32();
+}
+
+QScriptValue VersionToScriptValue(QScriptEngine *engine, const QWebSocketProtocol::Version &item)
+{
+  return engine->newVariant(item);
+}
+void VersionFromScriptValue(const QScriptValue &obj, QWebSocketProtocol::Version &item)
+{
+  item = (QWebSocketProtocol::Version)obj.toInt32();
+}
+
 void setupQWebSocketProtocolProto(QScriptEngine *engine)
 {
+  qScriptRegisterMetaType(engine, CloseCodeToScriptValue, CloseCodeFromScriptValue);
+  qScriptRegisterMetaType(engine, VersionToScriptValue, VersionFromScriptValue);
   QScriptValue obj = engine->newObject();
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
