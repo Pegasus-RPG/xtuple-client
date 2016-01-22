@@ -215,13 +215,15 @@ void openSalesOrders::sAddToPackingListBatch()
     int result = openAddToPackingListBatch.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("addToPackingListBatch", result), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Packing List Information"),
+                             storedProcErrorLookup("addToPackingListBatch", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (openAddToPackingListBatch.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Packing List Information"),
+                                openAddToPackingListBatch, __FILE__, __LINE__))
   {
-    systemError(this, openAddToPackingListBatch.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

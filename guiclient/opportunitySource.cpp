@@ -13,6 +13,8 @@
 #include <QVariant>
 #include <QMessageBox>
 
+#include "errorReporter.h"
+
 /*
  *  Constructs a opportunitySource as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
@@ -147,9 +149,8 @@ void opportunitySource::sSave()
       _opsourceid = opportunitySave.value("opsource_id").toInt();
     else
     {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Opportunity Source"),
+                           opportunitySave, __FILE__, __LINE__);
       return;
     }
 
