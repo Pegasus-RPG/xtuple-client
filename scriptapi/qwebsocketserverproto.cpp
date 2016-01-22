@@ -16,19 +16,19 @@ void setupQWebSocketServerProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
-QScriptValue QWebSocketServertoScriptValue(QScriptEngine *engine, QWebSocketServer* const &item)
+QScriptValue QWebSocketServerToScriptValue(QScriptEngine *engine, QWebSocketServer* const &item)
 {
   return engine->newQObject(item);
 }
 
-void QWebSocketServerfromScriptValue(const QScriptValue &obj, QWebSocketServer* &item)
+void QWebSocketServerFromScriptValue(const QScriptValue &obj, QWebSocketServer* &item)
 {
   item = qobject_cast<QWebSocketServer*>(obj.toQObject());
 }
 
 void setupQWebSocketServerProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QWebSocketServertoScriptValue, QWebSocketServerfromScriptValue);
+  qScriptRegisterMetaType(engine, QWebSocketServerToScriptValue, QWebSocketServerFromScriptValue);
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QWebSocketServerProto(engine));
