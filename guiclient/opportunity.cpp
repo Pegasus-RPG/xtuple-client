@@ -139,7 +139,8 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
       }
       else if(opportunityet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, opportunityet.lastError().databaseText(), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Opportunity Information"),
+                             opportunityet, __FILE__, __LINE__);
       }
 
       opportunityet.exec("SELECT fetchNextNumber('OpportunityNumber') AS result;");
@@ -149,7 +150,8 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
       }
       else if(opportunityet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, opportunityet.lastError().databaseText(), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Opportunity Information"),
+                             opportunityet, __FILE__, __LINE__);
       }
     }
     else if (param.toString() == "edit")
@@ -211,9 +213,9 @@ void opportunity::sCancel()
     cancelOppo.prepare("SELECT releaseNumber('OpportunityNumber', :number);");
     cancelOppo.bindValue(":number", _number->text().toInt());
     cancelOppo.exec();
-    if (cancelOppo.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Cancelling Opportunity"),
+                                  cancelOppo, __FILE__, __LINE__))
     {
-      systemError(this, cancelOppo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -228,13 +230,15 @@ void opportunity::sCancel()
       int result = cancelOppo.value("result").toInt();
       if (result < 0)
       {
-	systemError(this, storedProcErrorLookup("deleteOpportunity", result));
-	return;
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Cancelling Opportunity"),
+                               storedProcErrorLookup("deleteOpportunity", result),
+                               __FILE__, __LINE__);
+        return;
       }
     }
-    else if (cancelOppo.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Cancelling Opportunity"),
+                                  cancelOppo, __FILE__, __LINE__))
     {
-      systemError(this, cancelOppo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -276,7 +280,9 @@ bool opportunity::save(bool partial)
   if (!opportunityave.exec("BEGIN"))
   {
     rollback.exec();
-    systemError(this, opportunityave.lastError().databaseText(), __FILE__, __LINE__);
+
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Opportunity Information"),
+                         opportunityave, __FILE__, __LINE__);
     return false;
   }
 
@@ -360,7 +366,8 @@ bool opportunity::save(bool partial)
   if(!opportunityave.exec() && opportunityave.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, opportunityave.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Opportunity Information"),
+                         opportunityave, __FILE__, __LINE__);
     return false;
   }
 
@@ -368,7 +375,8 @@ bool opportunity::save(bool partial)
   if(opportunityave.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, opportunityave.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Opportunity Information"),
+                         opportunityave, __FILE__, __LINE__);
     return false;
   }
 
@@ -508,15 +516,17 @@ void opportunity::sDeleteTodoItem()
     int result = opportunityDeleteTodoItem.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("deleteTodoItem", result));
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting To-Do Information"),
+                             storedProcErrorLookup("deleteTodoItem", result),
+                             __FILE__, __LINE__);
       return;
     }
     else
       sFillTodoList();
     }
-  else if (opportunityDeleteTodoItem.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting To-Do Information"),
+                                opportunityDeleteTodoItem, __FILE__, __LINE__))
   {
-    systemError(this, opportunityDeleteTodoItem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -541,9 +551,9 @@ void opportunity::sFillTodoList()
 
   opportunityFillTodoList.bindValue(":ophead_id", _opheadid);
   opportunityFillTodoList.exec();
-  if (opportunityFillTodoList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving To-Do Information"),
+                                opportunityFillTodoList, __FILE__, __LINE__))
   {
-    systemError(this, opportunityFillTodoList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   _todoList->populate(opportunityFillTodoList);
@@ -721,7 +731,9 @@ void opportunity::sConvertQuote()
                 int result = prospectq.value("result").toInt();
                 if (result < 0)
                 {
-                  systemError(this, storedProcErrorLookup("convertProspectToCustomer", result), __FILE__, __LINE__);
+                  ErrorReporter::error(QtCriticalMsg, this, tr("Error Converting Prospect To Customer"),
+                                           storedProcErrorLookup("convertProspectToCustomer", result),
+                                           __FILE__, __LINE__);
 				  continue;
                 }
                 convert.exec();
@@ -738,7 +750,8 @@ void opportunity::sConvertQuote()
 			  }
               else if (prospectq.lastError().type() != QSqlError::NoError)
               {
-                systemError(this, prospectq.lastError().databaseText(), __FILE__, __LINE__);
+                ErrorReporter::error(QtCriticalMsg, this, tr("Error Converting Prospect To Customer"),
+                                     prospectq, __FILE__, __LINE__);
                 continue;
 			  }
 			}
@@ -779,7 +792,8 @@ void opportunity::sConvertQuote()
 	  }
       else if (convert.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, convert.lastError().databaseText(), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Converting Quote"),
+                             convert, __FILE__, __LINE__);
         continue;
 	  }
     } while (tryagain);
@@ -828,16 +842,17 @@ void opportunity::sAttachQuote()
       int result = opportunityAttachQuote.value("result").toInt();
       if (result < 0)
       {
-        systemError(this, storedProcErrorLookup("attachQuoteToOpportunity", result),
-                    __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Attaching Quote To Opportunity"),
+                               storedProcErrorLookup("attachQuoteToOpportunity", result),
+                               __FILE__, __LINE__);
         return;
       }
       else
         sFillSalesList();
     }
-    else if (opportunityAttachQuote.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Attaching Quote To Opportunity"),
+                                  opportunityAttachQuote, __FILE__, __LINE__))
     {
-      systemError(this, opportunityAttachQuote.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -883,16 +898,17 @@ void opportunity::sDeleteQuote()
       int result = opportunityDeleteQuote.value("result").toInt();
       if (result < 0)
       {
-        systemError(this, storedProcErrorLookup("deleteQuote", result),
-                    __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Quote"),
+                               storedProcErrorLookup("deleteQuote", result),
+                               __FILE__, __LINE__);
         return;
       }
       else
         sFillSalesList();
     }
-    else if (opportunityDeleteQuote.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Quote"),
+                                  opportunityDeleteQuote, __FILE__, __LINE__))
     {
-      systemError(this, opportunityDeleteQuote.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -947,16 +963,17 @@ void opportunity::sAttachSalesOrder()
       int result = opportunityAttachSalesOrder.value("result").toInt();
       if (result < 0)
       {
-        systemError(this, storedProcErrorLookup("attachSalesOrderToOpportunity", result),
-                    __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Attaching Sales Order To Opportunity"),
+                               storedProcErrorLookup("attachSalesOrderToOpportunity", result),
+                               __FILE__, __LINE__);
         return;
       }
       else
         sFillSalesList();
     }
-    else if (opportunityAttachSalesOrder.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Attaching Sales Order To Opportunity"),
+                                  opportunityAttachSalesOrder, __FILE__, __LINE__))
     {
-      systemError(this, opportunityAttachSalesOrder.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -1017,9 +1034,9 @@ void opportunity::sFillSalesList()
   opportunityFillSalesList.bindValue(":quote", tr("Quote"));
   opportunityFillSalesList.bindValue(":salesorder", tr("Sales Order"));
   opportunityFillSalesList.exec();
-  if (opportunityFillSalesList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Sales Information"),
+                                opportunityFillSalesList, __FILE__, __LINE__))
   {
-    systemError(this, opportunityFillSalesList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   _salesList->populate(opportunityFillSalesList, true);
