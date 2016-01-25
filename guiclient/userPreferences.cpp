@@ -21,6 +21,7 @@
 
 #include <parameter.h>
 
+#include "errorReporter.h"
 #include "hotkey.h"
 #include "imageList.h"
 #include "timeoutHandler.h"
@@ -113,6 +114,19 @@ userPreferences::~userPreferences()
 void userPreferences::languageChange()
 {
   retranslateUi(this);
+}
+
+enum SetResponse userPreferences::set(const ParameterList &pParams)
+{
+  XDialog::set(pParams);
+  QVariant  param;
+  bool      valid;
+
+  param = pParams.value("passwordReset", &valid);
+  if (valid)
+    _tab->setCurrentIndex(_tab->indexOf(_password));
+
+  return NoError;
 }
 
 void userPreferences::setBackgroundImage(int pImageid)
@@ -439,6 +453,15 @@ bool userPreferences::save()
       systemError(this, userave.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
+
+    XSqlQuery usrq;
+    usrq.prepare("SELECT setUserPreference(:username, 'PasswordResetDate', :passdate);");
+    usrq.bindValue(":username", _username->text());
+    usrq.bindValue(":passdate", QDate::currentDate());
+    usrq.exec();
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Saving User Account"),
+                             usrq, __FILE__, __LINE__))
+      return false;
   }
   return true;
 }

@@ -205,13 +205,15 @@ void openReturnAuthorizations::sDelete()
       openDelete.exec();
       if (openDelete.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, openDelete.lastError().databaseText(), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Return Authorization"),
+                             openDelete, __FILE__, __LINE__);
       }
     }
   }
   else if (checkwo.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, checkwo.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Return Authorization"),
+                         checkwo, __FILE__, __LINE__);
   }
   else
   {
@@ -224,7 +226,8 @@ void openReturnAuthorizations::sDelete()
       openDelete.exec();
       if (openDelete.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, openDelete.lastError().databaseText(), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Return Authorization"),
+                             openDelete, __FILE__, __LINE__);
       }
     }
   }
@@ -261,9 +264,9 @@ void openReturnAuthorizations::sFillList()
   setParams(params);
   openFillList = mql.toQuery(params);
   _ra->populate(openFillList);
-  if (openFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Return Authorization Information"),
+                                openFillList, __FILE__, __LINE__))
   {
-    systemError(this, openFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   _ra->setDragString("raheadid=");

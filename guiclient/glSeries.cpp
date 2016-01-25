@@ -380,6 +380,7 @@ void glSeries::sPost()
     if (glPost.first())
     {
       int returnVal = glPost.value("return").toInt();
+      if (returnVal < 0)
       {
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Selected G/L Series"),
                                storedProcErrorLookup("postGLSeriesNoSumm", returnVal),

@@ -52,6 +52,7 @@ public slots:
     virtual void sReturn();
     virtual void sViewAR();
     virtual void sAssigned();
+    virtual void sNewCharacteristic();
 
 signals:
     void populated();

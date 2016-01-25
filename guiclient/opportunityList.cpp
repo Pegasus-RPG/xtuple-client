@@ -22,6 +22,7 @@
 #include "opportunity.h"
 #include "parameterwidget.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 opportunityList::opportunityList(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "opportunityList", fl)
@@ -178,15 +179,17 @@ void opportunityList::sDelete()
     int result = opportunityDelete.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("deleteOpportunity", result));
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Opportunity"),
+                             storedProcErrorLookup("deleteOpportunity", result),
+                             __FILE__, __LINE__);
       return;
     }
     else
       sFillList();
     }
-  else if (opportunityDelete.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Opportunity"),
+                                opportunityDelete, __FILE__, __LINE__))
   {
-    systemError(this, opportunityDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -199,7 +202,8 @@ void opportunityList::sDeactivate()
   opportunityDeactivate.bindValue(":ophead_id", list()->id());
   opportunityDeactivate.exec();
   if (opportunityDeactivate.lastError().type() != QSqlError::NoError)
-    systemError(this, opportunityDeactivate.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Deactiving Opportunity"),
+                       opportunityDeactivate, __FILE__, __LINE__);
   else
     sFillList();
 }
@@ -211,7 +215,8 @@ void opportunityList::sActivate()
   opportunityActivate.bindValue(":ophead_id", list()->id());
   opportunityActivate.exec();
   if (opportunityActivate.lastError().type() != QSqlError::NoError)
-    systemError(this, opportunityActivate.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Activating Opportunity"),
+                       opportunityActivate, __FILE__, __LINE__);
   else
     sFillList();
 }

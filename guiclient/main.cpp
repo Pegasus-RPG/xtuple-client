@@ -122,6 +122,7 @@
 #include "xmainwindow.h"
 #include "checkForUpdates.h"
 #include "salesOrderSimple.h"
+#include "userPreferences.h"
 #include "xtNetworkRequestManager.h"
 
 #include "sysLocale.h"
@@ -796,7 +797,8 @@ int main(int argc, char *argv[])
       }
       else
       {
-        systemError(0, baseCurrency.lastError().databaseText(), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, omfgThis, QObject::tr("Error Retrieving Base Currency Information"),
+                             baseCurrency, __FILE__, __LINE__);
         // need to figure out appropriate return code for this...unusual error
         return -1;
       }
@@ -804,7 +806,8 @@ int main(int argc, char *argv[])
   }
   else
   {
-    systemError(0, baseCurrency.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, omfgThis, QObject::tr("Error Retrieving Base Currency Information"),
+                           baseCurrency, __FILE__, __LINE__);
     // need to figure out appropriate return code for this...unusual error
     return -1;
   }
@@ -858,6 +861,31 @@ int main(int argc, char *argv[])
                   "You should define the exchange rates for these currencies in 'System | "
                   "Setup | Exchange Rates...' before posting any "
                   "transactions in the system.") );
+
+// Check for presence of password reset requirement and user last reset days
+  XSqlQuery resetCheck("SELECT fetchmetricbool('EnforcePasswordReset') as passreset, "
+                       "       fetchmetricvalue('PasswordResetDays')::TEXT as resetdays, "
+                       "(SELECT current_date - fetchmetricvalue('PasswordResetDays')::INTEGER > "
+                       "(SELECT usrpref_value FROM usrpref WHERE ((usrpref_username = geteffectivextuser()) "
+                       " AND (usrpref_name = 'PasswordResetDate')))::DATE) AS lastreset;");
+  resetCheck.exec();
+  if(resetCheck.first())
+  {
+    if(resetCheck.value("passreset").toBool() && resetCheck.value("lastreset").toBool())
+    {
+      QMessageBox::warning( omfgThis, QObject::tr("New Password Required"),
+        QObject::tr("<p>Your company has a policy of updating passwords every %1 days.  "
+                  "Please change your password before logging out.").arg(resetCheck.value("resetdays").toString()));
+      if (_privileges->check("MaintainPreferencesSelf"))
+      {
+        ParameterList params;
+        params.append("passwordReset");
+        userPreferences newdlg(0, "", true);
+        newdlg.set(params);
+        newdlg.exec();
+      }
+    }
+  }
 
   app.exec();
 

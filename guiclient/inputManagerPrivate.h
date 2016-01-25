@@ -64,6 +64,9 @@ class InputManagerPrivate : public QObject
     void         addToEventList(QString prefix, int type, int length1, int length2, int length3, QString descrip, QString query);
     ReceiverItem findReceiver(int pMask);
     QString      queryFieldName(int barcodeType, int receiverType);
+
+  signals:
+    void gotBarCode(int type, int id);
 };
 
 #endif
