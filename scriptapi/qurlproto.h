@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -59,10 +59,11 @@ class QUrlProto : public QObject, public QScriptable
     Q_INVOKABLE void addQueryItem(const QString &key, const QString & value);
     #if QT_VERSION >= 0x050000
     Q_INVOKABLE QStringList allEncodedQueryItemValues(const QString &key);
+    Q_INVOKABLE QStringList       allQueryItemValues(const QString &key);
     #else
     Q_INVOKABLE QList<QByteArray> allEncodedQueryItemValues(const QByteArray &key) const;
+    Q_INVOKABLE QStringList       allQueryItemValues(const QString &key) const;
     #endif
-    Q_INVOKABLE QStringList       allQueryItemValues(const QString &key);
     Q_INVOKABLE QString    authority() const;
     Q_INVOKABLE void       clear();
 #if QT_VERSION >= 0x050000
