@@ -72,7 +72,6 @@ QScriptValue consoleWarnForJS(QScriptContext* context, QScriptEngine* engine)
 void setupJSConsole(QScriptEngine *engine)
 {
   QScriptValue proto = engine->newQObject(new JSConsole(engine));
-  engine->setDefaultPrototype(qMetaTypeId<JSConsole*>(), proto);
   engine->globalObject().setProperty("console",  proto);
 
   QScriptValue consoleError = engine->newFunction(consoleErrorForJS);
