@@ -57,13 +57,13 @@ class QUrlProto : public QObject, public QScriptable
 
 
     Q_INVOKABLE void addQueryItem(const QString &key, const QString & value);
-    #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-    Q_INVOKABLE QStringList allEncodedQueryItemValues(const QString &key);
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    Q_INVOKABLE QStringList       allEncodedQueryItemValues(const QString &key);
     Q_INVOKABLE QStringList       allQueryItemValues(const QString &key);
-    #else
+#else
     Q_INVOKABLE QList<QByteArray> allEncodedQueryItemValues(const QByteArray &key) const;
     Q_INVOKABLE QStringList       allQueryItemValues(const QString &key) const;
-    #endif
+#endif
     Q_INVOKABLE QString    authority() const;
     Q_INVOKABLE void       clear();
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
