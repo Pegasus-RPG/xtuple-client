@@ -53,7 +53,6 @@ QString QCoreApplicationProto::applicationDirPath()
   return QCoreApplication::applicationDirPath();
 }
 
-
 QString QCoreApplicationProto::applicationFilePath()
 {
   return QCoreApplication::applicationFilePath();
@@ -62,6 +61,11 @@ QString QCoreApplicationProto::applicationFilePath()
 qint64 QCoreApplicationProto::applicationPid()
 {
   return QCoreApplication::applicationPid();
+}
+
+QString QCoreApplicationProto::applicationVersion()
+{
+  return QCoreApplication::applicationVersion();
 }
 
 QStringList QCoreApplicationProto::arguments()
@@ -73,6 +77,13 @@ bool QCoreApplicationProto::closingDown()
 {
   return QCoreApplication::closingDown();
 }
+
+#if QT_VERSION >= 0x050000
+QAbstractEventDispatcher *QCoreApplicationProto::eventDispatcher()
+{
+  return QCoreApplication::eventDispatcher();
+}
+#endif
 
 int QCoreApplicationProto::exec()
 {
@@ -89,10 +100,12 @@ void QCoreApplicationProto::flush()
   QCoreApplication::flush();
 }
 
+#if QT_VERSION < 0x050000
 bool QCoreApplicationProto::hasPendingEvents()
 {
   return QCoreApplication::hasPendingEvents();
 }
+#endif
 
 void QCoreApplicationProto::installTranslator(QTranslator *translationFile)
 {
@@ -104,15 +117,29 @@ QCoreApplication *QCoreApplicationProto::instance()
   return QCoreApplication::instance();
 }
 
+#if QT_VERSION >= 0x050000
+bool QCoreApplicationProto::isQuitLockEnabled()
+{
+  return QCoreApplication::isQuitLockEnabled();
+}
+
+bool QCoreApplicationProto::isSetuidAllowed()
+{
+  return QCoreApplication::isSetuidAllowed();
+}
+#endif
+
 QStringList QCoreApplicationProto::libraryPaths()
 {
   return QCoreApplication::libraryPaths();
 }
 
+#if QT_VERSION < 0x050000
 void QCoreApplicationProto::postEvent(QObject *receiver, QEvent *event)
 {
   QCoreApplication::postEvent(receiver, event);
 }
+#endif
 
 void QCoreApplicationProto::postEvent(QObject *receiver, QEvent *event, int priority)
 {
@@ -159,10 +186,12 @@ void QCoreApplicationProto::sendPostedEvents(QObject *receiver, int event_type)
   QCoreApplication::sendPostedEvents(receiver, event_type);
 }
 
+#if QT_VERSION < 0x050000
 void QCoreApplicationProto::sendPostedEvents()
 {
   QCoreApplication::sendPostedEvents();
 }
+#endif
 
 void QCoreApplicationProto::setApplicationName(const QString &application)
 {
@@ -194,6 +223,18 @@ void QCoreApplicationProto::setOrganizationName(const QString &orgName)
   QCoreApplication::setOrganizationName(orgName);
 }
 
+#if QT_VERSION >= 0x050000
+void QCoreApplicationProto::setQuitLockEnabled(bool enabled)
+{
+  QCoreApplication::setQuitLockEnabled(enabled);
+}
+
+void QCoreApplicationProto::setSetuidAllowed(bool allow)
+{
+  QCoreApplication::setSetuidAllowed(allow);
+}
+#endif
+
 bool QCoreApplicationProto::startingUp()
 {
   return QCoreApplication::startingUp();
@@ -204,6 +245,7 @@ bool QCoreApplicationProto::testAttribute(Qt::ApplicationAttribute attribute)
   return QCoreApplication::testAttribute(attribute);
 }
 
+#if QT_VERSION < 0x050000
 QString QCoreApplicationProto::translate(const char *context, const char *sourceText, const char *disambiguation, QCoreApplication::Encoding encoding, int n)
 {
   return QCoreApplication::translate(context, sourceText, disambiguation, encoding, n);
@@ -213,6 +255,12 @@ QString QCoreApplicationProto::translate(const char *context, const char *source
 {
   return QCoreApplication::translate(context, sourceText, disambiguation, encoding);
 }
+#else
+QString QCoreApplicationProto::translate(const char *context, const char *sourceText, const char *disambiguation, int n)
+{
+  return QCoreApplication::translate(context, sourceText, disambiguation, n);
+}
+#endif
 
 QString QCoreApplicationProto::toString()
 {
