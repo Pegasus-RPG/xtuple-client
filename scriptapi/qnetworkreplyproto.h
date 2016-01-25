@@ -90,7 +90,7 @@ class QNetworkReplyProto : public QObject, public QScriptable
     Q_INVOKABLE qint64      write(const QByteArray &byteArray);
     Q_INVOKABLE qint64      write(const QString &string);
 
-  public Q_SLOTS:
+  public slots:
     Q_INVOKABLE void                              abort() const;
     Q_INVOKABLE void                              ignoreSslErrors();
 };
