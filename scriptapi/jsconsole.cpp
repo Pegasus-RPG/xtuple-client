@@ -36,7 +36,11 @@ QScriptValue consoleInfoForJS(QScriptContext* context, QScriptEngine* engine)
         QScriptValue param(context->argument(i));
         list.append(param.toString());
     }
+#if QT_VERSION >= 0x050000
     qInfo() << qPrintable("\n" + list.join(" "));
+#else
+    qDebug() << qPrintable("\n" + list.join(" "));
+#endif
     return engine->undefinedValue();
 }
 
