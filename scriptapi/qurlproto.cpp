@@ -103,7 +103,7 @@ void QUrlProto::addQueryItem(const QString &key, const QString &value)
   }
 }
 
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 void QUrlProto::setProtectedQuery(const QString &queryString)
 {
   _query = new QUrlQuery(queryString);
@@ -113,7 +113,7 @@ void QUrlProto::setProtectedQuery(const QString &queryString)
 // RETURN AND PARAM TYPES CHANGED FOR Qt5
 // I did not bother with Qt4 backwards compatibility directives - true backwards compatibility
 // would require varying the return/param types of several methods since QStrings are now used over QByteArrays
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 QStringList QUrlProto::allEncodedQueryItemValues(const QString &key)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -133,7 +133,7 @@ QList<QByteArray> QUrlProto::allEncodedQueryItemValues(const QByteArray &key) co
   return QList<QByteArray>();
  }
 #endif
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 QStringList QUrlProto::allQueryItemValues(const QString &key)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -179,7 +179,7 @@ void QUrlProto::clear()
 
 // NOTE: The return types of many of the following methods have been changed from QByteArray to QString for Qt5
 // This is to accommodate the new return type of the QUrl getter methods (since QStrings can now be encodings)
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 QString QUrlProto::encodedFragment() const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -198,7 +198,7 @@ QByteArray QUrlProto::encodedFragment() const
   return QByteArray();
 }
 #endif
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 QString QUrlProto::encodedHost() const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -216,7 +216,7 @@ QByteArray QUrlProto::encodedHost() const
   return QByteArray();
 }
 #endif
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 QString QUrlProto::encodedPassword() const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -234,7 +234,7 @@ QByteArray QUrlProto::encodedPassword() const
   return QByteArray();
 }
 #endif
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 QString QUrlProto::encodedPath() const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -252,7 +252,7 @@ QByteArray QUrlProto::encodedPath() const
   return QByteArray();
 }
 #endif
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 QString QUrlProto::encodedQuery() const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -270,7 +270,7 @@ QByteArray QUrlProto::encodedQuery() const
   return QByteArray();
 }
 #endif
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 QString QUrlProto::encodedQueryItemValue(const QString &key)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -291,7 +291,7 @@ QByteArray QUrlProto::encodedQueryItemValue(const QByteArray &key) const
   return QByteArray();
 }
 #endif
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 QList<QPair<QString, QString> > QUrlProto::encodedQueryItems()
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -312,7 +312,7 @@ QList<QPair<QByteArray, QByteArray> > QUrlProto::encodedQueryItems() const
   return QList<QPair<QByteArray, QByteArray> >();
 }
 #endif
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 QString QUrlProto::encodedUserName() const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
