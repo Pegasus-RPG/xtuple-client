@@ -510,9 +510,7 @@ void Documents::refresh()
               " WHEN (target_type='IMG') THEN :image "
               " ELSE NULL "
               " END AS target_type_qtdisplayrole "
-              "FROM docinfo "
-              "WHERE ((source_type=:source) "
-              " AND (source_id=:sourceid)) "
+              " FROM _docinfo(:sourceid, :source)"
               "ORDER by target_type_qtdisplayrole, target_number; ");
   query.prepare(sql);
   query.bindValue(":inventory", tr("Inventory Description"));
