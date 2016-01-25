@@ -68,7 +68,7 @@ QNetworkReply::NetworkError QNetworkReplyProto::error() const
   QNetworkReply *item = qscriptvalue_cast<QNetworkReply*>(thisObject());
   if (item)
     return item->error();
-  return QNetworkReply::NetworkError();
+  return (QNetworkReply::UnknownNetworkError);
 }
 
 
