@@ -35,6 +35,7 @@
 #include "qactionproto.h"
 #include "qapplicationproto.h"
 #include "qboxlayoutproto.h"
+#include "qbufferproto.h"
 #include "qbytearrayproto.h"
 #include "qcoreapplicationproto.h"
 #include "qdialogsetup.h"
@@ -171,6 +172,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQActionProto(engine);
   setupQApplicationProto(engine);
   setupQBoxLayoutProto(engine);
+  setupQBufferProto(engine);
   setupQByteArrayProto(engine);
   setupQCoreApplicationProto(engine);
   setupQDialog(engine);
