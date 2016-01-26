@@ -17,9 +17,10 @@ void setupQSslCertificateProto(QScriptEngine *engine);
 
 #if QT_VERSION >= 0x050000
 #include <QScriptable>
+#include <QSsl>
 #include <QSslCertificate>
-
-class QSslCertificate;
+#include <QSslCertificateExtension>
+#include <QSslError>
 
 Q_DECLARE_METATYPE(QSslCertificate*)
 Q_DECLARE_METATYPE(enum QSslCertificate::SubjectInfo)
@@ -43,13 +44,14 @@ class QSslCertificateProto : public QObject, public QScriptable
     Q_INVOKABLE bool                                                isBlacklisted() const;
     Q_INVOKABLE bool                                                isNull() const;
     Q_INVOKABLE bool                                                isSelfSigned() const;
-    Q_INVOKABLE QStringList                                         issuerInfo(QSslProto::SubjectInfo subject) const;
+    Q_INVOKABLE QStringList                                         issuerInfo(QSslCertificate::SubjectInfo subject) const;
     Q_INVOKABLE QStringList                                         issuerInfo(const QByteArray & attribute) const;
     Q_INVOKABLE QList<QByteArray>                                   issuerInfoAttributes() const;
-    Q_INVOKABLE QSslKey                                             publicKey() const;
+    // TODO: Doesn't work
+    //Q_INVOKABLE QSslKey                                             publicKey() const;
     Q_INVOKABLE QByteArray                                          serialNumber() const;
     Q_INVOKABLE QMultiMap<QSsl::AlternativeNameEntryType, QString>  subjectAlternativeNames() const;
-    Q_INVOKABLE QStringList                                         subjectInfo(QSslProto::SubjectInfo subject) const;
+    Q_INVOKABLE QStringList                                         subjectInfo(QSslCertificate::SubjectInfo subject) const;
     Q_INVOKABLE QStringList                                         subjectInfo(const QByteArray & attribute) const;
     Q_INVOKABLE QList<QByteArray>                                   subjectInfoAttributes() const;
     Q_INVOKABLE void                                                swap(QSslCertificate & other);

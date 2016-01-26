@@ -92,8 +92,11 @@ HEADERS += setupscriptapi.h \
     qsqldatabaseproto.h \
     qsqlerrorproto.h \
     qsqlrecordproto.h \
+    qsslcertificateextensionproto.h \
     qsslcertificateproto.h \
+    qsslcipherproto.h \
     qsslconfigurationproto.h \
+    qsslellipticcurveproto.h \
     qsslkeyproto.h \
     qsslproto.h \
     qsslsocketproto.h \
@@ -214,8 +217,11 @@ SOURCES += setupscriptapi.cpp \
     qsqldatabaseproto.cpp \
     qsqlerrorproto.cpp \
     qsqlrecordproto.cpp \
+    qsslcertificateextensionproto.cpp \
     qsslcertificateproto.cpp \
+    qsslcipherproto.cpp \
     qsslconfigurationproto.cpp \
+    qsslellipticcurveproto.cpp \
     qsslkeyproto.cpp \
     qsslproto.cpp \
     qsslsocketproto.cpp \

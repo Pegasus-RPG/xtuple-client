@@ -10,23 +10,16 @@
 
 #include "qsslconfigurationproto.h"
 
-QScriptValue QSslConfigurationtoScriptValue(QScriptEngine *engine, QSslConfiguration* const &item)
-{
-  return engine->newQObject(item);
-}
-
-void QSslConfigurationfromScriptValue(const QScriptValue &obj, QSslConfiguration* &item)
-{
-  item = qobject_cast<QSslConfiguration*>(obj.toQObject());
-}
-
+#if QT_VERSION < 0x050000
 void setupQSslConfigurationProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QSslConfigurationtoScriptValue, QSslConfigurationfromScriptValue);
-
+  Q_UNUSED(engine);
+}
+#else
+void setupQSslConfigurationProto(QScriptEngine *engine)
+{
   QScriptValue proto = engine->newQObject(new QSslConfigurationProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QSslConfiguration*>(), proto);
-  engine->setDefaultPrototype(qMetaTypeId<QSslConfiguration>(),  proto);
 
   QScriptValue constructor = engine->newFunction(constructQSslConfiguration,
                                                  proto);
@@ -50,6 +43,10 @@ QScriptValue constructQSslConfiguration(QScriptContext * /*context*/,
 
 QSslConfigurationProto::QSslConfigurationProto(QObject *parent)
     : QObject(parent)
+{
+}
+
+QSslConfigurationProto::~QSslConfigurationProto()
 {
 }
 
@@ -157,13 +154,18 @@ QSslSocket::PeerVerifyMode QSslConfigurationProto::peerVerifyMode() const
   return QSslSocket::PeerVerifyMode();
 }
 
+// TODO: Doesn't work
+/*
 QSslKey QSslConfigurationProto::privateKey() const
 {
   QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(thisObject());
   if (item)
     return item->privateKey();
-  return QSslKey();
+  // TODO: QSslKey must be passed a key.
+  //return QSslKey();
+  return item->publicKey();
 }
+*/
 
 QSsl::SslProtocol QSslConfigurationProto::protocol() const
 {
@@ -173,13 +175,18 @@ QSsl::SslProtocol QSslConfigurationProto::protocol() const
   return QSsl::SslProtocol();
 }
 
+// TODO: Doesn't work
+/*
 QSslCipher QSslConfigurationProto::sessionCipher() const
 {
   QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(thisObject());
   if (item)
     return item->sessionCipher();
-  return QSslCipher();
+  // TODO: QSslCipher must be passed a param.
+  //return QSslCipher();
+  return item->sessionCipher();
 }
+*/
 
 QSsl::SslProtocol QSslConfigurationProto::sessionProtocol() const
 {
@@ -316,7 +323,7 @@ void QSslConfigurationProto::setDefaultConfiguration(const QSslConfiguration & c
 {
   QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(thisObject());
   if (item)
-    item->setDefaultConfiguration(const QSslConfiguration & configuration);
+    item->setDefaultConfiguration(configuration);
 }
 
 QList<QSslCipher> QSslConfigurationProto::supportedCiphers()
@@ -343,10 +350,4 @@ QList<QSslCertificate> QSslConfigurationProto::systemCaCertificates()
   return QList<QSslCertificate>();
 }
 
-QString QSslConfigurationProto::toString() const
-{
-  QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(thisObject());
-  if (item)
-    return QString("QSslConfiguration()");
-  return QString("QSslConfiguration(unknown)");
-}
+#endif

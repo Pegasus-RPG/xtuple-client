@@ -17,9 +17,9 @@ void setupQSslConfigurationProto(QScriptEngine *engine);
 
 #if QT_VERSION >= 0x050000
 #include <QScriptable>
+#include <QSslCipher>
 #include <QSslConfiguration>
-
-class QSslConfiguration;
+#include <QSslEllipticCurve>
 
 Q_DECLARE_METATYPE(QSslConfiguration*)
 Q_DECLARE_METATYPE(enum QSslConfiguration::NextProtocolNegotiationStatus)
@@ -47,9 +47,11 @@ class QSslConfigurationProto : public QObject, public QScriptable
     Q_INVOKABLE QList<QSslCertificate>                            peerCertificateChain() const;
     Q_INVOKABLE int                                               peerVerifyDepth() const;
     Q_INVOKABLE QSslSocket::PeerVerifyMode                        peerVerifyMode() const;
-    Q_INVOKABLE QSslKey                                           privateKey() const;
+    // TODO: Doesn't work
+    //Q_INVOKABLE QSslKey                                           privateKey() const;
     Q_INVOKABLE QSsl::SslProtocol                                 protocol() const;
-    Q_INVOKABLE QSslCipher                                        sessionCipher() const;
+    // TODO: Doesn't work
+    //Q_INVOKABLE QSslCipher                                        sessionCipher() const;
     Q_INVOKABLE QSsl::SslProtocol                                 sessionProtocol() const;
     Q_INVOKABLE QByteArray                                        sessionTicket() const;
     Q_INVOKABLE int                                               sessionTicketLifeTimeHint() const;

@@ -10,14 +10,29 @@
 
 #include "qsslkeyproto.h"
 
+#if QT_VERSION < 0x050000
+void setupQSslKeyProto(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
 QScriptValue QSslKeytoScriptValue(QScriptEngine *engine, QSslKey* const &item)
 {
-  return engine->newQObject(item);
+  QScriptValue obj = engine->newObject();
+  //QString key = new QString(item->toPem());
+  obj.setProperty("key", qPrintable(QString(item->toPem())));
+  obj.setProperty("algorithm", item->algorithm());
+  obj.setProperty("type", item->type());
+  return obj;
 }
 
 void QSslKeyfromScriptValue(const QScriptValue &obj, QSslKey* &item)
 {
-  item = qobject_cast<QSslKey*>(obj.toQObject());
+  QString key = qscriptvalue_cast<QString>(obj.property("key"));;
+  QSsl::KeyAlgorithm algorithm = static_cast<QSsl::KeyAlgorithm>(obj.property("algorithm").toInt32());
+  QSsl::KeyType type = static_cast<QSsl::KeyType>(obj.property("type").toInt32());
+
+  item = new QSslKey(key.toLocal8Bit(), algorithm, QSsl::Pem, type);
 }
 
 void setupQSslKeyProto(QScriptEngine *engine)
@@ -26,7 +41,6 @@ void setupQSslKeyProto(QScriptEngine *engine)
 
   QScriptValue proto = engine->newQObject(new QSslKeyProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QSslKey*>(), proto);
-  engine->setDefaultPrototype(qMetaTypeId<QSslKey>(),  proto);
 
   QScriptValue constructor = engine->newFunction(constructQSslKey,
                                                  proto);
@@ -34,22 +48,39 @@ void setupQSslKeyProto(QScriptEngine *engine)
 }
 
 #include <QSslKey>
-QScriptValue constructQSslKey(QScriptContext * /*context*/,
+QScriptValue constructQSslKey(QScriptContext *context,
                                     QScriptEngine  *engine)
 {
   QSslKey *obj = 0;
-  /* if (context->argumentCount() ...)
-  else if (something bad)
-    context->throwError(QScriptContext::UnknownError,
-                        "Could not find an appropriate QSslKeyconstructor");
+  QString key;
+  QSsl::KeyAlgorithm algorithm;
+  QSsl::EncodingFormat encoding;
+  QSsl::KeyType type;
+  if (context->argumentCount() == 2)
+  {
+    key = context->argument(0).toString();
+    algorithm = static_cast<QSsl::KeyAlgorithm>(context->argument(1).toInt32());
+    obj = new QSslKey(key.toLocal8Bit(), algorithm);
+  }
+  else if (context->argumentCount() == 4)
+  {
+    key = context->argument(0).toString();
+    algorithm = static_cast<QSsl::KeyAlgorithm>(context->argument(1).toInt32());
+    encoding = static_cast<QSsl::EncodingFormat>(context->argument(2).toInt32());
+    type = static_cast<QSsl::KeyType>(context->argument(3).toInt32());
+    obj = new QSslKey(key.toLocal8Bit(), algorithm, encoding, type);
+  }
   else
-  */
-    obj = new QSslKey();
+    context->throwError(QScriptContext::UnknownError,
+                        "No SSL Key provided to QSslKey");
+
   return engine->toScriptValue(obj);
 }
 
-QSslKeyProto::QSslKeyProto(QObject *parent)
-    : QObject(parent)
+QSslKeyProto::QSslKeyProto(QObject *parent) : QObject(parent)
+{
+}
+QSslKeyProto::~QSslKeyProto()
 {
 }
 
@@ -122,11 +153,4 @@ QSsl::KeyType QSslKeyProto::type() const
     return item->type();
   return QSsl::KeyType();
 }
-
-QString QSslKeyProto::toString() const
-{
-  QSslKey *item = qscriptvalue_cast<QSslKey*>(thisObject());
-  if (item)
-    return QString("QSslKey()");
-  return QString("QSslKey(unknown)");
-}
+#endif

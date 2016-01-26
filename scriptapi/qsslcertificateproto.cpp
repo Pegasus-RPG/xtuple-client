@@ -10,14 +10,24 @@
 
 #include "qsslcertificateproto.h"
 
+#if QT_VERSION < 0x050000
+void setupQSslCertificateProto(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
 QScriptValue QSslCertificatetoScriptValue(QScriptEngine *engine, QSslCertificate* const &item)
 {
-  return engine->newQObject(item);
+  QScriptValue obj = engine->newObject();
+  //QString cert = new QString(item->toPem());
+  obj.setProperty("certificate", qPrintable(QString(item->toPem())));
+  return obj;
 }
 
 void QSslCertificatefromScriptValue(const QScriptValue &obj, QSslCertificate* &item)
 {
-  item = qobject_cast<QSslCertificate*>(obj.toQObject());
+  QString certificate = obj.property("certificate").toString();
+  item = new QSslCertificate(certificate.toLocal8Bit());
 }
 
 void setupQSslCertificateProto(QScriptEngine *engine)
@@ -26,7 +36,6 @@ void setupQSslCertificateProto(QScriptEngine *engine)
 
   QScriptValue proto = engine->newQObject(new QSslCertificateProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QSslCertificate*>(), proto);
-  engine->setDefaultPrototype(qMetaTypeId<QSslCertificate>(),  proto);
 
   QScriptValue constructor = engine->newFunction(constructQSslCertificate,
                                                  proto);
@@ -34,22 +43,28 @@ void setupQSslCertificateProto(QScriptEngine *engine)
 }
 
 #include <QSslCertificate>
-QScriptValue constructQSslCertificate(QScriptContext * /*context*/,
-                                    QScriptEngine  *engine)
+QScriptValue constructQSslCertificate(QScriptContext *context, QScriptEngine *engine)
 {
   QSslCertificate *obj = 0;
-  /* if (context->argumentCount() ...)
-  else if (something bad)
-    context->throwError(QScriptContext::UnknownError,
-                        "Could not find an appropriate QSslCertificateconstructor");
+  QString cert;
+  if (context->argumentCount() == 1)
+  {
+    cert = context->argument(0).toString();
+    obj = new QSslCertificate(cert.toLocal8Bit(), QSsl::Pem);
+  }
   else
-  */
-    obj = new QSslCertificate();
+    context->throwError(QScriptContext::UnknownError,
+                        "No SSL Certificate provided to QSslCertificate");
+
   return engine->toScriptValue(obj);
 }
 
 QSslCertificateProto::QSslCertificateProto(QObject *parent)
     : QObject(parent)
+{
+}
+
+QSslCertificateProto::~QSslCertificateProto()
 {
 }
 
@@ -72,7 +87,7 @@ QString QSslCertificateProto::effectiveDate() const
 {
   QSslCertificate *item = qscriptvalue_cast<QSslCertificate*>(thisObject());
   if (item)
-    return item->effectiveDate();
+    return item->effectiveDate().toString();
   return QString();
 }
 
@@ -80,7 +95,7 @@ QString QSslCertificateProto::expiryDate() const
 {
   QSslCertificate *item = qscriptvalue_cast<QSslCertificate*>(thisObject());
   if (item)
-    return item->expiryDate();
+    return item->expiryDate().toString();
   return QString();
 }
 
@@ -124,7 +139,7 @@ bool QSslCertificateProto::isSelfSigned() const
   return false;
 }
 
-QStringList QSslCertificateProto::issuerInfo(QSslProto::SubjectInfo subject) const
+QStringList QSslCertificateProto::issuerInfo(QSslCertificate::SubjectInfo subject) const
 {
   QSslCertificate *item = qscriptvalue_cast<QSslCertificate*>(thisObject());
   if (item)
@@ -148,13 +163,18 @@ QList<QByteArray> QSslCertificateProto::issuerInfoAttributes() const
   return QList<QByteArray>();
 }
 
+// TODO: Doesn't work
+/*
 QSslKey QSslCertificateProto::publicKey() const
 {
   QSslCertificate *item = qscriptvalue_cast<QSslCertificate*>(thisObject());
   if (item)
     return item->publicKey();
-  return QSslKey();
+  // TODO: QSslKey must be passed a key.
+  //return QSslKey();
+  return item->publicKey();
 }
+*/
 
 QByteArray QSslCertificateProto::serialNumber() const
 {
@@ -168,11 +188,11 @@ QMultiMap<QSsl::AlternativeNameEntryType, QString> QSslCertificateProto::subject
 {
   QSslCertificate *item = qscriptvalue_cast<QSslCertificate*>(thisObject());
   if (item)
-    return item->();
+    return item->subjectAlternativeNames();
   return QMultiMap<QSsl::AlternativeNameEntryType, QString>();
 }
 
-QStringList QSslCertificateProto::subjectInfo(QSslProto::SubjectInfo subject) const
+QStringList QSslCertificateProto::subjectInfo(QSslCertificate::SubjectInfo subject) const
 {
   QSslCertificate *item = qscriptvalue_cast<QSslCertificate*>(thisObject());
   if (item)
@@ -200,7 +220,7 @@ void QSslCertificateProto::swap(QSslCertificate & other)
 {
   QSslCertificate *item = qscriptvalue_cast<QSslCertificate*>(thisObject());
   if (item)
-    item->swap(QSslCertificate & other);
+    item->swap(other);
 }
 
 QByteArray QSslCertificateProto::toDer() const
@@ -275,10 +295,4 @@ QList<QSslError> QSslCertificateProto::verify(const QList<QSslCertificate> & cer
   return QList<QSslError>();
 }
 
-QString QSslCertificateProto::toString() const
-{
-  QSslCertificate *item = qscriptvalue_cast<QSslCertificate*>(thisObject());
-  if (item)
-    return QString("QSslCertificate()");
-  return QString("QSslCertificate(unknown)");
-}
+#endif

@@ -92,8 +92,11 @@
 #include "qsqldatabaseproto.h"
 #include "qsqlerrorproto.h"
 #include "qsqlrecordproto.h"
+#include "qsslcertificateextensionproto.h"
 #include "qsslcertificateproto.h"
+#include "qsslcipherproto.h"
 #include "qsslconfigurationproto.h"
+#include "qsslellipticcurveproto.h"
 #include "qsslkeyproto.h"
 #include "qsslproto.h"
 #include "qsslsocketproto.h"
@@ -234,8 +237,11 @@ void setupScriptApi(QScriptEngine *engine)
   setupQSqlDatabaseProto(engine);
   setupQSqlErrorProto(engine);
   setupQSqlRecordProto(engine);
+  setupQSslCertificateExtensionProto(engine);
   setupQSslCertificateProto(engine);
+  setupQSslCipherProto(engine);
   setupQSslConfigurationProto(engine);
+  setupQSslEllipticCurveProto(engine);
   setupQSslKeyProto(engine);
   setupQSslProto(engine);
   setupQSslSocketProto(engine);

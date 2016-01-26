@@ -10,7 +10,12 @@
 
 #include "qsslproto.h"
 
-#if QT_VERSION >= 0x050000
+#if QT_VERSION < 0x050000
+void setupQSslProto(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
 QScriptValue AlternativeNameEntryTypeToScriptValue(QScriptEngine *engine, const QSsl::AlternativeNameEntryType &item)
 {
   return engine->newVariant(item);
@@ -56,15 +61,6 @@ void SslOptionFromScriptValue(const QScriptValue &obj, QSsl::SslOption &item)
   item = (QSsl::SslOption)obj.toInt32();
 }
 
-QScriptValue SslOptionsToScriptValue(QScriptEngine *engine, const QSsl::SslOptions &item)
-{
-  return engine->newVariant(item);
-}
-void SslOptionsFromScriptValue(const QScriptValue &obj, QSsl::SslOptions &item)
-{
-  item = (QSsl::SslOptions)obj.toInt32();
-}
-
 QScriptValue SslProtocolToScriptValue(QScriptEngine *engine, const QSsl::SslProtocol &item)
 {
   return engine->newVariant(item);
@@ -73,14 +69,12 @@ void SslProtocolFromScriptValue(const QScriptValue &obj, QSsl::SslProtocol &item
 {
   item = (QSsl::SslProtocol)obj.toInt32();
 }
-#endif
 
 void setupQSslProto(QScriptEngine *engine)
 {
   QScriptValue obj = engine->newObject();
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
-#if QT_VERSION >= 0x050000
   qScriptRegisterMetaType(engine, AlternativeNameEntryTypeToScriptValue, AlternativeNameEntryTypeFromScriptValue);
   obj.setProperty("EmailEntry", QScriptValue(engine, QSsl::EmailEntry), permanent);
   obj.setProperty("DnsEntry",   QScriptValue(engine, QSsl::DnsEntry), permanent);
@@ -100,7 +94,6 @@ void setupQSslProto(QScriptEngine *engine)
   obj.setProperty("PublicKey",  QScriptValue(engine, QSsl::PublicKey), permanent);
 
   qScriptRegisterMetaType(engine, SslOptionToScriptValue, SslOptionFromScriptValue);
-  qScriptRegisterMetaType(engine, SslOptionsToScriptValue, SslOptionsFromScriptValue);
   obj.setProperty("SslOptionDisableEmptyFragments",       QScriptValue(engine, QSsl::SslOptionDisableEmptyFragments), permanent);
   obj.setProperty("SslOptionDisableSessionTickets",       QScriptValue(engine, QSsl::SslOptionDisableSessionTickets), permanent);
   obj.setProperty("SslOptionDisableCompression",          QScriptValue(engine, QSsl::SslOptionDisableCompression), permanent);
@@ -114,7 +107,6 @@ void setupQSslProto(QScriptEngine *engine)
   obj.setProperty("SslV2",            QScriptValue(engine, QSsl::SslV2), permanent);
   obj.setProperty("TlsV1_0",          QScriptValue(engine, QSsl::TlsV1_0), permanent);
   obj.setProperty("TlsV1_0OrLater",   QScriptValue(engine, QSsl::TlsV1_0OrLater), permanent);
-  obj.setProperty("TlsV1",            QScriptValue(engine, QSsl::TlsV1), permanent);
   obj.setProperty("TlsV1_1",          QScriptValue(engine, QSsl::TlsV1_1), permanent);
   obj.setProperty("TlsV1_1OrLater",   QScriptValue(engine, QSsl::TlsV1_1OrLater), permanent);
   obj.setProperty("TlsV1_2",          QScriptValue(engine, QSsl::TlsV1_2), permanent);
@@ -123,7 +115,8 @@ void setupQSslProto(QScriptEngine *engine)
   obj.setProperty("AnyProtocol",      QScriptValue(engine, QSsl::AnyProtocol), permanent);
   obj.setProperty("TlsV1SslV3",       QScriptValue(engine, QSsl::TlsV1SslV3), permanent);
   obj.setProperty("SecureProtocols",  QScriptValue(engine, QSsl::SecureProtocols), permanent);
-#endif
 
   engine->globalObject().setProperty("QSsl", obj, permanent);
 }
+
+#endif

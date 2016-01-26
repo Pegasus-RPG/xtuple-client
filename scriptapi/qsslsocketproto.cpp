@@ -10,6 +10,31 @@
 
 #include "qsslsocketproto.h"
 
+
+#if QT_VERSION < 0x050000
+void setupQSslSocketProto(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
+QScriptValue PeerVerifyModeToScriptValue(QScriptEngine *engine, const QSslSocket::PeerVerifyMode &item)
+{
+  return engine->newVariant(item);
+}
+void PeerVerifyModeFromScriptValue(const QScriptValue &obj, QSslSocket::PeerVerifyMode &item)
+{
+  item = (QSslSocket::PeerVerifyMode)obj.toInt32();
+}
+
+QScriptValue SslModeToScriptValue(QScriptEngine *engine, const QSslSocket::SslMode &item)
+{
+  return engine->newVariant(item);
+}
+void SslModeFromScriptValue(const QScriptValue &obj, QSslSocket::SslMode &item)
+{
+  item = (QSslSocket::SslMode)obj.toInt32();
+}
+
 QScriptValue QSslSockettoScriptValue(QScriptEngine *engine, QSslSocket* const &item)
 {
   return engine->newQObject(item);
@@ -23,14 +48,26 @@ void QSslSocketfromScriptValue(const QScriptValue &obj, QSslSocket* &item)
 void setupQSslSocketProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QSslSockettoScriptValue, QSslSocketfromScriptValue);
+  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QSslSocketProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QSslSocket*>(), proto);
-  engine->setDefaultPrototype(qMetaTypeId<QSslSocket>(),  proto);
 
   QScriptValue constructor = engine->newFunction(constructQSslSocket,
                                                  proto);
   engine->globalObject().setProperty("QSslSocket",  constructor);
+
+  qScriptRegisterMetaType(engine, PeerVerifyModeToScriptValue, PeerVerifyModeFromScriptValue);
+  constructor.setProperty("VerifyNone", QScriptValue(engine, QSslSocket::VerifyNone), permanent);
+  constructor.setProperty("QueryPeer", QScriptValue(engine, QSslSocket::QueryPeer), permanent);
+  constructor.setProperty("VerifyPeer", QScriptValue(engine, QSslSocket::VerifyPeer), permanent);
+  constructor.setProperty("AutoVerifyPeer", QScriptValue(engine, QSslSocket::AutoVerifyPeer), permanent);
+
+  qScriptRegisterMetaType(engine, SslModeToScriptValue, SslModeFromScriptValue);
+  constructor.setProperty("UnencryptedMode", QScriptValue(engine, QSslSocket::UnencryptedMode), permanent);
+  constructor.setProperty("SslClientMode", QScriptValue(engine, QSslSocket::SslClientMode), permanent);
+  constructor.setProperty("SslServerMode", QScriptValue(engine, QSslSocket::SslServerMode), permanent);
+
 }
 
 #include <QSslSocket>
@@ -53,10 +90,8 @@ QSslSocketProto::QSslSocketProto(QObject *parent)
 {
 }
 
-QString QSslSocketProto::toString() const
+QSslSocketProto::~QSslSocketProto()
 {
-  QSslSocket *item = qscriptvalue_cast<QSslSocket*>(thisObject());
-  if (item)
-    return QString("QSslSocket()");
-  return QString("QSslSocket(unknown)");
 }
+
+#endif

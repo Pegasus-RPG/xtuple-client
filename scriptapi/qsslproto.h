@@ -23,7 +23,6 @@ Q_DECLARE_METATYPE(enum QSsl::EncodingFormat)
 Q_DECLARE_METATYPE(enum QSsl::KeyAlgorithm)
 Q_DECLARE_METATYPE(enum QSsl::KeyType)
 Q_DECLARE_METATYPE(enum QSsl::SslOption)
-Q_DECLARE_METATYPE(enum QSsl::SslOptions)
 Q_DECLARE_METATYPE(enum QSsl::SslProtocol)
 
 #endif

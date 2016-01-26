@@ -17,9 +17,8 @@ void setupQSslKeyProto(QScriptEngine *engine);
 
 #if QT_VERSION >= 0x050000
 #include <QScriptable>
-#include <QSslKeyConfiguration>
-
-class QSslKey;
+#include <QSslKey>
+#include <QTextCodec>
 
 Q_DECLARE_METATYPE(QSslKey*)
 
