@@ -23,4 +23,3 @@ QScriptValue constructQBuffer(QScriptContext *context, QScriptEngine *engine)
   QBuffer *object = new QBuffer(parent);
   return engine->newQObject(object, QScriptEngine::ScriptOwnership);
 }
-#endif
