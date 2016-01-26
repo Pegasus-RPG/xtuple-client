@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -29,15 +29,16 @@ class QUrlProto : public QObject, public QScriptable
 {
   Q_OBJECT
 
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= 0x050000
   protected:
     QUrlQuery *_query;
+    void setProtectedQuery(const QString &queryString);
 #endif
 
   public:
     QUrlProto(QObject *parent = 0);
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION < 0x050000
     Q_INVOKABLE void       addEncodedQueryItem(const QByteArray &key, const QByteArray &value);
     Q_INVOKABLE bool       hasEncodedQueryItem(const QByteArray &key) const;
     Q_INVOKABLE void       removeAllEncodedQueryItems(const QByteArray &key);
@@ -56,12 +57,13 @@ class QUrlProto : public QObject, public QScriptable
 
 
     Q_INVOKABLE void addQueryItem(const QString &key, const QString & value);
-    #if QT_VERSION >= 0x050000
-    Q_INVOKABLE QStringList allEncodedQueryItemValues(const QString &key) const;
-    #else
+#if QT_VERSION >= 0x050000
+    Q_INVOKABLE QStringList       allEncodedQueryItemValues(const QString &key);
+    Q_INVOKABLE QStringList       allQueryItemValues(const QString &key);
+#else
     Q_INVOKABLE QList<QByteArray> allEncodedQueryItemValues(const QByteArray &key) const;
-    #endif
     Q_INVOKABLE QStringList       allQueryItemValues(const QString &key) const;
+#endif
     Q_INVOKABLE QString    authority() const;
     Q_INVOKABLE void       clear();
 #if QT_VERSION >= 0x050000
@@ -70,8 +72,8 @@ class QUrlProto : public QObject, public QScriptable
     Q_INVOKABLE QString encodedPassword() const;
     Q_INVOKABLE QString encodedPath()     const;
     Q_INVOKABLE QString encodedQuery()    const;
-    Q_INVOKABLE QString encodedQueryItemValue(const QString &key) const;
-    Q_INVOKABLE QList<QPair<QString, QString> > encodedQueryItems() const;
+    Q_INVOKABLE QString encodedQueryItemValue(const QString &key);
+    Q_INVOKABLE QList<QPair<QString, QString> > encodedQueryItems();
     Q_INVOKABLE QString encodedUserName() const;
 #else
     Q_INVOKABLE QByteArray encodedFragment() const;
@@ -87,7 +89,7 @@ class QUrlProto : public QObject, public QScriptable
     Q_INVOKABLE QString    fragment()       const;
     Q_INVOKABLE bool       hasFragment()    const;
     Q_INVOKABLE bool       hasQuery()       const;
-    Q_INVOKABLE bool       hasQueryItem(const QString &key) const;
+    Q_INVOKABLE bool       hasQueryItem(const QString &key);
     Q_INVOKABLE QString    host()           const;
     Q_INVOKABLE bool       isEmpty()        const;
     Q_INVOKABLE bool       isParentOf(const QUrl &childUrl) const;
@@ -97,10 +99,10 @@ class QUrlProto : public QObject, public QScriptable
     Q_INVOKABLE QString    path()           const;
     Q_INVOKABLE int        port()           const;
     Q_INVOKABLE int        port(int defaultPort) const;
-    Q_INVOKABLE QString    queryItemValue(const QString &key) const;
-    Q_INVOKABLE QList<QPair<QString, QString> > queryItems()  const;
-    Q_INVOKABLE char       queryPairDelimiter()               const;
-    Q_INVOKABLE char       queryValueDelimiter()              const;
+    Q_INVOKABLE QString    queryItemValue(const QString &key);
+    Q_INVOKABLE QList<QPair<QString, QString> > queryItems();
+    Q_INVOKABLE char       queryPairDelimiter();
+    Q_INVOKABLE char       queryValueDelimiter();
     Q_INVOKABLE void       removeAllQueryItems(const QString &key);
     Q_INVOKABLE void       removeQueryItem(const QString &key);
     Q_INVOKABLE QUrl       resolved(const QUrl &relative)     const;

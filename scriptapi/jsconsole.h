@@ -8,19 +8,21 @@
  * to be bound by its terms.
  */
 
-#ifndef __QWEBCHANNELPROTO_H__
-#define __QWEBCHANNELPROTO_H__
+#ifndef JSCONSOLE_H
+#define JSCONSOLE_H
 
+#include <QObject>
 #include <QtScript>
 
-void setupQWebChannelProto(QScriptEngine *engine);
+void setupJSConsole(QScriptEngine *engine);
 
-#if QT_VERSION >= 0x050000
-#include <QWebChannel>
+class JSConsole : public QObject, public QScriptable
+{
+  Q_OBJECT
 
-Q_DECLARE_METATYPE(QWebChannel*)
+  public:
+    JSConsole(QObject *parent = 0);
+    Q_INVOKABLE virtual ~JSConsole();
+};
 
-QScriptValue constructQWebChannel(QScriptContext *context, QScriptEngine *engine);
-#endif
-
-#endif
+#endif // JSCONSOLE_H

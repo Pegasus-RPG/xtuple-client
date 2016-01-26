@@ -36,7 +36,7 @@ HEADERS += setupscriptapi.h \
     qapplicationproto.h \
     qboxlayoutproto.h \
     qbytearrayproto.h \
-    qcoreapplicationproto.h     \
+    qcoreapplicationproto.h \
     qdialogbuttonboxproto.h \
     qdialogsetup.h \
     qdirproto.h \
@@ -66,6 +66,7 @@ HEADERS += setupscriptapi.h \
     qfontproto.h \
     qformlayoutproto.h \
     qgridlayoutproto.h \
+    qhostaddressproto.h \
     qiconproto.h \
     qiodeviceproto.h \
     qitemdelegateproto.h \
@@ -101,6 +102,7 @@ HEADERS += setupscriptapi.h \
     qtsetup.h \
     qurlproto.h \
     qvalidatorproto.h \
+    qwebchannelproto.h \
     qwebframeproto.h \
     qwebpageproto.h \
     qwebsocketcorsauthenticatorproto.h \
@@ -110,7 +112,6 @@ HEADERS += setupscriptapi.h \
     qwebviewproto.h \
     qwidgetproto.h \
     xdatawidgetmapperproto.h \
-    xnetworkaccessmanager.h \
     xsqltablemodelproto.h \
     xsqlqueryproto.h \
     addressclustersetup.h \
@@ -123,6 +124,7 @@ HEADERS += setupscriptapi.h \
     documentssetup.h \
     glclustersetup.h \
     itemlineeditsetup.h \
+    jsconsole.h \
     orderlineeditsetup.h \
     parametereditproto.h \
     parametergroupsetup.h \
@@ -150,7 +152,7 @@ SOURCES += setupscriptapi.cpp \
     qapplicationproto.cpp \
     qboxlayoutproto.cpp \
     qbytearrayproto.cpp \
-    qcoreapplicationproto.cpp   \
+    qcoreapplicationproto.cpp \
     qdialogbuttonboxproto.cpp \
     qdialogsetup.cpp \
     qdirproto.cpp \
@@ -180,6 +182,7 @@ SOURCES += setupscriptapi.cpp \
     qfontproto.cpp \
     qformlayoutproto.cpp \
     qgridlayoutproto.cpp \
+    qhostaddressproto.cpp \
     qiconproto.cpp \
     qiodeviceproto.cpp \
     qitemdelegateproto.cpp \
@@ -215,6 +218,7 @@ SOURCES += setupscriptapi.cpp \
     qtsetup.cpp \
     qurlproto.cpp \
     qvalidatorproto.cpp \
+    qwebchannelproto.cpp \
     qwebframeproto.cpp \
     qwebpageproto.cpp \
     qwebsocketcorsauthenticatorproto.cpp \
@@ -224,7 +228,6 @@ SOURCES += setupscriptapi.cpp \
     qwebviewproto.cpp \
     qwidgetproto.cpp \
     xdatawidgetmapperproto.cpp \
-    xnetworkaccessmanager.cpp \
     xsqltablemodelproto.cpp \
     xsqlqueryproto.cpp \
     addressclustersetup.cpp \
@@ -237,6 +240,7 @@ SOURCES += setupscriptapi.cpp \
     documentssetup.cpp \
     glclustersetup.cpp \
     itemlineeditsetup.cpp \
+    jsconsole.cpp \
     orderlineeditsetup.cpp \
     parametereditproto.cpp \
     parametergroupsetup.cpp \

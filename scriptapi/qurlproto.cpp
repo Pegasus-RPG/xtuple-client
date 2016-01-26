@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -72,13 +72,13 @@ QUrlProto::QUrlProto(QObject *parent)
   : QObject(parent)
 {
   // Set this instance's QUrlQuery member for Qt5+
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= 0x050000
   _query = new QUrlQuery();
 #endif
 }
 
 // addEncodedQueryItem removed from both QtUrl and QtUrlQuery classes in Qt5
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION < 0x050000
 void QUrlProto::addEncodedQueryItem(const QByteArray &key,
                                     const QByteArray &value)
 {
@@ -93,7 +93,8 @@ void QUrlProto::addQueryItem(const QString &key, const QString &value)
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
 
   if (item) {
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= 0x050000
+     setProtectedQuery(item->query());
      _query->addQueryItem(key, value);
      item->setQuery(*_query);
 #else
@@ -102,16 +103,24 @@ void QUrlProto::addQueryItem(const QString &key, const QString &value)
   }
 }
 
+#if QT_VERSION >= 0x050000
+void QUrlProto::setProtectedQuery(const QString &queryString)
+{
+  _query = new QUrlQuery(queryString);
+}
+#endif
+
 // RETURN AND PARAM TYPES CHANGED FOR Qt5
 // I did not bother with Qt4 backwards compatibility directives - true backwards compatibility
 // would require varying the return/param types of several methods since QStrings are now used over QByteArrays
 #if QT_VERSION >= 0x050000
-QStringList QUrlProto::allEncodedQueryItemValues(const QString &key) const
+QStringList QUrlProto::allEncodedQueryItemValues(const QString &key)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
 
   if (item) {
-      return _query->allQueryItemValues(key,QUrl::FullyEncoded);
+    setProtectedQuery(item->query());
+    return _query->allQueryItemValues(key,QUrl::FullyEncoded);
   }
 
   return QStringList();
@@ -125,12 +134,13 @@ QList<QByteArray> QUrlProto::allEncodedQueryItemValues(const QByteArray &key) co
  }
 #endif
 #if QT_VERSION >= 0x050000
-QStringList QUrlProto::allQueryItemValues(const QString &key) const
+QStringList QUrlProto::allQueryItemValues(const QString &key)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
 
   if (item) {
-      return _query->allQueryItemValues(key);
+    setProtectedQuery(item->query());
+    return _query->allQueryItemValues(key);
   }
 
   return QStringList();
@@ -160,7 +170,7 @@ void QUrlProto::clear()
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
   if (item) {
     item->clear();
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= 0x050000
     _query->clear();
 #endif
   }
@@ -261,12 +271,14 @@ QByteArray QUrlProto::encodedQuery() const
 }
 #endif
 #if QT_VERSION >= 0x050000
-QString QUrlProto::encodedQueryItemValue(const QString &key) const
+QString QUrlProto::encodedQueryItemValue(const QString &key)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
-  if (item) 
+  if (item) {
+    setProtectedQuery(item->query());
     return _query->queryItemValue(key, QUrl::FullyEncoded);
- 
+  }
+
   return QString();
 }
 #else
@@ -280,12 +292,14 @@ QByteArray QUrlProto::encodedQueryItemValue(const QByteArray &key) const
 }
 #endif
 #if QT_VERSION >= 0x050000
-QList<QPair<QString, QString> > QUrlProto::encodedQueryItems() const
+QList<QPair<QString, QString> > QUrlProto::encodedQueryItems()
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
-  if (item) 
+  if (item) {
+    setProtectedQuery(item->query());
     return _query->queryItems(QUrl::FullyEncoded);
-  
+  }
+
   return QList<QPair<QString, QString> >();
 }
 #else
@@ -333,7 +347,7 @@ QString QUrlProto::fragment() const
   return QString();
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION < 0x050000
 bool QUrlProto::hasEncodedQueryItem(const QByteArray &key) const
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -359,15 +373,18 @@ bool QUrlProto::hasQuery() const
   return false;
 }
 
-bool QUrlProto::hasQueryItem(const QString &key) const
+bool QUrlProto::hasQueryItem(const QString &key)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
-  if (item)
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+  if (item) {
+#if QT_VERSION >= 0x050000
+    setProtectedQuery(item->query());
     return _query->hasQueryItem(key);
 #else
     return item->hasQueryItem(key);
 #endif
+  }
+
   return false;
 }
 
@@ -443,55 +460,67 @@ int QUrlProto::port(int defaultPort) const
   return 0;
 }
 
-QString QUrlProto::queryItemValue(const QString &key) const
+QString QUrlProto::queryItemValue(const QString &key)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
-  if (item)
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+  if (item) {
+#if QT_VERSION >= 0x050000
+    setProtectedQuery(item->query());
     return _query->queryItemValue(key);
 #else
     return item->queryItemValue(key);
 #endif
+  }
+
   return QString();
 }
 
-QList<QPair<QString, QString> > QUrlProto::queryItems() const
+QList<QPair<QString, QString> > QUrlProto::queryItems()
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
-  if (item)
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+  if (item) {
+#if QT_VERSION >= 0x050000
+    setProtectedQuery(item->query());
     return _query->queryItems();
-#else    
+#else
     return item->queryItems();
 #endif
+  }
+
   return QList<QPair<QString, QString> >();
 }
 
-char QUrlProto::queryPairDelimiter() const
+char QUrlProto::queryPairDelimiter()
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
-  if (item)
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+  if (item) {
+#if QT_VERSION >= 0x050000
+    setProtectedQuery(item->query());
     return _query->queryPairDelimiter().toLatin1();
 #else
     return item->queryPairDelimiter();
 #endif
+  }
+
   return '\0';
 }
 
-char QUrlProto::queryValueDelimiter() const
+char QUrlProto::queryValueDelimiter()
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
-  if (item)
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+  if (item) {
+#if QT_VERSION >= 0x050000
+    setProtectedQuery(item->query());
     return _query->queryValueDelimiter().toLatin1();
 #else
     return item->queryValueDelimiter();
 #endif
+  }
+
   return '\0';
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION < 0x050000
 void QUrlProto::removeAllEncodedQueryItems(const QByteArray &key)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -504,7 +533,8 @@ void QUrlProto::removeAllQueryItems(const QString &key)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
   if (item) {
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= 0x050000
+    setProtectedQuery(item->query());
     _query->removeAllQueryItems(key);
     item->setQuery(*_query);
 #else
@@ -513,7 +543,7 @@ void QUrlProto::removeAllQueryItems(const QString &key)
   }
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION < 0x050000
 void QUrlProto::removeEncodedQueryItem(const QByteArray &key)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -526,7 +556,8 @@ void QUrlProto::removeQueryItem(const QString &key)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
   if (item) {
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= 0x050000
+    setProtectedQuery(item->query());
     _query->removeQueryItem(key);
     item->setQuery(*_query);
 #else
@@ -559,7 +590,7 @@ void QUrlProto::setAuthority(const QString &authority)
     item->setAuthority(authority);
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION < 0x050000
 void QUrlProto::setEncodedFragment(const QByteArray &fragment)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
@@ -663,7 +694,8 @@ void QUrlProto::setQueryDelimiters(char valueDelimiter, char pairDelimiter)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
   if (item) {
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= 0x050000
+    setProtectedQuery(item->query());
     _query->setQueryDelimiters(valueDelimiter, pairDelimiter);
     item->setQuery(*_query);
 #else
@@ -676,7 +708,8 @@ void QUrlProto::setQueryItems(const QList<QPair<QString, QString> > &query)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
   if (item) {
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= 0x050000
+    setProtectedQuery(item->query());
     _query->setQueryItems(query);
     item->setQuery(*_query);
 #else
@@ -699,7 +732,8 @@ void QUrlProto::setQueryItems(const QVariantMap &map)
       query.append(qMakePair(i.key(), i.value().toString()));
     }
 
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= 0x050000
+    setProtectedQuery(item->query());
     _query->setQueryItems(query);
     item->setQuery(*_query);
 #else
@@ -719,15 +753,23 @@ void QUrlProto::setScheme(const QString &scheme)
 void QUrlProto::setUrl(const QString &url)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
-  if (item)
+  if (item) {
     item->setUrl(url);
+#if QT_VERSION >= 0x050000
+    setProtectedQuery(item->query());
+#endif
+  }
 }
 
 void QUrlProto::setUrl(const QString &url, QUrl::ParsingMode parsingMode)
 {
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
-  if (item)
+  if (item) {
     item->setUrl(url, parsingMode);
+#if QT_VERSION >= 0x050000
+    setProtectedQuery(item->query());
+#endif
+  }
 }
 
 void QUrlProto::setUserInfo(const QString &userInfo)

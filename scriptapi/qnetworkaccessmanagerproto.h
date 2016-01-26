@@ -33,14 +33,12 @@ Q_DECLARE_METATYPE(QNetworkAccessManager*)
 
 QScriptValue constructQNetworkAccessManager(QScriptContext *context, QScriptEngine *engine);
 
-void setupQNetworkAccessManagerProto(QScriptEngine *engine);
-
 class QNetworkAccessManagerProto : public QObject, public QScriptable
 {
   Q_OBJECT
 
   public:
-    QNetworkAccessManagerProto(QObject *parent = 0);
+    QNetworkAccessManagerProto(QObject *parent);
     virtual ~QNetworkAccessManagerProto();
 
     Q_INVOKABLE QNetworkConfiguration                           activeConfiguration() const;
