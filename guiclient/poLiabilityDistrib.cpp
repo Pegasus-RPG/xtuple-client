@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QValidator>
 #include <QSqlError>
+#include "errorReporter.h"
 
 /*
  *  Constructs a poLiabilityDistrib as a child of 'parent', with the
@@ -117,9 +118,8 @@ void poLiabilityDistrib::sPost()
   poPost.exec();
   if (!poPost.first())
   {
-    systemError(this, tr("A System Error occurred at %1::%2.")
-                      .arg(__FILE__)
-                      .arg(__LINE__) );
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving GL Information"),
+                         poPost, __FILE__, __LINE__);
     return;
   }
 
