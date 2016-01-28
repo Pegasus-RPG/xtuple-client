@@ -16,30 +16,65 @@ void setupQSslCertificateProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
-QScriptValue QSslCertificatetoScriptValue(QScriptEngine *engine, QSslCertificate* const &item)
+QScriptValue SubjectInfoToScriptValue(QScriptEngine *engine, const QSslCertificate::SubjectInfo &item)
+{
+  return engine->newVariant(item);
+}
+void SubjectInfoFromScriptValue(const QScriptValue &obj, QSslCertificate::SubjectInfo &item)
+{
+  item = (QSslCertificate::SubjectInfo)obj.toInt32();
+}
+
+QScriptValue QSslCertificatetoScriptValue(QScriptEngine *engine, QSslCertificate const &item)
 {
   QScriptValue obj = engine->newObject();
-  //QString cert = new QString(item->toPem());
-  obj.setProperty("certificate", qPrintable(QString(item->toPem())));
+  obj.setProperty("_certificate", qPrintable(QString(item.toPem())));
+  return obj;
+}
+void QSslCertificatefromScriptValue(const QScriptValue &obj, QSslCertificate &item)
+{
+  QString certificate = obj.property("_certificate").toString();
+  QSslCertificate newCert = QSslCertificate(certificate.toLocal8Bit(), QSsl::Pem);
+  item.swap(newCert);
+}
+
+QScriptValue QSslCertificatePointertoScriptValue(QScriptEngine *engine, QSslCertificate* const &item)
+{
+  QScriptValue obj = engine->newObject();
+  obj.setProperty("_certificate", qPrintable(QString(item->toPem())));
   return obj;
 }
 
-void QSslCertificatefromScriptValue(const QScriptValue &obj, QSslCertificate* &item)
+void QSslCertificatePointerfromScriptValue(const QScriptValue &obj, QSslCertificate* &item)
 {
-  QString certificate = obj.property("certificate").toString();
-  item = new QSslCertificate(certificate.toLocal8Bit());
+  QString certificate = obj.property("_certificate").toString();
+  item = new QSslCertificate(certificate.toLocal8Bit(), QSsl::Pem);
 }
 
 void setupQSslCertificateProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QSslCertificatetoScriptValue, QSslCertificatefromScriptValue);
+  qScriptRegisterMetaType(engine, QSslCertificatePointertoScriptValue, QSslCertificatePointerfromScriptValue);
+  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QSslCertificateProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QSslCertificate*>(), proto);
+  engine->setDefaultPrototype(qMetaTypeId<QSslCertificate>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQSslCertificate,
                                                  proto);
   engine->globalObject().setProperty("QSslCertificate",  constructor);
+
+  qScriptRegisterMetaType(engine, SubjectInfoToScriptValue, SubjectInfoFromScriptValue);
+  constructor.setProperty("Organization",               QScriptValue(engine, QSslCertificate::Organization), permanent);
+  constructor.setProperty("CommonName",                 QScriptValue(engine, QSslCertificate::CommonName), permanent);
+  constructor.setProperty("LocalityName",               QScriptValue(engine, QSslCertificate::LocalityName), permanent);
+  constructor.setProperty("OrganizationalUnitName",     QScriptValue(engine, QSslCertificate::OrganizationalUnitName), permanent);
+  constructor.setProperty("CountryName",                QScriptValue(engine, QSslCertificate::CountryName), permanent);
+  constructor.setProperty("StateOrProvinceName",        QScriptValue(engine, QSslCertificate::StateOrProvinceName), permanent);
+  constructor.setProperty("DistinguishedNameQualifier", QScriptValue(engine, QSslCertificate::DistinguishedNameQualifier), permanent);
+  constructor.setProperty("SerialNumber",               QScriptValue(engine, QSslCertificate::SerialNumber), permanent);
+  constructor.setProperty("EmailAddress",               QScriptValue(engine, QSslCertificate::EmailAddress), permanent);
 }
 
 #include <QSslCertificate>
@@ -107,14 +142,6 @@ QList<QSslCertificateExtension> QSslCertificateProto::extensions() const
   return QList<QSslCertificateExtension>();
 }
 
-Qt::HANDLE QSslCertificateProto::handle() const
-{
-  QSslCertificate *item = qscriptvalue_cast<QSslCertificate*>(thisObject());
-  if (item)
-    return item->handle();
-  return Qt::HANDLE();
-}
-
 bool QSslCertificateProto::isBlacklisted() const
 {
   QSslCertificate *item = qscriptvalue_cast<QSslCertificate*>(thisObject());
@@ -163,18 +190,13 @@ QList<QByteArray> QSslCertificateProto::issuerInfoAttributes() const
   return QList<QByteArray>();
 }
 
-// TODO: Doesn't work
-/*
 QSslKey QSslCertificateProto::publicKey() const
 {
   QSslCertificate *item = qscriptvalue_cast<QSslCertificate*>(thisObject());
   if (item)
     return item->publicKey();
-  // TODO: QSslKey must be passed a key.
-  //return QSslKey();
-  return item->publicKey();
+  return QSslKey();
 }
-*/
 
 QByteArray QSslCertificateProto::serialNumber() const
 {

@@ -21,8 +21,10 @@ void setupQSslCertificateProto(QScriptEngine *engine);
 #include <QSslCertificate>
 #include <QSslCertificateExtension>
 #include <QSslError>
+#include <QSslKey>
 
 Q_DECLARE_METATYPE(QSslCertificate*)
+//Q_DECLARE_METATYPE(QSslCertificate) //Do not need. Already declared by qsslcertificate.h
 Q_DECLARE_METATYPE(enum QSslCertificate::SubjectInfo)
 
 QScriptValue constructQSslCertificate(QScriptContext *context, QScriptEngine *engine);
@@ -40,15 +42,13 @@ class QSslCertificateProto : public QObject, public QScriptable
     Q_INVOKABLE QString                                             effectiveDate() const;
     Q_INVOKABLE QString                                             expiryDate() const;
     Q_INVOKABLE QList<QSslCertificateExtension>                     extensions() const;
-    Q_INVOKABLE Qt::HANDLE                                          handle() const;
     Q_INVOKABLE bool                                                isBlacklisted() const;
     Q_INVOKABLE bool                                                isNull() const;
     Q_INVOKABLE bool                                                isSelfSigned() const;
     Q_INVOKABLE QStringList                                         issuerInfo(QSslCertificate::SubjectInfo subject) const;
     Q_INVOKABLE QStringList                                         issuerInfo(const QByteArray & attribute) const;
     Q_INVOKABLE QList<QByteArray>                                   issuerInfoAttributes() const;
-    // TODO: Doesn't work
-    //Q_INVOKABLE QSslKey                                             publicKey() const;
+    Q_INVOKABLE QSslKey                                             publicKey() const;
     Q_INVOKABLE QByteArray                                          serialNumber() const;
     Q_INVOKABLE QMultiMap<QSsl::AlternativeNameEntryType, QString>  subjectAlternativeNames() const;
     Q_INVOKABLE QStringList                                         subjectInfo(QSslCertificate::SubjectInfo subject) const;

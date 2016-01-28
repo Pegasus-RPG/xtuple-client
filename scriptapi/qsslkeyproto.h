@@ -21,6 +21,7 @@ void setupQSslKeyProto(QScriptEngine *engine);
 #include <QTextCodec>
 
 Q_DECLARE_METATYPE(QSslKey*)
+Q_DECLARE_METATYPE(QSslKey)
 
 QScriptValue constructQSslKey(QScriptContext *context, QScriptEngine *engine);
 

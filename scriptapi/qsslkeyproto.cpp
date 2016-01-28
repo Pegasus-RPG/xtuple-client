@@ -16,21 +16,39 @@ void setupQSslKeyProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
-QScriptValue QSslKeytoScriptValue(QScriptEngine *engine, QSslKey* const &item)
+QScriptValue QSslKeytoScriptValue(QScriptEngine *engine, QSslKey const &item)
 {
   QScriptValue obj = engine->newObject();
-  //QString key = new QString(item->toPem());
-  obj.setProperty("key", qPrintable(QString(item->toPem())));
-  obj.setProperty("algorithm", item->algorithm());
-  obj.setProperty("type", item->type());
+  obj.setProperty("_key", qPrintable(QString(item.toPem())));
+  obj.setProperty("_algorithm", item.algorithm());
+  obj.setProperty("_type", item.type());
+
   return obj;
 }
-
-void QSslKeyfromScriptValue(const QScriptValue &obj, QSslKey* &item)
+void QSslKeyfromScriptValue(const QScriptValue &obj, QSslKey &item)
 {
-  QString key = qscriptvalue_cast<QString>(obj.property("key"));;
-  QSsl::KeyAlgorithm algorithm = static_cast<QSsl::KeyAlgorithm>(obj.property("algorithm").toInt32());
-  QSsl::KeyType type = static_cast<QSsl::KeyType>(obj.property("type").toInt32());
+  QString key = qscriptvalue_cast<QString>(obj.property("_key"));;
+  QSsl::KeyAlgorithm algorithm = static_cast<QSsl::KeyAlgorithm>(obj.property("_algorithm").toInt32());
+  QSsl::KeyType type = static_cast<QSsl::KeyType>(obj.property("_type").toInt32());
+  QSslKey newKey = QSslKey(key.toLocal8Bit(), algorithm, QSsl::Pem, type);
+
+  item.swap(newKey);
+}
+
+QScriptValue QSslKeyPointertoScriptValue(QScriptEngine *engine, QSslKey* const &item)
+{
+  QScriptValue obj = engine->newObject();
+  obj.setProperty("_key", qPrintable(QString(item->toPem())));
+  obj.setProperty("_algorithm", item->algorithm());
+  obj.setProperty("_type", item->type());
+
+  return obj;
+}
+void QSslKeyPointerfromScriptValue(const QScriptValue &obj, QSslKey* &item)
+{
+  QString key = qscriptvalue_cast<QString>(obj.property("_key"));;
+  QSsl::KeyAlgorithm algorithm = static_cast<QSsl::KeyAlgorithm>(obj.property("_algorithm").toInt32());
+  QSsl::KeyType type = static_cast<QSsl::KeyType>(obj.property("_type").toInt32());
 
   item = new QSslKey(key.toLocal8Bit(), algorithm, QSsl::Pem, type);
 }
@@ -38,16 +56,17 @@ void QSslKeyfromScriptValue(const QScriptValue &obj, QSslKey* &item)
 void setupQSslKeyProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QSslKeytoScriptValue, QSslKeyfromScriptValue);
+  qScriptRegisterMetaType(engine, QSslKeyPointertoScriptValue, QSslKeyPointerfromScriptValue);
 
   QScriptValue proto = engine->newQObject(new QSslKeyProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QSslKey*>(), proto);
+  engine->setDefaultPrototype(qMetaTypeId<QSslKey>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQSslKey,
                                                  proto);
   engine->globalObject().setProperty("QSslKey",  constructor);
 }
 
-#include <QSslKey>
 QScriptValue constructQSslKey(QScriptContext *context,
                                     QScriptEngine  *engine)
 {
