@@ -97,6 +97,7 @@
 #include "qsslcipherproto.h"
 #include "qsslconfigurationproto.h"
 #include "qsslellipticcurveproto.h"
+#include "qsslerrorproto.h"
 #include "qsslkeyproto.h"
 #include "qsslproto.h"
 #include "qsslsocketproto.h"
@@ -242,6 +243,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQSslCipherProto(engine);
   setupQSslConfigurationProto(engine);
   setupQSslEllipticCurveProto(engine);
+  setupQSslErrorProto(engine);
   setupQSslKeyProto(engine);
   setupQSslProto(engine);
   setupQSslSocketProto(engine);

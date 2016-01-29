@@ -97,6 +97,7 @@ HEADERS += setupscriptapi.h \
     qsslcipherproto.h \
     qsslconfigurationproto.h \
     qsslellipticcurveproto.h \
+    qsslerrorproto.h \
     qsslkeyproto.h \
     qsslproto.h \
     qsslsocketproto.h \
@@ -222,6 +223,7 @@ SOURCES += setupscriptapi.cpp \
     qsslcipherproto.cpp \
     qsslconfigurationproto.cpp \
     qsslellipticcurveproto.cpp \
+    qsslerrorproto.cpp \
     qsslkeyproto.cpp \
     qsslproto.cpp \
     qsslsocketproto.cpp \
