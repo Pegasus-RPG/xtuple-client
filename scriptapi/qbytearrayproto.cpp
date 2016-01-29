@@ -26,7 +26,7 @@ void QByteArrayfromScriptValue(const QScriptValue &obj, QByteArray* &item)
 
 void setupQByteArrayProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QByteArraytoScriptValue, QByteArrayfromScriptValue);
+  //qScriptRegisterMetaType(engine, QByteArraytoScriptValue, QByteArrayfromScriptValue);
 
   QScriptValue proto = engine->newQObject(new QByteArrayProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QByteArray*>(), proto);
@@ -76,7 +76,7 @@ QByteArrayProto::QByteArrayProto(QObject *parent)
 {
 }
 
-/*
+
 QByteArray &QByteArrayProto::append(const QByteArray &ba)
 {
   QByteArray *item = qscriptvalue_cast<QByteArray*>(thisObject());
@@ -872,7 +872,7 @@ void QByteArrayProto::truncate(int pos)
   if (item)
     item->truncate(pos);
 }
-*/
+
 
 QString QByteArrayProto::toString() const
 {

@@ -27,7 +27,7 @@ class QByteArrayProto : public QObject, public QScriptable
   public:
     QByteArrayProto(QObject *parent);
 
-    /*
+    
     Q_INVOKABLE QByteArray &append(const QByteArray &ba);
     Q_INVOKABLE QByteArray &append(const QString &str);
     Q_INVOKABLE QByteArray &append(const char *str);
@@ -129,7 +129,7 @@ class QByteArrayProto : public QObject, public QScriptable
     Q_INVOKABLE QByteArray toUpper() const;
     Q_INVOKABLE QByteArray trimmed() const;
     Q_INVOKABLE void truncate(int pos);
-    */
+    
 
     Q_INVOKABLE QString toString() const;
 

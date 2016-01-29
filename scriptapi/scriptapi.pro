@@ -5,7 +5,7 @@ CONFIG += qt \
     warn_on \
     staticlib
 
-QT += core network printsupport script sql webkit webkitwidgets widgets xml
+QT += core network printsupport script sql webkit webkitwidgets widgets xml serialport
 
 greaterThan (QT_MAJOR_VERSION, 4) {
   QT += websockets webchannel
@@ -32,6 +32,7 @@ HEADERS += setupscriptapi.h \
     metasqlhighlighterproto.h \
     orreportproto.h \
     parameterlistsetup.h \
+    qabstractsocketproto.h \
     qactionproto.h \
     qapplicationproto.h \
     qboxlayoutproto.h \
@@ -59,6 +60,7 @@ HEADERS += setupscriptapi.h \
     qdomprocessinginstructionproto.h \
     qdomtextproto.h \
     qdoublevalidatorproto.h \
+    qhostaddressproto.h \
     qintvalidatorproto.h \
     qeventproto.h \
     qfileproto.h \
@@ -78,6 +80,7 @@ HEADERS += setupscriptapi.h \
     qmenuproto.h \
     qmessageboxsetup.h \
     qnetworkaccessmanagerproto.h \
+    qnetworkinterfaceproto.h \
     qnetworkreplyproto.h \
     qnetworkrequestproto.h \
     qobjectproto.h \
@@ -85,13 +88,18 @@ HEADERS += setupscriptapi.h \
     qprocessproto.h     \
     qprocessenvironmentproto.h     \
     qpushbuttonproto.h \
+    qserialportproto.h \
+    qserialportinfoproto.h \
     qsizepolicyproto.h \
     qspaceritemproto.h \
     qsqldatabaseproto.h \
     qsqlerrorproto.h \
     qsqlrecordproto.h \
+    qsslsocketproto.h \
     qstackedwidgetproto.h \
     qtabwidgetproto.h \
+    qtcpserverproto.h \
+    qtcpsocketproto.h \
     qtextdocumentproto.h \
     qtexteditproto.h \
     qtimerproto.h \
@@ -99,6 +107,7 @@ HEADERS += setupscriptapi.h \
     qtoolbuttonproto.h \
     qtreewidgetitemproto.h \
     qtsetup.h \
+    qudpsocketproto.h \
     qurlproto.h \
     qvalidatorproto.h \
     qwebframeproto.h \
@@ -146,6 +155,7 @@ SOURCES += setupscriptapi.cpp \
     metasqlhighlighterproto.cpp \
     orreportproto.cpp \
     parameterlistsetup.cpp \
+    qabstractsocketproto.cpp \
     qactionproto.cpp \
     qapplicationproto.cpp \
     qboxlayoutproto.cpp \
@@ -173,6 +183,7 @@ SOURCES += setupscriptapi.cpp \
     qdomprocessinginstructionproto.cpp \
     qdomtextproto.cpp \
     qdoublevalidatorproto.cpp \
+    qhostaddressproto.cpp \
     qintvalidatorproto.cpp \
     qeventproto.cpp \
     qfileproto.cpp \
@@ -192,6 +203,7 @@ SOURCES += setupscriptapi.cpp \
     qmenuproto.cpp \
     qmessageboxsetup.cpp \
     qnetworkaccessmanagerproto.cpp \
+    qnetworkinterfaceproto.cpp \
     qnetworkreplyproto.cpp \
     qnetworkrequestproto.cpp \
     qobjectproto.cpp \
@@ -199,13 +211,18 @@ SOURCES += setupscriptapi.cpp \
     qprocessproto.cpp \
     qprocessenvironmentproto.cpp \
     qpushbuttonproto.cpp \
+    qserialportproto.cpp \
+    qserialportinfoproto.cpp \
     qsizepolicyproto.cpp \
     qspaceritemproto.cpp \
     qsqldatabaseproto.cpp \
     qsqlerrorproto.cpp \
     qsqlrecordproto.cpp \
+    qsslsocketproto.cpp \
     qstackedwidgetproto.cpp \
     qtabwidgetproto.cpp \
+    qtcpserverproto.cpp \
+    qtcpsocketproto.cpp \
     qtextdocumentproto.cpp \
     qtexteditproto.cpp \
     qtimerproto.cpp \
@@ -213,6 +230,7 @@ SOURCES += setupscriptapi.cpp \
     qtoolbuttonproto.cpp \
     qtreewidgetitemproto.cpp \
     qtsetup.cpp \
+    qudpsocketproto.cpp \
     qurlproto.cpp \
     qvalidatorproto.cpp \
     qwebframeproto.cpp \

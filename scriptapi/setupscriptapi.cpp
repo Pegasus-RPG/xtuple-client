@@ -31,6 +31,7 @@
 #include "parameterlistsetup.h"
 #include "parameterwidget.h"
 #include "projectlineeditsetup.h"
+#include "qabstractsocketproto.h"
 #include "qactionproto.h"
 #include "qapplicationproto.h"
 #include "qboxlayoutproto.h"
@@ -58,6 +59,7 @@
 #include "qdomprocessinginstructionproto.h"
 #include "qdomtextproto.h"
 #include "qdoublevalidatorproto.h"
+#include "qhostaddressproto.h"
 #include "qintvalidatorproto.h"
 #include "qeventproto.h"
 #include "qfileproto.h"
@@ -77,6 +79,7 @@
 #include "qmenuproto.h"
 #include "qmessageboxsetup.h"
 #include "qnetworkaccessmanagerproto.h"
+#include "qnetworkinterfaceproto.h"
 #include "qnetworkreplyproto.h"
 #include "qnetworkrequestproto.h"
 #include "qobjectproto.h"
@@ -84,13 +87,18 @@
 #include "qprocessproto.h"
 #include "qprocessenvironmentproto.h"
 #include "qpushbuttonproto.h"
+#include "qserialportproto.h"
+#include "qserialportinfoproto.h"
 #include "qsizepolicyproto.h"
 #include "qspaceritemproto.h"
 #include "qsqldatabaseproto.h"
 #include "qsqlerrorproto.h"
 #include "qsqlrecordproto.h"
+#include "qsslsocketproto.h"
 #include "qstackedwidgetproto.h"
 #include "qtabwidgetproto.h"
+#include "qtcpserverproto.h"
+#include "qtcpsocketproto.h"
 #include "qtextdocumentproto.h"
 #include "qtexteditproto.h"
 #include "qtimerproto.h"
@@ -98,6 +106,7 @@
 #include "qtoolbuttonproto.h"
 #include "qtreewidgetitemproto.h"
 #include "qtsetup.h"
+#include "qudpsocketproto.h"
 #include "queryset.h"
 #include "qurlproto.h"
 #include "qvalidatorproto.h"
@@ -165,6 +174,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupParameterWidget(engine);
   setupPeriodListViewItem(engine);
   setupProjectLineEdit(engine);
+  setupQAbstractSocketProto(engine);
   setupQActionProto(engine);
   setupQApplicationProto(engine);
   setupQBoxLayoutProto(engine);
@@ -199,6 +209,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQFontProto(engine);
   setupQFormLayoutProto(engine);
   setupQGridLayoutProto(engine);
+  setupQHostAddressProto(engine);
   setupQIconProto(engine);
   setupQIODeviceProto(engine);
   setupQItemDelegateProto(engine);
@@ -211,6 +222,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQMenuProto(engine);
   setupQMessageBox(engine);
   setupQNetworkAccessManagerProto(engine);
+  setupQNetworkInterfaceProto(engine);
   setupQNetworkReplyProto(engine);
   setupQNetworkRequestProto(engine);
   setupQObjectProto(engine);
@@ -218,13 +230,18 @@ void setupScriptApi(QScriptEngine *engine)
   setupQProcessProto(engine);
   setupQProcessEnvironmentProto(engine);
   setupQPushButtonProto(engine);
+  setupQSerialPortProto(engine);
+  setupQSerialPortInfoProto(engine);
   setupQSizePolicy(engine);
   setupQSpacerItem(engine);
   setupQSqlDatabaseProto(engine);
   setupQSqlErrorProto(engine);
   setupQSqlRecordProto(engine);
+  setupQSslSocketProto(engine);
   setupQStackedWidgetProto(engine);
   setupQTabWidgetProto(engine);
+  setupQTcpServerProto(engine);
+  setupQTcpSocketProto(engine);
   setupQTextDocumentProto(engine);
   setupQTextEditProto(engine);
   setupQTimerProto(engine);
@@ -232,6 +249,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQToolButtonProto(engine);
   setupQTreeWidgetItemProto(engine);
   setupQt(engine);
+  setupQUdpSocketProto(engine);
   setupQuerySet(engine);
   setupQUrlProto(engine);
   setupQValidatorProto(engine);

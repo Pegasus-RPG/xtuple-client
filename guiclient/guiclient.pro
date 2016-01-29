@@ -4,7 +4,7 @@ TARGET   = xtuple
 CONFIG   += qt warn_on
 
 QT += xml sql script scripttools network
-QT += webkit xmlpatterns printsupport webkitwidgets
+QT += webkit xmlpatterns printsupport webkitwidgets serialport
 
 isEqual(QT_MAJOR_VERSION, 5) {
   QT     += help designer uitools quick websockets webchannel
