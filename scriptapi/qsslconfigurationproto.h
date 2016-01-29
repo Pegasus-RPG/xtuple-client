@@ -70,11 +70,9 @@ class QSslConfigurationProto : public QObject, public QScriptable
     Q_INVOKABLE void                                              swap(QSslConfiguration & other);
     Q_INVOKABLE bool                                              testSslOption(QSsl::SslOption option) const;
 
-    Q_INVOKABLE QSslConfiguration           defaultConfiguration();
     Q_INVOKABLE void                        setDefaultConfiguration(const QSslConfiguration & configuration);
     Q_INVOKABLE QList<QSslCipher>           supportedCiphers();
     Q_INVOKABLE QVector<QSslEllipticCurve>  supportedEllipticCurves();
-    Q_INVOKABLE QList<QSslCertificate>      systemCaCertificates();
 
 };
 

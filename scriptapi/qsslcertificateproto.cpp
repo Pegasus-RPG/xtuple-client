@@ -25,36 +25,21 @@ void SubjectInfoFromScriptValue(const QScriptValue &obj, QSslCertificate::Subjec
   item = (QSslCertificate::SubjectInfo)obj.toInt32();
 }
 
-QScriptValue QSslCertificatetoScriptValue(QScriptEngine *engine, QSslCertificate const &item)
+QScriptValue QListQSslCertificatetoScriptValue(QScriptEngine *engine, const QList<QSslCertificate> &certificates)
 {
-  QScriptValue obj = engine->newObject();
-  obj.setProperty("_certificate", qPrintable(QString(item.toPem())));
-  return obj;
+  QScriptValue certificateList = engine->newArray();
+  for (int i = 0; i < certificates.size(); i += 1) {
+    certificateList.setProperty(i, certificates.at(i).toText());
+  }
+  return certificateList;
 }
-void QSslCertificatefromScriptValue(const QScriptValue &obj, QSslCertificate &item)
+void QListQSslCertificatefromScriptValue(const QScriptValue &obj, QList<QSslCertificate> &certificates)
 {
-  QString certificate = obj.property("_certificate").toString();
-  QSslCertificate newCert = QSslCertificate(certificate.toLocal8Bit(), QSsl::Pem);
-  item.swap(newCert);
-}
-
-QScriptValue QSslCertificatePointertoScriptValue(QScriptEngine *engine, QSslCertificate* const &item)
-{
-  QScriptValue obj = engine->newObject();
-  obj.setProperty("_certificate", qPrintable(QString(item->toPem())));
-  return obj;
-}
-
-void QSslCertificatePointerfromScriptValue(const QScriptValue &obj, QSslCertificate* &item)
-{
-  QString certificate = obj.property("_certificate").toString();
-  item = new QSslCertificate(certificate.toLocal8Bit(), QSsl::Pem);
+  // TODO: Do we need this?
 }
 
 void setupQSslCertificateProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QSslCertificatetoScriptValue, QSslCertificatefromScriptValue);
-  qScriptRegisterMetaType(engine, QSslCertificatePointertoScriptValue, QSslCertificatePointerfromScriptValue);
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QSslCertificateProto(engine));
@@ -64,6 +49,8 @@ void setupQSslCertificateProto(QScriptEngine *engine)
   QScriptValue constructor = engine->newFunction(constructQSslCertificate,
                                                  proto);
   engine->globalObject().setProperty("QSslCertificate",  constructor);
+
+  qScriptRegisterMetaType(engine, QListQSslCertificatetoScriptValue, QListQSslCertificatefromScriptValue);
 
   qScriptRegisterMetaType(engine, SubjectInfoToScriptValue, SubjectInfoFromScriptValue);
   constructor.setProperty("Organization",               QScriptValue(engine, QSslCertificate::Organization), permanent);

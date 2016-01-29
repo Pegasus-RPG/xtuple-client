@@ -17,6 +17,15 @@ void setupQSslSocketProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
+QScriptValue addDefaultCaCertificateForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  if (context->argumentCount() == 1) {
+    QString cert = context->argument(0).toString();
+    QSslSocket::addDefaultCaCertificate(QSslCertificate(cert.toLocal8Bit(), QSsl::Pem));
+  }
+  return engine->undefinedValue();
+}
+
 QScriptValue PeerVerifyModeToScriptValue(QScriptEngine *engine, const QSslSocket::PeerVerifyMode &item)
 {
   return engine->newVariant(item);
@@ -39,7 +48,6 @@ QScriptValue QSslSockettoScriptValue(QScriptEngine *engine, QSslSocket* const &i
 {
   return engine->newQObject(item);
 }
-
 void QSslSocketfromScriptValue(const QScriptValue &obj, QSslSocket* &item)
 {
   item = qobject_cast<QSslSocket*>(obj.toQObject());
@@ -56,6 +64,9 @@ void setupQSslSocketProto(QScriptEngine *engine)
   QScriptValue constructor = engine->newFunction(constructQSslSocket,
                                                  proto);
   engine->globalObject().setProperty("QSslSocket",  constructor);
+
+  QScriptValue addDefaultCaCertificate = engine->newFunction(addDefaultCaCertificateForJS);
+  constructor.setProperty("addDefaultCaCertificate", addDefaultCaCertificate);
 
   qScriptRegisterMetaType(engine, PeerVerifyModeToScriptValue, PeerVerifyModeFromScriptValue);
   constructor.setProperty("VerifyNone", QScriptValue(engine, QSslSocket::VerifyNone), permanent);

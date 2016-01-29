@@ -16,87 +16,34 @@ void setupQSslConfigurationProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
-QScriptValue QSslConfigurationtoScriptValue(QScriptEngine *engine, QSslConfiguration const &item)
+QScriptValue defaultConfigurationForJS(QScriptContext* context, QScriptEngine* engine)
 {
-  QScriptValue obj = engine->newObject();
-
-  obj.setProperty("_peerVerifyMode", item.peerVerifyMode());
-
-  QSslCertificate localCertificate = item.localCertificate();
-  obj.setProperty("_localCertificate", qPrintable(QString(localCertificate.toPem())));
-
-  QSslKey privateKey = item.privateKey();
-  obj.setProperty("_privateKey", qPrintable(QString(privateKey.toPem())));
-
-  obj.setProperty("_protocol", item.protocol());
-
-  return obj;
+  QSslConfiguration defaultConfiguration = QSslConfiguration::defaultConfiguration();
+  return engine->toScriptValue(defaultConfiguration);
 }
-void QSslConfigurationfromScriptValue(const QScriptValue &obj, QSslConfiguration &item)
+QScriptValue systemCaCertificatesForJS(QScriptContext* context, QScriptEngine* engine)
 {
-  QSslConfiguration newConfig = QSslConfiguration();
-
-  newConfig.setPeerVerifyMode(static_cast<QSslSocket::PeerVerifyMode>(obj.property("_peerVerifyMode").toInt32()));
-
-  QString localCertificate = obj.property("_localCertificate").toString();
-  QSslCertificate cert = QSslCertificate(localCertificate.toLocal8Bit(), QSsl::Pem);
-  newConfig.setLocalCertificate(cert);
-
-  QString privateKey = obj.property("_privateKey").toString();
-  QSslKey key = QSslKey(privateKey.toLocal8Bit(), QSsl::Rsa);
-  newConfig.setPrivateKey(key);
-
-  newConfig.setProtocol(static_cast<QSsl::SslProtocol>(obj.property("_protocol").toInt32()));
-
-  item.swap(newConfig);
-}
-
-QScriptValue QSslConfigurationPointertoScriptValue(QScriptEngine *engine, QSslConfiguration* const &item)
-{
-  QScriptValue obj = engine->newObject();
-
-  obj.setProperty("_peerVerifyMode", item->peerVerifyMode());
-
-  QSslCertificate localCertificate = item->localCertificate();
-  obj.setProperty("_localCertificate", qPrintable(QString(localCertificate.toPem())));
-
-  QSslKey privateKey = item->privateKey();
-  obj.setProperty("_privateKey", qPrintable(QString(privateKey.toPem())));
-
-  obj.setProperty("_protocol", item->protocol());
-
-  return obj;
-}
-void QSslConfigurationPointerfromScriptValue(const QScriptValue &obj, QSslConfiguration* &item)
-{
-  QSslConfiguration newConfig = QSslConfiguration();
-
-  newConfig.setPeerVerifyMode(static_cast<QSslSocket::PeerVerifyMode>(obj.property("_peerVerifyMode").toInt32()));
-
-  QString localCertificate = obj.property("_localCertificate").toString();
-  QSslCertificate cert = QSslCertificate(localCertificate.toLocal8Bit(), QSsl::Pem);
-  newConfig.setLocalCertificate(cert);
-  QSslCertificate newConfigcert = newConfig.localCertificate();
-
-  QString privateKey = obj.property("_privateKey").toString();
-  QSslKey key = QSslKey(privateKey.toLocal8Bit(), QSsl::Rsa);
-  newConfig.setPrivateKey(key);
-
-  newConfig.setProtocol(static_cast<QSsl::SslProtocol>(obj.property("_protocol").toInt32()));
-
-  item = new QSslConfiguration(newConfig);
+  QList<QSslCertificate> certificates = QSslConfiguration::systemCaCertificates();
+  QScriptValue certificateList = engine->newArray();
+  for (int i = 0; i < certificates.size(); i += 1) {
+    certificateList.setProperty(i, certificates.at(i).toText());
+  }
+  return certificateList;
 }
 
 void setupQSslConfigurationProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QSslConfigurationtoScriptValue, QSslConfigurationfromScriptValue);
-  qScriptRegisterMetaType(engine, QSslConfigurationPointertoScriptValue, QSslConfigurationPointerfromScriptValue);
   QScriptValue proto = engine->newQObject(new QSslConfigurationProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QSslConfiguration*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QSslConfiguration>(), proto);
 
-  QScriptValue constructor = engine->newFunction(constructQSslConfiguration,
-                                                 proto);
+  QScriptValue constructor = engine->newFunction(constructQSslConfiguration, proto);
+
+  QScriptValue defaultConfiguration = engine->newFunction(defaultConfigurationForJS);
+  constructor.setProperty("defaultConfiguration", defaultConfiguration);
+  QScriptValue systemCaCertificates = engine->newFunction(systemCaCertificatesForJS);
+  constructor.setProperty("systemCaCertificates", systemCaCertificates);
+
   engine->globalObject().setProperty("QSslConfiguration",  constructor);
 }
 
@@ -300,9 +247,7 @@ void QSslConfigurationProto::setEllipticCurves(const QVector<QSslEllipticCurve> 
 
 void QSslConfigurationProto::setLocalCertificate(const QSslCertificate & certificate)
 {
-  QScriptValue scriptObj = thisObject();
-  scriptObj.setProperty("_localCertificate", qPrintable(QString(certificate.toPem())));
-  QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(scriptObj);
+  QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(thisObject());
   if (item)
     item->setLocalCertificate(certificate);
 }
@@ -323,27 +268,21 @@ void QSslConfigurationProto::setPeerVerifyDepth(int depth)
 
 void QSslConfigurationProto::setPeerVerifyMode(QSslSocket::PeerVerifyMode mode)
 {
-  QScriptValue scriptObj = thisObject();
-  scriptObj.setProperty("_peerVerifyMode", mode);
-  QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(scriptObj);
+  QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(thisObject());
   if (item)
     item->setPeerVerifyMode(mode);
 }
 
 void QSslConfigurationProto::setPrivateKey(const QSslKey & key)
 {
-  QScriptValue scriptObj = thisObject();
-  scriptObj.setProperty("_privateKey", qPrintable(QString(key.toPem())));
-  QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(scriptObj);
+  QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(thisObject());
   if (item)
     item->setPrivateKey(key);
 }
 
 void QSslConfigurationProto::setProtocol(QSsl::SslProtocol protocol)
 {
-  QScriptValue scriptObj = thisObject();
-  scriptObj.setProperty("_protocol", protocol);
-  QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(scriptObj);
+  QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(thisObject());
   if (item)
     item->setProtocol(protocol);
 }
@@ -377,14 +316,6 @@ bool QSslConfigurationProto::testSslOption(QSsl::SslOption option) const
   return false;
 }
 
-QSslConfiguration QSslConfigurationProto::defaultConfiguration()
-{
-  QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(thisObject());
-  if (item)
-    return item->defaultConfiguration();
-  return QSslConfiguration();
-}
-
 void QSslConfigurationProto::setDefaultConfiguration(const QSslConfiguration & configuration)
 {
   QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(thisObject());
@@ -406,14 +337,6 @@ QVector<QSslEllipticCurve> QSslConfigurationProto::supportedEllipticCurves()
   if (item)
     return item->supportedEllipticCurves();
   return QVector<QSslEllipticCurve>();
-}
-
-QList<QSslCertificate> QSslConfigurationProto::systemCaCertificates()
-{
-  QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(thisObject());
-  if (item)
-    return item->systemCaCertificates();
-  return QList<QSslCertificate>();
 }
 
 #endif
