@@ -476,9 +476,8 @@ int main(int argc, char *argv[])
 
 #if QT_VERSION < 0x050000  // below removed in qt5, needs to be ported
       QHttp *http = new QHttp();
-      
       QUrl url;
-      url.setPath("/api/regviolation.php");
+      url.setUrl("https://www.xtuple.org//api/regviolation.php");
       url.addQueryItem("key", QUrl::toPercentEncoding(rkey));
       url.addQueryItem("error", QUrl::toPercentEncoding(checkPassReason));
       url.addQueryItem("name", QUrl::toPercentEncoding(name));
@@ -490,6 +489,7 @@ int main(int argc, char *argv[])
 
       http->setHost("www.xtuple.org");
       http->get(url.toString());
+      http->close();
 #endif
       if(forced)
         return 0;
