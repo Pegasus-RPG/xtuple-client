@@ -9,6 +9,7 @@
  */
 
 #include "qsslcertificateproto.h"
+#include <QScriptValueIterator>
 
 #if QT_VERSION < 0x050000
 void setupQSslCertificateProto(QScriptEngine *engine)
@@ -43,7 +44,7 @@ void QListQSslCertificatefromScriptValue(const QScriptValue &obj, QList<QSslCert
     if (it.flags() & QScriptValue::SkipInEnumeration)
       continue;
     QSslCertificate item = qscriptvalue_cast<QSslCertificate>(it.value());
-    list.insert(it.name(), item);
+    list.insert(it.name().toInt(), item);
   }
 }
 
@@ -54,13 +55,15 @@ QScriptValue fromDataForJS(QScriptContext* context, QScriptEngine* engine)
     return engine->toScriptValue(QSslCertificate::fromData(data));
   } else if (context->argumentCount() == 2) {
     QByteArray data = qscriptvalue_cast<QByteArray>(context->argument(0));
-    QSsl::EncodingFormat format = (QSsl::SslProtocol)context->argument(1).toInt32();
+    QSsl::EncodingFormat format = (QSsl::EncodingFormat)context->argument(1).toInt32();
     return engine->toScriptValue(QSslCertificate::fromData(data, format));
   } else {
     return engine->undefinedValue();
   }
 }
 
+// TODO: Can't qscriptvalue_cast<QIODevice*>(context->argument(0));
+/*
 QScriptValue fromDeviceForJS(QScriptContext* context, QScriptEngine* engine)
 {
   if (context->argumentCount() == 1) {
@@ -68,12 +71,13 @@ QScriptValue fromDeviceForJS(QScriptContext* context, QScriptEngine* engine)
     return engine->toScriptValue(QSslCertificate::fromDevice(device));
   } else if (context->argumentCount() == 2) {
     QIODevice *device = qscriptvalue_cast<QIODevice*>(context->argument(0));
-    QSsl::EncodingFormat format = (QSsl::SslProtocol)context->argument(1).toInt32();
+    QSsl::EncodingFormat format = (QSsl::EncodingFormat)context->argument(1).toInt32();
     return engine->toScriptValue(QSslCertificate::fromDevice(device, format));
   } else {
     return engine->undefinedValue();
   }
 }
+*/
 
 QScriptValue fromPathForJS(QScriptContext* context, QScriptEngine* engine)
 {
@@ -82,11 +86,11 @@ QScriptValue fromPathForJS(QScriptContext* context, QScriptEngine* engine)
     return engine->toScriptValue(QSslCertificate::fromPath(path));
   } else if (context->argumentCount() == 2) {
     QString path = context->argument(0).toString();
-    QSsl::EncodingFormat format = (QSsl::SslProtocol)context->argument(1).toInt32();
+    QSsl::EncodingFormat format = (QSsl::EncodingFormat)context->argument(1).toInt32();
     return engine->toScriptValue(QSslCertificate::fromPath(path, format));
   } else if (context->argumentCount() == 3) {
     QString path = context->argument(0).toString();
-    QSsl::EncodingFormat format = (QSsl::SslProtocol)context->argument(1).toInt32();
+    QSsl::EncodingFormat format = (QSsl::EncodingFormat)context->argument(1).toInt32();
     QRegExp::PatternSyntax syntax = (QRegExp::PatternSyntax)context->argument(2).toInt32();
     return engine->toScriptValue(QSslCertificate::fromPath(path, format, syntax));
   } else {
@@ -94,6 +98,8 @@ QScriptValue fromPathForJS(QScriptContext* context, QScriptEngine* engine)
   }
 }
 
+// TODO: Something is wrong with how we expose QIODevice
+/*
 QScriptValue importPkcs12ForJS(QScriptContext* context, QScriptEngine* engine)
 {
   if (context->argumentCount() == 3) {
@@ -118,11 +124,12 @@ QScriptValue importPkcs12ForJS(QScriptContext* context, QScriptEngine* engine)
     return engine->toScriptValue(false);
   }
 }
+*/
 
 QScriptValue verifyForJS(QScriptContext* context, QScriptEngine* engine)
 {
   if (context->argumentCount() == 2) {
-    QList<QSslCertificate> certificateChain = qscriptvalue_cast<QList<QSslCertificate>>(context->argument(0));
+    QList<QSslCertificate> certificateChain = qscriptvalue_cast< QList<QSslCertificate> >(context->argument(0));
     QString hostName = context->argument(1).toString();
     return engine->toScriptValue(QSslCertificate::verify(certificateChain, hostName));
   } else {
@@ -157,12 +164,18 @@ void setupQSslCertificateProto(QScriptEngine *engine)
 
   QScriptValue fromData = engine->newFunction(fromDataForJS);
   constructor.setProperty("fromData", fromData);
+  // TODO: Can't qscriptvalue_cast<QIODevice*>(context->argument(0));
+  /*
   QScriptValue fromDevice = engine->newFunction(fromDeviceForJS);
   constructor.setProperty("fromDevice", fromDevice);
+  */
   QScriptValue fromPath = engine->newFunction(fromPathForJS);
   constructor.setProperty("fromPath", fromPath);
+  // TODO: Something is wrong with how we expose QIODevice
+  /*
   QScriptValue importPkcs12 = engine->newFunction(importPkcs12ForJS);
   constructor.setProperty("importPkcs12", importPkcs12);
+  */
   QScriptValue verify = engine->newFunction(verifyForJS);
   constructor.setProperty("verify", verify);
 }

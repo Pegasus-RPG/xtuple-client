@@ -38,9 +38,10 @@ QScriptValue hashForJS(QScriptContext* context, QScriptEngine* engine)
 
 void setupQCryptographicHashProto(QScriptEngine *engine)
 {
+  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+
   QScriptValue proto = engine->newQObject(new QCryptographicHashProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QCryptographicHash*>(), proto);
-  engine->setDefaultPrototype(qMetaTypeId<QCryptographicHash>(),  proto);
 
   QScriptValue constructor = engine->newFunction(constructQCryptographicHash, proto);
   engine->globalObject().setProperty("QCryptographicHash", constructor);

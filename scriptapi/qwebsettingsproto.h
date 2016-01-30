@@ -20,7 +20,7 @@ void setupQWebSettingsProto(QScriptEngine *engine);
 #include <QWebSettings>
 
 Q_DECLARE_METATYPE(QWebSettings*)
-Q_DECLARE_METATYPE(QWebSettings)
+//Q_DECLARE_METATYPE(QWebSettings) // Is private.
 Q_DECLARE_METATYPE(enum QWebSettings::FontFamily)
 Q_DECLARE_METATYPE(enum QWebSettings::FontSize)
 Q_DECLARE_METATYPE(enum QWebSettings::ThirdPartyCookiePolicy)
@@ -39,7 +39,7 @@ class QWebSettingsProto : public QObject, public QScriptable
     Q_INVOKABLE QString                               cssMediaType() const;
     Q_INVOKABLE QString                               defaultTextEncoding() const;
     Q_INVOKABLE QString                               fontFamily(QWebSettings::FontFamily which) const;
-    Q_INVOKABLE int                                   fontSize(FontSize type) const;
+    Q_INVOKABLE int                                   fontSize(QWebSettings::FontSize type) const;
     Q_INVOKABLE QString                               localStoragePath() const;
     Q_INVOKABLE void                                  resetAttribute(QWebSettings::WebAttribute attribute);
     Q_INVOKABLE void                                  resetFontFamily(QWebSettings::FontFamily which);
@@ -54,7 +54,8 @@ class QWebSettingsProto : public QObject, public QScriptable
     Q_INVOKABLE void                                  setUserStyleSheetUrl(const QUrl & location);
     Q_INVOKABLE bool                                  testAttribute(QWebSettings::WebAttribute attribute) const;
     Q_INVOKABLE QWebSettings::ThirdPartyCookiePolicy  thirdPartyCookiePolicy() const;
-    Q_INVOKABLE QUrl                                  userStyleSheetUrl() const;
+    // TODO: Why doesn't this work?
+    //Q_INVOKABLE QUrl                                  userStyleSheetUrl() const;
 
 };
 

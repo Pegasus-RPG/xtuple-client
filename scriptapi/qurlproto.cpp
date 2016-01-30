@@ -26,6 +26,7 @@ void setupQUrlProto(QScriptEngine *engine)
 
   QScriptValue urlproto = engine->newQObject(new QUrlProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QUrl*>(), urlproto);
+  engine->setDefaultPrototype(qMetaTypeId<QUrl>(), urlproto);
 
   QScriptValue urlConstructor = engine->newFunction(constructQUrl, urlproto);
   engine->globalObject().setProperty("QUrl", urlConstructor);

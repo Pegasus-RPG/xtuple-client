@@ -20,7 +20,6 @@ void setupQCryptographicHashProto(QScriptEngine *engine);
 #include <QCryptographicHash>
 
 Q_DECLARE_METATYPE(QCryptographicHash*)
-Q_DECLARE_METATYPE(QCryptographicHash)
 Q_DECLARE_METATYPE(enum QCryptographicHash::Algorithm)
 
 QScriptValue constructQCryptographicHash(QScriptContext *context, QScriptEngine *engine);

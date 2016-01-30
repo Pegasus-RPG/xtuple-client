@@ -9,6 +9,7 @@
  */
 
 #include "qsslproto.h"
+#include <QScriptValueIterator>
 
 #if QT_VERSION < 0x050000
 void setupQSslProto(QScriptEngine *engine)
@@ -79,6 +80,8 @@ void SslProtocolFromScriptValue(const QScriptValue &obj, QSsl::SslProtocol &item
  *   };
  *
  */
+// TODO: Figure out how to convert QMultiMap.
+/*
 QScriptValue QMultiMapQSslAlternativeNameEntryTypeQStringToScriptValue(QScriptEngine *engine, const QMultiMap<QSsl::AlternativeNameEntryType, QString> &map)
 {
   QMapIterator<QSsl::AlternativeNameEntryType, QString> it(map);
@@ -95,10 +98,11 @@ QScriptValue QMultiMapQSslAlternativeNameEntryTypeQStringToScriptValue(QScriptEn
       childCount++;
       childIt++;
     }
-    newObject.setProperty(engine->toScriptValue(it.key()), childArray);
+    newObject.setProperty((QSsl::AlternativeNameEntryType)it.key(), childArray);
   }
   return newObject;
 }
+*/
 /**
  * Converts Javascritp friendly form to `QMultiMap<QSsl::AlternativeNameEntryType, QString>`.
  *
@@ -108,6 +112,8 @@ QScriptValue QMultiMapQSslAlternativeNameEntryTypeQStringToScriptValue(QScriptEn
  *   };
  *
  */
+// TODO: Figure out how to convert QMultiMap.
+/*
 void QMultiMapQSslAlternativeNameEntryTypeQStringFromScriptValue(const QScriptValue &obj, QMultiMap<QSsl::AlternativeNameEntryType, QString> &map)
 {
   map = QMultiMap<QSsl::AlternativeNameEntryType, QString>();
@@ -122,11 +128,12 @@ void QMultiMapQSslAlternativeNameEntryTypeQStringFromScriptValue(const QScriptVa
     QScriptValueIterator childIt(it.value());
     while (childIt.hasNext()) {
       QString item = qscriptvalue_cast<QString>(childIt.value());
-      QSsl::AlternativeNameEntryType enumKey = (QSsl::AlternativeNameEntryType>)it.name().toInt32();
+      QSsl::AlternativeNameEntryType enumKey = (QSsl::AlternativeNameEntryType)it.name().toInt();
       map.insert(enumKey, item);
     }
   }
 }
+*/
 
 void setupQSslProto(QScriptEngine *engine)
 {
@@ -173,6 +180,9 @@ void setupQSslProto(QScriptEngine *engine)
   obj.setProperty("AnyProtocol",      QScriptValue(engine, QSsl::AnyProtocol), permanent);
   obj.setProperty("TlsV1SslV3",       QScriptValue(engine, QSsl::TlsV1SslV3), permanent);
   obj.setProperty("SecureProtocols",  QScriptValue(engine, QSsl::SecureProtocols), permanent);
+
+  // TODO: Figure out how to convert QMultiMap.
+  //qScriptRegisterMetaType(engine, QMultiMapQSslAlternativeNameEntryTypeQStringToScriptValue, QMultiMapQSslAlternativeNameEntryTypeQStringFromScriptValue);
 
   engine->globalObject().setProperty("QSsl", obj, permanent);
 }

@@ -16,6 +16,8 @@ void setupQSslEllipticCurveProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
+// TODO: Figure out how to expose QVector
+/*
 QScriptValue QVectorQSslEllipticCurveToScriptValue(QScriptEngine *engine, const QVector<QSslEllipticCurve> &list)
 {
   QScriptValue newArray = engine->newArray();
@@ -37,6 +39,7 @@ void QVectorQSslEllipticCurveFromScriptValue(const QScriptValue &obj, QVector<QS
     list.insert(it.name().toInt32, item);
   }
 }
+*/
 
 QScriptValue fromLongNameForJS(QScriptContext* context, QScriptEngine* engine)
 {
@@ -69,7 +72,8 @@ void setupQSslEllipticCurveProto(QScriptEngine *engine)
   QScriptValue constructor = engine->newFunction(constructQSslEllipticCurve, proto);
   engine->globalObject().setProperty("QSslEllipticCurve",  constructor);
 
-  qScriptRegisterMetaType(engine, QVectorQSslEllipticCurveToScriptValue, QVectorQSslEllipticCurveFromScriptValue);
+  // TODO: Figure out how to expose QVector
+  //qScriptRegisterMetaType(engine, QVectorQSslEllipticCurveToScriptValue, QVectorQSslEllipticCurveFromScriptValue);
 
   QScriptValue fromLongName = engine->newFunction(fromLongNameForJS);
   constructor.setProperty("fromLongName", fromLongName);
@@ -86,9 +90,6 @@ QScriptValue constructQSslEllipticCurve(QScriptContext * /*context*/, QScriptEng
 
 QSslEllipticCurveProto::QSslEllipticCurveProto(QObject *parent)
     : QObject(parent)
-{
-}
-QSslEllipticCurveProto::~QSslEllipticCurveProto()
 {
 }
 

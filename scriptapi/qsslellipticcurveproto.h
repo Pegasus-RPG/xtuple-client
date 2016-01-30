@@ -20,7 +20,7 @@ void setupQSslEllipticCurveProto(QScriptEngine *engine);
 #include <QSslEllipticCurve>
 
 Q_DECLARE_METATYPE(QSslEllipticCurve*)
-Q_DECLARE_METATYPE(QSslEllipticCurve)
+//Q_DECLARE_METATYPE(QSslEllipticCurve) // Already set in qsslellipticcurve.h
 
 QScriptValue constructQSslEllipticCurve(QScriptContext *context, QScriptEngine *engine);
 

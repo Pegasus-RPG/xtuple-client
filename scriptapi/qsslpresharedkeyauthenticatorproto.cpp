@@ -31,7 +31,8 @@ QScriptValue constructQSslPreSharedKeyAuthenticator(QScriptContext *context, QSc
 
   QSslPreSharedKeyAuthenticator *obj = 0;
   if (context->argumentCount() == 1) {
-    obj = new QSslPreSharedKeyAuthenticator(engine->toScriptValue(context->argument(0)));
+    QSslPreSharedKeyAuthenticator sslPSK = qscriptvalue_cast<QSslPreSharedKeyAuthenticator>(context->argument(0));
+    obj = new QSslPreSharedKeyAuthenticator(sslPSK);
   } else {
     obj = new QSslPreSharedKeyAuthenticator();
   }

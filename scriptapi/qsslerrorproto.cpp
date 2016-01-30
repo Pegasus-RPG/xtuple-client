@@ -11,6 +11,7 @@
 #include "qsslerrorproto.h"
 
 #include <QList>
+#include <QScriptValueIterator>
 
 #if QT_VERSION < 0x050000
 void setupQSslErrorProto(QScriptEngine *engine)
@@ -31,12 +32,12 @@ QScriptValue SslErrorToScriptValue(QScriptEngine *engine, const QSslError::SslEr
 {
   return engine->newVariant(item);
 }
-void SubjectInfoFromScriptValue(const QScriptValue &obj, QSslError::SslError &item)
+void SslErrorFromScriptValue(const QScriptValue &obj, QSslError::SslError &item)
 {
   item = (QSslError::SslError)obj.toInt32();
 }
 
-QScriptValue SslErrorFromScriptValue(QScriptEngine *engine, const QList<QSslError> &errors)
+QScriptValue QListQSslErrortoScriptValue(QScriptEngine *engine, const QList<QSslError> &list)
 {
   QScriptValue newArray = engine->newArray();
   for (int i = 0; i < list.size(); i += 1) {
@@ -44,7 +45,7 @@ QScriptValue SslErrorFromScriptValue(QScriptEngine *engine, const QList<QSslErro
   }
   return newArray;
 }
-void QListQSslErrorfromScriptValue(const QScriptValue &obj, QList<QSslError> &errors)
+void QListQSslErrorfromScriptValue(const QScriptValue &obj, QList<QSslError> &list)
 {
   list = QList<QSslError>();
   QScriptValueIterator it(obj);
@@ -54,7 +55,7 @@ void QListQSslErrorfromScriptValue(const QScriptValue &obj, QList<QSslError> &er
     if (it.flags() & QScriptValue::SkipInEnumeration)
       continue;
     QSslError item = qscriptvalue_cast<QSslError>(it.value());
-    list.insert(it.name(), item);
+    list.insert(it.name().toInt(), item);
   }
 }
 
@@ -100,11 +101,11 @@ void setupQSslErrorProto(QScriptEngine *engine)
   constructor.setProperty("CertificateBlacklisted", QScriptValue(engine, QSslError::CertificateBlacklisted), permanent);
 }
 
-QScriptValue constructQSslError(QScriptContext * /*context*/,
-                                    QScriptEngine  *engine)
+QScriptValue constructQSslError(QScriptContext *context, QScriptEngine  *engine)
 {
   QSslError *obj = 0;
   QSslError::SslError sslError;
+  QString cert;
   if (context->argumentCount() == 2) {
     sslError = static_cast<QSslError::SslError>(context->argument(0).toInt32());
     cert = context->argument(1).toString();
@@ -116,7 +117,7 @@ QScriptValue constructQSslError(QScriptContext * /*context*/,
       sslError = static_cast<QSslError::SslError>(context->argument(0).toInt32());
       obj = new QSslError(sslError);
     } else {
-      obj = new QSslError(static_cast<QSslError>(context->argument(0)));
+      obj = new QSslError(qscriptvalue_cast<QSslError>(context->argument(0)));
     }
   }
   else {
@@ -128,6 +129,9 @@ QScriptValue constructQSslError(QScriptContext * /*context*/,
 
 QSslErrorProto::QSslErrorProto(QObject *parent)
     : QObject(parent)
+{
+}
+QSslErrorProto::~QSslErrorProto()
 {
 }
 
@@ -159,7 +163,7 @@ void QSslErrorProto::swap(QSslError & other)
 {
   QSslError *item = qscriptvalue_cast<QSslError*>(thisObject());
   if (item)
-    item->swap(QSslError & other);
+    item->swap(other);
 }
 
 QString QSslErrorProto::toString() const

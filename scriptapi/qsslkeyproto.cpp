@@ -37,14 +37,15 @@ QScriptValue constructQSslKey(QScriptContext *context,
   QByteArray passPhrase;
 
   if (context->argumentCount() == 1) { // Handle `const QSslKey & other`.
-    obj = new QSslKey(static_cast<QSslKey>(context->argument(0)));
+    QSslKey paramKey = qscriptvalue_cast<QSslKey>(context->argument(0));
+    obj = new QSslKey(paramKey);
   } else if (context->argumentCount() >= 2) {
     QScriptValue arg = context->argument(0);
     // TODO: How to check is this is a QByteArray or QIODevice*???
     key = arg.toString();
     algorithm = static_cast<QSsl::KeyAlgorithm>(context->argument(1).toInt32());
 
-    if (key.length > 0) { // Handle `const QByteArray & encoded`.
+    if (key.length() > 0) { // Handle `const QByteArray & encoded`.
       QByteArray encoded = qscriptvalue_cast<QByteArray>(arg);
       if (context->argumentCount() == 2) {
         obj = new QSslKey(encoded, algorithm);
@@ -61,7 +62,10 @@ QScriptValue constructQSslKey(QScriptContext *context,
         passPhrase = qscriptvalue_cast<QByteArray>(context->argument(4));
         obj = new QSslKey(encoded, algorithm, encoding, type, passPhrase);
       }
-    } else { // Handle `QIODevice * device`.
+    }
+    // TODO: Something is wrong with how we expose QIODevice
+    /*
+    else { // Handle `QIODevice * device`.
       QIODevice *device = qscriptvalue_cast<QIODevice*>(arg);
       if (context->argumentCount() == 2) {
         obj = new QSslKey(device, algorithm);
@@ -79,6 +83,7 @@ QScriptValue constructQSslKey(QScriptContext *context,
         obj = new QSslKey(device, algorithm, encoding, type, passPhrase);
       }
     }
+    */
   } else {
     context->throwError(QScriptContext::UnknownError,
                         "No SSL Key provided to QSslKey");

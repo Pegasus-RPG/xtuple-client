@@ -19,8 +19,8 @@ void setupQSslPreSharedKeyAuthenticatorProto(QScriptEngine *engine);
 #include <QScriptable>
 #include <QSslPreSharedKeyAuthenticator>
 
-Q_DECLARE_METATYPE(QSslPreSharedKeyAuthenticator*)
-Q_DECLARE_METATYPE(QSslPreSharedKeyAuthenticator)
+//Q_DECLARE_METATYPE(QSslPreSharedKeyAuthenticator*) // Already set in qsslpresharedkeyauthenticator.h
+//Q_DECLARE_METATYPE(QSslPreSharedKeyAuthenticator) // Already set in qsslpresharedkeyauthenticator.h
 
 QScriptValue constructQSslPreSharedKeyAuthenticator(QScriptContext *context, QScriptEngine *engine);
 
@@ -39,7 +39,7 @@ class QSslPreSharedKeyAuthenticatorProto : public QObject, public QScriptable
     Q_INVOKABLE QByteArray  preSharedKey() const;
     Q_INVOKABLE void        setIdentity(const QByteArray & identity);
     Q_INVOKABLE void        setPreSharedKey(const QByteArray & preSharedKey);
-    Q_INVOKABLE void        swap(QSslPreSharedKeyAuthenticator & authenticator)
+    Q_INVOKABLE void        swap(QSslPreSharedKeyAuthenticator & authenticator);
 
 };
 

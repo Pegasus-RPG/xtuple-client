@@ -9,6 +9,7 @@
  */
 
 #include "qsslconfigurationproto.h"
+#include <QSslCipher>
 
 #if QT_VERSION < 0x050000
 void setupQSslConfigurationProto(QScriptEngine *engine)
@@ -34,12 +35,14 @@ QScriptValue defaultConfigurationForJS(QScriptContext* context, QScriptEngine* e
 QScriptValue setDefaultConfigurationForJS(QScriptContext* context, QScriptEngine* engine)
 {
   if (context->argumentCount() == 1) {
-    QSslConfiguration configuration = qscriptvalue_cast<QSslConfiguration*>(context->argument(0));
+    QSslConfiguration configuration = qscriptvalue_cast<QSslConfiguration>(context->argument(0));
     QSslConfiguration::setDefaultConfiguration(configuration);
   }
   return engine->undefinedValue();
 }
 
+// TODO: Something is wrong with how we expose QSslCipher.
+/*
 QScriptValue supportedCiphersForJS(QScriptContext* context, QScriptEngine* engine)
 {
   QList<QSslCipher> ciphers = QSslConfiguration::supportedCiphers();
@@ -49,13 +52,14 @@ QScriptValue supportedCiphersForJS(QScriptContext* context, QScriptEngine* engin
   }
   return newArray;
 }
+*/
 
 QScriptValue supportedEllipticCurvesForJS(QScriptContext* context, QScriptEngine* engine)
 {
   QVector<QSslEllipticCurve> curves = QSslConfiguration::supportedEllipticCurves();
   QScriptValue newArray = engine->newArray();
   for (int i = 0; i < curves.size(); i += 1) {
-    newArray.setProperty(i, engine->toScriptValue(curves.at(i));
+    newArray.setProperty(i, engine->toScriptValue(curves.at(i)));
   }
   return newArray;
 }
@@ -89,8 +93,11 @@ void setupQSslConfigurationProto(QScriptEngine *engine)
   constructor.setProperty("defaultConfiguration", defaultConfiguration);
   QScriptValue setDefaultConfiguration = engine->newFunction(setDefaultConfigurationForJS);
   constructor.setProperty("setDefaultConfiguration", setDefaultConfiguration);
+  // TODO: Something is wrong with how we expose QSslCipher.
+  /*
   QScriptValue supportedCiphers = engine->newFunction(supportedCiphersForJS);
   constructor.setProperty("supportedCiphers", supportedCiphers);
+  */
   QScriptValue supportedEllipticCurves = engine->newFunction(supportedEllipticCurvesForJS);
   constructor.setProperty("supportedEllipticCurves", supportedEllipticCurves);
   QScriptValue systemCaCertificates = engine->newFunction(systemCaCertificatesForJS);

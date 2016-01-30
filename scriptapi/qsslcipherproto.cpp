@@ -9,6 +9,7 @@
  */
 
 #include "qsslcipherproto.h"
+#include <QScriptValueIterator>
 
 #if QT_VERSION < 0x050000
 void setupQSslCipherProto(QScriptEngine *engine)
@@ -34,7 +35,7 @@ void QListQSslCipherFromScriptValue(const QScriptValue &obj, QList<QSslCipher> &
     if (it.flags() & QScriptValue::SkipInEnumeration)
       continue;
     QSslCipher item = qscriptvalue_cast<QSslCipher>(it.value());
-    list.insert(it.name(), item);
+    list.insert(it.name().toInt(), item);
   }
 }
 

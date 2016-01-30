@@ -94,6 +94,8 @@ QScriptValue iconDatabasePathForJS(QScriptContext* context, QScriptEngine* engin
   return engine->toScriptValue(QWebSettings::iconDatabasePath());
 }
 
+// TODO: Can't seem to get this working. Something is wrong with how we expose QUrl.
+/*
 QScriptValue iconForUrlForJS(QScriptContext* context, QScriptEngine* engine)
 {
   if (context->argumentCount() == 1) {
@@ -103,6 +105,7 @@ QScriptValue iconForUrlForJS(QScriptContext* context, QScriptEngine* engine)
     return engine->undefinedValue();
   }
 }
+*/
 
 QScriptValue maximumPagesInCacheForJS(QScriptContext* context, QScriptEngine* engine)
 {
@@ -204,6 +207,8 @@ QScriptValue setWebGraphicForJS(QScriptContext* context, QScriptEngine* engine)
   return engine->undefinedValue();
 }
 
+// TODO: Expose QPixmap for this to work.
+/*
 QScriptValue webGraphicForJS(QScriptContext* context, QScriptEngine* engine)
 {
   if (context->argumentCount() == 1) {
@@ -212,12 +217,16 @@ QScriptValue webGraphicForJS(QScriptContext* context, QScriptEngine* engine)
   }
   return engine->undefinedValue();
 }
+*/
 
 void setupQWebSettingsProto(QScriptEngine *engine)
 {
+  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+
   QScriptValue proto = engine->newQObject(new QWebSettingsProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebSettings*>(), proto);
-  engine->setDefaultPrototype(qMetaTypeId<QWebSettings>(),  proto);
+  // TODO: QWebSettings is private.
+  //engine->setDefaultPrototype(qMetaTypeId<QWebSettings>(),  proto);
 
   QScriptValue constructor = engine->newFunction(constructQWebSettings, proto);
   engine->globalObject().setProperty("QWebSettings", constructor);
@@ -301,8 +310,11 @@ void setupQWebSettingsProto(QScriptEngine *engine)
   QScriptValue iconDatabasePath = engine->newFunction(iconDatabasePathForJS);
   constructor.setProperty("iconDatabasePath", iconDatabasePath);
 
+  // TODO: Can't seem to get this working. Something is wrong with how we expose QUrl.
+  /*
   QScriptValue iconForUrl = engine->newFunction(iconForUrlForJS);
   constructor.setProperty("iconForUrl", iconForUrl);
+  */
 
   QScriptValue maximumPagesInCache = engine->newFunction(maximumPagesInCacheForJS);
   constructor.setProperty("maximumPagesInCache", maximumPagesInCache);
@@ -343,8 +355,11 @@ void setupQWebSettingsProto(QScriptEngine *engine)
   QScriptValue setWebGraphic = engine->newFunction(setWebGraphicForJS);
   constructor.setProperty("setWebGraphic", setWebGraphic);
 
+  // TODO: Expose QPixmap for this to work.
+  /*
   QScriptValue webGraphic = engine->newFunction(webGraphicForJS);
   constructor.setProperty("webGraphic", webGraphic);
+  */
 }
 
 QScriptValue constructQWebSettings(QScriptContext * /*context*/, QScriptEngine  *engine)
@@ -384,7 +399,7 @@ QString QWebSettingsProto::fontFamily(QWebSettings::FontFamily which) const
   return QString();
 }
 
-int QWebSettingsProto::fontSize(FontSize type) const
+int QWebSettingsProto::fontSize(QWebSettings::FontSize type) const
 {
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
@@ -493,6 +508,8 @@ QWebSettings::ThirdPartyCookiePolicy QWebSettingsProto::thirdPartyCookiePolicy()
   return QWebSettings::ThirdPartyCookiePolicy();
 }
 
+// TODO: Why doesn't this work?
+/*
 QUrl QWebSettingsProto::userStyleSheetUrl() const
 {
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
@@ -500,5 +517,6 @@ QUrl QWebSettingsProto::userStyleSheetUrl() const
     return item->userStyleSheetUrl();
   return QUrl();
 }
+*/
 
 #endif

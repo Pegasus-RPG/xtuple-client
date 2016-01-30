@@ -9,6 +9,7 @@
  */
 
 #include "qsslcertificateextensionproto.h"
+#include <QScriptValueIterator>
 
 #if QT_VERSION < 0x050000
 void setupQSslCertificateExtensionProto(QScriptEngine *engine)
@@ -59,7 +60,7 @@ QSslCertificateExtensionProto::~QSslCertificateExtensionProto()
 {
 }
 
-QScriptValue constructQSslCertificateExtension(QScriptContext * /*context*/, QScriptEngine  *engine)
+QScriptValue constructQSslCertificateExtension(QScriptContext *context, QScriptEngine  *engine)
 {
   QSslCertificateExtension *obj = 0;
   QString certExt;

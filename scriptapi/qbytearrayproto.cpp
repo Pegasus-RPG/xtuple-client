@@ -52,7 +52,7 @@ void QListQByteArrayfromScriptValue(const QScriptValue &obj, QList<QByteArray> &
     if (it.flags() & QScriptValue::SkipInEnumeration)
       continue;
     QByteArray item = qscriptvalue_cast<QByteArray>(it.value());
-    list.insert(it.name(), item);
+    list.insert(it.name().toInt(), item);
   }
 }
 
