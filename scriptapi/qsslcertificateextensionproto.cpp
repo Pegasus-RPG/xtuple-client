@@ -35,7 +35,7 @@ void QListQSslCertificateExtensionfromScriptValue(const QScriptValue &obj, QList
     if (it.flags() & QScriptValue::SkipInEnumeration)
       continue;
     QSslCertificateExtension item = qscriptvalue_cast<QSslCertificateExtension>(it.value());
-    list.insert(it.name(), item);
+    list.insert(it.name().toInt(), item);
   }
 }
 
