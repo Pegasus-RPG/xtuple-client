@@ -1,174 +1,239 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
-#include "qsslerrorproto.h"
+#include "qsqlrecordproto.h"
 
-#include <QList>
-#include <QScriptValueIterator>
+#include <QString>
 
-#if QT_VERSION < 0x050000
-void setupQSslErrorProto(QScriptEngine *engine)
+void setupQSqlRecordProto(QScriptEngine *engine)
 {
-  Q_UNUSED(engine);
-}
-#else
-/*
-QScriptValue QSslErrortoScriptValue(QScriptEngine *engine, QSslError* const &item)
-{ return engine->newQObject(item); }
+  QScriptValue proto = engine->newQObject(new QSqlRecordProto(engine));
+  engine->setDefaultPrototype(qMetaTypeId<QSqlRecord*>(), proto);
+  engine->setDefaultPrototype(qMetaTypeId<QSqlRecord>(),  proto);
 
-void QSslErrorfromScriptValue(const QScriptValue &obj, QSslError* &item)
-{
-  item = qobject_cast<QSslError*>(obj.toQObject());
-}
-*/
-QScriptValue SslErrorToScriptValue(QScriptEngine *engine, const QSslError::SslError &item)
-{
-  return engine->newVariant(item);
-}
-void SslErrorFromScriptValue(const QScriptValue &obj, QSslError::SslError &item)
-{
-  item = (QSslError::SslError)obj.toInt32();
+  QScriptValue constructor = engine->newFunction(constructQSqlRecord,
+                                                 proto);
+  engine->globalObject().setProperty("QSqlRecord",  constructor);
 }
 
-QScriptValue QListQSslErrortoScriptValue(QScriptEngine *engine, const QList<QSslError> &list)
+QScriptValue constructQSqlRecord(QScriptContext *context,
+                                 QScriptEngine  *engine)
 {
-  QScriptValue newArray = engine->newArray();
-  for (int i = 0; i < list.size(); i += 1) {
-    newArray.setProperty(i, engine->toScriptValue(list.at(i)));
-  }
-  return newArray;
-}
-void QListQSslErrorfromScriptValue(const QScriptValue &obj, QList<QSslError> &list)
-{
-  list = QList<QSslError>();
-  QScriptValueIterator it(obj);
-
-  while (it.hasNext()) {
-    it.next();
-    if (it.flags() & QScriptValue::SkipInEnumeration)
-      continue;
-    QSslError item = qscriptvalue_cast<QSslError>(it.value());
-    list.insert(it.name().toInt(), item);
-  }
-}
-
-void setupQSslErrorProto(QScriptEngine *engine)
-{
-  qScriptRegisterMetaType(engine, QListQSslErrortoScriptValue, QListQSslErrorfromScriptValue);
-  //qScriptRegisterMetaType(engine, QSslErrortoScriptValue, QSslErrorfromScriptValue);
-  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-
-  QScriptValue proto = engine->newQObject(new QSslErrorProto(engine));
-  engine->setDefaultPrototype(qMetaTypeId<QSslError*>(), proto);
-  engine->setDefaultPrototype(qMetaTypeId<QSslError>(),  proto);
-
-  QScriptValue constructor = engine->newFunction(constructQSslError, proto);
-  engine->globalObject().setProperty("QSslError",  constructor);
-
-  qScriptRegisterMetaType(engine, SslErrorToScriptValue, SslErrorFromScriptValue);
-  constructor.setProperty("NoError", QScriptValue(engine, QSslError::NoError), permanent);
-  constructor.setProperty("UnableToGetIssuerCertificate", QScriptValue(engine, QSslError::UnableToGetIssuerCertificate), permanent);
-  constructor.setProperty("UnableToDecryptCertificateSignature", QScriptValue(engine, QSslError::UnableToDecryptCertificateSignature), permanent);
-  constructor.setProperty("UnableToDecodeIssuerPublicKey", QScriptValue(engine, QSslError::UnableToDecodeIssuerPublicKey), permanent);
-  constructor.setProperty("CertificateSignatureFailed", QScriptValue(engine, QSslError::CertificateSignatureFailed), permanent);
-  constructor.setProperty("CertificateNotYetValid", QScriptValue(engine, QSslError::CertificateNotYetValid), permanent);
-  constructor.setProperty("CertificateExpired", QScriptValue(engine, QSslError::CertificateExpired), permanent);
-  constructor.setProperty("InvalidNotBeforeField", QScriptValue(engine, QSslError::InvalidNotBeforeField), permanent);
-  constructor.setProperty("InvalidNotAfterField", QScriptValue(engine, QSslError::InvalidNotAfterField), permanent);
-  constructor.setProperty("SelfSignedCertificate", QScriptValue(engine, QSslError::SelfSignedCertificate), permanent);
-  constructor.setProperty("SelfSignedCertificateInChain", QScriptValue(engine, QSslError::SelfSignedCertificateInChain), permanent);
-  constructor.setProperty("UnableToGetLocalIssuerCertificate", QScriptValue(engine, QSslError::UnableToGetLocalIssuerCertificate), permanent);
-  constructor.setProperty("UnableToVerifyFirstCertificate", QScriptValue(engine, QSslError::UnableToVerifyFirstCertificate), permanent);
-  constructor.setProperty("CertificateRevoked", QScriptValue(engine, QSslError::CertificateRevoked), permanent);
-  constructor.setProperty("InvalidCaCertificate", QScriptValue(engine, QSslError::InvalidCaCertificate), permanent);
-  constructor.setProperty("PathLengthExceeded", QScriptValue(engine, QSslError::PathLengthExceeded), permanent);
-  constructor.setProperty("InvalidPurpose", QScriptValue(engine, QSslError::InvalidPurpose), permanent);
-  constructor.setProperty("CertificateUntrusted", QScriptValue(engine, QSslError::CertificateUntrusted), permanent);
-  constructor.setProperty("CertificateRejected", QScriptValue(engine, QSslError::CertificateRejected), permanent);
-  constructor.setProperty("SubjectIssuerMismatch", QScriptValue(engine, QSslError::SubjectIssuerMismatch), permanent);
-  constructor.setProperty("AuthorityIssuerSerialNumberMismatch", QScriptValue(engine, QSslError::AuthorityIssuerSerialNumberMismatch), permanent);
-  constructor.setProperty("NoPeerCertificate", QScriptValue(engine, QSslError::NoPeerCertificate), permanent);
-  constructor.setProperty("HostNameMismatch", QScriptValue(engine, QSslError::HostNameMismatch), permanent);
-  constructor.setProperty("UnspecifiedError", QScriptValue(engine, QSslError::UnspecifiedError), permanent);
-  constructor.setProperty("NoSslSupport", QScriptValue(engine, QSslError::NoSslSupport), permanent);
-  constructor.setProperty("CertificateBlacklisted", QScriptValue(engine, QSslError::CertificateBlacklisted), permanent);
-}
-
-QScriptValue constructQSslError(QScriptContext *context, QScriptEngine  *engine)
-{
-  QSslError *obj = 0;
-  QSslError::SslError sslError;
-  QString cert;
-  if (context->argumentCount() == 2) {
-    sslError = static_cast<QSslError::SslError>(context->argument(0).toInt32());
-    cert = context->argument(1).toString();
-    obj = new QSslError(sslError, QSslCertificate(cert.toLocal8Bit(), QSsl::Pem));
-  }
-  else if (context->argumentCount() == 1) {
-    QScriptValue arg = context->argument(0);
-    if (arg.isString() or arg.isNumber()) {
-      sslError = static_cast<QSslError::SslError>(context->argument(0).toInt32());
-      obj = new QSslError(sslError);
-    } else {
-      obj = new QSslError(qscriptvalue_cast<QSslError>(context->argument(0)));
-    }
-  }
-  else {
-    obj = new QSslError();
-  }
+  QSqlRecord *obj = 0;
+  if (context->argumentCount() == 0)
+    obj = new QSqlRecord();
+  else if (context->argumentCount() == 1)
+    qWarning("QSqlRecordProto copy constructor not implemented yet");
 
   return engine->toScriptValue(obj);
 }
 
-QSslErrorProto::QSslErrorProto(QObject *parent)
+QSqlRecordProto::QSqlRecordProto(QObject *parent)
     : QObject(parent)
 {
 }
 
-QSslCertificate QSslErrorProto::certificate() const
+void QSqlRecordProto::append(const QSqlField & field)
 {
-  QSslError *item = qscriptvalue_cast<QSslError*>(thisObject());
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
   if (item)
-    return item->certificate();
-  return QSslCertificate();
+    item->append(field);
 }
 
-QSslError::SslError QSslErrorProto::error() const
+void QSqlRecordProto::clear()
 {
-  QSslError *item = qscriptvalue_cast<QSslError*>(thisObject());
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
   if (item)
-    return item->error();
-  return QSslError::SslError();
+    item->clear();
 }
 
-QString QSslErrorProto::errorString() const
+void QSqlRecordProto::clearValues()
 {
-  QSslError *item = qscriptvalue_cast<QSslError*>(thisObject());
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
   if (item)
-    return item->errorString();
+    item->clearValues();
+}
+
+bool QSqlRecordProto::contains(const QString &name) const
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    return item->contains(name);
+  return false;
+}
+
+int QSqlRecordProto::count() const
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    return item->count();
+  return 0;
+}
+
+QSqlField QSqlRecordProto::field(int index) const
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    return item->field(index);
+  return QSqlField();
+}
+
+QSqlField QSqlRecordProto::field(const QString &name) const
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    return item->field(name);
+  return QSqlField();
+}
+
+QString QSqlRecordProto::fieldName(int index) const
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    return item->fieldName(index);
   return QString();
 }
 
-void QSslErrorProto::swap(QSslError & other)
+int QSqlRecordProto::indexOf(const QString & name) const
 {
-  QSslError *item = qscriptvalue_cast<QSslError*>(thisObject());
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
   if (item)
-    item->swap(other);
+    return item->indexOf(name);
+  return -1;
 }
 
-QString QSslErrorProto::toString() const
+void QSqlRecordProto::insert(int pos, const QSqlField &field)
 {
-  QSslError *item = qscriptvalue_cast<QSslError*>(thisObject());
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
   if (item)
-    return item->errorString();
-  return QString();
+    item->insert(pos, field);
 }
 
-#endif
+bool QSqlRecordProto::isEmpty() const
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    return item->isEmpty();
+  return false;
+}
+
+bool QSqlRecordProto::isGenerated(const QString &name) const
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    return item->isGenerated(name);
+  return false;
+}
+
+bool QSqlRecordProto::isGenerated(int index) const
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    return item->isGenerated(index);
+  return false;
+}
+
+bool QSqlRecordProto::isNull(const QString &name) const
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    return item->isNull(name);
+  return false;
+}
+
+bool QSqlRecordProto::isNull(int index) const
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    return item->isNull(index);
+  return false;
+}
+
+void QSqlRecordProto::remove(int pos)
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    item->remove(pos);
+}
+
+void QSqlRecordProto::replace(int pos, const QSqlField &field)
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    item->replace(pos, field);
+}
+
+void QSqlRecordProto::setGenerated(const QString &name, bool generated)
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    item->setGenerated(name, generated);
+}
+
+void QSqlRecordProto::setGenerated(int index, bool generated)
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    item->setGenerated(index, generated);
+}
+
+void QSqlRecordProto::setNull(int index)
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    item->setNull(index);
+}
+
+void QSqlRecordProto::setNull(const QString &name)
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    item->setNull(name);
+}
+
+void QSqlRecordProto::setValue(int index, const QVariant &val)
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    item->setValue(index, val);
+}
+
+void QSqlRecordProto::setValue(const QString &name, const QVariant &val)
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    item->setValue(name, val);
+}
+
+QVariant QSqlRecordProto::value(int index) const
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    return item->value(index);
+  return QVariant();
+}
+
+QVariant QSqlRecordProto::value(const QString &name) const
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    return item->value(name);
+  return QVariant();
+}
+
+/*
+QString QSqlRecordProto::toString() const
+{
+  QSqlRecord *item = qscriptvalue_cast<QSqlRecord*>(thisObject());
+  if (item)
+    return QString("QSqlRecord()");
+  return QString("QSqlRecord(unknown)");
+}
+*/
