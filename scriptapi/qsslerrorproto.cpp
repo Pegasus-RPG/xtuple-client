@@ -27,21 +27,35 @@ void QSslErrorfromScriptValue(const QScriptValue &obj, QSslError* &item)
   item = qobject_cast<QSslError*>(obj.toQObject());
 }
 */
-
-QScriptValue QListQSslErrortoScriptValue(QScriptEngine *engine, const QList<QSslError> &errors)
+QScriptValue SslErrorToScriptValue(QScriptEngine *engine, const QSslError::SslError &item)
 {
-  QScriptValue errorList = engine->newArray();
-  for (int i = 0; i < errors.size(); i += 1) {
-    QScriptValue err = engine->newObject();
-    err.setProperty("message", errors.at(i).errorString());
-    err.setProperty("code", errors.at(i).error());
-    errorList.setProperty(i, err);
+  return engine->newVariant(item);
+}
+void SubjectInfoFromScriptValue(const QScriptValue &obj, QSslError::SslError &item)
+{
+  item = (QSslError::SslError)obj.toInt32();
+}
+
+QScriptValue SslErrorFromScriptValue(QScriptEngine *engine, const QList<QSslError> &errors)
+{
+  QScriptValue newArray = engine->newArray();
+  for (int i = 0; i < list.size(); i += 1) {
+    newArray.setProperty(i, engine->toScriptValue(list.at(i)));
   }
-  return errorList;
+  return newArray;
 }
 void QListQSslErrorfromScriptValue(const QScriptValue &obj, QList<QSslError> &errors)
 {
-  // TODO: Do we need this?
+  list = QList<QSslError>();
+  QScriptValueIterator it(obj);
+
+  while (it.hasNext()) {
+    it.next();
+    if (it.flags() & QScriptValue::SkipInEnumeration)
+      continue;
+    QSslError item = qscriptvalue_cast<QSslError>(it.value());
+    list.insert(it.name(), item);
+  }
 }
 
 void setupQSslErrorProto(QScriptEngine *engine)
@@ -57,6 +71,7 @@ void setupQSslErrorProto(QScriptEngine *engine)
   QScriptValue constructor = engine->newFunction(constructQSslError, proto);
   engine->globalObject().setProperty("QSslError",  constructor);
 
+  qScriptRegisterMetaType(engine, SslErrorToScriptValue, SslErrorFromScriptValue);
   constructor.setProperty("NoError", QScriptValue(engine, QSslError::NoError), permanent);
   constructor.setProperty("UnableToGetIssuerCertificate", QScriptValue(engine, QSslError::UnableToGetIssuerCertificate), permanent);
   constructor.setProperty("UnableToDecryptCertificateSignature", QScriptValue(engine, QSslError::UnableToDecryptCertificateSignature), permanent);

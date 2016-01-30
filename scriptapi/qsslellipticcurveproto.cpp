@@ -16,17 +16,68 @@ void setupQSslEllipticCurveProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
+QScriptValue QVectorQSslEllipticCurveToScriptValue(QScriptEngine *engine, const QVector<QSslEllipticCurve> &list)
+{
+  QScriptValue newArray = engine->newArray();
+  for (int i = 0; i < list.size(); i += 1) {
+    newArray.setProperty(i, engine->toScriptValue(list.at(i)));
+  }
+  return newArray;
+}
+void QVectorQSslEllipticCurveFromScriptValue(const QScriptValue &obj, QVector<QSslEllipticCurve> &list)
+{
+  list = QVector<QSslEllipticCurve>();
+  QScriptValueIterator it(obj);
+
+  while (it.hasNext()) {
+    it.next();
+    if (it.flags() & QScriptValue::SkipInEnumeration)
+      continue;
+    QSslEllipticCurve item = qscriptvalue_cast<QSslEllipticCurve>(it.value());
+    list.insert(it.name().toInt32, item);
+  }
+}
+
+QScriptValue fromLongNameForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  if (context->argumentCount() == 1) {
+    QString name = context->argument(0).toString();
+    QSslEllipticCurve fromLongName = QSslEllipticCurve::fromLongName(name);
+    return engine->toScriptValue(fromLongName);
+  } else {
+    return engine->undefinedValue();
+  }
+}
+
+QScriptValue fromShortNameForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  if (context->argumentCount() == 1) {
+    QString name = context->argument(0).toString();
+    QSslEllipticCurve fromShortName = QSslEllipticCurve::fromShortName(name);
+    return engine->toScriptValue(fromShortName);
+  } else {
+    return engine->undefinedValue();
+  }
+}
+
 void setupQSslEllipticCurveProto(QScriptEngine *engine)
 {
   QScriptValue proto = engine->newQObject(new QSslEllipticCurveProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QSslEllipticCurve*>(), proto);
+  engine->setDefaultPrototype(qMetaTypeId<QSslEllipticCurve>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQSslEllipticCurve, proto);
   engine->globalObject().setProperty("QSslEllipticCurve",  constructor);
+
+  qScriptRegisterMetaType(engine, QVectorQSslEllipticCurveToScriptValue, QVectorQSslEllipticCurveFromScriptValue);
+
+  QScriptValue fromLongName = engine->newFunction(fromLongNameForJS);
+  constructor.setProperty("fromLongName", fromLongName);
+  QScriptValue fromShortName = engine->newFunction(fromShortNameForJS);
+  constructor.setProperty("fromShortName", fromShortName);
 }
 
-QScriptValue constructQSslEllipticCurve(QScriptContext * /*context*/,
-                                    QScriptEngine  *engine)
+QScriptValue constructQSslEllipticCurve(QScriptContext * /*context*/, QScriptEngine  *engine)
 {
   QSslEllipticCurve *obj = 0;
   obj = new QSslEllipticCurve();
@@ -35,6 +86,9 @@ QScriptValue constructQSslEllipticCurve(QScriptContext * /*context*/,
 
 QSslEllipticCurveProto::QSslEllipticCurveProto(QObject *parent)
     : QObject(parent)
+{
+}
+QSslEllipticCurveProto::~QSslEllipticCurveProto()
 {
 }
 
@@ -68,22 +122,6 @@ QString QSslEllipticCurveProto::shortName() const
   if (item)
     return item->shortName();
   return QString();
-}
-
-QSslEllipticCurve QSslEllipticCurveProto::fromLongName(const QString & name)
-{
-  QSslEllipticCurve *item = qscriptvalue_cast<QSslEllipticCurve*>(thisObject());
-  if (item)
-    return item->fromLongName(name);
-  return QSslEllipticCurve();
-}
-
-QSslEllipticCurve QSslEllipticCurveProto::fromShortName(const QString & name)
-{
-  QSslEllipticCurve *item = qscriptvalue_cast<QSslEllipticCurve*>(thisObject());
-  if (item)
-    return item->fromShortName(name);
-  return QSslEllipticCurve();
 }
 
 #endif

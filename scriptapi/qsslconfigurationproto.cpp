@@ -16,31 +16,83 @@ void setupQSslConfigurationProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
+QScriptValue NextProtocolNegotiationStatusToScriptValue(QScriptEngine *engine, const QSslConfiguration::NextProtocolNegotiationStatus &item)
+{
+  return engine->newVariant(item);
+}
+void NextProtocolNegotiationStatusFromScriptValue(const QScriptValue &obj, QSslConfiguration::NextProtocolNegotiationStatus &item)
+{
+  item = (QSslConfiguration::NextProtocolNegotiationStatus)obj.toInt32();
+}
+
 QScriptValue defaultConfigurationForJS(QScriptContext* context, QScriptEngine* engine)
 {
   QSslConfiguration defaultConfiguration = QSslConfiguration::defaultConfiguration();
   return engine->toScriptValue(defaultConfiguration);
 }
+
+QScriptValue setDefaultConfigurationForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  if (context->argumentCount() == 1) {
+    QSslConfiguration configuration = qscriptvalue_cast<QSslConfiguration*>(context->argument(0));
+    QSslConfiguration::setDefaultConfiguration(configuration);
+  }
+  return engine->undefinedValue();
+}
+
+QScriptValue supportedCiphersForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  QList<QSslCipher> ciphers = QSslConfiguration::supportedCiphers();
+  QScriptValue newArray = engine->newArray();
+  for (int i = 0; i < ciphers.size(); i += 1) {
+    newArray.setProperty(i, engine->toScriptValue(ciphers.at(i)));
+  }
+  return newArray;
+}
+
+QScriptValue supportedEllipticCurvesForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  QVector<QSslEllipticCurve> curves = QSslConfiguration::supportedEllipticCurves();
+  QScriptValue newArray = engine->newArray();
+  for (int i = 0; i < curves.size(); i += 1) {
+    newArray.setProperty(i, engine->toScriptValue(curves.at(i));
+  }
+  return newArray;
+}
+
 QScriptValue systemCaCertificatesForJS(QScriptContext* context, QScriptEngine* engine)
 {
   QList<QSslCertificate> certificates = QSslConfiguration::systemCaCertificates();
-  QScriptValue certificateList = engine->newArray();
+  QScriptValue newArray = engine->newArray();
   for (int i = 0; i < certificates.size(); i += 1) {
-    certificateList.setProperty(i, certificates.at(i).toText());
+    newArray.setProperty(i, engine->toScriptValue(certificates.at(i)));
   }
-  return certificateList;
+  return newArray;
 }
 
 void setupQSslConfigurationProto(QScriptEngine *engine)
 {
+  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+
   QScriptValue proto = engine->newQObject(new QSslConfigurationProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QSslConfiguration*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QSslConfiguration>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQSslConfiguration, proto);
 
+  qScriptRegisterMetaType(engine, NextProtocolNegotiationStatusToScriptValue, NextProtocolNegotiationStatusFromScriptValue);
+  constructor.setProperty("NextProtocolNegotiationNone", QScriptValue(engine, QSslConfiguration::NextProtocolNegotiationNone), permanent);
+  constructor.setProperty("NextProtocolNegotiationNegotiated", QScriptValue(engine, QSslConfiguration::NextProtocolNegotiationNegotiated), permanent);
+  constructor.setProperty("NextProtocolNegotiationUnsupported", QScriptValue(engine, QSslConfiguration::NextProtocolNegotiationUnsupported), permanent);
+
   QScriptValue defaultConfiguration = engine->newFunction(defaultConfigurationForJS);
   constructor.setProperty("defaultConfiguration", defaultConfiguration);
+  QScriptValue setDefaultConfiguration = engine->newFunction(setDefaultConfigurationForJS);
+  constructor.setProperty("setDefaultConfiguration", setDefaultConfiguration);
+  QScriptValue supportedCiphers = engine->newFunction(supportedCiphersForJS);
+  constructor.setProperty("supportedCiphers", supportedCiphers);
+  QScriptValue supportedEllipticCurves = engine->newFunction(supportedEllipticCurvesForJS);
+  constructor.setProperty("supportedEllipticCurves", supportedEllipticCurves);
   QScriptValue systemCaCertificates = engine->newFunction(systemCaCertificatesForJS);
   constructor.setProperty("systemCaCertificates", systemCaCertificates);
 
@@ -314,29 +366,6 @@ bool QSslConfigurationProto::testSslOption(QSsl::SslOption option) const
   if (item)
     return item->testSslOption(option);
   return false;
-}
-
-void QSslConfigurationProto::setDefaultConfiguration(const QSslConfiguration & configuration)
-{
-  QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(thisObject());
-  if (item)
-    item->setDefaultConfiguration(configuration);
-}
-
-QList<QSslCipher> QSslConfigurationProto::supportedCiphers()
-{
-  QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(thisObject());
-  if (item)
-    return item->supportedCiphers();
-  return QList<QSslCipher>();
-}
-
-QVector<QSslEllipticCurve> QSslConfigurationProto::supportedEllipticCurves()
-{
-  QSslConfiguration *item = qscriptvalue_cast<QSslConfiguration*>(thisObject());
-  if (item)
-    return item->supportedEllipticCurves();
-  return QVector<QSslEllipticCurve>();
 }
 
 #endif

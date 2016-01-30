@@ -25,17 +25,109 @@ void SubjectInfoFromScriptValue(const QScriptValue &obj, QSslCertificate::Subjec
   item = (QSslCertificate::SubjectInfo)obj.toInt32();
 }
 
-QScriptValue QListQSslCertificatetoScriptValue(QScriptEngine *engine, const QList<QSslCertificate> &certificates)
+QScriptValue QListQSslCertificatetoScriptValue(QScriptEngine *engine, const QList<QSslCertificate> &list)
 {
-  QScriptValue certificateList = engine->newArray();
-  for (int i = 0; i < certificates.size(); i += 1) {
-    certificateList.setProperty(i, certificates.at(i).toText());
+  QScriptValue newArray = engine->newArray();
+  for (int i = 0; i < list.size(); i += 1) {
+    newArray.setProperty(i, engine->toScriptValue(list.at(i)));
   }
-  return certificateList;
+  return newArray;
 }
-void QListQSslCertificatefromScriptValue(const QScriptValue &obj, QList<QSslCertificate> &certificates)
+void QListQSslCertificatefromScriptValue(const QScriptValue &obj, QList<QSslCertificate> &list)
 {
-  // TODO: Do we need this?
+  list = QList<QSslCertificate>();
+  QScriptValueIterator it(obj);
+
+  while (it.hasNext()) {
+    it.next();
+    if (it.flags() & QScriptValue::SkipInEnumeration)
+      continue;
+    QSslCertificate item = qscriptvalue_cast<QSslCertificate>(it.value());
+    list.insert(it.name(), item);
+  }
+}
+
+QScriptValue fromDataForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  if (context->argumentCount() == 1) {
+    QByteArray data = qscriptvalue_cast<QByteArray>(context->argument(0));
+    return engine->toScriptValue(QSslCertificate::fromData(data));
+  } else if (context->argumentCount() == 2) {
+    QByteArray data = qscriptvalue_cast<QByteArray>(context->argument(0));
+    QSsl::EncodingFormat format = (QSsl::SslProtocol)context->argument(1).toInt32();
+    return engine->toScriptValue(QSslCertificate::fromData(data, format));
+  } else {
+    return engine->undefinedValue();
+  }
+}
+
+QScriptValue fromDeviceForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  if (context->argumentCount() == 1) {
+    QIODevice *device = qscriptvalue_cast<QIODevice*>(context->argument(0));
+    return engine->toScriptValue(QSslCertificate::fromDevice(device));
+  } else if (context->argumentCount() == 2) {
+    QIODevice *device = qscriptvalue_cast<QIODevice*>(context->argument(0));
+    QSsl::EncodingFormat format = (QSsl::SslProtocol)context->argument(1).toInt32();
+    return engine->toScriptValue(QSslCertificate::fromDevice(device, format));
+  } else {
+    return engine->undefinedValue();
+  }
+}
+
+QScriptValue fromPathForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  if (context->argumentCount() == 1) {
+    QString path = context->argument(0).toString();
+    return engine->toScriptValue(QSslCertificate::fromPath(path));
+  } else if (context->argumentCount() == 2) {
+    QString path = context->argument(0).toString();
+    QSsl::EncodingFormat format = (QSsl::SslProtocol)context->argument(1).toInt32();
+    return engine->toScriptValue(QSslCertificate::fromPath(path, format));
+  } else if (context->argumentCount() == 3) {
+    QString path = context->argument(0).toString();
+    QSsl::EncodingFormat format = (QSsl::SslProtocol)context->argument(1).toInt32();
+    QRegExp::PatternSyntax syntax = (QRegExp::PatternSyntax)context->argument(2).toInt32();
+    return engine->toScriptValue(QSslCertificate::fromPath(path, format, syntax));
+  } else {
+    return engine->undefinedValue();
+  }
+}
+
+QScriptValue importPkcs12ForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  if (context->argumentCount() == 3) {
+    QIODevice *device = qscriptvalue_cast<QIODevice*>(context->argument(0));
+    QSslKey *key = qscriptvalue_cast<QSslKey*>(context->argument(1));
+    QSslCertificate *certificate = qscriptvalue_cast<QSslCertificate*>(context->argument(2));
+    return engine->toScriptValue(QSslCertificate::importPkcs12(device, key, certificate));
+  } else if (context->argumentCount() == 4) {
+    QIODevice *device = qscriptvalue_cast<QIODevice*>(context->argument(0));
+    QSslKey *key = qscriptvalue_cast<QSslKey*>(context->argument(1));
+    QSslCertificate *certificate = qscriptvalue_cast<QSslCertificate*>(context->argument(2));
+    QList<QSslCertificate> *caCertificates = qscriptvalue_cast<QList<QSslCertificate>*>(context->argument(3));
+    return engine->toScriptValue(QSslCertificate::importPkcs12(device, key, certificate, caCertificates));
+  } else if (context->argumentCount() == 5) {
+    QIODevice *device = qscriptvalue_cast<QIODevice*>(context->argument(0));
+    QSslKey *key = qscriptvalue_cast<QSslKey*>(context->argument(1));
+    QSslCertificate *certificate = qscriptvalue_cast<QSslCertificate*>(context->argument(2));
+    QList<QSslCertificate> *caCertificates = qscriptvalue_cast<QList<QSslCertificate>*>(context->argument(3));
+    QByteArray passPhrase = qscriptvalue_cast<QByteArray>(context->argument(4));
+    return engine->toScriptValue(QSslCertificate::importPkcs12(device, key, certificate, caCertificates, passPhrase));
+  } else {
+    return engine->toScriptValue(false);
+  }
+}
+
+QScriptValue verifyForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  if (context->argumentCount() == 2) {
+    QList<QSslCertificate> certificateChain = qscriptvalue_cast<QList<QSslCertificate>>(context->argument(0));
+    QString hostName = context->argument(1).toString();
+    return engine->toScriptValue(QSslCertificate::verify(certificateChain, hostName));
+  } else {
+    return engine->undefinedValue();
+  }
 }
 
 void setupQSslCertificateProto(QScriptEngine *engine)
@@ -62,6 +154,17 @@ void setupQSslCertificateProto(QScriptEngine *engine)
   constructor.setProperty("DistinguishedNameQualifier", QScriptValue(engine, QSslCertificate::DistinguishedNameQualifier), permanent);
   constructor.setProperty("SerialNumber",               QScriptValue(engine, QSslCertificate::SerialNumber), permanent);
   constructor.setProperty("EmailAddress",               QScriptValue(engine, QSslCertificate::EmailAddress), permanent);
+
+  QScriptValue fromData = engine->newFunction(fromDataForJS);
+  constructor.setProperty("fromData", fromData);
+  QScriptValue fromDevice = engine->newFunction(fromDeviceForJS);
+  constructor.setProperty("fromDevice", fromDevice);
+  QScriptValue fromPath = engine->newFunction(fromPathForJS);
+  constructor.setProperty("fromPath", fromPath);
+  QScriptValue importPkcs12 = engine->newFunction(importPkcs12ForJS);
+  constructor.setProperty("importPkcs12", importPkcs12);
+  QScriptValue verify = engine->newFunction(verifyForJS);
+  constructor.setProperty("verify", verify);
 }
 
 #include <QSslCertificate>
@@ -262,46 +365,6 @@ QByteArray QSslCertificateProto::version() const
   if (item)
     return item->version();
   return QByteArray();
-}
-
-QList<QSslCertificate> QSslCertificateProto::fromData(const QByteArray & data, QSsl::EncodingFormat format)
-{
-  QSslCertificate *item = qscriptvalue_cast<QSslCertificate*>(thisObject());
-  if (item)
-    return item->fromData(data, format);
-  return QList<QSslCertificate>();
-}
-
-QList<QSslCertificate> QSslCertificateProto::fromDevice(QIODevice * device, QSsl::EncodingFormat format)
-{
-  QSslCertificate *item = qscriptvalue_cast<QSslCertificate*>(thisObject());
-  if (item)
-    return item->fromDevice(device, format);
-  return QList<QSslCertificate>();
-}
-
-QList<QSslCertificate> QSslCertificateProto::fromPath(const QString & path, QSsl::EncodingFormat format, QRegExp::PatternSyntax syntax)
-{
-  QSslCertificate *item = qscriptvalue_cast<QSslCertificate*>(thisObject());
-  if (item)
-    return item->fromPath(path, format, syntax);
-  return QList<QSslCertificate>();
-}
-
-bool QSslCertificateProto::importPkcs12(QIODevice * device, QSslKey * key, QSslCertificate * certificate, QList<QSslCertificate> * caCertificates, const QByteArray & passPhrase)
-{
-  QSslCertificate *item = qscriptvalue_cast<QSslCertificate*>(thisObject());
-  if (item)
-    return item->importPkcs12(device, key, certificate, caCertificates, passPhrase);
-  return false;
-}
-
-QList<QSslError> QSslCertificateProto::verify(const QList<QSslCertificate> & certificateChain, const QString & hostName)
-{
-  QSslCertificate *item = qscriptvalue_cast<QSslCertificate*>(thisObject());
-  if (item)
-    return item->verify(certificateChain, hostName);
-  return QList<QSslError>();
 }
 
 #endif

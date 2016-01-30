@@ -8,8 +8,8 @@
  * to be bound by its terms.
  */
 
-#ifndef __QSSLCERTIFICATEPPROTO_H__
-#define __QSSLCERTIFICATEPPROTO_H__
+#ifndef __QSSLCERTIFICATEPROTO_H__
+#define __QSSLCERTIFICATEPROTO_H__
 
 #include <QScriptEngine>
 
@@ -59,12 +59,6 @@ class QSslCertificateProto : public QObject, public QScriptable
     Q_INVOKABLE QByteArray                                          toPem() const;
     Q_INVOKABLE QString                                             toText() const;
     Q_INVOKABLE QByteArray                                          version() const;
-
-    Q_INVOKABLE QList<QSslCertificate>  fromData(const QByteArray & data, QSsl::EncodingFormat format = QSsl::Pem);
-    Q_INVOKABLE QList<QSslCertificate>  fromDevice(QIODevice * device, QSsl::EncodingFormat format = QSsl::Pem);
-    Q_INVOKABLE QList<QSslCertificate>  fromPath(const QString & path, QSsl::EncodingFormat format = QSsl::Pem, QRegExp::PatternSyntax syntax = QRegExp::FixedString);
-    Q_INVOKABLE bool                    importPkcs12(QIODevice * device, QSslKey * key, QSslCertificate * certificate, QList<QSslCertificate> * caCertificates = 0, const QByteArray & passPhrase = QByteArray());
-    Q_INVOKABLE QList<QSslError>        verify(const QList<QSslCertificate> & certificateChain, const QString & hostName = QString());
 
 };
 

@@ -8,8 +8,8 @@
  * to be bound by its terms.
  */
 
-#ifndef __QSSCIPHERPPROTO_H__
-#define __QSSCIPHERPPROTO_H__
+#ifndef __QSSCIPHERPROTO_H__
+#define __QSSCIPHERPROTO_H__
 
 #include <QScriptEngine>
 
@@ -21,6 +21,7 @@ void setupQSslCipherProto(QScriptEngine *engine);
 #include <QSslCipher>
 
 Q_DECLARE_METATYPE(QSslCipher*)
+Q_DECLARE_METATYPE(QSslCipher)
 
 QScriptValue constructQSslCipher(QScriptContext *context, QScriptEngine *engine);
 

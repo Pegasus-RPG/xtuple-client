@@ -8,8 +8,8 @@
  * to be bound by its terms.
  */
 
-#ifndef __QSSLELLIPTICCURVEPPROTO_H__
-#define __QSSLELLIPTICCURVEPPROTO_H__
+#ifndef __QSSLELLIPTICCURVEPROTO_H__
+#define __QSSLELLIPTICCURVEPROTO_H__
 
 #include <QScriptEngine>
 
@@ -20,6 +20,7 @@ void setupQSslEllipticCurveProto(QScriptEngine *engine);
 #include <QSslEllipticCurve>
 
 Q_DECLARE_METATYPE(QSslEllipticCurve*)
+Q_DECLARE_METATYPE(QSslEllipticCurve)
 
 QScriptValue constructQSslEllipticCurve(QScriptContext *context, QScriptEngine *engine);
 
@@ -34,9 +35,6 @@ class QSslEllipticCurveProto : public QObject, public QScriptable
     Q_INVOKABLE bool    isValid() const;
     Q_INVOKABLE QString longName() const;
     Q_INVOKABLE QString shortName() const;
-
-    Q_INVOKABLE QSslEllipticCurve   fromLongName(const QString & name);
-    Q_INVOKABLE QSslEllipticCurve   fromShortName(const QString & name);
 
 };
 

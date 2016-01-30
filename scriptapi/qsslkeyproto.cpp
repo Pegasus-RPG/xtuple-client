@@ -22,8 +22,7 @@ void setupQSslKeyProto(QScriptEngine *engine)
   engine->setDefaultPrototype(qMetaTypeId<QSslKey*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QSslKey>(), proto);
 
-  QScriptValue constructor = engine->newFunction(constructQSslKey,
-                                                 proto);
+  QScriptValue constructor = engine->newFunction(constructQSslKey, proto);
   engine->globalObject().setProperty("QSslKey",  constructor);
 }
 
@@ -35,23 +34,55 @@ QScriptValue constructQSslKey(QScriptContext *context,
   QSsl::KeyAlgorithm algorithm;
   QSsl::EncodingFormat encoding;
   QSsl::KeyType type;
-  if (context->argumentCount() == 2)
-  {
-    key = context->argument(0).toString();
+  QByteArray passPhrase;
+
+  if (context->argumentCount() == 1) { // Handle `const QSslKey & other`.
+    obj = new QSslKey(static_cast<QSslKey>(context->argument(0)));
+  } else if (context->argumentCount() >= 2) {
+    QScriptValue arg = context->argument(0);
+    // TODO: How to check is this is a QByteArray or QIODevice*???
+    key = arg.toString();
     algorithm = static_cast<QSsl::KeyAlgorithm>(context->argument(1).toInt32());
-    obj = new QSslKey(key.toLocal8Bit(), algorithm);
-  }
-  else if (context->argumentCount() == 4)
-  {
-    key = context->argument(0).toString();
-    algorithm = static_cast<QSsl::KeyAlgorithm>(context->argument(1).toInt32());
-    encoding = static_cast<QSsl::EncodingFormat>(context->argument(2).toInt32());
-    type = static_cast<QSsl::KeyType>(context->argument(3).toInt32());
-    obj = new QSslKey(key.toLocal8Bit(), algorithm, encoding, type);
-  }
-  else
+
+    if (key.length > 0) { // Handle `const QByteArray & encoded`.
+      QByteArray encoded = qscriptvalue_cast<QByteArray>(arg);
+      if (context->argumentCount() == 2) {
+        obj = new QSslKey(encoded, algorithm);
+      } else if (context->argumentCount() == 3) {
+        encoding = static_cast<QSsl::EncodingFormat>(context->argument(2).toInt32());
+        obj = new QSslKey(encoded, algorithm, encoding);
+      } else if (context->argumentCount() == 4) {
+        encoding = static_cast<QSsl::EncodingFormat>(context->argument(2).toInt32());
+        type = static_cast<QSsl::KeyType>(context->argument(3).toInt32());
+        obj = new QSslKey(encoded, algorithm, encoding, type);
+      } else if (context->argumentCount() == 5) {
+        encoding = static_cast<QSsl::EncodingFormat>(context->argument(2).toInt32());
+        type = static_cast<QSsl::KeyType>(context->argument(3).toInt32());
+        passPhrase = qscriptvalue_cast<QByteArray>(context->argument(4));
+        obj = new QSslKey(encoded, algorithm, encoding, type, passPhrase);
+      }
+    } else { // Handle `QIODevice * device`.
+      QIODevice *device = qscriptvalue_cast<QIODevice*>(arg);
+      if (context->argumentCount() == 2) {
+        obj = new QSslKey(device, algorithm);
+      } else if (context->argumentCount() == 3) {
+        encoding = static_cast<QSsl::EncodingFormat>(context->argument(2).toInt32());
+        obj = new QSslKey(device, algorithm, encoding);
+      } else if (context->argumentCount() == 4) {
+        encoding = static_cast<QSsl::EncodingFormat>(context->argument(2).toInt32());
+        type = static_cast<QSsl::KeyType>(context->argument(3).toInt32());
+        obj = new QSslKey(device, algorithm, encoding, type);
+      } else if (context->argumentCount() == 5) {
+        encoding = static_cast<QSsl::EncodingFormat>(context->argument(2).toInt32());
+        type = static_cast<QSsl::KeyType>(context->argument(3).toInt32());
+        passPhrase = qscriptvalue_cast<QByteArray>(context->argument(4));
+        obj = new QSslKey(device, algorithm, encoding, type, passPhrase);
+      }
+    }
+  } else {
     context->throwError(QScriptContext::UnknownError,
                         "No SSL Key provided to QSslKey");
+  }
 
   return engine->toScriptValue(obj);
 }
@@ -76,14 +107,6 @@ void QSslKeyProto::clear()
   QSslKey *item = qscriptvalue_cast<QSslKey*>(thisObject());
   if (item)
     item->clear();
-}
-
-Qt::HANDLE QSslKeyProto::handle() const
-{
-  QSslKey *item = qscriptvalue_cast<QSslKey*>(thisObject());
-  if (item)
-    return item->handle();
-  return Qt::HANDLE();
 }
 
 bool QSslKeyProto::isNull() const

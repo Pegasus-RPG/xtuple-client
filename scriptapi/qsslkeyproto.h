@@ -8,8 +8,8 @@
  * to be bound by its terms.
  */
 
-#ifndef __QSSLKEYPPROTO_H__
-#define __QSSLKEYPPROTO_H__
+#ifndef __QSSLKEYPROTO_H__
+#define __QSSLKEYPROTO_H__
 
 #include <QScriptEngine>
 
@@ -35,7 +35,6 @@ class QSslKeyProto : public QObject, public QScriptable
 
     Q_INVOKABLE QSsl::KeyAlgorithm  algorithm() const;
     Q_INVOKABLE void                clear();
-    Q_INVOKABLE Qt::HANDLE          handle() const;
     Q_INVOKABLE bool                isNull() const;
     Q_INVOKABLE int                 length() const;
     Q_INVOKABLE void                swap(QSslKey & other);

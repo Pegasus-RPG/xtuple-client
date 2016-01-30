@@ -70,6 +70,64 @@ void SslProtocolFromScriptValue(const QScriptValue &obj, QSsl::SslProtocol &item
   item = (QSsl::SslProtocol)obj.toInt32();
 }
 
+/**
+ * Converts `QMultiMap<QSsl::AlternativeNameEntryType, QString>` to Javascritp friendly form:
+ *
+ *   var myMap = {
+ *     0: ["bar@example.com", "baz@example.com"],   // `0` is for enum QSsl::EmailEntry.
+ *     1: ["buzz.example.com", "woof.example.com"]  // `1` is for enum QSsl::DnsEntry.
+ *   };
+ *
+ */
+QScriptValue QMultiMapQSslAlternativeNameEntryTypeQStringToScriptValue(QScriptEngine *engine, const QMultiMap<QSsl::AlternativeNameEntryType, QString> &map)
+{
+  QMapIterator<QSsl::AlternativeNameEntryType, QString> it(map);
+  QScriptValue newObject = engine->newObject();
+
+  while (it.hasNext()) {
+    it.next();
+    QScriptValue childArray = engine->newArray();
+    QMultiMap<QSsl::AlternativeNameEntryType, QString>::iterator childIt = map.find(it.key());
+    int childCount = 0;
+
+    while (childIt != map.end() && childIt.key() == it.key()) {
+      childArray.setProperty(childCount, childIt.value());
+      childCount++;
+      childIt++;
+    }
+    newObject.setProperty(engine->toScriptValue(it.key()), childArray);
+  }
+  return newObject;
+}
+/**
+ * Converts Javascritp friendly form to `QMultiMap<QSsl::AlternativeNameEntryType, QString>`.
+ *
+ *   var myMap = {
+ *     0: ["bar@example.com", "baz@example.com"],   // `0` is for enum QSsl::EmailEntry.
+ *     1: ["buzz.example.com", "woof.example.com"]  // `1` is for enum QSsl::DnsEntry.
+ *   };
+ *
+ */
+void QMultiMapQSslAlternativeNameEntryTypeQStringFromScriptValue(const QScriptValue &obj, QMultiMap<QSsl::AlternativeNameEntryType, QString> &map)
+{
+  map = QMultiMap<QSsl::AlternativeNameEntryType, QString>();
+  QScriptValueIterator it(obj);
+
+  while (it.hasNext()) {
+    it.next();
+    if (it.flags() & QScriptValue::SkipInEnumeration) {
+      continue;
+    }
+
+    QScriptValueIterator childIt(it.value());
+    while (childIt.hasNext()) {
+      QString item = qscriptvalue_cast<QString>(childIt.value());
+      QSsl::AlternativeNameEntryType enumKey = (QSsl::AlternativeNameEntryType>)it.name().toInt32();
+      map.insert(enumKey, item);
+    }
+  }
+}
+
 void setupQSslProto(QScriptEngine *engine)
 {
   QScriptValue obj = engine->newObject();

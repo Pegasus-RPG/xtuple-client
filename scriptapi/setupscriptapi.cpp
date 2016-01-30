@@ -38,6 +38,7 @@
 #include "qbufferproto.h"
 #include "qbytearrayproto.h"
 #include "qcoreapplicationproto.h"
+#include "qcryptographichashproto.h"
 #include "qdialogsetup.h"
 #include "qdialogbuttonboxproto.h"
 #include "qdirproto.h"
@@ -99,6 +100,7 @@
 #include "qsslellipticcurveproto.h"
 #include "qsslerrorproto.h"
 #include "qsslkeyproto.h"
+#include "qsslpresharedkeyauthenticatorproto.h"
 #include "qsslproto.h"
 #include "qsslsocketproto.h"
 #include "qstackedwidgetproto.h"
@@ -116,6 +118,7 @@
 #include "qwebchannelproto.h"
 #include "qwebframeproto.h"
 #include "qwebpageproto.h"
+#include "qwebsettingsproto.h"
 #include "qwebsocketcorsauthenticatorproto.h"
 #include "qwebsocketproto.h"
 #include "qwebsocketprotocolproto.h"
@@ -184,6 +187,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQBufferProto(engine);
   setupQByteArrayProto(engine);
   setupQCoreApplicationProto(engine);
+  setupQCryptographicHashProto(engine);
   setupQDialog(engine);
   setupQDialogButtonBoxProto(engine);
   setupQDirProto(engine);
@@ -245,6 +249,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQSslEllipticCurveProto(engine);
   setupQSslErrorProto(engine);
   setupQSslKeyProto(engine);
+  setupQSslPreSharedKeyAuthenticatorProto(engine);
   setupQSslProto(engine);
   setupQSslSocketProto(engine);
   setupQStackedWidgetProto(engine);
@@ -262,6 +267,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQWebChannelProto(engine);
   setupQWebFrameProto(engine);
   setupQWebPageProto(engine);
+  setupQWebSettingsProto(engine);
   setupQWebSocketCorsAuthenticatorProto(engine);
   setupQWebSocketProto(engine);
   setupQWebSocketProtocolProto(engine);

@@ -16,10 +16,35 @@ void setupQSslCertificateExtensionProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
+QScriptValue QListQSslCertificateExtensiontoScriptValue(QScriptEngine *engine, const QList<QSslCertificateExtension> &list)
+{
+  QScriptValue newArray = engine->newArray();
+  for (int i = 0; i < list.size(); i += 1) {
+    newArray.setProperty(i, engine->toScriptValue(list.at(i)));
+  }
+  return newArray;
+}
+void QListQSslCertificateExtensionfromScriptValue(const QScriptValue &obj, QList<QSslCertificateExtension> &list)
+{
+  list = QList<QSslCertificateExtension>();
+  QScriptValueIterator it(obj);
+
+  while (it.hasNext()) {
+    it.next();
+    if (it.flags() & QScriptValue::SkipInEnumeration)
+      continue;
+    QSslCertificateExtension item = qscriptvalue_cast<QSslCertificateExtension>(it.value());
+    list.insert(it.name(), item);
+  }
+}
+
 void setupQSslCertificateExtensionProto(QScriptEngine *engine)
 {
+  qScriptRegisterMetaType(engine, QListQSslCertificateExtensiontoScriptValue, QListQSslCertificateExtensionfromScriptValue);
+
   QScriptValue proto = engine->newQObject(new QSslCertificateExtensionProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QSslCertificateExtension*>(), proto);
+  engine->setDefaultPrototype(qMetaTypeId<QSslCertificateExtension>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQSslCertificateExtension, proto);
   engine->globalObject().setProperty("QSslCertificateExtension",  constructor);
@@ -37,7 +62,16 @@ QSslCertificateExtensionProto::~QSslCertificateExtensionProto()
 QScriptValue constructQSslCertificateExtension(QScriptContext * /*context*/, QScriptEngine  *engine)
 {
   QSslCertificateExtension *obj = 0;
-  obj = new QSslCertificateExtension();
+  QString certExt;
+  if (context->argumentCount() == 1)
+  {
+    QSslCertificateExtension certExt = qscriptvalue_cast<QSslCertificateExtension>(context->argument(0));
+    obj = new QSslCertificateExtension(certExt);
+  }
+  else {
+    obj = new QSslCertificateExtension();
+  }
+
   return engine->toScriptValue(obj);
 }
 

@@ -38,6 +38,7 @@ HEADERS += setupscriptapi.h \
     qbufferproto.h \
     qbytearrayproto.h \
     qcoreapplicationproto.h \
+    qcryptographichashproto.h \
     qdialogbuttonboxproto.h \
     qdialogsetup.h \
     qdirproto.h \
@@ -99,6 +100,7 @@ HEADERS += setupscriptapi.h \
     qsslellipticcurveproto.h \
     qsslerrorproto.h \
     qsslkeyproto.h \
+    qsslpresharedkeyauthenticatorproto.h \
     qsslproto.h \
     qsslsocketproto.h \
     qstackedwidgetproto.h \
@@ -115,6 +117,7 @@ HEADERS += setupscriptapi.h \
     qwebchannelproto.h \
     qwebframeproto.h \
     qwebpageproto.h \
+    qwebsettingsproto.h \
     qwebsocketcorsauthenticatorproto.h \
     qwebsocketproto.h             \
     qwebsocketprotocolproto.h     \
@@ -164,6 +167,7 @@ SOURCES += setupscriptapi.cpp \
     qbufferproto.cpp \
     qbytearrayproto.cpp \
     qcoreapplicationproto.cpp \
+    qcryptographichashproto.cpp \
     qdialogbuttonboxproto.cpp \
     qdialogsetup.cpp \
     qdirproto.cpp \
@@ -225,6 +229,7 @@ SOURCES += setupscriptapi.cpp \
     qsslellipticcurveproto.cpp \
     qsslerrorproto.cpp \
     qsslkeyproto.cpp \
+    qsslpresharedkeyauthenticatorproto.cpp \
     qsslproto.cpp \
     qsslsocketproto.cpp \
     qstackedwidgetproto.cpp \
@@ -241,6 +246,7 @@ SOURCES += setupscriptapi.cpp \
     qwebchannelproto.cpp \
     qwebframeproto.cpp \
     qwebpageproto.cpp \
+    qwebsettingsproto.cpp \
     qwebsocketcorsauthenticatorproto.cpp \
     qwebsocketproto.cpp           \
     qwebsocketprotocolproto.cpp   \

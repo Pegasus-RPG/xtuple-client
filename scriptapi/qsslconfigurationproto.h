@@ -8,8 +8,8 @@
  * to be bound by its terms.
  */
 
-#ifndef __QSSLCONFIGURATIONPPROTO_H__
-#define __QSSLCONFIGURATIONPPROTO_H__
+#ifndef __QSSLCONFIGURATIONPROTO_H__
+#define __QSSLCONFIGURATIONPROTO_H__
 
 #include <QScriptEngine>
 
@@ -69,10 +69,6 @@ class QSslConfigurationProto : public QObject, public QScriptable
     Q_INVOKABLE void                                              setSslOption(QSsl::SslOption option, bool on);
     Q_INVOKABLE void                                              swap(QSslConfiguration & other);
     Q_INVOKABLE bool                                              testSslOption(QSsl::SslOption option) const;
-
-    Q_INVOKABLE void                        setDefaultConfiguration(const QSslConfiguration & configuration);
-    Q_INVOKABLE QList<QSslCipher>           supportedCiphers();
-    Q_INVOKABLE QVector<QSslEllipticCurve>  supportedEllipticCurves();
 
 };
 

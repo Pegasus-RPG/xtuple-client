@@ -20,6 +20,7 @@ void setupQSslCertificateExtensionProto(QScriptEngine *engine);
 #include <QSslCertificateExtension>
 
 Q_DECLARE_METATYPE(QSslCertificateExtension*)
+Q_DECLARE_METATYPE(QSslCertificateExtension)
 
 QScriptValue constructQSslCertificateExtension(QScriptContext *context, QScriptEngine *engine);
 

@@ -8,8 +8,8 @@
  * to be bound by its terms.
  */
 
-#ifndef __QSSLPPROTO_H__
-#define __QSSLPPROTO_H__
+#ifndef __QSSLPROTO_H__
+#define __QSSLPROTO_H__
 
 #include <QScriptEngine>
 

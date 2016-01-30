@@ -16,14 +16,38 @@ void setupQSslCipherProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
+QScriptValue QListQSslCipherToScriptValue(QScriptEngine *engine, const QList<QSslCipher> &list)
+{
+  QScriptValue newArray = engine->newArray();
+  for (int i = 0; i < list.size(); i += 1) {
+    newArray.setProperty(i, engine->toScriptValue(list.at(i)));
+  }
+  return newArray;
+}
+void QListQSslCipherFromScriptValue(const QScriptValue &obj, QList<QSslCipher> &list)
+{
+  list = QList<QSslCipher>();
+  QScriptValueIterator it(obj);
+
+  while (it.hasNext()) {
+    it.next();
+    if (it.flags() & QScriptValue::SkipInEnumeration)
+      continue;
+    QSslCipher item = qscriptvalue_cast<QSslCipher>(it.value());
+    list.insert(it.name(), item);
+  }
+}
+
 void setupQSslCipherProto(QScriptEngine *engine)
 {
   QScriptValue proto = engine->newQObject(new QSslCipherProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QSslCipher*>(), proto);
+  engine->setDefaultPrototype(qMetaTypeId<QSslCipher>(), proto);
 
-  QScriptValue constructor = engine->newFunction(constructQSslCipher,
-                                                 proto);
+  QScriptValue constructor = engine->newFunction(constructQSslCipher, proto);
   engine->globalObject().setProperty("QSslCipher",  constructor);
+
+  qScriptRegisterMetaType(engine, QListQSslCipherToScriptValue, QListQSslCipherFromScriptValue);
 }
 
 QScriptValue constructQSslCipher(QScriptContext *context,
@@ -31,10 +55,15 @@ QScriptValue constructQSslCipher(QScriptContext *context,
 {
   QSslCipher *obj = 0;
   if (context->argumentCount() == 1) {
-    obj = new QSslCipher(context->argument(0).toString());
+    QScriptValue arg = context->argument(0);
+    if (arg.isString()) {
+      obj = new QSslCipher(arg.toString());
+    } else {
+      obj = new QSslCipher(qscriptvalue_cast<QSslCipher>(arg));
+    }
   }
   else if (context->argumentCount() == 2) {
-    obj = new QSslCipher(context->argument(0).toString(), static_cast<QSsl::SslProtocol>(context->argument(1).toInt32()));
+    obj = new QSslCipher(context->argument(0).toString(), (QSsl::SslProtocol)context->argument(1).toInt32());
   }
   else {
     obj = new QSslCipher();

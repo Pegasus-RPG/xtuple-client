@@ -8,8 +8,8 @@
  * to be bound by its terms.
  */
 
-#ifndef __QSSLSOCKETPPROTO_H__
-#define __QSSLSOCKETPPROTO_H__
+#ifndef __QSSLSOCKETPROTO_H__
+#define __QSSLSOCKETPROTO_H__
 
 #include <QScriptEngine>
 

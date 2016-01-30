@@ -8,8 +8,8 @@
  * to be bound by its terms.
  */
 
-#ifndef __QSSLERRORPPROTO_H__
-#define __QSSLERRORPPROTO_H__
+#ifndef __QSSLERRORPROTO_H__
+#define __QSSLERRORPROTO_H__
 
 #include <QScriptEngine>
 
