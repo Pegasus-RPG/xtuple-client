@@ -10,101 +10,23 @@
 
 #include "qwebchannelproto.h"
 
-QScriptValue QWebChanneltoScriptValue(QScriptEngine *engine, QWebChannel* const &item)
-{ return engine->newQObject(item); }
-
-void QWebChannelfromScriptValue(const QScriptValue &obj, QWebChannel* &item)
-{
-  item = qobject_cast<QWebChannel*>(obj.toQObject());
-}
-
+#if QT_VERSION < 0x050000
 void setupQWebChannelProto(QScriptEngine *engine)
 {
- qScriptRegisterMetaType(engine, QWebChanneltoScriptValue, QWebChannelfromScriptValue);
-
-  QScriptValue proto = engine->newQObject(new QWebChannelProto(engine));
-  engine->setDefaultPrototype(qMetaTypeId<QWebChannel*>(), proto);
-  engine->setDefaultPrototype(qMetaTypeId<QWebChannel>(),  proto);
-
-  QScriptValue constructor = engine->newFunction(constructQWebChannel,
-                                                 proto);
-  engine->globalObject().setProperty("QWebChannel",  constructor);
+  Q_UNUSED(engine);
+}
+#else
+void setupQWebChannelProto(QScriptEngine *engine)
+{
+  QScriptValue constructor = engine->newFunction(constructQWebChannel);
+  QScriptValue metaObject = engine->newQMetaObject(&QWebChannel::staticMetaObject, constructor);
+  engine->globalObject().setProperty("QWebChannel", metaObject);
 }
 
 QScriptValue constructQWebChannel(QScriptContext *context, QScriptEngine *engine)
 {
-  QWebChannel *obj = 0;
-  if (context->argumentCount() == 1)
-    obj = new QWebChannel(context->argument(0).toQObject());
-  else
-    context->throwError(QScriptContext::UnknownError,
-                        "Could not find an appropriate QWebChannel constructor");
-  return engine->toScriptValue(obj);
+  QObject *parent = context->argument(0).toQObject();
+  QWebChannel *object = new QWebChannel(parent);
+  return engine->newQObject(object, QScriptEngine::ScriptOwnership);
 }
-
-QWebChannelProto::QWebChannelProto(QObject *parent)
-    : QObject(parent)
-{
-}
-
-QWebChannelProto::~QWebChannelProto()
-{
-}
-
-bool QWebChannelProto::blockUpdates() const
-{
-  QWebChannel *item = qscriptvalue_cast<QWebChannel*>(thisObject());
-  if (item)
-    return item->blockUpdates();
-  return false;
-}
-
-void QWebChannelProto::deregisterObject(QObject * object)
-{
-  QWebChannel *item = qscriptvalue_cast<QWebChannel*>(thisObject());
-  if (item)
-    item->deregisterObject(object);
-}
-
-void QWebChannelProto::registerObject(const QString & id, QObject * object)
-{
-  QWebChannel *item = qscriptvalue_cast<QWebChannel*>(thisObject());
-  if (item)
-    item->registerObject(id, object);
-}
-
-void QWebChannelProto::registerObjects(const QHash<QString, QObject *> & objects)
-{
-  QWebChannel *item = qscriptvalue_cast<QWebChannel*>(thisObject());
-  if (item)
-    item->registerObjects(objects);
-}
-
-QHash<QString, QObject *> QWebChannelProto::registeredObjects() const
-{
-  QWebChannel *item = qscriptvalue_cast<QWebChannel*>(thisObject());
-  if (item)
-    return item->registeredObjects();
-  return QHash<QString, QObject *>();
-}
-
-void QWebChannelProto::setBlockUpdates(bool block)
-{
-  QWebChannel *item = qscriptvalue_cast<QWebChannel*>(thisObject());
-  if (item)
-    item->setBlockUpdates(block);
-}
-
-void QWebChannelProto::connectTo(QWebChannelAbstractTransport * transport)
-{
-  QWebChannel *item = qscriptvalue_cast<QWebChannel*>(thisObject());
-  if (item)
-    return item->connectTo(transport);
-}
-
-void QWebChannelProto::disconnectFrom(QWebChannelAbstractTransport * transport)
-{
-  QWebChannel *item = qscriptvalue_cast<QWebChannel*>(thisObject());
-  if (item)
-    return item->disconnectFrom(transport);
-}
+#endif

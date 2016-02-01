@@ -26,6 +26,7 @@
 #include "storedProcErrorLookup.h"
 #include "transferOrder.h"
 #include "transferOrderList.h"
+#include "errorReporter.h"
 
 packingListBatch::packingListBatch(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -102,9 +103,9 @@ void packingListBatch::sPrintBatch()
     params.append("MultiWhs");
   MetaSQLQuery mql = mqlLoad("packingListBatch", "print");
   packingPrintBatch = mql.toQuery(params);
-  if (packingPrintBatch.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Printing Packing List Batch"),
+                                packingPrintBatch, __FILE__, __LINE__))
   {
-    systemError(this, packingPrintBatch.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -114,7 +115,9 @@ void packingListBatch::sPrintBatch()
   if (orReport::beginMultiPrint(&printer, userCanceled) == false)
   {
     if(!userCanceled)
-      systemError(this, tr("Could not initialize printing system for multiple reports."));
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                         tr("%1: Could not initialize printing system "
+                            "for multiple reports").arg(windowTitle()),__FILE__,__LINE__);
     return;
   }
 
@@ -161,9 +164,9 @@ void packingListBatch::sPrintBatch()
       setupPrinter = false;
       updateq.bindValue(":packid", packingPrintBatch.value("pack_id").toInt());
       updateq.exec();
-      if (updateq.lastError().type() != QSqlError::NoError)
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Printing Packing List Batch"),
+                                    updateq, __FILE__, __LINE__))
       {
-        systemError(this, updateq.lastError().databaseText(), __FILE__, __LINE__);
         orReport::endMultiPrint(&printer);
         return;
       }
@@ -230,9 +233,9 @@ void packingListBatch::sClearPrinted()
   setParams(params);
   MetaSQLQuery mql = mqlLoad("packingListBatch", "clear");
   packingClearPrinted = mql.toQuery(params);
-  if (packingClearPrinted.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Clearing Packing List Batch"),
+                                packingClearPrinted, __FILE__, __LINE__))
   {
-    systemError(this, packingClearPrinted.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -284,9 +287,9 @@ void packingListBatch::sAddSO()
     packingAddSO.exec();
     if (packingAddSO.first())
       sFillList();
-    else if (packingAddSO.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Adding SO To Packing List Batch"),
+                                  packingAddSO, __FILE__, __LINE__))
     {
-      systemError(this, packingAddSO.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -310,9 +313,9 @@ void packingListBatch::sAddTO()
     packingAddTO.exec();
     if (packingAddTO.first())
       sFillList();
-    else if (packingAddTO.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Adding To Packing List Batch"),
+                                  packingAddTO, __FILE__, __LINE__))
     {
-      systemError(this, packingAddTO.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -339,9 +342,9 @@ void packingListBatch::sDelete()
 
   MetaSQLQuery mql(sql);
   packingDelete = mql.toQuery(params);
-  if (packingDelete.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Packing List Batch Information"),
+                                           packingDelete, __FILE__, __LINE__))
   {
-    systemError(this, packingDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -399,9 +402,9 @@ void packingListBatch::sPrintPackingList()
 
     MetaSQLQuery mql(sql);
     packingPrintPackingList = mql.toQuery(params);
-    if (packingPrintPackingList.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Printing Packing List Batch"),
+                                           packingPrintPackingList, __FILE__, __LINE__))
     {
-      systemError(this, packingPrintPackingList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -416,9 +419,9 @@ void packingListBatch::sFillList()
   setParams(params);
   MetaSQLQuery mql = mqlLoad("packingListBatch", "detail");
   packingFillList = mql.toQuery(params);
-  if (packingFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Packing List Batch Information"),
+                                           packingFillList, __FILE__, __LINE__))
   {
-    systemError(this, packingFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   _pack->populate(packingFillList, true);

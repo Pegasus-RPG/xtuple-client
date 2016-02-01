@@ -23,6 +23,7 @@
 #include "glclustersetup.h"
 #include "include.h"
 #include "itemlineeditsetup.h"
+#include "jsconsole.h"
 #include "metasqlhighlighterproto.h"
 #include "orderlineeditsetup.h"
 #include "orreportproto.h"
@@ -110,6 +111,7 @@
 #include "queryset.h"
 #include "qurlproto.h"
 #include "qvalidatorproto.h"
+#include "qwebchannelproto.h"
 #include "qwebframeproto.h"
 #include "qwebpageproto.h"
 #include "qwebsocketcorsauthenticatorproto.h"
@@ -134,7 +136,6 @@
 #include "xdatawidgetmapperproto.h"
 #include "xdateeditsetup.h"
 #include "xdoccopysetter.h"
-#include "xnetworkaccessmanager.h"
 #include "xsqltablemodelproto.h"
 #include "xsqlqueryproto.h"
 #include "xtreewidget.h"
@@ -165,6 +166,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupGLCluster(engine);
   setupInclude(engine);
   setupItemLineEdit(engine);
+  setupJSConsole(engine);
   setupMetaSQLHighlighterProto(engine);
   setupOrderLineEdit(engine);
   setupOrReportProto(engine);
@@ -253,6 +255,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQuerySet(engine);
   setupQUrlProto(engine);
   setupQValidatorProto(engine);
+  setupQWebChannelProto(engine);
   setupQWebFrameProto(engine);
   setupQWebPageProto(engine);
   setupQWebSocketCorsAuthenticatorProto(engine);

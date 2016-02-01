@@ -407,7 +407,7 @@ void XSqlTableModelProto::setSort(int column, int order)
     item->setSort(column, (Qt::SortOrder)order);
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION < 0x050000
 void XSqlTableModelProto::setSupportedDragActions(int actions)
 {
   XSqlTableModel *item = qscriptvalue_cast<XSqlTableModel*>(thisObject());

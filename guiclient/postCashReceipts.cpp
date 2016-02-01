@@ -48,9 +48,8 @@ void postCashReceipts::sPost()
     journalNumber = postPost.value("journalnumber").toInt();
   else
   {
-    systemError(this, tr("A System Error occurred at %1::%2.")
-                      .arg(__FILE__)
-                      .arg(__LINE__) );
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipts Information"),
+                         postPost, __FILE__, __LINE__);
     return;
   }
 

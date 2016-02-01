@@ -33,13 +33,9 @@ void QWebSocketCorsAuthenticatorFromScriptValue(const QScriptValue &obj, QWebSoc
 
 void setupQWebSocketCorsAuthenticatorProto(QScriptEngine *engine)
 {
- qScriptRegisterMetaType(engine, QWebSocketCorsAuthenticatorToScriptValue, QWebSocketCorsAuthenticatorFromScriptValue);
-
   QScriptValue proto = engine->newQObject(new QWebSocketCorsAuthenticatorProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebSocketCorsAuthenticator*>(), proto);
-
-  QScriptValue constructor = engine->newFunction(constructQWebSocketCorsAuthenticator, proto);
-  engine->globalObject().setProperty("QWebSocketCorsAuthenticator",  constructor);
+  engine->globalObject().setProperty("QWebSocketCorsAuthenticator",  proto);
 }
 
 QScriptValue constructQWebSocketCorsAuthenticator(QScriptContext *context, QScriptEngine *engine)

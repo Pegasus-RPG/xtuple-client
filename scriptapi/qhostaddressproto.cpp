@@ -16,8 +16,7 @@ void setupQHostAddressProto(QScriptEngine *engine)
   QScriptValue proto = engine->newQObject(new QHostAddressProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QHostAddress*>(), proto);
 
-  QScriptValue constructor = engine->newFunction(constructQHostAddress,
-                                                 proto);
+  QScriptValue constructor = engine->newFunction(constructQHostAddress, proto);
   engine->globalObject().setProperty("QHostAddress",  constructor);
 
   // enum QHostAddress::SpecialAddress
@@ -32,16 +31,12 @@ void setupQHostAddressProto(QScriptEngine *engine)
 
 }
 
-QScriptValue constructQHostAddress(QScriptContext * /*context*/,
-                                    QScriptEngine  *engine)
+QScriptValue constructQHostAddress(QScriptContext * /*context*/, QScriptEngine  *engine)
 {
   QHostAddress *obj = 0;
-  /* if (context->argumentCount() ...)
-  else if (something bad)
-    context->throwError(QScriptContext::UnknownError,
-                        "Could not find an appropriate QHostAddressconstructor");
+  if (context->argumentCount() == 1 && context->argument(0).isString())
+    obj = new QHostAddress(context->argument(0).toString());
   else
-  */
     obj = new QHostAddress();
   return engine->toScriptValue(obj);
 }

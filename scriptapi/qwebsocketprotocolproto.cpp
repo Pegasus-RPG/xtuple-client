@@ -10,12 +10,35 @@
 
 #include "qwebsocketprotocolproto.h"
 
+#if QT_VERSION >= 0x050000
+QScriptValue CloseCodeToScriptValue(QScriptEngine *engine, const QWebSocketProtocol::CloseCode &item)
+{
+  return engine->newVariant(item);
+}
+void CloseCodeFromScriptValue(const QScriptValue &obj, QWebSocketProtocol::CloseCode &item)
+{
+  item = (QWebSocketProtocol::CloseCode)obj.toInt32();
+}
+
+QScriptValue VersionToScriptValue(QScriptEngine *engine, const QWebSocketProtocol::Version &item)
+{
+  return engine->newVariant(item);
+}
+void VersionFromScriptValue(const QScriptValue &obj, QWebSocketProtocol::Version &item)
+{
+  item = (QWebSocketProtocol::Version)obj.toInt32();
+}
+#endif
+
 void setupQWebSocketProtocolProto(QScriptEngine *engine)
 {
   QScriptValue obj = engine->newObject();
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
 #if QT_VERSION >= 0x050000
+  qScriptRegisterMetaType(engine, CloseCodeToScriptValue, CloseCodeFromScriptValue);
+  qScriptRegisterMetaType(engine, VersionToScriptValue, VersionFromScriptValue);
+
   obj.setProperty("CloseCodeNormal",                 QScriptValue(engine, QWebSocketProtocol::CloseCodeNormal),                permanent);
   obj.setProperty("CloseCodeGoingAway",              QScriptValue(engine, QWebSocketProtocol::CloseCodeGoingAway),             permanent);
   obj.setProperty("CloseCodeProtocolError",          QScriptValue(engine, QWebSocketProtocol::CloseCodeProtocolError),         permanent);

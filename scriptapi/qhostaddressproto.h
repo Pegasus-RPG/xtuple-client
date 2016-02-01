@@ -11,7 +11,6 @@ void setupQHostAddressProto(QScriptEngine *engine);
 QScriptValue constructQHostAddress(QScriptContext *context, QScriptEngine *engine);
 
 Q_DECLARE_METATYPE(enum QHostAddress::SpecialAddress)
-//Q_DECLARE_METATYPE(QHostAddress)
 Q_DECLARE_METATYPE(QHostAddress*)
 
 class QHostAddressProto : public QObject, public QScriptable
