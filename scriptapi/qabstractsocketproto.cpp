@@ -9,7 +9,7 @@
  */
 #include "scriptapi_internal.h"
 #include "qabstractsocketproto.h"
-#define DEBUG true
+#define DEBUG false
 
 QScriptValue QAbstractSockettoScriptValue(QScriptEngine *engine, QAbstractSocket* const &item)
 { return engine->newQObject(item); }
@@ -18,6 +18,57 @@ void QAbstractSocketfromScriptValue(const QScriptValue &obj, QAbstractSocket* &i
 {
   item = qobject_cast<QAbstractSocket*>(obj.toQObject());
 }
+
+QScriptValue BindFlagtoScriptValue(QScriptEngine *engine, const enum QAbstractSocket::BindFlag &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void BindFlagfromScriptValue(const QScriptValue &obj, enum QAbstractSocket::BindFlag &p)
+{
+  p = (enum QAbstractSocket::BindFlag)obj.toInt32();
+}
+
+QScriptValue NetworkLayerProtocoltoScriptValue(QScriptEngine *engine, const enum QAbstractSocket::NetworkLayerProtocol &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void NetworkLayerProtocolfromScriptValue(const QScriptValue &obj, enum QAbstractSocket::NetworkLayerProtocol &p)
+{
+  p = (enum QAbstractSocket::NetworkLayerProtocol)obj.toInt32();
+}
+
+QScriptValue PauseModetoScriptValue(QScriptEngine *engine, const enum QAbstractSocket::PauseMode &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void PauseModefromScriptValue(const QScriptValue &obj, enum QAbstractSocket::PauseMode &p)
+{
+  p = (enum QAbstractSocket::PauseMode)obj.toInt32();
+}
+
+QScriptValue SocketOptiontoScriptValue(QScriptEngine *engine, const enum QAbstractSocket::SocketOption &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void SocketOptionfromScriptValue(const QScriptValue &obj, enum QAbstractSocket::SocketOption &p)
+{
+  p = (enum QAbstractSocket::SocketOption)obj.toInt32();
+}
+
+QScriptValue SocketTypetoScriptValue(QScriptEngine *engine, const enum QAbstractSocket::SocketType &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void SocketTypefromScriptValue(const QScriptValue &obj, enum QAbstractSocket::SocketType &p)
+{
+  p = (enum QAbstractSocket::SocketType)obj.toInt32();
+}
+
 
 void setupQAbstractSocketProto(QScriptEngine *engine)
 {
@@ -379,54 +430,4 @@ QString QAbstractSocketProto::toString() const
   if (item)
     return QString("QAbstractSocketProto()");
   return QString("QAbstractSocketProto(unknown)");
-}
-
-QScriptValue BindFlagtoScriptValue(QScriptEngine *engine, const enum QAbstractSocket::BindFlag &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-
-void BindFlagfromScriptValue(const QScriptValue &obj, enum QAbstractSocket::BindFlag &p)
-{
-  p = (enum QAbstractSocket::BindFlag)obj.toInt32();
-}
-
-QScriptValue NetworkLayerProtocoltoScriptValue(QScriptEngine *engine, const enum QAbstractSocket::NetworkLayerProtocol &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-
-void NetworkLayerProtocolfromScriptValue(const QScriptValue &obj, enum QAbstractSocket::NetworkLayerProtocol &p)
-{
-  p = (enum QAbstractSocket::NetworkLayerProtocol)obj.toInt32();
-}
-
-QScriptValue PauseModetoScriptValue(QScriptEngine *engine, const enum QAbstractSocket::PauseMode &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-
-void PauseModefromScriptValue(const QScriptValue &obj, enum QAbstractSocket::PauseMode &p)
-{
-  p = (enum QAbstractSocket::PauseMode)obj.toInt32();
-}
-
-QScriptValue SocketOptiontoScriptValue(QScriptEngine *engine, const enum QAbstractSocket::SocketOption &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-
-void SocketOptionfromScriptValue(const QScriptValue &obj, enum QAbstractSocket::SocketOption &p)
-{
-  p = (enum QAbstractSocket::SocketOption)obj.toInt32();
-}
-
-QScriptValue SocketTypetoScriptValue(QScriptEngine *engine, const enum QAbstractSocket::SocketType &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-
-void SocketTypefromScriptValue(const QScriptValue &obj, enum QAbstractSocket::SocketType &p)
-{
-  p = (enum QAbstractSocket::SocketType)obj.toInt32();
 }

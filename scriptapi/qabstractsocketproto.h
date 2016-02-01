@@ -34,18 +34,6 @@ Q_DECLARE_METATYPE(enum QAbstractSocket::SocketOption)
 //Q_DECLARE_METATYPE(enum QAbstractSocket::SocketState) already declared somewhere?
 Q_DECLARE_METATYPE(enum QAbstractSocket::SocketType)
 
-
-QScriptValue BindFlagtoScriptValue(QScriptEngine *engine,                 const enum QAbstractSocket::BindFlag &p);
-void         BindFlagfromScriptValue(const QScriptValue &obj,             enum QAbstractSocket::BindFlag &p);
-QScriptValue NetworkLayerProtocoltoScriptValue(QScriptEngine *engine,     const enum QAbstractSocket::NetworkLayerProtocol &p);
-void         NetworkLayerProtocolfromScriptValue(const QScriptValue &obj, enum QAbstractSocket::NetworkLayerProtocol &p);
-QScriptValue PauseModetoScriptValue(QScriptEngine *engine,                const enum QAbstractSocket::PauseMode &p);
-void         PauseModefromScriptValue(const QScriptValue &obj,            enum QAbstractSocket::PauseMode &p);
-QScriptValue SocketOptiontoScriptValue(QScriptEngine *engine,             const enum QAbstractSocket::SocketOption &p);
-void         SocketOptionfromScriptValue(const QScriptValue &obj,         enum QAbstractSocket::SocketOption &p);
-QScriptValue SocketTypetoScriptValue(QScriptEngine *engine,               const enum QAbstractSocket::SocketType &p);
-void         SocketTypefromScriptValue(const QScriptValue &obj,           enum QAbstractSocket::SocketType &p);
-
 class QAbstractSocketProto : public QIODeviceProto
 {
   Q_OBJECT

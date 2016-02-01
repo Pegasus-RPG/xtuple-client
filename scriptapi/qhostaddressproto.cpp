@@ -31,7 +31,7 @@ void setupQHostAddressProto(QScriptEngine *engine)
 
 }
 
-QScriptValue constructQHostAddress(QScriptContext * /*context*/, QScriptEngine  *engine)
+QScriptValue constructQHostAddress(QScriptContext *context, QScriptEngine  *engine)
 {
   QHostAddress *obj = 0;
   if (context->argumentCount() == 1 && context->argument(0).isString())
