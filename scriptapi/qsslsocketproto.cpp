@@ -10,7 +10,6 @@
 
 #include "qsslsocketproto.h"
 
-
 #if QT_VERSION < 0x050000
 void setupQSslSocketProto(QScriptEngine *engine)
 {
@@ -20,8 +19,13 @@ void setupQSslSocketProto(QScriptEngine *engine)
 QScriptValue addDefaultCaCertificateForJS(QScriptContext* context, QScriptEngine* engine)
 {
   if (context->argumentCount() == 1) {
-    QString cert = context->argument(0).toString();
-    QSslSocket::addDefaultCaCertificate(QSslCertificate(cert.toLocal8Bit(), QSsl::Pem));
+    if (context->argument(0).isString()) {
+      QSslCertificate newCert = QSslCertificate(context->argument(0).toString().toLocal8Bit());
+      QSslSocket::addDefaultCaCertificate(newCert);
+    } else if (context->argument(0).isObject()) {
+      QSslCertificate cert = qscriptvalue_cast<QSslCertificate>(context->argument(0));
+      QSslSocket::addDefaultCaCertificate(cert);
+    }
   }
   return engine->undefinedValue();
 }
