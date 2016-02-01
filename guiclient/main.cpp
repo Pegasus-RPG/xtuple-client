@@ -364,7 +364,7 @@ int main(int argc, char *argv[])
     bool checkPass = true;
     bool checkLock = false;
     bool expired   = false;
-    bool invalid   = true;
+    bool invalid   = false;
     QString checkPassReason;
     QString rkey = _metrics->value("RegistrationKey");
     XTupleProductKey pkey(rkey);
