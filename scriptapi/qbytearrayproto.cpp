@@ -60,7 +60,10 @@ void setupQByteArrayProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QByteArraytoScriptValue, QByteArrayfromScriptValue);
   qScriptRegisterMetaType(engine, QByteArrayPointertoScriptValue, QByteArrayPointerfromScriptValue);
+
+#if QT_VERSION < 0x050000
   qScriptRegisterMetaType(engine, QListQByteArraytoScriptValue, QListQByteArrayfromScriptValue);
+#endif
 
   QScriptValue proto = engine->newQObject(new QByteArrayProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QByteArray*>(), proto);
