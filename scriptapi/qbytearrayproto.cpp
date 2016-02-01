@@ -9,6 +9,7 @@
  */
 
 #include "qbytearrayproto.h"
+#include <QScriptValueIterator>
 
 static QByteArray nullBA = QByteArray();
 
@@ -61,7 +62,7 @@ void setupQByteArrayProto(QScriptEngine *engine)
   qScriptRegisterMetaType(engine, QByteArraytoScriptValue, QByteArrayfromScriptValue);
   qScriptRegisterMetaType(engine, QByteArrayPointertoScriptValue, QByteArrayPointerfromScriptValue);
 
-#if QT_VERSION < 0x050000
+#if QT_VERSION >= 0x050000
   qScriptRegisterMetaType(engine, QListQByteArraytoScriptValue, QListQByteArrayfromScriptValue);
 #endif
 
