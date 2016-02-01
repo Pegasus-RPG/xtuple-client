@@ -94,7 +94,7 @@
 #include "qsqldatabaseproto.h"
 #include "qsqlerrorproto.h"
 #include "qsqlrecordproto.h"
-#include "qsslsocketproto.h"
+//#include "qsslsocketproto.h"
 #include "qstackedwidgetproto.h"
 #include "qtabwidgetproto.h"
 #include "qtcpserverproto.h"
@@ -237,7 +237,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQSqlDatabaseProto(engine);
   setupQSqlErrorProto(engine);
   setupQSqlRecordProto(engine);
-  setupQSslSocketProto(engine);
+  //setupQSslSocketProto(engine);
   setupQStackedWidgetProto(engine);
   setupQTabWidgetProto(engine);
   setupQTcpServerProto(engine);

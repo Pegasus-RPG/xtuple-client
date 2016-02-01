@@ -11,6 +11,7 @@
 #include "scriptapi_internal.h"
 
 #include "qtcpserverproto.h"
+#include "qhostaddressproto.h"
 
 #define DEBUG false
 
@@ -32,11 +33,9 @@ void setupQTcpServerProto(QScriptEngine *engine)
   QScriptValue constructor = engine->newFunction(constructQTcpServer, proto);
   engine->globalObject().setProperty("QTcpServer",  constructor);
 
-
 }
 
-QScriptValue constructQTcpServer(QScriptContext *context,
-                                    QScriptEngine  *engine)
+QScriptValue constructQTcpServer(QScriptContext *context, QScriptEngine  *engine)
 {
   QTcpServer *obj = 0;
   if (context->argumentCount() == 1) {
@@ -49,8 +48,7 @@ QScriptValue constructQTcpServer(QScriptContext *context,
   return engine->toScriptValue(obj);
 }
 
-QTcpServerProto::QTcpServerProto(QObject *parent)
-    : QObject(parent)
+QTcpServerProto::QTcpServerProto(QObject *parent) : QObject(parent)
 {
 }
 
@@ -85,10 +83,8 @@ bool QTcpServerProto::isListening() const
   return false;
 }
 
-bool QTcpServerProto::listen(const QHostAddress & address, quint16 port)
+bool QTcpServerProto::listen(const QHostAddress::SpecialAddress & address, quint16 port)
 {
-    qDebug() << "listening " << port;
-
   QTcpServer *item = qscriptvalue_cast<QTcpServer*>(thisObject());
   if (item)
     return item->listen(address, port);

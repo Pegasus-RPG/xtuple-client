@@ -1,6 +1,16 @@
 #include "scriptapi_internal.h"
 #include "qhostaddressproto.h"
 
+QScriptValue SpecialAddresstoScriptValue(QScriptEngine *engine, const enum QHostAddress::SpecialAddress &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void SpecialAddressfromScriptValue(const QScriptValue &obj, enum QHostAddress::SpecialAddress &p)
+{
+  p = (enum QHostAddress::SpecialAddress)obj.toInt32();
+}
+
 void setupQHostAddressProto(QScriptEngine *engine)
 {
   QScriptValue proto = engine->newQObject(new QHostAddressProto(engine));
@@ -11,13 +21,14 @@ void setupQHostAddressProto(QScriptEngine *engine)
   engine->globalObject().setProperty("QHostAddress",  constructor);
 
   // enum QHostAddress::SpecialAddress
-  constructor.setProperty("Null",          QScriptValue(engine,   QHostAddress::Null),          ENUMPROPFLAGS);
-  constructor.setProperty("LocalHost",     QScriptValue(engine,   QHostAddress::LocalHost),     ENUMPROPFLAGS);
-  constructor.setProperty("LocalHostIPv6", QScriptValue(engine,   QHostAddress::LocalHostIPv6), ENUMPROPFLAGS);
-  constructor.setProperty("Broadcast",     QScriptValue(engine,   QHostAddress::Broadcast),     ENUMPROPFLAGS);
-  constructor.setProperty("AnyIPv4",       QScriptValue(engine,   QHostAddress::AnyIPv4),       ENUMPROPFLAGS);
-  constructor.setProperty("AnyIPv4",       QScriptValue(engine,   QHostAddress::AnyIPv4),       ENUMPROPFLAGS);
-  constructor.setProperty("Any",           QScriptValue(engine,   QHostAddress::Any),           ENUMPROPFLAGS);
+  qScriptRegisterMetaType(engine,          SpecialAddresstoScriptValue, SpecialAddressfromScriptValue);
+  constructor.setProperty("Null",          QScriptValue(engine,         QHostAddress::Null),            ENUMPROPFLAGS);
+  constructor.setProperty("LocalHost",     QScriptValue(engine,         QHostAddress::LocalHost),       ENUMPROPFLAGS);
+  constructor.setProperty("LocalHostIPv6", QScriptValue(engine,         QHostAddress::LocalHostIPv6),   ENUMPROPFLAGS);
+  constructor.setProperty("Broadcast",     QScriptValue(engine,         QHostAddress::Broadcast),       ENUMPROPFLAGS);
+  constructor.setProperty("AnyIPv4",       QScriptValue(engine,         QHostAddress::AnyIPv4),         ENUMPROPFLAGS);
+  constructor.setProperty("AnyIPv4",       QScriptValue(engine,         QHostAddress::AnyIPv4),         ENUMPROPFLAGS);
+  constructor.setProperty("Any",           QScriptValue(engine,         QHostAddress::Any),             ENUMPROPFLAGS);
 
 }
 

@@ -25,7 +25,7 @@ class QTcpServerProto : public QObject, public QScriptable
     Q_INVOKABLE QString	                      errorString() const;
     Q_INVOKABLE bool	                      hasPendingConnections() const;
     Q_INVOKABLE bool	                      isListening() const;
-    Q_INVOKABLE bool	                      listen(const QHostAddress & address = QHostAddress::Any, quint16 port = 0);
+    Q_INVOKABLE bool	                      listen(const QHostAddress::SpecialAddress &address = QHostAddress::Any, quint16 port = 0);
     Q_INVOKABLE virtual QTcpSocket*           nextPendingConnection();
     Q_INVOKABLE void	                      pauseAccepting();
     Q_INVOKABLE QNetworkProxy                 proxy() const;

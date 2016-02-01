@@ -19,6 +19,110 @@ void setupQSerialPortProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
+
+// qScriptRegisterMetaType handlers
+
+QScriptValue BaudRatetoScriptValue(QScriptEngine *engine, const enum QSerialPort::BaudRate &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void BaudRatefromScriptValue(const QScriptValue &obj, enum QSerialPort::BaudRate &p)
+{
+  p = (enum QSerialPort::BaudRate)obj.toInt32();
+}
+
+QScriptValue DataBitstoScriptValue(QScriptEngine *engine, const enum QSerialPort::DataBits &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void DataBitsfromScriptValue(const QScriptValue &obj, enum QSerialPort::DataBits &p)
+{
+  p = (enum QSerialPort::DataBits)obj.toInt32();
+}
+
+QScriptValue DirectiontoScriptValue(QScriptEngine *engine, const enum QSerialPort::Direction &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void DirectionfromScriptValue(const QScriptValue &obj, enum QSerialPort::Direction &p)
+{
+  p = (enum QSerialPort::Direction)obj.toInt32();
+}
+
+QScriptValue DirectionFlagstoScriptValue(QScriptEngine *engine, const QSerialPort::Directions &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void DirectionFlagsfromScriptValue(const QScriptValue &obj, QSerialPort::Directions &p)
+{
+  p = (QSerialPort::Directions)obj.toInt32();
+}
+
+QScriptValue FlowControltoScriptValue(QScriptEngine *engine, const enum QSerialPort::FlowControl &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void FlowControlfromScriptValue(const QScriptValue &obj, enum QSerialPort::FlowControl &p)
+{
+  p = (enum QSerialPort::FlowControl)obj.toInt32();
+}
+
+QScriptValue ParitytoScriptValue(QScriptEngine *engine, const enum QSerialPort::Parity &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void ParityfromScriptValue(const QScriptValue &obj, enum QSerialPort::Parity &p)
+{
+  p = (enum QSerialPort::Parity)obj.toInt32();
+}
+
+QScriptValue PinoutSignaltoScriptValue(QScriptEngine *engine, const enum QSerialPort::PinoutSignal &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void PinoutSignalfromScriptValue(const QScriptValue &obj, enum QSerialPort::PinoutSignal &p)
+{
+  p = (enum QSerialPort::PinoutSignal)obj.toInt32();
+}
+
+QScriptValue PinoutSignalstoScriptValue(QScriptEngine *engine, const QSerialPort::PinoutSignals &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void PinoutSignalsfromScriptValue(const QScriptValue &obj, QSerialPort::PinoutSignals &p)
+{
+  p = (QSerialPort::PinoutSignals)obj.toInt32();
+}
+
+QScriptValue SerialPortErrortoScriptValue(QScriptEngine *engine, const enum QSerialPort::SerialPortError &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void SerialPortErrorfromScriptValue(const QScriptValue &obj, enum QSerialPort::SerialPortError &p)
+{
+  p = (enum QSerialPort::SerialPortError)obj.toInt32();
+}
+
+QScriptValue StopBitstoScriptValue(QScriptEngine *engine, const enum QSerialPort::StopBits &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void StopBitsfromScriptValue(const QScriptValue &obj, enum QSerialPort::StopBits &p)
+{
+  p = (enum QSerialPort::StopBits)obj.toInt32();
+}
+//
+
 void setupQSerialPortProto(QScriptEngine *engine)
 {
   if (DEBUG) qDebug("setupQSerialPortProto entered");
@@ -28,43 +132,43 @@ void setupQSerialPortProto(QScriptEngine *engine)
 
   QScriptValue serialPortConstructor = engine->newFunction(constructQSerialPort, serialproto);
   engine->globalObject().setProperty("QSerialPort", serialPortConstructor);
-  
+
   // enum QSerialPort::BaudRate
-  qScriptRegisterMetaType(engine,        BaudRatetoScriptValue, BaudRatefromScriptValue);
-  serialPortConstructor.setProperty("Baud1200",    QScriptValue(engine,   QSerialPort::Baud1200),    ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("Baud2400",    QScriptValue(engine,   QSerialPort::Baud2400),    ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("Baud4800",    QScriptValue(engine,   QSerialPort::Baud4800),    ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("Baud9600",    QScriptValue(engine,   QSerialPort::Baud9600),    ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("Baud19200",   QScriptValue(engine,   QSerialPort::Baud19200),   ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("Baud38400",   QScriptValue(engine,   QSerialPort::Baud38400),   ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("Baud57600",   QScriptValue(engine,   QSerialPort::Baud57600),   ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("Baud115200",  QScriptValue(engine,   QSerialPort::Baud115200),  ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("UnknownBaud", QScriptValue(engine,   QSerialPort::UnknownBaud), ENUMPROPFLAGS);
+  qScriptRegisterMetaType(engine, BaudRatetoScriptValue, BaudRatefromScriptValue);
+  serialPortConstructor.setProperty("Baud1200",    QScriptValue(engine, QSerialPort::Baud1200),    ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("Baud2400",    QScriptValue(engine, QSerialPort::Baud2400),    ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("Baud4800",    QScriptValue(engine, QSerialPort::Baud4800),    ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("Baud9600",    QScriptValue(engine, QSerialPort::Baud9600),    ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("Baud19200",   QScriptValue(engine, QSerialPort::Baud19200),   ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("Baud38400",   QScriptValue(engine, QSerialPort::Baud38400),   ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("Baud57600",   QScriptValue(engine, QSerialPort::Baud57600),   ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("Baud115200",  QScriptValue(engine, QSerialPort::Baud115200),  ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("UnknownBaud", QScriptValue(engine, QSerialPort::UnknownBaud), ENUMPROPFLAGS);
 
   // enum QSerialPort::DataBits
-  qScriptRegisterMetaType(engine,            DataBitstoScriptValue, DataBitsfromScriptValue);
-  serialPortConstructor.setProperty("Data5",           QScriptValue(engine,   QSerialPort::Data5),           ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("Data6",           QScriptValue(engine,   QSerialPort::Data6),           ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("Data7",           QScriptValue(engine,   QSerialPort::Data7),           ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("Data8",           QScriptValue(engine,   QSerialPort::Data8),           ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("UnknownDataBits", QScriptValue(engine,   QSerialPort::UnknownDataBits), ENUMPROPFLAGS);
+  qScriptRegisterMetaType(engine, DataBitstoScriptValue, DataBitsfromScriptValue);
+  serialPortConstructor.setProperty("Data5",           QScriptValue(engine, QSerialPort::Data5),           ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("Data6",           QScriptValue(engine, QSerialPort::Data6),           ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("Data7",           QScriptValue(engine, QSerialPort::Data7),           ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("Data8",           QScriptValue(engine, QSerialPort::Data8),           ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("UnknownDataBits", QScriptValue(engine, QSerialPort::UnknownDataBits), ENUMPROPFLAGS);
  
    // enum QSerialPort::Direction
-  qScriptRegisterMetaType(engine,          DirectiontoScriptValue,  DirectionfromScriptValue);
-  qRegisterMetaType<QSerialPort::Directions>("QSerialPort::Directions");
-  serialPortConstructor.setProperty("Input",         QScriptValue(engine,     QSerialPort::Input),         ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("Output",        QScriptValue(engine,     QSerialPort::Output),        ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("AllDirections", QScriptValue(engine,     QSerialPort::AllDirections), ENUMPROPFLAGS);
+  qScriptRegisterMetaType(engine, DirectiontoScriptValue, DirectionfromScriptValue);
+  qScriptRegisterMetaType(engine, DirectionFlagstoScriptValue, DirectionFlagsfromScriptValue);
+  serialPortConstructor.setProperty("Input",         QScriptValue(engine, QSerialPort::Input),         ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("Output",        QScriptValue(engine, QSerialPort::Output),        ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("AllDirections", QScriptValue(engine, QSerialPort::AllDirections), ENUMPROPFLAGS);
   
   // enum QSerialPort::FlowControl
-  qScriptRegisterMetaType(engine,               FlowControltoScriptValue, FlowControlfromScriptValue);
-  serialPortConstructor.setProperty("NoFlowControl",      QScriptValue(engine,      QSerialPort::NoFlowControl),      ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("HardwareControl",    QScriptValue(engine,      QSerialPort::HardwareControl),    ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("SoftwareControl",    QScriptValue(engine,      QSerialPort::SoftwareControl),    ENUMPROPFLAGS);
-  serialPortConstructor.setProperty("UnknownFlowControl", QScriptValue(engine,      QSerialPort::UnknownFlowControl), ENUMPROPFLAGS);
+  qScriptRegisterMetaType(engine, FlowControltoScriptValue, FlowControlfromScriptValue);
+  serialPortConstructor.setProperty("NoFlowControl",      QScriptValue(engine, QSerialPort::NoFlowControl),      ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("HardwareControl",    QScriptValue(engine, QSerialPort::HardwareControl),    ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("SoftwareControl",    QScriptValue(engine, QSerialPort::SoftwareControl),    ENUMPROPFLAGS);
+  serialPortConstructor.setProperty("UnknownFlowControl", QScriptValue(engine, QSerialPort::UnknownFlowControl), ENUMPROPFLAGS);
   
   // enum QSerialPort::Parity
-  qScriptRegisterMetaType(engine,          ParitytoScriptValue,   ParityfromScriptValue);
+  qScriptRegisterMetaType(engine, ParitytoScriptValue, ParityfromScriptValue);
   serialPortConstructor.setProperty("NoParity",      QScriptValue(engine,   QSerialPort::NoParity),      ENUMPROPFLAGS);
   serialPortConstructor.setProperty("EvenParity",    QScriptValue(engine,   QSerialPort::EvenParity),    ENUMPROPFLAGS);
   serialPortConstructor.setProperty("OddParity",     QScriptValue(engine,   QSerialPort::OddParity),     ENUMPROPFLAGS);
@@ -73,7 +177,8 @@ void setupQSerialPortProto(QScriptEngine *engine)
   serialPortConstructor.setProperty("UnknownParity", QScriptValue(engine,   QSerialPort::UnknownParity), ENUMPROPFLAGS);
 
   // enum QSerialPort::PinoutSignal
-  qScriptRegisterMetaType(engine,                           PinoutSignaltoScriptValue, PinoutSignalfromScriptValue);
+  qScriptRegisterMetaType(engine, PinoutSignaltoScriptValue, PinoutSignalfromScriptValue);
+  qScriptRegisterMetaType(engine, PinoutSignalstoScriptValue, PinoutSignalsfromScriptValue);
   serialPortConstructor.setProperty("NoSignal",                       QScriptValue(engine,       QSerialPort::NoSignal),                       ENUMPROPFLAGS);
   serialPortConstructor.setProperty("TransmittedDataSignal",          QScriptValue(engine,       QSerialPort::TransmittedDataSignal),          ENUMPROPFLAGS);
   serialPortConstructor.setProperty("ReceivedDataSignal",             QScriptValue(engine,       QSerialPort::ReceivedDataSignal),             ENUMPROPFLAGS);
@@ -367,7 +472,6 @@ bool QSerialPortProto::setStopBits(QSerialPort::StopBits stopBits)
 {
   QSerialPort *item = qscriptvalue_cast<QSerialPort*>(thisObject());
   if (item)
-    //emit stopBitsChanged(stopBits);
     return item->setStopBits(stopBits);
 
   return false;
@@ -459,87 +563,4 @@ QString QSerialPortProto::toString() const
     return QString("QSerialPort(%1)").arg(item->portName());
   return QString("QSerialPort(unknown)");
 }
-
-// qScriptRegisterMetaType handlers
-
-QScriptValue BaudRatetoScriptValue(QScriptEngine *engine, const enum QSerialPort::BaudRate &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-
-void BaudRatefromScriptValue(const QScriptValue &obj, enum QSerialPort::BaudRate &p)
-{
-  p = (enum QSerialPort::BaudRate)obj.toInt32();
-}
-
-QScriptValue DataBitstoScriptValue(QScriptEngine *engine, const enum QSerialPort::DataBits &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-
-void DataBitsfromScriptValue(const QScriptValue &obj, enum QSerialPort::DataBits &p)
-{
-  p = (enum QSerialPort::DataBits)obj.toInt32();
-}
-
-QScriptValue DirectiontoScriptValue(QScriptEngine *engine, const enum QSerialPort::Direction &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-
-void DirectionfromScriptValue(const QScriptValue &obj, enum QSerialPort::Direction &p)
-{
-  p = (enum QSerialPort::Direction)obj.toInt32();
-}
-
-QScriptValue FlowControltoScriptValue(QScriptEngine *engine, const enum QSerialPort::FlowControl &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-
-void FlowControlfromScriptValue(const QScriptValue &obj, enum QSerialPort::FlowControl &p)
-{
-  p = (enum QSerialPort::FlowControl)obj.toInt32();
-}
-
-QScriptValue ParitytoScriptValue(QScriptEngine *engine, const enum QSerialPort::Parity &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-
-void ParityfromScriptValue(const QScriptValue &obj, enum QSerialPort::Parity &p)
-{
-  p = (enum QSerialPort::Parity)obj.toInt32();
-}
-
-QScriptValue PinoutSignaltoScriptValue(QScriptEngine *engine, const enum QSerialPort::PinoutSignal &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-
-void PinoutSignalfromScriptValue(const QScriptValue &obj, enum QSerialPort::PinoutSignal &p)
-{
-  p = (enum QSerialPort::PinoutSignal)obj.toInt32();
-}
-
-QScriptValue SerialPortErrortoScriptValue(QScriptEngine *engine, const enum QSerialPort::SerialPortError &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-
-void SerialPortErrorfromScriptValue(const QScriptValue &obj, enum QSerialPort::SerialPortError &p)
-{
-  p = (enum QSerialPort::SerialPortError)obj.toInt32();
-}
-
-QScriptValue StopBitstoScriptValue(QScriptEngine *engine, const enum QSerialPort::StopBits &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-
-void StopBitsfromScriptValue(const QScriptValue &obj, enum QSerialPort::StopBits &p)
-{
-  p = (enum QSerialPort::StopBits)obj.toInt32();
-}
-
 #endif

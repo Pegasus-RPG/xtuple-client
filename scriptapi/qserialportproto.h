@@ -31,25 +31,9 @@ Q_DECLARE_METATYPE(QSerialPort::Directions)
 Q_DECLARE_METATYPE(enum QSerialPort::FlowControl)
 Q_DECLARE_METATYPE(enum QSerialPort::Parity)
 Q_DECLARE_METATYPE(enum QSerialPort::PinoutSignal)
+Q_DECLARE_METATYPE(QSerialPort::PinoutSignals)
 Q_DECLARE_METATYPE(enum QSerialPort::SerialPortError)
 Q_DECLARE_METATYPE(enum QSerialPort::StopBits)
-
-QScriptValue BaudRatetoScriptValue(QScriptEngine *engine,            const enum QSerialPort::BaudRate &p);
-void         BaudRatefromScriptValue(const QScriptValue &obj,        enum QSerialPort::BaudRate &p);
-QScriptValue DataBitstoScriptValue(QScriptEngine *engine,            const enum QSerialPort::DataBits &p);
-void         DataBitsfromScriptValue(const QScriptValue &obj,        enum QSerialPort::DataBits &p);
-QScriptValue DirectiontoScriptValue(QScriptEngine *engine,           const enum QSerialPort::Direction &p);
-void         DirectionfromScriptValue(const QScriptValue &obj,       enum QSerialPort::Direction &p);
-QScriptValue FlowControltoScriptValue(QScriptEngine *engine,         const enum QSerialPort::FlowControl &p);
-void         FlowControlfromScriptValue(const QScriptValue &obj,     enum QSerialPort::FlowControl &p);
-QScriptValue ParitytoScriptValue(QScriptEngine *engine,              const enum QSerialPort::Parity &p);
-void         ParityfromScriptValue(const QScriptValue &obj,          enum QSerialPort::Parity &p);
-QScriptValue PinoutSignaltoScriptValue(QScriptEngine *engine,        const enum QSerialPort::PinoutSignal &p);
-void         PinoutSignalfromScriptValue(const QScriptValue &obj,    enum QSerialPort::PinoutSignal &p);
-QScriptValue SerialPortErrortoScriptValue(QScriptEngine *engine,     const enum QSerialPort::SerialPortError &p);
-void         SerialPortErrorfromScriptValue(const QScriptValue &obj, enum QSerialPort::SerialPortError &p);
-QScriptValue StopBitstoScriptValue(QScriptEngine *engine,            const enum QSerialPort::StopBits &p);
-void         StopBitsfromScriptValue(const QScriptValue &obj,        enum QSerialPort::StopBits &p);
 
 class QSerialPortProto : public QIODeviceProto
 {
