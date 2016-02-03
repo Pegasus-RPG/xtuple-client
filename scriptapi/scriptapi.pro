@@ -148,13 +148,13 @@ HEADERS += setupscriptapi.h \
     shipmentclusterlineeditsetup.h \
     vendorgroupsetup.h \
     wcomboboxsetup.h \
+    webchanneltransport.h \
     womatlclustersetup.h \
     xdateeditsetup.h \
     ../widgets/xt.h \
     xvariantsetup.h \
     xwebsync_p.h \
-    xwebsync.h \
-    xwebsyncproto.h
+    xwebsync.h
 
 SOURCES += setupscriptapi.cpp \
     include.cpp \
@@ -277,9 +277,9 @@ SOURCES += setupscriptapi.cpp \
     shipmentclusterlineeditsetup.cpp \
     vendorgroupsetup.cpp \
     wcomboboxsetup.cpp \
+    webchanneltransport.cpp \
     womatlclustersetup.cpp \
     xdateeditsetup.cpp \
     ../widgets/xt.cpp \
     xvariantsetup.cpp \
-    xwebsync.cpp \
-    xwebsyncproto.cpp
+    xwebsync.cpp

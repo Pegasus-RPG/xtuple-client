@@ -11,32 +11,47 @@
 #ifndef __XWEBSYNC_H__
 #define __XWEBSYNC_H__
 
+#include <QtScript>
+
+void setupXWebSync(QScriptEngine *engine);
+
+#if QT_VERSION >= 0x050000
 #include <QObject>
+#include "xwebsync_p.h"
 
 class XWebSyncPrivate;
+
+QScriptValue constructXWebSync(QScriptContext *context, QScriptEngine *engine);
 
 class XWebSync : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(QString data READ data WRITE setData NOTIFY dataChanged)
-  Q_PROPERTY(QString query READ query WRITE setQuery NOTIFY queryChanged)
-  Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
+
+  Q_PROPERTY(QString data READ getData WRITE setData NOTIFY dataChanged)
+  Q_PROPERTY(QString query READ getQuery WRITE setQuery NOTIFY queryChanged)
+  Q_PROPERTY(QString title READ getTitle WRITE setTitle NOTIFY titleChanged)
 
   public:
-    explicit XWebSync(QObject *parent = 0);
+    explicit XWebSync(QObject *parent);
     ~XWebSync();
 
-    void setData(const QString &data);
-    void setQuery(const QString &query);
-    void setTitle(const QString &title);
-    QString data() const;
-    QString query() const;
-    QString title() const;
+    Q_INVOKABLE QString getData() const;
+    Q_INVOKABLE QString getQuery() const;
+    Q_INVOKABLE QString getTitle() const;
+    Q_INVOKABLE void    setData(const QString &data);
+    Q_INVOKABLE void    setQuery(const QString &query);
+    Q_INVOKABLE void    setTitle(const QString &title);
 
-  Q_SIGNALS:
-    void executeRequest();
+  public slots:
+    Q_INVOKABLE void sendClientMessage(const QString &message);
+    Q_INVOKABLE void sendServerMessage(const QString &message);
+
+  signals:
     void dataChanged(const QString &data);
+    void executeRequest();
     void queryChanged(const QString &query);
+    void receivedClientMessage(const QString &message);
+    void receivedServerMessage(const QString &message);
     void titleChanged(const QString &title);
 
   private:
@@ -44,5 +59,9 @@ class XWebSync : public QObject
     Q_DECLARE_PRIVATE(XWebSync)
     QScopedPointer<XWebSyncPrivate> d_ptr;
 };
+
+Q_DECLARE_METATYPE(XWebSync*)
+
+#endif
 
 #endif

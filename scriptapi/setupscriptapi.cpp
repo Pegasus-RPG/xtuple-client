@@ -134,6 +134,7 @@
 #include "usernamecluster.h"
 #include "vendorgroupsetup.h"
 #include "wcomboboxsetup.h"
+#include "webchanneltransport.h"
 #include "wocluster.h"
 #include "womatlclustersetup.h"
 #include "xcheckbox.h"
@@ -145,7 +146,7 @@
 #include "xsqlqueryproto.h"
 #include "xtreewidget.h"
 #include "xvariantsetup.h"
-#include "xwebsyncproto.h"
+#include "xwebsync.h"
 
 /*! \defgroup scriptapi The xTuple ERP Scripting API
 
@@ -283,6 +284,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupUsernameLineEdit(engine);
   setupVendorGroup(engine);
   setupWComboBox(engine);
+  setupWebChannelTransport(engine);
   setupWoCluster(engine);
   setupWomatlCluster(engine);
   setupXCheckBox(engine);
@@ -296,5 +298,5 @@ void setupScriptApi(QScriptEngine *engine)
   setupXTreeWidget(engine);
   setupXTreeWidgetItem(engine);
   setupXVariant(engine);
-  setupXWebSyncProto(engine);
+  setupXWebSync(engine);
 }

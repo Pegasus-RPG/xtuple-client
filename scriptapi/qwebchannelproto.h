@@ -12,6 +12,7 @@
 #define __QWEBCHANNELPROTO_H__
 
 #include <QtScript>
+#include "qobjectproto.h"
 
 void setupQWebChannelProto(QScriptEngine *engine);
 
