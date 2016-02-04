@@ -76,10 +76,10 @@ void QListQSslCertificatefromScriptValue(const QScriptValue &obj, QList<QSslCert
 QScriptValue fromDataForJS(QScriptContext* context, QScriptEngine* engine)
 {
   if (context->argumentCount() == 1) {
-    QByteArray data = qscriptvalue_cast<QByteArray>(context->argument(0));
+    QByteArray data = context->argument(0).toVariant().toByteArray();
     return engine->toScriptValue(QSslCertificate::fromData(data));
   } else if (context->argumentCount() == 2) {
-    QByteArray data = qscriptvalue_cast<QByteArray>(context->argument(0));
+    QByteArray data = context->argument(0).toVariant().toByteArray();
     QSsl::EncodingFormat format = (QSsl::EncodingFormat)context->argument(1).toInt32();
     return engine->toScriptValue(QSslCertificate::fromData(data, format));
   } else {
@@ -143,7 +143,7 @@ QScriptValue importPkcs12ForJS(QScriptContext* context, QScriptEngine* engine)
     QSslKey *key = qscriptvalue_cast<QSslKey*>(context->argument(1));
     QSslCertificate *certificate = qscriptvalue_cast<QSslCertificate*>(context->argument(2));
     QList<QSslCertificate> *caCertificates = qscriptvalue_cast<QList<QSslCertificate>*>(context->argument(3));
-    QByteArray passPhrase = qscriptvalue_cast<QByteArray>(context->argument(4));
+    QByteArray passPhrase = context->argument(4).toVariant().toByteArray();
     return engine->toScriptValue(QSslCertificate::importPkcs12(device, key, certificate, caCertificates, passPhrase));
   } else {
     return engine->toScriptValue(false);

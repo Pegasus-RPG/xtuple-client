@@ -16,9 +16,35 @@
 void setupQBufferProto(QScriptEngine *engine);
 
 #include <QBuffer>
+#include <QIODevice>
 
 Q_DECLARE_METATYPE(QBuffer*)
+//Q_DECLARE_METATYPE(QBuffer) // Is Q_DISABLE_COPY() in qbuffer.h
 
 QScriptValue constructQBuffer(QScriptContext *context, QScriptEngine *engine);
+
+class QBufferProto : public QObject, public QScriptable
+{
+  Q_OBJECT
+
+  public:
+    QBufferProto(QObject *parent);
+    virtual ~QBufferProto();
+
+    Q_INVOKABLE QByteArray &        buffer();
+    Q_INVOKABLE const QByteArray &  data() const;
+    Q_INVOKABLE void                setBuffer(QByteArray * byteArray);
+    Q_INVOKABLE void                setData(const QByteArray & data);
+    Q_INVOKABLE void                setData(const char * data, int size);
+
+  // Reimplemented Public Functions.
+    Q_INVOKABLE bool                atEnd() const;
+    Q_INVOKABLE bool                canReadLine() const;
+    Q_INVOKABLE void                close();
+    Q_INVOKABLE bool                open(QIODevice::OpenMode flags);
+    Q_INVOKABLE qint64              pos() const;
+    Q_INVOKABLE bool                seek(qint64 pos);
+    Q_INVOKABLE qint64              size() const;
+};
 
 #endif

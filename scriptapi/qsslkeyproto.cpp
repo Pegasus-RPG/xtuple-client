@@ -86,7 +86,7 @@ QScriptValue constructQSslKey(QScriptContext *context,
     algorithm = static_cast<QSsl::KeyAlgorithm>(context->argument(1).toInt32());
 
     if (key.length() > 0) { // Handle `const QByteArray & encoded`.
-      QByteArray encoded = qscriptvalue_cast<QByteArray>(arg);
+      QByteArray encoded = arg.toVariant().toByteArray();
       if (context->argumentCount() == 2) {
         obj = new QSslKey(encoded, algorithm);
       } else if (context->argumentCount() == 3) {
@@ -99,7 +99,7 @@ QScriptValue constructQSslKey(QScriptContext *context,
       } else if (context->argumentCount() == 5) {
         encoding = static_cast<QSsl::EncodingFormat>(context->argument(2).toInt32());
         type = static_cast<QSsl::KeyType>(context->argument(3).toInt32());
-        passPhrase = qscriptvalue_cast<QByteArray>(context->argument(4));
+        passPhrase = context->argument(4).toVariant().toByteArray();
         obj = new QSslKey(encoded, algorithm, encoding, type, passPhrase);
       }
     }
@@ -119,7 +119,7 @@ QScriptValue constructQSslKey(QScriptContext *context,
       } else if (context->argumentCount() == 5) {
         encoding = static_cast<QSsl::EncodingFormat>(context->argument(2).toInt32());
         type = static_cast<QSsl::KeyType>(context->argument(3).toInt32());
-        passPhrase = qscriptvalue_cast<QByteArray>(context->argument(4));
+        passPhrase = context->argument(4).toVariant().toByteArray();
         obj = new QSslKey(device, algorithm, encoding, type, passPhrase);
       }
     }

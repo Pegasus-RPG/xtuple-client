@@ -12,13 +12,19 @@
 #define __QHOSTADDRESSPROTO_H__
 
 #include <QScriptEngine>
+
+void setupQHostAddressProto(QScriptEngine *engine);
+
+#if QT_VERSION >= 0x050000
+#include <QAbstractSocket>
 #include <QHostAddress>
 #include <QScriptable>
+#include <QString>
 
 Q_DECLARE_METATYPE(QHostAddress*)
 Q_DECLARE_METATYPE(QHostAddress)
+Q_DECLARE_METATYPE(enum QHostAddress::SpecialAddress)
 
-void setupQHostAddressProto(QScriptEngine *engine);
 QScriptValue constructQHostAddress(QScriptContext *context, QScriptEngine *engine);
 
 class QHostAddressProto : public QObject, public QScriptable
@@ -29,8 +35,26 @@ class QHostAddressProto : public QObject, public QScriptable
     QHostAddressProto(QObject *parent);
     ~QHostAddressProto();
 
-    Q_INVOKABLE QString                   toString() const;
+    Q_INVOKABLE void                                    clear();
+    Q_INVOKABLE bool                                    isInSubnet(const QHostAddress & subnet, int netmask) const;
+    Q_INVOKABLE bool                                    isInSubnet(const QPair<QHostAddress, int> & subnet) const;
+    Q_INVOKABLE bool                                    isLoopback() const;
+    Q_INVOKABLE bool                                    isNull() const;
+    Q_INVOKABLE QAbstractSocket::NetworkLayerProtocol   protocol() const;
+    Q_INVOKABLE QString                                 scopeId() const;
+    Q_INVOKABLE void                                    setAddress(quint32 ip4Addr);
+    Q_INVOKABLE void                                    setAddress(quint8 * ip6Addr);
+    Q_INVOKABLE void                                    setAddress(const quint8 * ip6Addr);
+    Q_INVOKABLE void                                    setAddress(const Q_IPV6ADDR & ip6Addr);
+    Q_INVOKABLE void                                    setAddress(const sockaddr * sockaddr);
+    Q_INVOKABLE bool                                    setAddress(const QString & address);
+    Q_INVOKABLE void                                    setScopeId(const QString & id);
+    Q_INVOKABLE quint32                                 toIPv4Address() const;
+    Q_INVOKABLE quint32                                 toIPv4Address(bool * ok) const;
+    Q_INVOKABLE Q_IPV6ADDR                              toIPv6Address() const;
+    Q_INVOKABLE QString                                 toString() const;
 
 };
 
+#endif
 #endif
