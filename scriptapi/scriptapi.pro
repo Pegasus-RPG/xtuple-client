@@ -113,10 +113,15 @@ HEADERS += setupscriptapi.h \
     qtreewidgetitemproto.h \
     qtsetup.h \
     qurlproto.h \
+    qurlqueryproto.h \
+    quuidproto.h \
     qvalidatorproto.h \
     qwebchannelproto.h \
+    qwebelementproto.h \
+    qwebelementcollectionproto.h \
     qwebframeproto.h \
     qwebpageproto.h \
+    qwebsecurityoriginproto.h \
     qwebsettingsproto.h \
     qwebsocketcorsauthenticatorproto.h \
     qwebsocketproto.h             \
@@ -242,10 +247,15 @@ SOURCES += setupscriptapi.cpp \
     qtreewidgetitemproto.cpp \
     qtsetup.cpp \
     qurlproto.cpp \
+    qurlqueryproto.cpp \
+    quuidproto.cpp \
     qvalidatorproto.cpp \
     qwebchannelproto.cpp \
+    qwebelementproto.cpp \
+    qwebelementcollectionproto.cpp \
     qwebframeproto.cpp \
     qwebpageproto.cpp \
+    qwebsecurityoriginproto.cpp \
     qwebsettingsproto.cpp \
     qwebsocketcorsauthenticatorproto.cpp \
     qwebsocketproto.cpp           \
