@@ -24,7 +24,7 @@ void setupQWebSocketServerProto(QScriptEngine *engine);
 class QWebSocket;
 
 Q_DECLARE_METATYPE(QWebSocketServer*)
-Q_DECLARE_METATYPE(QWebSocketServer)
+//Q_DECLARE_METATYPE(QWebSocketServer) // Is Q_DISABLE_COPY() in qwebsocketserver.h
 Q_DECLARE_METATYPE(enum QWebSocketServer::SslMode)
 
 QScriptValue constructQWebSocketServer(QScriptContext *context, QScriptEngine *engine);

@@ -26,7 +26,7 @@
 #include <QWebPage>
 
 Q_DECLARE_METATYPE(QWebView*)
-Q_DECLARE_METATYPE(QWebView)
+//Q_DECLARE_METATYPE(QWebView) // Is private in qwebview.h
 
 void setupQWebViewProto(QScriptEngine *engine);
 QScriptValue constructQWebView(QScriptContext *context, QScriptEngine *engine);
@@ -77,9 +77,9 @@ class QWebViewProto : public QObject, public QScriptable
     Q_INVOKABLE qreal                   zoomFactor() const;
 
   // Reimplemented Public Functions.
-    Q_INVOKABLE bool                    event(QEvent * e)
-    Q_INVOKABLE QVariant                inputMethodQuery(Qt::InputMethodQuery property) const
-    Q_INVOKABLE QSize                   sizeHint() const
+    Q_INVOKABLE bool                    event(QEvent * e);
+    Q_INVOKABLE QVariant                inputMethodQuery(Qt::InputMethodQuery property) const;
+    Q_INVOKABLE QSize                   sizeHint() const;
 
   public Q_SLOTS:
     Q_INVOKABLE void                    back();

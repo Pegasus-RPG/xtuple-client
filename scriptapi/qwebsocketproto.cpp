@@ -34,7 +34,8 @@ void setupQWebSocketProto(QScriptEngine *engine)
 
   QScriptValue proto = engine->newQObject(new QWebSocketProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebSocket*>(), proto);
-  engine->setDefaultPrototype(qMetaTypeId<QWebSocket>(), proto);
+  // Not allowed. Is Q_DISABLE_COPY() in qwebsocket.h
+  //engine->setDefaultPrototype(qMetaTypeId<QWebSocket>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQWebSocket, proto);
   engine->globalObject().setProperty("QWebSocket",  constructor);

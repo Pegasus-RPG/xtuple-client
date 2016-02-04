@@ -21,7 +21,7 @@ void setupQWebSocketProto(QScriptEngine *engine);
 class QMaskGenerator;
 
 Q_DECLARE_METATYPE(QWebSocket*)
-Q_DECLARE_METATYPE(QWebSocket)
+//Q_DECLARE_METATYPE(QWebSocket) // Is Q_DISABLE_COPY() in qwebsocket.h
 
 QScriptValue constructQWebSocket(QScriptContext *context, QScriptEngine *engine);
 
@@ -75,7 +75,7 @@ class QWebSocketProto :public QObject, public QScriptable
     void ping(const QByteArray & payload = QByteArray());
 
   signals:
-    void    aboutToClose()
+    void    aboutToClose();
     void    binaryFrameReceived(const QByteArray & frame, bool isLastFrame);
     void    binaryMessageReceived(const QByteArray & message);
     void    bytesWritten(qint64 bytes);

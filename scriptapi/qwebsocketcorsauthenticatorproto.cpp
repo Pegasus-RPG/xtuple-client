@@ -20,7 +20,8 @@ void setupQWebSocketCorsAuthenticatorProto(QScriptEngine *engine)
 {
   QScriptValue proto = engine->newQObject(new QWebSocketCorsAuthenticatorProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebSocketCorsAuthenticator*>(), proto);
-  engine->setDefaultPrototype(qMetaTypeId<QWebSocketCorsAuthenticator>(), proto);
+  // Not allowed. Is Q_DECLARE_PRIVATE() in qwebsocketcorsauthenticator.h
+  //engine->setDefaultPrototype(qMetaTypeId<QWebSocketCorsAuthenticator>(), proto);
 
   engine->globalObject().setProperty("QWebSocketCorsAuthenticator",  proto);
 }

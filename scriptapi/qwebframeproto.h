@@ -34,7 +34,7 @@
 #include <QWebSecurityOrigin>
 
 Q_DECLARE_METATYPE(QWebFrame*)
-Q_DECLARE_METATYPE(QWebFrame)
+//Q_DECLARE_METATYPE(QWebFrame) // Is private in in qwebframe.h
 
 Q_DECLARE_METATYPE(enum QWebFrame::RenderLayer)
 #if QT_VERSION >= 0x050000
@@ -110,7 +110,7 @@ class QWebFrameProto : public QObject, public QScriptable
     Q_INVOKABLE qreal                         zoomFactor() const;
 
   // Reimplemented Public Functions.
-    Q_INVOKABLE bool                          event(QEvent * e)
+    Q_INVOKABLE bool                          event(QEvent * e);
 
   public Q_SLOTS:
     Q_INVOKABLE QVariant                      evaluateJavaScript(const QString& scriptSource);

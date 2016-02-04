@@ -132,7 +132,8 @@ void setupQWebPageProto(QScriptEngine *engine)
 
   QScriptValue proto = engine->newQObject(new QWebPageProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebPage*>(), proto);
-  engine->setDefaultPrototype(qMetaTypeId<QWebPage>(), proto);
+  // Not allowed. Is private in qwebpage.h
+  //engine->setDefaultPrototype(qMetaTypeId<QWebPage>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQWebPage,
                                                  proto);
@@ -202,7 +203,7 @@ void setupQWebPageProto(QScriptEngine *engine)
   constructor.setProperty("Forward", QScriptValue(engine, QWebPage::Forward), permanent);
   constructor.setProperty("Stop", QScriptValue(engine, QWebPage::Stop), permanent);
   constructor.setProperty("StopScheduledPageRefresh", QScriptValue(engine, QWebPage::StopScheduledPageRefresh), permanent);
-  constructor.setProperty("Reload", QScriptValue(engine, QWebPage::ReloadReload), permanent);
+  constructor.setProperty("Reload", QScriptValue(engine, QWebPage::Reload), permanent);
   constructor.setProperty("ReloadAndBypassCache", QScriptValue(engine, QWebPage::ReloadAndBypassCache), permanent);
   constructor.setProperty("Cut", QScriptValue(engine, QWebPage::Cut), permanent);
   constructor.setProperty("Copy", QScriptValue(engine, QWebPage::Copy), permanent);

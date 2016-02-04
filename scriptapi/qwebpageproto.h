@@ -33,7 +33,7 @@
 #include <QWidget>
 
 Q_DECLARE_METATYPE(QWebPage*)
-Q_DECLARE_METATYPE(QWebPage)
+//Q_DECLARE_METATYPE(QWebPage) // Is private in qwebpage.h
 
 Q_DECLARE_METATYPE(class QWebPage::ChooseMultipleFilesExtensionOption)
 Q_DECLARE_METATYPE(class QWebPage::ChooseMultipleFilesExtensionReturn)
@@ -63,17 +63,17 @@ class QWebPageProto : public QObject, public QScriptable
 {
   Q_OBJECT
 
-  Q_PROPERTY (bool contentEditable                          READ isContentEditable          WRITE setContentEditable)
-  Q_PROPERTY (bool forwardUnsupportedContent                READ forwardUnsupportedContent  WRITE setForwardUnsupportedContent)
-  Q_PROPERTY (const bool hasSelection                       READ hasSelection)
-  Q_PROPERTY (LinkDelegationPolicy linkDelegationPolicy     READ linkDelegationPolicy       WRITE setLinkDelegationPolicy)
-  Q_PROPERTY (const bool modified                           READ isModified)
-  Q_PROPERTY (QPalette palette                              READ palette                    WRITE setPalette)
-  Q_PROPERTY (QSize preferredContentsSize                   READ preferredContentsSize      WRITE setPreferredContentsSize)
-  Q_PROPERTY (const QString selectedHtml                    READ selectedHtml)
-  Q_PROPERTY (const QString selectedText                    READ selectedText)
-  Q_PROPERTY (QSize viewportSize                            READ viewportSize               WRITE setViewportSize)
-  Q_PROPERTY (VisibilityState visibilityState               READ visibilityState            WRITE setVisibilityState)
+  Q_PROPERTY (bool contentEditable                                  READ isContentEditable          WRITE setContentEditable)
+  Q_PROPERTY (bool forwardUnsupportedContent                        READ forwardUnsupportedContent  WRITE setForwardUnsupportedContent)
+  Q_PROPERTY (const bool hasSelection                               READ hasSelection)
+  Q_PROPERTY (QWebPage::LinkDelegationPolicy linkDelegationPolicy   READ linkDelegationPolicy       WRITE setLinkDelegationPolicy)
+  Q_PROPERTY (const bool modified                                   READ isModified)
+  Q_PROPERTY (QPalette palette                                      READ palette                    WRITE setPalette)
+  Q_PROPERTY (QSize preferredContentsSize                           READ preferredContentsSize      WRITE setPreferredContentsSize)
+  Q_PROPERTY (const QString selectedHtml                            READ selectedHtml)
+  Q_PROPERTY (const QString selectedText                            READ selectedText)
+  Q_PROPERTY (QSize viewportSize                                    READ viewportSize               WRITE setViewportSize)
+  Q_PROPERTY (QWebPage::VisibilityState visibilityState             READ visibilityState            WRITE setVisibilityState)
 
   public:
     QWebPageProto(QObject *parent);

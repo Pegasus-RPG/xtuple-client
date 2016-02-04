@@ -34,7 +34,8 @@ void setupQWebViewProto(QScriptEngine *engine)
 
   QScriptValue proto = engine->newQObject(new QWebViewProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebView*>(), proto);
-  engine->setDefaultPrototype(qMetaTypeId<QWebView>(), proto);
+  // Not allowed. Is private in qwebview.h
+  //engine->setDefaultPrototype(qMetaTypeId<QWebView>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQWebView,
                                                  proto);

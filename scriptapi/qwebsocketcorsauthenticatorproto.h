@@ -20,7 +20,7 @@ void setupQWebSocketCorsAuthenticatorProto(QScriptEngine *engine);
 #include <QWebSocketCorsAuthenticator>
 
 Q_DECLARE_METATYPE(QWebSocketCorsAuthenticator*)
-Q_DECLARE_METATYPE(QWebSocketCorsAuthenticator)
+//Q_DECLARE_METATYPE(QWebSocketCorsAuthenticator) // Is Q_DECLARE_PRIVATE() in qwebsocketcorsauthenticator.h
 
 QScriptValue constructQWebSocketCorsAuthenticator(QScriptContext *context, QScriptEngine *engine);
 

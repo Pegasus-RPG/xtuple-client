@@ -52,7 +52,8 @@ void setupQWebFrameProto(QScriptEngine *engine)
 
   QScriptValue proto = engine->newQObject(new QWebFrameProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebFrame*>(), proto);
-  engine->setDefaultPrototype(qMetaTypeId<QWebFrame>(), proto);
+  // Not allowed. Is private in in qwebframe.h
+  //engine->setDefaultPrototype(qMetaTypeId<QWebFrame>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQWebFrame, proto);
   engine->globalObject().setProperty("QWebFrame",  constructor);
