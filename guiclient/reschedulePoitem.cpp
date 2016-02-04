@@ -9,7 +9,7 @@
  */
 
 #include "reschedulePoitem.h"
-
+#include "guiErrorCheck.h"
 #include <QMessageBox>
 #include <QVariant>
 
@@ -125,21 +125,26 @@ void reschedulePoitem::sPopulate(int pPoitemid)
 
 void reschedulePoitem::sAllItems()
 {
-  _poitem->setEnabled(!_allItems->isChecked());
-  _reschedule->setEnabled(_allItems->isChecked() || (!_allItems->isChecked() && _poitem->isValid()));
+  _poitem->setVisible(!_allItems->isChecked());
+  _poitemLit->setVisible(!_allItems->isChecked());
+  _reschedule->setEnabled((_allItems->isChecked() && _po->isValid()) 
+                       || (!_allItems->isChecked() && _poitem->isValid()));
 }
 
 void reschedulePoitem::sReschedule()
 {
   XSqlQuery rescheduleReschedule;
-  if (!_new->isValid())
-  {
-    QMessageBox::critical( this, tr("Invalid Reschedule Date"),
+
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(!_new->isValid(), _new,
                            tr("<p>You must enter a reschedule due date before "
-                              "you may save this Purchase Order Item.") );
-    _new->setFocus();
-    return;
-  }
+                              "you may save this Purchase Order.") )
+         << GuiErrorCheck(!_po->isValid(), _po,
+                           tr("<p>You must select a Purchase Order.") )
+  ;
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Reschedule Order"), errors))
+      return;
 
   if (_allItems->isChecked())
     rescheduleReschedule.prepare("SELECT changePoitemDueDate(poitem_id, :dueDate) "

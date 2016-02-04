@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>388</width>
-    <height>199</height>
+    <width>438</width>
+    <height>218</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -157,25 +157,28 @@ to be bound by its terms.</comment>
  <customwidgets>
   <customwidget>
    <class>DLineEdit</class>
-   <extends></extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>OrderCluster</class>
-   <extends></extends>
+   <extends>QWidget</extends>
    <header>ordercluster.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
-   <extends></extends>
+   <extends>QComboBox</extends>
    <header>xcombobox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_po</tabstop>
+  <tabstop>_allItems</tabstop>
+  <tabstop>_poitem</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_reschedule</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_current</tabstop>
  </tabstops>
  <includes>
   <include location="global">parameter.h</include>
