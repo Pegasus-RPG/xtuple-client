@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which(including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -15,7 +15,6 @@ void setupQWebSocketProto(QScriptEngine *engine)
 {
   Q_UNUSED(engine);
 }
-
 #else
 
 #include <QMaskGenerator>
@@ -24,7 +23,6 @@ QScriptValue QWebSocketToScriptValue(QScriptEngine *engine, QWebSocket* const &i
 {
   return engine->newQObject(item);
 }
-
 void QWebSocketFromScriptValue(const QScriptValue &obj, QWebSocket* &item)
 {
   item = qobject_cast<QWebSocket*>(obj.toQObject());
@@ -36,6 +34,7 @@ void setupQWebSocketProto(QScriptEngine *engine)
 
   QScriptValue proto = engine->newQObject(new QWebSocketProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebSocket*>(), proto);
+  engine->setDefaultPrototype(qMetaTypeId<QWebSocket>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQWebSocket, proto);
   engine->globalObject().setProperty("QWebSocket",  constructor);

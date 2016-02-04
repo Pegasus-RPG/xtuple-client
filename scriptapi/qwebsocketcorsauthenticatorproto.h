@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which(including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -20,14 +20,16 @@ void setupQWebSocketCorsAuthenticatorProto(QScriptEngine *engine);
 #include <QWebSocketCorsAuthenticator>
 
 Q_DECLARE_METATYPE(QWebSocketCorsAuthenticator*)
+Q_DECLARE_METATYPE(QWebSocketCorsAuthenticator)
 
 QScriptValue constructQWebSocketCorsAuthenticator(QScriptContext *context, QScriptEngine *engine);
+
 class QWebSocketCorsAuthenticatorProto : public QObject, public QScriptable
 {
   Q_OBJECT
 
   public:
-    QWebSocketCorsAuthenticatorProto(QObject *parent = 0);
+    QWebSocketCorsAuthenticatorProto(QObject *parent);
     Q_INVOKABLE virtual ~QWebSocketCorsAuthenticatorProto();
 
     Q_INVOKABLE bool                        allowed() const;

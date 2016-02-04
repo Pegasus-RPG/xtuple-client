@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which(including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -16,25 +16,12 @@ void setupQWebSocketCorsAuthenticatorProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
-
-QScriptValue QWebSocketCorsAuthenticatorToScriptValue(QScriptEngine *engine, QWebSocketCorsAuthenticator* const &item)
-{
-  QScriptValue obj = engine->newObject();
-  obj.setProperty("origin",  item->origin());
-  obj.setProperty("allowed", item->allowed());
-  return obj;
-}
-
-void QWebSocketCorsAuthenticatorFromScriptValue(const QScriptValue &obj, QWebSocketCorsAuthenticator* &item)
-{
-  item = new QWebSocketCorsAuthenticator(obj.property("origin").toString());
-  item->setAllowed(obj.property("allowed").toBool());
-}
-
 void setupQWebSocketCorsAuthenticatorProto(QScriptEngine *engine)
 {
   QScriptValue proto = engine->newQObject(new QWebSocketCorsAuthenticatorProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebSocketCorsAuthenticator*>(), proto);
+  engine->setDefaultPrototype(qMetaTypeId<QWebSocketCorsAuthenticator>(), proto);
+
   engine->globalObject().setProperty("QWebSocketCorsAuthenticator",  proto);
 }
 
@@ -44,14 +31,18 @@ QScriptValue constructQWebSocketCorsAuthenticator(QScriptContext *context, QScri
   if (context->argumentCount() >= 1)
   {
     QScriptValue arg = context->argument(0);
-    if (arg.isString())
+    if (arg.isString()) {
       obj = new QWebSocketCorsAuthenticator(arg.toString());
-    else
-      QWebSocketCorsAuthenticatorFromScriptValue(arg, obj);
+    } else {
+      obj = new QWebSocketCorsAuthenticator(arg.property("origin").toString());
+      obj->setAllowed(arg.property("allowed").toBool());
+    }
   }
-  else
+  else {
     context->throwError(QScriptContext::UnknownError,
                         "Could not find an appropriate QWebSocketCorsAuthenticator constructor");
+  }
+
   return engine->toScriptValue(obj);
 }
 

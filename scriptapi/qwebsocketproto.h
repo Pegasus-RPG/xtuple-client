@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which(including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -21,14 +21,16 @@ void setupQWebSocketProto(QScriptEngine *engine);
 class QMaskGenerator;
 
 Q_DECLARE_METATYPE(QWebSocket*)
+Q_DECLARE_METATYPE(QWebSocket)
 
 QScriptValue constructQWebSocket(QScriptContext *context, QScriptEngine *engine);
+
 class QWebSocketProto :public QObject, public QScriptable
 {
   Q_OBJECT
 
   public:
-    QWebSocketProto(QObject *parent = 0);
+    QWebSocketProto(QObject *parent);
     Q_INVOKABLE virtual ~QWebSocketProto();
 
     Q_INVOKABLE void                          abort();
@@ -71,6 +73,22 @@ class QWebSocketProto :public QObject, public QScriptable
     void ignoreSslErrors();
     void open(const QUrl & url);
     void ping(const QByteArray & payload = QByteArray());
+
+  signals:
+    void    aboutToClose()
+    void    binaryFrameReceived(const QByteArray & frame, bool isLastFrame);
+    void    binaryMessageReceived(const QByteArray & message);
+    void    bytesWritten(qint64 bytes);
+    void    connected();
+    void    disconnected();
+    void    error(QAbstractSocket::SocketError error);
+    void    pong(quint64 elapsedTime, const QByteArray & payload);
+    void    proxyAuthenticationRequired(const QNetworkProxy & proxy, QAuthenticator * authenticator);
+    void    readChannelFinished();
+    void    sslErrors(const QList<QSslError> & errors);
+    void    stateChanged(QAbstractSocket::SocketState state);
+    void    textFrameReceived(const QString & frame, bool isLastFrame);
+    void    textMessageReceived(const QString & message);
 
 };
 

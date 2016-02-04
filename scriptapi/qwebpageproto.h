@@ -33,20 +33,28 @@
 #include <QWidget>
 
 Q_DECLARE_METATYPE(QWebPage*)
+Q_DECLARE_METATYPE(QWebPage)
 
+Q_DECLARE_METATYPE(class QWebPage::ChooseMultipleFilesExtensionOption)
+Q_DECLARE_METATYPE(class QWebPage::ChooseMultipleFilesExtensionReturn)
+Q_DECLARE_METATYPE(class QWebPage::ErrorPageExtensionOption)
+Q_DECLARE_METATYPE(class QWebPage::ErrorPageExtensionReturn)
 Q_DECLARE_METATYPE(class QWebPage::ExtensionOption)
 Q_DECLARE_METATYPE(class QWebPage::ExtensionReturn)
 Q_DECLARE_METATYPE(class QWebPage::ViewportAttributes)
 
+Q_DECLARE_METATYPE(enum QWebPage::ErrorDomain)
 Q_DECLARE_METATYPE(enum QWebPage::Extension)
 Q_DECLARE_METATYPE(enum QWebPage::Feature)
 Q_DECLARE_METATYPE(enum QWebPage::FindFlag)
 Q_DECLARE_METATYPE(enum QWebPage::LinkDelegationPolicy)
+Q_DECLARE_METATYPE(enum QWebPage::NavigationType)
 Q_DECLARE_METATYPE(enum QWebPage::PermissionPolicy)
 #if QT_VERSION >= 0x050000
 Q_DECLARE_METATYPE(enum QWebPage::VisibilityState)
 #endif
 Q_DECLARE_METATYPE(enum QWebPage::WebAction)
+Q_DECLARE_METATYPE(enum QWebPage::WebWindowType)
 
 void setupQWebPageProto(QScriptEngine *engine);
 QScriptValue constructQWebPage(QScriptContext *context, QScriptEngine *engine);
@@ -54,6 +62,18 @@ QScriptValue constructQWebPage(QScriptContext *context, QScriptEngine *engine);
 class QWebPageProto : public QObject, public QScriptable
 {
   Q_OBJECT
+
+  Q_PROPERTY (bool contentEditable                          READ isContentEditable          WRITE setContentEditable)
+  Q_PROPERTY (bool forwardUnsupportedContent                READ forwardUnsupportedContent  WRITE setForwardUnsupportedContent)
+  Q_PROPERTY (const bool hasSelection                       READ hasSelection)
+  Q_PROPERTY (LinkDelegationPolicy linkDelegationPolicy     READ linkDelegationPolicy       WRITE setLinkDelegationPolicy)
+  Q_PROPERTY (const bool modified                           READ isModified)
+  Q_PROPERTY (QPalette palette                              READ palette                    WRITE setPalette)
+  Q_PROPERTY (QSize preferredContentsSize                   READ preferredContentsSize      WRITE setPreferredContentsSize)
+  Q_PROPERTY (const QString selectedHtml                    READ selectedHtml)
+  Q_PROPERTY (const QString selectedText                    READ selectedText)
+  Q_PROPERTY (QSize viewportSize                            READ viewportSize               WRITE setViewportSize)
+  Q_PROPERTY (VisibilityState visibilityState               READ visibilityState            WRITE setVisibilityState)
 
   public:
     QWebPageProto(QObject *parent);
@@ -111,6 +131,39 @@ class QWebPageProto : public QObject, public QScriptable
 #if QT_VERSION >= 0x050000
     Q_INVOKABLE QWebPage::VisibilityState       visibilityState() const;
 #endif
+
+  // Reimplemented Public Functions
+    Q_INVOKABLE bool                            event(QEvent * ev);
+
+  signals:
+    void    applicationCacheQuotaExceeded(QWebSecurityOrigin * origin, quint64 defaultOriginQuota, quint64 totalSpaceNeeded);
+    void    contentsChanged();
+    void    databaseQuotaExceeded(QWebFrame * frame, QString databaseName);
+    void    downloadRequested(const QNetworkRequest & request);
+    void    featurePermissionRequestCanceled(QWebFrame * frame, QWebPage::Feature feature);
+    void    featurePermissionRequested(QWebFrame * frame, QWebPage::Feature feature);
+    void    frameCreated(QWebFrame * frame);
+    void    geometryChangeRequested(const QRect & geom);
+    void    linkClicked(const QUrl & url);
+    void    linkHovered(const QString & link, const QString & title, const QString & textContent);
+    void    loadFinished(bool ok);
+    void    loadProgress(int progress);
+    void    loadStarted();
+    void    menuBarVisibilityChangeRequested(bool visible);
+    void    microFocusChanged();
+    void    printRequested(QWebFrame * frame);
+    void    repaintRequested(const QRect & dirtyRect);
+    void    restoreFrameStateRequested(QWebFrame * frame);
+    void    saveFrameStateRequested(QWebFrame * frame, QWebHistoryItem * item);
+    void    scrollRequested(int dx, int dy, const QRect & rectToScroll);
+    void    selectionChanged();
+    void    statusBarMessage(const QString & text);
+    void    statusBarVisibilityChangeRequested(bool visible);
+    void    toolBarVisibilityChangeRequested(bool visible);
+    void    unsupportedContent(QNetworkReply * reply);
+    void    viewportChangeRequested();
+    void    windowCloseRequested();
+
 };
 
 #endif
