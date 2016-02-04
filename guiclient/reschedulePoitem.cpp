@@ -23,6 +23,7 @@ reschedulePoitem::reschedulePoitem(QWidget* parent, const char* name, bool modal
   connect(_po, SIGNAL(valid(bool)), _poitem, SLOT(setEnabled(bool)));
   connect(_po, SIGNAL(newId(int, QString)), this, SLOT(sPopulatePoitem(int)));
   connect(_poitem, SIGNAL(newID(int)), this, SLOT(sPopulate(int)));
+  connect(_allItems, SIGNAL(clicked()), this, SLOT(sAllItems()));
 }
 
 reschedulePoitem::~reschedulePoitem()
@@ -122,6 +123,12 @@ void reschedulePoitem::sPopulate(int pPoitemid)
   }
 }
 
+void reschedulePoitem::sAllItems()
+{
+  _poitem->setEnabled(!_allItems->isChecked());
+  _reschedule->setEnabled(_allItems->isChecked() || (!_allItems->isChecked() && _poitem->isValid()));
+}
+
 void reschedulePoitem::sReschedule()
 {
   XSqlQuery rescheduleReschedule;
@@ -134,7 +141,15 @@ void reschedulePoitem::sReschedule()
     return;
   }
 
-  rescheduleReschedule.prepare("SELECT changePoitemDueDate(:poitem_id, :dueDate);");
+  if (_allItems->isChecked())
+    rescheduleReschedule.prepare("SELECT changePoitemDueDate(poitem_id, :dueDate) "
+                                 "FROM poitem "
+                                 "WHERE ((poitem_pohead_id=:po_id) "
+                                 " AND   (poitem_status <> 'C'));");
+  else
+    rescheduleReschedule.prepare("SELECT changePoitemDueDate(:poitem_id, :dueDate);");
+
+  rescheduleReschedule.bindValue(":po_id", _po->id());
   rescheduleReschedule.bindValue(":poitem_id", _poitem->id());
   rescheduleReschedule.bindValue(":dueDate", _new->date());
   rescheduleReschedule.exec();
