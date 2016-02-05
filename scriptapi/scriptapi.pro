@@ -91,6 +91,7 @@ HEADERS += setupscriptapi.h \
     qsizepolicyproto.h \
     qspaceritemproto.h \
     qsqldatabaseproto.h \
+    qsqldriverproto.h \
     qsqlerrorproto.h \
     qsqlrecordproto.h \
     qsslcertificateextensionproto.h \
@@ -225,6 +226,7 @@ SOURCES += setupscriptapi.cpp \
     qsizepolicyproto.cpp \
     qspaceritemproto.cpp \
     qsqldatabaseproto.cpp \
+    qsqldriverproto.cpp \
     qsqlerrorproto.cpp \
     qsqlrecordproto.cpp \
     qsslcertificateextensionproto.cpp \

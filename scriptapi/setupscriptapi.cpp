@@ -91,6 +91,7 @@
 #include "qsizepolicyproto.h"
 #include "qspaceritemproto.h"
 #include "qsqldatabaseproto.h"
+#include "qsqldriverproto.h"
 #include "qsqlerrorproto.h"
 #include "qsqlrecordproto.h"
 #include "qsslcertificateextensionproto.h"
@@ -246,6 +247,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQSizePolicy(engine);
   setupQSpacerItem(engine);
   setupQSqlDatabaseProto(engine);
+  setupQSqlDriverProto(engine);
   setupQSqlErrorProto(engine);
   setupQSqlRecordProto(engine);
   setupQSslCertificateExtensionProto(engine);
