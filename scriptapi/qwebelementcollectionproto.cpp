@@ -18,8 +18,6 @@ void setupQWebElementCollectionProto(QScriptEngine *engine)
 #else
 void setupQWebElementCollectionProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QWebElementCollectiontoScriptValue, QWebElementCollectionfromScriptValue);
-
   QScriptValue proto = engine->newQObject(new QWebElementCollectionProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebElementCollection*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QWebElementCollection>(),  proto);
@@ -62,41 +60,43 @@ QWebElement QWebElementCollectionProto::at(int i) const
 {
   QWebElementCollection *item = qscriptvalue_cast<QWebElementCollection*>(thisObject());
   if (item)
-    return item->at(int i);
+    return item->at(i);
   return QWebElement();
 }
 
-const_iterator QWebElementCollectionProto::begin() const
+#ifdef Use_QWebElementCollectionIterators
+QWebElementCollection::const_iterator QWebElementCollectionProto::begin() const
 {
   QWebElementCollection *item = qscriptvalue_cast<QWebElementCollection*>(thisObject());
   if (item)
     return item->begin();
-  return const_iterator();
+  return QWebElementCollection::const_iterator();
 }
 
-iterator QWebElementCollectionProto::begin()
+QWebElementCollection::iterator QWebElementCollectionProto::begin()
 {
   QWebElementCollection *item = qscriptvalue_cast<QWebElementCollection*>(thisObject());
   if (item)
     return item->begin();
-  return iterator();
+  return QWebElementCollection::iterator();
 }
 
-const_iterator QWebElementCollectionProto::constBegin() const
+QWebElementCollection::const_iterator QWebElementCollectionProto::constBegin() const
 {
   QWebElementCollection *item = qscriptvalue_cast<QWebElementCollection*>(thisObject());
   if (item)
     return item->constBegin();
-  return const_iterator();
+  return QWebElementCollection::const_iterator();
 }
 
-const_iterator QWebElementCollectionProto::constEnd() const
+QWebElementCollection::const_iterator QWebElementCollectionProto::constEnd() const
 {
   QWebElementCollection *item = qscriptvalue_cast<QWebElementCollection*>(thisObject());
   if (item)
     return item->constEnd();
-  return const_iterator();
+  return QWebElementCollection::const_iterator();
 }
+#endif
 
 int QWebElementCollectionProto::count() const
 {
@@ -106,21 +106,23 @@ int QWebElementCollectionProto::count() const
   return 0;
 }
 
-const_iterator QWebElementCollectionProto::end() const
+#ifdef Use_QWebElementCollectionIterators
+QWebElementCollection::const_iterator QWebElementCollectionProto::end() const
 {
   QWebElementCollection *item = qscriptvalue_cast<QWebElementCollection*>(thisObject());
   if (item)
     return item->end();
-  return const_iterator();
+  return QWebElementCollection::const_iterator();
 }
 
-iterator QWebElementCollectionProto::end()
+QWebElementCollection::iterator QWebElementCollectionProto::end()
 {
   QWebElementCollection *item = qscriptvalue_cast<QWebElementCollection*>(thisObject());
   if (item)
     return item->end();
-  return iterator();
+  return QWebElementCollection::iterator();
 }
+#endif
 
 QWebElement QWebElementCollectionProto::first() const
 {

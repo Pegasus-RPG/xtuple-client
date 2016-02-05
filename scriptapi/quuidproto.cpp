@@ -34,7 +34,7 @@ void VersionFromScriptValue(const QScriptValue &obj, QUuid::Version &item)
   item = (QUuid::Version)obj.toInt32();
 }
 
-QScriptValue createUuidForJS(QScriptContext* context, QScriptEngine* engine)
+QScriptValue createUuidForJS(QScriptContext* /*context*/, QScriptEngine* engine)
 {
   return engine->toScriptValue(QUuid::createUuid());
 }
@@ -69,9 +69,8 @@ QScriptValue createUuidV5ForJS(QScriptContext* context, QScriptEngine* engine)
 
 QScriptValue fromRfc4122ForJS(QScriptContext* context, QScriptEngine* engine)
 {
-  return engine->toScriptValue(QUuid::fromRfc4122());
   if (context->argumentCount() == 1) {
-    return engine->toScriptValue(QUuid::fromRfc4122ForJS(ns, context->argument(0).toVariant().toByteArray()));
+    return engine->toScriptValue(QUuid::fromRfc4122(context->argument(0).toVariant().toByteArray()));
   } else {
     return engine->undefinedValue();
   }
@@ -80,7 +79,6 @@ QScriptValue fromRfc4122ForJS(QScriptContext* context, QScriptEngine* engine)
 void setupQUuidProto(QScriptEngine *engine)
 {
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  qScriptRegisterMetaType(engine, QUuidtoScriptValue, QUuidfromScriptValue);
 
   QScriptValue proto = engine->newQObject(new QUuidProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QUuid*>(), proto);
@@ -119,6 +117,8 @@ QScriptValue constructQUuid(QScriptContext *context, QScriptEngine  *engine)
 {
   QUuid *obj = 0;
   if (context->argumentCount() == 11) {
+    // TODO: How to do these conversions?
+    /*
     uint l = context->argument(0).toUInt32();
     ushort w1 = context->argument(1).toUInt16();
     ushort w2 = context->argument(2).toUInt16();
@@ -141,6 +141,7 @@ QScriptValue constructQUuid(QScriptContext *context, QScriptEngine  *engine)
     memcpy(b8, context->argument(10).toString().toStdString().c_str(), context->argument(10).toString().size());
 
     obj = new QUuid(l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8);
+    */
   } else if (context->argumentCount() == 1) {
     if (context->argument(0).isString()) {
       obj = new QUuid(context->argument(0).toString());

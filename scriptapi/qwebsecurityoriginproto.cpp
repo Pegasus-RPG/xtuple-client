@@ -9,6 +9,7 @@
  */
 
 #include "qwebsecurityoriginproto.h"
+#include <QScriptValueIterator>
 
 #if QT_VERSION < 0x050000
 void setupQWebSecurityOriginProto(QScriptEngine *engine)
@@ -16,6 +17,42 @@ void setupQWebSecurityOriginProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
+/*
+QScriptValue QWebSecurityOriginToScriptValue(QScriptEngine *engine, QWebSecurityOrigin const &item)
+{
+  QScriptValue obj = engine->newObject();
+  QUrl url = QUrl();
+  url.setHost(item.host());
+  url.setPort(item.port());
+  url.setScheme(item.scheme());
+  obj.setProperty("_url", qPrintable(url.toString()));
+  return obj;
+}
+void QWebSecurityOriginFromScriptValue(const QScriptValue &obj, QWebSecurityOrigin &item)
+{
+  QString url = obj.property("_url").toString();
+  QUrl newUrl = QUrl(url);
+  item = QWebSecurityOrigin(newUrl);
+}
+*/
+
+QScriptValue QWebSecurityOriginPointerToScriptValue(QScriptEngine *engine, QWebSecurityOrigin* const &item)
+{
+  QScriptValue obj = engine->newObject();
+  QUrl url = QUrl();
+  url.setHost(item->host());
+  url.setPort(item->port());
+  url.setScheme(item->scheme());
+  obj.setProperty("_url", qPrintable(url.toString()));
+  return obj;
+}
+void QWebSecurityOriginPointerFromScriptValue(const QScriptValue &obj, QWebSecurityOrigin* &item)
+{
+  QString url = obj.property("_url").toString();
+  QUrl newUrl = QUrl(url);
+  item = new QWebSecurityOrigin(newUrl);
+}
+
 QScriptValue SubdomainSettingToScriptValue(QScriptEngine *engine, const QWebSecurityOrigin::SubdomainSetting &item)
 {
   return engine->newVariant(item);
@@ -25,6 +62,9 @@ void SubdomainSettingFromScriptValue(const QScriptValue &obj, QWebSecurityOrigin
   item = (QWebSecurityOrigin::SubdomainSetting)obj.toInt32();
 }
 
+// TODO: error: no matching function for call to 'QWebSecurityOrigin::QWebSecurityOrigin()'
+// FROM line: `QWebSecurityOrigin item = qscriptvalue_cast<QWebSecurityOrigin>(it.value());`
+/*
 QScriptValue QListQWebSecurityOriginToScriptValue(QScriptEngine *engine, const QList<QWebSecurityOrigin> &list)
 {
   QScriptValue newArray = engine->newArray();
@@ -46,6 +86,7 @@ void QListQWebSecurityOriginFromScriptValue(const QScriptValue &obj, QList<QWebS
     list.insert(it.name().toInt(), item);
   }
 }
+*/
 
 QScriptValue addLocalSchemeForJS(QScriptContext* context, QScriptEngine* engine)
 {
@@ -56,12 +97,12 @@ QScriptValue addLocalSchemeForJS(QScriptContext* context, QScriptEngine* engine)
   return engine->undefinedValue();
 }
 
-QScriptValue allOriginsForJS(QScriptContext* context, QScriptEngine* engine)
-{
-  return engine->toScriptValue(QWebSecurityOrigin::allOrigins());
-}
+//QScriptValue allOriginsForJS(QScriptContext* /*context*/, QScriptEngine* engine)
+//{
+//  return engine->toScriptValue(QWebSecurityOrigin::allOrigins());
+//}
 
-QScriptValue localSchemesForJS(QScriptContext* context, QScriptEngine* engine)
+QScriptValue localSchemesForJS(QScriptContext* /*context*/, QScriptEngine* engine)
 {
   return engine->toScriptValue(QWebSecurityOrigin::localSchemes());
 }
@@ -77,13 +118,16 @@ QScriptValue removeLocalSchemeForJS(QScriptContext* context, QScriptEngine* engi
 
 void setupQWebSecurityOriginProto(QScriptEngine *engine)
 {
+  //qScriptRegisterMetaType(engine, QWebSecurityOriginToScriptValue, QWebSecurityOriginFromScriptValue);
+  qScriptRegisterMetaType(engine, QWebSecurityOriginPointerToScriptValue, QWebSecurityOriginPointerFromScriptValue);
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
-  qScriptRegisterMetaType(engine, QListQWebSecurityOriginToScriptValue, QListQWebSecurityOriginFromScriptValue);
+  // TODO:
+  //qScriptRegisterMetaType(engine, QListQWebSecurityOriginToScriptValue, QListQWebSecurityOriginFromScriptValue);
 
   QScriptValue proto = engine->newQObject(new QWebSecurityOriginProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebSecurityOrigin*>(), proto);
-  engine->setDefaultPrototype(qMetaTypeId<QWebSecurityOrigin>(),  proto);
+  //engine->setDefaultPrototype(qMetaTypeId<QWebSecurityOrigin>(),  proto);
 
   QScriptValue constructor = engine->newFunction(constructQWebSecurityOrigin, proto);
   engine->globalObject().setProperty("QWebSecurityOrigin", constructor);
@@ -94,8 +138,8 @@ void setupQWebSecurityOriginProto(QScriptEngine *engine)
 
   QScriptValue addLocalScheme = engine->newFunction(addLocalSchemeForJS);
   constructor.setProperty("addLocalScheme", addLocalScheme);
-  QScriptValue allOrigins = engine->newFunction(allOriginsForJS);
-  constructor.setProperty("allOrigins", allOrigins);
+  //QScriptValue allOrigins = engine->newFunction(allOriginsForJS);
+  //constructor.setProperty("allOrigins", allOrigins);
   QScriptValue localSchemes = engine->newFunction(localSchemesForJS);
   constructor.setProperty("localSchemes", localSchemes);
   QScriptValue removeLocalScheme = engine->newFunction(removeLocalSchemeForJS);
@@ -110,9 +154,10 @@ QScriptValue constructQWebSecurityOrigin(QScriptContext *context, QScriptEngine 
     if (url.toString().length() > 0) {
       obj = new QWebSecurityOrigin(url);
     } else {
+      // TODO: error: no matching function for call to 'QWebSecurityOrigin::QWebSecurityOrigin()'
       // The argument must be a QWebSecurityOrigin.
-      QWebSecurityOrigin other = qscriptvalue_cast<QWebSecurityOrigin>(context->argument(0));
-      obj = new QWebSecurityOrigin(other);
+      //QWebSecurityOrigin other = qscriptvalue_cast<QWebSecurityOrigin>(context->argument(0));
+      //obj = new QWebSecurityOrigin(other);
     }
   } else {
     context->throwError(QScriptContext::UnknownError,
@@ -153,6 +198,7 @@ qint64 QWebSecurityOriginProto::databaseUsage() const
 }
 
 // TODO: QWebDatabase and therefore QList<QWebDatabase> are not exposed yet.
+/*
 QList<QWebDatabase> QWebSecurityOriginProto::databases() const
 {
   QWebSecurityOrigin *item = qscriptvalue_cast<QWebSecurityOrigin*>(thisObject());
@@ -160,6 +206,7 @@ QList<QWebDatabase> QWebSecurityOriginProto::databases() const
     return item->databases();
   return QList<QWebDatabase>();
 }
+*/
 
 QString QWebSecurityOriginProto::host() const
 {

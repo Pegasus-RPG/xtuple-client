@@ -172,8 +172,7 @@ void setupQSslCertificateProto(QScriptEngine *engine)
   engine->setDefaultPrototype(qMetaTypeId<QSslCertificate*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QSslCertificate>(), proto);
 
-  QScriptValue constructor = engine->newFunction(constructQSslCertificate,
-                                                 proto);
+  QScriptValue constructor = engine->newFunction(constructQSslCertificate, proto);
   engine->globalObject().setProperty("QSslCertificate",  constructor);
 
   qScriptRegisterMetaType(engine, QListQSslCertificatetoScriptValue, QListQSslCertificatefromScriptValue);

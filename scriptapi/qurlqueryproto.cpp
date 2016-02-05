@@ -16,20 +16,18 @@ void setupQUrlQueryProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
-QScriptValue defaultQueryPairDelimiterForJS(QScriptContext* context, QScriptEngine* engine)
+QScriptValue defaultQueryPairDelimiterForJS(QScriptContext* /*context*/, QScriptEngine* engine)
 {
   return engine->toScriptValue(QUrlQuery::defaultQueryPairDelimiter());
 }
 
-QScriptValue defaultQueryValueDelimiterForJS(QScriptContext* context, QScriptEngine* engine)
+QScriptValue defaultQueryValueDelimiterForJS(QScriptContext* /*context*/, QScriptEngine* engine)
 {
   return engine->toScriptValue(QUrlQuery::defaultQueryValueDelimiter());
 }
 
 void setupQUrlQueryProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QUrlQuerytoScriptValue, QUrlQueryfromScriptValue);
-
   QScriptValue proto = engine->newQObject(new QUrlQueryProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QUrlQuery*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QUrlQuery>(),  proto);

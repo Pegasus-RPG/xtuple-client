@@ -185,7 +185,7 @@ QWebElementCollection QWebElementProto::findAll(const QString & selectorQuery) c
 {
   QWebElement *item = qscriptvalue_cast<QWebElement*>(thisObject());
   if (item)
-    return item->findAll(selectorQuery) const;
+    return item->findAll(selectorQuery);
   return QWebElementCollection();
 }
 
@@ -193,7 +193,7 @@ QWebElement QWebElementProto::findFirst(const QString & selectorQuery) const
 {
   QWebElement *item = qscriptvalue_cast<QWebElement*>(thisObject());
   if (item)
-    return item->findFirst(selectorQuery) const;
+    return item->findFirst(selectorQuery);
   return QWebElement();
 }
 
@@ -515,16 +515,20 @@ void QWebElementProto::toggleClass(const QString & name)
 QWebFrame * QWebElementProto::webFrame() const
 {
   QWebElement *item = qscriptvalue_cast<QWebElement*>(thisObject());
-  if (item)
+  if (item) {
     return item->webFrame();
-  return new QWebFrame();
+  }
+
+  // TODO: You cannot `ruturn new QWebFrame();` directly, so we make a new QWebPage first.
+  QWebPage *page = new QWebPage();
+  return page->currentFrame();
 }
 
 QString QWebElementProto::toString() const
 {
   QWebElement *item = qscriptvalue_cast<QWebElement*>(thisObject());
   if (item)
-    return itme->toPlainText();
+    return item->toPlainText();
   return QString("QWebElement(unknown)");
 }
 

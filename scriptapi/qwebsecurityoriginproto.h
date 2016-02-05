@@ -20,7 +20,7 @@ void setupQWebSecurityOriginProto(QScriptEngine *engine);
 #include <QWebSecurityOrigin>
 
 Q_DECLARE_METATYPE(QWebSecurityOrigin*)
-Q_DECLARE_METATYPE(QWebSecurityOrigin)
+//Q_DECLARE_METATYPE(QWebSecurityOrigin)
 Q_DECLARE_METATYPE(enum QWebSecurityOrigin::SubdomainSetting)
 
 QScriptValue constructQWebSecurityOrigin(QScriptContext *context, QScriptEngine *engine);
@@ -36,7 +36,8 @@ class QWebSecurityOriginProto : public QObject, public QScriptable
     Q_INVOKABLE void                  addAccessWhitelistEntry(const QString & scheme, const QString & host, QWebSecurityOrigin::SubdomainSetting subdomainSetting);
     Q_INVOKABLE qint64                databaseQuota() const;
     Q_INVOKABLE qint64                databaseUsage() const;
-    Q_INVOKABLE QList<QWebDatabase>   databases() const;
+    // TODO: QWebDatabase and therefore QList<QWebDatabase> are not exposed yet.
+    //Q_INVOKABLE QList<QWebDatabase>   databases() const;
     Q_INVOKABLE QString               host() const;
     Q_INVOKABLE int                   port() const;
     Q_INVOKABLE void                  removeAccessWhitelistEntry(const QString & scheme, const QString & host, QWebSecurityOrigin::SubdomainSetting subdomainSetting);

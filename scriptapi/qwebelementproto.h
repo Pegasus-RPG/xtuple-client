@@ -18,9 +18,10 @@ void setupQWebElementProto(QScriptEngine *engine);
 #if QT_VERSION >= 0x050000
 #include <QScriptable>
 #include <QWebElement>
+#include <QWebPage>
 
 Q_DECLARE_METATYPE(QWebElement*)
-Q_DECLARE_METATYPE(QWebElement)
+//Q_DECLARE_METATYPE(QWebElement) // Already Q_DECLARE_METATYPE() in qwebelement.h.
 Q_DECLARE_METATYPE(enum QWebElement::StyleResolveStrategy)
 
 QScriptValue constructQWebElement(QScriptContext *context, QScriptEngine *engine);
