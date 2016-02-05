@@ -36,6 +36,7 @@ dspReturnAuthorizationsByItem::dspReturnAuthorizationsByItem(QWidget* parent, co
   list()->addColumn(tr("Return #"),        _orderColumn, Qt::AlignLeft,   true,  "rahead_number"   );
   list()->addColumn(tr("Created"),         _dateColumn,  Qt::AlignCenter, true,  "rahead_authdate" );
   list()->addColumn(tr("Customer"),        -1,           Qt::AlignLeft,   true,  "rahead_billtoname"   );
+  list()->addColumn(tr("Status"),          _orderColumn, Qt::AlignLeft,   true,  "raitem_status"   );
   list()->addColumn(tr("Order UOM"),       _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
   list()->addColumn(tr("Authorized"),      _qtyColumn,   Qt::AlignRight,  true,  "raitem_qtyauthorized"  );
   list()->addColumn(tr("Received"),        _qtyColumn,   Qt::AlignRight,  true,  "raitem_qtyreceived"  );
