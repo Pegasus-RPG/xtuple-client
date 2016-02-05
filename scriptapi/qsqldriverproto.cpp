@@ -67,69 +67,71 @@ void setupQSqlDriverProto(QScriptEngine *engine)
 
   QScriptValue proto = engine->newQObject(new QSqlDriverProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QSqlDriver*>(), proto);
-  engine->setDefaultPrototype(qMetaTypeId<QSqlDriver>(), proto);
-
-  QScriptValue constructor = engine->newFunction(constructQSqlDriver, proto);
-  engine->globalObject().setProperty("QSqlDriver", constructor);
+  engine->globalObject().setProperty("QSqlDriver", proto);
 
   qScriptRegisterMetaType(engine, DbmsTypeToScriptValue, DbmsTypeFromScriptValue);
-  constructor.setProperty("UnknownDbms", QScriptValue(engine, QSqlDriver::UnknownDbms), permanent);
-  constructor.setProperty("MSSqlServer", QScriptValue(engine, QSqlDriver::MSSqlServer), permanent);
-  constructor.setProperty("MySqlServer", QScriptValue(engine, QSqlDriver::MySqlServer), permanent);
-  constructor.setProperty("PostgreSQL", QScriptValue(engine, QSqlDriver::PostgreSQL), permanent);
-  constructor.setProperty("Oracle", QScriptValue(engine, QSqlDriver::Oracle), permanent);
-  constructor.setProperty("Sybase", QScriptValue(engine, QSqlDriver::Sybase), permanent);
-  constructor.setProperty("SQLite", QScriptValue(engine, QSqlDriver::SQLite), permanent);
-  constructor.setProperty("Interbase", QScriptValue(engine, QSqlDriver::Interbase), permanent);
-  constructor.setProperty("DB2", QScriptValue(engine, QSqlDriver::DB2), permanent);
+  proto.setProperty("UnknownDbms", QScriptValue(engine, QSqlDriver::UnknownDbms), permanent);
+  proto.setProperty("MSSqlServer", QScriptValue(engine, QSqlDriver::MSSqlServer), permanent);
+  proto.setProperty("MySqlServer", QScriptValue(engine, QSqlDriver::MySqlServer), permanent);
+  proto.setProperty("PostgreSQL", QScriptValue(engine, QSqlDriver::PostgreSQL), permanent);
+  proto.setProperty("Oracle", QScriptValue(engine, QSqlDriver::Oracle), permanent);
+  proto.setProperty("Sybase", QScriptValue(engine, QSqlDriver::Sybase), permanent);
+  proto.setProperty("SQLite", QScriptValue(engine, QSqlDriver::SQLite), permanent);
+  proto.setProperty("Interbase", QScriptValue(engine, QSqlDriver::Interbase), permanent);
+  proto.setProperty("DB2", QScriptValue(engine, QSqlDriver::DB2), permanent);
 
   qScriptRegisterMetaType(engine, DriverFeatureToScriptValue, DriverFeatureFromScriptValue);
-  constructor.setProperty("Transactions", QScriptValue(engine, QSqlDriver::Transactions), permanent);
-  constructor.setProperty("QuerySize", QScriptValue(engine, QSqlDriver::QuerySize), permanent);
-  constructor.setProperty("BLOB", QScriptValue(engine, QSqlDriver::BLOB), permanent);
-  constructor.setProperty("Unicode", QScriptValue(engine, QSqlDriver::Unicode), permanent);
-  constructor.setProperty("PreparedQueries", QScriptValue(engine, QSqlDriver::PreparedQueries), permanent);
-  constructor.setProperty("NamedPlaceholders", QScriptValue(engine, QSqlDriver::NamedPlaceholders), permanent);
-  constructor.setProperty("PositionalPlaceholders", QScriptValue(engine, QSqlDriver::PositionalPlaceholders), permanent);
-  constructor.setProperty("LastInsertId", QScriptValue(engine, QSqlDriver::LastInsertId), permanent);
-  constructor.setProperty("BatchOperations", QScriptValue(engine, QSqlDriver::BatchOperations), permanent);
-  constructor.setProperty("SimpleLocking", QScriptValue(engine, QSqlDriver::SimpleLocking), permanent);
-  constructor.setProperty("LowPrecisionNumbers", QScriptValue(engine, QSqlDriver::LowPrecisionNumbers), permanent);
-  constructor.setProperty("EventNotifications", QScriptValue(engine, QSqlDriver::EventNotifications), permanent);
-  constructor.setProperty("FinishQuery", QScriptValue(engine, QSqlDriver::FinishQuery), permanent);
-  constructor.setProperty("MultipleResultSets", QScriptValue(engine, QSqlDriver::MultipleResultSets), permanent);
-  constructor.setProperty("CancelQuery", QScriptValue(engine, QSqlDriver::CancelQuery), permanent);
+  proto.setProperty("Transactions", QScriptValue(engine, QSqlDriver::Transactions), permanent);
+  proto.setProperty("QuerySize", QScriptValue(engine, QSqlDriver::QuerySize), permanent);
+  proto.setProperty("BLOB", QScriptValue(engine, QSqlDriver::BLOB), permanent);
+  proto.setProperty("Unicode", QScriptValue(engine, QSqlDriver::Unicode), permanent);
+  proto.setProperty("PreparedQueries", QScriptValue(engine, QSqlDriver::PreparedQueries), permanent);
+  proto.setProperty("NamedPlaceholders", QScriptValue(engine, QSqlDriver::NamedPlaceholders), permanent);
+  proto.setProperty("PositionalPlaceholders", QScriptValue(engine, QSqlDriver::PositionalPlaceholders), permanent);
+  proto.setProperty("LastInsertId", QScriptValue(engine, QSqlDriver::LastInsertId), permanent);
+  proto.setProperty("BatchOperations", QScriptValue(engine, QSqlDriver::BatchOperations), permanent);
+  proto.setProperty("SimpleLocking", QScriptValue(engine, QSqlDriver::SimpleLocking), permanent);
+  proto.setProperty("LowPrecisionNumbers", QScriptValue(engine, QSqlDriver::LowPrecisionNumbers), permanent);
+  proto.setProperty("EventNotifications", QScriptValue(engine, QSqlDriver::EventNotifications), permanent);
+  proto.setProperty("FinishQuery", QScriptValue(engine, QSqlDriver::FinishQuery), permanent);
+  proto.setProperty("MultipleResultSets", QScriptValue(engine, QSqlDriver::MultipleResultSets), permanent);
+  proto.setProperty("CancelQuery", QScriptValue(engine, QSqlDriver::CancelQuery), permanent);
 
   qScriptRegisterMetaType(engine, IdentifierTypeToScriptValue, IdentifierTypeFromScriptValue);
-  constructor.setProperty("FieldName", QScriptValue(engine, QSqlDriver::FieldName), permanent);
-  constructor.setProperty("TableName", QScriptValue(engine, QSqlDriver::TableName), permanent);
+  proto.setProperty("FieldName", QScriptValue(engine, QSqlDriver::FieldName), permanent);
+  proto.setProperty("TableName", QScriptValue(engine, QSqlDriver::TableName), permanent);
 
   qScriptRegisterMetaType(engine, NotificationSourceToScriptValue, NotificationSourceFromScriptValue);
-  constructor.setProperty("UnknownSource", QScriptValue(engine, QSqlDriver::UnknownSource), permanent);
-  constructor.setProperty("SelfSource", QScriptValue(engine, QSqlDriver::SelfSource), permanent);
-  constructor.setProperty("OtherSource", QScriptValue(engine, QSqlDriver::OtherSource), permanent);
+  proto.setProperty("UnknownSource", QScriptValue(engine, QSqlDriver::UnknownSource), permanent);
+  proto.setProperty("SelfSource", QScriptValue(engine, QSqlDriver::SelfSource), permanent);
+  proto.setProperty("OtherSource", QScriptValue(engine, QSqlDriver::OtherSource), permanent);
 
   qScriptRegisterMetaType(engine, StatementTypeToScriptValue, StatementTypeFromScriptValue);
-  constructor.setProperty("WhereStatement", QScriptValue(engine, QSqlDriver::WhereStatement), permanent);
-  constructor.setProperty("SelectStatement", QScriptValue(engine, QSqlDriver::SelectStatement), permanent);
-  constructor.setProperty("UpdateStatement", QScriptValue(engine, QSqlDriver::UpdateStatement), permanent);
-  constructor.setProperty("InsertStatement", QScriptValue(engine, QSqlDriver::InsertStatement), permanent);
-  constructor.setProperty("DeleteStatement", QScriptValue(engine, QSqlDriver::DeleteStatement), permanent);
+  proto.setProperty("WhereStatement", QScriptValue(engine, QSqlDriver::WhereStatement), permanent);
+  proto.setProperty("SelectStatement", QScriptValue(engine, QSqlDriver::SelectStatement), permanent);
+  proto.setProperty("UpdateStatement", QScriptValue(engine, QSqlDriver::UpdateStatement), permanent);
+  proto.setProperty("InsertStatement", QScriptValue(engine, QSqlDriver::InsertStatement), permanent);
+  proto.setProperty("DeleteStatement", QScriptValue(engine, QSqlDriver::DeleteStatement), permanent);
 }
 
+// QSqlDriver is an abstract class. I can only be returned, not created.
+/*
 QScriptValue constructQSqlDriver(QScriptContext *context, QScriptEngine  *engine)
 {
   QSqlDriver *obj = 0;
+  QObject *parent = 0;
   if (context->argumentCount() == 1)
   {
-    QObject *parent = context->argument(0).toQObject();
+    parent = context->argument(0).toQObject();
     obj = new QSqlDriver(parent);
   } else {
-    obj = new QSqlDriver();
+    parent = new QObject();
+    obj = new QSqlDriver(parent);
   }
 
   return engine->toScriptValue(obj);
 }
+*/
 
 QSqlDriverProto::QSqlDriverProto(QObject *parent) : QObject(parent)
 {
@@ -146,7 +148,7 @@ bool QSqlDriverProto::beginTransaction()
   return false;
 }
 
-void QSqlDriverProto::close() = 0
+void QSqlDriverProto::close()
 {
   QSqlDriver *item = qscriptvalue_cast<QSqlDriver*>(thisObject());
   if (item)
@@ -161,12 +163,12 @@ bool QSqlDriverProto::commitTransaction()
   return false;
 }
 
-QSqlResult QSqlDriverProto::createResult() const = 0
+QSqlResult * QSqlDriverProto::createResult() const
 {
   QSqlDriver *item = qscriptvalue_cast<QSqlDriver*>(thisObject());
   if (item)
     return item->createResult();
-  return *(new QSqlResult());
+  return 0;
 }
 
 QSqlDriver::DbmsType QSqlDriverProto::dbmsType() const
@@ -181,7 +183,7 @@ QString QSqlDriverProto::escapeIdentifier(const QString & identifier, QSqlDriver
 {
   QSqlDriver *item = qscriptvalue_cast<QSqlDriver*>(thisObject());
   if (item)
-    return item->escapeIdentifier(dentifier, type);
+    return item->escapeIdentifier(identifier, type);
   return QString();
 }
 
@@ -201,7 +203,7 @@ QVariant QSqlDriverProto::handle() const
   return QVariant();
 }
 
-bool QSqlDriverProto::hasFeature(QSqlDriver::DriverFeature feature) const = 0
+bool QSqlDriverProto::hasFeature(QSqlDriver::DriverFeature feature) const
 {
   QSqlDriver *item = qscriptvalue_cast<QSqlDriver*>(thisObject());
   if (item)
@@ -252,12 +254,11 @@ QSql::NumericalPrecisionPolicy QSqlDriverProto::numericalPrecisionPolicy() const
 */
 
 bool QSqlDriverProto::open(const QString & db,
-                           const QString & user = QString(),
-                           const QString & password = QString(),
-                           const QString & host = QString(),
-                           int port = -1,
-                           const QString & options = QString()
-                           ) = 0
+                           const QString & user,
+                           const QString & password,
+                           const QString & host,
+                           int port,
+                           const QString & options)
 {
   QSqlDriver *item = qscriptvalue_cast<QSqlDriver*>(thisObject());
   if (item)

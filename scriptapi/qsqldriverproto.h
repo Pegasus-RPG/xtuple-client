@@ -18,9 +18,11 @@ void setupQSqlDriverProto(QScriptEngine *engine);
 #if QT_VERSION >= 0x050000
 #include <QScriptable>
 #include <QSqlDriver>
+#include <QSqlError>
+#include <QSqlIndex>
+#include <QSqlRecord>
 
 Q_DECLARE_METATYPE(QSqlDriver*)
-//Q_DECLARE_METATYPE(QSqlDriver) //Do not need. Already declared by qsqldriver.h
 Q_DECLARE_METATYPE(enum QSqlDriver::DbmsType)
 Q_DECLARE_METATYPE(enum QSqlDriver::DriverFeature)
 Q_DECLARE_METATYPE(enum QSqlDriver::IdentifierType)
@@ -38,14 +40,14 @@ class QSqlDriverProto : public QObject, public QScriptable
     virtual ~QSqlDriverProto();
 
     Q_INVOKABLE bool                            beginTransaction();
-    Q_INVOKABLE void                            close() = 0;
+    Q_INVOKABLE void                            close();
     Q_INVOKABLE bool                            commitTransaction();
-    Q_INVOKABLE QSqlResult *                    createResult() const = 0;
+    Q_INVOKABLE QSqlResult *                    createResult() const;
     Q_INVOKABLE QSqlDriver::DbmsType            dbmsType() const;
     Q_INVOKABLE QString                         escapeIdentifier(const QString & identifier, QSqlDriver::IdentifierType type) const;
     Q_INVOKABLE QString                         formatValue(const QSqlField & field, bool trimStrings = false) const;
     Q_INVOKABLE QVariant                        handle() const;
-    Q_INVOKABLE bool                            hasFeature(QSqlDriver::DriverFeature feature) const = 0;
+    Q_INVOKABLE bool                            hasFeature(QSqlDriver::DriverFeature feature) const;
     Q_INVOKABLE bool                            isIdentifierEscaped(const QString & identifier, QSqlDriver::IdentifierType type) const;
     Q_INVOKABLE bool                            isOpen() const;
     Q_INVOKABLE bool                            isOpenError() const;
@@ -58,7 +60,7 @@ class QSqlDriverProto : public QObject, public QScriptable
                                                     const QString & host = QString(),
                                                     int port = -1,
                                                     const QString & options = QString()
-                                                ) = 0;
+                                                );
     Q_INVOKABLE QSqlIndex                       primaryIndex(const QString & tableName) const;
     Q_INVOKABLE QSqlRecord                      record(const QString & tableName) const;
     Q_INVOKABLE bool                            rollbackTransaction();
