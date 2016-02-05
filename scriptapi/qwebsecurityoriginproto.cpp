@@ -16,33 +16,109 @@ void setupQWebSecurityOriginProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
-// TODO: enums
+QScriptValue SubdomainSettingToScriptValue(QScriptEngine *engine, const QWebSecurityOrigin::SubdomainSetting &item)
+{
+  return engine->newVariant(item);
+}
+void SubdomainSettingFromScriptValue(const QScriptValue &obj, QWebSecurityOrigin::SubdomainSetting &item)
+{
+  item = (QWebSecurityOrigin::SubdomainSetting)obj.toInt32();
+}
 
-// TODO: statics
+QScriptValue QListQWebSecurityOriginToScriptValue(QScriptEngine *engine, const QList<QWebSecurityOrigin> &list)
+{
+  QScriptValue newArray = engine->newArray();
+  for (int i = 0; i < list.size(); i += 1) {
+    newArray.setProperty(i, engine->toScriptValue(list.at(i)));
+  }
+  return newArray;
+}
+void QListQWebSecurityOriginFromScriptValue(const QScriptValue &obj, QList<QWebSecurityOrigin> &list)
+{
+  list = QList<QWebSecurityOrigin>();
+  QScriptValueIterator it(obj);
 
-// TODO: constuct args.
+  while (it.hasNext()) {
+    it.next();
+    if (it.flags() & QScriptValue::SkipInEnumeration)
+      continue;
+    QWebSecurityOrigin item = qscriptvalue_cast<QWebSecurityOrigin>(it.value());
+    list.insert(it.name().toInt(), item);
+  }
+}
+
+QScriptValue addLocalSchemeForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  if (context->argumentCount() == 1) {
+    QWebSecurityOrigin::addLocalScheme(context->argument(0).toString());
+  }
+
+  return engine->undefinedValue();
+}
+
+QScriptValue allOriginsForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  return engine->toScriptValue(QWebSecurityOrigin::allOrigins());
+}
+
+QScriptValue localSchemesForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  return engine->toScriptValue(QWebSecurityOrigin::localSchemes());
+}
+
+QScriptValue removeLocalSchemeForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  if (context->argumentCount() == 1) {
+    QWebSecurityOrigin::removeLocalScheme(context->argument(0).toString());
+  }
+
+  return engine->undefinedValue();
+}
 
 void setupQWebSecurityOriginProto(QScriptEngine *engine)
 {
+  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+
+  qScriptRegisterMetaType(engine, QListQWebSecurityOriginToScriptValue, QListQWebSecurityOriginFromScriptValue);
+
   QScriptValue proto = engine->newQObject(new QWebSecurityOriginProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebSecurityOrigin*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QWebSecurityOrigin>(),  proto);
 
   QScriptValue constructor = engine->newFunction(constructQWebSecurityOrigin, proto);
   engine->globalObject().setProperty("QWebSecurityOrigin", constructor);
+
+  qScriptRegisterMetaType(engine, SubdomainSettingToScriptValue, SubdomainSettingFromScriptValue);
+  constructor.setProperty("AllowSubdomains", QScriptValue(engine, QWebSecurityOrigin::AllowSubdomains), permanent);
+  constructor.setProperty("DisallowSubdomains", QScriptValue(engine, QWebSecurityOrigin::DisallowSubdomains), permanent);
+
+  QScriptValue addLocalScheme = engine->newFunction(addLocalSchemeForJS);
+  constructor.setProperty("addLocalScheme", addLocalScheme);
+  QScriptValue allOrigins = engine->newFunction(allOriginsForJS);
+  constructor.setProperty("allOrigins", allOrigins);
+  QScriptValue localSchemes = engine->newFunction(localSchemesForJS);
+  constructor.setProperty("localSchemes", localSchemes);
+  QScriptValue removeLocalScheme = engine->newFunction(removeLocalSchemeForJS);
+  constructor.setProperty("removeLocalScheme", removeLocalScheme);
 }
 
-QScriptValue constructQWebSecurityOrigin(QScriptContext * /*context*/,
-                                    QScriptEngine  *engine)
+QScriptValue constructQWebSecurityOrigin(QScriptContext *context, QScriptEngine  *engine)
 {
   QWebSecurityOrigin *obj = 0;
-  /* if (context->argumentCount() ...)
-  else if (something bad)
+  if (context->argumentCount() == 1) {
+    QUrl url = qscriptvalue_cast<QUrl>(context->argument(0));
+    if (url.toString().length() > 0) {
+      obj = new QWebSecurityOrigin(url);
+    } else {
+      // The argument must be a QWebSecurityOrigin.
+      QWebSecurityOrigin other = qscriptvalue_cast<QWebSecurityOrigin>(context->argument(0));
+      obj = new QWebSecurityOrigin(other);
+    }
+  } else {
     context->throwError(QScriptContext::UnknownError,
-                        "Could not find an appropriate QWebSecurityOriginconstructor");
-  else
-  */
-    obj = new QWebSecurityOrigin();
+                        "No QUrl or QWebSecurityOrigin argument provided to the QWebSecurityOriginconstructor");
+  }
+
   return engine->toScriptValue(obj);
 }
 
@@ -76,6 +152,7 @@ qint64 QWebSecurityOriginProto::databaseUsage() const
   return 0;
 }
 
+// TODO: QWebDatabase and therefore QList<QWebDatabase> are not exposed yet.
 QList<QWebDatabase> QWebSecurityOriginProto::databases() const
 {
   QWebSecurityOrigin *item = qscriptvalue_cast<QWebSecurityOrigin*>(thisObject());

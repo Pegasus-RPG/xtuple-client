@@ -28,17 +28,19 @@ void setupQWebElementCollectionProto(QScriptEngine *engine)
   engine->globalObject().setProperty("QWebElementCollection", constructor);
 }
 
-QScriptValue constructQWebElementCollection(QScriptContext * /*context*/,
-                                    QScriptEngine  *engine)
+QScriptValue constructQWebElementCollection(QScriptContext *context, QScriptEngine  *engine)
 {
   QWebElementCollection *obj = 0;
-  /* if (context->argumentCount() ...)
-  else if (something bad)
-    context->throwError(QScriptContext::UnknownError,
-                        "Could not find an appropriate QWebElementCollectionconstructor");
-  else
-  */
+  if (context->argumentCount() == 2) {
+    QWebElement contextElement = qscriptvalue_cast<QWebElement>(context->argument(0));
+    obj = new QWebElementCollection(contextElement, context->argument(1).toString());
+  } else if (context->argumentCount() == 1) {
+    QWebElementCollection other = qscriptvalue_cast<QWebElementCollection>(context->argument(0));
+    obj = new QWebElementCollection(other);
+  } else {
     obj = new QWebElementCollection();
+  }
+
   return engine->toScriptValue(obj);
 }
 

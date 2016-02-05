@@ -16,6 +16,16 @@ void setupQUrlQueryProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
+QScriptValue defaultQueryPairDelimiterForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  return engine->toScriptValue(QUrlQuery::defaultQueryPairDelimiter());
+}
+
+QScriptValue defaultQueryValueDelimiterForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  return engine->toScriptValue(QUrlQuery::defaultQueryValueDelimiter());
+}
+
 void setupQUrlQueryProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QUrlQuerytoScriptValue, QUrlQueryfromScriptValue);
@@ -26,19 +36,22 @@ void setupQUrlQueryProto(QScriptEngine *engine)
 
   QScriptValue constructor = engine->newFunction(constructQUrlQuery, proto);
   engine->globalObject().setProperty("QUrlQuery", constructor);
+
+  QScriptValue defaultQueryPairDelimiter = engine->newFunction(defaultQueryPairDelimiterForJS);
+  constructor.setProperty("defaultQueryPairDelimiter", defaultQueryPairDelimiter);
+  QScriptValue defaultQueryValueDelimiter = engine->newFunction(defaultQueryValueDelimiterForJS);
+  constructor.setProperty("defaultQueryValueDelimiter", defaultQueryValueDelimiter);
 }
 
-QScriptValue constructQUrlQuery(QScriptContext * /*context*/,
-                                    QScriptEngine  *engine)
+QScriptValue constructQUrlQuery(QScriptContext *context, QScriptEngine  *engine)
 {
   QUrlQuery *obj = 0;
-  /* if (context->argumentCount() ...)
-  else if (something bad)
-    context->throwError(QScriptContext::UnknownError,
-                        "Could not find an appropriate QUrlQueryconstructor");
-  else
-  */
+  if (context->argumentCount() == 1) {
+    obj = new QUrlQuery(context->argument(0).toString());
+  } else {
     obj = new QUrlQuery();
+  }
+
   return engine->toScriptValue(obj);
 }
 

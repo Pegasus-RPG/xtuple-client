@@ -16,27 +16,42 @@ void setupQWebElementProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
+QScriptValue StyleResolveStrategyToScriptValue(QScriptEngine *engine, const QWebElement::StyleResolveStrategy &item)
+{
+  return engine->newVariant(item);
+}
+void StyleResolveStrategyFromScriptValue(const QScriptValue &obj, QWebElement::StyleResolveStrategy &item)
+{
+  item = (QWebElement::StyleResolveStrategy)obj.toInt32();
+}
+
 void setupQWebElementProto(QScriptEngine *engine)
 {
+  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+
   QScriptValue proto = engine->newQObject(new QWebElementProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebElement*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QWebElement>(),  proto);
 
   QScriptValue constructor = engine->newFunction(constructQWebElement, proto);
   engine->globalObject().setProperty("QWebElement", constructor);
+
+  qScriptRegisterMetaType(engine, StyleResolveStrategyToScriptValue, StyleResolveStrategyFromScriptValue);
+  constructor.setProperty("InlineStyle", QScriptValue(engine, QWebElement::InlineStyle), permanent);
+  constructor.setProperty("CascadedStyle", QScriptValue(engine, QWebElement::CascadedStyle), permanent);
+  constructor.setProperty("ComputedStyle", QScriptValue(engine, QWebElement::ComputedStyle), permanent);
 }
 
-QScriptValue constructQWebElement(QScriptContext * /*context*/,
-                                    QScriptEngine  *engine)
+QScriptValue constructQWebElement(QScriptContext *context, QScriptEngine  *engine)
 {
   QWebElement *obj = 0;
-  /* if (context->argumentCount() ...)
-  else if (something bad)
-    context->throwError(QScriptContext::UnknownError,
-                        "Could not find an appropriate QWebElementconstructor");
-  else
-  */
+  if (context->argumentCount() == 1) {
+    QWebElement other = qscriptvalue_cast<QWebElement>(context->argument(0));
+    obj = new QWebElement(other);
+  } else {
     obj = new QWebElement();
+  }
+
   return engine->toScriptValue(obj);
 }
 
