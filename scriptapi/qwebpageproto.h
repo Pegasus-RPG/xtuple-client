@@ -73,7 +73,9 @@ class QWebPageProto : public QObject, public QScriptable
   Q_PROPERTY (const QString selectedHtml                            READ selectedHtml)
   Q_PROPERTY (const QString selectedText                            READ selectedText)
   Q_PROPERTY (QSize viewportSize                                    READ viewportSize               WRITE setViewportSize)
+#if QT_VERSION >= 0x050000
   Q_PROPERTY (QWebPage::VisibilityState visibilityState             READ visibilityState            WRITE setVisibilityState)
+#endif
 
   public:
     QWebPageProto(QObject *parent);

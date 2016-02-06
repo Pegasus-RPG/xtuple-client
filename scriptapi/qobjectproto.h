@@ -31,7 +31,9 @@ class QObjectProto : public QObject, public QScriptable
 
     Q_INVOKABLE bool                        blockSignals(bool block);
     Q_INVOKABLE const QObjectList&          children() const;
+#if QT_VERSION >= 0x050000
     Q_INVOKABLE QMetaObject::Connection     connect(const QObject * sender, const char * signal, const char * method, Qt::ConnectionType type = Qt::AutoConnection) const;
+#endif
     Q_INVOKABLE bool                        disconnect(const char * signal = 0, const QObject * receiver = 0, const char * method = 0) const;
     Q_INVOKABLE bool                        disconnect(const QObject * receiver, const char * method = 0) const;
     Q_INVOKABLE void                        dumpObjectInfo();
@@ -49,7 +51,9 @@ class QObjectProto : public QObject, public QScriptable
     Q_INVOKABLE bool                        inherits(const char * className) const;
     Q_INVOKABLE void                        installEventFilter(QObject * filterObj);
     Q_INVOKABLE bool                        isWidgetType() const;
+#if QT_VERSION >= 0x050000
     Q_INVOKABLE bool                        isWindowType() const;
+#endif
     Q_INVOKABLE void                        killTimer(int id);
     // TODO: Does not work. `virtual const QMetaObject* QObjectProto::metaObject() const` cannot be overloaded
     //Q_INVOKABLE const QMetaObject*          metaObject() const;
@@ -62,7 +66,9 @@ class QObjectProto : public QObject, public QScriptable
     Q_INVOKABLE void                        setParent(QObject * parent);
     Q_INVOKABLE bool                        setProperty(const char * name, const QVariant & value);
     Q_INVOKABLE bool                        signalsBlocked() const;
+#if QT_VERSION >= 0x050000
     Q_INVOKABLE int                         startTimer(int interval, Qt::TimerType timerType = Qt::CoarseTimer);
+#endif
     Q_INVOKABLE QThread*                    thread() const;
 
     Q_INVOKABLE QString                     toString() const;

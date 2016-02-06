@@ -640,7 +640,6 @@ void QUrlProto::setQueryItems(const QList<QPair<QString, QString> > &query)
 
 void QUrlProto::setQueryItems(const QVariantMap &map)
 {
-  if (DEBUG) qDebug("setQueryItems(const QVariantMap &map) entered");
   QUrl *item = qscriptvalue_cast<QUrl*>(thisObject());
   if (item)
   {

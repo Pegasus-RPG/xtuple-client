@@ -89,6 +89,7 @@ void PermissionPolicyFromScriptValue(const QScriptValue &obj, QWebPage::Permissi
   item = (QWebPage::PermissionPolicy)obj.toInt32();
 }
 
+#if QT_VERSION >= 0x050000
 QScriptValue VisibilityStateToScriptValue(QScriptEngine *engine, const QWebPage::VisibilityState &item)
 {
   return engine->newVariant(item);
@@ -97,6 +98,7 @@ void VisibilityStateFromScriptValue(const QScriptValue &obj, QWebPage::Visibilit
 {
   item = (QWebPage::VisibilityState)obj.toInt32();
 }
+#endif
 
 QScriptValue WebActionToScriptValue(QScriptEngine *engine, const QWebPage::WebAction &item)
 {
@@ -181,17 +183,21 @@ void setupQWebPageProto(QScriptEngine *engine)
   constructor.setProperty("PermissionGrantedByUser", QScriptValue(engine, QWebPage::PermissionGrantedByUser), permanent);
   constructor.setProperty("PermissionDeniedByUser", QScriptValue(engine, QWebPage::PermissionDeniedByUser), permanent);
 
+#if QT_VERSION >= 0x050000
   qScriptRegisterMetaType(engine, VisibilityStateToScriptValue, VisibilityStateFromScriptValue);
   constructor.setProperty("VisibilityStateVisible", QScriptValue(engine, QWebPage::VisibilityStateVisible), permanent);
   constructor.setProperty("VisibilityStateHidden", QScriptValue(engine, QWebPage::VisibilityStateHidden), permanent);
   constructor.setProperty("VisibilityStatePrerender", QScriptValue(engine, QWebPage::VisibilityStatePrerender), permanent);
   constructor.setProperty("VisibilityStateUnloaded", QScriptValue(engine, QWebPage::VisibilityStateUnloaded), permanent);
+#endif
 
   qScriptRegisterMetaType(engine, WebActionToScriptValue, WebActionFromScriptValue);
   constructor.setProperty("NoWebAction", QScriptValue(engine, QWebPage::NoWebAction), permanent);
   constructor.setProperty("OpenLink", QScriptValue(engine, QWebPage::OpenLink), permanent);
   constructor.setProperty("OpenLinkInNewWindow", QScriptValue(engine, QWebPage::OpenLinkInNewWindow), permanent);
+#if QT_VERSION >= 0x050000
   constructor.setProperty("OpenLinkInThisWindow", QScriptValue(engine, QWebPage::OpenLinkInThisWindow), permanent);
+#endif
   constructor.setProperty("OpenFrameInNewWindow", QScriptValue(engine, QWebPage::OpenFrameInNewWindow), permanent);
   constructor.setProperty("DownloadLinkToDisk", QScriptValue(engine, QWebPage::DownloadLinkToDisk), permanent);
   constructor.setProperty("CopyLinkToClipboard", QScriptValue(engine, QWebPage::CopyLinkToClipboard), permanent);
@@ -259,6 +265,7 @@ void setupQWebPageProto(QScriptEngine *engine)
   constructor.setProperty("AlignJustified", QScriptValue(engine, QWebPage::AlignJustified), permanent);
   constructor.setProperty("AlignLeft", QScriptValue(engine, QWebPage::AlignLeft), permanent);
   constructor.setProperty("AlignRight", QScriptValue(engine, QWebPage::AlignRight), permanent);
+#if QT_VERSION >= 0x050000
   constructor.setProperty("DownloadMediaToDisk", QScriptValue(engine, QWebPage::DownloadMediaToDisk), permanent);
   constructor.setProperty("CopyMediaUrlToClipboard", QScriptValue(engine, QWebPage::CopyMediaUrlToClipboard), permanent);
   constructor.setProperty("ToggleMediaControls", QScriptValue(engine, QWebPage::ToggleMediaControls), permanent);
@@ -266,6 +273,7 @@ void setupQWebPageProto(QScriptEngine *engine)
   constructor.setProperty("ToggleMediaPlayPause", QScriptValue(engine, QWebPage::ToggleMediaPlayPause), permanent);
   constructor.setProperty("ToggleMediaMute", QScriptValue(engine, QWebPage::ToggleMediaMute), permanent);
   constructor.setProperty("ToggleVideoFullscreen", QScriptValue(engine, QWebPage::ToggleVideoFullscreen), permanent);
+#endif
 
   qScriptRegisterMetaType(engine, WebWindowTypeToScriptValue, WebWindowTypeFromScriptValue);
   constructor.setProperty("WebBrowserWindow", QScriptValue(engine, QWebPage::WebBrowserWindow), permanent);

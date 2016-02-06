@@ -152,6 +152,7 @@ const QObjectList& QObjectProto::children() const
   return *(new QObjectList());
 }
 
+#if QT_VERSION >= 0x050000
 QMetaObject::Connection QObjectProto::connect(const QObject * sender, const char * signal, const char * method, Qt::ConnectionType type) const
 {
   QObject *item = qscriptvalue_cast<QObject*>(thisObject());
@@ -159,6 +160,7 @@ QMetaObject::Connection QObjectProto::connect(const QObject * sender, const char
     return item->connect(sender, signal, method, type);
   return QMetaObject::Connection();
 }
+#endif
 
 bool QObjectProto::disconnect(const char * signal, const QObject * receiver, const char * method) const
 {
@@ -272,6 +274,7 @@ bool QObjectProto::isWidgetType() const
   return false;
 }
 
+#if QT_VERSION >= 0x050000
 bool QObjectProto::isWindowType() const
 {
   QObject *item = qscriptvalue_cast<QObject*>(thisObject());
@@ -279,6 +282,7 @@ bool QObjectProto::isWindowType() const
     return item->isWindowType();
   return false;
 }
+#endif
 
 void QObjectProto::killTimer(int id)
 {
@@ -366,6 +370,7 @@ bool QObjectProto::signalsBlocked() const
   return false;
 }
 
+#if QT_VERSION >= 0x050000
 int QObjectProto::startTimer(int interval, Qt::TimerType timerType)
 {
   QObject *item = qscriptvalue_cast<QObject*>(thisObject());
@@ -373,6 +378,7 @@ int QObjectProto::startTimer(int interval, Qt::TimerType timerType)
     return item->startTimer(interval, timerType);
   return 0;
 }
+#endif
 
 QThread* QObjectProto::thread() const
 {
