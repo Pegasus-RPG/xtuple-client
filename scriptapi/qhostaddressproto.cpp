@@ -1,3 +1,13 @@
+/*
+ * This file is part of the xTuple ERP: PostBooks Edition, a free and
+ * open source Enterprise Resource Planning software suite,
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * It is licensed to you under the Common Public Attribution License
+ * version 1.0, the full text of which (including xTuple-specific Exhibits)
+ * is available at www.xtuple.com/CPAL.  By using this software, you agree
+ * to be bound by its terms.
+ */
+
 #include "scriptapi_internal.h"
 #include "qhostaddressproto.h"
 
@@ -41,8 +51,7 @@ QScriptValue constructQHostAddress(QScriptContext *context, QScriptEngine  *engi
   return engine->toScriptValue(obj);
 }
 
-QHostAddressProto::QHostAddressProto(QObject *parent = 0)
-    : QObject(parent)
+QHostAddressProto::QHostAddressProto(QObject *parent = 0) : QObject(parent)
 {
 }
 
@@ -172,7 +181,7 @@ QString QHostAddressProto::toString() const
 {
   QHostAddress *item = qscriptvalue_cast<QHostAddress*>(thisObject());
   if (item)
-    return item->toString();
-  return QString();
+    return QString("QHostAddress(%1)").arg(item->toString());
+  return QString("QHostAddress(unknown)");
 }
 

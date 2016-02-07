@@ -44,7 +44,7 @@ void setupQIODeviceProto(QScriptEngine *engine)
   iodev.setProperty("Unbuffered", QScriptValue(engine, QIODevice::Unbuffered), ENUMPROPFLAGS);
 }
 
-Q_DECLARE_METATYPE(enum QIODevice::OpenModeFlag);
+Q_DECLARE_METATYPE(enum QIODevice::OpenModeFlag)
 
 QIODeviceProto::QIODeviceProto(QObject *parent)
     : QObject(parent)
