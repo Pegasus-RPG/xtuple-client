@@ -10,6 +10,7 @@
 
 #include "createLotSerial.h"
 
+#include <QDebug>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QValidator>
@@ -230,11 +231,12 @@ void createLotSerial::sHandleCharacteristics()
             else if (char_type == 1)
             {
                 XComboBox *x = qobject_cast<XComboBox *>(_charWidgets.at(i));
-                int index = x->findText(charass_value);
-                if (index > -1) {
+                if (x) {
+                  int index = x->findText(charass_value);
+                  if (index > -1) {
                     x->setCurrentIndex(index);
+                  }
                 }
-
             }
             else
             {
