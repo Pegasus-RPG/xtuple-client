@@ -17,31 +17,6 @@ void setupQSslCertificateProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
-QScriptValue QSslCertificatetoScriptValue(QScriptEngine *engine, QSslCertificate const &item)
-{
-  QScriptValue obj = engine->newObject();
-  obj.setProperty("_certificate", qPrintable(QString(item.toPem())));
-  return obj;
-}
-void QSslCertificatefromScriptValue(const QScriptValue &obj, QSslCertificate &item)
-{
-  QString certificate = obj.property("_certificate").toString();
-  QSslCertificate newCert = QSslCertificate(certificate.toLocal8Bit(), QSsl::Pem);
-  item.swap(newCert);
-}
-
-QScriptValue QSslCertificatePointertoScriptValue(QScriptEngine *engine, QSslCertificate* const &item)
-{
-  QScriptValue obj = engine->newObject();
-  obj.setProperty("_certificate", qPrintable(QString(item->toPem())));
-  return obj;
-}
-void QSslCertificatePointerfromScriptValue(const QScriptValue &obj, QSslCertificate* &item)
-{
-  QString certificate = obj.property("_certificate").toString();
-  item = new QSslCertificate(certificate.toLocal8Bit(), QSsl::Pem);
-}
-
 QScriptValue SubjectInfoToScriptValue(QScriptEngine *engine, const QSslCertificate::SubjectInfo &item)
 {
   return engine->newVariant(item);
@@ -164,8 +139,6 @@ QScriptValue verifyForJS(QScriptContext* context, QScriptEngine* engine)
 
 void setupQSslCertificateProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QSslCertificatetoScriptValue, QSslCertificatefromScriptValue);
-  qScriptRegisterMetaType(engine, QSslCertificatePointertoScriptValue, QSslCertificatePointerfromScriptValue);
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QSslCertificateProto(engine));
