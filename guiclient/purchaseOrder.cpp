@@ -250,9 +250,8 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
         }
         else
         {
-          systemError(this, tr("A System Error occurred at %1::%2.")
-                            .arg(__FILE__)
-                            .arg(__LINE__) );
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                               purchaseet, __FILE__, __LINE__);
           return UndefinedError;
         }
       }
@@ -326,9 +325,8 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
           purchaseet.exec();
           if (!purchaseet.first())
           {
-            systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                                 purchaseet, __FILE__, __LINE__);\
             return UndefinedError;
           }
         }
@@ -601,9 +599,8 @@ void purchaseOrder::createHeader()
     setPoheadid(purchasecreateHeader.value("pohead_id").toInt());
   else
   {
-    systemError(this, tr("A System Error occurred at %1::%2.")
-                      .arg(__FILE__)
-                      .arg(__LINE__) );
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating Purchase Order Header"),
+                         purchasecreateHeader, __FILE__, __LINE__);
     return;
   }
 
@@ -634,7 +631,8 @@ void purchaseOrder::createHeader()
   purchasecreateHeader.bindValue(":pohead_curr_id", _poCurrency->id());
   purchasecreateHeader.exec();
   if (purchasecreateHeader.lastError().type() != QSqlError::NoError)
-    systemError(this, purchasecreateHeader.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating Purchase Order Header"),
+                       purchasecreateHeader, __FILE__, __LINE__);
 
   // Populate Ship To contact and addresses for the Receiving Site
   sHandleShipTo();
@@ -821,14 +819,15 @@ void purchaseOrder::sSave()
           int result = unRelease.value("result").toInt();
           if (result < 0)
           {
-            systemError(this, storedProcErrorLookup("unreleasePurchaseOrder", result),
-                        __FILE__, __LINE__);
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Unreleasing Purchase Order"),
+                                   storedProcErrorLookup("unreleasePurchaseOrder", result),
+                                   __FILE__, __LINE__);
             return;
           }
         }
-        else if (unRelease.lastError().type() != QSqlError::NoError)
+        else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                                      unRelease, __FILE__, __LINE__))
         {
-          systemError(this, unRelease.lastError().databaseText(), __FILE__, __LINE__);
           return;
         }
       }
@@ -1083,9 +1082,9 @@ void purchaseOrder::sDelete()
                "WHERE (poitem_id=:poitem_id);" );
     purchaseDelete.bindValue(":poitem_id", _poitem->id());
     purchaseDelete.exec();
-    if (purchaseDelete.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Purchase Order"),
+                                  purchaseDelete, __FILE__, __LINE__))
     {
-      systemError(this, purchaseDelete.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -1102,9 +1101,9 @@ void purchaseOrder::sDelete()
                "WHERE (poitem_id=:poitem_id);" );
     purchaseDelete.bindValue(":poitem_id", _poitem->id());
     purchaseDelete.exec();
-    if (purchaseDelete.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Purchase Order"),
+                                  purchaseDelete, __FILE__, __LINE__))
     {
-      systemError(this, purchaseDelete.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -1313,9 +1312,9 @@ void purchaseOrder::sFillList()
 
   purchaseFillList = mql.toQuery(params);
   _poitem->populate(purchaseFillList);
-  if (purchaseFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                                purchaseFillList, __FILE__, __LINE__))
   {
-    systemError(this, purchaseFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -1402,7 +1401,8 @@ void purchaseOrder::sHandleOrderNumber()
       purchaseHandleOrderNumber.bindValue(":orderNumber", _orderNumber->text().toInt());
       purchaseHandleOrderNumber.exec();
       if (purchaseHandleOrderNumber.lastError().type() != QSqlError::NoError)
-        systemError(this, purchaseHandleOrderNumber.lastError().databaseText(), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                               purchaseHandleOrderNumber, __FILE__, __LINE__);
 
       if (! _lock.release())
         ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
@@ -1426,7 +1426,8 @@ void purchaseOrder::sHandleOrderNumber()
     purchaseHandleOrderNumber.bindValue(":pohead_number", _orderNumber->text());
     purchaseHandleOrderNumber.exec();
     if (purchaseHandleOrderNumber.lastError().type() != QSqlError::NoError)
-      systemError(this, purchaseHandleOrderNumber.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                         purchaseHandleOrderNumber, __FILE__, __LINE__);
   }
 }
 
@@ -1439,9 +1440,9 @@ void purchaseOrder::populateOrderNumber()
     _orderNumber->setText(on.value("ponumber"));
     _NumberGen = on.value("ponumber").toInt();
   }
-  else if (on.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Purchase Order Information"),
+                                on, __FILE__, __LINE__))
   {
-    systemError(this, on.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -1475,7 +1476,8 @@ void purchaseOrder::closeEvent(QCloseEvent *pEvent)
     purchasecloseEvent.bindValue(":pohead_id", _poheadid);
     purchasecloseEvent.exec();
     if (purchasecloseEvent.lastError().type() != QSqlError::NoError)
-      systemError(this, purchasecloseEvent.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Purchase Order"),
+                         purchasecloseEvent, __FILE__, __LINE__);
 
     sReleaseNumber();
   }
@@ -1496,7 +1498,8 @@ void purchaseOrder::closeEvent(QCloseEvent *pEvent)
     purchasecloseEvent.bindValue(":pohead_id", _poheadid);
     purchasecloseEvent.exec();
     if (purchasecloseEvent.lastError().type() != QSqlError::NoError)
-      systemError(this, purchasecloseEvent.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Purchase Order"),
+                         purchasecloseEvent, __FILE__, __LINE__);
   }
 
   // TODO: if sQeSave == false then find a way to return control to the user
@@ -1529,7 +1532,8 @@ void purchaseOrder::sReleaseNumber()
     purchaseReleaseNumber.bindValue(":number", _NumberGen);
     purchaseReleaseNumber.exec();
     if (purchaseReleaseNumber.lastError().type() != QSqlError::NoError)
-      systemError(this, purchaseReleaseNumber.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Releasing Purchase Order"),
+                         purchaseReleaseNumber, __FILE__, __LINE__);
     _NumberGen = -1;
   }
 }
@@ -1551,7 +1555,9 @@ void purchaseOrder::sQEDelete()
 {
   if (! _qeitem->removeRow(_qeitemView->currentIndex().row()))
   {
-    systemError(this, tr("Removing row from view failed"), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                         tr("%1: Removing row from view failed. ")
+                         .arg(windowTitle()),__FILE__,__LINE__);\
     return;
   }
 }
@@ -1613,9 +1619,9 @@ void purchaseOrder::sTaxZoneChanged()
     taxq.bindValue(":pohead_id", _poheadid);
     taxq.bindValue(":freight", _freight->localValue());
     taxq.exec();
-    if (taxq.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating Purchase Order Tax Zone Information"),
+                                  taxq, __FILE__, __LINE__))
     {
-      systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     sCalculateTax();

@@ -19,6 +19,7 @@
 #include "inputManager.h"
 #include "scrapWoMaterialFromWIP.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 #define DEBUG false
 
@@ -195,9 +196,9 @@ bool postProduction::okToPost()
                              "associated with.") );
     return false;
   }
-  else if (type.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production),
+                                       type, __FILE__, __LINE__))
   {
-    systemError(this, type.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 */
@@ -414,9 +415,9 @@ void postProduction::sPost()
 
     if (itemlocSeries < 0)
     {
-      rollback.exec();
-      systemError(this, storedProcErrorLookup("postProduction", itemlocSeries),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production"),
+                             storedProcErrorLookup("postProduction", itemlocSeries),
+                             __FILE__, __LINE__);
       return;
     }
 
@@ -424,7 +425,10 @@ void postProduction::sPost()
     if (! errmsg.isEmpty())
     {
       rollback.exec();
-      systemError(this, errmsg, __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                           tr("%1: %2")
+                           .arg(windowTitle())
+                           .arg(errmsg),__FILE__,__LINE__);
       return;
     }
 
@@ -440,7 +444,10 @@ void postProduction::sPost()
     if (! errmsg.isEmpty())
     {
       rollback.exec();
-      systemError(this, errmsg, __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                           tr("%1: %2")
+                           .arg(windowTitle())
+                           .arg(errmsg),__FILE__,__LINE__);
       return;
     }
 
@@ -448,7 +455,10 @@ void postProduction::sPost()
     if (! errmsg.isEmpty())
     {
       rollback.exec();
-      systemError(this, errmsg, __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                           tr("%1: %2")
+                           .arg(windowTitle())
+                           .arg(errmsg),__FILE__,__LINE__);
       return;
     }
 
@@ -470,7 +480,8 @@ void postProduction::sPost()
   else if (postPost.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, postPost.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production"),
+                         postPost, __FILE__, __LINE__);
     return;
   }
 

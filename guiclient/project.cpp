@@ -51,9 +51,9 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
     projectType.bindValue(":prj_id", _prjid);
     projectType.exec();
     _projectType->populate(projectType);
-    if (projectType.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Project Type Information"),
+                                  projectType, __FILE__, __LINE__))
     {
-      systemError(this, projectType.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -200,9 +200,9 @@ enum SetResponse project::set(const ParameterList &pParams)
       projectet.exec("SELECT NEXTVAL('prj_prj_id_seq') AS prj_id;");
       if (projectet.first())
         _prjid = projectet.value("prj_id").toInt();
-      else if (projectet.lastError().type() == QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Project Information"),
+                                    projectet, __FILE__, __LINE__))
       {
-        systemError(this, projectet.lastError().text(), __FILE__, __LINE__);
         return UndefinedError;
       }
 
@@ -591,7 +591,8 @@ bool project::sSave(bool partial)
   if (projectSave.lastError().type() != QSqlError::NoError)
   {
     rollbackq.exec();
-    systemError(this, projectSave.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Project Information"),
+                         projectSave, __FILE__, __LINE__);
     return false;
   }
 
@@ -600,7 +601,10 @@ bool project::sSave(bool partial)
   {
     qDebug("recurring->save failed");
     rollbackq.exec();
-    systemError(this, errmsg, __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                         tr("%1: Error Saving Project Information \n %2")
+                         .arg(windowTitle())
+                         .arg(errmsg),__FILE__,__LINE__);
     return false;
   }
 
@@ -788,9 +792,9 @@ void project::sFillTaskList()
     _totalExpAct->setDouble(qry.value("totalexpact").toDouble());
     _totalExpBal->setDouble(qry.value("totalexpbal").toDouble());
   }
-  if (qry.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Project Information"),
+                                qry, __FILE__, __LINE__))
   {
-    systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 /* Not sure why the totals are zeroed out 

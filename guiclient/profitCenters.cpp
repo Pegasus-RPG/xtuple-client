@@ -19,6 +19,7 @@
 
 #include "profitCenter.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 profitCenters::profitCenters(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -102,16 +103,16 @@ void profitCenters::sDelete()
   if (profitDelete.first())
   {
     int result = profitDelete.value("result").toInt();
-    if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("deleteProfitCenter", result),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Profit Center"),
+                             storedProcErrorLookup("deleteProfitCenter", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (profitDelete.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Profit Center"),
+                                profitDelete, __FILE__, __LINE__))
   {
-    systemError(this, profitDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -140,9 +141,9 @@ void profitCenters::sFillList()
                  "ORDER BY prftcntr_number;" );
   profitFillList.exec();
   _prftcntr->populate(profitFillList);
-  if (profitFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Profit Center Information"),
+                                         profitFillList, __FILE__, __LINE__))
   {
-    systemError(this, profitFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

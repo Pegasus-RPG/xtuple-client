@@ -14,6 +14,7 @@
 #include <QVariant>
 
 #include "mqlutil.h"
+#include "errorReporter.h"
 
 priceList::priceList(QWidget* parent, const char * name, Qt::WindowFlags fl)
     : XDialog(parent, name, fl)
@@ -164,9 +165,9 @@ void priceList::sNewCust()
       _custtypeid = custq.value("custtype_id").toInt();
       _custtypecode = custq.value("custtype_code").toString();
     }
-    else if (custq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Price List Information"),
+                                  custq, __FILE__, __LINE__))
     {
-      systemError(this, custq.lastError().text(), __FILE__, __LINE__);
       return;
     }
   }
@@ -186,9 +187,9 @@ void priceList::sNewShipto()
     {
       _shiptonum = shiptoq.value("shipto_num").toString();
     }
-    else if (shiptoq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Price List Information"),
+                                  shiptoq, __FILE__, __LINE__))
     {
-      systemError(this, shiptoq.lastError().text(), __FILE__, __LINE__);
       return;
     }
   }
@@ -225,9 +226,9 @@ void priceList::sNewItem()
       _iteminvpricerat = itemq.value("iteminvpricerat").toDouble();
       _prodcatid = itemq.value("item_prodcat_id").toInt();
     }
-    else if (itemq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Price List Information"),
+                                  itemq, __FILE__, __LINE__))
     {
-      systemError(this, itemq.lastError().text(), __FILE__, __LINE__);
       return;
     }
   }
@@ -248,7 +249,10 @@ void priceList::sFillList()
                                           errString, &ok);
   if (! ok)
   {
-    systemError(this, errString, __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                         tr("%1: %2")
+                         .arg(windowTitle())
+                         .arg(errString),__FILE__,__LINE__);
     return;
   }
 
