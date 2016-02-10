@@ -321,6 +321,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
       _bomRevision->setEnabled(_privileges->boolean("UseInactiveRevisions"));
       _booRevision->setEnabled(_privileges->boolean("UseInactiveRevisions"));
       _comments->setId(_poitemid);
+      _project->setAllowedStatuses(ProjectLineEdit::Concept |  ProjectLineEdit::InProcess);
       _tab->setTabEnabled(_tab->indexOf(_demandTab), false);
     }
     else if (param.toString() == "edit")
