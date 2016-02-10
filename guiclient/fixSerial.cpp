@@ -72,6 +72,7 @@ void fixSerial::sFillList()
 		"    AND d.adnum = a.attnum"
 		"    AND pg_catalog.pg_get_expr(d.adbin, d.adrelid) ~* 'nextval'"
 		"    AND a.atthasdef "
+                "    AND pg_class.relkind != 'f'" // #27517 do not include foreign tables (relkind = 'f')
 		"ORDER BY relname;" ;
 
   XSqlQuery relq;
