@@ -311,12 +311,15 @@ QString postProduction::handleIssueToParentAfterPost(int itemlocSeries)
 
   // If this is a child W/O and the originating womatl
   // is auto issue then issue this receipt to the parent W/O
-  issueq.prepare("SELECT issueWoMaterial(womatl_id, :qty,"
+  issueq.prepare("SELECT issueWoMaterial(womatl_id,"
+                 "       roundQty(item_fractional, itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, :qty)),"
                  "       :itemlocseries, NOW(), :invhist_id ) AS result "
-                 "FROM wo, womatl "
+                 "FROM wo, womatl, itemsite, item "
                  "WHERE (wo_id=:wo_id)"
                  "  AND (womatl_id=wo_womatl_id)"
-                 "  AND (womatl_issuewo);");
+                 "  AND (womatl_issuewo)"
+                 "  AND (itemsite_id=womatl_itemsite_id)"
+                 "  AND (item_id=itemsite_item_id);");
   issueq.bindValue(":itemlocseries", itemlocSeries);
   issueq.bindValue(":wo_id", _wo->id());
   issueq.bindValue(":qty", _qty->toDouble());
@@ -341,13 +344,15 @@ QString postProduction::handleIssueToParentAfterPost(int itemlocSeries)
 
   // If this is a W/O for a Job Cost item and the parent is a S/O
   // then issue this receipt to the S/O
-  issueq.prepare("SELECT issueToShipping('SO', coitem_id, :qty,"
+  issueq.prepare("SELECT issueToShipping('SO', coitem_id,"
+                 "       roundQty(item_fractional, itemuomtouom(itemsite_item_id, NULL, coitem_qty_uom_id, :qty)),"
                  "       :itemlocseries, NOW(), :invhist_id) AS result "
-                 "FROM wo, itemsite, coitem "
+                 "FROM wo, itemsite, item, coitem "
                  "WHERE (wo_id=:wo_id)"
                  "  AND (wo_ordtype='S')"
                  "  AND (itemsite_id=wo_itemsite_id)"
                  "  AND (itemsite_costmethod='J')"
+                 "  AND (item_id=itemsite_item_id)"
                  "  AND (coitem_id=wo_ordid);");
   issueq.bindValue(":itemlocseries", itemlocSeries);
   issueq.bindValue(":wo_id", _wo->id());
