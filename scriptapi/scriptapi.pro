@@ -5,10 +5,10 @@ CONFIG += qt \
     warn_on \
     staticlib
 
-QT += core network printsupport script sql webkit webkitwidgets widgets xml serialport
+QT += core network printsupport script sql webkit webkitwidgets widgets xml
 
 greaterThan (QT_MAJOR_VERSION, 4) {
-  QT += websockets webchannel
+  QT += websockets webchannel serialport
 }
 
 DBFILE = scriptapi.db
