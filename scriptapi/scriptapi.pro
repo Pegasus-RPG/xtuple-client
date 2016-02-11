@@ -35,8 +35,10 @@ HEADERS += setupscriptapi.h \
     qactionproto.h \
     qapplicationproto.h \
     qboxlayoutproto.h \
+    qbufferproto.h \
     qbytearrayproto.h \
     qcoreapplicationproto.h \
+    qcryptographichashproto.h \
     qdialogbuttonboxproto.h \
     qdialogsetup.h \
     qdirproto.h \
@@ -91,6 +93,16 @@ HEADERS += setupscriptapi.h \
     qsqldatabaseproto.h \
     qsqlerrorproto.h \
     qsqlrecordproto.h \
+    qsslcertificateextensionproto.h \
+    qsslcertificateproto.h \
+    qsslcipherproto.h \
+    qsslconfigurationproto.h \
+    qsslellipticcurveproto.h \
+    qsslerrorproto.h \
+    qsslkeyproto.h \
+    qsslpresharedkeyauthenticatorproto.h \
+    qsslproto.h \
+    qsslsocketproto.h \
     qstackedwidgetproto.h \
     qtabwidgetproto.h \
     qtextdocumentproto.h \
@@ -105,6 +117,7 @@ HEADERS += setupscriptapi.h \
     qwebchannelproto.h \
     qwebframeproto.h \
     qwebpageproto.h \
+    qwebsettingsproto.h \
     qwebsocketcorsauthenticatorproto.h \
     qwebsocketproto.h             \
     qwebsocketprotocolproto.h     \
@@ -151,8 +164,10 @@ SOURCES += setupscriptapi.cpp \
     qactionproto.cpp \
     qapplicationproto.cpp \
     qboxlayoutproto.cpp \
+    qbufferproto.cpp \
     qbytearrayproto.cpp \
     qcoreapplicationproto.cpp \
+    qcryptographichashproto.cpp \
     qdialogbuttonboxproto.cpp \
     qdialogsetup.cpp \
     qdirproto.cpp \
@@ -207,6 +222,16 @@ SOURCES += setupscriptapi.cpp \
     qsqldatabaseproto.cpp \
     qsqlerrorproto.cpp \
     qsqlrecordproto.cpp \
+    qsslcertificateextensionproto.cpp \
+    qsslcertificateproto.cpp \
+    qsslcipherproto.cpp \
+    qsslconfigurationproto.cpp \
+    qsslellipticcurveproto.cpp \
+    qsslerrorproto.cpp \
+    qsslkeyproto.cpp \
+    qsslpresharedkeyauthenticatorproto.cpp \
+    qsslproto.cpp \
+    qsslsocketproto.cpp \
     qstackedwidgetproto.cpp \
     qtabwidgetproto.cpp \
     qtextdocumentproto.cpp \
@@ -221,6 +246,7 @@ SOURCES += setupscriptapi.cpp \
     qwebchannelproto.cpp \
     qwebframeproto.cpp \
     qwebpageproto.cpp \
+    qwebsettingsproto.cpp \
     qwebsocketcorsauthenticatorproto.cpp \
     qwebsocketproto.cpp           \
     qwebsocketprotocolproto.cpp   \

@@ -35,8 +35,10 @@
 #include "qactionproto.h"
 #include "qapplicationproto.h"
 #include "qboxlayoutproto.h"
+#include "qbufferproto.h"
 #include "qbytearrayproto.h"
 #include "qcoreapplicationproto.h"
+#include "qcryptographichashproto.h"
 #include "qdialogsetup.h"
 #include "qdialogbuttonboxproto.h"
 #include "qdirproto.h"
@@ -91,6 +93,16 @@
 #include "qsqldatabaseproto.h"
 #include "qsqlerrorproto.h"
 #include "qsqlrecordproto.h"
+#include "qsslcertificateextensionproto.h"
+#include "qsslcertificateproto.h"
+#include "qsslcipherproto.h"
+#include "qsslconfigurationproto.h"
+#include "qsslellipticcurveproto.h"
+#include "qsslerrorproto.h"
+#include "qsslkeyproto.h"
+#include "qsslpresharedkeyauthenticatorproto.h"
+#include "qsslproto.h"
+#include "qsslsocketproto.h"
 #include "qstackedwidgetproto.h"
 #include "qtabwidgetproto.h"
 #include "qtextdocumentproto.h"
@@ -106,6 +118,7 @@
 #include "qwebchannelproto.h"
 #include "qwebframeproto.h"
 #include "qwebpageproto.h"
+#include "qwebsettingsproto.h"
 #include "qwebsocketcorsauthenticatorproto.h"
 #include "qwebsocketproto.h"
 #include "qwebsocketprotocolproto.h"
@@ -171,8 +184,10 @@ void setupScriptApi(QScriptEngine *engine)
   setupQActionProto(engine);
   setupQApplicationProto(engine);
   setupQBoxLayoutProto(engine);
+  setupQBufferProto(engine);
   setupQByteArrayProto(engine);
   setupQCoreApplicationProto(engine);
+  setupQCryptographicHashProto(engine);
   setupQDialog(engine);
   setupQDialogButtonBoxProto(engine);
   setupQDirProto(engine);
@@ -227,6 +242,16 @@ void setupScriptApi(QScriptEngine *engine)
   setupQSqlDatabaseProto(engine);
   setupQSqlErrorProto(engine);
   setupQSqlRecordProto(engine);
+  setupQSslCertificateExtensionProto(engine);
+  setupQSslCertificateProto(engine);
+  setupQSslCipherProto(engine);
+  setupQSslConfigurationProto(engine);
+  setupQSslEllipticCurveProto(engine);
+  setupQSslErrorProto(engine);
+  setupQSslKeyProto(engine);
+  setupQSslPreSharedKeyAuthenticatorProto(engine);
+  setupQSslProto(engine);
+  setupQSslSocketProto(engine);
   setupQStackedWidgetProto(engine);
   setupQTabWidgetProto(engine);
   setupQTextDocumentProto(engine);
@@ -242,6 +267,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQWebChannelProto(engine);
   setupQWebFrameProto(engine);
   setupQWebPageProto(engine);
+  setupQWebSettingsProto(engine);
   setupQWebSocketCorsAuthenticatorProto(engine);
   setupQWebSocketProto(engine);
   setupQWebSocketProtocolProto(engine);

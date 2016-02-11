@@ -24,6 +24,7 @@ void setupQWebSocketServerProto(QScriptEngine *engine);
 class QWebSocket;
 
 Q_DECLARE_METATYPE(QWebSocketServer*)
+Q_DECLARE_METATYPE(enum QWebSocketServer::SslMode)
 
 QScriptValue constructQWebSocketServer(QScriptContext *context, QScriptEngine *engine);
 

@@ -21,6 +21,7 @@ class QByteArray;
 class QSslConfiguration;
 
 Q_DECLARE_METATYPE(QUrl*)
+//Q_DECLARE_METATYPE(QUrl) // Already set in qurl.h
 
 void         setupQUrlProto(QScriptEngine *engine);
 QScriptValue constructQUrl(QScriptContext *context, QScriptEngine *engine);

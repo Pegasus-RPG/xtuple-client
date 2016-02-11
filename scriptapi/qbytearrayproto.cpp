@@ -9,27 +9,66 @@
  */
 
 #include "qbytearrayproto.h"
+#include <QScriptValueIterator>
 
 static QByteArray nullBA = QByteArray();
 
-QScriptValue QByteArraytoScriptValue(QScriptEngine *engine, QByteArray* const &item)
+QScriptValue QByteArrayPointertoScriptValue(QScriptEngine *engine, QByteArray* const &item)
 {
   QByteArray tmpBA = *item;
   QVariant  *tmpVar = new QVariant(tmpBA);      // TODO: memory leak?
   return engine->newVariant(*tmpVar);
 }
-
-void QByteArrayfromScriptValue(const QScriptValue &obj, QByteArray* &item)
+void QByteArrayPointerfromScriptValue(const QScriptValue &obj, QByteArray* &item)
 {
   item = new QByteArray(obj.toVariant().toByteArray());
+}
+
+QScriptValue QByteArraytoScriptValue(QScriptEngine *engine, QByteArray const &item)
+{
+  QByteArray tmpBA = item;
+  QVariant   tmpVar = QVariant(tmpBA);      // TODO: memory leak?
+  return engine->newVariant(tmpVar);
+}
+void QByteArrayfromScriptValue(const QScriptValue &obj, QByteArray &item)
+{
+  item = QByteArray(obj.toVariant().toByteArray());
+}
+
+QScriptValue QListQByteArraytoScriptValue(QScriptEngine *engine, const QList<QByteArray> &list)
+{
+  QScriptValue newArray = engine->newArray();
+  for (int i = 0; i < list.size(); i += 1) {
+    newArray.setProperty(i, engine->toScriptValue(list.at(i)));
+  }
+  return newArray;
+}
+void QListQByteArrayfromScriptValue(const QScriptValue &obj, QList<QByteArray> &list)
+{
+  list = QList<QByteArray>();
+  QScriptValueIterator it(obj);
+
+  while (it.hasNext()) {
+    it.next();
+    if (it.flags() & QScriptValue::SkipInEnumeration)
+      continue;
+    QByteArray item = qscriptvalue_cast<QByteArray>(it.value());
+    list.insert(it.name().toInt(), item);
+  }
 }
 
 void setupQByteArrayProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QByteArraytoScriptValue, QByteArrayfromScriptValue);
+  qScriptRegisterMetaType(engine, QByteArrayPointertoScriptValue, QByteArrayPointerfromScriptValue);
+
+#if QT_VERSION >= 0x050000
+  qScriptRegisterMetaType(engine, QListQByteArraytoScriptValue, QListQByteArrayfromScriptValue);
+#endif
 
   QScriptValue proto = engine->newQObject(new QByteArrayProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QByteArray*>(), proto);
+  engine->setDefaultPrototype(qMetaTypeId<QByteArray>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQByteArray,
                                                  proto);
