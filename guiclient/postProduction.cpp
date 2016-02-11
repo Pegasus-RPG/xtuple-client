@@ -313,7 +313,7 @@ QString postProduction::handleIssueToParentAfterPost(int itemlocSeries)
   // is auto issue then issue this receipt to the parent W/O
   issueq.prepare("SELECT issueWoMaterial(womatl_id,"
                  "       roundQty(item_fractional, itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, :qty)),"
-                 "       :itemlocseries, NOW(), :invhist_id ) AS result "
+                 "       :itemlocseries, :date, :invhist_id ) AS result "
                  "FROM wo, womatl, itemsite, item "
                  "WHERE (wo_id=:wo_id)"
                  "  AND (womatl_id=wo_womatl_id)"
@@ -323,6 +323,7 @@ QString postProduction::handleIssueToParentAfterPost(int itemlocSeries)
   issueq.bindValue(":itemlocseries", itemlocSeries);
   issueq.bindValue(":wo_id", _wo->id());
   issueq.bindValue(":qty", _qty->toDouble());
+  issueq.bindValue(":date",  _transDate->date());
   if (invhistid > 0)
     issueq.bindValue(":invhist_id", invhistid);
   issueq.exec();
@@ -346,7 +347,7 @@ QString postProduction::handleIssueToParentAfterPost(int itemlocSeries)
   // then issue this receipt to the S/O
   issueq.prepare("SELECT issueToShipping('SO', coitem_id,"
                  "       roundQty(item_fractional, itemuomtouom(itemsite_item_id, NULL, coitem_qty_uom_id, :qty)),"
-                 "       :itemlocseries, NOW(), :invhist_id) AS result "
+                 "       :itemlocseries, :date, :invhist_id) AS result "
                  "FROM wo, itemsite, item, coitem "
                  "WHERE (wo_id=:wo_id)"
                  "  AND (wo_ordtype='S')"
@@ -357,6 +358,7 @@ QString postProduction::handleIssueToParentAfterPost(int itemlocSeries)
   issueq.bindValue(":itemlocseries", itemlocSeries);
   issueq.bindValue(":wo_id", _wo->id());
   issueq.bindValue(":qty", _qty->toDouble());
+  issueq.bindValue(":date",  _transDate->date());
   if (invhistid > 0)
     issueq.bindValue(":invhist_id", invhistid);
   issueq.exec();
