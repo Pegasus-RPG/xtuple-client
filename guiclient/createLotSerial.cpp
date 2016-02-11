@@ -379,17 +379,15 @@ void createLotSerial::sAssign()
   {
     createAssign.prepare("SELECT COUNT(*) AS count FROM "
                          "(SELECT itemloc_id AS count "
-                         "FROM item JOIN itemsite ON (itemsite_item_id=item_id)"
-                         "          JOIN itemloc ON (itemloc_itemsite_id=itemsite_id)"
-                         "          JOIN ls ON (ls_id=itemloc_ls_id) "
-                         "WHERE (item_id=:item_id)"
+                         "FROM itemsite JOIN itemloc ON (itemloc_itemsite_id=itemsite_id)"
+                         "              JOIN ls ON (ls_id=itemloc_ls_id) "
+                         "WHERE (itemsite_item_id=:item_id)"
                          "  AND (UPPER(ls_number)=UPPER(:lotserial))"
                          "UNION "
                          "SELECT itemlocdist_id "
-                         "FROM item JOIN itemsite ON (itemsite_item_id=item_id)"
-                         "          JOIN itemlocdist ON (itemlocdist_itemsite_id=itemsite_id)"
-                         "          JOIN ls ON (ls_id=itemlocdist_ls_id) "
-                         "WHERE (item_id=:item_id)"
+                         "FROM itemsite JOIN itemlocdist ON (itemlocdist_itemsite_id=itemsite_id)"
+                         "              JOIN ls ON (ls_id=itemlocdist_ls_id) "
+                         "WHERE (itemsite_item_id=:item_id)"
                          "  AND (UPPER(ls_number)=UPPER(:lotserial))"
                          "  AND (itemlocdist_source_type='D')) AS data;");
     createAssign.bindValue(":item_id", _item->id());
