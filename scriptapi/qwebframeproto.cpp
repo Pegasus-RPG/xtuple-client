@@ -27,11 +27,19 @@
 #include <QWebPage>
 #include <QWebSecurityOrigin>
 
+QScriptValue RenderLayerToScriptValue(QScriptEngine *engine, const QWebFrame::RenderLayer &item)
+{
+  return engine->newVariant(item);
+}
+void RenderLayerFromScriptValue(const QScriptValue &obj, QWebFrame::RenderLayer &item)
+{
+  item = (QWebFrame::RenderLayer)obj.toInt32();
+}
+
 QScriptValue QWebFrametoScriptValue(QScriptEngine *engine, QWebFrame* const &item)
 {
   return engine->newQObject(item);
 }
-
 void QWebFramefromScriptValue(const QScriptValue &obj, QWebFrame* &item)
 {
   item = qobject_cast<QWebFrame*>(obj.toQObject());
@@ -40,13 +48,21 @@ void QWebFramefromScriptValue(const QScriptValue &obj, QWebFrame* &item)
 void setupQWebFrameProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QWebFrametoScriptValue, QWebFramefromScriptValue);
+  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QWebFrameProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebFrame*>(), proto);
+  // Not allowed. Is private in in qwebframe.h
+  //engine->setDefaultPrototype(qMetaTypeId<QWebFrame>(), proto);
 
-  QScriptValue constructor = engine->newFunction(constructQWebFrame,
-                                                 proto);
+  QScriptValue constructor = engine->newFunction(constructQWebFrame, proto);
   engine->globalObject().setProperty("QWebFrame",  constructor);
+
+  qScriptRegisterMetaType(engine, RenderLayerToScriptValue, RenderLayerFromScriptValue);
+  constructor.setProperty("ContentsLayer", QScriptValue(engine, QWebFrame::ContentsLayer), permanent);
+  constructor.setProperty("ScrollBarLayer", QScriptValue(engine, QWebFrame::ScrollBarLayer), permanent);
+  constructor.setProperty("PanIconLayer", QScriptValue(engine, QWebFrame::PanIconLayer), permanent);
+  constructor.setProperty("AllLayers", QScriptValue(engine, QWebFrame::AllLayers), permanent);
 }
 
 QScriptValue constructQWebFrame(QScriptContext * context,
@@ -413,6 +429,16 @@ qreal QWebFrameProto::zoomFactor() const
   return qreal();
 }
 
+// Reimplemented Public Functions.
+bool QWebFrameProto::event(QEvent * e)
+{
+  QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
+  if (item)
+    return item->event(e);
+  return false;
+}
+
+// Public slots.
 QVariant QWebFrameProto::evaluateJavaScript(const QString& scriptSource)
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());

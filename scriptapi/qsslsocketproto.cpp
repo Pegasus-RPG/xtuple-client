@@ -19,13 +19,15 @@ void setupQSslSocketProto(QScriptEngine *engine)
 QScriptValue addDefaultCaCertificateForJS(QScriptContext* context, QScriptEngine* engine)
 {
   if (context->argumentCount() == 1) {
-    if (context->argument(0).isString()) {
-      QSslCertificate newCert = QSslCertificate(context->argument(0).toString().toLocal8Bit());
-      QSslSocket::addDefaultCaCertificate(newCert);
-    } else if (context->argument(0).isObject()) {
-      QSslCertificate cert = qscriptvalue_cast<QSslCertificate>(context->argument(0));
-      QSslSocket::addDefaultCaCertificate(cert);
+    QScriptValue toPem = context->argument(0).property(QString("toPem"));
+    QString certificate;
+    if (toPem.isFunction()) {
+      certificate = toPem.call(context->argument(0)).toString();
+    } else {
+      certificate = context->argument(0).toString();
     }
+    QSslCertificate newCert = QSslCertificate(certificate.toLocal8Bit(), QSsl::Pem);
+    QSslSocket::addDefaultCaCertificate(newCert);
   }
   return engine->undefinedValue();
 }
@@ -48,18 +50,8 @@ void SslModeFromScriptValue(const QScriptValue &obj, QSslSocket::SslMode &item)
   item = (QSslSocket::SslMode)obj.toInt32();
 }
 
-QScriptValue QSslSockettoScriptValue(QScriptEngine *engine, QSslSocket* const &item)
-{
-  return engine->newQObject(item);
-}
-void QSslSocketfromScriptValue(const QScriptValue &obj, QSslSocket* &item)
-{
-  item = qobject_cast<QSslSocket*>(obj.toQObject());
-}
-
 void setupQSslSocketProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QSslSockettoScriptValue, QSslSocketfromScriptValue);
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QSslSocketProto(engine));

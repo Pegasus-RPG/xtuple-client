@@ -13,26 +13,16 @@
 
 static QByteArray nullBA = QByteArray();
 
-QScriptValue QByteArrayPointertoScriptValue(QScriptEngine *engine, QByteArray* const &item)
+QScriptValue QByteArraytoScriptValue(QScriptEngine *engine, QByteArray* const &item)
 {
   QByteArray tmpBA = *item;
   QVariant  *tmpVar = new QVariant(tmpBA);      // TODO: memory leak?
   return engine->newVariant(*tmpVar);
 }
-void QByteArrayPointerfromScriptValue(const QScriptValue &obj, QByteArray* &item)
+
+void QByteArrayfromScriptValue(const QScriptValue &obj, QByteArray* &item)
 {
   item = new QByteArray(obj.toVariant().toByteArray());
-}
-
-QScriptValue QByteArraytoScriptValue(QScriptEngine *engine, QByteArray const &item)
-{
-  QByteArray tmpBA = item;
-  QVariant   tmpVar = QVariant(tmpBA);      // TODO: memory leak?
-  return engine->newVariant(tmpVar);
-}
-void QByteArrayfromScriptValue(const QScriptValue &obj, QByteArray &item)
-{
-  item = QByteArray(obj.toVariant().toByteArray());
 }
 
 QScriptValue QListQByteArraytoScriptValue(QScriptEngine *engine, const QList<QByteArray> &list)
@@ -60,7 +50,6 @@ void QListQByteArrayfromScriptValue(const QScriptValue &obj, QList<QByteArray> &
 void setupQByteArrayProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QByteArraytoScriptValue, QByteArrayfromScriptValue);
-  qScriptRegisterMetaType(engine, QByteArrayPointertoScriptValue, QByteArrayPointerfromScriptValue);
 
 #if QT_VERSION >= 0x050000
   qScriptRegisterMetaType(engine, QListQByteArraytoScriptValue, QListQByteArrayfromScriptValue);

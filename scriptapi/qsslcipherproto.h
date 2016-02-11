@@ -33,16 +33,16 @@ class QSslCipherProto : public QObject, public QScriptable
     QSslCipherProto(QObject *parent);
     virtual ~QSslCipherProto();
 
-    Q_INVOKABLE QString authenticationMethod() const;
-    Q_INVOKABLE QString encryptionMethod() const;
-    Q_INVOKABLE bool  isNull() const;
-    Q_INVOKABLE QString keyExchangeMethod() const;
-    Q_INVOKABLE QString name() const;
-    Q_INVOKABLE QSsl::SslProtocol protocol() const;
-    Q_INVOKABLE QString protocolString() const;
-    Q_INVOKABLE int supportedBits() const;
-    Q_INVOKABLE void  swap(QSslCipher & other);
-    Q_INVOKABLE int usedBits() const;
+    Q_INVOKABLE QString             authenticationMethod() const;
+    Q_INVOKABLE QString             encryptionMethod() const;
+    Q_INVOKABLE bool                isNull() const;
+    Q_INVOKABLE QString             keyExchangeMethod() const;
+    Q_INVOKABLE QString             name() const;
+    Q_INVOKABLE QSsl::SslProtocol   protocol() const;
+    Q_INVOKABLE QString             protocolString() const;
+    Q_INVOKABLE int                 supportedBits() const;
+    Q_INVOKABLE void                swap(QSslCipher & other);
+    Q_INVOKABLE int                 usedBits() const;
 
 };
 

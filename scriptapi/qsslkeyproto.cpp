@@ -16,48 +16,8 @@ void setupQSslKeyProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
-QScriptValue QSslKeytoScriptValue(QScriptEngine *engine, QSslKey const &item)
-{
-  QScriptValue obj = engine->newObject();
-  obj.setProperty("_key", qPrintable(QString(item.toPem())));
-  obj.setProperty("_algorithm", item.algorithm());
-  obj.setProperty("_type", item.type());
-
-  return obj;
-}
-void QSslKeyfromScriptValue(const QScriptValue &obj, QSslKey &item)
-{
-  QString key = qscriptvalue_cast<QString>(obj.property("_key"));;
-  QSsl::KeyAlgorithm algorithm = static_cast<QSsl::KeyAlgorithm>(obj.property("_algorithm").toInt32());
-  QSsl::KeyType type = static_cast<QSsl::KeyType>(obj.property("_type").toInt32());
-  QSslKey newKey = QSslKey(key.toLocal8Bit(), algorithm, QSsl::Pem, type);
-
-  item.swap(newKey);
-}
-
-QScriptValue QSslKeyPointertoScriptValue(QScriptEngine *engine, QSslKey* const &item)
-{
-  QScriptValue obj = engine->newObject();
-  obj.setProperty("_key", qPrintable(QString(item->toPem())));
-  obj.setProperty("_algorithm", item->algorithm());
-  obj.setProperty("_type", item->type());
-
-  return obj;
-}
-void QSslKeyPointerfromScriptValue(const QScriptValue &obj, QSslKey* &item)
-{
-  QString key = qscriptvalue_cast<QString>(obj.property("_key"));;
-  QSsl::KeyAlgorithm algorithm = static_cast<QSsl::KeyAlgorithm>(obj.property("_algorithm").toInt32());
-  QSsl::KeyType type = static_cast<QSsl::KeyType>(obj.property("_type").toInt32());
-
-  item = new QSslKey(key.toLocal8Bit(), algorithm, QSsl::Pem, type);
-}
-
 void setupQSslKeyProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QSslKeytoScriptValue, QSslKeyfromScriptValue);
-  qScriptRegisterMetaType(engine, QSslKeyPointertoScriptValue, QSslKeyPointerfromScriptValue);
-
   QScriptValue proto = engine->newQObject(new QSslKeyProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QSslKey*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QSslKey>(), proto);
@@ -86,7 +46,7 @@ QScriptValue constructQSslKey(QScriptContext *context,
     algorithm = static_cast<QSsl::KeyAlgorithm>(context->argument(1).toInt32());
 
     if (key.length() > 0) { // Handle `const QByteArray & encoded`.
-      QByteArray encoded = qscriptvalue_cast<QByteArray>(arg);
+      QByteArray encoded = arg.toVariant().toByteArray();
       if (context->argumentCount() == 2) {
         obj = new QSslKey(encoded, algorithm);
       } else if (context->argumentCount() == 3) {
@@ -99,7 +59,7 @@ QScriptValue constructQSslKey(QScriptContext *context,
       } else if (context->argumentCount() == 5) {
         encoding = static_cast<QSsl::EncodingFormat>(context->argument(2).toInt32());
         type = static_cast<QSsl::KeyType>(context->argument(3).toInt32());
-        passPhrase = qscriptvalue_cast<QByteArray>(context->argument(4));
+        passPhrase = context->argument(4).toVariant().toByteArray();
         obj = new QSslKey(encoded, algorithm, encoding, type, passPhrase);
       }
     }
@@ -119,7 +79,7 @@ QScriptValue constructQSslKey(QScriptContext *context,
       } else if (context->argumentCount() == 5) {
         encoding = static_cast<QSsl::EncodingFormat>(context->argument(2).toInt32());
         type = static_cast<QSsl::KeyType>(context->argument(3).toInt32());
-        passPhrase = qscriptvalue_cast<QByteArray>(context->argument(4));
+        passPhrase = context->argument(4).toVariant().toByteArray();
         obj = new QSslKey(device, algorithm, encoding, type, passPhrase);
       }
     }

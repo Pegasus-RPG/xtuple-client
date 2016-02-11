@@ -17,77 +17,6 @@ void setupQSslConfigurationProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
-QScriptValue QSslConfigurationtoScriptValue(QScriptEngine *engine, QSslConfiguration const &item)
-{
-  QScriptValue obj = engine->newObject();
-
-  obj.setProperty("_peerVerifyMode", item.peerVerifyMode());
-
-  QSslCertificate localCertificate = item.localCertificate();
-  obj.setProperty("_localCertificate", qPrintable(QString(localCertificate.toPem())));
-
-  QSslKey privateKey = item.privateKey();
-  obj.setProperty("_privateKey", qPrintable(QString(privateKey.toPem())));
-
-  obj.setProperty("_protocol", item.protocol());
-
-  return obj;
-}
-void QSslConfigurationfromScriptValue(const QScriptValue &obj, QSslConfiguration &item)
-{
-  QSslConfiguration newConfig = QSslConfiguration();
-
-  newConfig.setPeerVerifyMode(static_cast<QSslSocket::PeerVerifyMode>(obj.property("_peerVerifyMode").toInt32()));
-
-  QString localCertificate = obj.property("_localCertificate").toString();
-  QSslCertificate cert = QSslCertificate(localCertificate.toLocal8Bit(), QSsl::Pem);
-  newConfig.setLocalCertificate(cert);
-
-  QString privateKey = obj.property("_privateKey").toString();
-  QSslKey key = QSslKey(privateKey.toLocal8Bit(), QSsl::Rsa);
-  newConfig.setPrivateKey(key);
-
-  newConfig.setProtocol(static_cast<QSsl::SslProtocol>(obj.property("_protocol").toInt32()));
-
-  item.swap(newConfig);
-}
-
-QScriptValue QSslConfigurationPointertoScriptValue(QScriptEngine *engine, QSslConfiguration* const &item)
-{
-  QScriptValue obj = engine->newObject();
-
-  obj.setProperty("_peerVerifyMode", item->peerVerifyMode());
-
-  QSslCertificate localCertificate = item->localCertificate();
-  obj.setProperty("_localCertificate", qPrintable(QString(localCertificate.toPem())));
-
-  QSslKey privateKey = item->privateKey();
-  obj.setProperty("_privateKey", qPrintable(QString(privateKey.toPem())));
-
-  obj.setProperty("_protocol", item->protocol());
-
-  return obj;
-}
-void QSslConfigurationPointerfromScriptValue(const QScriptValue &obj, QSslConfiguration* &item)
-{
-  QSslConfiguration newConfig = QSslConfiguration();
-
-  newConfig.setPeerVerifyMode(static_cast<QSslSocket::PeerVerifyMode>(obj.property("_peerVerifyMode").toInt32()));
-
-  QString localCertificate = obj.property("_localCertificate").toString();
-  QSslCertificate cert = QSslCertificate(localCertificate.toLocal8Bit(), QSsl::Pem);
-  newConfig.setLocalCertificate(cert);
-  QSslCertificate newConfigcert = newConfig.localCertificate();
-
-  QString privateKey = obj.property("_privateKey").toString();
-  QSslKey key = QSslKey(privateKey.toLocal8Bit(), QSsl::Rsa);
-  newConfig.setPrivateKey(key);
-
-  newConfig.setProtocol(static_cast<QSsl::SslProtocol>(obj.property("_protocol").toInt32()));
-
-  item = new QSslConfiguration(newConfig);
-}
-
 QScriptValue NextProtocolNegotiationStatusToScriptValue(QScriptEngine *engine, const QSslConfiguration::NextProtocolNegotiationStatus &item)
 {
   return engine->newVariant(item);
@@ -147,8 +76,6 @@ QScriptValue systemCaCertificatesForJS(QScriptContext* context, QScriptEngine* e
 
 void setupQSslConfigurationProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QSslConfigurationtoScriptValue, QSslConfigurationfromScriptValue);
-  qScriptRegisterMetaType(engine, QSslConfigurationPointertoScriptValue, QSslConfigurationPointerfromScriptValue);
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QSslConfigurationProto(engine));

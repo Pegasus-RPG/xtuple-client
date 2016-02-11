@@ -91,6 +91,7 @@ HEADERS += setupscriptapi.h \
     qsizepolicyproto.h \
     qspaceritemproto.h \
     qsqldatabaseproto.h \
+    qsqldriverproto.h \
     qsqlerrorproto.h \
     qsqlrecordproto.h \
     qsslcertificateextensionproto.h \
@@ -113,10 +114,15 @@ HEADERS += setupscriptapi.h \
     qtreewidgetitemproto.h \
     qtsetup.h \
     qurlproto.h \
+    qurlqueryproto.h \
+    quuidproto.h \
     qvalidatorproto.h \
     qwebchannelproto.h \
+    qwebelementproto.h \
+    qwebelementcollectionproto.h \
     qwebframeproto.h \
     qwebpageproto.h \
+    qwebsecurityoriginproto.h \
     qwebsettingsproto.h \
     qwebsocketcorsauthenticatorproto.h \
     qwebsocketproto.h             \
@@ -148,13 +154,13 @@ HEADERS += setupscriptapi.h \
     shipmentclusterlineeditsetup.h \
     vendorgroupsetup.h \
     wcomboboxsetup.h \
+    webchanneltransport.h \
     womatlclustersetup.h \
     xdateeditsetup.h \
     ../widgets/xt.h \
     xvariantsetup.h \
     xwebsync_p.h \
-    xwebsync.h \
-    xwebsyncproto.h
+    xwebsync.h
 
 SOURCES += setupscriptapi.cpp \
     include.cpp \
@@ -220,6 +226,7 @@ SOURCES += setupscriptapi.cpp \
     qsizepolicyproto.cpp \
     qspaceritemproto.cpp \
     qsqldatabaseproto.cpp \
+    qsqldriverproto.cpp \
     qsqlerrorproto.cpp \
     qsqlrecordproto.cpp \
     qsslcertificateextensionproto.cpp \
@@ -242,10 +249,15 @@ SOURCES += setupscriptapi.cpp \
     qtreewidgetitemproto.cpp \
     qtsetup.cpp \
     qurlproto.cpp \
+    qurlqueryproto.cpp \
+    quuidproto.cpp \
     qvalidatorproto.cpp \
     qwebchannelproto.cpp \
+    qwebelementproto.cpp \
+    qwebelementcollectionproto.cpp \
     qwebframeproto.cpp \
     qwebpageproto.cpp \
+    qwebsecurityoriginproto.cpp \
     qwebsettingsproto.cpp \
     qwebsocketcorsauthenticatorproto.cpp \
     qwebsocketproto.cpp           \
@@ -277,9 +289,9 @@ SOURCES += setupscriptapi.cpp \
     shipmentclusterlineeditsetup.cpp \
     vendorgroupsetup.cpp \
     wcomboboxsetup.cpp \
+    webchanneltransport.cpp \
     womatlclustersetup.cpp \
     xdateeditsetup.cpp \
     ../widgets/xt.cpp \
     xvariantsetup.cpp \
-    xwebsync.cpp \
-    xwebsyncproto.cpp
+    xwebsync.cpp

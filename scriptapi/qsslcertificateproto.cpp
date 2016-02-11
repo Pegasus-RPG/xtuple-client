@@ -17,31 +17,6 @@ void setupQSslCertificateProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
-QScriptValue QSslCertificatetoScriptValue(QScriptEngine *engine, QSslCertificate const &item)
-{
-  QScriptValue obj = engine->newObject();
-  obj.setProperty("_certificate", qPrintable(QString(item.toPem())));
-  return obj;
-}
-void QSslCertificatefromScriptValue(const QScriptValue &obj, QSslCertificate &item)
-{
-  QString certificate = obj.property("_certificate").toString();
-  QSslCertificate newCert = QSslCertificate(certificate.toLocal8Bit(), QSsl::Pem);
-  item.swap(newCert);
-}
-
-QScriptValue QSslCertificatePointertoScriptValue(QScriptEngine *engine, QSslCertificate* const &item)
-{
-  QScriptValue obj = engine->newObject();
-  obj.setProperty("_certificate", qPrintable(QString(item->toPem())));
-  return obj;
-}
-void QSslCertificatePointerfromScriptValue(const QScriptValue &obj, QSslCertificate* &item)
-{
-  QString certificate = obj.property("_certificate").toString();
-  item = new QSslCertificate(certificate.toLocal8Bit(), QSsl::Pem);
-}
-
 QScriptValue SubjectInfoToScriptValue(QScriptEngine *engine, const QSslCertificate::SubjectInfo &item)
 {
   return engine->newVariant(item);
@@ -76,10 +51,10 @@ void QListQSslCertificatefromScriptValue(const QScriptValue &obj, QList<QSslCert
 QScriptValue fromDataForJS(QScriptContext* context, QScriptEngine* engine)
 {
   if (context->argumentCount() == 1) {
-    QByteArray data = qscriptvalue_cast<QByteArray>(context->argument(0));
+    QByteArray data = context->argument(0).toVariant().toByteArray();
     return engine->toScriptValue(QSslCertificate::fromData(data));
   } else if (context->argumentCount() == 2) {
-    QByteArray data = qscriptvalue_cast<QByteArray>(context->argument(0));
+    QByteArray data = context->argument(0).toVariant().toByteArray();
     QSsl::EncodingFormat format = (QSsl::EncodingFormat)context->argument(1).toInt32();
     return engine->toScriptValue(QSslCertificate::fromData(data, format));
   } else {
@@ -143,7 +118,7 @@ QScriptValue importPkcs12ForJS(QScriptContext* context, QScriptEngine* engine)
     QSslKey *key = qscriptvalue_cast<QSslKey*>(context->argument(1));
     QSslCertificate *certificate = qscriptvalue_cast<QSslCertificate*>(context->argument(2));
     QList<QSslCertificate> *caCertificates = qscriptvalue_cast<QList<QSslCertificate>*>(context->argument(3));
-    QByteArray passPhrase = qscriptvalue_cast<QByteArray>(context->argument(4));
+    QByteArray passPhrase = context->argument(4).toVariant().toByteArray();
     return engine->toScriptValue(QSslCertificate::importPkcs12(device, key, certificate, caCertificates, passPhrase));
   } else {
     return engine->toScriptValue(false);
@@ -164,16 +139,13 @@ QScriptValue verifyForJS(QScriptContext* context, QScriptEngine* engine)
 
 void setupQSslCertificateProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QSslCertificatetoScriptValue, QSslCertificatefromScriptValue);
-  qScriptRegisterMetaType(engine, QSslCertificatePointertoScriptValue, QSslCertificatePointerfromScriptValue);
   QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QSslCertificateProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QSslCertificate*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QSslCertificate>(), proto);
 
-  QScriptValue constructor = engine->newFunction(constructQSslCertificate,
-                                                 proto);
+  QScriptValue constructor = engine->newFunction(constructQSslCertificate, proto);
   engine->globalObject().setProperty("QSslCertificate",  constructor);
 
   qScriptRegisterMetaType(engine, QListQSslCertificatetoScriptValue, QListQSslCertificatefromScriptValue);

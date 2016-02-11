@@ -29,4 +29,5 @@ QScriptValue constructQWebChannel(QScriptContext *context, QScriptEngine *engine
   QWebChannel *object = new QWebChannel(parent);
   return engine->newQObject(object, QScriptEngine::ScriptOwnership);
 }
+
 #endif

@@ -26,11 +26,102 @@
 #include <QWebSettings>
 #include <QWidget>
 
+QScriptValue ErrorDomainToScriptValue(QScriptEngine *engine, const QWebPage::ErrorDomain &item)
+{
+  return engine->newVariant(item);
+}
+void ErrorDomainFromScriptValue(const QScriptValue &obj, QWebPage::ErrorDomain &item)
+{
+  item = (QWebPage::ErrorDomain)obj.toInt32();
+}
+
+QScriptValue ExtensionToScriptValue(QScriptEngine *engine, const QWebPage::Extension &item)
+{
+  return engine->newVariant(item);
+}
+void ExtensionFromScriptValue(const QScriptValue &obj, QWebPage::Extension &item)
+{
+  item = (QWebPage::Extension)obj.toInt32();
+}
+
+QScriptValue FeatureToScriptValue(QScriptEngine *engine, const QWebPage::Feature &item)
+{
+  return engine->newVariant(item);
+}
+void FeatureFromScriptValue(const QScriptValue &obj, QWebPage::Feature &item)
+{
+  item = (QWebPage::Feature)obj.toInt32();
+}
+
+QScriptValue FindFlagToScriptValue(QScriptEngine *engine, const QWebPage::FindFlag &item)
+{
+  return engine->newVariant(item);
+}
+void FindFlagFromScriptValue(const QScriptValue &obj, QWebPage::FindFlag &item)
+{
+  item = (QWebPage::FindFlag)obj.toInt32();
+}
+
+QScriptValue LinkDelegationPolicyToScriptValue(QScriptEngine *engine, const QWebPage::LinkDelegationPolicy &item)
+{
+  return engine->newVariant(item);
+}
+void LinkDelegationPolicyFromScriptValue(const QScriptValue &obj, QWebPage::LinkDelegationPolicy &item)
+{
+  item = (QWebPage::LinkDelegationPolicy)obj.toInt32();
+}
+
+QScriptValue NavigationTypeToScriptValue(QScriptEngine *engine, const QWebPage::NavigationType &item)
+{
+  return engine->newVariant(item);
+}
+void NavigationTypeFromScriptValue(const QScriptValue &obj, QWebPage::NavigationType &item)
+{
+  item = (QWebPage::NavigationType)obj.toInt32();
+}
+
+QScriptValue PermissionPolicyToScriptValue(QScriptEngine *engine, const QWebPage::PermissionPolicy &item)
+{
+  return engine->newVariant(item);
+}
+void PermissionPolicyFromScriptValue(const QScriptValue &obj, QWebPage::PermissionPolicy &item)
+{
+  item = (QWebPage::PermissionPolicy)obj.toInt32();
+}
+
+#if QT_VERSION >= 0x050000
+QScriptValue VisibilityStateToScriptValue(QScriptEngine *engine, const QWebPage::VisibilityState &item)
+{
+  return engine->newVariant(item);
+}
+void VisibilityStateFromScriptValue(const QScriptValue &obj, QWebPage::VisibilityState &item)
+{
+  item = (QWebPage::VisibilityState)obj.toInt32();
+}
+#endif
+
+QScriptValue WebActionToScriptValue(QScriptEngine *engine, const QWebPage::WebAction &item)
+{
+  return engine->newVariant(item);
+}
+void WebActionFromScriptValue(const QScriptValue &obj, QWebPage::WebAction &item)
+{
+  item = (QWebPage::WebAction)obj.toInt32();
+}
+
+QScriptValue WebWindowTypeToScriptValue(QScriptEngine *engine, const QWebPage::WebWindowType &item)
+{
+  return engine->newVariant(item);
+}
+void WebWindowTypeFromScriptValue(const QScriptValue &obj, QWebPage::WebWindowType &item)
+{
+  item = (QWebPage::WebWindowType)obj.toInt32();
+}
+
 QScriptValue QWebPagetoScriptValue(QScriptEngine *engine, QWebPage* const &item)
 {
   return engine->newQObject(item);
 }
-
 void QWebPagefromScriptValue(const QScriptValue &obj, QWebPage* &item)
 {
   item = qobject_cast<QWebPage*>(obj.toQObject());
@@ -43,21 +134,150 @@ void setupQWebPageProto(QScriptEngine *engine)
 
   QScriptValue proto = engine->newQObject(new QWebPageProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebPage*>(), proto);
+  // Not allowed. Is private in qwebpage.h
+  //engine->setDefaultPrototype(qMetaTypeId<QWebPage>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQWebPage,
                                                  proto);
   engine->globalObject().setProperty("QWebPage",  constructor);
 
-  // enum QWebPage::LinkDelegationPolicy
-  constructor.setProperty("DontDelegateLinks",      QScriptValue(engine, QWebPage::DontDelegateLinks),      permanent);
-  constructor.setProperty("DelegateExternalLinks",  QScriptValue(engine, QWebPage::DelegateExternalLinks),  permanent);
-  constructor.setProperty("DelegateAllLinks",       QScriptValue(engine, QWebPage::DelegateAllLinks),       permanent);
+  qScriptRegisterMetaType(engine, ErrorDomainToScriptValue, ErrorDomainFromScriptValue);
+  constructor.setProperty("QtNetwork", QScriptValue(engine, QWebPage::QtNetwork), permanent);
+  constructor.setProperty("Http", QScriptValue(engine, QWebPage::Http), permanent);
+  constructor.setProperty("WebKit", QScriptValue(engine, QWebPage::WebKit), permanent);
 
-  // enum QWebPage::VisibilityState
-  constructor.setProperty("VisibilityStateVisible",   QScriptValue(engine, QWebPage::DelegateAllLinks), permanent);
-  constructor.setProperty("VisibilityStateHidden",    QScriptValue(engine, QWebPage::DelegateAllLinks), permanent);
-  constructor.setProperty("VisibilityStatePrerender", QScriptValue(engine, QWebPage::DelegateAllLinks), permanent);
-  constructor.setProperty("VisibilityStateUnloaded",  QScriptValue(engine, QWebPage::DelegateAllLinks), permanent);
+  qScriptRegisterMetaType(engine, ExtensionToScriptValue, ExtensionFromScriptValue);
+  constructor.setProperty("ChooseMultipleFilesExtension", QScriptValue(engine, QWebPage::ChooseMultipleFilesExtension), permanent);
+  constructor.setProperty("ErrorPageExtension", QScriptValue(engine, QWebPage::ErrorPageExtension), permanent);
+
+  qScriptRegisterMetaType(engine, FeatureToScriptValue, FeatureFromScriptValue);
+  constructor.setProperty("Notifications", QScriptValue(engine, QWebPage::Notifications), permanent);
+  constructor.setProperty("Geolocation", QScriptValue(engine, QWebPage::Geolocation), permanent);
+
+  qScriptRegisterMetaType(engine, FindFlagToScriptValue, FindFlagFromScriptValue);
+  constructor.setProperty("FindBackward", QScriptValue(engine, QWebPage::FindBackward), permanent);
+  constructor.setProperty("FindCaseSensitively", QScriptValue(engine, QWebPage::FindCaseSensitively), permanent);
+  constructor.setProperty("FindWrapsAroundDocument", QScriptValue(engine, QWebPage::FindWrapsAroundDocument), permanent);
+  constructor.setProperty("HighlightAllOccurrences", QScriptValue(engine, QWebPage::HighlightAllOccurrences), permanent);
+#if QT_VERSION >= 0x050000
+  constructor.setProperty("FindAtWordBeginningsOnly", QScriptValue(engine, QWebPage::FindAtWordBeginningsOnly), permanent);
+  constructor.setProperty("TreatMedialCapitalAsWordBeginning", QScriptValue(engine, QWebPage::TreatMedialCapitalAsWordBeginning), permanent);
+  constructor.setProperty("FindBeginsInSelection", QScriptValue(engine, QWebPage::FindBeginsInSelection), permanent);
+#endif
+
+  qScriptRegisterMetaType(engine, LinkDelegationPolicyToScriptValue, LinkDelegationPolicyFromScriptValue);
+  constructor.setProperty("DontDelegateLinks", QScriptValue(engine, QWebPage::DontDelegateLinks), permanent);
+  constructor.setProperty("DelegateExternalLinks", QScriptValue(engine, QWebPage::DelegateExternalLinks), permanent);
+  constructor.setProperty("DelegateAllLinks", QScriptValue(engine, QWebPage::DelegateAllLinks), permanent);
+
+  qScriptRegisterMetaType(engine, NavigationTypeToScriptValue, NavigationTypeFromScriptValue);
+  constructor.setProperty("NavigationTypeLinkClicked", QScriptValue(engine, QWebPage::NavigationTypeLinkClicked), permanent);
+  constructor.setProperty("NavigationTypeFormSubmitted", QScriptValue(engine, QWebPage::NavigationTypeFormSubmitted), permanent);
+  constructor.setProperty("NavigationTypeBackOrForward", QScriptValue(engine, QWebPage::NavigationTypeBackOrForward), permanent);
+  constructor.setProperty("NavigationTypeReload", QScriptValue(engine, QWebPage::NavigationTypeReload), permanent);
+  constructor.setProperty("NavigationTypeFormResubmitted", QScriptValue(engine, QWebPage::NavigationTypeFormResubmitted), permanent);
+  constructor.setProperty("NavigationTypeOther", QScriptValue(engine, QWebPage::NavigationTypeOther), permanent);
+
+  qScriptRegisterMetaType(engine, PermissionPolicyToScriptValue, PermissionPolicyFromScriptValue);
+  constructor.setProperty("PermissionUnknown", QScriptValue(engine, QWebPage::PermissionUnknown), permanent);
+  constructor.setProperty("PermissionGrantedByUser", QScriptValue(engine, QWebPage::PermissionGrantedByUser), permanent);
+  constructor.setProperty("PermissionDeniedByUser", QScriptValue(engine, QWebPage::PermissionDeniedByUser), permanent);
+
+#if QT_VERSION >= 0x050000
+  qScriptRegisterMetaType(engine, VisibilityStateToScriptValue, VisibilityStateFromScriptValue);
+  constructor.setProperty("VisibilityStateVisible", QScriptValue(engine, QWebPage::VisibilityStateVisible), permanent);
+  constructor.setProperty("VisibilityStateHidden", QScriptValue(engine, QWebPage::VisibilityStateHidden), permanent);
+  constructor.setProperty("VisibilityStatePrerender", QScriptValue(engine, QWebPage::VisibilityStatePrerender), permanent);
+  constructor.setProperty("VisibilityStateUnloaded", QScriptValue(engine, QWebPage::VisibilityStateUnloaded), permanent);
+#endif
+
+  qScriptRegisterMetaType(engine, WebActionToScriptValue, WebActionFromScriptValue);
+  constructor.setProperty("NoWebAction", QScriptValue(engine, QWebPage::NoWebAction), permanent);
+  constructor.setProperty("OpenLink", QScriptValue(engine, QWebPage::OpenLink), permanent);
+  constructor.setProperty("OpenLinkInNewWindow", QScriptValue(engine, QWebPage::OpenLinkInNewWindow), permanent);
+#if QT_VERSION >= 0x050000
+  constructor.setProperty("OpenLinkInThisWindow", QScriptValue(engine, QWebPage::OpenLinkInThisWindow), permanent);
+#endif
+  constructor.setProperty("OpenFrameInNewWindow", QScriptValue(engine, QWebPage::OpenFrameInNewWindow), permanent);
+  constructor.setProperty("DownloadLinkToDisk", QScriptValue(engine, QWebPage::DownloadLinkToDisk), permanent);
+  constructor.setProperty("CopyLinkToClipboard", QScriptValue(engine, QWebPage::CopyLinkToClipboard), permanent);
+  constructor.setProperty("OpenImageInNewWindow", QScriptValue(engine, QWebPage::OpenImageInNewWindow), permanent);
+  constructor.setProperty("DownloadImageToDisk", QScriptValue(engine, QWebPage::DownloadImageToDisk), permanent);
+  constructor.setProperty("CopyImageToClipboard", QScriptValue(engine, QWebPage::CopyImageToClipboard), permanent);
+  constructor.setProperty("CopyImageUrlToClipboard", QScriptValue(engine, QWebPage::CopyImageUrlToClipboard), permanent);
+  constructor.setProperty("Back", QScriptValue(engine, QWebPage::Back), permanent);
+  constructor.setProperty("Forward", QScriptValue(engine, QWebPage::Forward), permanent);
+  constructor.setProperty("Stop", QScriptValue(engine, QWebPage::Stop), permanent);
+  constructor.setProperty("StopScheduledPageRefresh", QScriptValue(engine, QWebPage::StopScheduledPageRefresh), permanent);
+  constructor.setProperty("Reload", QScriptValue(engine, QWebPage::Reload), permanent);
+  constructor.setProperty("ReloadAndBypassCache", QScriptValue(engine, QWebPage::ReloadAndBypassCache), permanent);
+  constructor.setProperty("Cut", QScriptValue(engine, QWebPage::Cut), permanent);
+  constructor.setProperty("Copy", QScriptValue(engine, QWebPage::Copy), permanent);
+  constructor.setProperty("Paste", QScriptValue(engine, QWebPage::Paste), permanent);
+  constructor.setProperty("Undo", QScriptValue(engine, QWebPage::Undo), permanent);
+  constructor.setProperty("Redo", QScriptValue(engine, QWebPage::Redo), permanent);
+  constructor.setProperty("MoveToNextChar", QScriptValue(engine, QWebPage::MoveToNextChar), permanent);
+  constructor.setProperty("MoveToPreviousChar", QScriptValue(engine, QWebPage::MoveToPreviousChar), permanent);
+  constructor.setProperty("MoveToNextWord", QScriptValue(engine, QWebPage::MoveToNextWord), permanent);
+  constructor.setProperty("MoveToPreviousWord", QScriptValue(engine, QWebPage::MoveToPreviousWord), permanent);
+  constructor.setProperty("MoveToNextLine", QScriptValue(engine, QWebPage::MoveToNextLine), permanent);
+  constructor.setProperty("MoveToPreviousLine", QScriptValue(engine, QWebPage::MoveToPreviousLine), permanent);
+  constructor.setProperty("MoveToStartOfLine", QScriptValue(engine, QWebPage::MoveToStartOfLine), permanent);
+  constructor.setProperty("MoveToEndOfLine", QScriptValue(engine, QWebPage::MoveToEndOfLine), permanent);
+  constructor.setProperty("MoveToStartOfBlock", QScriptValue(engine, QWebPage::MoveToStartOfBlock), permanent);
+  constructor.setProperty("MoveToEndOfBlock", QScriptValue(engine, QWebPage::MoveToEndOfBlock), permanent);
+  constructor.setProperty("MoveToStartOfDocument", QScriptValue(engine, QWebPage::MoveToStartOfDocument), permanent);
+  constructor.setProperty("MoveToEndOfDocument", QScriptValue(engine, QWebPage::MoveToEndOfDocument), permanent);
+  constructor.setProperty("SelectNextChar", QScriptValue(engine, QWebPage::SelectNextChar), permanent);
+  constructor.setProperty("SelectPreviousChar", QScriptValue(engine, QWebPage::SelectPreviousChar), permanent);
+  constructor.setProperty("SelectNextWord", QScriptValue(engine, QWebPage::SelectNextWord), permanent);
+  constructor.setProperty("SelectPreviousWord", QScriptValue(engine, QWebPage::SelectPreviousWord), permanent);
+  constructor.setProperty("SelectNextLine", QScriptValue(engine, QWebPage::SelectNextLine), permanent);
+  constructor.setProperty("SelectPreviousLine", QScriptValue(engine, QWebPage::SelectPreviousLine), permanent);
+  constructor.setProperty("SelectStartOfLine", QScriptValue(engine, QWebPage::SelectStartOfLine), permanent);
+  constructor.setProperty("SelectEndOfLine", QScriptValue(engine, QWebPage::SelectEndOfLine), permanent);
+  constructor.setProperty("SelectStartOfBlock", QScriptValue(engine, QWebPage::SelectStartOfBlock), permanent);
+  constructor.setProperty("SelectEndOfBlock", QScriptValue(engine, QWebPage::SelectEndOfBlock), permanent);
+  constructor.setProperty("SelectStartOfDocument", QScriptValue(engine, QWebPage::SelectStartOfDocument), permanent);
+  constructor.setProperty("SelectEndOfDocument", QScriptValue(engine, QWebPage::SelectEndOfDocument), permanent);
+  constructor.setProperty("DeleteStartOfWord", QScriptValue(engine, QWebPage::DeleteStartOfWord), permanent);
+  constructor.setProperty("DeleteEndOfWord", QScriptValue(engine, QWebPage::DeleteEndOfWord), permanent);
+  constructor.setProperty("SetTextDirectionDefault", QScriptValue(engine, QWebPage::SetTextDirectionDefault), permanent);
+  constructor.setProperty("SetTextDirectionLeftToRight", QScriptValue(engine, QWebPage::SetTextDirectionLeftToRight), permanent);
+  constructor.setProperty("SetTextDirectionRightToLeft", QScriptValue(engine, QWebPage::SetTextDirectionRightToLeft), permanent);
+  constructor.setProperty("ToggleBold", QScriptValue(engine, QWebPage::ToggleBold), permanent);
+  constructor.setProperty("ToggleItalic", QScriptValue(engine, QWebPage::ToggleItalic), permanent);
+  constructor.setProperty("ToggleUnderline", QScriptValue(engine, QWebPage::ToggleUnderline), permanent);
+  constructor.setProperty("InspectElement", QScriptValue(engine, QWebPage::InspectElement), permanent);
+  constructor.setProperty("InsertParagraphSeparator", QScriptValue(engine, QWebPage::InsertParagraphSeparator), permanent);
+  constructor.setProperty("InsertLineSeparator", QScriptValue(engine, QWebPage::InsertLineSeparator), permanent);
+  constructor.setProperty("SelectAll", QScriptValue(engine, QWebPage::SelectAll), permanent);
+  constructor.setProperty("PasteAndMatchStyle", QScriptValue(engine, QWebPage::PasteAndMatchStyle), permanent);
+  constructor.setProperty("RemoveFormat", QScriptValue(engine, QWebPage::RemoveFormat), permanent);
+  constructor.setProperty("ToggleStrikethrough", QScriptValue(engine, QWebPage::ToggleStrikethrough), permanent);
+  constructor.setProperty("ToggleSubscript", QScriptValue(engine, QWebPage::ToggleSubscript), permanent);
+  constructor.setProperty("ToggleSuperscript", QScriptValue(engine, QWebPage::ToggleSuperscript), permanent);
+  constructor.setProperty("InsertUnorderedList", QScriptValue(engine, QWebPage::InsertUnorderedList), permanent);
+  constructor.setProperty("InsertOrderedList", QScriptValue(engine, QWebPage::InsertOrderedList), permanent);
+  constructor.setProperty("Indent", QScriptValue(engine, QWebPage::Indent), permanent);
+  constructor.setProperty("Outdent", QScriptValue(engine, QWebPage::Outdent), permanent);
+  constructor.setProperty("AlignCenter", QScriptValue(engine, QWebPage::AlignCenter), permanent);
+  constructor.setProperty("AlignJustified", QScriptValue(engine, QWebPage::AlignJustified), permanent);
+  constructor.setProperty("AlignLeft", QScriptValue(engine, QWebPage::AlignLeft), permanent);
+  constructor.setProperty("AlignRight", QScriptValue(engine, QWebPage::AlignRight), permanent);
+#if QT_VERSION >= 0x050000
+  constructor.setProperty("DownloadMediaToDisk", QScriptValue(engine, QWebPage::DownloadMediaToDisk), permanent);
+  constructor.setProperty("CopyMediaUrlToClipboard", QScriptValue(engine, QWebPage::CopyMediaUrlToClipboard), permanent);
+  constructor.setProperty("ToggleMediaControls", QScriptValue(engine, QWebPage::ToggleMediaControls), permanent);
+  constructor.setProperty("ToggleMediaLoop", QScriptValue(engine, QWebPage::ToggleMediaLoop), permanent);
+  constructor.setProperty("ToggleMediaPlayPause", QScriptValue(engine, QWebPage::ToggleMediaPlayPause), permanent);
+  constructor.setProperty("ToggleMediaMute", QScriptValue(engine, QWebPage::ToggleMediaMute), permanent);
+  constructor.setProperty("ToggleVideoFullscreen", QScriptValue(engine, QWebPage::ToggleVideoFullscreen), permanent);
+#endif
+
+  qScriptRegisterMetaType(engine, WebWindowTypeToScriptValue, WebWindowTypeFromScriptValue);
+  constructor.setProperty("WebBrowserWindow", QScriptValue(engine, QWebPage::WebBrowserWindow), permanent);
+  constructor.setProperty("WebModalDialog", QScriptValue(engine, QWebPage::WebModalDialog), permanent);
 }
 
 QScriptValue constructQWebPage(QScriptContext * context,
@@ -452,3 +672,12 @@ QWebPage::VisibilityState QWebPageProto::visibilityState() const
   return QWebPage::VisibilityStateVisible; // don't know the best default
 }
 #endif
+
+// Reimplemented Public Functions
+bool QWebPageProto::event(QEvent * ev)
+{
+  QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
+  if (item)
+    return item->event(ev);
+  return false;
+}

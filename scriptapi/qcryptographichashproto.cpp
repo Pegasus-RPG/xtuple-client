@@ -28,7 +28,7 @@ void AlgorithmFromScriptValue(const QScriptValue &obj, QCryptographicHash::Algor
 QScriptValue hashForJS(QScriptContext* context, QScriptEngine* engine)
 {
   if (context->argumentCount() == 2) {
-    QByteArray data = qscriptvalue_cast<QByteArray>(context->argument(0));
+    QByteArray data = context->argument(0).toVariant().toByteArray();
     QCryptographicHash::Algorithm method = (QCryptographicHash::Algorithm)context->argument(1).toInt32();
     return engine->toScriptValue(QCryptographicHash::hash(data, method));
   } else {

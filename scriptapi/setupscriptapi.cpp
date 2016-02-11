@@ -91,6 +91,7 @@
 #include "qsizepolicyproto.h"
 #include "qspaceritemproto.h"
 #include "qsqldatabaseproto.h"
+#include "qsqldriverproto.h"
 #include "qsqlerrorproto.h"
 #include "qsqlrecordproto.h"
 #include "qsslcertificateextensionproto.h"
@@ -114,10 +115,15 @@
 #include "qtsetup.h"
 #include "queryset.h"
 #include "qurlproto.h"
+#include "qurlqueryproto.h"
+#include "quuidproto.h"
 #include "qvalidatorproto.h"
 #include "qwebchannelproto.h"
+#include "qwebelementproto.h"
+#include "qwebelementcollectionproto.h"
 #include "qwebframeproto.h"
 #include "qwebpageproto.h"
+#include "qwebsecurityoriginproto.h"
 #include "qwebsettingsproto.h"
 #include "qwebsocketcorsauthenticatorproto.h"
 #include "qwebsocketproto.h"
@@ -134,6 +140,7 @@
 #include "usernamecluster.h"
 #include "vendorgroupsetup.h"
 #include "wcomboboxsetup.h"
+#include "webchanneltransport.h"
 #include "wocluster.h"
 #include "womatlclustersetup.h"
 #include "xcheckbox.h"
@@ -145,7 +152,7 @@
 #include "xsqlqueryproto.h"
 #include "xtreewidget.h"
 #include "xvariantsetup.h"
-#include "xwebsyncproto.h"
+#include "xwebsync.h"
 
 /*! \defgroup scriptapi The xTuple ERP Scripting API
 
@@ -240,6 +247,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQSizePolicy(engine);
   setupQSpacerItem(engine);
   setupQSqlDatabaseProto(engine);
+  setupQSqlDriverProto(engine);
   setupQSqlErrorProto(engine);
   setupQSqlRecordProto(engine);
   setupQSslCertificateExtensionProto(engine);
@@ -263,10 +271,15 @@ void setupScriptApi(QScriptEngine *engine)
   setupQt(engine);
   setupQuerySet(engine);
   setupQUrlProto(engine);
+  setupQUrlQueryProto(engine);
+  setupQUuidProto(engine);
   setupQValidatorProto(engine);
   setupQWebChannelProto(engine);
+  setupQWebElementProto(engine);
+  setupQWebElementCollectionProto(engine);
   setupQWebFrameProto(engine);
   setupQWebPageProto(engine);
+  setupQWebSecurityOriginProto(engine);
   setupQWebSettingsProto(engine);
   setupQWebSocketCorsAuthenticatorProto(engine);
   setupQWebSocketProto(engine);
@@ -283,6 +296,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupUsernameLineEdit(engine);
   setupVendorGroup(engine);
   setupWComboBox(engine);
+  setupWebChannelTransport(engine);
   setupWoCluster(engine);
   setupWomatlCluster(engine);
   setupXCheckBox(engine);
@@ -296,5 +310,5 @@ void setupScriptApi(QScriptEngine *engine)
   setupXTreeWidget(engine);
   setupXTreeWidgetItem(engine);
   setupXVariant(engine);
-  setupXWebSyncProto(engine);
+  setupXWebSync(engine);
 }
