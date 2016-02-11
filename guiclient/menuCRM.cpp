@@ -17,7 +17,6 @@
 
 #include "project.h"
 #include "projects.h"
-#include "projectTypes.h"
 #include "dspOrderActivityByProject.h"
 
 #include "contact.h"
@@ -95,10 +94,6 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     { "pm.newProject", tr("&New..."), SLOT(sNewProject()), projectsMenu, "MaintainPersonalProjects MaintainAllProjects", NULL, NULL, true , NULL },
     { "pm.projects", tr("&List..."), SLOT(sProjects()), projectsMenu, "ViewPersonalProjects MaintainPersonalProjects ViewAllProjects MaintainAllProjects", new QPixmap(":/images/projects.png"), toolBar, true , tr("List Projects") },
     
-    { "separator",		NULL,				NULL,			projectsMenu,	"true", NULL, NULL, true	, NULL },
-
-    { "pm.projectTypes", tr("&Project Types..."), SLOT(sProjectTypes()), projectsMenu, "MaintainProjectTypes", NULL, NULL, true , NULL },
-
     // Opportunity
     { "menu",		tr("&Opportunity"),	(char*)opportunityMenu,	crmMenu,		"true", NULL, NULL, true	, NULL },
     { "crm.newOpportunity", tr("&New..."), SLOT(sNewOpportunity()), opportunityMenu, "MaintainPersonalOpportunities MaintainAllOpportunities", NULL, NULL, true , NULL },
@@ -216,11 +211,6 @@ void menuCRM::sNewProject()
 void menuCRM::sProjects()
 {
   omfgThis->handleNewWindow(new projects());
-}
-
-void menuCRM::sProjectTypes()
-{
-  omfgThis->handleNewWindow(new projectTypes());
 }
 
 void menuCRM::sDspOrderActivityByProject()

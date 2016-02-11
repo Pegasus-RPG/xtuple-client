@@ -77,9 +77,11 @@ void projectTypes::sNew()
   ParameterList params;
   params.append("mode", "new");
 
-  projectType *newdlg = new projectType();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  projectType newdlg(this, "", true);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
 }
 
 void projectTypes::sEdit()
@@ -88,9 +90,11 @@ void projectTypes::sEdit()
   params.append("mode", "edit");
   params.append("prjtype_id", _projecttype->id());
 
-  projectType *newdlg = new projectType();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  projectType newdlg(this, "", true);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
 }
 
 void projectTypes::sFillList()
