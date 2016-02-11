@@ -378,22 +378,21 @@ void createLotSerial::sAssign()
   if (_serial)
   {
     createAssign.prepare("SELECT COUNT(*) AS count FROM "
-              "(SELECT itemloc_id AS count "
-              "FROM itemloc,itemsite,ls "
-              "WHERE ((itemloc_itemsite_id=:itemsite_id)"
-              "  AND (itemloc_itemsite_id=itemsite_id)"
-              "  AND (itemsite_item_id=ls_item_id)"
-              "  AND (itemloc_ls_id=ls_id)"
-              "  AND (UPPER(ls_number)=UPPER(:lotserial)))"
-              "UNION "
-              "SELECT itemlocdist_id "
-              "FROM itemlocdist,itemsite,ls "
-              "WHERE ((itemlocdist_itemsite_id=:itemsite_id) "
-              "  AND (itemlocdist_itemsite_id=itemsite_id)"
-              "  AND (itemlocdist_ls_id=ls_id)"
-              "  AND (UPPER(ls_number)=UPPER(:lotserial)) "
-              "  AND (itemlocdist_source_type='D'))) as data;");
-    createAssign.bindValue(":itemsite_id", _itemsiteid);
+                         "(SELECT itemloc_id AS count "
+                         "FROM item JOIN itemsite ON (itemsite_item_id=item_id)"
+                         "          JOIN itemloc ON (itemloc_itemsite_id=itemsite_id)"
+                         "          JOIN ls ON (ls_id=itemloc_ls_id) "
+                         "WHERE (item_id=:item_id)"
+                         "  AND (UPPER(ls_number)=UPPER(:lotserial))"
+                         "UNION "
+                         "SELECT itemlocdist_id "
+                         "FROM item JOIN itemsite ON (itemsite_item_id=item_id)"
+                         "          JOIN itemlocdist ON (itemlocdist_itemsite_id=itemsite_id)"
+                         "          JOIN ls ON (ls_id=itemlocdist_ls_id) "
+                         "WHERE (item_id=:item_id)"
+                         "  AND (UPPER(ls_number)=UPPER(:lotserial))"
+                         "  AND (itemlocdist_source_type='D')) AS data;");
+    createAssign.bindValue(":item_id", _item->id());
     createAssign.bindValue(":lotserial", _lotSerial->currentText());
     createAssign.exec();
     if (createAssign.first())
