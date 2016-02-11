@@ -186,6 +186,13 @@ class QWidgetProto : public QObject, public QScriptable
     Q_INVOKABLE void                  showMinimized();
     Q_INVOKABLE void                  showNormal();
     Q_INVOKABLE void                  update();
+
+  signals:
+    void   customContextMenuRequested(const QPoint & pos);
+    void    windowIconChanged(const QIcon & icon);
+    void    windowIconTextChanged(const QString & iconText);
+    void    windowTitleChanged(const QString & title);
+
 };
 
 #endif

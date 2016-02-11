@@ -36,8 +36,10 @@ HEADERS += setupscriptapi.h \
     qactionproto.h \
     qapplicationproto.h \
     qboxlayoutproto.h \
+    qbufferproto.h \
     qbytearrayproto.h \
     qcoreapplicationproto.h \
+    qcryptographichashproto.h \
     qdialogbuttonboxproto.h \
     qdialogsetup.h \
     qdirproto.h \
@@ -93,8 +95,19 @@ HEADERS += setupscriptapi.h \
     qsizepolicyproto.h \
     qspaceritemproto.h \
     qsqldatabaseproto.h \
+    qsqldriverproto.h \
     qsqlerrorproto.h \
     qsqlrecordproto.h \
+    qsslcertificateextensionproto.h \
+    qsslcertificateproto.h \
+    qsslcipherproto.h \
+    qsslconfigurationproto.h \
+    qsslellipticcurveproto.h \
+    qsslerrorproto.h \
+    qsslkeyproto.h \
+    qsslpresharedkeyauthenticatorproto.h \
+    qsslproto.h \
+    qsslsocketproto.h \
     qstackedwidgetproto.h \
     qtabwidgetproto.h \
     qtcpserverproto.h \
@@ -108,10 +121,16 @@ HEADERS += setupscriptapi.h \
     qtsetup.h \
     qudpsocketproto.h \
     qurlproto.h \
+    qurlqueryproto.h \
+    quuidproto.h \
     qvalidatorproto.h \
     qwebchannelproto.h \
+    qwebelementproto.h \
+    qwebelementcollectionproto.h \
     qwebframeproto.h \
     qwebpageproto.h \
+    qwebsecurityoriginproto.h \
+    qwebsettingsproto.h \
     qwebsocketcorsauthenticatorproto.h \
     qwebsocketproto.h             \
     qwebsocketprotocolproto.h     \
@@ -142,13 +161,13 @@ HEADERS += setupscriptapi.h \
     shipmentclusterlineeditsetup.h \
     vendorgroupsetup.h \
     wcomboboxsetup.h \
+    webchanneltransport.h \
     womatlclustersetup.h \
     xdateeditsetup.h \
     ../widgets/xt.h \
     xvariantsetup.h \
     xwebsync_p.h \
-    xwebsync.h \
-    xwebsyncproto.h
+    xwebsync.h
 
 SOURCES += setupscriptapi.cpp \
     include.cpp \
@@ -159,8 +178,10 @@ SOURCES += setupscriptapi.cpp \
     qactionproto.cpp \
     qapplicationproto.cpp \
     qboxlayoutproto.cpp \
+    qbufferproto.cpp \
     qbytearrayproto.cpp \
     qcoreapplicationproto.cpp \
+    qcryptographichashproto.cpp \
     qdialogbuttonboxproto.cpp \
     qdialogsetup.cpp \
     qdirproto.cpp \
@@ -216,8 +237,19 @@ SOURCES += setupscriptapi.cpp \
     qsizepolicyproto.cpp \
     qspaceritemproto.cpp \
     qsqldatabaseproto.cpp \
+    qsqldriverproto.cpp \
     qsqlerrorproto.cpp \
     qsqlrecordproto.cpp \
+    qsslcertificateextensionproto.cpp \
+    qsslcertificateproto.cpp \
+    qsslcipherproto.cpp \
+    qsslconfigurationproto.cpp \
+    qsslellipticcurveproto.cpp \
+    qsslerrorproto.cpp \
+    qsslkeyproto.cpp \
+    qsslpresharedkeyauthenticatorproto.cpp \
+    qsslproto.cpp \
+    qsslsocketproto.cpp \
     qstackedwidgetproto.cpp \
     qtabwidgetproto.cpp \
     qtcpserverproto.cpp \
@@ -231,10 +263,16 @@ SOURCES += setupscriptapi.cpp \
     qtsetup.cpp \
     qudpsocketproto.cpp \
     qurlproto.cpp \
+    qurlqueryproto.cpp \
+    quuidproto.cpp \
     qvalidatorproto.cpp \
     qwebchannelproto.cpp \
+    qwebelementproto.cpp \
+    qwebelementcollectionproto.cpp \
     qwebframeproto.cpp \
     qwebpageproto.cpp \
+    qwebsecurityoriginproto.cpp \
+    qwebsettingsproto.cpp \
     qwebsocketcorsauthenticatorproto.cpp \
     qwebsocketproto.cpp           \
     qwebsocketprotocolproto.cpp   \
@@ -265,9 +303,9 @@ SOURCES += setupscriptapi.cpp \
     shipmentclusterlineeditsetup.cpp \
     vendorgroupsetup.cpp \
     wcomboboxsetup.cpp \
+    webchanneltransport.cpp \
     womatlclustersetup.cpp \
     xdateeditsetup.cpp \
     ../widgets/xt.cpp \
     xvariantsetup.cpp \
-    xwebsync.cpp \
-    xwebsyncproto.cpp
+    xwebsync.cpp

@@ -34,6 +34,8 @@ void setupQWebViewProto(QScriptEngine *engine)
 
   QScriptValue proto = engine->newQObject(new QWebViewProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebView*>(), proto);
+  // Not allowed. Is private in qwebview.h
+  //engine->setDefaultPrototype(qMetaTypeId<QWebView>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQWebView,
                                                  proto);
@@ -256,6 +258,32 @@ qreal QWebViewProto::zoomFactor() const
   return qreal();
 }
 
+// Reimplemented Public Functions.
+bool QWebViewProto::event(QEvent * e)
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->event(e);
+  return false;
+}
+
+QVariant QWebViewProto::inputMethodQuery(Qt::InputMethodQuery property) const
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->inputMethodQuery(property);
+  return QVariant();
+}
+
+QSize QWebViewProto::sizeHint() const
+{
+  QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
+  if (item)
+    return item->sizeHint();
+  return QSize();
+}
+
+// Public Slots.
 void QWebViewProto::back()
 {
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());

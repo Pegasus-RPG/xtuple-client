@@ -9,29 +9,64 @@
  */
 
 #include "xwebsync.h"
-#include "xwebsync_p.h"
-
 #include <QObject>
 
-/*!
-  Constructs a XWebSync with the specified \a parent.
- */
+#if QT_VERSION < 0x050000
+void setupXWebSync(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
+void setupXWebSync(QScriptEngine *engine)
+{
+  QScriptValue constructor = engine->newFunction(constructXWebSync);
+  QScriptValue metaObject = engine->newQMetaObject(&XWebSync::staticMetaObject, constructor);
+  engine->globalObject().setProperty("XWebSync", metaObject);
+}
+
+QScriptValue constructXWebSync(QScriptContext *context, QScriptEngine *engine)
+{
+  QObject *parent = context->argument(0).toQObject();
+  XWebSync *object = new XWebSync(parent);
+  return engine->newQObject(object, QScriptEngine::ScriptOwnership);
+}
+
 XWebSync::XWebSync(QObject *parent) :
   QObject(parent), d_ptr(new XWebSyncPrivate)
 {
 }
-
-/*!
-  Destroys the XWebSync.
-*/
 XWebSync::~XWebSync()
 {
 }
 
-/*!
-  \property XWebSync::data
-  \brief the data of the XWebSync
- */
+QString XWebSync::getData() const
+{
+  Q_D(const XWebSync);
+  return d->data;
+}
+
+QString XWebSync::getQuery() const
+{
+  Q_D(const XWebSync);
+  return d->query;
+}
+
+QString XWebSync::getTitle() const
+{
+  Q_D(const XWebSync);
+  return d->title;
+}
+
+void XWebSync::sendClientMessage(const QString &message)
+{
+  emit receivedClientMessage(message);
+}
+
+void XWebSync::sendServerMessage(const QString &message)
+{
+  emit receivedServerMessage(message);
+}
+
 void XWebSync::setData(const QString &data)
 {
   Q_D(XWebSync);
@@ -41,25 +76,6 @@ void XWebSync::setData(const QString &data)
   }
 }
 
-QString XWebSync::data() const
-{
-  Q_D(const XWebSync);
-  return d->data;
-}
-
-/*!
-  \fn void XWebSync::dataChanged(const QString &data)
-
-  This signal is emitted whenever the data of the web sync changes.
-  The \a data string specifies the new data.
-
-  \sa XWebSync::data()
-*/
-
-/*!
-  \property XWebSync::query
-  \brief the title of the XWebSync
- */
 void XWebSync::setQuery(const QString &query)
 {
   Q_D(XWebSync);
@@ -69,25 +85,6 @@ void XWebSync::setQuery(const QString &query)
   }
 }
 
-QString XWebSync::query() const
-{
-  Q_D(const XWebSync);
-  return d->query;
-}
-
-/*!
-  \fn void XWebSync::queryChanged(const QString &query)
-
-  This signal is emitted whenever the query of the web sync changes.
-  The \a query string specifies the new query.
-
-  \sa XWebSync::query()
-*/
-
-/*!
-  \property XWebSync::title
-  \brief the title of the XWebSync
- */
 void XWebSync::setTitle(const QString &title)
 {
   Q_D(XWebSync);
@@ -97,32 +94,4 @@ void XWebSync::setTitle(const QString &title)
   }
 }
 
-QString XWebSync::title() const
-{
-  Q_D(const XWebSync);
-  return d->title;
-}
-
-/*!
-  \fn void XWebSync::titleChanged(const QString &title)
-
-  This signal is emitted whenever the title of the web sync changes.
-  The \a title string specifies the new title.
-
-  \sa XWebSync::title()
-*/
-
-/*!
-  \fn void XWebSync::testChanged(QJsonObject &test)
-
-  This signal is emitted whenever the test of the web sync changes.
-  The \a test string specifies the new test.
-
-  \sa XWebSync::test()
-*/
-
-/*!
-  \fn void XWebSync::executeRequest()
-
-  This signal is emitted whenever the execute() function is called.
-*/
+#endif

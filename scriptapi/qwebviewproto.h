@@ -26,6 +26,7 @@
 #include <QWebPage>
 
 Q_DECLARE_METATYPE(QWebView*)
+//Q_DECLARE_METATYPE(QWebView) // Is private in qwebview.h
 
 void setupQWebViewProto(QScriptEngine *engine);
 QScriptValue constructQWebView(QScriptContext *context, QScriptEngine *engine);
@@ -33,6 +34,16 @@ QScriptValue constructQWebView(QScriptContext *context, QScriptEngine *engine);
 class QWebViewProto : public QObject, public QScriptable
 {
   Q_OBJECT
+
+  Q_PROPERTY (const bool hasSelection               READ hasSelection)
+  Q_PROPERTY (const QIcon icon                      READ icon)
+  Q_PROPERTY (const bool modified                   READ isModified)
+  Q_PROPERTY (QPainter::RenderHints renderHints     READ renderHints    WRITE setRenderHints)
+  Q_PROPERTY (const QString selectedHtml            READ selectedHtml)
+  Q_PROPERTY (const QString selectedText            READ selectedText)
+  Q_PROPERTY (const QString title                   READ title)
+  Q_PROPERTY (QUrl url                              READ url            WRITE setUrl)
+  Q_PROPERTY (qreal zoomFactor                      READ zoomFactor     WRITE setZoomFactor)
 
   public:
     QWebViewProto(QObject *parent);
@@ -65,12 +76,29 @@ class QWebViewProto : public QObject, public QScriptable
     Q_INVOKABLE QUrl                    url() const;
     Q_INVOKABLE qreal                   zoomFactor() const;
 
+  // Reimplemented Public Functions.
+    Q_INVOKABLE bool                    event(QEvent * e);
+    Q_INVOKABLE QVariant                inputMethodQuery(Qt::InputMethodQuery property) const;
+    Q_INVOKABLE QSize                   sizeHint() const;
+
   public Q_SLOTS:
     Q_INVOKABLE void                    back();
     Q_INVOKABLE void                    forward();
     Q_INVOKABLE void                    print(QPrinter * printer) const;
     Q_INVOKABLE void                    reload();
     Q_INVOKABLE void                    stop();
+
+  signals:
+    void    iconChanged();
+    void    linkClicked(const QUrl & url);
+    void    loadFinished(bool ok);
+    void    loadProgress(int progress);
+    void    loadStarted();
+    void    selectionChanged();
+    void    statusBarMessage(const QString & text);
+    void    titleChanged(const QString & title);
+    void    urlChanged(const QUrl & url);
+
 };
 
 #endif

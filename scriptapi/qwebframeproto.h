@@ -34,11 +34,12 @@
 #include <QWebSecurityOrigin>
 
 Q_DECLARE_METATYPE(QWebFrame*)
+//Q_DECLARE_METATYPE(QWebFrame) // Is private in in qwebframe.h
 
+Q_DECLARE_METATYPE(enum QWebFrame::RenderLayer)
 #if QT_VERSION >= 0x050000
 Q_DECLARE_METATYPE(enum QWebFrame::ValueOwnership)
 #endif
-Q_DECLARE_METATYPE(enum QWebFrame::RenderLayer)
 
 void setupQWebFrameProto(QScriptEngine *engine);
 QScriptValue constructQWebFrame(QScriptContext *context, QScriptEngine *engine);
@@ -46,6 +47,16 @@ QScriptValue constructQWebFrame(QScriptContext *context, QScriptEngine *engine);
 class QWebFrameProto : public QObject, public QScriptable
 {
   Q_OBJECT
+
+  Q_PROPERTY (const QUrl baseUrl        READ baseUrl)
+  Q_PROPERTY (const QSize contentsSize  READ contentsSize)
+  Q_PROPERTY (const bool focus          READ hasFocus)
+  Q_PROPERTY (const QIcon icon          READ icon)
+  Q_PROPERTY (const QUrl requestedUrl   READ requestedUrl)
+  Q_PROPERTY (QPoint scrollPosition     READ scrollPosition     WRITE setScrollPosition)
+  Q_PROPERTY (const QString title       READ title)
+  Q_PROPERTY (QUrl url                  READ url                WRITE setUrl)
+  Q_PROPERTY (qreal zoomFactor          READ zoomFactor         WRITE setZoomFactor)
 
   public:
     QWebFrameProto(QObject *parent);
@@ -98,9 +109,24 @@ class QWebFrameProto : public QObject, public QScriptable
     Q_INVOKABLE QUrl                          url() const;
     Q_INVOKABLE qreal                         zoomFactor() const;
 
+  // Reimplemented Public Functions.
+    Q_INVOKABLE bool                          event(QEvent * e);
+
   public Q_SLOTS:
     Q_INVOKABLE QVariant                      evaluateJavaScript(const QString& scriptSource);
     Q_INVOKABLE void                          print(QPrinter * printer) const;
+
+  signals:
+    void    contentsSizeChanged(const QSize & size);
+    void    iconChanged();
+    void    initialLayoutCompleted();
+    void    javaScriptWindowObjectCleared();
+    void    loadFinished(bool ok);
+    void    loadStarted();
+    void    pageChanged();
+    void    titleChanged(const QString & title);
+    void    urlChanged(const QUrl & url);
+
 };
 
 #endif

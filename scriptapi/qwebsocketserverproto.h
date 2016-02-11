@@ -24,6 +24,8 @@ void setupQWebSocketServerProto(QScriptEngine *engine);
 class QWebSocket;
 
 Q_DECLARE_METATYPE(QWebSocketServer*)
+//Q_DECLARE_METATYPE(QWebSocketServer) // Is Q_DISABLE_COPY() in qwebsocketserver.h
+Q_DECLARE_METATYPE(enum QWebSocketServer::SslMode)
 
 QScriptValue constructQWebSocketServer(QScriptContext *context, QScriptEngine *engine);
 
@@ -61,6 +63,15 @@ class QWebSocketServerProto : public QObject, public QScriptable
     Q_INVOKABLE QList<QWebSocketProtocol::Version>  supportedVersions() const;
 
     Q_INVOKABLE QString toString() const;
+
+  signals:
+    void    acceptError(QAbstractSocket::SocketError socketError);
+    void    closed();
+    void    newConnection();
+    void    originAuthenticationRequired(QWebSocketCorsAuthenticator * authenticator);
+    void    peerVerifyError(const QSslError & error);
+    void    serverError(QWebSocketProtocol::CloseCode closeCode);
+    void    sslErrors(const QList<QSslError> & errors);
 
 };
 

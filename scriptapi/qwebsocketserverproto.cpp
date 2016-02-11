@@ -16,11 +16,19 @@ void setupQWebSocketServerProto(QScriptEngine *engine)
   Q_UNUSED(engine);
 }
 #else
+QScriptValue SslModeToScriptValue(QScriptEngine *engine, const QWebSocketServer::SslMode &item)
+{
+  return engine->newVariant(item);
+}
+void SslModeFromScriptValue(const QScriptValue &obj, QWebSocketServer::SslMode &item)
+{
+  item = (QWebSocketServer::SslMode)obj.toInt32();
+}
+
 QScriptValue QWebSocketServerToScriptValue(QScriptEngine *engine, QWebSocketServer* const &item)
 {
   return engine->newQObject(item);
 }
-
 void QWebSocketServerFromScriptValue(const QScriptValue &obj, QWebSocketServer* &item)
 {
   item = qobject_cast<QWebSocketServer*>(obj.toQObject());
@@ -33,9 +41,13 @@ void setupQWebSocketServerProto(QScriptEngine *engine)
 
   QScriptValue proto = engine->newQObject(new QWebSocketServerProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QWebSocketServer*>(), proto);
+  // Not allowed. Is Q_DISABLE_COPY() in qwebsocketserver.h
+  //engine->setDefaultPrototype(qMetaTypeId<QWebSocketServer>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQWebSocketServer, proto);
   engine->globalObject().setProperty("QWebSocketServer",  constructor);
+
+  qScriptRegisterMetaType(engine, SslModeToScriptValue, SslModeFromScriptValue);
   constructor.setProperty("SecureMode",    QScriptValue(engine, QWebSocketServer::SecureMode),    permanent);
   constructor.setProperty("NonSecureMode", QScriptValue(engine, QWebSocketServer::NonSecureMode), permanent);
 }
