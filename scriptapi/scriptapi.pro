@@ -60,7 +60,6 @@ HEADERS += setupscriptapi.h \
     qdomprocessinginstructionproto.h \
     qdomtextproto.h \
     qdoublevalidatorproto.h \
-    qhostaddressproto.h \
     qintvalidatorproto.h \
     qeventproto.h \
     qfileproto.h \
@@ -96,7 +95,6 @@ HEADERS += setupscriptapi.h \
     qsqldatabaseproto.h \
     qsqlerrorproto.h \
     qsqlrecordproto.h \
-    qsslsocketproto.h \
     qstackedwidgetproto.h \
     qtabwidgetproto.h \
     qtcpserverproto.h \
@@ -193,7 +191,6 @@ SOURCES += setupscriptapi.cpp \
     qfontproto.cpp \
     qformlayoutproto.cpp \
     qgridlayoutproto.cpp \
-    qhostaddressproto.cpp \
     qiconproto.cpp \
     qiodeviceproto.cpp \
     qitemdelegateproto.cpp \
@@ -221,7 +218,6 @@ SOURCES += setupscriptapi.cpp \
     qsqldatabaseproto.cpp \
     qsqlerrorproto.cpp \
     qsqlrecordproto.cpp \
-    qsslsocketproto.cpp \
     qstackedwidgetproto.cpp \
     qtabwidgetproto.cpp \
     qtcpserverproto.cpp \

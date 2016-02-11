@@ -60,7 +60,6 @@
 #include "qdomprocessinginstructionproto.h"
 #include "qdomtextproto.h"
 #include "qdoublevalidatorproto.h"
-#include "qhostaddressproto.h"
 #include "qintvalidatorproto.h"
 #include "qeventproto.h"
 #include "qfileproto.h"
@@ -95,7 +94,6 @@
 #include "qsqldatabaseproto.h"
 #include "qsqlerrorproto.h"
 #include "qsqlrecordproto.h"
-//#include "qsslsocketproto.h"
 #include "qstackedwidgetproto.h"
 #include "qtabwidgetproto.h"
 #include "qtcpserverproto.h"
@@ -211,7 +209,6 @@ void setupScriptApi(QScriptEngine *engine)
   setupQFontProto(engine);
   setupQFormLayoutProto(engine);
   setupQGridLayoutProto(engine);
-  setupQHostAddressProto(engine);
   setupQIconProto(engine);
   setupQIODeviceProto(engine);
   setupQItemDelegateProto(engine);
@@ -239,7 +236,6 @@ void setupScriptApi(QScriptEngine *engine)
   setupQSqlDatabaseProto(engine);
   setupQSqlErrorProto(engine);
   setupQSqlRecordProto(engine);
-  //setupQSslSocketProto(engine);
   setupQStackedWidgetProto(engine);
   setupQTabWidgetProto(engine);
   setupQTcpServerProto(engine);
