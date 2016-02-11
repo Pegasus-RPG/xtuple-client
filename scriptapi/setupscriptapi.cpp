@@ -62,6 +62,7 @@
 #include "qdomprocessinginstructionproto.h"
 #include "qdomtextproto.h"
 #include "qdoublevalidatorproto.h"
+#include "qhostaddressproto.h"
 #include "qintvalidatorproto.h"
 #include "qeventproto.h"
 #include "qfileproto.h"
@@ -231,6 +232,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQFontProto(engine);
   setupQFormLayoutProto(engine);
   setupQGridLayoutProto(engine);
+  setupQHostAddressProto(engine);
   setupQIconProto(engine);
   setupQIODeviceProto(engine);
   setupQItemDelegateProto(engine);
