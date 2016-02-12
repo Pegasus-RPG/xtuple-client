@@ -225,9 +225,8 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
     }
     else
     {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Item Information"),
+                           purchaseet, __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -268,9 +267,8 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
         _poitemid = purchaseet.value("poitem_id").toInt();
       else
       {
-        systemError(this, tr("A System Error occurred at %1::%2.")
-                          .arg(__FILE__)
-                          .arg(__LINE__) );
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Item Information"),
+                             purchaseet, __FILE__, __LINE__);
         return UndefinedError;
       }
 
@@ -311,9 +309,8 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
         _lineNumber->setText(purchaseet.value("_linenumber").toString());
       else
       {
-        systemError(this, tr("A System Error occurred at %1::%2.")
-                          .arg(__FILE__)
-                          .arg(__LINE__) );
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Item Information"),
+                             purchaseet, __FILE__, __LINE__);
 
         return UndefinedError;
       }
@@ -424,9 +421,9 @@ void purchaseOrderItem::populate()
   params.append("sonum",     tr("Sales Order #")),
   params.append("wonum",     tr("Work Order #")),
   purchasepopulate = mql.toQuery(params);
-  if (purchasepopulate.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Item Information"),
+                                purchasepopulate, __FILE__, __LINE__))
   {
-    systemError(this, purchasepopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   if (purchasepopulate.first())
@@ -572,9 +569,9 @@ void purchaseOrderItem::prepare()
     _poitemid = prepareq.value("_poitem_id").toInt();
     _comments->setId(_poitemid);
   }
-  else if (prepareq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Item Information"),
+                                prepareq, __FILE__, __LINE__))
   {
-    systemError(this, prepareq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
         
@@ -585,9 +582,9 @@ void purchaseOrderItem::prepare()
   prepareq.exec();
   if (prepareq.first())
     _lineNumber->setText(prepareq.value("_linenumber").toString());
-  else if (prepareq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Item Information"),
+                                prepareq, __FILE__, __LINE__))
   {
-    systemError(this, prepareq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -827,9 +824,9 @@ void purchaseOrderItem::sSave()
     purchaseSave.bindValue(":poitem_boo_rev_id", _booRevision->id());
   }
   purchaseSave.exec();
-  if (purchaseSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Purchase Order Item Information"),
+                                         purchaseSave, __FILE__, __LINE__))
   {
-    systemError(this, purchaseSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

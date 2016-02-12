@@ -15,6 +15,7 @@
 
 #include "guiclient.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 printChecksReview::printChecksReview(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -82,10 +83,13 @@ void printChecksReview::sComplete()
 	{
 	  int result = checkPrint.value("result").toInt();
 	  if (result < 0)
-	    systemError(this, storedProcErrorLookup("markCheckPrinted", result), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Check Information"),
+                               storedProcErrorLookup("markCheckPrinted", result),
+                               __FILE__, __LINE__);
 	}
 	else if (checkPrint.lastError().type() != QSqlError::NoError)
-	  systemError(this, checkPrint.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Check Information"),
+                         checkPrint, __FILE__, __LINE__);
         break;
       case ActionVoided:
         checkVoid.bindValue(":check_id", cursor->id());
@@ -94,10 +98,13 @@ void printChecksReview::sComplete()
 	{
 	  int result = checkVoid.value("result").toInt();
 	  if (result < 0)
-	    systemError(this, storedProcErrorLookup("voidCheck", result), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Check Information"),
+                             storedProcErrorLookup("voidCheck", result),
+                             __FILE__, __LINE__);
 	}
 	else if (checkVoid.lastError().type() != QSqlError::NoError)
-	  systemError(this, checkVoid.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Check Information"),
+                         checkVoid, __FILE__, __LINE__);
         break;
       case ActionReplaced:
         checkVoid.bindValue(":check_id", cursor->id());
@@ -106,20 +113,26 @@ void printChecksReview::sComplete()
 	{
 	  int result = checkVoid.value("result").toInt();
 	  if (result < 0)
-	    systemError(this, storedProcErrorLookup("voidCheck", result), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Check Information"),
+                             storedProcErrorLookup("voidCheck", result),
+                             __FILE__, __LINE__);
 	}
 	else if (checkVoid.lastError().type() != QSqlError::NoError)
-	  systemError(this, checkVoid.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Check Information"),
+                         checkVoid, __FILE__, __LINE__);
         checkReplace.bindValue(":check_id", cursor->id());
         checkReplace.exec();
 	if (checkReplace.first())
 	{
 	  int result = checkReplace.value("result").toInt();
 	  if (result < 0)
-	    systemError(this, storedProcErrorLookup("replaceVoidedCheck", result), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Check Information"),
+                             storedProcErrorLookup("replaceVoidedCheck", result),
+                             __FILE__, __LINE__);
 	}
 	else if (checkReplace.lastError().type() != QSqlError::NoError)
-	  systemError(this, checkReplace.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Check Information"),
+                         checkReplace, __FILE__, __LINE__);
         break;
     }
   }
