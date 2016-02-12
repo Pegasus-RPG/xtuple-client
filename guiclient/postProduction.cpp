@@ -415,6 +415,7 @@ void postProduction::sPost()
 
     if (itemlocSeries < 0)
     {
+      rollback.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production"),
                              storedProcErrorLookup("postProduction", itemlocSeries),
                              __FILE__, __LINE__);
