@@ -337,6 +337,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _cust->setType(CLineEdit::ActiveCustomers);
       _salesRep->setType(XComboBox::SalesRepsActive);
       _comments->setType(Comments::SalesOrder);
+      _project->setAllowedStatuses(ProjectLineEdit::Concept |  ProjectLineEdit::InProcess);
       _calcfreight = _metrics->boolean("CalculateFreight");
 
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
@@ -351,6 +352,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
 
       _cust->setType(CLineEdit::ActiveCustomersAndProspects);
       _salesRep->setType(XComboBox::SalesRepsActive);
+      _project->setAllowedStatuses(ProjectLineEdit::Concept |  ProjectLineEdit::InProcess);
       _calcfreight = _metrics->boolean("CalculateFreight");
       _action->hide();
 
