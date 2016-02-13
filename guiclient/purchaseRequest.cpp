@@ -219,9 +219,8 @@ void purchaseRequest::sSave()
     purchaseCreate.exec();
     if (!purchaseCreate.first())
     {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Purchase Request"),
+                           purchaseCreate, __FILE__, __LINE__);
       return;
     }
     else
@@ -249,9 +248,9 @@ void purchaseRequest::sSave()
     purchaseCreate.bindValue(":prj_id", _project->id());
     purchaseCreate.bindValue(":notes", _notes->toPlainText());
     purchaseCreate.exec();
-    if (purchaseCreate.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Purchase Request"),
+                                  purchaseCreate, __FILE__, __LINE__))
     {
-      systemError(this, purchaseCreate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -305,9 +304,9 @@ void purchaseRequest::populate()
     _project->setId(purchaseet.value("pr_prj_id").toInt());
     _notes->setText(purchaseet.value("pr_releasenote").toString());
   }
-  else if (purchaseet.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Request Information"),
+                                purchaseet, __FILE__, __LINE__))
   {
-    systemError(this, purchaseet.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -322,9 +321,8 @@ void purchaseRequest::populateNumber()
     purchasepopulateNumber.exec("SELECT fetchPrNumber() AS number;");
     if (!purchasepopulateNumber.first())
     {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Request Information"),
+                           purchasepopulateNumber, __FILE__, __LINE__);
 
       _number->setText("Error");
       return;
@@ -376,7 +374,8 @@ void purchaseRequest::sReleaseNumber()
     purchaseReleaseNumber.bindValue(":number", _NumberGen);
     purchaseReleaseNumber.exec();
     if (purchaseReleaseNumber.lastError().type() != QSqlError::NoError)
-      systemError(this, purchaseReleaseNumber.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Request Information"),
+                         purchaseReleaseNumber, __FILE__, __LINE__);
     _NumberGen = -1;
   }
 }

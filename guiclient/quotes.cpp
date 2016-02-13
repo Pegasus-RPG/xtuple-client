@@ -231,11 +231,11 @@ void quotes::sConvert(int pType)
                       int result = prospectq.value("result").toInt();
                       if (result < 0)
                       {
-                        systemError(this,
-                                    storedProcErrorLookup("convertProspectToCustomer",
-                                    result), __FILE__, __LINE__);
-                        notConverted.append(item);
-                        continue;
+                          ErrorReporter::error(QtCriticalMsg, this, tr("Error Converting Prospect To Customer"),
+                                               storedProcErrorLookup("convertProspectToCustomer", result),
+                                               __FILE__, __LINE__);
+                          notConverted.append(item);
+                          continue;
                       }
                       convert.exec();
                       if (convert.first())
@@ -251,12 +251,11 @@ void quotes::sConvert(int pType)
                         }
                       }
                     }
-                    else if (prospectq.lastError().type() != QSqlError::NoError)
+                    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Converting Prospect To Customer"),
+                                                  prospectq, __FILE__, __LINE__))
                     {
-                      systemError(this, prospectq.lastError().databaseText(),
-                              __FILE__, __LINE__);
-                      notConverted.append(item);
-                      continue;
+                        notConverted.append(item);
+                        continue;
                     }
                   }
                   else
@@ -353,9 +352,9 @@ void quotes::sCopy()
       {
         lastid = qq.value("result").toInt();
       }
-      else if(qq.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Quote"),
+                                    qq, __FILE__, __LINE__))
       {
-        systemError(this, qq.lastError().text(), __FILE__, __LINE__);
         return;
       }
     }
@@ -455,18 +454,18 @@ void quotes::sDelete()
           int result = quotesDelete.value("result").toInt();
           if (result < 0)
           {
-            systemError(this, storedProcErrorLookup("deleteQuote", result),
-                        __FILE__, __LINE__);
-            continue;
+              ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Quote"),
+                                   storedProcErrorLookup("deleteQuote", result),
+                                   __FILE__, __LINE__);
+              continue;
           }
           counter++;
         }
-        else if (quotesDelete.lastError().type() != QSqlError::NoError)
+        else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Quote #%1")
+                                      .arg(item->text(0)),
+                                      quotesDelete, __FILE__, __LINE__))
         {
-          systemError(this, tr("A System Error occurred deleting Quote #%1\n%2.")
-                             .arg(item->text(0))
-                             .arg(quotesDelete.lastError().databaseText()), __FILE__, __LINE__);
-          continue;
+            continue;
         }
       }
     }
