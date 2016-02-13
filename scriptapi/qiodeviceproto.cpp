@@ -25,6 +25,16 @@ QScriptValue QIODevicetoScriptValue(QScriptEngine *engine, QIODevice* const &ite
 void QIODevicefromScriptValue(const QScriptValue &obj, QIODevice* &item)
 { item = qobject_cast<QIODevice*>(obj.toQObject()); }
 
+QScriptValue OpenModeFlagtoScriptValue(QScriptEngine *engine, const enum QIODevice::OpenModeFlag &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void OpenModeFlagfromScriptValue(const QScriptValue &obj, enum QIODevice::OpenModeFlag &p)
+{
+  p = (enum QIODevice::OpenModeFlag)obj.toInt32();
+}
+
 void setupQIODeviceProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QIODevicetoScriptValue, QIODevicefromScriptValue);
@@ -310,14 +320,4 @@ qint64 QIODeviceProto::write(const char *data, qint64 maxSize)
   if (item)
     return item->write(data, maxSize);
   return 0;
-}
-
-QScriptValue OpenModeFlagtoScriptValue(QScriptEngine *engine, const enum QIODevice::OpenModeFlag &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-
-void OpenModeFlagfromScriptValue(const QScriptValue &obj, enum QIODevice::OpenModeFlag &p)
-{
-  p = (enum QIODevice::OpenModeFlag)obj.toInt32();
 }

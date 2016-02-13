@@ -17,7 +17,6 @@
 
 Q_DECLARE_METATYPE(QByteArray*)
 Q_DECLARE_METATYPE(QByteArray)
-
 void setupQByteArrayProto(QScriptEngine *engine);
 QScriptValue constructQByteArray(QScriptContext *context, QScriptEngine *engine);
 
