@@ -70,6 +70,7 @@ HEADERS += setupscriptapi.h \
     qformlayoutproto.h \
     qgridlayoutproto.h \
     qhostaddressproto.h \
+    qhostinfoproto.h \
     qiconproto.h \
     qiodeviceproto.h \
     qitemdelegateproto.h \
@@ -212,6 +213,7 @@ SOURCES += setupscriptapi.cpp \
     qfontproto.cpp \
     qformlayoutproto.cpp \
     qgridlayoutproto.cpp \
+    qhostinfoproto.cpp \
     qiconproto.cpp \
     qiodeviceproto.cpp \
     qitemdelegateproto.cpp \
