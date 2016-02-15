@@ -370,8 +370,8 @@ void reconcileBankaccount::populate()
         rcp.value("notes"),
         rcp.value("doc_curr"),
         rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6), // 6 dp to match bankrec-receipts metasql
-        rcp.value("base_amount").isNull() ? tr("?????") : rcp.value("base_amount").toDouble(),
-        rcp.value("amount").isNull() ? tr("?????") : rcp.value("amount").toDouble() );
+        rcp.value("base_amount").isNull() ? tr("?????") : QVariant(rcp.value("base_amount").toDouble()),
+        rcp.value("amount").isNull() ? tr("?????") : QVariant(rcp.value("amount").toDouble()) );
     }
     else
     {
@@ -392,8 +392,8 @@ void reconcileBankaccount::populate()
         rcp.value("notes"),
         rcp.value("doc_curr"),
         rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6), // 6 dp to match bankrec-receipts metasql
-        rcp.value("base_amount").isNull() ? tr("?????") : rcp.value("base_amount").toDouble(),
-        rcp.value("amount").isNull() ? tr("?????") : rcp.value("amount").toDouble() );
+        rcp.value("base_amount").isNull() ? tr("?????") : QVariant(rcp.value("base_amount").toDouble()),
+        rcp.value("amount").isNull() ? tr("?????") : QVariant(rcp.value("amount").toDouble()) );
     }
   }
   if(parent != 0)
