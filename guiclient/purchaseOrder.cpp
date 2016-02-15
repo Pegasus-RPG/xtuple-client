@@ -607,6 +607,7 @@ void purchaseOrder::createHeader()
   // need to set at least the _order date before the INSERT
   _comments->setId(_poheadid);
   _documents->setId(_poheadid);
+  _charass->setId(_poheadid);
   _orderDate->setDate(omfgThis->dbDate(), true);
   _status->setCurrentIndex(0);
   _vendor->setShowInactive(false);
