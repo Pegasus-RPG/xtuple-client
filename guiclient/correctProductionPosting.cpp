@@ -98,19 +98,31 @@ bool correctProductionPosting::okToPost()
   }
 
   XSqlQuery itemtypeq;
-  itemtypeq.prepare( "SELECT itemsite_costmethod "
+  itemtypeq.prepare( "SELECT itemsite_costmethod, itemsite_qtyonhand "
              "FROM wo, itemsite "
              "WHERE ( (wo_itemsite_id=itemsite_id)"
              " AND (wo_id=:wo_id) );" );
   itemtypeq.bindValue(":wo_id", _wo->id());
   itemtypeq.exec();
-  if (itemtypeq.first() && (itemtypeq.value("itemsite_costmethod").toString() == "J"))
+  if (itemtypeq.first())
   {
-    QMessageBox::warning(this, tr("Cannot Post Correction"),
-                         tr("You may not post a correction to a Work Order for a "
-                            "Item Site with the Job cost method. You must, "
-                            "instead, adjust shipped quantities."));
-    return false;
+    if (itemtypeq.value("itemsite_costmethod").toString() == "J")
+    {
+      QMessageBox::warning(this, tr("Cannot Post Correction"),
+                           tr("You may not post a correction to a Work Order for a "
+                              "Item Site with the Job cost method. You must, "
+                              "instead, adjust shipped quantities."));
+      return false;
+    }
+
+    if (itemtypeq.value("itemsite_qtyonhand").toDouble() < _qty->toDouble())
+    {
+      QMessageBox::warning(this, tr("Cannot Post Correction"),
+                           tr("You may not post a correction to a Work Order for a "
+                              "Item Site with a quantity on hand less than the "
+                              "correction quantity."));
+      return false;
+    }
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production Correction"),
                                 itemtypeq, __FILE__, __LINE__))
