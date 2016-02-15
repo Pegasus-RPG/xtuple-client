@@ -106,6 +106,8 @@ void itemAlias::sSave()
                              "before continuing"))
      ;
 
+  _number->setText(_number->text().trimmed().toUpper());
+
   itemSave.prepare( "SELECT itemalias_id "
              "FROM itemalias "
              "WHERE ( (itemalias_item_id=:itemalias_item_id)"
