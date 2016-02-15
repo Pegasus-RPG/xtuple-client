@@ -16,7 +16,7 @@
 static QScriptValue qhostinfo_abortHostLookup(QScriptContext *context, QScriptEngine * /*engine*/)
 {
   if (context->argumentCount() == 1 && context->argument(0).isNumber()) {
-      QHostInfo::abortHostLookup(context->argument(1).toInt32());
+      QHostInfo::abortHostLookup(context->argument(0).toInt32());
   }
   return QScriptValue();
 }
@@ -33,6 +33,32 @@ static QScriptValue qhostinfo_localHostName(QScriptContext * /*context*/, QScrip
   return QHostInfo::localHostName();
 }
 
+static QScriptValue qhostinfo_fromName(QScriptContext *context, QScriptEngine *engine)
+{
+    QHostInfo obj;
+    QScriptValue scriptlist = engine->newObject();
+
+    if (context->argumentCount() == 1 && context->argument(0).isString()) {
+        obj = QHostInfo::fromName(context->argument(0).toString());
+        QScriptValue addressList = engine->newObject();
+        QList<QHostAddress> qlist = obj.addresses();
+        for (int i = 0; i < qlist.size(); i += 1) {
+            addressList.setProperty(i, qlist[i].toString());
+        }
+        scriptlist.setProperty("addresses",   addressList);
+        scriptlist.setProperty("error",       obj.error());
+        if (obj.error() > 0) {
+            scriptlist.setProperty("errorString", obj.errorString());
+        }
+        else {
+            scriptlist.setProperty("errorString", "No Error");
+        }
+        scriptlist.setProperty("hostName",    obj.hostName());
+        scriptlist.setProperty("lookupId",    obj.lookupId());
+    }
+
+    return scriptlist;
+}
 
 QScriptValue HostInfoErrortoScriptValue(QScriptEngine *engine, const enum QHostInfo::HostInfoError &p)
 {
@@ -59,6 +85,7 @@ void setupQHostInfoProto(QScriptEngine *engine)
   constructor.setProperty("abortHostLookup", engine->newFunction(qhostinfo_abortHostLookup), STATICPROPFLAGS);
   constructor.setProperty("localDomainName", engine->newFunction(qhostinfo_localDomainName), STATICPROPFLAGS);
   constructor.setProperty("localHostName",   engine->newFunction(qhostinfo_localHostName),   STATICPROPFLAGS);
+  constructor.setProperty("fromName",        engine->newFunction(qhostinfo_fromName),        STATICPROPFLAGS);
 
   engine->globalObject().setProperty("QHostInfo",  constructor);
 }
@@ -80,7 +107,7 @@ QScriptValue constructQHostInfo(QScriptContext *context, QScriptEngine  *engine)
   else
   {
     if (DEBUG) qDebug("qhostinfo unknown");
-    context->throwError(QScriptContext::UnknownError, "Unknown Constructor for QHostInfo");
+    context->throwError(QScriptContext::UnknownError, "Unsupported Constructor for QHostInfo");
   }
 
   return engine->toScriptValue(obj);
