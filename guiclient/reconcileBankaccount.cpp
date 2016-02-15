@@ -352,7 +352,7 @@ void reconcileBankaccount::populate()
         }
         jrnlnum = rcp.value("jrnlnum").toInt();
         last = new XTreeWidgetItem( _receipts, last,
-          jrnlnum, 9, "", formatDate(rcp.value("f_jrnldate").toDate()), tr("JS"), rcp.value("jrnlnum"));
+          jrnlnum, 9, "", rcp.value("f_jrnldate").toDate(), tr("JS"), rcp.value("jrnlnum"));
         parent = last;
         cleared = true;
         amount = 0.0;
@@ -366,12 +366,12 @@ void reconcileBankaccount::populate()
       lastChild = new XTreeWidgetItem( parent, lastChild,
         rcp.value("id").toInt(), rcp.value("altid").toInt(),
         (rcp.value("cleared").toBool() ? tr("Yes") : tr("No")),
-        formatDate(rcp.value("f_date").toDate()), rcp.value("doc_type"), rcp.value("docnumber"),
+        rcp.value("f_date").toDate(), rcp.value("doc_type"), rcp.value("docnumber"),
         rcp.value("notes"),
         rcp.value("doc_curr"),
         rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6), // 6 dp to match bankrec-receipts metasql
-        rcp.value("base_amount").isNull() ? tr("?????") : formatMoney(rcp.value("base_amount").toDouble()),
-        rcp.value("amount").isNull() ? tr("?????") : formatMoney(rcp.value("amount").toDouble()) );
+        rcp.value("base_amount").isNull() ? tr("?????") : rcp.value("base_amount").toDouble(),
+        rcp.value("amount").isNull() ? tr("?????") : rcp.value("amount").toDouble() );
     }
     else
     {
@@ -388,12 +388,12 @@ void reconcileBankaccount::populate()
       last = new XTreeWidgetItem( _receipts, last,
         rcp.value("id").toInt(), rcp.value("altid").toInt(),
         (rcp.value("cleared").toBool() ? tr("Yes") : tr("No")),
-        formatDate(rcp.value("f_date").toDate()), rcp.value("doc_type"), rcp.value("docnumber"),
+        rcp.value("f_date").toDate(), rcp.value("doc_type"), rcp.value("docnumber"),
         rcp.value("notes"),
         rcp.value("doc_curr"),
         rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6), // 6 dp to match bankrec-receipts metasql
-        rcp.value("base_amount").isNull() ? tr("?????") : formatMoney(rcp.value("base_amount").toDouble()),
-        rcp.value("amount").isNull() ? tr("?????") : formatMoney(rcp.value("amount").toDouble()) );
+        rcp.value("base_amount").isNull() ? tr("?????") : rcp.value("base_amount").toDouble(),
+        rcp.value("amount").isNull() ? tr("?????") : rcp.value("amount").toDouble() );
     }
   }
   if(parent != 0)
