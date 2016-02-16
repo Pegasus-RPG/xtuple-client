@@ -1011,7 +1011,7 @@ qDebug("Comparing doubles.");
       break;
 
     case QVariant::String:
-qDebug("Comparint strings.");
+qDebug("Comparing strings.");
       bool ok;
       if (v1.toString().toDouble() == 0.0 && v2.toDouble() == 0.0)
         returnVal = (v1.toString() < v2.toString());
@@ -1091,10 +1091,12 @@ bool XTreeWidgetItem::operator>(const XTreeWidgetItem &other) const
 void XTreeWidget::sortItems(int column, Qt::SortOrder order)
 {
   int previd = id();
+qDebug("Starting sort...");
 
   // if old style then maintain backwards compatibility
   if (_roles.size() <= 0)
   {
+qDebug("Old style sort.");
     QTreeWidget::sortItems(column, order);
     return;
   }
@@ -1103,6 +1105,7 @@ void XTreeWidget::sortItems(int column, Qt::SortOrder order)
       headerItem()->data(column, Qt::UserRole).toString() == "xtrunningrole")
     return;
 
+qDebug("New style sort.");
   header()->setSortIndicator(column, order);
 
   // simple insertion sort using binary search to find the right insertion pt
