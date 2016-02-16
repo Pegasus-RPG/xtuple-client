@@ -18,6 +18,7 @@
 #include <parameter.h>
 #include "mqlutil.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 recallOrders::recallOrders(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -76,15 +77,16 @@ void recallOrders::sRecall()
     int result = recallRecall.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("recallShipment", result),
-		  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Recalling Shipment"),
+                             storedProcErrorLookup("recallShipment", result),
+                             __FILE__, __LINE__);
       return;
     }
     sFillList();
   }
-  else if (recallRecall.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Recalling Shipment"),
+                                recallRecall, __FILE__, __LINE__))
   {
-    systemError(this, recallRecall.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -124,9 +126,9 @@ void recallOrders::sFillList()
   XSqlQuery r = mql.toQuery(params);
   _ship->clear();
   _ship->populate(r, true);
-  if (r.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Shipment Information"),
+                                r, __FILE__, __LINE__))
   {
-    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
