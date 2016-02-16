@@ -1975,6 +1975,21 @@ QVariant XTreeWidgetItem::rawValue(const QString pName)
     return data(colIdx, Xt::RawRole);
 }
 
+void XTreeWidgetItem::setNumericRole(const QString pRole, const QString pColumn)
+{
+  int colIdx = ((XTreeWidget *)treeWidget())->column(pColumn);
+  if (colIdx >= 0)
+  {
+    bool canConvert = false;
+    double value = text(pColumn).toDouble(&canConvert);
+
+    if (canConvert)
+    {
+      setData(colIdx, Qt::DisplayRole, QLocale().toString(value, 'f', decimalPlaces(pRole)));
+    }
+  }
+}
+
 /* Calculate the total for a particular XTreeWidgetItem, including any children.
    pcol is the column for which we want the total.
    prole is the value of xttotalrole for which we want the total.

@@ -52,8 +52,8 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
     _receipts->addColumn(tr("Notes"),                    -1, Qt::AlignLeft   );
     _receipts->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignCenter );
     _receipts->addColumn(tr("Exch. Rate"),  _bigMoneyColumn, Qt::AlignRight  );
-    _receipts->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight  );
-    _receipts->addColumn(tr("Amount"),      _bigMoneyColumn, Qt::AlignRight  );
+    _receipts->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight, true, "base_amount");
+    _receipts->addColumn(tr("Amount"),      _bigMoneyColumn, Qt::AlignRight, true, "amount" );
     
     _checks->addColumn(tr("Cleared"),       _ynColumn * 2, Qt::AlignCenter , true, "cleared");
     _checks->addColumn(tr("Date"),            _dateColumn, Qt::AlignCenter , true, "transdate");
@@ -349,6 +349,7 @@ void reconcileBankaccount::populate()
         {
           parent->setText(0, (cleared ? tr("Yes") : tr("No")));
           parent->setText(8, amountNull ? tr("?????") : formatMoney(amount));
+          parent->setNumericRole("curr", "amount");
         }
         jrnlnum = rcp.value("jrnlnum").toInt();
         last = new XTreeWidgetItem( _receipts, last,
@@ -372,6 +373,9 @@ void reconcileBankaccount::populate()
         rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6), // 6 dp to match bankrec-receipts metasql
         rcp.value("base_amount").isNull() ? tr("?????") : QVariant(rcp.value("base_amount").toDouble()),
         rcp.value("amount").isNull() ? tr("?????") : QVariant(rcp.value("amount").toDouble()) );
+
+      lastChild->setNumericRole("curr", "base_amount");
+      lastChild->setNumericRole("curr", "amount");
     }
     else
     {
@@ -379,6 +383,7 @@ void reconcileBankaccount::populate()
       {
         parent->setText(0, (cleared ? tr("Yes") : tr("No")));
         parent->setText(8, formatMoney(amount));
+        parent->setNumericRole("curr", "amount");
       }
       parent = 0;
       cleared = true;
@@ -394,12 +399,16 @@ void reconcileBankaccount::populate()
         rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6), // 6 dp to match bankrec-receipts metasql
         rcp.value("base_amount").isNull() ? tr("?????") : QVariant(rcp.value("base_amount").toDouble()),
         rcp.value("amount").isNull() ? tr("?????") : QVariant(rcp.value("amount").toDouble()) );
+
+      lastChild->setNumericRole("curr", "base_amount");
+      lastChild->setNumericRole("curr", "amount");
     }
   }
   if(parent != 0)
   {
     parent->setText(0, (cleared ? tr("Yes") : tr("No")));
     parent->setText(8, amountNull ? tr("?????") : formatMoney(amount));
+    parent->setNumericRole("curr", "amount");
   }
 
   if(currid != -1)
