@@ -762,6 +762,7 @@ void XTreeWidget::populateWorker()
     cleanupAfterPopulate();
 
     populateCalculatedColumns();
+qDebug("Checking for sortColumn() >= 0");
     if (sortColumn() >= 0 && header()->isSortIndicatorShown())
       sortItems(sortColumn(), header()->sortIndicatorOrder());
 
@@ -896,6 +897,7 @@ void XTreeWidget::addColumn(const QString &pString, int pWidth, int pAlignment, 
       roles->insert("qtdisplayrole", pDisplayColumn);
 
     _roles.insert(column, roles);
+qDebug("Adding role %s " + qPrintable(column));
   }
 
   _defaultColumnWidths.insert(column, pWidth);
@@ -1664,9 +1666,11 @@ void XTreeWidget::mouseMoveEvent(QMouseEvent *event)
 
 void XTreeWidget::sHeaderClicked(int column)
 {
+qDebug("sHeaderClicked");
   // Qt::SortOrder sortOrder = Qt::DescendingOrder;
   if (!header()->isSortIndicatorShown())
     header()->setSortIndicatorShown(true);
+qDebug("About to sortItems");
   sortItems(column, header()->sortIndicatorOrder());
 }
 
