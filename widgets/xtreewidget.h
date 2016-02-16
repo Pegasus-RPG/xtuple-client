@@ -56,6 +56,7 @@
 class QAction;
 class QMenu;
 class QScriptEngine;
+class QDate;
 class XTreeWidget;
 class XTreeWidgetProgress;
 
@@ -136,7 +137,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidgetItem : public QObject, public QTreeWidgetI
 
     Q_INVOKABLE virtual void            setDate(int pColIdx, const QDate pDate);
     Q_INVOKABLE virtual void            setNumber(int pColIdx, const QVariant pValue, const QString pRole);
-    Q_INVOKABLE virtual void            setNumericRole(int pColIdx, const QString pRole);
+    Q_INVOKABLE virtual bool            setNumericRole(int pColIdx, const QString pRole);
 
     virtual bool operator               <(const XTreeWidgetItem &other) const;
     virtual bool operator               ==(const XTreeWidgetItem &other) const;

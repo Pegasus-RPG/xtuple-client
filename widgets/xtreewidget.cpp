@@ -1978,7 +1978,11 @@ QVariant XTreeWidgetItem::rawValue(const QString pName)
 void XTreeWidgetItem::setNumber(int pColumn, const QVariant pValue, const QString pNumericRole)
 {
   setData(pColumn, Xt::RawRole, pValue);
-  setNumericRole(pColumn, pNumericRole);
+  if (!setNumericRole(pColumn, pNumericRole))
+  {
+    // pValue is not a valid number
+    setText(pColumn, pValue);
+  }
 }
 
 void XTreeWidgetItem::setDate(int pColumn, const QDate pDate)
@@ -1987,11 +1991,12 @@ void XTreeWidgetItem::setDate(int pColumn, const QDate pDate)
   setData(pColumn, Qt::DisplayRole, formatDate(pDate));
 }
 
-void XTreeWidgetItem::setNumericRole(int pColIdx, const QString pRole)
+bool XTreeWidgetItem::setNumericRole(int pColIdx, const QString pRole)
 {
+  bool canConvert = false;
+
   if (pColIdx >= 0)
   {
-    bool canConvert = false;
     double value = data(pColIdx, Xt::RawRole).toDouble(&canConvert);
 
     if (canConvert)
@@ -1999,6 +2004,7 @@ void XTreeWidgetItem::setNumericRole(int pColIdx, const QString pRole)
       setData(pColIdx, Qt::DisplayRole, QLocale().toString(value, 'f', decimalPlaces(pRole)));
     }
   }
+  return canConvert;
 }
 
 /* Calculate the total for a particular XTreeWidgetItem, including any children.
