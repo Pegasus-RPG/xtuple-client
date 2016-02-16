@@ -347,16 +347,16 @@ void reconcileBankaccount::populate()
       {
         if(parent != 0)
         {
-          parent->setRawValue(0, (cleared ? tr("Yes") : tr("No")));
+          parent->setText(0, (cleared ? tr("Yes") : tr("No")));
           parent->setRawValue(8, amountNull ? tr("?????") : QVariant(amount));
           parent->setNumericRole(8, "curr");
         }
         jrnlnum = rcp.value("jrnlnum").toInt();
         last = new XTreeWidgetItem( _receipts, last, jrnlnum, 9);
-        last->setRawValue(0, "");
-        last->setRawValue(1, rcp.value("f_jrnldate"));
-        last->setRawValue(2, tr("JS"));
-        last->setRawValue(3, rcp.value("jrnlnum"));
+        last->setText(0, "");
+        last->setRawValue(1, rcp.value("f_jrnldate").toDate());
+        last->setText(2, tr("JS"));
+        last->setText(3, rcp.value("jrnlnum"));
         parent = last;
         cleared = true;
         amount = 0.0;
@@ -369,12 +369,12 @@ void reconcileBankaccount::populate()
       
       lastChild = new XTreeWidgetItem(parent, lastChild, rcp.value("id").toInt(), rcp.value("altid").toInt());
 
-      lastChild->setRawValue(0, rcp.value("cleared").toBool() ? tr("Yes") : tr("No"));
-      lastChild->setRawValue(1, rcp.value("f_date"));
-      lastChild->setRawValue(2, rcp.value("doc_type"));
-      lastChild->setRawValue(3, rcp.value("docnumber"));
-      lastChild->setRawValue(4, rcp.value("notes"));
-      lastChild->setRawValue(5, rcp.value("doc_curr"));
+      lastChild->setText(0, rcp.value("cleared").toBool() ? tr("Yes") : tr("No"));
+      lastChild->setRawValue(1, rcp.value("f_date").toDate());
+      lastChild->setText(2, rcp.value("doc_type"));
+      lastChild->setText(3, rcp.value("docnumber"));
+      lastChild->setText(4, rcp.value("notes"));
+      lastChild->setText(5, rcp.value("doc_curr"));
       lastChild->setRawValue(6, rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6));
       lastChild->setRawValue(7, rcp.value("base_amount").isNull() ? tr("?????") : rcp.value("base_amount"));
       lastChild->setRawValue(8, rcp.value("amount").isNull() ? tr("?????") : rcp.value("amount"));
@@ -386,7 +386,7 @@ void reconcileBankaccount::populate()
     {
       if(parent != 0)
       {
-        parent->setRawValue(0, (cleared ? tr("Yes") : tr("No")));
+        parent->setText(0, (cleared ? tr("Yes") : tr("No")));
         parent->setRawValue(8, QVariant(amount));
         parent->setNumericRole(8, "curr");
       }
@@ -398,11 +398,11 @@ void reconcileBankaccount::populate()
       last = new XTreeWidgetItem(_receipts, last, rcp.value("id").toInt(), rcp.value("altid").toInt());
 
       last->setRawValue(0, rcp.value("cleared").toBool() ? tr("Yes") : tr("No"));
-      last->setRawValue(1, rcp.value("f_date"));
-      last->setRawValue(2, rcp.value("doc_type"));
-      last->setRawValue(3, rcp.value("docnumber"));
-      last->setRawValue(4, rcp.value("notes"));
-      last->setRawValue(5, rcp.value("doc_curr"));
+      last->setRawValue(1, rcp.value("f_date").toDate());
+      last->setText(2, rcp.value("doc_type"));
+      last->setText(3, rcp.value("docnumber"));
+      last->setText(4, rcp.value("notes"));
+      last->setText(5, rcp.value("doc_curr"));
       last->setRawValue(6, rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6));
       last->setRawValue(7, rcp.value("base_amount").isNull() ? tr("?????") : rcp.value("base_amount"));
       last->setRawValue(8, rcp.value("amount").isNull() ? tr("?????") : rcp.value("amount"));
@@ -413,7 +413,7 @@ void reconcileBankaccount::populate()
   }
   if(parent != 0)
   {
-    parent->setRawValue(0, (cleared ? tr("Yes") : tr("No")));
+    parent->setText(0, (cleared ? tr("Yes") : tr("No")));
     parent->setRawValue(8, amountNull ? tr("?????") : QVariant(amount));
     parent->setNumericRole(8, "curr");
   }
