@@ -45,15 +45,15 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
     connect(_startDate, SIGNAL(newDate(QDate)), this, SLOT(sDateChanged()));
     connect(_endDate,   SIGNAL(newDate(QDate)), this, SLOT(sDateChanged()));
 
-    _receipts->addColumn(tr("Cleared"),       _ynColumn * 2, Qt::AlignCenter );
-    _receipts->addColumn(tr("Date"),            _dateColumn, Qt::AlignCenter );
-    _receipts->addColumn(tr("Doc. Type"),     _ynColumn * 2, Qt::AlignCenter );
-    _receipts->addColumn(tr("Doc. Number"),     _itemColumn, Qt::AlignLeft   );
-    _receipts->addColumn(tr("Notes"),                    -1, Qt::AlignLeft   );
-    _receipts->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignCenter );
-    _receipts->addColumn(tr("Exch. Rate"),  _bigMoneyColumn, Qt::AlignRight  );
-    _receipts->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight  );
-    _receipts->addColumn(tr("Amount"),      _bigMoneyColumn, Qt::AlignRight  );
+    _receipts->addColumn(tr("Cleared"),       _ynColumn * 2, Qt::AlignCenter, true, "cleared" );
+    _receipts->addColumn(tr("Date"),            _dateColumn, Qt::AlignCenter, true, "transdate" );
+    _receipts->addColumn(tr("Doc. Type"),     _ynColumn * 2, Qt::AlignCenter, true, "doc_type" );
+    _receipts->addColumn(tr("Doc. Number"),     _itemColumn, Qt::AlignLeft  , true, "doc_number");
+    _receipts->addColumn(tr("Notes"),                    -1, Qt::AlignLeft  , true, "notes");
+    _receipts->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignCenter, true, "doc_curr");
+    _receipts->addColumn(tr("Exch. Rate"),  _bigMoneyColumn, Qt::AlignRight , true, "doc_exchrate");
+    _receipts->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight , true, "base_amount");
+    _receipts->addColumn(tr("Amount"),      _bigMoneyColumn, Qt::AlignRight , true, "amount");
     
     _checks->addColumn(tr("Cleared"),       _ynColumn * 2, Qt::AlignCenter , true, "cleared");
     _checks->addColumn(tr("Date"),            _dateColumn, Qt::AlignCenter , true, "transdate");
