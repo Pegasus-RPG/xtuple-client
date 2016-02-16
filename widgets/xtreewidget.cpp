@@ -1975,9 +1975,16 @@ QVariant XTreeWidgetItem::rawValue(const QString pName)
     return data(colIdx, Xt::RawRole);
 }
 
-void XTreeWidgetItem::setRawValue(int pColumn, const QVariant pValue)
+void XTreeWidgetItem::setNumber(int pColumn, const QVariant pValue, const QString pNumericRole)
 {
   setData(pColumn, Xt::RawRole, pValue);
+  setNumericRole(pColumn, pNumericRole);
+}
+
+void XTreeWidgetItem::setDate(int pColumn, const QDate pDate)
+{
+  setData(pColumn, Xt::RawRole, pValue);
+  setData(pColumn, Qt::DisplayRole, formatDate(pDate));
 }
 
 void XTreeWidgetItem::setNumericRole(int pColIdx, const QString pRole)
