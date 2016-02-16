@@ -1985,10 +1985,10 @@ void XTreeWidgetItem::setNumber(int pColumn, const QVariant pValue, const QStrin
   }
 }
 
-void XTreeWidgetItem::setDate(int pColumn, const QDate pDate)
+void XTreeWidgetItem::setDate(int pColumn, const QVariant pDate)
 {
   setData(pColumn, Xt::RawRole, pDate);
-  setData(pColumn, Qt::DisplayRole, formatDate(pDate));
+  setData(pColumn, Qt::DisplayRole, formatDate(pDate.toDate()));
 }
 
 bool XTreeWidgetItem::setNumericRole(int pColIdx, const QString pRole)
