@@ -762,7 +762,6 @@ void XTreeWidget::populateWorker()
     cleanupAfterPopulate();
 
     populateCalculatedColumns();
-qDebug("Checking for sortColumn() >= 0");
     if (sortColumn() >= 0 && header()->isSortIndicatorShown())
       sortItems(sortColumn(), header()->sortIndicatorOrder());
 
@@ -897,7 +896,6 @@ void XTreeWidget::addColumn(const QString &pString, int pWidth, int pAlignment, 
       roles->insert("qtdisplayrole", pDisplayColumn);
 
     _roles.insert(column, roles);
-qDebug("Adding role %s ", qPrintable(column));
   }
 
   _defaultColumnWidths.insert(column, pWidth);
@@ -991,7 +989,6 @@ bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
       break;
 
     case QVariant::Date:
-qDebug("Comparing dates.");
       returnVal = (v1.toDate() < v2.toDate());
       break;
 
@@ -1000,7 +997,6 @@ qDebug("Comparing dates.");
       break;
 
     case QVariant::Double:
-qDebug("Comparing doubles.");
       returnVal = (v1.toDouble() < v2.toDouble());
       break;
 
@@ -1013,7 +1009,6 @@ qDebug("Comparing doubles.");
       break;
 
     case QVariant::String:
-qDebug("Comparing strings.");
       bool ok;
       if (v1.toString().toDouble() == 0.0 && v2.toDouble() == 0.0)
         returnVal = (v1.toString() < v2.toString());
@@ -1093,12 +1088,10 @@ bool XTreeWidgetItem::operator>(const XTreeWidgetItem &other) const
 void XTreeWidget::sortItems(int column, Qt::SortOrder order)
 {
   int previd = id();
-qDebug("Starting sort...");
 
   // if old style then maintain backwards compatibility
   if (_roles.size() <= 0)
   {
-qDebug("Old style sort.");
     QTreeWidget::sortItems(column, order);
     return;
   }
@@ -1107,7 +1100,6 @@ qDebug("Old style sort.");
       headerItem()->data(column, Qt::UserRole).toString() == "xtrunningrole")
     return;
 
-qDebug("New style sort.");
   header()->setSortIndicator(column, order);
 
   // simple insertion sort using binary search to find the right insertion pt
@@ -1666,11 +1658,9 @@ void XTreeWidget::mouseMoveEvent(QMouseEvent *event)
 
 void XTreeWidget::sHeaderClicked(int column)
 {
-qDebug("sHeaderClicked");
   // Qt::SortOrder sortOrder = Qt::DescendingOrder;
   if (!header()->isSortIndicatorShown())
     header()->setSortIndicatorShown(true);
-qDebug("About to sortItems");
   sortItems(column, header()->sortIndicatorOrder());
 }
 

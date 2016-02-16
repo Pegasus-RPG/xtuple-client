@@ -45,9 +45,9 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
     connect(_startDate, SIGNAL(newDate(QDate)), this, SLOT(sDateChanged()));
     connect(_endDate,   SIGNAL(newDate(QDate)), this, SLOT(sDateChanged()));
 
-    _receipts->addColumn(tr("Cleared"),       _ynColumn * 2, Qt::AlignCenter, true, "cleared" );
-    _receipts->addColumn(tr("Date"),            _dateColumn, Qt::AlignCenter, true, "transdate" );
-    _receipts->addColumn(tr("Doc. Type"),     _ynColumn * 2, Qt::AlignCenter, true, "doc_type" );
+    _receipts->addColumn(tr("Cleared"),       _ynColumn * 2, Qt::AlignCenter, true, "cleared");
+    _receipts->addColumn(tr("Date"),            _dateColumn, Qt::AlignCenter, true, "transdate");
+    _receipts->addColumn(tr("Doc. Type"),     _ynColumn * 2, Qt::AlignCenter, true, "doc_type");
     _receipts->addColumn(tr("Doc. Number"),     _itemColumn, Qt::AlignLeft  , true, "doc_number");
     _receipts->addColumn(tr("Notes"),                    -1, Qt::AlignLeft  , true, "notes");
     _receipts->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignCenter, true, "doc_curr");
@@ -339,6 +339,8 @@ void reconcileBankaccount::populate()
   bool cleared = true;
   double amount = 0.0;
   bool amountNull = true;
+  const QString exchangePrecision = "6";
+
   while (rcp.next())
   {
     if(rcp.value("use").toString() == "C/R")
@@ -374,7 +376,7 @@ void reconcileBankaccount::populate()
       lastChild->setText(3, rcp.value("docnumber"));
       lastChild->setText(4, rcp.value("notes"));
       lastChild->setText(5, rcp.value("doc_curr"));
-      lastChild->setText(6, rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6));
+      lastChild->setNumber(6, rcp.value("doc_exchrate").isNull() ? tr("?????") : rcp.value("doc_exchrate").toDouble(), exchangePrecision);
       lastChild->setNumber(7, rcp.value("base_amount").isNull() ? tr("?????") : rcp.value("base_amount"), "curr");
       lastChild->setNumber(8, rcp.value("amount").isNull() ? tr("?????") : rcp.value("amount"), "curr");
     }
@@ -390,6 +392,7 @@ void reconcileBankaccount::populate()
       amount = 0.0;
       amountNull = true;
       lastChild = 0;
+
       last = new XTreeWidgetItem(_receipts, last, rcp.value("id").toInt(), rcp.value("altid").toInt());
 
       last->setText(0, rcp.value("cleared").toBool() ? tr("Yes") : tr("No"));
@@ -398,7 +401,7 @@ void reconcileBankaccount::populate()
       last->setText(3, rcp.value("docnumber"));
       last->setText(4, rcp.value("notes"));
       last->setText(5, rcp.value("doc_curr"));
-      last->setText(6, rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6));
+      last->setNumber(6, rcp.value("doc_exchrate").isNull() ? tr("?????") : rcp.value("doc_exchrate").toDouble(), exchangePrecision);
       last->setNumber(7, rcp.value("base_amount").isNull() ? tr("?????") : rcp.value("base_amount"), "curr");
       last->setNumber(8, rcp.value("amount").isNull() ? tr("?????") : rcp.value("amount"), "curr");
     }
