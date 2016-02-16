@@ -376,7 +376,7 @@ void reconcileBankaccount::populate()
       lastChild->setText(3, rcp.value("docnumber"));
       lastChild->setText(4, rcp.value("notes"));
       lastChild->setText(5, rcp.value("doc_curr"));
-      lastChild->setNumber(6, rcp.value("doc_exchrate").isNull() ? tr("?????") : rcp.value("doc_exchrate").toDouble(), exchangePrecision);
+      lastChild->setNumber(6, rcp.value("doc_exchrate").isNull() ? tr("?????") : rcp.value("doc_exchrate"), exchangePrecision);
       lastChild->setNumber(7, rcp.value("base_amount").isNull() ? tr("?????") : rcp.value("base_amount"), "curr");
       lastChild->setNumber(8, rcp.value("amount").isNull() ? tr("?????") : rcp.value("amount"), "curr");
     }
@@ -401,7 +401,7 @@ void reconcileBankaccount::populate()
       last->setText(3, rcp.value("docnumber"));
       last->setText(4, rcp.value("notes"));
       last->setText(5, rcp.value("doc_curr"));
-      last->setNumber(6, rcp.value("doc_exchrate").isNull() ? tr("?????") : rcp.value("doc_exchrate").toDouble(), exchangePrecision);
+      last->setNumber(6, rcp.value("doc_exchrate").isNull() ? tr("?????") : rcp.value("doc_exchrate"), exchangePrecision);
       last->setNumber(7, rcp.value("base_amount").isNull() ? tr("?????") : rcp.value("base_amount"), "curr");
       last->setNumber(8, rcp.value("amount").isNull() ? tr("?????") : rcp.value("amount"), "curr");
     }
