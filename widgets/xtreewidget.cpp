@@ -1989,7 +1989,7 @@ void XTreeWidgetItem::setNumericRole(int pColIdx, const QString pRole)
 
     if (canConvert)
     {
-      setData(colIdx, Qt::DisplayRole, QLocale().toString(value, 'f', decimalPlaces(pRole)));
+      setData(pColIdx, Qt::DisplayRole, QLocale().toString(value, 'f', decimalPlaces(pRole)));
     }
   }
 }
