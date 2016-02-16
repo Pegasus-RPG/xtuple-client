@@ -134,7 +134,8 @@ class XTUPLEWIDGETS_EXPORT XTreeWidgetItem : public QObject, public QTreeWidgetI
     Q_INVOKABLE virtual QVariant        rawValue(const QString colname);
     Q_INVOKABLE virtual int             id(const QString);
 
-    Q_INVOKABLE virtual void            setNumericRole(const QString pRole, const QString pColumn);
+    Q_INVOKABLE virtual void            setRawValue(int pColIdx, const QVariant pValue);
+    Q_INVOKABLE virtual void            setNumericRole(int pColIdx, const QString pRole);
 
     virtual bool operator               <(const XTreeWidgetItem &other) const;
     virtual bool operator               ==(const XTreeWidgetItem &other) const;

@@ -52,8 +52,8 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
     _receipts->addColumn(tr("Notes"),                    -1, Qt::AlignLeft   );
     _receipts->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignCenter );
     _receipts->addColumn(tr("Exch. Rate"),  _bigMoneyColumn, Qt::AlignRight  );
-    _receipts->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight, true, "base_amount");
-    _receipts->addColumn(tr("Amount"),      _bigMoneyColumn, Qt::AlignRight, true, "amount" );
+    _receipts->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight  );
+    _receipts->addColumn(tr("Amount"),      _bigMoneyColumn, Qt::AlignRight  );
     
     _checks->addColumn(tr("Cleared"),       _ynColumn * 2, Qt::AlignCenter , true, "cleared");
     _checks->addColumn(tr("Date"),            _dateColumn, Qt::AlignCenter , true, "transdate");
@@ -347,13 +347,16 @@ void reconcileBankaccount::populate()
       {
         if(parent != 0)
         {
-          parent->setText(0, (cleared ? tr("Yes") : tr("No")));
-          parent->setText(8, amountNull ? tr("?????") : formatMoney(amount));
-          parent->setNumericRole("curr", "amount");
+          parent->setRawValue(0, (cleared ? tr("Yes") : tr("No")));
+          parent->setRawValue(8, amountNull ? tr("?????") : QVariant(amount));
+          parent->setNumericRole(8, "curr");
         }
         jrnlnum = rcp.value("jrnlnum").toInt();
-        last = new XTreeWidgetItem( _receipts, last,
-          jrnlnum, 9, "", rcp.value("f_jrnldate").toDate(), tr("JS"), rcp.value("jrnlnum"));
+        last = new XTreeWidgetItem( _receipts, last, jrnlnum, 9);
+        last->setRawValue(0, "");
+        last->setRawValue(1, rcp.value("f_jrnldate"));
+        last->setRawValue(2, tr("JS"));
+        last->setRawValue(3, rcp.value("jrnlnum"));
         parent = last;
         cleared = true;
         amount = 0.0;
@@ -364,51 +367,55 @@ void reconcileBankaccount::populate()
       amount += rcp.value("amount").toDouble();
       amountNull = rcp.value("amount").isNull();
       
-      lastChild = new XTreeWidgetItem( parent, lastChild,
-        rcp.value("id").toInt(), rcp.value("altid").toInt(),
-        (rcp.value("cleared").toBool() ? tr("Yes") : tr("No")),
-        rcp.value("f_date").toDate(), rcp.value("doc_type"), rcp.value("docnumber"),
-        rcp.value("notes"),
-        rcp.value("doc_curr"),
-        rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6), // 6 dp to match bankrec-receipts metasql
-        rcp.value("base_amount").isNull() ? tr("?????") : QVariant(rcp.value("base_amount").toDouble()),
-        rcp.value("amount").isNull() ? tr("?????") : QVariant(rcp.value("amount").toDouble()) );
+      lastChild = new XTreeWidgetItem(parent, lastChild, rcp.value("id").toInt(), rcp.value("altid").toInt());
 
-      lastChild->setNumericRole("curr", "base_amount");
-      lastChild->setNumericRole("curr", "amount");
+      lastChild->setRawValue(0, rcp.value("cleared") ? tr("Yes") : tr("No"));
+      lastChild->setRawValue(1, rcp.value("f_date"));
+      lastChild->setRawValue(2, rcp.value("doc_type"));
+      lastChild->setRawValue(3, rcp.value("docnumber"));
+      lastChild->setRawValue(4, rcp.value("notes"));
+      lastChild->setRawValue(5, rcp.value("doc_curr"));
+      lastChild->setRawValue(6, rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6));
+      lastChild->setRawValue(7, rcp.value("base_amount").isNull() ? tr("?????") : rcp.value("base_amount"));
+      lastChild->setRawValue(8, rcp.value("amount").isNull() ? tr("?????") : rcp.value("amount"));
+
+      lastChild->setNumericRole(7, "curr");
+      lastChild->setNumericRole(8, "curr");
     }
     else
     {
       if(parent != 0)
       {
-        parent->setText(0, (cleared ? tr("Yes") : tr("No")));
-        parent->setText(8, formatMoney(amount));
-        parent->setNumericRole("curr", "amount");
+        parent->setRawValue(0, (cleared ? tr("Yes") : tr("No")));
+        parent->setRawValue(8, QVariant(amount));
+        parent->setNumericRole(8, "curr");
       }
       parent = 0;
       cleared = true;
       amount = 0.0;
       amountNull = true;
       lastChild = 0;
-      last = new XTreeWidgetItem( _receipts, last,
-        rcp.value("id").toInt(), rcp.value("altid").toInt(),
-        (rcp.value("cleared").toBool() ? tr("Yes") : tr("No")),
-        rcp.value("f_date").toDate(), rcp.value("doc_type"), rcp.value("docnumber"),
-        rcp.value("notes"),
-        rcp.value("doc_curr"),
-        rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6), // 6 dp to match bankrec-receipts metasql
-        rcp.value("base_amount").isNull() ? tr("?????") : QVariant(rcp.value("base_amount").toDouble()),
-        rcp.value("amount").isNull() ? tr("?????") : QVariant(rcp.value("amount").toDouble()) );
+      last = new XTreeWidgetItem(_receipts, last, rcp.value("id").toInt(), rcp.value("altid").toInt());
 
-      lastChild->setNumericRole("curr", "base_amount");
-      lastChild->setNumericRole("curr", "amount");
+      last->setRawValue(0, rcp.value("cleared") ? tr("Yes") : tr("No"));
+      last->setRawValue(1, rcp.value("f_date"));
+      last->setRawValue(2, rcp.value("doc_type"));
+      last->setRawValue(3, rcp.value("docnumber"));
+      last->setRawValue(4, rcp.value("notes"));
+      last->setRawValue(5, rcp.value("doc_curr"));
+      last->setRawValue(6, rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6));
+      last->setRawValue(7, rcp.value("base_amount").isNull() ? tr("?????") : rcp.value("base_amount"));
+      last->setRawValue(8, rcp.value("amount").isNull() ? tr("?????") : rcp.value("amount"));
+
+      last->setNumericRole(7, "curr");
+      last->setNumericRole(8, "curr");
     }
   }
   if(parent != 0)
   {
-    parent->setText(0, (cleared ? tr("Yes") : tr("No")));
-    parent->setText(8, amountNull ? tr("?????") : formatMoney(amount));
-    parent->setNumericRole("curr", "amount");
+    parent->setRawValue(0, (cleared ? tr("Yes") : tr("No")));
+    parent->setRawValue(8, amountNull ? tr("?????") : QVariant(amount));
+    parent->setNumericRole(8, "curr");
   }
 
   if(currid != -1)

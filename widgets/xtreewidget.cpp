@@ -1975,13 +1975,17 @@ QVariant XTreeWidgetItem::rawValue(const QString pName)
     return data(colIdx, Xt::RawRole);
 }
 
-void XTreeWidgetItem::setNumericRole(const QString pRole, const QString pColumn)
+void XTreeWidgetItem::setRawValue(int pColumn, const QVariant &pValue)
 {
-  int colIdx = ((XTreeWidget *)treeWidget())->column(pColumn);
-  if (colIdx >= 0)
+  setData(pColumn, Qt::RawRole, pValue);
+}
+
+void XTreeWidgetItem::setNumericRole(int pColIdx, const QString pRole)
+{
+  if (pColIdx >= 0)
   {
     bool canConvert = false;
-    double value = text(pColumn).toDouble(&canConvert);
+    double value = data(pColIdx, Xt::RawRole).toDouble(&canConvert);
 
     if (canConvert)
     {
