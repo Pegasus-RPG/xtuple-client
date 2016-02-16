@@ -989,6 +989,7 @@ bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
       break;
 
     case QVariant::Date:
+qDebug("Comparing dates.");
       returnVal = (v1.toDate() < v2.toDate());
       break;
 
@@ -997,6 +998,7 @@ bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
       break;
 
     case QVariant::Double:
+qDebug("Comparing doubles.");
       returnVal = (v1.toDouble() < v2.toDouble());
       break;
 
@@ -1009,6 +1011,7 @@ bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
       break;
 
     case QVariant::String:
+qDebug("Comparint strings.");
       bool ok;
       if (v1.toString().toDouble() == 0.0 && v2.toDouble() == 0.0)
         returnVal = (v1.toString() < v2.toString());
