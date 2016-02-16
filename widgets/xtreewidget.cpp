@@ -1977,7 +1977,7 @@ QVariant XTreeWidgetItem::rawValue(const QString pName)
 
 void XTreeWidgetItem::setRawValue(int pColumn, const QVariant &pValue)
 {
-  setData(pColumn, Qt::RawRole, pValue);
+  setData(pColumn, Xt::RawRole, pValue);
 }
 
 void XTreeWidgetItem::setNumericRole(int pColIdx, const QString pRole)
