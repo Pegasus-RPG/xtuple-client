@@ -369,7 +369,7 @@ void reconcileBankaccount::populate()
       
       lastChild = new XTreeWidgetItem(parent, lastChild, rcp.value("id").toInt(), rcp.value("altid").toInt());
 
-      lastChild->setRawValue(0, rcp.value("cleared") ? tr("Yes") : tr("No"));
+      lastChild->setRawValue(0, rcp.value("cleared").toBool() ? tr("Yes") : tr("No"));
       lastChild->setRawValue(1, rcp.value("f_date"));
       lastChild->setRawValue(2, rcp.value("doc_type"));
       lastChild->setRawValue(3, rcp.value("docnumber"));
@@ -397,7 +397,7 @@ void reconcileBankaccount::populate()
       lastChild = 0;
       last = new XTreeWidgetItem(_receipts, last, rcp.value("id").toInt(), rcp.value("altid").toInt());
 
-      last->setRawValue(0, rcp.value("cleared") ? tr("Yes") : tr("No"));
+      last->setRawValue(0, rcp.value("cleared").toBool() ? tr("Yes") : tr("No"));
       last->setRawValue(1, rcp.value("f_date"));
       last->setRawValue(2, rcp.value("doc_type"));
       last->setRawValue(3, rcp.value("docnumber"));
