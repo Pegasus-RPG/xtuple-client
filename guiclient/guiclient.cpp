@@ -1044,7 +1044,7 @@ void GUIClient::sTick()
     if (!QSqlDatabase::database().isOpen())
     {
       if  (QMessageBox::question(this, tr("Database disconnected"),
-                                tr("It appears that you have been disconnected from the "
+                                tr("It appears that you've been disconnected from the"
                                    "database. Select Yes to try to reconnect or "
                                    "No to terminate the application."),
                                    QMessageBox::Yes,
