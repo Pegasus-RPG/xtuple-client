@@ -897,7 +897,7 @@ void XTreeWidget::addColumn(const QString &pString, int pWidth, int pAlignment, 
       roles->insert("qtdisplayrole", pDisplayColumn);
 
     _roles.insert(column, roles);
-qDebug("Adding role %s " + qPrintable(column));
+qDebug("Adding role %s ", qPrintable(column));
   }
 
   _defaultColumnWidths.insert(column, pWidth);
