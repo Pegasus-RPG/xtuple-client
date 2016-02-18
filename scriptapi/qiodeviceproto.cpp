@@ -8,6 +8,7 @@
  *to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qiodeviceproto.h"
 
 /** \ingroup scriptapi
@@ -24,6 +25,16 @@ QScriptValue QIODevicetoScriptValue(QScriptEngine *engine, QIODevice* const &ite
 void QIODevicefromScriptValue(const QScriptValue &obj, QIODevice* &item)
 { item = qobject_cast<QIODevice*>(obj.toQObject()); }
 
+QScriptValue OpenModeFlagtoScriptValue(QScriptEngine *engine, const enum QIODevice::OpenModeFlag &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void OpenModeFlagfromScriptValue(const QScriptValue &obj, enum QIODevice::OpenModeFlag &p)
+{
+  p = (enum QIODevice::OpenModeFlag)obj.toInt32();
+}
+
 void setupQIODeviceProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QIODevicetoScriptValue, QIODevicefromScriptValue);
@@ -32,17 +43,18 @@ void setupQIODeviceProto(QScriptEngine *engine)
   engine->globalObject().setProperty("QIODevice",  iodev, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   // enum QIODevice::OpenModeFlag
-  iodev.setProperty("NotOpen", QScriptValue(engine, QIODevice::NotOpen), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  iodev.setProperty("ReadOnly", QScriptValue(engine, QIODevice::ReadOnly), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  iodev.setProperty("WriteOnly", QScriptValue(engine, QIODevice::WriteOnly), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  iodev.setProperty("ReadWrite", QScriptValue(engine, QIODevice::ReadWrite), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  iodev.setProperty("Append", QScriptValue(engine, QIODevice::Append), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  iodev.setProperty("Truncate", QScriptValue(engine, QIODevice::Truncate), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  iodev.setProperty("Text", QScriptValue(engine, QIODevice::Text), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  iodev.setProperty("Unbuffered", QScriptValue(engine, QIODevice::Unbuffered), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  qScriptRegisterMetaType(engine, OpenModeFlagtoScriptValue, OpenModeFlagfromScriptValue);
+  iodev.setProperty("NotOpen",    QScriptValue(engine, QIODevice::NotOpen),    ENUMPROPFLAGS);
+  iodev.setProperty("ReadOnly",   QScriptValue(engine, QIODevice::ReadOnly),   ENUMPROPFLAGS);
+  iodev.setProperty("WriteOnly",  QScriptValue(engine, QIODevice::WriteOnly),  ENUMPROPFLAGS);
+  iodev.setProperty("ReadWrite",  QScriptValue(engine, QIODevice::ReadWrite),  ENUMPROPFLAGS);
+  iodev.setProperty("Append",     QScriptValue(engine, QIODevice::Append),     ENUMPROPFLAGS);
+  iodev.setProperty("Truncate",   QScriptValue(engine, QIODevice::Truncate),   ENUMPROPFLAGS);
+  iodev.setProperty("Text",       QScriptValue(engine, QIODevice::Text),       ENUMPROPFLAGS);
+  iodev.setProperty("Unbuffered", QScriptValue(engine, QIODevice::Unbuffered), ENUMPROPFLAGS);
 }
 
-Q_DECLARE_METATYPE(enum QIODevice::OpenModeFlag);
+Q_DECLARE_METATYPE(enum QIODevice::OpenModeFlag)
 
 QIODeviceProto::QIODeviceProto(QObject *parent)
     : QObject(parent)
@@ -309,13 +321,3 @@ qint64 QIODeviceProto::write(const char *data, qint64 maxSize)
     return item->write(data, maxSize);
   return 0;
 }
-
-/**
-QString QIODeviceProto::toString() const
-{
-  QIODevice *item = qscriptvalue_cast<QIODevice*>(thisObject());
-  if (item)
-    return QString("QIODevice()");
-  return QString("QIODevice(unknown)");
-}
-*/

@@ -18,7 +18,7 @@ void setupQSslSocketProto(QScriptEngine *engine);
 #if QT_VERSION >= 0x050000
 #include <QScriptable>
 #include <QSslSocket>
-
+#include "qtcpsocketproto.h"
 class QSslSocket;
 
 Q_DECLARE_METATYPE(QSslSocket*)
@@ -27,7 +27,7 @@ Q_DECLARE_METATYPE(enum QSslSocket::SslMode)
 
 QScriptValue constructQSslSocket(QScriptContext *context, QScriptEngine *engine);
 
-class QSslSocketProto : public QObject, public QScriptable
+class QSslSocketProto : public QTcpSocketProto
 {
   Q_OBJECT
 

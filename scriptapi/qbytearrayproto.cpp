@@ -16,7 +16,7 @@ static QByteArray nullBA = QByteArray();
 QScriptValue QByteArraytoScriptValue(QScriptEngine *engine, QByteArray* const &item)
 {
   QByteArray tmpBA = *item;
-  QVariant  *tmpVar = new QVariant(tmpBA);      // TODO: memory leak?
+  QVariant  *tmpVar = new QVariant(tmpBA);
   return engine->newVariant(*tmpVar);
 }
 
@@ -49,14 +49,14 @@ void QListQByteArrayfromScriptValue(const QScriptValue &obj, QList<QByteArray> &
 
 void setupQByteArrayProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QByteArraytoScriptValue, QByteArrayfromScriptValue);
+  //qScriptRegisterMetaType(engine, QByteArraytoScriptValue, QByteArrayfromScriptValue);
 
 #if QT_VERSION >= 0x050000
   qScriptRegisterMetaType(engine, QListQByteArraytoScriptValue, QListQByteArrayfromScriptValue);
 #endif
 
   QScriptValue proto = engine->newQObject(new QByteArrayProto(engine));
-  engine->setDefaultPrototype(qMetaTypeId<QByteArray*>(), proto);
+  //engine->setDefaultPrototype(qMetaTypeId<QByteArray*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QByteArray>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQByteArray,
@@ -67,29 +67,29 @@ void setupQByteArrayProto(QScriptEngine *engine)
 QScriptValue constructQByteArray(QScriptContext *context,
                                  QScriptEngine  *engine)
 {
-  QByteArray *obj = 0;
+  QByteArray obj = 0;
 
   if (context->argumentCount() == 0)
-    obj = new QByteArray();
+    obj = QByteArray();
 
   else if (context->argumentCount() == 1 &&
-           qscriptvalue_cast<QByteArray*>(context->argument(0)))
-    obj = new QByteArray(*(qscriptvalue_cast<QByteArray*>(context->argument(0))));
+             qscriptvalue_cast<QByteArray*>(context->argument(0)))
+    obj = QByteArray(*(qscriptvalue_cast<QByteArray*>(context->argument(0))));
 
   else if (context->argumentCount() == 1 &&
            context->argument(0).isString())
-    obj = new QByteArray(context->argument(0).toString().toLatin1().data());
+    obj = QByteArray(context->argument(0).toString().toLatin1().data());
 
   else if (context->argumentCount() == 2 &&
            context->argument(0).isString() &&
            context->argument(1).isNumber())
-    obj = new QByteArray(context->argument(0).toString().toLatin1().data(),
+    obj = QByteArray(context->argument(0).toString().toLatin1().data(),
                          context->argument(1).toInt32());
 
   else if (context->argumentCount() == 2 &&
            context->argument(0).isNumber() &&
            context->argument(1).isString())
-    obj = new QByteArray(context->argument(0).toInt32(),
+    obj = QByteArray(context->argument(0).toInt32(),
                          context->argument(1).toString().at(0).toLatin1());
 
   else
@@ -104,7 +104,7 @@ QByteArrayProto::QByteArrayProto(QObject *parent)
 {
 }
 
-/*
+
 QByteArray &QByteArrayProto::append(const QByteArray &ba)
 {
   QByteArray *item = qscriptvalue_cast<QByteArray*>(thisObject());
@@ -900,7 +900,6 @@ void QByteArrayProto::truncate(int pos)
   if (item)
     item->truncate(pos);
 }
-*/
 
 QString QByteArrayProto::toString() const
 {
