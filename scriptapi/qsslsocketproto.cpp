@@ -93,7 +93,7 @@ QScriptValue constructQSslSocket(QScriptContext * /*context*/,
 }
 
 QSslSocketProto::QSslSocketProto(QObject *parent)
-    : QObject(parent)
+    : QTcpSocketProto(parent)
 {
 }
 
