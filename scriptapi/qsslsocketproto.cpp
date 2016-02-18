@@ -158,14 +158,14 @@ void QSslSocketProto::addCaCertificates(const QList<QSslCertificate> & certifica
     item->addCaCertificates(certificates);
 }
 
-void QSslSocketProto::connectToHostEncrypted(const QString & hostName, quint16 port, OpenMode mode, NetworkLayerProtocol protocol)
+void QSslSocketProto::connectToHostEncrypted(const QString & hostName, quint16 port, QIODevice::OpenMode mode, QAbstractSocket::NetworkLayerProtocol protocol)
 {
   QSslSocket *item = qscriptvalue_cast<QSslSocket*>(thisObject());
   if (item)
     item->connectToHostEncrypted(hostName, port, mode, protocol);
 }
 
-void QSslSocketProto::connectToHostEncrypted(const QString & hostName, quint16 port, const QString & sslPeerName, OpenMode mode, NetworkLayerProtocol protocol)
+void QSslSocketProto::connectToHostEncrypted(const QString & hostName, quint16 port, const QString & sslPeerName, QIODevice::OpenMode mode, QAbstractSocket::NetworkLayerProtocol protocol)
 {
   QSslSocket *item = qscriptvalue_cast<QSslSocket*>(thisObject());
   if (item)
@@ -328,7 +328,7 @@ void QSslSocketProto::setLocalCertificateChain(const QList<QSslCertificate> & lo
     item->setLocalCertificateChain(localChain);
 }
 
-void QSslSocketProto::setPeerVerifyDepth(depth)
+void QSslSocketProto::setPeerVerifyDepth(int depth)
 {
   QSslSocket *item = qscriptvalue_cast<QSslSocket*>(thisObject());
   if (item)
@@ -456,7 +456,7 @@ void QSslSocketProto::setReadBufferSize(qint64 size)
     item->setReadBufferSize(size);
 }
 
-bool QSslSocketProto::setSocketDescriptor(qintptr socketDescriptor, SocketState state, OpenMode openMode)
+bool QSslSocketProto::setSocketDescriptor(qintptr socketDescriptor, QAbstractSocket::SocketState state, QIODevice::OpenMode openMode)
 {
   QSslSocket *item = qscriptvalue_cast<QSslSocket*>(thisObject());
   if (item)
@@ -487,7 +487,7 @@ bool QSslSocketProto::waitForBytesWritten(int msecs)
   return false;
 }
 
-bool QSslSocketProto::waitForConnected(msecs)
+bool QSslSocketProto::waitForConnected(int msecs)
 {
   QSslSocket *item = qscriptvalue_cast<QSslSocket*>(thisObject());
   if (item)

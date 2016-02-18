@@ -16,7 +16,13 @@
 void setupQSslSocketProto(QScriptEngine *engine);
 
 #if QT_VERSION >= 0x050000
+#include <QIODevice>
 #include <QScriptable>
+#include <QSsl>
+#include <QSslCertificate>
+#include <QSslCipher>
+#include <QSslConfiguration>
+#include <QSslKey>
 #include <QSslSocket>
 #include "qtcpsocketproto.h"
 class QSslSocket;
@@ -39,8 +45,8 @@ class QSslSocketProto : public QTcpSocketProto
     Q_INVOKABLE void                        addCaCertificate(const QSslCertificate & certificate);
     Q_INVOKABLE bool                        addCaCertificates(const QString & path, QSsl::EncodingFormat format = QSsl::Pem, QRegExp::PatternSyntax syntax = QRegExp::FixedString);
     Q_INVOKABLE void                        addCaCertificates(const QList<QSslCertificate> & certificates);
-    Q_INVOKABLE void                        connectToHostEncrypted(const QString & hostName, quint16 port, OpenMode mode = ReadWrite, NetworkLayerProtocol protocol = AnyIPProtocol);
-    Q_INVOKABLE void                        connectToHostEncrypted(const QString & hostName, quint16 port, const QString & sslPeerName, OpenMode mode = ReadWrite, NetworkLayerProtocol protocol = AnyIPProtocol);
+    Q_INVOKABLE void                        connectToHostEncrypted(const QString & hostName, quint16 port, QIODevice::OpenMode mode = QIODevice::ReadWrite, QAbstractSocket::NetworkLayerProtocol protocol = QAbstractSocket::AnyIPProtocol);
+    Q_INVOKABLE void                        connectToHostEncrypted(const QString & hostName, quint16 port, const QString & sslPeerName, QIODevice::OpenMode mode = QIODevice::ReadWrite, QAbstractSocket::NetworkLayerProtocol protocol = QAbstractSocket::AnyIPProtocol);
     Q_INVOKABLE qint64                      encryptedBytesAvailable() const;
     Q_INVOKABLE qint64                      encryptedBytesToWrite() const;
     Q_INVOKABLE bool                        flush();
@@ -80,7 +86,7 @@ class QSslSocketProto : public QTcpSocketProto
     Q_INVOKABLE void      close();
     Q_INVOKABLE void      resume();
     Q_INVOKABLE void      setReadBufferSize(qint64 size);
-    Q_INVOKABLE bool      setSocketDescriptor(qintptr socketDescriptor, SocketState state = ConnectedState, OpenMode openMode = ReadWrite);
+    Q_INVOKABLE bool      setSocketDescriptor(qintptr socketDescriptor, QAbstractSocket::SocketState state = QAbstractSocket::ConnectedState, QIODevice::OpenMode openMode = QIODevice::ReadWrite);
     Q_INVOKABLE void      setSocketOption(QAbstractSocket::SocketOption option, const QVariant & value);
     Q_INVOKABLE QVariant  socketOption(QAbstractSocket::SocketOption option);
     Q_INVOKABLE bool      waitForBytesWritten(int msecs = 30000);

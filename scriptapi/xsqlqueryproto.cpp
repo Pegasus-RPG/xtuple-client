@@ -28,13 +28,22 @@ QScriptValue constructXSqlQuery(QScriptContext *context, QScriptEngine  *engine)
   if (context->argumentCount() > 0) {
     QScriptValue arg = context->argument(0);
     if (arg.isString()) {
+      /* TODO: Cannot pass QSqlDatabase.
       if (context->argumentCount() == 2) {
-        obj = new XSqlQuery(arg.toString(), context->argumentCount().toQObject());
+        QSqlDatabase db = context->argument(1).toVariant().value<QSqlDatabase>();
+        obj = new XSqlQuery(arg.toString(), db);
       } else {
         obj = new XSqlQuery(arg.toString());
       }
+      */
+      obj = new XSqlQuery(arg.toString());
     } else {
-      obj = new XSqlQuery(arg.toQObject());
+      /* TODO: Cannot pass QSqlDatabase.
+      QSqlDatabase db = arg.toVariant().value<QSqlDatabase>();
+      obj = new XSqlQuery(db);
+      */
+      context->throwError(QScriptContext::UnknownError,
+                          "Qt Script XSqlQuery() can only take one QString arg. No other instantiation is supported at this time.");
     }
   } else {
     obj = new XSqlQuery();
@@ -205,4 +214,3 @@ int XSqlQueryProto::findFirst(const QString & col, const QString & val)
     return item->findFirst(col, val);
   return -1;
 }
-
