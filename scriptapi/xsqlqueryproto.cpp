@@ -18,28 +18,36 @@ void setupXSqlQueryProto(QScriptEngine *engine)
   engine->setDefaultPrototype(qMetaTypeId<XSqlQuery*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<XSqlQuery>(),  proto);
 
-/*
-  QScriptValue constructor = engine->newFunction(constructXSqlQuery,
-                                                 proto);
+  QScriptValue constructor = engine->newFunction(constructXSqlQuery, proto);
   engine->globalObject().setProperty("XSqlQuery",  constructor);
-*/
 }
 
-/*
-QScriptValue constructXSqlQuery(QScriptContext * context,
-                                QScriptEngine  *engine)
+QScriptValue constructXSqlQuery(QScriptContext *context, QScriptEngine  *engine)
 {
   XSqlQuery *obj = 0;
-  if (context->argumentCount() == 1)
-    obj = new XSqlQuery(context->argument(1).toQObject());
-  else
+  if (context->argumentCount() > 0) {
+    QScriptValue arg = context->argument(0);
+    if (arg.isString()) {
+      if (context->argumentCount() == 2) {
+        obj = new XSqlQuery(arg.toString(), context->argumentCount().toQObject());
+      } else {
+        obj = new XSqlQuery(arg.toString());
+      }
+    } else {
+      obj = new XSqlQuery(arg.toQObject());
+    }
+  } else {
     obj = new XSqlQuery();
+  }
+
   return engine->toScriptValue(obj);
 }
-*/
 
-XSqlQueryProto::XSqlQueryProto(QObject * parent)
-  : QObject(parent)
+XSqlQueryProto::XSqlQueryProto(QObject * parent) : QObject(parent)
+{
+}
+
+XSqlQueryProto::~XSqlQueryProto()
 {
 }
 
