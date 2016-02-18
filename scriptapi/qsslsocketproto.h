@@ -107,6 +107,24 @@ class QSslSocketProto : public QTcpSocketProto
     void  preSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator * authenticator);
     void  sslErrors(const QList<QSslError> & errors);
 
+    // QAbstractSocket signals:
+    void  connected();
+    void  disconnected();
+    void  error(QAbstractSocket::SocketError socketError);
+    void  hostFound();
+    void  proxyAuthenticationRequired(const QNetworkProxy & proxy, QAuthenticator * authenticator);
+    void  stateChanged(QAbstractSocket::SocketState socketState);
+
+    // QIODevice signals:
+    void  aboutToClose();
+    void  bytesWritten(qint64 bytes);
+    void  readChannelFinished();
+    void  readyRead();
+
+    // QObject signals:
+    void  destroyed(QObject * obj = 0);
+    void  objectNameChanged(const QString & objectName);
+
 };
 
 #endif
