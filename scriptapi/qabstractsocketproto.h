@@ -29,9 +29,9 @@ Q_DECLARE_METATYPE(QAbstractSocket::BindMode)
 Q_DECLARE_METATYPE(enum QAbstractSocket::NetworkLayerProtocol)
 Q_DECLARE_METATYPE(enum QAbstractSocket::PauseMode)
 Q_DECLARE_METATYPE(QAbstractSocket::PauseModes)
-//Q_DECLARE_METATYPE(enum QAbstractSocket::SocketError) already declared somewhere?
+//Q_DECLARE_METATYPE(enum QAbstractSocket::SocketError) // Already declared in qabstractsocket.h
 Q_DECLARE_METATYPE(enum QAbstractSocket::SocketOption)
-//Q_DECLARE_METATYPE(enum QAbstractSocket::SocketState) already declared somewhere?
+//Q_DECLARE_METATYPE(enum QAbstractSocket::SocketState) // Already declared in qabstractsocket.h
 Q_DECLARE_METATYPE(enum QAbstractSocket::SocketType)
 
 class QAbstractSocketProto : public QIODeviceProto
