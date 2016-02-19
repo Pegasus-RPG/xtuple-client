@@ -11,6 +11,7 @@
 #include "addressclustersetup.h"
 #include "alarmssetup.h"
 #include "calendarTools.h"
+#include "char.h"
 #include "clineeditsetup.h"
 #include "commentssetup.h"
 #include "contactwidgetsetup.h"
@@ -174,6 +175,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupAddressCluster(engine);
   setupAlarms(engine);
   setupCLineEdit(engine);
+  setupchar(engine);
   setupCRMAcctLineEdit(engine);
   setupComments(engine);
   setupContactWidget(engine);

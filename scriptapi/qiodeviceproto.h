@@ -16,6 +16,8 @@
 #include <QtScript>
 
 Q_DECLARE_METATYPE(QIODevice*)
+Q_DECLARE_METATYPE(enum QIODevice::OpenModeFlag)
+Q_DECLARE_METATYPE(QIODevice::OpenMode)
 
 void setupQIODeviceProto(QScriptEngine *engine);
 QScriptValue constructQIODevice(QScriptContext *context, QScriptEngine *engine);

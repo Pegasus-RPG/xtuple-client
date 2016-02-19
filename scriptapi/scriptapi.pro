@@ -143,6 +143,7 @@ HEADERS += setupscriptapi.h \
     xsqlqueryproto.h \
     addressclustersetup.h \
     alarmssetup.h \
+    char.h \
     clineeditsetup.h \
     commentssetup.h \
     contactwidgetsetup.h \
@@ -286,6 +287,7 @@ SOURCES += setupscriptapi.cpp \
     xsqlqueryproto.cpp \
     addressclustersetup.cpp \
     alarmssetup.cpp \
+    char.cpp \
     clineeditsetup.cpp \
     commentssetup.cpp \
     contactwidgetsetup.cpp \
