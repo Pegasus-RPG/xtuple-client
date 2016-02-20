@@ -119,11 +119,19 @@ QString QIODeviceProto::errorString() const
   return QString();
 }
 
-bool QIODeviceProto::getChar(char *c)
+// Javascript does not support pass by reference String parameters. Return char instead.
+//bool QIODeviceProto::getChar(char *c)
+char QIODeviceProto::getChar()
 {
+  char c;
   QIODevice *item = qscriptvalue_cast<QIODevice*>(thisObject());
-  if (item)
-    return item->getChar(c);
+  if (item) {
+    if (item->getChar(&c)) {
+      return c;
+    } else {
+      return false;
+    }
+  }
   return false;
 }
 

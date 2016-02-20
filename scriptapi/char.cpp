@@ -10,11 +10,12 @@
 
 #include "char.h"
 
-QScriptValue charPointerToScriptValue(QScriptEngine *engine, char* &item)
+QScriptValue charPointerToScriptValue(QScriptEngine *engine, char* const &item)
 {
   QVariant v;
-  v.setValue(QString(QChar(item)));
-  return engine->newVariant(v);
+  QString *myString = new QString(item);
+  v.setValue(myString);
+  return engine->newVariant(QScriptValue(item), v);
 }
 void charPointerFromScriptValue(const QScriptValue &obj, char* &item)
 {

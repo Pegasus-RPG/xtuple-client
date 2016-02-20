@@ -13,4 +13,9 @@
 
 #include <QtScript>
 
+Q_DECLARE_METATYPE(char*)
+Q_DECLARE_METATYPE(QString*)
+
 void setupchar(QScriptEngine *engine);
+
+#endif
