@@ -1473,7 +1473,8 @@ void salesOrderItem::sSave(bool pPartial)
       if (explodeq.lastError().type() != QSqlError::NoError)
       {
         rollback.exec();
-        systemError(this, explodeq.lastError().databaseText(), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                             explodeq, __FILE__, __LINE__);
         return;
       }
     }
@@ -1757,9 +1758,9 @@ void salesOrderItem::sDeterminePrice(bool force)
         _itemchar->setData(idx3, salesDeterminePrice.value("price").toString(), Qt::DisplayRole);
         _itemchar->setData(idx3, QVariant(_charVars), Qt::UserRole);
       }
-      else if (salesDeterminePrice.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Pricing Information"),
+                                    salesDeterminePrice, __FILE__, __LINE__))
       {
-        systemError(this, salesDeterminePrice.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
@@ -1847,7 +1848,8 @@ void salesOrderItem::sDeterminePrice(bool force)
     }
   }
   else if (itemprice.lastError().type() != QSqlError::NoError)
-            systemError(this, itemprice.lastError().databaseText(), __FILE__, __LINE__);
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Pricing Information"),
+                                itemprice, __FILE__, __LINE__);
 
   sCheckSupplyOrder();
 }
@@ -1888,9 +1890,9 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
         itemsrc.exec();
         if (itemsrc.first())
           ;   // do nothing
-        else if (itemsrc.lastError().type() != QSqlError::NoError)
+        else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                      itemsrc, __FILE__, __LINE__))
         {
-            systemError(this, itemsrc.lastError().databaseText(), __FILE__, __LINE__);
           return;
         }
         else
@@ -1926,9 +1928,9 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       sCalculateDiscountPrcnt();
 
     }
-    else if (salesPopulateItemInfo.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                  salesPopulateItemInfo, __FILE__, __LINE__))
     {
-      systemError(this, salesPopulateItemInfo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -2021,9 +2023,9 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       _itemchar->setData(idx, QVariant(_charVars), Qt::UserRole);
       row++;
     }
-    if (salesPopulateItemInfo.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                  salesPopulateItemInfo, __FILE__, __LINE__))
     {
-      systemError(this, salesPopulateItemInfo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -2163,9 +2165,9 @@ void salesOrderItem::sDetermineAvailability( bool p )
 
           availability = mql.toQuery(params);
           _availability->populate(availability);
-          if (availability.lastError().type() != QSqlError::NoError)
+          if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                        availability, __FILE__, __LINE__))
           {
-            systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
             return;
           }
           _availability->expandAll();
@@ -2198,9 +2200,9 @@ void salesOrderItem::sDetermineAvailability( bool p )
           
           availability = mql.toQuery(params);
           _availability->populate(availability);
-          if (availability.lastError().type() != QSqlError::NoError)
+          if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                        availability, __FILE__, __LINE__))
           {
-            systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
             return;
           }
         }
@@ -2208,9 +2210,9 @@ void salesOrderItem::sDetermineAvailability( bool p )
       else
         _availability->setEnabled(false);
     }
-    else if (availability.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                  availability, __FILE__, __LINE__))
     {
-      systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -2298,14 +2300,15 @@ void salesOrderItem::sReserveStock()
       int result = reserveSales.value("result").toInt();
       if (result < 0)
       {
-        systemError(this, storedProcErrorLookup("reserveSoLineBalance", result),
-                    __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Reserving Item"),
+                               storedProcErrorLookup("reserveSoLineBalance", result),
+                               __FILE__, __LINE__);
         return;
       }
     }
-    else if (reserveSales.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Reserving Item"),
+                                  reserveSales, __FILE__, __LINE__))
     {
-      systemError(this, reserveSales.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -2451,9 +2454,9 @@ void salesOrderItem::sHandleSupplyOrder()
     ordq.exec();
     if (ordq.first())
       valqty = ordq.value("qty").toDouble();
-    else if (ordq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                  ordq, __FILE__, __LINE__))
     {
-      systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
       
@@ -2495,9 +2498,9 @@ void salesOrderItem::sHandleSupplyOrder()
             implodeq.exec();
           }
         }
-        else if (ordq.lastError().type() != QSqlError::NoError)
+        else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                      ordq, __FILE__, __LINE__))
         {
-          systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
           return;
         }
       }
@@ -2516,9 +2519,9 @@ void salesOrderItem::sHandleSupplyOrder()
           {
             itemsrcid=(ordq.value("itemsrc_id").toInt());
           }
-          else if (ordq.lastError().type() != QSqlError::NoError)
+          else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                        ordq, __FILE__, __LINE__))
           {
-            systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
             return;
           }
           else
@@ -2539,7 +2542,8 @@ void salesOrderItem::sHandleSupplyOrder()
         ordq.exec();
         if (!ordq.first())
         {
-          systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                               ordq, __FILE__, __LINE__);
           return;
         }
         else
@@ -2612,8 +2616,9 @@ void salesOrderItem::sHandleSupplyOrder()
             procname = "createPurchaseToSale";
           else
             procname = "unnamed stored procedure";
-          systemError(this, storedProcErrorLookup(procname, _supplyOrderId),
-                      __FILE__, __LINE__);
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Database Information"),
+                                   storedProcErrorLookup(procname, _supplyOrderId),
+                                   __FILE__, __LINE__);
           return;
         }
         // save the sales order item again to capture the supply order id
@@ -2630,15 +2635,15 @@ void salesOrderItem::sHandleSupplyOrder()
         ordq.bindValue(":orderid", _supplyOrderId);
         ordq.bindValue(":soitem_id", _soitemid);
         ordq.exec();
-        if (ordq.lastError().type() != QSqlError::NoError)
+        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Sales Order Information"),
+                                      ordq, __FILE__, __LINE__))
         {
-          systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
           return;
         }
       }
-      else if (ordq.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Sales Order Information"),
+                                    ordq, __FILE__, __LINE__))
       {
-        systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }  // end supply order does not exist
@@ -2689,13 +2694,15 @@ void salesOrderItem::sHandleSupplyOrder()
               int result = ordq.value("result").toInt();
               if (result < 0)
               {
-                systemError(this, storedProcErrorLookup("changeWoQty", result), __FILE__, __LINE__);
+                ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                                       storedProcErrorLookup("changeWoQty", result),
+                                       __FILE__, __LINE__);
                 return;
               }
             }
-            else if (ordq.lastError().type() != QSqlError::NoError)
+            else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                                          ordq, __FILE__, __LINE__))
             {
-              systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
               return;
             }
           } // end supply ord qty changed
@@ -2735,13 +2742,14 @@ void salesOrderItem::sHandleSupplyOrder()
                 bool result = ordq.value("result").toBool();
                 if (!result)
                 {
-                  systemError(this, tr("changePoQty failed"), __FILE__, __LINE__);
+                  ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                                       ordq, __FILE__, __LINE__);
                   return;
                 }
               }
-              else if (ordq.lastError().type() != QSqlError::NoError)
+              else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                                            ordq, __FILE__, __LINE__))
               {
-                systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
                 return;
               }
             }
@@ -2757,13 +2765,14 @@ void salesOrderItem::sHandleSupplyOrder()
               bool result = ordq.value("result").toBool();
               if (!result)
               {
-                systemError(this, tr("changePoQty failed"), __FILE__, __LINE__);
+                ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                                     ordq, __FILE__, __LINE__);
                 return;
               }
             }
-            else if (ordq.lastError().type() != QSqlError::NoError)
+            else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                                          ordq, __FILE__, __LINE__))
             {
-              systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
               return;
             }
           } // end supply ord qty changed
@@ -2794,13 +2803,14 @@ void salesOrderItem::sHandleSupplyOrder()
                 bool result = ordq.value("result").toBool();
                 if (!result)
                 {
-                  systemError(this, tr("changePrQty failed"), __FILE__, __LINE__);
+                  ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Request Information"),
+                                       ordq, __FILE__, __LINE__);
                   return;
                 }
               }
-              else if (ordq.lastError().type() != QSqlError::NoError)
+              else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Request Information"),
+                                            ordq, __FILE__, __LINE__))
               {
-                systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
                 return;
               }
             }
@@ -2816,13 +2826,14 @@ void salesOrderItem::sHandleSupplyOrder()
               bool result = ordq.value("result").toBool();
               if (!result)
               {
-                systemError(this, tr("changePrQty failed"), __FILE__, __LINE__);
+                ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Request Information"),
+                                     ordq, __FILE__, __LINE__);
                 return;
               }
             }
-            else if (ordq.lastError().type() != QSqlError::NoError)
+            else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Request Information"),
+                                          ordq, __FILE__, __LINE__))
             {
-              systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
               return;
             }
           } // end supply ord qty changed
@@ -2857,15 +2868,16 @@ void salesOrderItem::sHandleSupplyOrder()
               {
                 int result = ordq.value("result").toInt();
                 if (result < 0)
-                {
-                  systemError(this, storedProcErrorLookup("changeWoDates", result),
-                              __FILE__, __LINE__);
+                 {
+                  ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                                         storedProcErrorLookup("changeWoDates", result),
+                                         __FILE__, __LINE__);
                   return;
                 }
               }
-              else if (ordq.lastError().type() != QSqlError::NoError)
+              else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                                            ordq, __FILE__, __LINE__))
               {
-                systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
                 return;
               }
             }
@@ -2883,14 +2895,15 @@ void salesOrderItem::sHandleSupplyOrder()
               int result = ordq.value("result").toInt();
               if (result < 0)
               {
-                systemError(this, storedProcErrorLookup("changeWoDates", result),
-                            __FILE__, __LINE__);
+                ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                                       storedProcErrorLookup("changeWoDates", result),
+                                       __FILE__, __LINE__);
                 return;
               }
             }
-            else if (ordq.lastError().type() != QSqlError::NoError)
+            else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                                          ordq, __FILE__, __LINE__))
             {
-              systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
               return;
             }
           } // end supply ord due date changed
@@ -2928,13 +2941,15 @@ void salesOrderItem::sHandleSupplyOrder()
                 int result = ordq.value("result").toInt();
                 if (result < 0)
                 {
-                  systemError(this, storedProcErrorLookup("changePoDate", result), __FILE__, __LINE__);
+                  ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                                         storedProcErrorLookup("changePoDate", result),
+                                         __FILE__, __LINE__);
                   return;
                 }
               }
-              else if (ordq.lastError().type() != QSqlError::NoError)
+              else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                                            ordq, __FILE__, __LINE__))
               {
-                systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
                 return;
               }
             }
@@ -2950,13 +2965,15 @@ void salesOrderItem::sHandleSupplyOrder()
               int result = ordq.value("result").toInt();
               if (result < 0)
               {
-                systemError(this, storedProcErrorLookup("changePoDate", result), __FILE__, __LINE__);
+                ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                                       storedProcErrorLookup("changePoDate", result),
+                                       __FILE__, __LINE__);
                 return;
               }
             }
-            else if (ordq.lastError().type() != QSqlError::NoError)
+            else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                                          ordq, __FILE__, __LINE__))
             {
-              systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
               return;
             }
           } // end supply ord due date changed
@@ -2985,13 +3002,15 @@ void salesOrderItem::sHandleSupplyOrder()
                 int result = ordq.value("result").toInt();
                 if (result < 0)
                 {
-                  systemError(this, storedProcErrorLookup("changePrDate", result), __FILE__, __LINE__);
+                  ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Request Information"),
+                                         storedProcErrorLookup("changePrDate", result),
+                                         __FILE__, __LINE__);
                   return;
                 }
               }
-              else if (ordq.lastError().type() != QSqlError::NoError)
+              else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Request Information"),
+                                            ordq, __FILE__, __LINE__))
               {
-                systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
                 return;
               }
             }
@@ -3007,13 +3026,15 @@ void salesOrderItem::sHandleSupplyOrder()
               int result = ordq.value("result").toInt();
               if (result < 0)
               {
-                systemError(this, storedProcErrorLookup("changePrDate", result), __FILE__, __LINE__);
+                ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Request Information"),
+                                       storedProcErrorLookup("changePrDate", result),
+                                       __FILE__, __LINE__);
                 return;
               }
             }
-            else if (ordq.lastError().type() != QSqlError::NoError)
+            else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Request Information"),
+                                          ordq, __FILE__, __LINE__))
             {
-              systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
               return;
             }
           } // end supply ord due date changed
@@ -3058,7 +3079,9 @@ void salesOrderItem::sHandleSupplyOrder()
               _supplyOrderId = ordq.value("result").toInt();
               if (_supplyOrderId < 0)
               {
-                systemError(this, storedProcErrorLookup("changePurchaseDropShip", _supplyOrderId), __FILE__, __LINE__);
+                ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                                       storedProcErrorLookup("changePurchaseDropShip", _supplyOrderId),
+                                       __FILE__, __LINE__);
                 return;
               }
               // save the sales order item again to capture the supply order id
@@ -3066,9 +3089,9 @@ void salesOrderItem::sHandleSupplyOrder()
               sCalcUnitCost();
               sSave(true);
             }
-            else if (ordq.lastError().type() != QSqlError::NoError)
+            else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                                          ordq, __FILE__, __LINE__))
             {
-              systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
               return;
             }
           }
@@ -3099,9 +3122,9 @@ void salesOrderItem::sHandleSupplyOrder()
             ordq.bindValue(":poitem_id", _supplyOrderId);
             ordq.bindValue(":unitprice", _supplyOverridePrice->localValue());
             ordq.exec();
-            if (ordq.lastError().type() != QSqlError::NoError)
+            if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                                          ordq, __FILE__, __LINE__))
             {
-              systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
               return;
             }
           }
@@ -3135,8 +3158,9 @@ void salesOrderItem::sHandleSupplyOrder()
             int result = ordq.value("result").toInt();
             if (result < 0)
             {
-              systemError(this, storedProcErrorLookup("deleteWo", result),
-                          __FILE__, __LINE__);
+              ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                                     storedProcErrorLookup("deleteWo", result),
+                                     __FILE__, __LINE__);
               _createSupplyOrder->setChecked(true);
               return;
             }
@@ -3151,10 +3175,9 @@ void salesOrderItem::sHandleSupplyOrder()
               _itemcharView->setEnabled(true);
             }
           }
-          else if (ordq.lastError().type() != QSqlError::NoError)
+          else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                                        ordq, __FILE__, __LINE__))
           {
-              systemError(this, ordq.lastError().databaseText(),
-                        __FILE__, __LINE__);
             _createSupplyOrder->setChecked(true);
             return;
           }
@@ -3183,8 +3206,9 @@ void salesOrderItem::sHandleSupplyOrder()
             int result = ordq.value("result").toInt();
             if (result < 0)
             {
-              systemError(this, storedProcErrorLookup("deletePoitem", result),
-                          __FILE__, __LINE__);
+              ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                                   storedProcErrorLookup("deletePoitem", result),
+                                   __FILE__, __LINE__);
               _createSupplyOrder->setChecked(true);
               return;
             }
@@ -3198,9 +3222,9 @@ void salesOrderItem::sHandleSupplyOrder()
               _supplyOrderId = -1;
             }
           }
-          else if (ordq.lastError().type() != QSqlError::NoError)
+          else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Information"),
+                                        ordq, __FILE__, __LINE__))
           {
-            systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
             _createSupplyOrder->setChecked(true);
             return;
           }
@@ -3226,7 +3250,8 @@ void salesOrderItem::sHandleSupplyOrder()
             bool result = ordq.value("result").toBool();
             if (!result)
             {
-              systemError(this, tr("deletePr failed"), __FILE__, __LINE__);
+              ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Request Information"),
+                                   ordq, __FILE__, __LINE__);
               _createSupplyOrder->setChecked(true);
               return;
             }
@@ -3240,9 +3265,9 @@ void salesOrderItem::sHandleSupplyOrder()
               _supplyOrderId = -1;
             }
           }
-          else if (ordq.lastError().type() != QSqlError::NoError)
+          else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Request Information"),
+                                        ordq, __FILE__, __LINE__))
           {
-            systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
             return;
           }
         }
@@ -3521,9 +3546,9 @@ void salesOrderItem::sRollupPrices()
       {
         _netUnitPrice->setLocalValue(ordq.value("price").toDouble());
       }
-      else if (ordq.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                                    ordq, __FILE__, __LINE__))
       {
-        systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
@@ -3609,9 +3634,9 @@ void salesOrderItem::sFillWoIndentedList()
   workFillList.bindValue(":showmatl", true);
   workFillList.bindValue(":showindent", false);
   workFillList.exec();
-  if (workFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                                workFillList, __FILE__, __LINE__))
   {
-    systemError(this, workFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   _woIndentedList->populate(workFillList, true);
@@ -3743,13 +3768,15 @@ void salesOrderItem::sDeleteWoMatl()
       int result = workDeleteMatl.value("result").toInt();
       if (result < 0)
       {
-        systemError(this, storedProcErrorLookup("deleteWoMaterial", result), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                               storedProcErrorLookup("deleteWoMaterial", result),
+                               __FILE__, __LINE__);
         return;
       }
     }
-    else if (workDeleteMatl.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                                  workDeleteMatl, __FILE__, __LINE__))
     {
-      systemError(this, workDeleteMatl.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     workDeleteMatl.prepare("SELECT womatl_wo_id AS woid "
@@ -3972,9 +3999,9 @@ void salesOrderItem::populate()
     sLookupTax();
     sDetermineAvailability();
   }
-  else if (item.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                item, __FILE__, __LINE__))
   {
-    systemError(this, item.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -4114,9 +4141,9 @@ void salesOrderItem::sNext()
     }
     set(params);
   }
-  else if (salesNext.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Next Transaction ID"),
+                                salesNext, __FILE__, __LINE__))
   {
-    systemError(this, salesNext.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else if (cView != _initialMode && cViewQuote != _initialMode)
@@ -4228,9 +4255,9 @@ void salesOrderItem::sPrev()
     }
     set(params);
   }
-  else if (salesPrev.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                salesPrev, __FILE__, __LINE__))
   {
-    systemError(this, salesPrev.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -4274,17 +4301,21 @@ void salesOrderItem::reject()
   if (!saved && (cNew == _mode || cNewQuote == _mode))
   {
     // DELETE ANY COMMENTS
-    if (ISQUOTE(_mode))
+    QString errMsg;
+    if (ISQUOTE(_mode)) {
       salesreject.prepare("SELECT deleteQuoteItem(:coitem_id);"
                           "DELETE FROM comment WHERE comment_source_id=:coitem_id AND comment_source = 'QI';");
-    else
+    errMsg = "Quote";
+    } else {
       salesreject.prepare("SELECT deleteSoItem(:coitem_id);"
                           "DELETE FROM comment WHERE comment_source_id=:coitem_id AND comment_source = 'SI';");
+    errMsg = "Sales Order";
+    }
     salesreject.bindValue(":coitem_id", _soitemid);
     salesreject.exec();
-    if (salesreject.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting %1 Comment Information").arg(errMsg),
+                                         salesreject, __FILE__, __LINE__))
     {
-      systemError(this, salesreject.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -4332,9 +4363,9 @@ void salesOrderItem::sCancel()
   salesCancel.prepare("UPDATE coitem SET coitem_status='X' WHERE (coitem_id=:coitem_id);");
   salesCancel.bindValue(":coitem_id", _soitemid);
   salesCancel.exec();
-  if (salesCancel.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Cancelling Item"),
+                                salesCancel, __FILE__, __LINE__))
   {
-      systemError(this, salesCancel.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -4371,9 +4402,9 @@ void salesOrderItem::sLookupTax()
     _cachedRate= calcq.value("val").toDouble();
     _tax->setLocalValue(_cachedRate );
   }
-  else if (calcq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Tax Information"),
+                                calcq, __FILE__, __LINE__))
   {
-      systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -4518,7 +4549,8 @@ void salesOrderItem::sQtyUOMChanged()
         _qtyOrdered->setValidator(new QIntValidator(this));
     }
     else
-      systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                         invuom, __FILE__, __LINE__);
   }
 
   if (_qtyUOM->id() != _invuomid || cView == _mode || cViewQuote == _mode)
@@ -4587,7 +4619,8 @@ void salesOrderItem::sPriceUOMChanged()
     if (invuom.first())
       _priceinvuomratio = invuom.value("ratio").toDouble();
     else
-      systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                         invuom, __FILE__, __LINE__);
   }
 
   XSqlQuery item;

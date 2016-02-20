@@ -19,6 +19,7 @@
 
 #include "selectPayment.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 selectedPayments::selectedPayments(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -111,14 +112,15 @@ void selectedPayments::sClear()
     int result = selectedClear.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("clearPayment", result),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Clearing Payment Information"),
+                             storedProcErrorLookup("clearPayment", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (selectedClear.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Clearing Payment Information"),
+                                selectedClear, __FILE__, __LINE__))
   {
-    systemError(this, selectedClear.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -141,9 +143,9 @@ void selectedPayments::sFillList()
   MetaSQLQuery mql = mqlLoad("apOpenItems", "selectedpayments");
   selectedFillList = mql.toQuery(params);
   _apselect->populate(selectedFillList,true);
-  if (selectedFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Payment Information"),
+                                selectedFillList, __FILE__, __LINE__))
   {
-    systemError(this, selectedFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
