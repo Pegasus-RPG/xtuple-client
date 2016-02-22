@@ -145,15 +145,16 @@ void selectPayments::sSelectDue()
       int result = selectSelectDue.value("result").toInt();
       if (result < 0)
       {
-        systemError(this, storedProcErrorLookup("selectPayment", result),
-                    __FILE__, __LINE__);
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Payment Information"),
+                               storedProcErrorLookup("selectPayment", result),
+                               __FILE__, __LINE__);
         return;
       }
     }
     else
     {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Select Due"),
-                           selectSelectDue, __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Payment Information"),
+                                        selectSelectDue, __FILE__, __LINE__);
       return;
     }
 
@@ -188,14 +189,15 @@ void selectPayments::sSelectDiscount()
       int result = selectSelectDiscount.value("result").toInt();
       if (result < 0)
       {
-        systemError(this, storedProcErrorLookup("selectPayment", result),
-                    __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Payment Information"),
+                               storedProcErrorLookup("selectPayment", result),
+                               __FILE__, __LINE__);
         return;
       }
     }
     else
     {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Select Discount"),
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Payment Information"),
                            selectSelectDiscount, __FILE__, __LINE__);
       return;
     }
@@ -217,14 +219,15 @@ void selectPayments::sClearAll()
     int result = selectClearAll.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("clearPayment", result),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Clearing Payment Information"),
+                             storedProcErrorLookup("clearPayment", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (selectClearAll.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Clearing Payment Information"),
+                                selectClearAll, __FILE__, __LINE__))
   {
-    systemError(this, selectClearAll.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -314,15 +317,15 @@ void selectPayments::sSelectLine()
         int result = selectSelectLine.value("result").toInt();
         if (result < 0)
         {
-          systemError(this, cursor->text(0) + " " + cursor->text(2) + "\n" +
-                            storedProcErrorLookup("selectPayment", result),
-                      __FILE__, __LINE__);
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Payment Information"),
+                                 storedProcErrorLookup("selectPayment", result),
+                                 __FILE__, __LINE__);
           return;
         }
       }
-      else if (selectSelectLine.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Payment Information"),
+                                    selectSelectLine, __FILE__, __LINE__))
       {
-        systemError(this, selectSelectLine.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
                 }
@@ -351,15 +354,15 @@ void selectPayments::sClear()
       int result = selectClear.value("result").toInt();
       if (result < 0)
       {
-        systemError(this, cursor->text(0) + " " + cursor->text(2) + "\n" +
-                          storedProcErrorLookup("clearPayment", result),
-                    __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Clearing Payment Information"),
+                               storedProcErrorLookup("clearPayment", result),
+                               __FILE__, __LINE__);
         return;
       }
     }
-    else if (selectClear.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Clearing Payment Information"),
+                                  selectClear, __FILE__, __LINE__))
     {
-      systemError(this, selectClear.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     update = true;
@@ -433,9 +436,9 @@ void selectPayments::sFillList()
   MetaSQLQuery mql = mqlLoad("apOpenItems", "selectpayments");
   selectFillList = mql.toQuery(params);
   _apopen->populate(selectFillList,true);
-  if (selectFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Payment Information"),
+                                selectFillList, __FILE__, __LINE__))
   {
-    systemError(this, selectFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -529,7 +532,8 @@ void selectPayments::sViewGLSeries()
     omfgThis->handleNewWindow(newdlg);
   }
   else
-    systemError( this, dspViewGLSeries.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Payment Information"),
+                       dspViewGLSeries, __FILE__, __LINE__);
 }
 
 void selectPayments::sOpen()
@@ -620,10 +624,8 @@ void selectPayments::sVoidVoucher()
       {
         if(dspVoidVoucher.value("result").toInt() < 0)
         {
-          systemError( this, tr("A System Error occurred at %1::%2, Error #%3.")
-                      .arg(__FILE__)
-                      .arg(__LINE__)
-                      .arg(dspVoidVoucher.value("result").toInt()) );
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Voiding Voucher"),
+                               dspVoidVoucher, __FILE__, __LINE__);
           return;
         }
       }
