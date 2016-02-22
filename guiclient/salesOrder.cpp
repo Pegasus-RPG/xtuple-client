@@ -1292,7 +1292,7 @@ bool salesOrder::save(bool partial)
   }
 
   // TODO: should this be done before saveSales.exec()?
-  if ((cNew == _mode) && (!_saved)
+  if ((cNew == _mode || cNewQuote == _mode) && (!_saved)
       && ! _lock.acquire(ISORDER(_mode) ? "cohead" : "quhead", _soheadid,
                          AppLock::Interactive))
   {
@@ -2448,7 +2448,7 @@ void salesOrder::populate()
   if ( (_mode == cNew) || (_mode == cEdit) || (_mode == cView) )
   {
     XSqlQuery so;
-    if (_mode == cEdit
+    if ((_mode == cEdit || cEditQuote == _mode)
         && !_lock.acquire(ISORDER(_mode) ? "cohead" : "quhead", _soheadid,
                           AppLock::Interactive))
     {

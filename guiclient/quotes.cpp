@@ -185,6 +185,21 @@ void quotes::sConvert(int pType)
 
       foreach (XTreeWidgetItem *item, list()->selectedItems())
       {
+        if (!_lock.acquire("quhead", item->id(), AppLock::Interactive))
+        {
+          QMessageBox::critical(this, tr("Cannot Convert"),
+                                tr("<p>One or more of the selected Quotes is"
+                                   " being edited.  You cannot convert a Quote"
+                                   " that is being edited."));
+          return;
+        }
+        if (! _lock.release())
+        {
+          ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                               _lock.lastError(), __FILE__, __LINE__);
+          return;
+        }
+        
         if (checkSitePrivs(item->id()))
         {
           int quheadid = item->id();
