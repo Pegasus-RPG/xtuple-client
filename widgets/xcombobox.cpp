@@ -1598,6 +1598,10 @@ void XComboBox::mousePressEvent(QMouseEvent *event)
   QComboBox::mousePressEvent(event);
 }
 
+void XComboBox::wheelEvent(QWheelEvent *event)
+{
+}
+
 void XComboBox::showPopup()
 {
   QComboBox::showPopup();
