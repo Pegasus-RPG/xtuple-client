@@ -803,7 +803,7 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
           if (uc.first())
             _unitCost->setLocalValue(uc.value("unitcost").toDouble());
           else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Item Information"),
-                                        itemsite, __FILE__, __LINE__))
+                                        uc, __FILE__, __LINE__))
           {
             return;
           }

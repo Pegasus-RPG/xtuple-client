@@ -1859,11 +1859,13 @@ void returnAuthorization::sRefund()
                                cardproc->errorMsg());
       }
     }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
-                                        ccq, __FILE__, __LINE__))
+    else if (ccq.lastError().type() != QSqlError::NoError)
     {
-      XSqlQuery rollback("ROLLBACK;");
-      return;
+      systemError(this, ccq.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
+                                              ccq, __FILE__, __LINE__);
+       XSqlQuery rollback("ROLLBACK;");
+       return;
     }
     else
     {

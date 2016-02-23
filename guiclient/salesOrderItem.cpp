@@ -1450,6 +1450,7 @@ void salesOrderItem::sSave(bool pPartial)
         int result = salesSave.value("result").toInt();
         if (result < 0)
         {
+          rollback.exec();
           ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
                                  storedProcErrorLookup("updateCharAssignment", result),
                                  __FILE__, __LINE__);
