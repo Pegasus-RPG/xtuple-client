@@ -11,7 +11,6 @@
 #ifndef QUOTES_H
 #define QUOTES_H
 
-#include "applock.h"
 #include "display.h"
 
 #include "ui_quotes.h"
@@ -44,9 +43,6 @@ public slots:
 signals:
     void finishedPrinting(int);
   
-private:
-  AppLock _lock;
-
 };
 
 #endif // QUOTES_H

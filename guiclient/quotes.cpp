@@ -16,6 +16,7 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <applock.h>
 #include <parameter.h>
 #include <openreports.h>
 
@@ -155,6 +156,7 @@ void quotes::sPrint()
 
 void quotes::sConvert(int pType)
 {
+  AppLock _lock;
   QString docType = "Sales Order";
   if (pType == 1)
     docType = "Invoice";
