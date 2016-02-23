@@ -25,6 +25,7 @@
 #include "importData.h"
 #include "toggleBankrecCleared.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -133,18 +134,19 @@ void reconcileBankaccount::sCancel()
       reconcileCancel.exec();
       if (reconcileCancel.first())
       {
-	int result = reconcileCancel.value("result").toInt();
-	if (result < 0)
-	{
-	  systemError(this, storedProcErrorLookup("deleteBankReconciliation", result),
-		      __FILE__, __LINE__);
-	  return;
-	}
+        int result = reconcileCancel.value("result").toInt();
+        if (result < 0)
+        {
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Cancelling Bank Reconciliation"),
+                                 storedProcErrorLookup("deleteBankReconciliation", result),
+                                 __FILE__, __LINE__);
+          return;
+        }
       }
-      else if (reconcileCancel.lastError().type() != QSqlError::NoError)
+       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Cancelling Bank Reconcilaition"),
+                                    reconcileCancel, __FILE__, __LINE__))
       {
-	systemError(this, reconcileCancel.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+        return;
       }
     }
   }
@@ -176,9 +178,9 @@ bool reconcileBankaccount::sSave(bool closeWhenDone)
               "(:bankrecid, :bankaccntid,"
               " :startDate, :endDate,"
               " :openbal, :endbal); ");
-  else if (reconcileSave.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Reconciliation Information"),
+                                reconcileSave, __FILE__, __LINE__))
   {
-    systemError(this, reconcileSave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -189,11 +191,9 @@ bool reconcileBankaccount::sSave(bool closeWhenDone)
   reconcileSave.bindValue(":openbal", _openBal->localValue());
   reconcileSave.bindValue(":endbal", _endBal->localValue());
   reconcileSave.exec();
-  if (reconcileSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Reconciliation Information"),
+                                reconcileSave, __FILE__, __LINE__))
   {
-    systemError(this, tr("<p>There was an error creating records to reconcile "
-			 "this account: <br><pre>%1</pre>")
-			.arg(reconcileSave.lastError().databaseText()), __FILE__, __LINE__);
     return false;
   }
 
@@ -265,7 +265,8 @@ void reconcileBankaccount::sReconcile()
   XSqlQuery bal = mbal.toQuery(params);
   if(!bal.first())
   {
-    systemError(this, bal.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                         bal, __FILE__, __LINE__);
     return;
   }
 
@@ -289,16 +290,17 @@ void reconcileBankaccount::sReconcile()
     int result = reconcileReconcile.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("postBankReconciliation", result),
-		  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                             storedProcErrorLookup("postBankReconciliation",result),
+                             __FILE__, __LINE__);
       return;
     }
     _bankrecid = -1;
     close();
   }
-  else if (reconcileReconcile.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                                reconcileReconcile, __FILE__, __LINE__))
   {
-    systemError(this, reconcileReconcile.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -327,8 +329,9 @@ void reconcileBankaccount::populate()
   MetaSQLQuery mrcp = mqlLoad("bankrec", "receipts");
   XSqlQuery rcp = mrcp.toQuery(params);
   if (rcp.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                                rcp, __FILE__, __LINE__))
   {
-    systemError(this, rcp.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -422,9 +425,9 @@ void reconcileBankaccount::populate()
   _checks->clear();
   MetaSQLQuery mchk = mqlLoad("bankrec", "checks");
   XSqlQuery chk = mchk.toQuery(params);
-  if (chk.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                                chk, __FILE__, __LINE__))
   {
-    systemError(this, chk.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   _checks->populate(chk, true);
@@ -440,9 +443,9 @@ void reconcileBankaccount::populate()
   rcp = mrcp.toQuery(params);
   if (rcp.first())
     _clearedReceipts->setDouble(rcp.value("cleared_amount").toDouble());
-  else if (rcp.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                                rcp, __FILE__, __LINE__))
   {
-    systemError(this, rcp.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -450,9 +453,9 @@ void reconcileBankaccount::populate()
   chk = mchk.toQuery(params);
   if (chk.first())
     _clearedChecks->setDouble(chk.value("cleared_amount").toDouble());
-  else if (chk.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                                chk, __FILE__, __LINE__))
   {
-    systemError(this, chk.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -478,9 +481,9 @@ void reconcileBankaccount::populate()
 
     _diffBal->setStyleSheet(stylesheet);
   }
-  else if (bal.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                                bal, __FILE__, __LINE__))
   {
-    systemError(this, bal.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -495,9 +498,9 @@ void reconcileBankaccount::sImport()
   reconcileImport.prepare("SELECT setMetric('ImportBankRecId', :bankrecid::TEXT) AS result; ");
   reconcileImport.bindValue(":bankrecid", _bankrecid);
   reconcileImport.exec();
-  if (reconcileImport.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                                reconcileImport, __FILE__, __LINE__))
   {
-    systemError(this, reconcileImport.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -576,9 +579,9 @@ void reconcileBankaccount::sReceiptsToggleCleared()
           reconcileReceiptsToggleCleared.exec();
           if(reconcileReceiptsToggleCleared.first())
             child->setText(0, (reconcileReceiptsToggleCleared.value("cleared").toBool() ? tr("Yes") : tr("No") ));
-          else if (reconcileReceiptsToggleCleared.lastError().type() != QSqlError::NoError)
+          else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                                        reconcileReceiptsToggleCleared, __FILE__, __LINE__))
           {
-            systemError(this, reconcileReceiptsToggleCleared.lastError().databaseText(), __FILE__, __LINE__);
             return;
           }
         }
@@ -643,9 +646,9 @@ void reconcileBankaccount::sReceiptsToggleCleared()
       else
       {
         populate();
-        if (reconcileReceiptsToggleCleared.lastError().type() != QSqlError::NoError)
+        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                                      reconcileReceiptsToggleCleared, __FILE__, __LINE__))
         {
-          systemError(this, reconcileReceiptsToggleCleared.lastError().databaseText(), __FILE__, __LINE__);
           return;
         }
       }
@@ -706,9 +709,9 @@ void reconcileBankaccount::sChecksToggleCleared()
     else
     {
       populate();
-      if (reconcileChecksToggleCleared.lastError().type() != QSqlError::NoError)
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                                    reconcileChecksToggleCleared, __FILE__, __LINE__))
       {
-        systemError(this, reconcileChecksToggleCleared.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
@@ -743,16 +746,17 @@ void reconcileBankaccount::sBankaccntChanged()
         {
 	      int result = reconcileBankaccntChanged.value("result").toInt();
 	      if (result < 0)
-	      {
-	        systemError(this, storedProcErrorLookup("deleteBankReconciliation", result),
-		                __FILE__, __LINE__);
-	        return;
-	      }
+          {
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                                   storedProcErrorLookup("deleteBankReconciliation", result),
+                                   __FILE__, __LINE__);
+            return;
+          }
         }
-        else if (reconcileBankaccntChanged.lastError().type() != QSqlError::NoError)
+        else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                                      reconcileBankaccntChanged, __FILE__, __LINE__))
         {
-	      systemError(this, reconcileBankaccntChanged.lastError().databaseText(), __FILE__, __LINE__);
-	      return;
+          return;
         }
       }
 	}
@@ -766,9 +770,9 @@ void reconcileBankaccount::sBankaccntChanged()
   accntq.exec();
   if (accntq.first())
     _currency->setId(accntq.value("bankaccnt_curr_id").toInt());
-  else if (accntq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                                accntq, __FILE__, __LINE__))
   {
-    systemError(this, accntq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -785,9 +789,9 @@ void reconcileBankaccount::sBankaccntChanged()
     _openBal->setLocalValue(accntq.value("bankrec_openbal").toDouble());
     _endBal->setLocalValue(accntq.value("bankrec_endbal").toDouble());
   }
-  else if (accntq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                                accntq, __FILE__, __LINE__))
   {
-    systemError(this, accntq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
@@ -796,9 +800,9 @@ void reconcileBankaccount::sBankaccntChanged()
     accntq.exec();
     if (accntq.first())
       _bankrecid = accntq.value("bankrec_id").toInt();
-    else if (accntq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconcilation Information"),
+                                  accntq, __FILE__, __LINE__))
     {
-      systemError(this, accntq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     
@@ -820,9 +824,9 @@ void reconcileBankaccount::sBankaccntChanged()
       _startDate->clear();
       _openBal->clear();
     }
-    if (accntq.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                                  accntq, __FILE__, __LINE__))
     {
-      systemError(this, accntq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -855,11 +859,11 @@ void reconcileBankaccount::sDateChanged()
     _datesAreOK = false;
     return;
   }
-  else if(reconcileDateChanged.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Reconciliation Information"),
+                                reconcileDateChanged, __FILE__, __LINE__))
   {
-    systemError(this, reconcileDateChanged.lastError().databaseText(), __FILE__, __LINE__);
     _datesAreOK = false;
-	return;
+    return;
   }
   else
   {
