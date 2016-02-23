@@ -146,6 +146,16 @@ void setupQAbstractSocketProto(QScriptEngine *engine)
   constructor.setProperty("TemporaryError", QScriptValue(engine, QAbstractSocket::TemporaryError), ENUMPROPFLAGS);
   constructor.setProperty("UnknownSocketError", QScriptValue(engine, QAbstractSocket::UnknownSocketError), ENUMPROPFLAGS);
 
+  // enum QAbstractSocket::SocketOption
+  qScriptRegisterMetaType(engine, SocketOptiontoScriptValue, SocketOptionfromScriptValue);
+  constructor.setProperty("LowDelayOption", QScriptValue(engine, QAbstractSocket::LowDelayOption), ENUMPROPFLAGS);
+  constructor.setProperty("KeepAliveOption", QScriptValue(engine, QAbstractSocket::KeepAliveOption), ENUMPROPFLAGS);
+  constructor.setProperty("MulticastTtlOption", QScriptValue(engine, QAbstractSocket::MulticastTtlOption), ENUMPROPFLAGS);
+  constructor.setProperty("MulticastLoopbackOption", QScriptValue(engine, QAbstractSocket::MulticastLoopbackOption), ENUMPROPFLAGS);
+  constructor.setProperty("TypeOfServiceOption", QScriptValue(engine, QAbstractSocket::TypeOfServiceOption), ENUMPROPFLAGS);
+  constructor.setProperty("SendBufferSizeSocketOption", QScriptValue(engine, QAbstractSocket::SendBufferSizeSocketOption), ENUMPROPFLAGS);
+  constructor.setProperty("ReceiveBufferSizeSocketOption", QScriptValue(engine, QAbstractSocket::ReceiveBufferSizeSocketOption), ENUMPROPFLAGS);
+
   // enum QAbstractSocket::SocketState
   qScriptRegisterMetaType(engine, SocketStatetoScriptValue, SocketStatefromScriptValue);
   constructor.setProperty("UnconnectedState", QScriptValue(engine, QAbstractSocket::UnconnectedState), ENUMPROPFLAGS);
@@ -155,9 +165,6 @@ void setupQAbstractSocketProto(QScriptEngine *engine)
   constructor.setProperty("BoundState", QScriptValue(engine, QAbstractSocket::BoundState), ENUMPROPFLAGS);
   constructor.setProperty("ClosingState", QScriptValue(engine, QAbstractSocket::ClosingState), ENUMPROPFLAGS);
   constructor.setProperty("ListeningState", QScriptValue(engine, QAbstractSocket::ListeningState), ENUMPROPFLAGS);
-
-  // enum QAbstractSocket::SocketError
-  qScriptRegisterMetaType(engine, SocketErrortoScriptValue, SocketErrorfromScriptValue);
 
   // enum QAbstractSocket::SocketType
   qScriptRegisterMetaType(engine,              SocketTypetoScriptValue,  SocketTypefromScriptValue);
