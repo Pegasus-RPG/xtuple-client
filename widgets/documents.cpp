@@ -188,11 +188,26 @@ void Documents::sNewDoc(QString ptype, QString pui)
 
   ParameterList params;
   params.append("mode", "new");
-  int target_id;
-  QDialog* newdlg = qobject_cast<QDialog*>(_guiClientInterface->openWindow(ui, params, parentWidget(),Qt::WindowModal, Qt::Dialog));
-  target_id = newdlg->exec();
-  if (target_id != QDialog::Rejected) {
-    sInsertDocass(type, target_id);
+  int target_id = -1;
+  QWidget *window = _guiClientInterface->openWindow(ui, params, parentWidget(), Qt::WindowModal, Qt::Dialog);
+  QDialog *newdlg = qobject_cast<QDialog*>(window);
+  if (newdlg)
+  {
+    target_id = newdlg->exec();
+    if (target_id != QDialog::Rejected) {
+      sInsertDocass(type, target_id);
+    }
+  }
+  else if (window)
+  {
+    window->show();
+    // TODO: how do we get the ID and when?
+    // sInsertDocass(type, target_id);
+  }
+  else
+  {
+    QMessageBox::critical(this, tr("Error Creating Document"),
+                          tr("Cannot find the '%1'' window to create a %2").arg(ui, type));
   }
   refresh();
 }

@@ -196,6 +196,6 @@ int XDialog::exec()
 		omfgThis->updateMacDockMenu(this);
 	#endif
 
-  return QDialog::exec();
+	return QDialog::exec();
 }
 
