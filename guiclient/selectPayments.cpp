@@ -354,7 +354,8 @@ void selectPayments::sClear()
       int result = selectClear.value("result").toInt();
       if (result < 0)
       {
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Clearing Payment Information"),
+        ErrorReporter::error(QtCriticalMsg, this, cursor->text(0) + " " + cursor->text(2) + "\n" +
+                               tr(" Error Clearing Payment Information"),
                                storedProcErrorLookup("clearPayment", result),
                                __FILE__, __LINE__);
         return;

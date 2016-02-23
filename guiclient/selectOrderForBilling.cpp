@@ -406,7 +406,7 @@ void selectOrderForBilling::sSelectBalance()
     int result = selectSelectBalance.value("result").toInt();
     if (result < 0)
     {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retreiving Billing Information"),
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Billing Information"),
                              storedProcErrorLookup("selectBalanceForBilling", result),
                              __FILE__, __LINE__);
       return;
