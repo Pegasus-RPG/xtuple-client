@@ -45,15 +45,15 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
     connect(_startDate, SIGNAL(newDate(QDate)), this, SLOT(sDateChanged()));
     connect(_endDate,   SIGNAL(newDate(QDate)), this, SLOT(sDateChanged()));
 
-    _receipts->addColumn(tr("Cleared"),       _ynColumn * 2, Qt::AlignCenter );
-    _receipts->addColumn(tr("Date"),            _dateColumn, Qt::AlignCenter );
-    _receipts->addColumn(tr("Doc. Type"),     _ynColumn * 2, Qt::AlignCenter );
-    _receipts->addColumn(tr("Doc. Number"),     _itemColumn, Qt::AlignLeft   );
-    _receipts->addColumn(tr("Notes"),                    -1, Qt::AlignLeft   );
-    _receipts->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignCenter );
-    _receipts->addColumn(tr("Exch. Rate"),  _bigMoneyColumn, Qt::AlignRight  );
-    _receipts->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight  );
-    _receipts->addColumn(tr("Amount"),      _bigMoneyColumn, Qt::AlignRight  );
+    _receipts->addColumn(tr("Cleared"),       _ynColumn * 2, Qt::AlignCenter, true, "cleared");
+    _receipts->addColumn(tr("Date"),            _dateColumn, Qt::AlignCenter, true, "transdate");
+    _receipts->addColumn(tr("Doc. Type"),     _ynColumn * 2, Qt::AlignCenter, true, "doc_type");
+    _receipts->addColumn(tr("Doc. Number"),     _itemColumn, Qt::AlignLeft  , true, "doc_number");
+    _receipts->addColumn(tr("Notes"),                    -1, Qt::AlignLeft  , true, "notes");
+    _receipts->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignCenter, true, "doc_curr");
+    _receipts->addColumn(tr("Exch. Rate"),  _bigMoneyColumn, Qt::AlignRight , true, "doc_exchrate");
+    _receipts->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight , true, "base_amount");
+    _receipts->addColumn(tr("Amount"),      _bigMoneyColumn, Qt::AlignRight , true, "amount");
     
     _checks->addColumn(tr("Cleared"),       _ynColumn * 2, Qt::AlignCenter , true, "cleared");
     _checks->addColumn(tr("Date"),            _dateColumn, Qt::AlignCenter , true, "transdate");
@@ -339,6 +339,8 @@ void reconcileBankaccount::populate()
   bool cleared = true;
   double amount = 0.0;
   bool amountNull = true;
+  const QString exchangePrecision = "6";
+
   while (rcp.next())
   {
     if(rcp.value("use").toString() == "C/R")
@@ -348,11 +350,14 @@ void reconcileBankaccount::populate()
         if(parent != 0)
         {
           parent->setText(0, (cleared ? tr("Yes") : tr("No")));
-          parent->setText(8, amountNull ? tr("?????") : formatMoney(amount));
+          parent->setNumber(8, amountNull ? tr("?????") : QVariant(amount), "curr");
         }
         jrnlnum = rcp.value("jrnlnum").toInt();
-        last = new XTreeWidgetItem( _receipts, last,
-          jrnlnum, 9, "", formatDate(rcp.value("f_jrnldate").toDate()), tr("JS"), rcp.value("jrnlnum"));
+        last = new XTreeWidgetItem( _receipts, last, jrnlnum, 9);
+        last->setText(0, "");
+        last->setDate(1, rcp.value("f_jrnldate").toDate());
+        last->setText(2, tr("JS"));
+        last->setText(3, rcp.value("jrnlnum"));
         parent = last;
         cleared = true;
         amount = 0.0;
@@ -363,43 +368,48 @@ void reconcileBankaccount::populate()
       amount += rcp.value("amount").toDouble();
       amountNull = rcp.value("amount").isNull();
       
-      lastChild = new XTreeWidgetItem( parent, lastChild,
-        rcp.value("id").toInt(), rcp.value("altid").toInt(),
-        (rcp.value("cleared").toBool() ? tr("Yes") : tr("No")),
-        formatDate(rcp.value("f_date").toDate()), rcp.value("doc_type"), rcp.value("docnumber"),
-        rcp.value("notes"),
-        rcp.value("doc_curr"),
-        rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6), // 6 dp to match bankrec-receipts metasql
-        rcp.value("base_amount").isNull() ? tr("?????") : formatMoney(rcp.value("base_amount").toDouble()),
-        rcp.value("amount").isNull() ? tr("?????") : formatMoney(rcp.value("amount").toDouble()) );
+      lastChild = new XTreeWidgetItem(parent, lastChild, rcp.value("id").toInt(), rcp.value("altid").toInt());
+
+      lastChild->setText(0, rcp.value("cleared").toBool() ? tr("Yes") : tr("No"));
+      lastChild->setDate(1, rcp.value("f_date").toDate());
+      lastChild->setText(2, rcp.value("doc_type"));
+      lastChild->setText(3, rcp.value("docnumber"));
+      lastChild->setText(4, rcp.value("notes"));
+      lastChild->setText(5, rcp.value("doc_curr"));
+      lastChild->setNumber(6, rcp.value("doc_exchrate").isNull() ? tr("?????") : rcp.value("doc_exchrate"), exchangePrecision);
+      lastChild->setNumber(7, rcp.value("base_amount").isNull() ? tr("?????") : rcp.value("base_amount"), "curr");
+      lastChild->setNumber(8, rcp.value("amount").isNull() ? tr("?????") : rcp.value("amount"), "curr");
     }
     else
     {
       if(parent != 0)
       {
         parent->setText(0, (cleared ? tr("Yes") : tr("No")));
-        parent->setText(8, formatMoney(amount));
+        parent->setNumber(8, QVariant(amount), "curr");
       }
       parent = 0;
       cleared = true;
       amount = 0.0;
       amountNull = true;
       lastChild = 0;
-      last = new XTreeWidgetItem( _receipts, last,
-        rcp.value("id").toInt(), rcp.value("altid").toInt(),
-        (rcp.value("cleared").toBool() ? tr("Yes") : tr("No")),
-        formatDate(rcp.value("f_date").toDate()), rcp.value("doc_type"), rcp.value("docnumber"),
-        rcp.value("notes"),
-        rcp.value("doc_curr"),
-        rcp.value("doc_exchrate").isNull() ? tr("?????") : formatNumber(rcp.value("doc_exchrate").toDouble(), 6), // 6 dp to match bankrec-receipts metasql
-        rcp.value("base_amount").isNull() ? tr("?????") : formatMoney(rcp.value("base_amount").toDouble()),
-        rcp.value("amount").isNull() ? tr("?????") : formatMoney(rcp.value("amount").toDouble()) );
+
+      last = new XTreeWidgetItem(_receipts, last, rcp.value("id").toInt(), rcp.value("altid").toInt());
+
+      last->setText(0, rcp.value("cleared").toBool() ? tr("Yes") : tr("No"));
+      last->setDate(1, rcp.value("f_date").toDate());
+      last->setText(2, rcp.value("doc_type"));
+      last->setText(3, rcp.value("docnumber"));
+      last->setText(4, rcp.value("notes"));
+      last->setText(5, rcp.value("doc_curr"));
+      last->setNumber(6, rcp.value("doc_exchrate").isNull() ? tr("?????") : rcp.value("doc_exchrate"), exchangePrecision);
+      last->setNumber(7, rcp.value("base_amount").isNull() ? tr("?????") : rcp.value("base_amount"), "curr");
+      last->setNumber(8, rcp.value("amount").isNull() ? tr("?????") : rcp.value("amount"), "curr");
     }
   }
   if(parent != 0)
   {
     parent->setText(0, (cleared ? tr("Yes") : tr("No")));
-    parent->setText(8, amountNull ? tr("?????") : formatMoney(amount));
+    parent->setNumber(8, amountNull ? tr("?????") : QVariant(amount), "curr");
   }
 
   if(currid != -1)
