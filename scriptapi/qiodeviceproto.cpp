@@ -20,19 +20,31 @@
 */
 
 QScriptValue QIODevicetoScriptValue(QScriptEngine *engine, QIODevice* const &item)
-{ return engine->newQObject(item); }
+{
+  return engine->newQObject(item);
+}
 
 void QIODevicefromScriptValue(const QScriptValue &obj, QIODevice* &item)
-{ item = qobject_cast<QIODevice*>(obj.toQObject()); }
+{
+  item = qobject_cast<QIODevice*>(obj.toQObject());
+}
 
-QScriptValue OpenModeFlagtoScriptValue(QScriptEngine *engine, const enum QIODevice::OpenModeFlag &p)
+QScriptValue OpenModeFlagToScriptValue(QScriptEngine *engine, const enum QIODevice::OpenModeFlag &p)
 {
   return QScriptValue(engine, (int)p);
 }
-
-void OpenModeFlagfromScriptValue(const QScriptValue &obj, enum QIODevice::OpenModeFlag &p)
+void OpenModeFlagFromScriptValue(const QScriptValue &obj, enum QIODevice::OpenModeFlag &p)
 {
   p = (enum QIODevice::OpenModeFlag)obj.toInt32();
+}
+
+QScriptValue OpenModeToScriptValue(QScriptEngine *engine, const QIODevice::OpenMode &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void OpenModeFromScriptValue(const QScriptValue &obj, QIODevice::OpenMode &p)
+{
+  p = (QIODevice::OpenMode)obj.toInt32();
 }
 
 void setupQIODeviceProto(QScriptEngine *engine)
@@ -42,8 +54,9 @@ void setupQIODeviceProto(QScriptEngine *engine)
   QScriptValue iodev = engine->newObject();
   engine->globalObject().setProperty("QIODevice",  iodev, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
+  qScriptRegisterMetaType(engine, OpenModeToScriptValue, OpenModeFromScriptValue);
   // enum QIODevice::OpenModeFlag
-  qScriptRegisterMetaType(engine, OpenModeFlagtoScriptValue, OpenModeFlagfromScriptValue);
+  qScriptRegisterMetaType(engine, OpenModeFlagToScriptValue, OpenModeFlagFromScriptValue);
   iodev.setProperty("NotOpen",    QScriptValue(engine, QIODevice::NotOpen),    ENUMPROPFLAGS);
   iodev.setProperty("ReadOnly",   QScriptValue(engine, QIODevice::ReadOnly),   ENUMPROPFLAGS);
   iodev.setProperty("WriteOnly",  QScriptValue(engine, QIODevice::WriteOnly),  ENUMPROPFLAGS);
@@ -53,8 +66,6 @@ void setupQIODeviceProto(QScriptEngine *engine)
   iodev.setProperty("Text",       QScriptValue(engine, QIODevice::Text),       ENUMPROPFLAGS);
   iodev.setProperty("Unbuffered", QScriptValue(engine, QIODevice::Unbuffered), ENUMPROPFLAGS);
 }
-
-Q_DECLARE_METATYPE(enum QIODevice::OpenModeFlag)
 
 QIODeviceProto::QIODeviceProto(QObject *parent)
     : QObject(parent)
@@ -108,11 +119,19 @@ QString QIODeviceProto::errorString() const
   return QString();
 }
 
-bool QIODeviceProto::getChar(char *c)
+// Javascript does not support pass by reference String parameters. Return char instead.
+//bool QIODeviceProto::getChar(char *c)
+char QIODeviceProto::getChar()
 {
+  char c;
   QIODevice *item = qscriptvalue_cast<QIODevice*>(thisObject());
-  if (item)
-    return item->getChar(c);
+  if (item) {
+    if (item->getChar(&c)) {
+      return c;
+    } else {
+      return false;
+    }
+  }
   return false;
 }
 

@@ -16,6 +16,8 @@
 #include <QtScript>
 
 Q_DECLARE_METATYPE(QIODevice*)
+Q_DECLARE_METATYPE(enum QIODevice::OpenModeFlag)
+Q_DECLARE_METATYPE(QIODevice::OpenMode)
 
 void setupQIODeviceProto(QScriptEngine *engine);
 QScriptValue constructQIODevice(QScriptContext *context, QScriptEngine *engine);
@@ -33,7 +35,9 @@ class QIODeviceProto : public QObject, public QScriptable
     Q_INVOKABLE bool                    canReadLine() const;
     Q_INVOKABLE void                    close();
     Q_INVOKABLE QString                 errorString() const;
-    Q_INVOKABLE bool                    getChar(char *c);
+    // Javascript does not support pass by reference String parameters. Return char instead.
+    //Q_INVOKABLE bool                    getChar(char *c);
+    Q_INVOKABLE char                    getChar();
     Q_INVOKABLE bool                    isOpen() const;
     Q_INVOKABLE bool                    isReadable() const;
     Q_INVOKABLE bool                    isSequential() const;
