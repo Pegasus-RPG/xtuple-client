@@ -42,6 +42,7 @@ public slots:
 
 signals:
     void finishedPrinting(int);
+  
 };
 
 #endif // QUOTES_H
