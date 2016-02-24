@@ -128,7 +128,6 @@ void setupQAbstractSocketProto(QScriptEngine *engine)
 
   // enum QAbstractSocket::NetworkLayerProtocol
   qScriptRegisterMetaType(engine,                        NetworkLayerProtocoltoScriptValue, NetworkLayerProtocolfromScriptValue);
-<<<<<<< HEAD
   constructor.setProperty("IPv4Protocol",                QScriptValue(engine,               QAbstractSocket::IPv4Protocol),                           ENUMPROPFLAGS);
   constructor.setProperty("IPv6Protocol",                QScriptValue(engine,               QAbstractSocket::IPv6Protocol),                           ENUMPROPFLAGS);
   constructor.setProperty("AnyIPProtocol",               QScriptValue(engine,               QAbstractSocket::AnyIPProtocol),                          ENUMPROPFLAGS);
@@ -137,6 +136,7 @@ void setupQAbstractSocketProto(QScriptEngine *engine)
   // enum QAbstractSocket::PauseMode
   qRegisterMetaType<QAbstractSocket::PauseModes>("QAbstractSocket::PauseModes");
   qScriptRegisterMetaType(engine,             PauseModetoScriptValue, PauseModefromScriptValue);
+  qScriptRegisterMetaType(engine,             PauseModestoScriptValue, PauseModesfromScriptValue);
   constructor.setProperty("PauseNever",       QScriptValue(engine,    QAbstractSocket::PauseNever),       ENUMPROPFLAGS);
   constructor.setProperty("PauseOnSslErrors", QScriptValue(engine,    QAbstractSocket::PauseOnSslErrors), ENUMPROPFLAGS);
 
@@ -167,19 +167,6 @@ void setupQAbstractSocketProto(QScriptEngine *engine)
   constructor.setProperty("TemporaryError", QScriptValue(engine, QAbstractSocket::TemporaryError), ENUMPROPFLAGS);
   constructor.setProperty("UnknownSocketError", QScriptValue(engine, QAbstractSocket::UnknownSocketError), ENUMPROPFLAGS);
 
-=======
-  constructor.setProperty("IPv4Protocol",                QScriptValue(engine,               QAbstractSocket::IPv4Protocol),                ENUMPROPFLAGS);
-  constructor.setProperty("IPv6Protocol",                QScriptValue(engine,               QAbstractSocket::IPv6Protocol),                ENUMPROPFLAGS);
-  constructor.setProperty("AnyIPProtocol",               QScriptValue(engine,               QAbstractSocket::AnyIPProtocol),               ENUMPROPFLAGS);
-  constructor.setProperty("UnknownNetworkLayerProtocol", QScriptValue(engine,               QAbstractSocket::UnknownNetworkLayerProtocol), ENUMPROPFLAGS);
-
-   // enum QAbstractSocket::PauseMode
-  qScriptRegisterMetaType(engine,             PauseModetoScriptValue,  PauseModefromScriptValue);
-  qScriptRegisterMetaType(engine,             PauseModestoScriptValue, PauseModesfromScriptValue);
-  constructor.setProperty("PauseNever",       QScriptValue(engine,     QAbstractSocket::PauseNever),       ENUMPROPFLAGS);
-  constructor.setProperty("PauseOnSslErrors", QScriptValue(engine,     QAbstractSocket::PauseOnSslErrors), ENUMPROPFLAGS);
-
->>>>>>> DAVID/scriptExposure
   // enum QAbstractSocket::SocketOption
   qScriptRegisterMetaType(engine, SocketOptiontoScriptValue, SocketOptionfromScriptValue);
   constructor.setProperty("LowDelayOption", QScriptValue(engine, QAbstractSocket::LowDelayOption), ENUMPROPFLAGS);
