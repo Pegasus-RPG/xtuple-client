@@ -13,6 +13,13 @@
 
 #define DEBUG false
 
+#if QT_VERSION < 0x050000
+void setupQHostInfoProto(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
+
 static QScriptValue qhostinfo_abortHostLookup(QScriptContext *context, QScriptEngine * /*engine*/)
 {
   if (context->argumentCount() == 1 && context->argument(0).isNumber()) {
@@ -21,12 +28,10 @@ static QScriptValue qhostinfo_abortHostLookup(QScriptContext *context, QScriptEn
   return QScriptValue();
 }
 
-
 static QScriptValue qhostinfo_localDomainName(QScriptContext * /*context*/, QScriptEngine * /*engine*/)
 {
   return QHostInfo::localDomainName();
 }
-
 
 static QScriptValue qhostinfo_localHostName(QScriptContext * /*context*/, QScriptEngine * /*engine*/)
 {
@@ -200,3 +205,4 @@ QString QHostInfoProto::toString() const
     return QString("QHostInfo()");
   return QString("QHostInfo(unknown)");
 }
+#endif

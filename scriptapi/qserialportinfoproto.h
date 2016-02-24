@@ -17,7 +17,7 @@
 
 void setupQSerialPortInfoProto(QScriptEngine *engine);
 
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= 0x050100
 #include <QSerialPortInfo>
 
 Q_DECLARE_METATYPE(QSerialPortInfo)
@@ -32,19 +32,19 @@ class QSerialPortInfoProto : public QObject, public QScriptable
   public:
     QSerialPortInfoProto(QObject *parent);
 
-    Q_INVOKABLE QString           description() const;
-    Q_INVOKABLE bool              hasProductIdentifier() const;
-    Q_INVOKABLE bool              hasVendorIdentifier() const;
-    Q_INVOKABLE bool              isBusy() const;
-    Q_INVOKABLE bool              isNull() const;
-    Q_INVOKABLE QString           manufacturer() const;
-    Q_INVOKABLE QString           portName() const;
-    Q_INVOKABLE quint16           productIdentifier() const;
-    Q_INVOKABLE QString           serialNumber() const;
-    Q_INVOKABLE void              swap(QSerialPortInfo & other);
-    Q_INVOKABLE QString           systemLocation() const;
-    Q_INVOKABLE quint16           vendorIdentifier() const;
-    Q_INVOKABLE QString           toString() const;
+    Q_INVOKABLE QString description() const;
+    Q_INVOKABLE bool    hasProductIdentifier() const;
+    Q_INVOKABLE bool    hasVendorIdentifier() const;
+    Q_INVOKABLE bool    isBusy() const;
+    Q_INVOKABLE bool    isNull() const;
+    Q_INVOKABLE QString manufacturer() const;
+    Q_INVOKABLE QString portName() const;
+    Q_INVOKABLE quint16 productIdentifier() const;
+    Q_INVOKABLE QString serialNumber() const;
+    Q_INVOKABLE void    swap(QSerialPortInfo & other);
+    Q_INVOKABLE QString systemLocation() const;
+    Q_INVOKABLE quint16 vendorIdentifier() const;
+    Q_INVOKABLE QString toString() const;
 };
 #endif
 

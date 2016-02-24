@@ -205,7 +205,6 @@ SOURCES += setupscriptapi.cpp \
     qdomprocessinginstructionproto.cpp \
     qdomtextproto.cpp \
     qdoublevalidatorproto.cpp \
-    qhostaddressproto.cpp \
     qintvalidatorproto.cpp \
     qeventproto.cpp \
     qfileproto.cpp \
@@ -213,6 +212,7 @@ SOURCES += setupscriptapi.cpp \
     qfontproto.cpp \
     qformlayoutproto.cpp \
     qgridlayoutproto.cpp \
+    qhostaddressproto.cpp \
     qhostinfoproto.cpp \
     qiconproto.cpp \
     qiodeviceproto.cpp \
