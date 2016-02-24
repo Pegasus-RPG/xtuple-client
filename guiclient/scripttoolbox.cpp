@@ -46,6 +46,7 @@
 #include "display.h"
 #include "xuiloader.h"
 #include "getscreen.h"
+#include "errorReporter.h"
 
 /** @ingroup scriptapi
 
@@ -893,7 +894,8 @@ bool ScriptToolbox::printReportCopies(const QString & name, const ParameterList 
   if (orReport::beginMultiPrint(&printer, userCanceled) == false)
   {
     if(!userCanceled)
-      systemError(NULL, tr("Could not initialize printing system for multiple reports."));
+      ErrorReporter::error(QtCriticalMsg, 0, tr("Error Occurred"),
+                         tr("Could not initialize the printing system for multiple reports."),__FILE__,__LINE__);
     return userCanceled;
   }
   userCanceled = false;
@@ -1366,9 +1368,9 @@ QWidget *ScriptToolbox::openWindow(QString pname, QWidget *parent, Qt::WindowMod
     }
     _lastWindow = window;
   }
-  else if (screenq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Opening New Window"),
+                                screenq, __FILE__, __LINE__))
   {
-    systemError(0, screenq.lastError().databaseText(), __FILE__, __LINE__);
     return 0;
   }
 

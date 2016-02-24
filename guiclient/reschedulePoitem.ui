@@ -147,7 +147,7 @@ to be bound by its terms.</comment>
    <item row="1" column="0" colspan="3">
     <widget class="QCheckBox" name="_allItems">
      <property name="text">
-      <string>Release All Open P/O Items</string>
+      <string>Reschedule All Open P/O Items</string>
      </property>
     </widget>
    </item>
