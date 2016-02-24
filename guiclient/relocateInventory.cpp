@@ -16,6 +16,7 @@
 
 #include "inputManager.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 relocateInventory::relocateInventory(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -218,14 +219,15 @@ void relocateInventory::sMove()
     int result = relocate.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("relocateInventory", result),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Inventory Information"),
+                             storedProcErrorLookup("relocateInventory", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (relocate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Inventory Information"),
+                                relocate, __FILE__, __LINE__))
   {
-    systemError(this, relocate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   
@@ -270,9 +272,9 @@ void relocateInventory::sFillList()
     query.bindValue(":warehous_id", _warehouse->id());
     query.exec();
     _source->populate(query, true);
-    if (query.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Inventory Information"),
+                                  query, __FILE__, __LINE__))
     {
-      systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -301,9 +303,9 @@ void relocateInventory::sFillList()
     query.bindValue(":item_id", _item->id());
     query.exec();
     _target->populate(query);
-    if (query.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Inventory Information"),
+                                  query, __FILE__, __LINE__))
     {
-      systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -365,11 +367,11 @@ void relocateInventory::sChangeDefaultLocation()
    query.bindValue(":item_id", _item->id());
    query.exec();
    sFillList();
-   if (query.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-      }
+   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Inventory Information"),
+                                 query, __FILE__, __LINE__))
+   {
+     return;
+   }
    }
 
 }

@@ -474,6 +474,9 @@ void postProduction::sPost()
 
     omfgThis->sWorkOrdersUpdated(_wo->id(), true);
 
+    if (_scrap->isChecked())
+      sScrap();
+    
     if (_closeWo->isChecked())
     {
       ParameterList params;
@@ -492,9 +495,6 @@ void postProduction::sPost()
                          postPost, __FILE__, __LINE__);
     return;
   }
-
-  if (_scrap->isChecked())
-    sScrap();
 
   if (_captive)
     done(itemlocSeries);

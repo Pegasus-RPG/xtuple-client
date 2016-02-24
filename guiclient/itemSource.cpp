@@ -83,9 +83,8 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::Window
 
   if (omfgThis->singleCurrency())
   {
-    _itemsrcp->hideColumn(1);
-    _itemsrcp->hideColumn(2);
-    _itemsrcp->headerItem()->setText(3, tr("Unit Price"));
+    _itemsrcp->hideColumn("item_curr");
+    _itemsrcp->hideColumn("price_base");
   }
 
   _invVendorUOMRatio->setValidator(omfgThis->ratioVal());

@@ -38,7 +38,9 @@ setup::setup(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
-
+  if (! name)
+    setObjectName("setup");
+    
   _modules->addItem(tr("All"), Xt::AllModules);
   _modules->addItem(tr("Accounting"), Xt::AccountingModule);
   _modules->addItem(tr("Sales"), Xt::SalesModule);

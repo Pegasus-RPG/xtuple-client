@@ -607,6 +607,7 @@ void purchaseOrder::createHeader()
   // need to set at least the _order date before the INSERT
   _comments->setId(_poheadid);
   _documents->setId(_poheadid);
+  _charass->setId(_poheadid);
   _orderDate->setDate(omfgThis->dbDate(), true);
   _status->setCurrentIndex(0);
   _vendor->setShowInactive(false);
@@ -1848,14 +1849,17 @@ void purchaseOrder::sHandleShipTo()
 
 void purchaseOrder::sHandleShipToName()
 {
-  XSqlQuery purchaseHandleShipTo;
-  purchaseHandleShipTo.prepare( "SELECT COALESCE(shipto_name,crmacct_name) AS shiptoname "
-	  "FROM address left outer join shiptoinfo on (shipto_addr_id=addr_id) "
-                               "WHERE (addr_id=:addr_id);" );
-  purchaseHandleShipTo.bindValue(":addr_id", _shiptoAddr->id());
-  purchaseHandleShipTo.exec();
-  if (purchaseHandleShipTo.first())
+  if (!_dropShip->isChecked())
   {
-    _shiptoName->setText(purchaseHandleShipTo.value("shiptoname").toString());
+    XSqlQuery purchaseHandleShipTo;
+    purchaseHandleShipTo.prepare("SELECT * "
+                                 "FROM address "
+                                 "WHERE (addr_id=:addr_id);" );
+    purchaseHandleShipTo.bindValue(":addr_id", _shiptoAddr->id());
+    purchaseHandleShipTo.exec();
+    if (purchaseHandleShipTo.first())
+    {
+      _shiptoName->setText(purchaseHandleShipTo.value("crmacct_name").toString());
+    }
   }
 }

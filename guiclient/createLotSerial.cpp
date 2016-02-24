@@ -10,6 +10,7 @@
 
 #include "createLotSerial.h"
 
+#include <QDebug>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QValidator>
@@ -217,8 +218,7 @@ void createLotSerial::sHandleCharacteristics()
         {
             qDebug() << __FUNCTION__ << __LINE__ << charQuery.lastError().text();
         }
-        int i=0;
-        while(charQuery.next())
+        for (int i = 0; charQuery.next() && i < _charWidgets.length(); i++)
         {
             QString charass_value = charQuery.value("charass_value").toString();
             int char_type = charQuery.value("char_type").toInt();
@@ -231,11 +231,12 @@ void createLotSerial::sHandleCharacteristics()
             else if (char_type == 1)
             {
                 XComboBox *x = qobject_cast<XComboBox *>(_charWidgets.at(i));
-                int index = x->findText(charass_value);
-                if (index > -1) {
+                if (x) {
+                  int index = x->findText(charass_value);
+                  if (index > -1) {
                     x->setCurrentIndex(index);
+                  }
                 }
-
             }
             else
             {
@@ -243,7 +244,6 @@ void createLotSerial::sHandleCharacteristics()
                 if (l)
                     l->setText(charass_value);
             }
-            i++;
         }
     }
     else
@@ -264,17 +264,20 @@ void createLotSerial::clearCharacteristics()
       if (char_types.at(i) == 2)
       {
           DLineEdit *l = qobject_cast<DLineEdit *>(_charWidgets.at(i));
-          l->clear();
+          if (l)
+            l->clear();
       }
       else if (char_types.at(i) == 1)
       {
           XComboBox *x = qobject_cast<XComboBox *>(_charWidgets.at(i));
-          x->setCurrentIndex(0);
+          if (x)
+            x->setCurrentIndex(0);
       }
       else
       {
           QLineEdit *l = qobject_cast<QLineEdit *>(_charWidgets.at(i));
-          l->clear();
+          if (l)
+            l->clear();
       }
    }
 }
