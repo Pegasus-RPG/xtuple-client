@@ -9,11 +9,20 @@
  */
 #include "scriptapi_internal.h"
 #include "qabstractsocketproto.h"
+
 #define DEBUG false
 
-QScriptValue QAbstractSockettoScriptValue(QScriptEngine *engine, QAbstractSocket* const &item)
-{ return engine->newQObject(item); }
+#if QT_VERSION < 0x050000
+void setupQAbstractSocketProto(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
 
+QScriptValue QAbstractSockettoScriptValue(QScriptEngine *engine, QAbstractSocket* const &item)
+{
+  return engine->newQObject(item);
+}
 void QAbstractSocketfromScriptValue(const QScriptValue &obj, QAbstractSocket* &item)
 {
   item = qobject_cast<QAbstractSocket*>(obj.toQObject());
@@ -23,17 +32,24 @@ QScriptValue BindFlagtoScriptValue(QScriptEngine *engine, const enum QAbstractSo
 {
   return QScriptValue(engine, (int)p);
 }
-
 void BindFlagfromScriptValue(const QScriptValue &obj, enum QAbstractSocket::BindFlag &p)
 {
   p = (enum QAbstractSocket::BindFlag)obj.toInt32();
+}
+
+QScriptValue BindModetoScriptValue(QScriptEngine *engine, const QAbstractSocket::BindMode &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void BindModefromScriptValue(const QScriptValue &obj, QAbstractSocket::BindMode &p)
+{
+  p = (QAbstractSocket::BindMode)obj.toInt32();
 }
 
 QScriptValue NetworkLayerProtocoltoScriptValue(QScriptEngine *engine, const enum QAbstractSocket::NetworkLayerProtocol &p)
 {
   return QScriptValue(engine, (int)p);
 }
-
 void NetworkLayerProtocolfromScriptValue(const QScriptValue &obj, enum QAbstractSocket::NetworkLayerProtocol &p)
 {
   p = (enum QAbstractSocket::NetworkLayerProtocol)obj.toInt32();
@@ -43,17 +59,25 @@ QScriptValue PauseModetoScriptValue(QScriptEngine *engine, const enum QAbstractS
 {
   return QScriptValue(engine, (int)p);
 }
-
 void PauseModefromScriptValue(const QScriptValue &obj, enum QAbstractSocket::PauseMode &p)
 {
   p = (enum QAbstractSocket::PauseMode)obj.toInt32();
+}
+
+
+QScriptValue PauseModestoScriptValue(QScriptEngine *engine, const QAbstractSocket::PauseModes &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void PauseModesfromScriptValue(const QScriptValue &obj, QAbstractSocket::PauseModes &p)
+{
+  p = (QAbstractSocket::PauseModes)obj.toInt32();
 }
 
 QScriptValue SocketErrortoScriptValue(QScriptEngine *engine, const enum QAbstractSocket::SocketError &p)
 {
   return QScriptValue(engine, (int)p);
 }
-
 void SocketErrorfromScriptValue(const QScriptValue &obj, enum QAbstractSocket::SocketError &p)
 {
   p = (enum QAbstractSocket::SocketError)obj.toInt32();
@@ -63,7 +87,6 @@ QScriptValue SocketOptiontoScriptValue(QScriptEngine *engine, const enum QAbstra
 {
   return QScriptValue(engine, (int)p);
 }
-
 void SocketOptionfromScriptValue(const QScriptValue &obj, enum QAbstractSocket::SocketOption &p)
 {
   p = (enum QAbstractSocket::SocketOption)obj.toInt32();
@@ -73,7 +96,6 @@ QScriptValue SocketStatetoScriptValue(QScriptEngine *engine, const enum QAbstrac
 {
   return QScriptValue(engine, (int)p);
 }
-
 void SocketStatefromScriptValue(const QScriptValue &obj, enum QAbstractSocket::SocketState &p)
 {
   p = (enum QAbstractSocket::SocketState)obj.toInt32();
@@ -83,12 +105,10 @@ QScriptValue SocketTypetoScriptValue(QScriptEngine *engine, const enum QAbstract
 {
   return QScriptValue(engine, (int)p);
 }
-
 void SocketTypefromScriptValue(const QScriptValue &obj, enum QAbstractSocket::SocketType &p)
 {
   p = (enum QAbstractSocket::SocketType)obj.toInt32();
 }
-
 
 void setupQAbstractSocketProto(QScriptEngine *engine)
 {
@@ -99,8 +119,8 @@ void setupQAbstractSocketProto(QScriptEngine *engine)
   engine->globalObject().setProperty("QAbstractSocket",  constructor);
 
     // enum QAbstractSocket::BindFlag
-  qRegisterMetaType<QAbstractSocket::BindMode>("QAbstractSocket::BindMode");
   qScriptRegisterMetaType(engine,               BindFlagtoScriptValue, BindFlagfromScriptValue);
+  qScriptRegisterMetaType(engine,               BindModetoScriptValue, BindModefromScriptValue);
   constructor.setProperty("ShareAddress",       QScriptValue(engine,   QAbstractSocket::ShareAddress),       ENUMPROPFLAGS);
   constructor.setProperty("DontShareAddress",   QScriptValue(engine,   QAbstractSocket::DontShareAddress),   ENUMPROPFLAGS);
   constructor.setProperty("ReuseAddressHint",   QScriptValue(engine,   QAbstractSocket::ReuseAddressHint),   ENUMPROPFLAGS);
@@ -108,6 +128,7 @@ void setupQAbstractSocketProto(QScriptEngine *engine)
 
   // enum QAbstractSocket::NetworkLayerProtocol
   qScriptRegisterMetaType(engine,                        NetworkLayerProtocoltoScriptValue, NetworkLayerProtocolfromScriptValue);
+<<<<<<< HEAD
   constructor.setProperty("IPv4Protocol",                QScriptValue(engine,               QAbstractSocket::IPv4Protocol),                           ENUMPROPFLAGS);
   constructor.setProperty("IPv6Protocol",                QScriptValue(engine,               QAbstractSocket::IPv6Protocol),                           ENUMPROPFLAGS);
   constructor.setProperty("AnyIPProtocol",               QScriptValue(engine,               QAbstractSocket::AnyIPProtocol),                          ENUMPROPFLAGS);
@@ -146,6 +167,19 @@ void setupQAbstractSocketProto(QScriptEngine *engine)
   constructor.setProperty("TemporaryError", QScriptValue(engine, QAbstractSocket::TemporaryError), ENUMPROPFLAGS);
   constructor.setProperty("UnknownSocketError", QScriptValue(engine, QAbstractSocket::UnknownSocketError), ENUMPROPFLAGS);
 
+=======
+  constructor.setProperty("IPv4Protocol",                QScriptValue(engine,               QAbstractSocket::IPv4Protocol),                ENUMPROPFLAGS);
+  constructor.setProperty("IPv6Protocol",                QScriptValue(engine,               QAbstractSocket::IPv6Protocol),                ENUMPROPFLAGS);
+  constructor.setProperty("AnyIPProtocol",               QScriptValue(engine,               QAbstractSocket::AnyIPProtocol),               ENUMPROPFLAGS);
+  constructor.setProperty("UnknownNetworkLayerProtocol", QScriptValue(engine,               QAbstractSocket::UnknownNetworkLayerProtocol), ENUMPROPFLAGS);
+
+   // enum QAbstractSocket::PauseMode
+  qScriptRegisterMetaType(engine,             PauseModetoScriptValue,  PauseModefromScriptValue);
+  qScriptRegisterMetaType(engine,             PauseModestoScriptValue, PauseModesfromScriptValue);
+  constructor.setProperty("PauseNever",       QScriptValue(engine,     QAbstractSocket::PauseNever),       ENUMPROPFLAGS);
+  constructor.setProperty("PauseOnSslErrors", QScriptValue(engine,     QAbstractSocket::PauseOnSslErrors), ENUMPROPFLAGS);
+
+>>>>>>> DAVID/scriptExposure
   // enum QAbstractSocket::SocketOption
   qScriptRegisterMetaType(engine, SocketOptiontoScriptValue, SocketOptionfromScriptValue);
   constructor.setProperty("LowDelayOption", QScriptValue(engine, QAbstractSocket::LowDelayOption), ENUMPROPFLAGS);
@@ -488,3 +522,4 @@ QString QAbstractSocketProto::toString() const
     return QString("QAbstractSocketProto()");
   return QString("QAbstractSocketProto(unknown)");
 }
+#endif

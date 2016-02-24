@@ -10,6 +10,13 @@
 
 #include "qtcpsocketproto.h"
 
+#if QT_VERSION < 0x050000
+void setupQTcpSocketProto(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
+
 QScriptValue QTcpSockettoScriptValue(QScriptEngine *engine, QTcpSocket* const &item)
 { return engine->newQObject(item); }
 
@@ -42,3 +49,4 @@ QTcpSocketProto::QTcpSocketProto(QObject *parent)
     : QAbstractSocketProto(parent)
 {
 }
+#endif

@@ -14,13 +14,16 @@
 #include <QtScript>
 #include <QString>
 #include <QList>
+
+void setupQHostInfoProto(QScriptEngine *engine);
+
+#if QT_VERSION >= 0x050000
 #include <QHostAddress>
 #include <QHostInfo>
 
 Q_DECLARE_METATYPE(QHostInfo*)
 Q_DECLARE_METATYPE(enum QHostInfo::HostInfoError)
 
-void setupQHostInfoProto(QScriptEngine *engine);
 QScriptValue constructQHostInfo(QScriptContext *context, QScriptEngine *engine);
 
 class QHostInfoProto : public QObject, public QScriptable
@@ -42,4 +45,6 @@ class QHostInfoProto : public QObject, public QScriptable
     Q_INVOKABLE void                     setLookupId(int id);
     Q_INVOKABLE QString                  toString() const;
 };
+#endif
+
 #endif

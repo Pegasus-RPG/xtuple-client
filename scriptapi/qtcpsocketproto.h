@@ -13,12 +13,15 @@
 #include <QObject>
 #include <QString>
 #include <QtScript>
+
+void setupQTcpSocketProto(QScriptEngine *engine);
+
+#if QT_VERSION >= 0x050000
 #include <QIODevice>
 #include <QAbstractSocket>
 #include <QTcpSocket>
 #include "qabstractsocketproto.h"
 
-void setupQTcpSocketProto(QScriptEngine *engine);
 QScriptValue constructQTcpSocket(QScriptContext *context, QScriptEngine *engine);
 
 Q_DECLARE_METATYPE(QTcpSocket*)
@@ -30,5 +33,6 @@ class QTcpSocketProto : public QAbstractSocketProto
   public:
     QTcpSocketProto(QObject *parent);
 };
+#endif
 
 #endif

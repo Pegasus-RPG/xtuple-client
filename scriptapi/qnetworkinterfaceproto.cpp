@@ -11,14 +11,20 @@
 #include "scriptapi_internal.h"
 #include "qnetworkinterfaceproto.h"
 
-#define DEBUG true
+#define DEBUG false
+
+#if QT_VERSION < 0x050000
+void setupQNetworkInterfaceProto(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
 
 static QScriptValue qnetworkinterface_allAddresses(QScriptContext * /*context*/, QScriptEngine *engine)
 {
   QStringList list;
   foreach (const QHostAddress &host, QNetworkInterface::allAddresses()) {
-        QString s = host.toString();
-        list << s;
+       list << host.toString();
   }
 
   return engine->toScriptValue(list);
@@ -70,6 +76,16 @@ void InterfaceFlagfromScriptValue(const QScriptValue &obj, enum QNetworkInterfac
   p = (enum QNetworkInterface::InterfaceFlag)obj.toInt32();
 }
 
+QScriptValue InterfaceFlagstoScriptValue(QScriptEngine *engine, const QNetworkInterface::InterfaceFlags &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+void InterfaceFlagsfromScriptValue(const QScriptValue &obj, QNetworkInterface::InterfaceFlags &p)
+{
+  p = (QNetworkInterface::InterfaceFlags)obj.toInt32();
+}
+
 void setupQNetworkInterfaceProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QNetworkInterfacetoScriptValue, QNetworkInterfacefromScriptValue);
@@ -81,14 +97,14 @@ void setupQNetworkInterfaceProto(QScriptEngine *engine)
   engine->globalObject().setProperty("QNetworkInterface",  constructor);
 
   // enum QNetworkInterface::InterfaceFlag
-  qScriptRegisterMetaType(engine,     InterfaceFlagtoScriptValue, InterfaceFlagfromScriptValue);
-  qRegisterMetaType<QNetworkInterface::InterfaceFlags>("QNetworkInterface::InterfaceFlags");
-  proto.setProperty("IsUp",           QScriptValue(engine,        QNetworkInterface::IsUp),           ENUMPROPFLAGS);
-  proto.setProperty("IsRunning",      QScriptValue(engine,        QNetworkInterface::IsRunning),      ENUMPROPFLAGS);
-  proto.setProperty("CanBroadcast",   QScriptValue(engine,        QNetworkInterface::CanBroadcast),   ENUMPROPFLAGS);
-  proto.setProperty("IsLoopBack",     QScriptValue(engine,        QNetworkInterface::IsLoopBack),     ENUMPROPFLAGS);
-  proto.setProperty("IsPointToPoint", QScriptValue(engine,        QNetworkInterface::IsPointToPoint), ENUMPROPFLAGS);
-  proto.setProperty("CanMulticast",   QScriptValue(engine,        QNetworkInterface::CanMulticast),   ENUMPROPFLAGS);
+  qScriptRegisterMetaType(engine,     InterfaceFlagtoScriptValue,  InterfaceFlagfromScriptValue);
+  qScriptRegisterMetaType(engine,     InterfaceFlagstoScriptValue, InterfaceFlagsfromScriptValue);
+  proto.setProperty("IsUp",           QScriptValue(engine,         QNetworkInterface::IsUp),           ENUMPROPFLAGS);
+  proto.setProperty("IsRunning",      QScriptValue(engine,         QNetworkInterface::IsRunning),      ENUMPROPFLAGS);
+  proto.setProperty("CanBroadcast",   QScriptValue(engine,         QNetworkInterface::CanBroadcast),   ENUMPROPFLAGS);
+  proto.setProperty("IsLoopBack",     QScriptValue(engine,         QNetworkInterface::IsLoopBack),     ENUMPROPFLAGS);
+  proto.setProperty("IsPointToPoint", QScriptValue(engine,         QNetworkInterface::IsPointToPoint), ENUMPROPFLAGS);
+  proto.setProperty("CanMulticast",   QScriptValue(engine,         QNetworkInterface::CanMulticast),   ENUMPROPFLAGS);
   // static methods
   constructor.setProperty("allAddresses",  engine->newFunction(qnetworkinterface_allAddresses),  STATICPROPFLAGS);
   constructor.setProperty("allInterfaces", engine->newFunction(qnetworkinterface_allInterfaces), STATICPROPFLAGS);
@@ -175,6 +191,7 @@ QString QNetworkInterfaceProto::toString() const
 {
   QNetworkInterface *item = qscriptvalue_cast<QNetworkInterface*>(thisObject());
   if (item)
-    return QString("QNetworkInterface()");
+    return QString("QNetworkInterface(%1)").arg(item->humanReadableName());
   return QString("QNetworkInterface(unknown)");
 }
+#endif

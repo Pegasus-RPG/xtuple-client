@@ -10,7 +10,15 @@
 
 #include "scriptapi_internal.h"
 #include "qudpsocketproto.h"
-#define DEBUG true
+
+#define DEBUG false
+
+#if QT_VERSION < 0x050000
+void setupQUdpSocketProto(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
 
 QScriptValue QUdpSockettoScriptValue(QScriptEngine *engine, QUdpSocket* const &item)
 { return engine->newQObject(item); }
@@ -145,3 +153,5 @@ QString QUdpSocketProto::toString() const
     return QString("QUdpSocket()");
   return QString("QUdpSocket(unknown)");
 }
+#endif
+

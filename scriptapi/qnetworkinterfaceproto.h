@@ -11,15 +11,18 @@
 #ifndef __QNETWORKINTERFACEPROTO_H__
 #define __QNETWORKINTERFACEPROTO_H__
 #include <QtScript>
-#include <QNetworkInterface>
-#include <QHostAddress>
 
 void setupQNetworkInterfaceProto(QScriptEngine *engine);
+
+#if QT_VERSION >= 0x050000
+#include <QNetworkInterface>
+#include <QHostAddress>
 QScriptValue constructQNetworkInterface(QScriptContext *context, QScriptEngine *engine);
 
 Q_DECLARE_METATYPE(QNetworkInterface*)
 Q_DECLARE_METATYPE(QList<QNetworkAddressEntry>)
 Q_DECLARE_METATYPE(enum QNetworkInterface::InterfaceFlag)
+Q_DECLARE_METATYPE(QNetworkInterface::InterfaceFlags)
 
 class QNetworkInterfaceProto : public QObject, public QScriptable
 {
@@ -27,16 +30,17 @@ class QNetworkInterfaceProto : public QObject, public QScriptable
 
   public:
     QNetworkInterfaceProto(QObject *parent);
-    Q_INVOKABLE QList<QNetworkAddressEntry>        addressEntries() const;
-    Q_INVOKABLE QNetworkInterface::InterfaceFlags  flags() const;
-    Q_INVOKABLE QString                            hardwareAddress() const;
-    Q_INVOKABLE QString                            humanReadableName() const;
-    Q_INVOKABLE int                                index() const;
-    Q_INVOKABLE bool                               isValid() const;
-    Q_INVOKABLE QString                            name() const;
-    Q_INVOKABLE void                               swap(QNetworkInterface & other);
+    Q_INVOKABLE QList<QNetworkAddressEntry>       addressEntries() const;
+    Q_INVOKABLE QNetworkInterface::InterfaceFlags flags() const;
+    Q_INVOKABLE QString                           hardwareAddress() const;
+    Q_INVOKABLE QString                           humanReadableName() const;
+    Q_INVOKABLE int                               index() const;
+    Q_INVOKABLE bool                              isValid() const;
+    Q_INVOKABLE QString                           name() const;
+    Q_INVOKABLE void                              swap(QNetworkInterface & other);
     // added custom
-    Q_INVOKABLE QString                            toString() const;
+    Q_INVOKABLE QString                           toString() const;
 };
+#endif
 
 #endif

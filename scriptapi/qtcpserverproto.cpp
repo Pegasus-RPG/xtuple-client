@@ -9,11 +9,17 @@
  */
 
 #include "scriptapi_internal.h"
-
 #include "qtcpserverproto.h"
 #include "qhostaddressproto.h"
 
 #define DEBUG false
+
+#if QT_VERSION < 0x050000
+void setupQTcpServerProto(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
 
 QScriptValue QTcpServertoScriptValue(QScriptEngine *engine, QTcpServer* const &item)
 { return engine->newQObject(item); }
@@ -25,7 +31,7 @@ void QTcpServerfromScriptValue(const QScriptValue &obj, QTcpServer* &item)
 
 void setupQTcpServerProto(QScriptEngine *engine)
 {
- qScriptRegisterMetaType(engine, QTcpServertoScriptValue, QTcpServerfromScriptValue);
+  qScriptRegisterMetaType(engine, QTcpServertoScriptValue, QTcpServerfromScriptValue);
 
   QScriptValue proto = engine->newQObject(new QTcpServerProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QTcpServer*>(), proto);
@@ -182,3 +188,4 @@ bool QTcpServerProto::waitForNewConnection(int msec, bool * timedOut)
     return item->waitForNewConnection(msec, timedOut);
   return false;
 }
+#endif
