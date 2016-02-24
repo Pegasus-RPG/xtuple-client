@@ -13,18 +13,6 @@
 
 static QByteArray nullBA = QByteArray();
 
-QScriptValue QByteArraytoScriptValue(QScriptEngine *engine, QByteArray* const &item)
-{
-  QByteArray tmpBA = *item;
-  QVariant  *tmpVar = new QVariant(tmpBA);
-  return engine->newVariant(*tmpVar);
-}
-
-void QByteArrayfromScriptValue(const QScriptValue &obj, QByteArray* &item)
-{
-  item = new QByteArray(obj.toVariant().toByteArray());
-}
-
 QScriptValue QListQByteArraytoScriptValue(QScriptEngine *engine, const QList<QByteArray> &list)
 {
   QScriptValue newArray = engine->newArray();
@@ -49,18 +37,15 @@ void QListQByteArrayfromScriptValue(const QScriptValue &obj, QList<QByteArray> &
 
 void setupQByteArrayProto(QScriptEngine *engine)
 {
-  //qScriptRegisterMetaType(engine, QByteArraytoScriptValue, QByteArrayfromScriptValue);
 
 #if QT_VERSION >= 0x050000
   qScriptRegisterMetaType(engine, QListQByteArraytoScriptValue, QListQByteArrayfromScriptValue);
 #endif
 
   QScriptValue proto = engine->newQObject(new QByteArrayProto(engine));
-  //engine->setDefaultPrototype(qMetaTypeId<QByteArray*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QByteArray>(), proto);
 
-  QScriptValue constructor = engine->newFunction(constructQByteArray,
-                                                 proto);
+  QScriptValue constructor = engine->newFunction(constructQByteArray, proto);
   engine->globalObject().setProperty("QByteArray",  constructor);
 }
 
