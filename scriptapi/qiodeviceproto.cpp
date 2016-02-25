@@ -38,15 +38,6 @@ void OpenModeFlagFromScriptValue(const QScriptValue &obj, enum QIODevice::OpenMo
   p = (enum QIODevice::OpenModeFlag)obj.toInt32();
 }
 
-QScriptValue OpenModeToScriptValue(QScriptEngine *engine, const QIODevice::OpenMode &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-void OpenModeFromScriptValue(const QScriptValue &obj, QIODevice::OpenMode &p)
-{
-  p = (QIODevice::OpenMode)obj.toInt32();
-}
-
 void setupQIODeviceProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QIODevicetoScriptValue, QIODevicefromScriptValue);
@@ -54,7 +45,6 @@ void setupQIODeviceProto(QScriptEngine *engine)
   QScriptValue iodev = engine->newObject();
   engine->globalObject().setProperty("QIODevice",  iodev, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
-  qScriptRegisterMetaType(engine, OpenModeToScriptValue, OpenModeFromScriptValue);
   // enum QIODevice::OpenModeFlag
   qScriptRegisterMetaType(engine, OpenModeFlagToScriptValue, OpenModeFlagFromScriptValue);
   iodev.setProperty("NotOpen",    QScriptValue(engine, QIODevice::NotOpen),    ENUMPROPFLAGS);

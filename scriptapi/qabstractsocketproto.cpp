@@ -37,15 +37,6 @@ void BindFlagfromScriptValue(const QScriptValue &obj, enum QAbstractSocket::Bind
   p = (enum QAbstractSocket::BindFlag)obj.toInt32();
 }
 
-QScriptValue BindModetoScriptValue(QScriptEngine *engine, const QAbstractSocket::BindMode &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-void BindModefromScriptValue(const QScriptValue &obj, QAbstractSocket::BindMode &p)
-{
-  p = (QAbstractSocket::BindMode)obj.toInt32();
-}
-
 QScriptValue NetworkLayerProtocoltoScriptValue(QScriptEngine *engine, const enum QAbstractSocket::NetworkLayerProtocol &p)
 {
   return QScriptValue(engine, (int)p);
@@ -62,15 +53,6 @@ QScriptValue PauseModetoScriptValue(QScriptEngine *engine, const enum QAbstractS
 void PauseModefromScriptValue(const QScriptValue &obj, enum QAbstractSocket::PauseMode &p)
 {
   p = (enum QAbstractSocket::PauseMode)obj.toInt32();
-}
-
-QScriptValue PauseModestoScriptValue(QScriptEngine *engine, const QAbstractSocket::PauseModes &p)
-{
-  return QScriptValue(engine, (int)p);
-}
-void PauseModesfromScriptValue(const QScriptValue &obj, QAbstractSocket::PauseModes &p)
-{
-  p = (QAbstractSocket::PauseModes)obj.toInt32();
 }
 
 QScriptValue SocketErrortoScriptValue(QScriptEngine *engine, const enum QAbstractSocket::SocketError &p)
@@ -119,7 +101,6 @@ void setupQAbstractSocketProto(QScriptEngine *engine)
 
     // enum QAbstractSocket::BindFlag
   qScriptRegisterMetaType(engine,               BindFlagtoScriptValue, BindFlagfromScriptValue);
-  qScriptRegisterMetaType(engine,               BindModetoScriptValue, BindModefromScriptValue);
   constructor.setProperty("ShareAddress",       QScriptValue(engine,   QAbstractSocket::ShareAddress),       ENUMPROPFLAGS);
   constructor.setProperty("DontShareAddress",   QScriptValue(engine,   QAbstractSocket::DontShareAddress),   ENUMPROPFLAGS);
   constructor.setProperty("ReuseAddressHint",   QScriptValue(engine,   QAbstractSocket::ReuseAddressHint),   ENUMPROPFLAGS);
@@ -134,7 +115,6 @@ void setupQAbstractSocketProto(QScriptEngine *engine)
 
   // enum QAbstractSocket::PauseMode
   qScriptRegisterMetaType(engine,             PauseModetoScriptValue,  PauseModefromScriptValue);
-  qScriptRegisterMetaType(engine,             PauseModestoScriptValue, PauseModesfromScriptValue);
   constructor.setProperty("PauseNever",       QScriptValue(engine,     QAbstractSocket::PauseNever),       ENUMPROPFLAGS);
   constructor.setProperty("PauseOnSslErrors", QScriptValue(engine,     QAbstractSocket::PauseOnSslErrors), ENUMPROPFLAGS);
 
