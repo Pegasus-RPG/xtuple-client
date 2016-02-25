@@ -16,6 +16,7 @@
 #include <QVariant>
 
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 todoItem::todoItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -223,7 +224,9 @@ void todoItem::sSave()
     int result = todoSave.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup(storedProc, result), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving To Do Information"),
+                             storedProcErrorLookup(storedProc, result),
+                             __FILE__, __LINE__);
       rollbackq.exec();
       return;
     }
@@ -231,7 +234,8 @@ void todoItem::sSave()
   else if (todoSave.lastError().type() != QSqlError::NoError)
   {
     rollbackq.exec();
-    systemError(this, todoSave.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving To Do Information"),
+                         todoSave, __FILE__, __LINE__);
     return;
   }
 
@@ -247,7 +251,8 @@ void todoItem::sSave()
     if (! recurq.exec())
     {
       rollbackq.exec();
-      systemError(this, recurq.lastError().text(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving To Do Information"),
+                           recurq, __FILE__, __LINE__);
       return;
     }
   }
@@ -261,7 +266,8 @@ void todoItem::sSave()
     if (! recurq.exec())
     {
       rollbackq.exec();
-      systemError(this, recurq.lastError().text(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving To Do Information"),
+                           recurq, __FILE__, __LINE__);
       return;
     }
   }
@@ -270,7 +276,10 @@ void todoItem::sSave()
   if (! _recurring->save(true, cp, &errmsg))
   {
     rollbackq.exec();
-    systemError(this, errmsg, __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                         tr("%1: %2")
+                         .arg(windowTitle())
+                         .arg(errmsg),__FILE__,__LINE__);
     return;
   }
 
@@ -334,9 +343,9 @@ void todoItem::sPopulate()
                           "TODO");
     _cntct->setId(todoPopulate.value("todoitem_cntct_id").toInt());
   }
-  else if (todoPopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving To Do Information"),
+                                todoPopulate, __FILE__, __LINE__))
   {
-    systemError(this, todoPopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -360,9 +369,9 @@ void todoItem::sHandleIncident()
     incdtq.exec();
     if (incdtq.first())
       _crmacct->setId(incdtq.value("incdt_crmacct_id").toInt());
-    else if (incdtq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Incident Information"),
+                                  incdtq, __FILE__, __LINE__))
     {
-      systemError(this, incdtq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

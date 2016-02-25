@@ -25,6 +25,7 @@
 #include "storedProcErrorLookup.h"
 #include "todoItem.h"
 #include "customer.h"
+#include "errorReporter.h"
 
 todoListCalendar::todoListCalendar(QWidget* parent, const char * name, Qt::WindowFlags f)
   : XWidget(parent, name, f)
@@ -215,15 +216,17 @@ void todoListCalendar::sDelete()
     int result = todoDelete.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("deleteTodoItem", result));
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting To Do Item Information"),
+                             storedProcErrorLookup("deleteTodoItem", result),
+                             __FILE__, __LINE__);
       return;
     }
     else
       sFillList();
     }
-  else if (todoDelete.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting To Do Item Information"),
+                                todoDelete, __FILE__, __LINE__))
   {
-    systemError(this, todoDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -244,7 +247,8 @@ void todoListCalendar::sEditCustomer()
     omfgThis->handleNewWindow(newdlg);
   }
   else if (cust.lastError().type() != QSqlError::NoError)
-    systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Customer Information"),
+                       cust, __FILE__, __LINE__);
 
 }
 
@@ -264,7 +268,8 @@ void todoListCalendar::sViewCustomer()
     omfgThis->handleNewWindow(newdlg);
   }
   else if (cust.lastError().type() != QSqlError::NoError)
-    systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Customer Information"),
+                       cust, __FILE__, __LINE__);
 
 }
 
@@ -328,9 +333,9 @@ void todoListCalendar::sFillList(const QDate & date)
 
   _list->populate(itemQ);
 
-  if (itemQ.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving To Do Item Information"),
+                                itemQ, __FILE__, __LINE__))
   {
-    systemError(this, itemQ.lastError().databaseText(), __FILE__, __LINE__);
     dontBotherMe = false;
     return;
   }

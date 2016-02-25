@@ -16,6 +16,7 @@
 
 #include "metasql.h"
 #include "parameter.h"
+#include "errorReporter.h"
 
 taxAssignment::taxAssignment(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -133,9 +134,9 @@ void taxAssignment::sPopulateTaxCode()
 
   _taxCodeOption->clear();
   _taxCodeOption->populate(taxPopulateTaxCode);
-  if (taxPopulateTaxCode.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Tax Information"),
+                                taxPopulateTaxCode, __FILE__, __LINE__))
   {
-    systemError(this, taxPopulateTaxCode.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -161,9 +162,9 @@ void taxAssignment::sPopulateTaxCode()
 
   _taxCodeSelected->clear();
   _taxCodeSelected->populate(taxPopulateTaxCode);
-  if (taxPopulateTaxCode.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Tax Information"),
+                                taxPopulateTaxCode, __FILE__, __LINE__))
   {
-    systemError(this, taxPopulateTaxCode.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -249,7 +250,8 @@ void taxAssignment::sAdd()
   else if (taxAdd.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, taxAdd.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Tax Information"),
+                         taxAdd, __FILE__, __LINE__);
     return;
   }
   
@@ -267,7 +269,8 @@ void taxAssignment::sAdd()
   if (taxAdd.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, taxAdd.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Tax Information"),
+                         taxAdd, __FILE__, __LINE__);
     return;
   }
   taxAdd.exec("COMMIT;");
@@ -285,9 +288,9 @@ void taxAssignment::sRevoke()
   taxRevoke.bindValue(":taxass_taxzone_id", _taxZone->id());
   taxRevoke.bindValue(":taxass_taxtype_id", _taxType->id());
   taxRevoke.exec();
-  if (taxRevoke.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Tax Information"),
+                                taxRevoke, __FILE__, __LINE__))
   {
-    systemError(this, taxRevoke.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sPopulateTaxCode();

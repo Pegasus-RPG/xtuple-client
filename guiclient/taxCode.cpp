@@ -152,9 +152,9 @@ void taxCode::sDelete()
     taxDelete.bindValue(":taxrate_id", _taxitems->id());
     taxDelete.exec();
 
-    if (taxDelete.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Tax Code Rate"),
+                                  taxDelete, __FILE__, __LINE__))
     {
-      systemError(this, taxDelete.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -192,9 +192,9 @@ void taxCode::sFillList()
   taxFillList = mql.toQuery(params);
    
   _taxitems->populate(taxFillList);
-  if (taxFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Tax Rate Information"),
+                                taxFillList, __FILE__, __LINE__))
   {
-    systemError(this, taxFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -386,7 +386,8 @@ void taxCode::sCheck()
       ph.bindValue(":tax_id", _taxid);
       ph.exec();
       if (ph.lastError().type() != QSqlError::NoError)
-        systemError(this, ph.lastError().databaseText(), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Tax Rate Information"),
+                           ph, __FILE__, __LINE__);
         
       _taxid = taxCheck.value("tax_id").toInt();
       _mode = cEdit;
@@ -452,7 +453,8 @@ void taxCode::closeEvent(QCloseEvent *pEvent)
     taxcloseEvent.bindValue(":tax_id", _taxid);
     taxcloseEvent.exec();
     if (taxcloseEvent.lastError().type() != QSqlError::NoError)
-      systemError(this, taxcloseEvent.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Tax Rate Information"),
+                         taxcloseEvent, __FILE__, __LINE__);
   }
 
   XDialog::closeEvent(pEvent);
