@@ -13,6 +13,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <xvariant.h>
+#include "errorReporter.h"
 
 submitReport::submitReport(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -166,6 +167,8 @@ void submitReport::sSubmit()
     systemError(this, tr("A System Error occurred at %1::%2.")
                       .arg(__FILE__)
                       .arg(__LINE__) );
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Scheduled Report Information"),
+                       submitSubmit, __FILE__, __LINE__);
 
   accept();
 }
