@@ -224,10 +224,10 @@ void todoItem::sSave()
     int result = todoSave.value("result").toInt();
     if (result < 0)
     {
+      rollbackq.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving To Do Information"),
                              storedProcErrorLookup(storedProc, result),
                              __FILE__, __LINE__);
-      rollbackq.exec();
       return;
     }
   }

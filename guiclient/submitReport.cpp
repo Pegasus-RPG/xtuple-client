@@ -164,9 +164,6 @@ void submitReport::sSubmit()
     }
   }
   else
-    systemError(this, tr("A System Error occurred at %1::%2.")
-                      .arg(__FILE__)
-                      .arg(__LINE__) );
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Scheduled Report Information"),
                        submitSubmit, __FILE__, __LINE__);
 
