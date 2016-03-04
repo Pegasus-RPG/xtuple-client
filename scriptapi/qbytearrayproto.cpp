@@ -35,14 +35,19 @@ void QListQByteArrayfromScriptValue(const QScriptValue &obj, QList<QByteArray> &
   }
 }
 
+
 // Static Public Members:
 QScriptValue fromBase64ForJS(QScriptContext* context, QScriptEngine* engine)
 {
   if (context->argumentCount() == 1) {
     engine->toScriptValue(QByteArray::fromBase64(context->argument(0).toString().toLocal8Bit()));
   } else if (context->argumentCount() == 2) {
+#if QT_VERSION < 0x050000
+    engine->toScriptValue(QByteArray::fromBase64(context->argument(0).toString().toLocal8Bit()));
+#else
     QByteArray::Base64Option options = static_cast<QByteArray::Base64Option>(context->argument(1).toInt32());
     engine->toScriptValue(QByteArray::fromBase64(context->argument(0).toString().toLocal8Bit(), options));
+#endif
   }
 }
 
@@ -99,6 +104,7 @@ QScriptValue fromStdStringForJS(QScriptContext* context, QScriptEngine* engine)
   engine->toScriptValue(QByteArray::fromStdString(context->argument(0).toString().toStdString()));
 }
 
+#if QT_VERSION >= 0x050000
 // enum QByteArray::Base64Option
 QScriptValue Base64OptionToScriptValue(QScriptEngine *engine, const enum QByteArray::Base64Option &p)
 {
@@ -108,6 +114,7 @@ void Base64OptionFromScriptValue(const QScriptValue &obj, enum QByteArray::Base6
 {
   p = (enum QByteArray::Base64Option)obj.toInt32();
 }
+#endif
 
 void setupQByteArrayProto(QScriptEngine *engine)
 {
