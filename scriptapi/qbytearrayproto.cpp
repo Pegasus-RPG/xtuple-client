@@ -98,11 +98,12 @@ QScriptValue fromRawNSDataForJS(QScriptContext* context, QScriptEngine* engine)
   engine->toScriptValue(QByteArray::fromRawNSData(context->argument(0).toString()));
 }
 */
-
+#if QT_VERSION >= 0x050000
 QScriptValue fromStdStringForJS(QScriptContext* context, QScriptEngine* engine)
 {
   engine->toScriptValue(QByteArray::fromStdString(context->argument(0).toString().toStdString()));
 }
+#endif
 
 #if QT_VERSION >= 0x050000
 // enum QByteArray::Base64Option
