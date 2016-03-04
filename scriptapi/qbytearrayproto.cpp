@@ -162,7 +162,6 @@ void setupQByteArrayProto(QScriptEngine *engine)
 
   //QScriptValue fromStdString = engine->newFunction(fromStdStringForJS);
   //constructor.setProperty("fromStdString", fromStdString);
-#endif
 
   // enum QByteArray::Base64Option
   qScriptRegisterMetaType(engine, Base64OptionToScriptValue, Base64OptionFromScriptValue);
@@ -170,6 +169,7 @@ void setupQByteArrayProto(QScriptEngine *engine)
   constructor.setProperty("Base64UrlEncoding", QScriptValue(engine, QByteArray::Base64UrlEncoding), permanent);
   constructor.setProperty("KeepTrailingEquals", QScriptValue(engine, QByteArray::KeepTrailingEquals), permanent);
   constructor.setProperty("OmitTrailingEquals", QScriptValue(engine, QByteArray::OmitTrailingEquals), permanent);
+#endif
 }
 
 QScriptValue constructQByteArray(QScriptContext *context,
