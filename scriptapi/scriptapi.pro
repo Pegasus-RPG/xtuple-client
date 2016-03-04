@@ -8,7 +8,7 @@ CONFIG += qt \
 QT += core network printsupport script sql webkit webkitwidgets widgets xml
 
 greaterThan (QT_MAJOR_VERSION, 4) {
-  QT += websockets webchannel
+  QT += websockets webchannel serialport
 }
 
 DBFILE = scriptapi.db
@@ -32,6 +32,7 @@ HEADERS += setupscriptapi.h \
     metasqlhighlighterproto.h \
     orreportproto.h \
     parameterlistsetup.h \
+    qabstractsocketproto.h \
     qactionproto.h \
     qapplicationproto.h \
     qboxlayoutproto.h \
@@ -69,6 +70,7 @@ HEADERS += setupscriptapi.h \
     qformlayoutproto.h \
     qgridlayoutproto.h \
     qhostaddressproto.h \
+    qhostinfoproto.h \
     qiconproto.h \
     qiodeviceproto.h \
     qitemdelegateproto.h \
@@ -81,6 +83,7 @@ HEADERS += setupscriptapi.h \
     qmenuproto.h \
     qmessageboxsetup.h \
     qnetworkaccessmanagerproto.h \
+    qnetworkinterfaceproto.h \
     qnetworkreplyproto.h \
     qnetworkrequestproto.h \
     qobjectproto.h \
@@ -88,6 +91,8 @@ HEADERS += setupscriptapi.h \
     qprocessproto.h     \
     qprocessenvironmentproto.h     \
     qpushbuttonproto.h \
+    qserialportproto.h \
+    qserialportinfoproto.h \
     qsizepolicyproto.h \
     qspaceritemproto.h \
     qsqldatabaseproto.h \
@@ -106,6 +111,8 @@ HEADERS += setupscriptapi.h \
     qsslsocketproto.h \
     qstackedwidgetproto.h \
     qtabwidgetproto.h \
+    qtcpserverproto.h \
+    qtcpsocketproto.h \
     qtextdocumentproto.h \
     qtexteditproto.h \
     qtimerproto.h \
@@ -113,6 +120,7 @@ HEADERS += setupscriptapi.h \
     qtoolbuttonproto.h \
     qtreewidgetitemproto.h \
     qtsetup.h \
+    qudpsocketproto.h \
     qurlproto.h \
     qurlqueryproto.h \
     quuidproto.h \
@@ -135,6 +143,7 @@ HEADERS += setupscriptapi.h \
     xsqlqueryproto.h \
     addressclustersetup.h \
     alarmssetup.h \
+    char.h \
     clineeditsetup.h \
     commentssetup.h \
     contactwidgetsetup.h \
@@ -167,6 +176,7 @@ SOURCES += setupscriptapi.cpp \
     metasqlhighlighterproto.cpp \
     orreportproto.cpp \
     parameterlistsetup.cpp \
+    qabstractsocketproto.cpp \
     qactionproto.cpp \
     qapplicationproto.cpp \
     qboxlayoutproto.cpp \
@@ -204,6 +214,7 @@ SOURCES += setupscriptapi.cpp \
     qformlayoutproto.cpp \
     qgridlayoutproto.cpp \
     qhostaddressproto.cpp \
+    qhostinfoproto.cpp \
     qiconproto.cpp \
     qiodeviceproto.cpp \
     qitemdelegateproto.cpp \
@@ -216,6 +227,7 @@ SOURCES += setupscriptapi.cpp \
     qmenuproto.cpp \
     qmessageboxsetup.cpp \
     qnetworkaccessmanagerproto.cpp \
+    qnetworkinterfaceproto.cpp \
     qnetworkreplyproto.cpp \
     qnetworkrequestproto.cpp \
     qobjectproto.cpp \
@@ -223,6 +235,8 @@ SOURCES += setupscriptapi.cpp \
     qprocessproto.cpp \
     qprocessenvironmentproto.cpp \
     qpushbuttonproto.cpp \
+    qserialportproto.cpp \
+    qserialportinfoproto.cpp \
     qsizepolicyproto.cpp \
     qspaceritemproto.cpp \
     qsqldatabaseproto.cpp \
@@ -241,6 +255,8 @@ SOURCES += setupscriptapi.cpp \
     qsslsocketproto.cpp \
     qstackedwidgetproto.cpp \
     qtabwidgetproto.cpp \
+    qtcpserverproto.cpp \
+    qtcpsocketproto.cpp \
     qtextdocumentproto.cpp \
     qtexteditproto.cpp \
     qtimerproto.cpp \
@@ -248,6 +264,7 @@ SOURCES += setupscriptapi.cpp \
     qtoolbuttonproto.cpp \
     qtreewidgetitemproto.cpp \
     qtsetup.cpp \
+    qudpsocketproto.cpp \
     qurlproto.cpp \
     qurlqueryproto.cpp \
     quuidproto.cpp \
@@ -270,6 +287,7 @@ SOURCES += setupscriptapi.cpp \
     xsqlqueryproto.cpp \
     addressclustersetup.cpp \
     alarmssetup.cpp \
+    char.cpp \
     clineeditsetup.cpp \
     commentssetup.cpp \
     contactwidgetsetup.cpp \

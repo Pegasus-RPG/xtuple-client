@@ -13,18 +13,6 @@
 
 static QByteArray nullBA = QByteArray();
 
-QScriptValue QByteArraytoScriptValue(QScriptEngine *engine, QByteArray* const &item)
-{
-  QByteArray tmpBA = *item;
-  QVariant  *tmpVar = new QVariant(tmpBA);      // TODO: memory leak?
-  return engine->newVariant(*tmpVar);
-}
-
-void QByteArrayfromScriptValue(const QScriptValue &obj, QByteArray* &item)
-{
-  item = new QByteArray(obj.toVariant().toByteArray());
-}
-
 QScriptValue QListQByteArraytoScriptValue(QScriptEngine *engine, const QList<QByteArray> &list)
 {
   QScriptValue newArray = engine->newArray();
@@ -47,51 +35,192 @@ void QListQByteArrayfromScriptValue(const QScriptValue &obj, QList<QByteArray> &
   }
 }
 
+
+// Static Public Members:
+QScriptValue fromBase64ForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  if (context->argumentCount() == 1) {
+    engine->toScriptValue(QByteArray::fromBase64(context->argument(0).toString().toLocal8Bit()));
+  } else if (context->argumentCount() == 2) {
+#if QT_VERSION < 0x050000
+    engine->toScriptValue(QByteArray::fromBase64(context->argument(0).toString().toLocal8Bit()));
+#else
+    QByteArray::Base64Option options = static_cast<QByteArray::Base64Option>(context->argument(1).toInt32());
+    engine->toScriptValue(QByteArray::fromBase64(context->argument(0).toString().toLocal8Bit(), options));
+#endif
+  }
+}
+
+/* TODO: Is CFData supported?
+QScriptValue fromCFDataForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  engine->toScriptValue(QByteArray::fromCFData(context->argument(0).toString()));
+}
+*/
+
+QScriptValue fromHexForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  engine->toScriptValue(QByteArray::fromHex(context->argument(0).toString().toLocal8Bit()));
+}
+
+/* TODO: Is NSData supported?
+QScriptValue fromNSDataForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  engine->toScriptValue(QByteArray::fromNSData(context->argument(0).toString()));
+}
+*/
+
+QScriptValue fromPercentEncodingForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  engine->toScriptValue(QByteArray::fromPercentEncoding(context->argument(0).toString().toLocal8Bit()));
+}
+
+/* TODO: Is CFDataRef supported?
+QScriptValue fromRawCFDataForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  engine->toScriptValue(QByteArray::fromRawCFData(context->argument(0).toString()));
+}
+*/
+
+QScriptValue fromRawDataForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  if (context->argumentCount() == 2) {
+    char thisArg = context->argument(0).toInt32();
+    engine->toScriptValue(QByteArray::fromRawData(&thisArg, context->argument(1).toInt32()));
+  } else {
+    return engine->undefinedValue();
+  }
+}
+
+/* TODO: Is NSData supported?
+QScriptValue fromRawNSDataForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  engine->toScriptValue(QByteArray::fromRawNSData(context->argument(0).toString()));
+}
+*/
+#if QT_VERSION >= 0x050000
+QScriptValue fromStdStringForJS(QScriptContext* context, QScriptEngine* engine)
+{
+  engine->toScriptValue(QByteArray::fromStdString(context->argument(0).toString().toStdString()));
+}
+#endif
+
+#if QT_VERSION >= 0x050000
+// enum QByteArray::Base64Option
+QScriptValue Base64OptionToScriptValue(QScriptEngine *engine, const enum QByteArray::Base64Option &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void Base64OptionFromScriptValue(const QScriptValue &obj, enum QByteArray::Base64Option &p)
+{
+  p = (enum QByteArray::Base64Option)obj.toInt32();
+}
+#endif
+
 void setupQByteArrayProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QByteArraytoScriptValue, QByteArrayfromScriptValue);
+  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
 #if QT_VERSION >= 0x050000
   qScriptRegisterMetaType(engine, QListQByteArraytoScriptValue, QListQByteArrayfromScriptValue);
 #endif
 
   QScriptValue proto = engine->newQObject(new QByteArrayProto(engine));
-  engine->setDefaultPrototype(qMetaTypeId<QByteArray*>(), proto);
+  //engine->setDefaultPrototype(qMetaTypeId<QByteArray*>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QByteArray>(), proto);
 
-  QScriptValue constructor = engine->newFunction(constructQByteArray,
-                                                 proto);
+  QScriptValue constructor = engine->newFunction(constructQByteArray, proto);
   engine->globalObject().setProperty("QByteArray",  constructor);
+
+#if QT_VERSION >= 0x050000
+  // Static Public Members:
+  // TODO: These are crashing the client.
+
+  //QScriptValue fromBase64 = engine->newFunction(fromBase64ForJS);
+  //constructor.setProperty("fromBase64", fromBase64);
+
+  /* TODO: Is CFData supported?
+  QScriptValue fromCFData = engine->newFunction(fromCFDataForJS);
+  constructor.setProperty("fromCFData", fromCFData);
+  */
+
+  //QScriptValue fromHex = engine->newFunction(fromHexForJS);
+  //constructor.setProperty("fromHex", fromHex);
+
+  /* TODO: Is NSData supported?
+  QScriptValue fromNSData = engine->newFunction(fromNSDataForJS);
+  constructor.setProperty("fromNSData", fromNSData);
+  */
+
+  //QScriptValue fromPercentEncoding = engine->newFunction(fromPercentEncodingForJS);
+  //constructor.setProperty("fromPercentEncoding", fromPercentEncoding);
+
+  /* TODO: Is CFDataRef supported?
+  QScriptValue fromRawCFData = engine->newFunction(fromRawCFDataForJS);
+  constructor.setProperty("fromRawCFData", fromRawCFData);
+  */
+
+  //QScriptValue fromRawData = engine->newFunction(fromRawDataForJS);
+  //constructor.setProperty("fromRawData", fromRawData);
+
+  /* TODO: Is NSData supported?
+  QScriptValue fromRawNSData = engine->newFunction(fromRawNSDataForJS);
+  constructor.setProperty("fromRawNSData", fromRawNSData);
+  */
+
+  //QScriptValue fromStdString = engine->newFunction(fromStdStringForJS);
+  //constructor.setProperty("fromStdString", fromStdString);
+
+  // enum QByteArray::Base64Option
+  qScriptRegisterMetaType(engine, Base64OptionToScriptValue, Base64OptionFromScriptValue);
+  constructor.setProperty("Base64Encoding", QScriptValue(engine, QByteArray::Base64Encoding), permanent);
+  constructor.setProperty("Base64UrlEncoding", QScriptValue(engine, QByteArray::Base64UrlEncoding), permanent);
+  constructor.setProperty("KeepTrailingEquals", QScriptValue(engine, QByteArray::KeepTrailingEquals), permanent);
+  constructor.setProperty("OmitTrailingEquals", QScriptValue(engine, QByteArray::OmitTrailingEquals), permanent);
+#endif
 }
 
 QScriptValue constructQByteArray(QScriptContext *context,
                                  QScriptEngine  *engine)
 {
-  QByteArray *obj = 0;
+  QByteArray obj = 0;
 
   if (context->argumentCount() == 0)
-    obj = new QByteArray();
+    obj = QByteArray();
 
   else if (context->argumentCount() == 1 &&
-           qscriptvalue_cast<QByteArray*>(context->argument(0)))
-    obj = new QByteArray(*(qscriptvalue_cast<QByteArray*>(context->argument(0))));
+             qscriptvalue_cast<QByteArray*>(context->argument(0)))
+    obj = QByteArray(*(qscriptvalue_cast<QByteArray*>(context->argument(0))));
 
   else if (context->argumentCount() == 1 &&
            context->argument(0).isString())
-    obj = new QByteArray(context->argument(0).toString().toLatin1().data());
-
+    obj = QByteArray(context->argument(0).toString().toLatin1().data());
+  // Support `QByteArray(const char * data, int size = -1)` with integer char and no size arg.
+  else if (context->argumentCount() == 1 &&
+           context->argument(0).isNumber()) {
+    char thisArg = context->argument(0).toInt32();
+    obj = QByteArray(&thisArg);
+  }
   else if (context->argumentCount() == 2 &&
            context->argument(0).isString() &&
            context->argument(1).isNumber())
-    obj = new QByteArray(context->argument(0).toString().toLatin1().data(),
+    obj = QByteArray(context->argument(0).toString().toLatin1().data(),
                          context->argument(1).toInt32());
 
   else if (context->argumentCount() == 2 &&
            context->argument(0).isNumber() &&
            context->argument(1).isString())
-    obj = new QByteArray(context->argument(0).toInt32(),
+    obj = QByteArray(context->argument(0).toInt32(),
                          context->argument(1).toString().at(0).toLatin1());
-
+  // Support `QByteArray(int size, char ch)` with integer char.
+  else if (context->argumentCount() == 2 &&
+           context->argument(0).isNumber() &&
+           context->argument(1).isNumber()) {
+    // No way to determine `const` for `QByteArray(const char * data, int size = -1)`.
+    // So it's not supported. `QByteArray(int size, char ch)` only.
+    obj = QByteArray(context->argument(0).toInt32(),
+                         context->argument(1).toInt32());
+  }
   else
     context->throwError(QScriptContext::UnknownError,
                        "could not find appropriate QByteArray constructor");
@@ -103,8 +232,10 @@ QByteArrayProto::QByteArrayProto(QObject *parent)
     : QObject(parent)
 {
 }
+QByteArrayProto::~QByteArrayProto()
+{
+}
 
-/*
 QByteArray &QByteArrayProto::append(const QByteArray &ba)
 {
   QByteArray *item = qscriptvalue_cast<QByteArray*>(thisObject());
@@ -900,7 +1031,6 @@ void QByteArrayProto::truncate(int pos)
   if (item)
     item->truncate(pos);
 }
-*/
 
 QString QByteArrayProto::toString() const
 {
