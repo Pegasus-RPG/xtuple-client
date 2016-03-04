@@ -17,6 +17,7 @@
 
 Q_DECLARE_METATYPE(QByteArray*)
 Q_DECLARE_METATYPE(QByteArray)
+Q_DECLARE_METATYPE(enum QByteArray::Base64Option)
 void setupQByteArrayProto(QScriptEngine *engine);
 QScriptValue constructQByteArray(QScriptContext *context, QScriptEngine *engine);
 

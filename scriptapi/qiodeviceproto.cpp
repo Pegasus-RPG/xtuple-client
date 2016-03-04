@@ -325,18 +325,22 @@ qint64 QIODeviceProto::write(const QByteArray &byteArray)
   return 0;
 }
 
-qint64 QIODeviceProto::write(const char *data)
+// Javascript does not support pass by reference String parameters. Don't use a pointer.
+//qint64 QIODeviceProto::write(const char *data)
+qint64 QIODeviceProto::write(char data)
 {
   QIODevice *item = qscriptvalue_cast<QIODevice*>(thisObject());
   if (item)
-    return item->write(data);
+    return item->write(&data);
   return 0;
 }
 
-qint64 QIODeviceProto::write(const char *data, qint64 maxSize)
+// Javascript does not support pass by reference String parameters. Don't use a pointer.
+//qint64 QIODeviceProto::write(const char *data, qint64 maxSize)
+qint64 QIODeviceProto::write(char data, qint64 maxSize)
 {
   QIODevice *item = qscriptvalue_cast<QIODevice*>(thisObject());
   if (item)
-    return item->write(data, maxSize);
+    return item->write(&data, maxSize);
   return 0;
 }
