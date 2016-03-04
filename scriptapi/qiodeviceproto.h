@@ -62,8 +62,11 @@ class QIODeviceProto : public QObject, public QScriptable
     Q_INVOKABLE bool                    waitForBytesWritten(int msecs);
     Q_INVOKABLE bool                    waitForReadyRead(int msecs);
     Q_INVOKABLE qint64                  write(const QByteArray &byteArray);
-    Q_INVOKABLE qint64                  write(const char *data);
-    Q_INVOKABLE qint64                  write(const char *data, qint64 maxSize);
+    // Javascript does not support pass by reference String parameters. Don't use a const pointer.
+    //Q_INVOKABLE qint64                  write(const char *data);
+    //Q_INVOKABLE qint64                  write(const char *data, qint64 maxSize);
+    Q_INVOKABLE qint64                  write(char data);
+    Q_INVOKABLE qint64                  write(char data, qint64 maxSize);
 
   public slots:
 
