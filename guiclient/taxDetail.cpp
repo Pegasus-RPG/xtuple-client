@@ -15,6 +15,7 @@
 #include <QMessageBox>
 #include "metasql.h"
 #include "taxAdjustment.h"
+#include "errorReporter.h"
 
 taxDetail::taxDetail(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -148,11 +149,12 @@ void taxDetail::sCalculateTax()
   taxCalculateTax = mql.toQuery(params);
   _taxcodes->clear();
   _taxcodes->populate(taxCalculateTax);
-  if (taxCalculateTax.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Tax Detail Information"),
+                                taxCalculateTax, __FILE__, __LINE__))
   {
-    systemError(this, taxCalculateTax.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+
 }
 
 void taxDetail::clear()
@@ -210,9 +212,9 @@ void taxDetail::sPopulate()
   
   _taxcodes->clear();
   _taxcodes->populate(taxPopulate);
-  if (taxPopulate.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Tax Type Information"),
+                                taxPopulate, __FILE__, __LINE__))
   {
-    systemError(this, taxPopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -264,9 +266,9 @@ void taxDetail::sDelete()
 	  taxDelete.bindValue(":parent_id", _orderid);
           taxDelete.bindValue(":tax_id", _taxcodes->id());
           taxDelete.exec();
-          if (taxDelete.lastError().type() != QSqlError::NoError)
+          if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Tax Adjustment Information"),
+                                        taxDelete, __FILE__, __LINE__))
           {
-            systemError(this, taxDelete.lastError().databaseText(), __FILE__, __LINE__);
             return;
           }
 	}

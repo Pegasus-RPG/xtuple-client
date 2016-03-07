@@ -19,6 +19,7 @@
 
 #include "mqlutil.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 splitReceipt::splitReceipt(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -77,9 +78,9 @@ void splitReceipt::populate()
     _freight->setId(splitpopulate.value("curr_id").toInt());
     _freight->setLocalValue(splitpopulate.value("recv_freight").toDouble());
   }
-  else if (splitpopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Receipt Information"),
+                                splitpopulate, __FILE__, __LINE__))
   {
-    systemError(this, splitpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -99,15 +100,16 @@ void splitReceipt::sSplit()
     result = splitSplit.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup(QString("splitReceipt"), result),
-		  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Receipt Information"),
+                             storedProcErrorLookup("splitReceipt", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (splitSplit.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Receipt Information"),
+                                splitSplit, __FILE__, __LINE__))
   {
-      systemError(this, splitSplit.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+    return;
   }
 
   omfgThis->sPurchaseOrderReceiptsUpdated();
