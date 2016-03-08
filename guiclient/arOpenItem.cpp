@@ -41,6 +41,7 @@ arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::Window
   connect(_taxLit,         SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
   connect(_amount,         SIGNAL(valueChanged()),            this, SLOT(sCalculateCommission()));
   connect(_amount,         SIGNAL(editingFinished()),         this, SLOT(sDetermineTaxAmount()));
+  connect(_taxzone,        SIGNAL(newID(int)),                this, SLOT(sDetermineTaxAmount()));
   connect(_docNumber,      SIGNAL(textEdited(QString)),       this, SLOT(sReleaseNumber()));
 
   _last = -1;

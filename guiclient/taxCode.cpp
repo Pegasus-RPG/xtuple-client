@@ -41,7 +41,6 @@ taxCode::taxCode(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_expire, SIGNAL(clicked()), this, SLOT(sExpire())); 
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-  connect(_autoApplyMemo, SIGNAL(clicked()), this, SLOT(sSetMemo()));
   
   _taxitems->addColumn(tr("Effective"), _dateColumn,    Qt::AlignLeft,  true, "effective" );
   _taxitems->addColumn(tr("Expires"),   _dateColumn,    Qt::AlignLeft,  true, "expires" );
@@ -287,8 +286,6 @@ enum SetResponse taxCode::set(const ParameterList &pParams)
       _edit->setEnabled(false);
       _expire->setEnabled(false);
       _delete->setEnabled(false);
-      _autoAR->setEnabled(false);
-      _autoAP->setEnabled(false);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
     }
@@ -307,8 +304,6 @@ void taxCode::sSave()
                           tr("You must select a Ledger Account for this Tax.") )
          << GuiErrorCheck(_metrics->boolean("CashBasedTax") && !_distaccount->isValid(), _distaccount,
                           tr("You must select a Distribution Ledger Account for this Tax.") )
-         << GuiErrorCheck(_autoApplyMemo->isChecked() && !(_autoAP->isChecked() || _autoAR->isChecked()), _autoAP, 
-                          tr("Please mark this Tax Code as applicable to A/R or A/P Memos.") )
   ;
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Tax Code"), errors))
@@ -335,9 +330,7 @@ void taxCode::sSave()
                   "    tax_dist_accnt_id=:tax_dist_accnt_id,"
                   "    tax_taxclass_id=:tax_taxclass_id,"
                   "    tax_taxauth_id=:tax_taxauth_id,"
-                  "    tax_basis_tax_id=:tax_basis_tax_id, "
-                  "    tax_armemo=:arMemos, "
-                  "    tax_apmemo=:apMemos "
+                  "    tax_basis_tax_id=:tax_basis_tax_id "
                   "WHERE (tax_id=:tax_id);" );
   
   taxSave.bindValue(":tax_code", _code->text().trimmed());
@@ -352,8 +345,6 @@ void taxCode::sSave()
     taxSave.bindValue(":tax_taxclass_id", _taxClass->id());
   if(_basis->isValid())
     taxSave.bindValue(":tax_basis_tax_id", _basis->id());
-  taxSave.bindValue(":arMemos", _autoAR->isChecked());
-  taxSave.bindValue(":apMemos", _autoAP->isChecked());
   taxSave.bindValue(":tax_id", _taxid); 
   taxSave.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Saving Tax Code"),
@@ -415,12 +406,6 @@ void taxCode::populate()
     _taxClass->setId(taxpopulate.value("tax_taxclass_id").toInt());
     _taxauth->setId(taxpopulate.value("tax_taxauth_id").toInt());
     _basis->setId(taxpopulate.value("tax_basis_tax_id").toInt());
-    _autoAR->setChecked(taxpopulate.value("tax_armemo").toBool());
-    _autoAP->setChecked(taxpopulate.value("tax_apmemo").toBool());
-    if (taxpopulate.value("tax_armemo").toBool() || taxpopulate.value("tax_apmemo").toBool())
-      _autoApplyMemo->setChecked(true);
-    else
-      _autoApplyMemo->setChecked(false);
   }
   
   sFillList();
@@ -465,15 +450,6 @@ bool taxCode::setParams(ParameterList &pParams)
   pParams.append("never",       tr("Never"));
 
   return true;
-}
-
-void taxCode::sSetMemo()
-{
-  if (!_autoApplyMemo->isChecked())
-  {
-    _autoAP->setChecked(false);
-    _autoAR->setChecked(false);
-  }
 }
 
 void taxCode::sClose()
