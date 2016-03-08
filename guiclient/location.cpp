@@ -175,7 +175,7 @@ void location::sSave()
   if ( (!_netable->isChecked()) && (_usable->isChecked()) )
   {
     QMessageBox::critical( this, tr("Invalid Status"),
-                          tr( "<p>Non Nettable inventory cannot be Usable inventory." ) );
+                          tr( "<p>Non Netable inventory cannot be Usable inventory." ) );
     _netable->setFocus();
     return;
   }

@@ -20,6 +20,7 @@
 
 class QLabel;
 class QMouseEvent;
+class QWheelEvent;
 class QScriptEngine;
 class XComboBoxPrivate;
 class XDataWidgetMapper;
@@ -165,6 +166,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
   protected:
     QString      currentDefault();
     void         mousePressEvent(QMouseEvent *);
+    void         wheelEvent(QWheelEvent *);
 
     bool              _allowNull;
     XComboBoxPrivate *_data;

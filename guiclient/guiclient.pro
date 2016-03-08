@@ -7,7 +7,7 @@ QT += xml sql script scripttools network
 QT += webkit xmlpatterns printsupport webkitwidgets
 
 isEqual(QT_MAJOR_VERSION, 5) {
-  QT     += help designer uitools quick websockets webchannel
+  QT     += help designer uitools quick websockets webchannel serialport
 } else {
   CONFIG += help designer uitools
 }

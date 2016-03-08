@@ -169,12 +169,11 @@ void taxAssignment::sPopulateTaxCode()
   taxPopulateTaxCode = mqlTaxOption.toQuery(params);
 
   _taxCodeOption->clear();
-  _taxCodeOption->populate(taxPopulateTaxCode);  // Std Code
-
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Account"),
+  _taxCodeOption->populate(taxPopulateTaxCode);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Tax Information"),
                                 taxPopulateTaxCode, __FILE__, __LINE__))
   {
-      return;
+    return;
   }
 
   QString sqlTaxSelected("SELECT tax_id, tax_code AS taxcode_selected "
@@ -200,10 +199,10 @@ void taxAssignment::sPopulateTaxCode()
 
   _taxCodeSelected->clear();
   _taxCodeSelected->populate(taxPopulateTaxCode);
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Account"),
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Tax Information"),
                                 taxPopulateTaxCode, __FILE__, __LINE__))
   {
-      return;
+    return;
   }
 
 }
@@ -289,8 +288,10 @@ void taxAssignment::sAdd()
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Adding Tax Code"),
                                 taxAdd, __FILE__, __LINE__))
   {
-      rollback.exec();
-      return;
+    rollback.exec();
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Tax Information"),
+                         taxAdd, __FILE__, __LINE__);
+    return;
   }
   
   taxAdd.prepare("INSERT INTO taxass(taxass_id, taxass_taxzone_id, "
@@ -308,8 +309,10 @@ void taxAssignment::sAdd()
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Adding Tax Code"),
                                 taxAdd, __FILE__, __LINE__))
   {
-      rollback.exec();
-      return;
+    rollback.exec();
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Tax Information"),
+                         taxAdd, __FILE__, __LINE__);
+    return;
   }
   taxAdd.exec("COMMIT;");
   sPopulateTaxCode();
@@ -326,10 +329,10 @@ void taxAssignment::sRevoke()
   taxRevoke.bindValue(":taxass_taxzone_id", _taxZone->id());
   taxRevoke.bindValue(":taxass_taxtype_id", _taxType->id());
   taxRevoke.exec();
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Revoking Tax Code"),
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Tax Information"),
                                 taxRevoke, __FILE__, __LINE__))
   {
-      return;
+    return;
   }
   sPopulateTaxCode();
 }

@@ -38,7 +38,7 @@ QScriptValue constructQBuffer(QScriptContext *context, QScriptEngine  *engine)
   return engine->toScriptValue(obj);
 }
 
-QBufferProto::QBufferProto(QObject *parent) : QObject(parent)
+QBufferProto::QBufferProto(QObject *parent) : QIODeviceProto(parent)
 {
 }
 QBufferProto::~QBufferProto()

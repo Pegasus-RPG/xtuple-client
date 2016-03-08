@@ -1598,6 +1598,15 @@ void XComboBox::mousePressEvent(QMouseEvent *event)
   QComboBox::mousePressEvent(event);
 }
 
+void XComboBox::wheelEvent(QWheelEvent *event)
+{
+  if (_x_preferences)
+    if (_x_preferences->boolean("DisableXComboBoxWheelEvent"))
+      return;
+
+  QComboBox::wheelEvent(event);
+}
+
 void XComboBox::showPopup()
 {
   QComboBox::showPopup();

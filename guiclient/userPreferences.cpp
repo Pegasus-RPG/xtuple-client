@@ -236,6 +236,7 @@ void userPreferences::sPopulate()
   _accountingToolbar->setChecked(_pref->boolean("ShowGLToolbar"));
   
   _listNumericItemsFirst->setChecked(_pref->boolean("ListNumericItemNumbersFirst"));
+  _disableWheelEvent->setChecked(_pref->boolean("DisableXComboBoxWheelEvent"));
   _ignoreTranslation->setChecked(_pref->boolean("IngoreMissingTranslationFiles"));
 
   _idleTimeout->setValue(_pref->value("IdleTimeout").toInt());
@@ -328,6 +329,7 @@ void userPreferences::sSave(bool close)
   _pref->set("PreferredWarehouse", ((_noWarehouse->isChecked()) ? -1 : _warehouse->id())  );
  
   _pref->set("ListNumericItemNumbersFirst", _listNumericItemsFirst->isChecked());
+  _pref->set("DisableXComboBoxWheelEvent", _disableWheelEvent->isChecked());
   _pref->set("IngoreMissingTranslationFiles", _ignoreTranslation->isChecked());
 
   _pref->set("IdleTimeout", _idleTimeout->value());

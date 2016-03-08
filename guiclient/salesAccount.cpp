@@ -177,9 +177,9 @@ void salesAccount::sSave()
                        "WHERE (custtype_code ~ :pattern);");
     regexCheck.bindValue(":pattern", _customerTypes->pattern());
     regexCheck.exec();
-    if (regexCheck.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Customer Type Information"),
+                                  regexCheck, __FILE__, __LINE__))
     {
-      systemError(this, regexCheck.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     
@@ -205,9 +205,9 @@ void salesAccount::sSave()
                        "WHERE (prodcat_code ~ :pattern);");
     regexCheck.bindValue(":pattern", _productCategories->pattern());
     regexCheck.exec();
-    if (regexCheck.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Product Category Information"),
+                                  regexCheck, __FILE__, __LINE__))
     {
-      systemError(this, regexCheck.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     
@@ -220,9 +220,9 @@ void salesAccount::sSave()
     errors << GuiErrorCheck(true, _warehouse,
                            tr("<p>You cannot specify a duplicate Warehouse/Customer Type/Product Category for the Sales Account Assignment."));
   }
-  else if (salesSave.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Sales Account Information "),
+                                salesSave, __FILE__, __LINE__))
   {
-    systemError(this, salesSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -322,9 +322,9 @@ void salesAccount::sSave()
   salesSave.exec();
   if (_mode == cNew && salesSave.first())
     _salesaccntid = salesSave.value("salesaccnt_id").toInt();
-  else if (salesSave.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Sales Account Information"),
+                                salesSave, __FILE__, __LINE__))
   {
-    systemError(this, salesSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -366,9 +366,9 @@ void salesAccount::populate()
     if (!salespopulate.value("salesaccnt_cow_accnt_id").isNull())
       _cow->setId(salespopulate.value("salesaccnt_cow_accnt_id").toInt());
   }
-  else if (salespopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Sales Account Information"),
+                                salespopulate, __FILE__, __LINE__))
   {
-    systemError(this, salespopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

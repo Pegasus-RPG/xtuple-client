@@ -12,6 +12,7 @@
 
 #include <QSqlError>
 #include <QVariant>
+#include "errorReporter.h"
 
 salesOrderInformation::salesOrderInformation(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -52,9 +53,9 @@ enum SetResponse salesOrderInformation::set(const ParameterList &pParams)
       _soheadid = saleset.value("coitem_cohead_id").toInt();
       populate();
     }
-    else if (saleset.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                  saleset, __FILE__, __LINE__))
     {
-      systemError(this, saleset.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }

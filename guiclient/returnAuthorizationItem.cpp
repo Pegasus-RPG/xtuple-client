@@ -196,9 +196,9 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _creditmethod = returnet.value("rahead_creditmethod").toString();
       _crmacctid = returnet.value("crmacct_id").toInt();
     }
-    else if (returnet.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Information"),
+                                  returnet, __FILE__, __LINE__))
     {
-      systemError(this, returnet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -234,9 +234,9 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       returnet.exec();
       if (returnet.first())
         _lineNumber->setText(returnet.value("n_linenumber").toString());
-      else if (returnet.lastError().type() == QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Information"),
+                                    returnet, __FILE__, __LINE__))
       {
-        systemError(this, returnet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
 
@@ -249,9 +249,9 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       {
         _disposition->setCode(returnet.value("rahead_disposition").toString());
       }
-      else if (returnet.lastError().type() == QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Information"),
+                                    returnet, __FILE__, __LINE__))
       {
-        systemError(this, returnet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
 
@@ -377,9 +377,9 @@ bool returnAuthorizationItem::sSave()
       _raitemid  = returnSave.value("_raitem_id").toInt();
       _comments->setId(_raitemid);
     }
-    else if (returnSave.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Information"),
+                                  returnSave, __FILE__, __LINE__))
     {
-      systemError(this, returnSave.lastError().databaseText(), __FILE__, __LINE__);
       reject();
     }
 
@@ -489,9 +489,9 @@ bool returnAuthorizationItem::sSave()
     returnSave.bindValue(":raitem_unitcost", _unitCost->localValue());
   returnSave.bindValue(":raitem_custpn", _customerPN->text());
   returnSave.exec();
-  if (returnSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Information"),
+                                returnSave, __FILE__, __LINE__))
   {
-    systemError(this, returnSave.lastError().databaseText(), __FILE__, __LINE__);
     reject();
   }
 
@@ -505,13 +505,14 @@ bool returnAuthorizationItem::sSave()
       returnSave.exec();
       if (returnSave.value("result").toInt() < 0)
       {
-        systemError(this, storedProcErrorLookup("deleteWo", returnSave.value("result").toInt()),
-                    __FILE__, __LINE__);
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Retreiving RA Information"),
+                               storedProcErrorLookup("deleteWo", returnSave.value("result").toInt()),
+                               __FILE__, __LINE__);
         reject();
       }
-      else if (returnSave.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Information"),
+                                    returnSave, __FILE__, __LINE__))
       {
-        systemError(this, returnSave.lastError().databaseText(), __FILE__, __LINE__);
         reject();
       }
     }
@@ -534,15 +535,16 @@ bool returnAuthorizationItem::sSave()
           int result = returnSave.value("result").toInt();
           if (result < 0)
           {
-            systemError(this, storedProcErrorLookup("changeWoDates", result),
-            __FILE__, __LINE__);
+              ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Information"),
+                                   storedProcErrorLookup("changeWoDates", result),
+                                   __FILE__, __LINE__);
             reject();
           }
           _cScheduledDate = _scheduledDate->date();
         }
-        else if (returnSave.lastError().type() != QSqlError::NoError)
+        else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Information"),
+                                      returnSave, __FILE__, __LINE__))
         {
-          systemError(this, returnSave.lastError().databaseText(), __FILE__, __LINE__);
           reject();
         }
       }
@@ -628,8 +630,9 @@ bool returnAuthorizationItem::sSave()
               procname = "createWo";
             else
               procname = "unnamed stored procedure";
-            systemError(this, storedProcErrorLookup(procname, _orderId),
-                __FILE__, __LINE__);
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Information"),
+                                 storedProcErrorLookup(procname, _orderId),
+                                 __FILE__, __LINE__);
             reject();
           }
 
@@ -644,9 +647,9 @@ bool returnAuthorizationItem::sSave()
             returnSave.bindValue(":orderid", _orderId);
             returnSave.bindValue(":soitem_id", so.value("raitem_new_coitem_id").toInt());
             returnSave.exec();
-            if (returnSave.lastError().type() != QSqlError::NoError)
+            if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Information"),
+                                               returnSave, __FILE__, __LINE__))
             {
-              systemError(this, returnSave.lastError().databaseText(), __FILE__, __LINE__);
               reject();
             }
           }
@@ -665,9 +668,9 @@ bool returnAuthorizationItem::sSave()
           returnSave.bindValue(":wo_id", _orderId);
           returnSave.bindValue(":comments", so.value("cust_name").toString() + "\n" + _notes->toPlainText());
           returnSave.exec();
-          if (returnSave.lastError().type() != QSqlError::NoError)
+          if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating RA Information"),
+                                        returnSave, __FILE__, __LINE__))
           {
-            systemError(this, returnSave.lastError().databaseText(), __FILE__, __LINE__);
             reject();
           }
         }
@@ -707,9 +710,9 @@ void returnAuthorizationItem::sPopulateItemInfo()
     _unitCost->setBaseValue(item.value("stdcost").toDouble());
     _taxType->setId(item.value("taxtype_id").toInt());
   }
-  else if (item.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Information"),
+                                item, __FILE__, __LINE__))
   {
-    systemError(this, item.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -799,10 +802,10 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
           uc.exec();
           if (uc.first())
             _unitCost->setLocalValue(uc.value("unitcost").toDouble());
-          else if (uc.lastError().type() != QSqlError::NoError)
+          else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Item Information"),
+                                        uc, __FILE__, __LINE__))
           {
-             systemError(this, itemsite.lastError().databaseText(), __FILE__, __LINE__);
-             return;
+            return;
           }
         }
         _unitCost->setEnabled(cView != _mode);
@@ -817,9 +820,9 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
       (itemsite.value("itemsite_controlmethod").toString() == "L" ||
        itemsite.value("itemsite_controlmethod").toString() == "S"));
     }
-    else if (itemsite.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Item Information"),
+                                  itemsite, __FILE__, __LINE__))
     {
-      systemError(this, itemsite.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -997,9 +1000,9 @@ void returnAuthorizationItem::populate()
       }
     }
   }
-  else if (raitem.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Item Information"),
+                                raitem, __FILE__, __LINE__))
   {
-    systemError(this, raitem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();
@@ -1288,9 +1291,9 @@ void returnAuthorizationItem::sCalculateTax()
   calcq.exec();
   if (calcq.first())
     _tax->setLocalValue(calcq.value("tax").toDouble());
-  else if (calcq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Calculating Tax Information"),
+                                calcq, __FILE__, __LINE__))
   {
-    systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -1414,7 +1417,8 @@ void returnAuthorizationItem::sQtyUOMChanged()
     if(invuom.first())
       _qtyinvuomratio = invuom.value("ratio").toDouble();
     else
-      systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Retrieving RA Item Information"),
+                         invuom, __FILE__, __LINE__);
   }
 
   if(_qtyUOM->id() != _invuomid)
@@ -1482,7 +1486,8 @@ void returnAuthorizationItem::sPriceUOMChanged()
     if(invuom.first())
       _priceinvuomratio = invuom.value("ratio").toDouble();
     else
-      systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Item Information"),
+                         invuom, __FILE__, __LINE__);
   }
   //_ratio->setText(formatUOMRatio(_priceinvuomratio));
 
@@ -1683,8 +1688,9 @@ void returnAuthorizationItem::sHandleWo(bool pCreate)
             int result = query.value("result").toInt();
             if (result < 0)
             {
-              systemError(this, storedProcErrorLookup("deleteWo", result),
-                          __FILE__, __LINE__);
+              ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating RA Item Information"),
+                                     storedProcErrorLookup("deleteWo", result),
+                                     __FILE__, __LINE__);
               _createOrder->setChecked(true); // if (pCreate) => won't recurse
               return;
             }
@@ -1703,11 +1709,10 @@ void returnAuthorizationItem::sHandleWo(bool pCreate)
               _createOrder->setChecked(false);
             }
           }
-          else if (query.lastError().type() != QSqlError::NoError)
+          else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating RA Item Information"),
+                                        query, __FILE__, __LINE__))
           {
-            systemError(this, query.lastError().databaseText(),
-                        __FILE__, __LINE__);
-            _createOrder->setChecked(true); // if (pCreate) => won't recurse
+             _createOrder->setChecked(true); // if (pCreate) => won't recurse
             return;
           }
 
@@ -1740,9 +1745,9 @@ void returnAuthorizationItem::sPopulateOrderInfo()
       if (qty.first())
         _orderQty->setDouble(qty.value("qty").toDouble());
 
-      else if (qty.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Item Information"),
+                                    qty, __FILE__, __LINE__))
       {
-        systemError(this, qty.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
@@ -1800,9 +1805,9 @@ void returnAuthorizationItem::sDetermineAvailability()
         stylesheet = QString("* { color: %1; }").arg(namedColor("error").name());
       _available->setStyleSheet(stylesheet);
     }
-    else if (availability.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Item Information"),
+                                  availability, __FILE__, __LINE__))
     {
-      systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -1900,10 +1905,10 @@ void returnAuthorizationItem::sDelete()
         returnDelete.prepare(sql);
         returnDelete.bindValue(":raitemls_id",  ((XTreeWidgetItem*)(selected[i]))->id());
         returnDelete.exec();
-        if (returnDelete.lastError().type() != QSqlError::NoError)
+        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting RA Item Information"),
+                                      returnDelete, __FILE__, __LINE__))
         {
-           systemError(this, returnDelete.lastError().databaseText(), __FILE__, __LINE__);
-           reject();
+          reject();
         }
   }
   populate();
@@ -1936,9 +1941,9 @@ void returnAuthorizationItem::sFillList()
   _raitemls->populate(returnFillList,true);
   _authLotSerial->setDisabled(returnFillList.first());
   _authLotSerial->setChecked(returnFillList.first());
-  if (returnFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Item Information"),
+                                returnFillList, __FILE__, __LINE__))
   {
-    systemError(this, returnFillList.lastError().databaseText(), __FILE__, __LINE__);
     reject();
   }
 }
