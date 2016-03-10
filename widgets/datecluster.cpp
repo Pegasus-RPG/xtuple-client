@@ -27,6 +27,7 @@
 
 #include "datecluster.h"
 #include "dcalendarpopup.h"
+#include "errorReporter.h"
 #include "format.h"
 
 #define DEBUG false
@@ -474,13 +475,12 @@ void XDateEdit::checkDate(const QDate &pDate)
     workday.bindValue(":desired", 0);
     workday.exec();
     if (workday.first())
-      nextWorkDate = workday.value("result").toDate();
-    else if (workday.lastError().type() != QSqlError::NoError)
     {
-      QMessageBox::warning(this, tr("No work week calendar found"),
-                            tr("<p>The selected Site has no work week defined. "
-                               "Please go to Schedule Setup and define "
-                               "the working days for this site."));
+      nextWorkDate = workday.value("result").toDate();
+    }
+    else if (ErrorReporter::error(QtWarningMsg, this, tr("No work week calendar found"),
+                                  workday, __FILE__, __LINE__))
+    {
       return;
     }
   }
