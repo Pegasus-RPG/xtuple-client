@@ -43,7 +43,8 @@
 #define iJustUpdate   3
 
 salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlags fl)
-  : XDialog(parent, name, fl)
+  : XDialog(parent, name, fl),
+  _soitemid(-1)
 {
   setupUi(this);
 
@@ -447,11 +448,16 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
     _charVars.replace(EFFECTIVE, param.toDate());
   }
 
+  QDate tmpSchedDate;   // avoid duplicate ::setDate() err if shpDate isn't in the site calendar
   param = pParams.value("shipDate", &valid);
   if (valid)
-    _scheduledDate->setDate(param.toDate());
+  {
+    tmpSchedDate = param.toDate();
+    _scheduledDate->setDate(tmpSchedDate);
+  }
 
-  if (_metrics->boolean("AllowASAPShipSchedules") && !_scheduledDate->isValid())
+  if (_metrics->boolean("AllowASAPShipSchedules") && !_scheduledDate->isValid()
+      && tmpSchedDate.isNull())
     _scheduledDate->setDate(QDate::currentDate());
   
   param = pParams.value("mode", &valid);
