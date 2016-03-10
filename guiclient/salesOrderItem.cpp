@@ -448,7 +448,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
     _charVars.replace(EFFECTIVE, param.toDate());
   }
 
-  QDate tmpSchedDate;   // avoid duplicate ::setDate() err if shpDate isn't in the site calendar
+  QDate tmpSchedDate;   // avoid duplicate ::setDate() err if shipDate isn't in the site calendar
   param = pParams.value("shipDate", &valid);
   if (valid)
   {
