@@ -16,6 +16,7 @@
 #include <parameter.h>
 #include "storedProcErrorLookup.h"
 #include "uomConv.h"
+#include "errorReporter.h"
 
 uom::uom(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -131,9 +132,8 @@ void uom::sSave()
       _uomid = uomSave.value("uom_id").toInt();
     else
     {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving UOM Information"),
+                           uomSave, __FILE__, __LINE__);
       return;
     }
  
@@ -269,13 +269,15 @@ void uom::sDelete()
     int result = uomDelete.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("deleteUOMConv", result), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting UOM Information"),
+                             storedProcErrorLookup("deleteUOMConv", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (uomDelete.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting UOM Information"),
+                                uomDelete, __FILE__, __LINE__))
   {
-    systemError(this, uomDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

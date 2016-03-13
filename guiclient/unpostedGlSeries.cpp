@@ -112,10 +112,10 @@ void unpostedGlSeries::sDelete()
     {
       unpostedDelete.bindValue(":id", ((XTreeWidgetItem*)(selected[i]))->altId() );
       unpostedDelete.exec();
-      if (unpostedDelete.lastError().type() != QSqlError::NoError)
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting G/L Transaction Information"),
+                                    unpostedDelete, __FILE__, __LINE__))
       {
-	systemError(this, unpostedDelete.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+        return;
       }
     }
     omfgThis->sGlSeriesUpdated();
@@ -159,11 +159,12 @@ void unpostedGlSeries::sPost()
       {
 	int result = post.value("result").toInt();
 	if (result < 0)
-	{
-	  systemError(this, storedProcErrorLookup("postGLSeriesNoSumm", result),
-		      __FILE__, __LINE__);
-	  continue;
-	}
+    {
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting G/L Transaction Information"),
+                             storedProcErrorLookup("postGLSeriesNoSumm", result),
+                             __FILE__, __LINE__);
+      continue;
+    }
       }
       // contains() string is hard-coded in stored procedure
       else if (post.lastError().databaseText().contains("post to closed period"))

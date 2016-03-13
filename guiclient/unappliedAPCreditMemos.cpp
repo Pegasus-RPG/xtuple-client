@@ -20,6 +20,7 @@
 #include "applyAPCreditMemo.h"
 #include "apOpenItem.h"
 #include "mqlutil.h"
+#include "errorReporter.h"
 
 unappliedAPCreditMemos::unappliedAPCreditMemos(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -120,9 +121,9 @@ void unappliedAPCreditMemos::sFillList()
     return;
   unappliedFillList = mql.toQuery(params);
   _apopen->populate(unappliedFillList);
-  if (unappliedFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Unapplied AP Memo Information"),
+                                unappliedFillList, __FILE__, __LINE__))
   {
-    systemError(this, unappliedFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

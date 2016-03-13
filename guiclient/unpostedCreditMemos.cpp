@@ -25,6 +25,7 @@
 #include "getGLDistDate.h"
 #include "printCreditMemo.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 unpostedCreditMemos::unpostedCreditMemos(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -200,9 +201,10 @@ void unpostedCreditMemos::sPost()
         setDate.bindValue(":distdate",  newDate);
         setDate.bindValue(":cmhead_id", id);
         setDate.exec();
-        if (setDate.lastError().type() != QSqlError::NoError)
+        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Credit Memo Information"),
+                                      setDate, __FILE__, __LINE__))
         {
-	      systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
+          return;
         }
       }
     }
@@ -233,8 +235,9 @@ void unpostedCreditMemos::sPost()
           if (result < 0)
           {
             rollback.exec();
-            systemError( this, storedProcErrorLookup("postCreditMemo", result),
-                  __FILE__, __LINE__);
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Credit Memo Information"),
+                                 storedProcErrorLookup("postCreditMemo", result),
+                                 __FILE__, __LINE__);
             return;
           }
           else
@@ -264,10 +267,10 @@ void unpostedCreditMemos::sPost()
         else if (postq.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();
-          systemError(this, tr("A System Error occurred posting Return#%1.\n%2")
-                  .arg(selected[i]->text(0))
-                  .arg(postq.lastError().databaseText()),
-                __FILE__, __LINE__);
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Credit Memo Information: %1 \n%2")
+                               .arg(selected[i]->text(0))
+                               .arg(postq.lastError().databaseText()),
+                               postq, __FILE__, __LINE__);
         }
       }
 
@@ -305,13 +308,13 @@ void unpostedCreditMemos::sDelete()
         if (delq.first())
         {
 	      if (! delq.value("result").toBool())
-	        systemError(this, tr("Could not delete Return."),
-		            __FILE__, __LINE__);
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Credit Memo Information"),
+                               delq, __FILE__, __LINE__);
         }
         else if (delq.lastError().type() != QSqlError::NoError)
-	      systemError(this,
-		          tr("Error deleting Return %1\n").arg(selected[i]->text(0)) +
-		          delq.lastError().databaseText(), __FILE__, __LINE__);
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Credit Memo Information %1\n")
+                             .arg(selected[i]->text(0)) + delq.lastError().databaseText(),
+                             delq, __FILE__, __LINE__);
       }
     }
 
