@@ -110,9 +110,8 @@ enum SetResponse task::set(const ParameterList &pParams)
         _prjtaskid = tasket.value("prjtask_id").toInt();
       else
       {
-        systemError(this, tr("A System Error occurred at %1::%2.")
-                          .arg(__FILE__)
-                          .arg(__LINE__) );
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Project Task Information"),
+                             tasket, __FILE__, __LINE__);
       }
 
       connect(_assignedTo, SIGNAL(newId(int)), this, SLOT(sAssignedToChanged(int)));
@@ -199,9 +198,9 @@ void task::populate()
     sHoursAdjusted();
     sExpensesAdjusted();
   }
-  else if (taskpopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Task Information"),
+                                taskpopulate, __FILE__, __LINE__))
   {
-    systemError(this, taskpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -274,9 +273,9 @@ void task::sSave()
   taskSave.bindValue(":prjtask_exp_actual", _actualExp->text().toDouble());
 
   taskSave.exec();
-  if (taskSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Task Information"),
+                                taskSave, __FILE__, __LINE__))
   {
-    systemError(this, taskSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
