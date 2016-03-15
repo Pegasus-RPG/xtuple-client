@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>880</width>
-    <height>707</height>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1155,7 +1155,7 @@ to be bound by its terms.</comment>
          <item row="0" column="0">
           <widget class="Comments" name="_comments">
            <property name="type">
-            <number>0</number>
+            <enum>Comments::Warehouse</enum>
            </property>
           </widget>
          </item>
