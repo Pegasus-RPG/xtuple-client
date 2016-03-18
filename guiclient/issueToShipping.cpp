@@ -104,6 +104,7 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WindowFl
   
   if(_metrics->boolean("EnableSOReservations"))
   {
+    _requireInventory->setForgetful(true);
     _requireInventory->setChecked(true);
     _requireInventory->setEnabled(false);
   }
