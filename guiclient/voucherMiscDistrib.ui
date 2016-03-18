@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>643</width>
-    <height>431</height>
+    <width>748</width>
+    <height>448</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -125,23 +125,6 @@ to be bound by its terms.</comment>
           </property>
          </spacer>
         </item>
-        <item row="1" column="3">
-         <widget class="XComboBox" name="_taxType">
-          <property name="allowNull">
-           <bool>true</bool>
-          </property>
-          <property name="type">
-           <enum>XComboBox::TaxTypes</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="XLabel" name="_taxTypeLit">
-          <property name="text">
-           <string>Tax Type:</string>
-          </property>
-         </widget>
-        </item>
        </layout>
       </widget>
      </item>
@@ -157,7 +140,7 @@ to be bound by its terms.</comment>
          </property>
         </widget>
        </item>
-       <item row="0" column="1" rowspan="2">
+       <item row="0" column="1" rowspan="4">
         <widget class="CurrCluster" name="_amount">
          <property name="allowNegative">
           <bool>true</bool>
@@ -180,23 +163,7 @@ to be bound by its terms.</comment>
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>0</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="0">
+       <item row="3" column="0">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -208,6 +175,42 @@ to be bound by its terms.</comment>
           <size>
            <width>0</width>
            <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="2">
+        <widget class="XLabel" name="_taxTypeLit">
+         <property name="text">
+          <string>Tax Type:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="XComboBox" name="_taxType">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="allowNull">
+          <bool>true</bool>
+         </property>
+         <property name="type">
+          <enum>XComboBox::TaxTypes</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="4">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
           </size>
          </property>
         </spacer>
@@ -318,6 +321,7 @@ to be bound by its terms.</comment>
   <tabstop>_taxCode</tabstop>
   <tabstop>_amount</tabstop>
   <tabstop>_discountable</tabstop>
+  <tabstop>_taxType</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
