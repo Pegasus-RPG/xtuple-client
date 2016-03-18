@@ -322,75 +322,18 @@ void task::sExpensesAdjusted()
 void task::sNewUser()
 {
   XSqlQuery taskNewUser;
-/*
-  userList newdlg(this, "", true);
-  int result = newdlg.exec();
-  if (result != XDialog::Rejected)
-  {
-    QString username = newdlg.username();
-    taskNewUser.prepare( "SELECT prjtaskuser_id "
-               "FROM prjtaskuser "
-               "WHERE ( (prjtaskuser_username=:username)"
-               " AND (prjtaskuser_prjtask_id=:prjtask_id) );" );
-    taskNewUser.bindValue(":username", username);
-    taskNewUser.bindValue(":prjtask_id", _prjtaskid);
-    taskNewUser.exec();
-    if (!taskNewUser.first())
-    {
-      taskNewUser.prepare( "INSERT INTO prjtaskuser "
-                 "( prjtaskuser_prjtask_id, prjtaskuser_username ) "
-                 "VALUES "
-                 "( :prjtaskuser_prjtask_id, :prjtaskuser_username );" );
-      taskNewUser.bindValue(":prjtaskuser_username", username);
-      taskNewUser.bindValue(":prjtaskuser_prjtask_id", _prjtaskid);
-      taskNewUser.exec();
-      sFillUserList();
-    }
-    if (taskNewUser.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, taskNewUser.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-*/
 }
 
 void task::sDeleteUser()
 {
   XSqlQuery taskDeleteUser;
-/*
-  taskDeleteUser.prepare( "DELETE FROM prjtaskuser "
-             "WHERE ( (prjtaskuser_username=:username)"
-             " AND (prjtaskuser_prjtask_id=:prjtask_id) );" );
-  taskDeleteUser.bindValue(":username", _usr->username());
-  taskDeleteUser.bindValue(":prjtask_id", _prjtaskid);
-  taskDeleteUser.exec();
-  if (taskDeleteUser.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, taskDeleteUser.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  sFillUserList();
-*/
+
 }
 
 
 void task::sFillUserList()
 {
   XSqlQuery taskFillUserList;
-/*
-  taskFillUserList.prepare( "SELECT prjtaskuser_id, usr_username, usr_propername "
-             "FROM prjtaskuser, usr "
-             "WHERE ( (prjtaskuser_username=usr_username)"
-             " AND (prjtaskuser_prjtask_id=:prjtask_id) );" );
-  taskFillUserList.bindValue(":prjtask_id", _prjtaskid);
-  taskFillUserList.exec();
-  _usr->populate(taskFillUserList);
-  if (taskFillUserList.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, taskFillUserList.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-*/
+
 }
 

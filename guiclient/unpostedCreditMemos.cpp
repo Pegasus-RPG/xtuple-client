@@ -307,9 +307,11 @@ void unpostedCreditMemos::sDelete()
         delq.exec();
         if (delq.first())
         {
-	      if (! delq.value("result").toBool())
+          int result = delq.value("result").toInt();
+          if (result < 0)
             ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Credit Memo Information"),
-                               delq, __FILE__, __LINE__);
+                                 storedProcErrorLookup("deleteCreditMemo", result),
+                                 __FILE__, __LINE__);
         }
         else if (delq.lastError().type() != QSqlError::NoError)
           ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Credit Memo Information %1\n")

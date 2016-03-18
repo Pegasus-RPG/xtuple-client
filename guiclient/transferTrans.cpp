@@ -267,10 +267,7 @@ void transferTrans::sPost()
   else
   {
     rollback.exec();
-    ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Inter Warehouse Transfer")
-                         .arg(_item->id())
-                         .arg(_toWarehouse->id())
-                         .arg(_fromWarehouse->id()),
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Inter Warehouse Transfer"),
                          transferPost, __FILE__, __LINE__);
     return;
   }

@@ -129,12 +129,12 @@ void vendorAddress::sSave()
   }
   if (saveResult < 0)	// not else-if: this is error check for CHANGE{ONE,ALL}
   {
+    rollback.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
                          tr("%1: There was an error saving this address (%2).\n"
                             "Check the database server log for errors.")
                          .arg(windowTitle())
                          .arg(saveResult),__FILE__,__LINE__);
-    rollback.exec();
     _address->setFocus();
     return;
   }

@@ -103,7 +103,7 @@ void uninvoicedShipments::sFillList()
 
   XSqlQuery qry = mql.toQuery(params);
   _shipitem->populate(qry, true);
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retriving Shipment Information"),
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Shipment Information"),
                                 qry, __FILE__, __LINE__))
   {
     return;

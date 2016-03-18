@@ -1647,8 +1647,7 @@ bool salesOrderSimple::sIssueLineBalance()
         if (result < 0)
         {
           rollback.exec();
-           ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Line Balance To Shipping"
-                                   "\n Line Item %1")
+           ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Line Balance To Shipping Line Item %1")
                                    .arg(_soitem->topLevelItem(i)->text(0)),
                                    storedProcErrorLookup("issueLineBalanceToShipping", result),
                                    __FILE__, __LINE__);
@@ -1788,14 +1787,13 @@ bool salesOrderSimple::sShipInvoice()
     omfgThis->sBillingSelectionUpdated(_soheadid, true);
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Selecting Shipment for Billing"),
+                                tr("%1: <p>Although Sales Order %2 was successfully shipped, "
+                                   "it was not selected for billing. You must manually "
+                                   "select this Sales Order for Billing.")
+                                .arg(windowTitle())
+                                .arg(_soheadid),
                                 shipq, __FILE__, __LINE__))
   {
-    ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
-                         tr("%1: <p>Although Sales Order %2 was successfully shipped, "
-                            "it was not selected for billing. You must manually "
-                            "select this Sales Order for Billing.")
-                         .arg(windowTitle())
-                         .arg(_soheadid),__FILE__,__LINE__);
     return false;
   }
 
@@ -1815,16 +1813,14 @@ bool salesOrderSimple::sShipInvoice()
     }
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating Invoice"),
+                                tr("%1: <p>Although Sales Order %2 was successfully shipped "
+                                   "and selected for billing, the Invoice was not "
+                                   "created properly. You may need to create an Invoice "
+                                   "manually from the Billing Selection.")
+                                .arg(windowTitle())
+                                .arg(_soheadid),
                                 shipq, __FILE__, __LINE__))
   {
-    ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
-                         tr("%1: <p>Although Sales Order %2 was successfully shipped "
-                            "and selected for billing, the Invoice was not "
-                            "created properly. You may need to create an Invoice "
-                            "manually from the Billing Selection.")
-                         .arg(windowTitle())
-                         .arg(_soheadid),__FILE__,__LINE__);
-
     return false;
   }
 
