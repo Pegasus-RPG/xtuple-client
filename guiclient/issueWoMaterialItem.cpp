@@ -17,6 +17,7 @@
 
 #include "inputManager.h"
 #include "distributeInventory.h"
+#include "storedProcErrorLookup.h"
 #include "errorReporter.h"
 
 issueWoMaterialItem::issueWoMaterialItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
@@ -182,12 +183,14 @@ void issueWoMaterialItem::sIssue()
   issueIssue.exec();
   if (issueIssue.first())
   {
-    if (issueIssue.value("result").toInt() < 0)
+    int result = issueIssue.value("result").toInt();
+    if (result < 0)
     {
       rollback.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Material To Work Order #: %1")
                            .arg(_wo->id()),
-                            issueIssue, __FILE__, __LINE__);
+                            storedProcErrorLookup("issueWoMaterial", result),
+                            __FILE__, __LINE__);
       return;
     }
     else if (distributeInventory::SeriesAdjust(issueIssue.value("result").toInt(), this) == XDialog::Rejected)
