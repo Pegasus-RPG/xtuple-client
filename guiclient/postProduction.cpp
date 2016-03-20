@@ -87,6 +87,7 @@ enum SetResponse postProduction::set(const ParameterList &pParams)
   {
     _wo->setId(param.toInt());
     _wo->setReadOnly(true);
+    _qty->setFocus();
   }
 
   param = pParams.value("backflush", &valid);
