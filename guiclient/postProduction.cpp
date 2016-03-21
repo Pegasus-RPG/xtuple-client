@@ -314,7 +314,7 @@ QString postProduction::handleIssueToParentAfterPost(int itemlocSeries)
   // is auto issue then issue this receipt to the parent W/O
   issueq.prepare("SELECT issueWoMaterial(womatl_id,"
                  "       roundQty(item_fractional, itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, :qty)),"
-                 "       :itemlocseries, :date, :invhist_id ) AS result "
+                 "       :itemlocseries, :date, :invhist_id::INTEGER ) AS result "
                  "FROM wo, womatl, itemsite, item "
                  "WHERE (wo_id=:wo_id)"
                  "  AND (womatl_id=wo_womatl_id)"
