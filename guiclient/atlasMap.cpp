@@ -18,6 +18,7 @@
 #include <QXmlQuery>
 
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 #define DEBUG false
 
@@ -66,9 +67,9 @@ int atlasMap::exec()
     return XDialog::exec();
   else
   {
-    systemError(this,
-                tr("You do not have sufficient privilege to view this window"),
-                __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                         tr("%1: Insufficient privileges to view this window")
+                         .arg(windowTitle()),__FILE__,__LINE__);
     return XDialog::Rejected;
   }
 }
@@ -215,9 +216,9 @@ void atlasMap::sSave()
     _name->setFocus();
     return;
   }
-  else if (dupq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Atlas Map Information"),
+                                dupq, __FILE__, __LINE__))
   {
-    systemError(this, dupq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -253,9 +254,9 @@ void atlasMap::sSave()
   upsq.exec();
   if (upsq.first())
     _atlasmapId = upsq.value("atlasmap_id").toInt();
-  else if (upsq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Atlas Map Information"),
+                                upsq, __FILE__, __LINE__))
   {
-    systemError(this, upsq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -290,9 +291,9 @@ void atlasMap::sPopulate()
         _map->setCode(atlasPopulate.value("atlasmap_map").toString());
       _firstLine->setChecked(atlasPopulate.value("atlasmap_headerline").toBool());
     }
-    else if (atlasPopulate.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Atlas Map Information"),
+                                  atlasPopulate, __FILE__, __LINE__))
     {
-      systemError(this, atlasPopulate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
