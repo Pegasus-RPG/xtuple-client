@@ -1854,9 +1854,9 @@ void item::sDeleteUOM()
       return;
     }
   }
-  else if (itemDeleteUOM.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Dleting Item UOM Conversion Information"),
+                                itemDeleteUOM, __FILE__, __LINE__))
   {
-    systemError(this, itemDeleteUOM.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

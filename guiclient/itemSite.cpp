@@ -1795,9 +1795,9 @@ int itemSite::createItemSite(QWidget* pparent, int pitemsiteid, int pwhsid, bool
     return -100;
   }
 
-  systemError(pparent, tr("<p>There was a problem checking or creating an "
-               "Item Site for this Transfer Order Item."),
-              __FILE__, __LINE__);
+  ErrorReporter::error(QtCriticalMsg, pparent, tr("Error Occurred"),
+                       tr("<p>There was a problem checking or creating an "
+                          "Item Site for this Transfer Order Item."),__FILE__,__LINE__);
   return -90;	// catchall: we didn't successfully find/create an itemsite
 }
 

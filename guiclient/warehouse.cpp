@@ -82,9 +82,9 @@ enum SetResponse warehouse::set(const ParameterList &pParams)
       warehouseet.exec("SELECT NEXTVAL('warehous_warehous_id_seq') AS warehous_id");
       if (warehouseet.first())
         _warehousid = warehouseet.value("warehous_id").toInt();
-      else if (warehouseet.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Warehouse Information"),
+                                    warehouseet, __FILE__, __LINE__))
       {
-        systemError(this, warehouseet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
 
@@ -269,9 +269,11 @@ void warehouse::sSave()
   if (saveResult < 0)   // not else-if: this is error check for CHANGE{ONE,ALL}
   {
     rollback.exec();
-    systemError(this, tr("There was an error saving this address (%1).\n"
-                         "Check the database server log for errors.")
-                      .arg(saveResult), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                         tr("%1: There was an error saving this address (%2).\n"
+                            "Check the database server log for errors.")
+                         .arg(windowTitle())
+                         .arg(saveResult),__FILE__,__LINE__);
     _address->setFocus();
     return;
   }
@@ -536,9 +538,9 @@ void warehouse::sDeleteZone()
                              "the selected Site Zone." ) );
     return;
   }
-  else if (warehouseDeleteZone.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Site Zone Information"),
+                                warehouseDeleteZone, __FILE__, __LINE__))
   {
-    systemError(this, warehouseDeleteZone.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -546,9 +548,9 @@ void warehouse::sDeleteZone()
              "WHERE (whsezone_id=:whsezone_id);" );
   warehouseDeleteZone.bindValue(":whsezone_id", _whsezone->id());
   warehouseDeleteZone.exec();
-  if (warehouseDeleteZone.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Site Zone Information"),
+                                warehouseDeleteZone, __FILE__, __LINE__))
   {
-    systemError(this, warehouseDeleteZone.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();
@@ -564,9 +566,9 @@ void warehouse::sFillList()
   warehouseFillList.bindValue(":warehous_id", _warehousid);
   warehouseFillList.exec();
   _whsezone->populate(warehouseFillList);
-  if (warehouseFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Warehouse Information"),
+                                warehouseFillList, __FILE__, __LINE__))
   {
-    systemError(this, warehouseFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

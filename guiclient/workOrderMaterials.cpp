@@ -229,13 +229,15 @@ void workOrderMaterials::sDelete()
     int result = workDelete.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("deleteWoMaterial", result), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Material Information"),
+                             storedProcErrorLookup("deleteWoMaterial", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (workDelete.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Material Information"),
+                                workDelete, __FILE__, __LINE__))
   {
-    systemError(this, workDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -261,9 +263,9 @@ void workOrderMaterials::sViewAvailability()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (workViewAvailability.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Material Information"),
+                                workViewAvailability, __FILE__, __LINE__))
   {
-    systemError(this, workViewAvailability.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -287,9 +289,9 @@ void workOrderMaterials::sViewSubstituteAvailability()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (workViewSubstituteAvailability.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Material Information"),
+                                workViewSubstituteAvailability, __FILE__, __LINE__))
   {
-    systemError(this, workViewSubstituteAvailability.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -351,9 +353,9 @@ void workOrderMaterials::sSubstitute()
       }
     }
   }
-  else if (workSubstitute.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Material Information"),
+                                workSubstitute, __FILE__, __LINE__))
   {
-    systemError(this, workSubstitute.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -483,10 +485,10 @@ void workOrderMaterials::sFillList()
         _currentActCost->setText(workFillList.value("f_actcost").toDouble());
         _maxCost->setText(workFillList.value("f_maxcost").toDouble());
       }
-      else if (workFillList.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Material Information"),
+                                    workFillList, __FILE__, __LINE__))
       {
-	systemError(this, workFillList.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+        return;
       }
     }
   }

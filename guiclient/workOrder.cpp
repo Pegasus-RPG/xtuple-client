@@ -319,10 +319,9 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
       }
       else
       {
-        systemError(this, tr("A System Error occurred at %1::%2, Planned Order ID %3.")
-                          .arg(__FILE__)
-                          .arg(__LINE__)
-                          .arg(_planordid) );
+        ErrorReporter::error(QtCriticalMsg, this, tr("A System Error Occured, Planned Order ID %1")
+                             .arg(_planordid),
+                             setWork, __FILE__, __LINE__);
         close();
       }
      }
@@ -408,9 +407,8 @@ void workOrder::sCreate()
       workCreate.exec();
       if (!workCreate.first())
       {
-        systemError(this, tr("A System Error occurred at %1::%2.")
-                          .arg(__FILE__)
-                          .arg(__LINE__) );
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Validating Order Quantity"),
+                             workCreate, __FILE__, __LINE__);
         return;
       }
   
@@ -465,17 +463,18 @@ void workOrder::sCreate()
       workCreate.bindValue(":ordid", -1);
     }
     workCreate.exec();
-    if (workCreate.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating Work Order %1")
+                                  .arg(_woNumber->text()),
+                                  workCreate, __FILE__, __LINE__))
     {
-        systemError(this, workCreate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
     if (!workCreate.first())
     {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating Work Order %1")
+                                        .arg(_woNumber->text()),
+                                        workCreate, __FILE__, __LINE__);
       return;
     }
   
@@ -649,9 +648,9 @@ bool workOrder::sSave()
   else if (_proportional->isChecked() && _jobCosGroup->isEnabled())
     workSave.bindValue(":wo_cosmethod",QString("P"));
   workSave.exec();
-  if (workSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Work Order Information"),
+                                workSave, __FILE__, __LINE__))
   {
-    systemError(this, workSave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -665,9 +664,9 @@ bool workOrder::sSave()
     workSave.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
     workSave.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
     workSave.exec();
-    if (workSave.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Work Order Information"),
+                                  workSave, __FILE__, __LINE__))
     {
-      systemError(this, workSave.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
   }
@@ -698,9 +697,8 @@ void workOrder::sUpdateStartDate()
   if (startDate.first())
     _startDate->setDate(startDate.value("startdate").toDate());
   else
-    systemError(this, tr("A System Error occurred at %1::%2.")
-                      .arg(__FILE__)
-                      .arg(__LINE__) );
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating Start Date"),
+                       startDate, __FILE__, __LINE__);
 }
 
 void workOrder::sPopulateItemChar( int pItemid )
@@ -793,9 +791,8 @@ void workOrder::populateWoNumber()
     {
       _woNumber->setText("Error");
 
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                           workpopulateWoNumber, __FILE__, __LINE__);
 
       return;
     }
@@ -935,9 +932,9 @@ void workOrder::sFillList()
   workFillList.exec();
   _woIndentedList->populate(workFillList, true);
   _woIndentedList->expandAll();
-  if (workFillList.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                                workFillList, __FILE__, __LINE__))
   {
-    systemError(this, workFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -1085,18 +1082,21 @@ void workOrder::sDeleteWO()
       int result = workDeleteWO.value("returnVal").toInt();
       if (result < 0)
       {
-	systemError(this, storedProcErrorLookup("deleteWo", result));
-	return;
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
+                               storedProcErrorLookup("deleteWo", result),
+                               __FILE__, __LINE__);
+        return;
       }
       omfgThis->sWorkOrdersUpdated(-1, true);
     }
     else if (workDeleteWO.lastError().type() != QSqlError::NoError)
-      systemError(this, workDeleteWO.lastError().databaseText(), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
+                         workDeleteWO, __FILE__, __LINE__);
 
   }
-  else if (workDeleteWO.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
+                                workDeleteWO, __FILE__, __LINE__))
   {
-    systemError(this, workDeleteWO.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   populate();
@@ -1170,9 +1170,9 @@ void workOrder::sReprioritizeParent()
     workReprioritizeParent.bindValue(":newPriority", _priority->value());
     workReprioritizeParent.bindValue(":reprioritizeChildren", true);
     workReprioritizeParent.exec();
-    if (workReprioritizeParent.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Reprioritizing Work Order Information"),
+                                  workReprioritizeParent, __FILE__, __LINE__))
     {
-      systemError(this, workReprioritizeParent.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
@@ -1208,9 +1208,9 @@ void workOrder::sRescheduleParent()
     workRescheduleParent.bindValue(":dueDate", _dueDate->date());
     workRescheduleParent.bindValue(":rescheduleChildren", true);
     workRescheduleParent.exec();
-    if (workRescheduleParent.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Rescheduling Work Order Information"),
+                                  workRescheduleParent, __FILE__, __LINE__))
     {
-      systemError(this, workRescheduleParent.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
@@ -1237,9 +1237,9 @@ void workOrder::sChangeParentQty()
     workChangeParentQty.bindValue(":wo_id", _woid);
     workChangeParentQty.bindValue(":qty", newQty);
     workChangeParentQty.exec();
-    if (workChangeParentQty.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Validating Work Order Quantity"),
+                                  workChangeParentQty, __FILE__, __LINE__))
     {
-      systemError(this, workChangeParentQty.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else if (workChangeParentQty.first())
@@ -1349,9 +1349,9 @@ void workOrder::sDspRunningAvailability()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (workDspRunningAvailability.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                                workDspRunningAvailability, __FILE__, __LINE__))
   {
-    systemError(this, workDspRunningAvailability.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -1389,10 +1389,9 @@ void workOrder::sReturnMatlBatch()
         if (workReturnMatlBatch.value("result").toInt() < 0)
         {
           rollback.exec();
-          systemError( this, tr("A System Error occurred at returnWoMaterialBatch::%1, W/O ID #%2, Error #%3.")
-                             .arg(__LINE__)
-                             .arg(_woIndentedList->id())
-                             .arg(workReturnMatlBatch.value("result").toInt()) );
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Returning Work Order Materials: W/O #%1")
+                                                       .arg(_woIndentedList->id()),
+                                                       workReturnMatlBatch, __FILE__, __LINE__);
           return;
         }
         else if (distributeInventory::SeriesAdjust(workReturnMatlBatch.value("result").toInt(), this) == XDialog::Rejected)
@@ -1408,9 +1407,9 @@ void workOrder::sReturnMatlBatch()
       else
       {
         rollback.exec();
-        systemError( this, tr("A System Error occurred at returnWoMaterialBatch::%1, W/O ID #%2.")
-                           .arg(__LINE__)
-                           .arg(_woIndentedList->id()) );
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Returning Work Order Materials: W/O #%1")
+                                                     .arg(_woIndentedList->id()),
+                                                     workReturnMatlBatch, __FILE__, __LINE__);
         return;
       }
     }
@@ -1468,10 +1467,9 @@ void workOrder::sIssueMatlBatch()
     if (issue.value("result").toInt() < 0)
     {
       rollback.exec();
-      systemError( this, tr("A System Error occurred at issueWoMaterialBatch::%1, Work Order ID #%2, Error #%3.")
-                         .arg(__LINE__)
-                         .arg(_woIndentedList->id())
-                         .arg(issue.value("result").toInt()) );
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Work Order Materials: W/O #%1")
+                                                   .arg(_woIndentedList->id()),
+                                                   issue, __FILE__, __LINE__);
       return;
     }
     else
@@ -1490,9 +1488,9 @@ void workOrder::sIssueMatlBatch()
   else
   {
     rollback.exec();
-    systemError( this, tr("A System Error occurred at issueWoMaterialBatch::%1, Work Order ID #%2.")
-                       .arg(__LINE__)
-                       .arg(_woIndentedList->id()) );
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Work Order Materials: W/O #%1")
+                                                 .arg(_woIndentedList->id()),
+                                                 issue, __FILE__, __LINE__);
     return;
   }
   populate();
@@ -1676,13 +1674,15 @@ void workOrder::sDeleteMatl()
         int result = workDeleteMatl.value("result").toInt();
         if (result < 0)
         {
-          systemError(this, storedProcErrorLookup("deleteWo", result), __FILE__, __LINE__);
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
+                                 storedProcErrorLookup("deleteWo", result),
+                                 __FILE__, __LINE__);
           return;
         }
       }
-      else if (workDeleteMatl.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
+                                    workDeleteMatl, __FILE__, __LINE__))
       {
-        systemError(this, workDeleteMatl.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
@@ -1696,13 +1696,15 @@ void workOrder::sDeleteMatl()
     int result = workDeleteMatl.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("deleteWoMaterial", result), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Material Information"),
+                             storedProcErrorLookup("deleteWoMaterial", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (workDeleteMatl.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Material Information"),
+                                workDeleteMatl, __FILE__, __LINE__))
   {
-    systemError(this, workDeleteMatl.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   
@@ -1737,9 +1739,9 @@ void workOrder::sViewMatlAvailability()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (workViewMatlAvailability.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Material Information"),
+                                workViewMatlAvailability, __FILE__, __LINE__))
   {
-    systemError(this, workViewMatlAvailability.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -1763,9 +1765,9 @@ void workOrder::sViewMatlSubstituteAvailability()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (workViewMatlSubstituteAvailability.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Material Information"),
+                                workViewMatlSubstituteAvailability, __FILE__, __LINE__))
   {
-    systemError(this, workViewMatlSubstituteAvailability.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -1835,9 +1837,9 @@ void workOrder::sSubstituteMatl()
       }
     }
   }
-  else if (workSubstituteMatl.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Material Information"),
+                                workSubstituteMatl, __FILE__, __LINE__))
   {
-    systemError(this, workSubstituteMatl.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
@@ -2144,10 +2146,9 @@ void workOrder::populate()
   }
   else if (wo.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, tr("A System Error occurred at %1::%2, W/O ID %3.")
-                      .arg(__FILE__)
-                      .arg(__LINE__)
-                      .arg(_woid) );
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information for WO #: %1")
+                         .arg(_woid),
+                         wo, __FILE__, __LINE__);
     if(_captive)
       close();
   }
