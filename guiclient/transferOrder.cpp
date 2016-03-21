@@ -1863,21 +1863,17 @@ void transferOrder::sIssueLineBalance()
                 "   AND  (toitem_id=:toitem_id)); ");
             transferIssueLineBalance.bindValue(":toitem_id", toitem->id());
             transferIssueLineBalance.exec();
-            if (! transferIssueLineBalance.first() && transferIssueLineBalance.lastError().type() != QSqlError::NoError)
+            if (transferIssueLineBalance.first())
             {
-              //-----------------------------------------------------------------
-              // The following ErrorReporter::error(..) call was already here
-              // but I think it's redundant and should be removed
-              ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Item"),
-                                   transferIssueLineBalance, __FILE__, __LINE__);
-              //------------------------------------------------------------------
-
               ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Transfer Order Item Information"),
                                      storedProcErrorLookup("sufficientInventoryToShipItem", result)
                                      .arg(transferIssueLineBalance.value("item_number").toString())
                                      .arg(transferIssueLineBalance.value("tohead_srcname").toString()),
                                      __FILE__, __LINE__);
               return;
+            } else {
+                ErrorReporter::error(QtCriticalMsg, this, tr("Error Checking Item Availability"),
+                                     transferIssueLineBalance, __FILE__, __LINE__);
             }
           }
         }
