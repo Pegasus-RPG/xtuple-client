@@ -23,6 +23,7 @@
 #include "transferOrder.h"
 #include "workOrder.h"
 #include "purchaseOrder.h"
+#include "errorReporter.h"
 
 dspRunningAvailability::dspRunningAvailability(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspRunningAvailability", fl)
@@ -213,9 +214,9 @@ void dspRunningAvailability::sSoftenOrder()
              "WHERE (planord_id=:planord_id);" );
   dspSoftenOrder.bindValue(":planord_id", list()->id());
   dspSoftenOrder.exec();
-  if (dspSoftenOrder.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Planned Order Information"),
+                                dspSoftenOrder, __FILE__, __LINE__))
   {
-    systemError(this, dspSoftenOrder.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -275,9 +276,9 @@ void dspRunningAvailability::sDeleteOrder()
     }
     */
   }
-  else if (dspDeleteOrder.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Planned Order Information"),
+                                dspDeleteOrder, __FILE__, __LINE__))
   {
-    systemError(this, dspDeleteOrder.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -380,9 +381,9 @@ void dspRunningAvailability::sFillList()
 
       display::sFillList();
     }
-    else if (dspFillList.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                  dspFillList, __FILE__, __LINE__))
     {
-      systemError(this, dspFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
