@@ -157,6 +157,12 @@ characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_charoptView, SIGNAL(clicked(QModelIndex)), this, SLOT(sCharoptClicked(QModelIndex)));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+
+  _validator->append(0, "[Y|N]");
+  _validator->append(1, "\\S+");
+  _validator->append(2, "[1-9]\\d{0,3}");
+  _validator->append(3, "[A-Z]\\d{5}[1-9]");
+  _validator->append(4, "(https?:\\/\\/(?:www\\.|(?!www))[^\\s\\.]+\\.[^\\s]{2,}|www\\.[^\\s]+\\.[^\\s]{2,})");
 }
 
 characteristic::~characteristic()

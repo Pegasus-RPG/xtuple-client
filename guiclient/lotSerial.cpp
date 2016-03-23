@@ -25,6 +25,7 @@ lotSerial::lotSerial(QWidget* parent, const char* name, bool modal, Qt::WindowFl
     setupUi(this);
 
     _print = _buttonBox->addButton(tr("Print Label"),QDialogButtonBox::ActionRole);
+    _print->setEnabled(false);
 
     connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
     connect(_lotSerial, SIGNAL(valid(bool)), this, SLOT(populate()));
@@ -35,6 +36,7 @@ lotSerial::lotSerial(QWidget* parent, const char* name, bool modal, Qt::WindowFl
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     
     _charass->setType("LS");
+    _charass->findChild<QPushButton*>("_newCharacteristic")->setEnabled(false);
     
     _reg->addColumn(tr("Number")      ,        _orderColumn,  Qt::AlignLeft, true, "lsreg_number" );
     _reg->addColumn(tr("Account#"),            _itemColumn,  Qt::AlignLeft, true, "crmacct_number" );
@@ -117,6 +119,8 @@ void lotSerial::populate()
   {
     return;
   }
+  _charass->findChild<QPushButton*>("_newCharacteristic")->setEnabled(_lotSerial->isValid());
+  _print->setEnabled(_lotSerial->isValid());
   sFillList();
 }
 
