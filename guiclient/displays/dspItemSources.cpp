@@ -22,6 +22,7 @@
 #include "dspPoItemReceivingsByItem.h"
 #include "guiclient.h"
 #include "parameterwidget.h"
+#include "errorReporter.h"
 
 dspItemSources::dspItemSources(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspItemSources", fl)
@@ -164,9 +165,9 @@ void dspItemSources::sDefault()
 
   itemSave.bindValue(":itemsrc_id", list()->altId());
   itemSave.exec();
-  if (itemSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Item Information"),
+                                itemSave, __FILE__, __LINE__))
   {
-    systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();

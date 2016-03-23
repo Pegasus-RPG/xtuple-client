@@ -23,6 +23,7 @@
 
 #include "printStatementByCustomer.h"
 #include "dspAROpenItems.h"
+#include "errorReporter.h"
 
 dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspTimePhasedOpenARItems", fl)
@@ -231,9 +232,9 @@ void dspTimePhasedOpenARItems::sFillCustom()
     return;
   dspFillCustom = mql.toQuery(params);
   list()->populate(dspFillCustom);
-  if (dspFillCustom.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Customer Information"),
+                                dspFillCustom, __FILE__, __LINE__))
   {
-    systemError(this, dspFillCustom.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -248,9 +249,9 @@ void dspTimePhasedOpenARItems::sFillStd()
 
   dspFillStd = mql.toQuery(params);
   list()->populate(dspFillStd);
-  if (dspFillStd.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Customer Information"),
+                                dspFillStd, __FILE__, __LINE__))
   {
-    systemError(this, dspFillStd.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
