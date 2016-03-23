@@ -246,16 +246,19 @@ void packingListBatch::sPopulateMenu(QMenu *pMenu)
 {
   QAction *menuItem;
 
-  menuItem = pMenu->addAction(tr("View Sales Order..."), this, SLOT(sViewSalesOrder()));
-  menuItem->setEnabled(_pack->currentItem()->rawValue("pack_head_type") == "SO" &&
-                       (_privileges->check("MaintainSalesOrders") ||
-                        _privileges->check("ViewSalesOrders")));
+  if (_pack->currentItem()->rawValue("pack_head_type") == "SO")
+  {
+    menuItem = pMenu->addAction(tr("View Sales Order..."), this, SLOT(sViewSalesOrder()));
+    menuItem->setEnabled(_privileges->check("MaintainSalesOrders") ||
+                        _privileges->check("ViewSalesOrders"));
+  }
     
-
-  menuItem = pMenu->addAction(tr("View Transfer Order..."), this, SLOT(sViewTransferOrder()));
-  menuItem->setEnabled(_pack->currentItem()->rawValue("pack_head_type") == "TO" &&
-                       (_privileges->check("MaintainTransferOrders") ||
-                        _privileges->check("ViewTransferOrders")));
+  if (_pack->currentItem()->rawValue("pack_head_type") == "TO")
+  {
+    menuItem = pMenu->addAction(tr("View Transfer Order..."), this, SLOT(sViewTransferOrder()));
+    menuItem->setEnabled(_privileges->check("MaintainTransferOrders") ||
+                        _privileges->check("ViewTransferOrders"));
+  }
 }
 
 void packingListBatch::sViewSalesOrder()
