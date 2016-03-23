@@ -102,8 +102,9 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WindowFl
     _warehouse->hide();
   }
   
-  if(_metrics->boolean("EnableSOReservations"))
+  if(_metrics->boolean("EnableSOReservations") || _metrics->boolean("DisallowNegativeInventory"))
   {
+    _requireInventory->setForgetful(true);
     _requireInventory->setChecked(true);
     _requireInventory->setEnabled(false);
   }
@@ -573,7 +574,7 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   {
     rollback.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Item"),
-                         issue, __FILE__, __LINE__);\
+                         issue, __FILE__, __LINE__);
     return false;
   }
   return true;
