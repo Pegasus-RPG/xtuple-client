@@ -599,8 +599,46 @@ void invoice::sSave()
   if (!save())
     return;
 
+  // If this is a recurring invoice check whether the newly saved invoice
+  // should supercede the original recurring invoice settings
+  if (_recurring->isRecurring() && _mode == cEdit && _recurring->parentId() != _invcheadid)
+  {
+    if (QMessageBox::question(this, tr("Recurring Invoice"),
+                                    tr("You have edited a recurring Invoice.\n"
+                                    "Do you wish to change all future invoice recurrences?"),
+                              QMessageBox::Yes, QMessageBox::No | QMessageBox::Default)
+             == QMessageBox::Yes)
+    {
+    // Update Recurring Invoice with latest saved detail
+      XSqlQuery recurUpd;
+      recurUpd.prepare("UPDATE recur SET recur_parent_id=:newinvoice "
+                       "WHERE ((recur_parent_type = 'I') "
+                       " AND   (recur_parent_id = :oldinvoice));");
+      recurUpd.bindValue(":newinvoice", _invcheadid);
+      recurUpd.bindValue(":oldinvoice", _recurring->parentId());
+      recurUpd.exec();
+      if (recurUpd.lastError().type() != QSqlError::NoError)
+      {
+         ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating Invoice Recurrence"),
+                     recurUpd, __FILE__, __LINE__);
+           return;
+      }
+      // Also update this invoice
+      recurUpd.prepare("UPDATE invchead SET invchead_recurring_invchead_id=:invoice "
+                       "WHERE (invchead_id = :invoice); ");
+      recurUpd.bindValue(":invoice",  _invcheadid);
+      recurUpd.exec();
+      if (recurUpd.lastError().type() != QSqlError::NoError)
+      {
+         ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating Invoice Recurrence"),
+                     recurUpd, __FILE__, __LINE__);
+           return;
+      }
+    }
+  }
+
   // post the Invoice if user desires
-  if (_postInvoice->isChecked())
+  if (_postInvoice->isVisible() && _postInvoice->isChecked())
     postInvoice();
 
   omfgThis->sInvoicesUpdated(_invcheadid, true);
