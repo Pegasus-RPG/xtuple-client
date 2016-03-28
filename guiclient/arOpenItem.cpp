@@ -222,20 +222,18 @@ void arOpenItem::sSave()
           <<GuiErrorCheck(_tax->localValue() > _amount->localValue(), _tax,
                           tr("The tax amount may not be greater than the total Receivable Memo amount."));
 
-    if(GuiErrorCheck::reportErrors(this,tr("Cannot Save Receivable Memo"),errors))
-        return;
 
     if (_useAltPrepaid->isChecked())
     {
-      errors.clear();
       errors<<GuiErrorCheck(_altSalescatidSelected->isChecked() && !_altSalescatid->isValid(), _altSalescatid,
                            tr("You must choose a valid Alternate Sales Category for this Receivable Memo before you may save it."))
             <<GuiErrorCheck(_altAccntidSelected->isChecked() && !_altAccntid->isValid(), _altAccntid,
                           tr("You must choose a valid Alternate Prepaid Account Number for this Receivable Memo before you may save it."));
 
-      if(GuiErrorCheck::reportErrors(this,tr("Cannot Save Receivable Memo"),errors))
-          return;
     }
+
+    if(GuiErrorCheck::reportErrors(this,tr("Cannot Save Receivable Memo"),errors))
+        return;
 
     if (_docType->code() == "C")
     {
