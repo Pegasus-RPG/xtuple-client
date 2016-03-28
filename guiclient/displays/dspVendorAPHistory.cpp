@@ -228,10 +228,8 @@ void dspVendorAPHistory::sVoidVoucher()
   if(dspVoidVoucher.first())
   {
     if(dspVoidVoucher.value("result").toInt() < 0)
-      systemError( this, tr("A System Error occurred at %1::%2, Error #%3.")
-                         .arg(__FILE__)
-                         .arg(__LINE__)
-                         .arg(dspVoidVoucher.value("result").toInt()) );
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Voucher Information"),
+                         dspVoidVoucher, __FILE__, __LINE__);
     else
       sFillList();
   }
@@ -270,7 +268,8 @@ void dspVendorAPHistory::sViewVoucher()
     }
   }
   else
-    systemError( this, dspViewVoucher.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Voucher Information"),
+                       dspViewVoucher, __FILE__, __LINE__);
 }
 
 void dspVendorAPHistory::sViewGLSeries()
@@ -293,6 +292,7 @@ void dspVendorAPHistory::sViewGLSeries()
     omfgThis->handleNewWindow(newdlg);
   }
   else
-    systemError( this, dspViewGLSeries.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving GL Series Information"),
+                       dspViewGLSeries, __FILE__, __LINE__);
 }
 

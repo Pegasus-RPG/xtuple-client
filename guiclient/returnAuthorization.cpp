@@ -1861,7 +1861,6 @@ void returnAuthorization::sRefund()
     }
     else if (ccq.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, ccq.lastError().databaseText(), __FILE__, __LINE__);
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
                                               ccq, __FILE__, __LINE__);
        XSqlQuery rollback("ROLLBACK;");

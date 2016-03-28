@@ -142,9 +142,9 @@ void userPreferences::setBackgroundImage(int pImageid)
     _backgroundImageid = useretBackgroundImage.value("image_id").toInt();
     _background->setText(useretBackgroundImage.value("description").toString());
   }
-  else if (useretBackgroundImage.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Setting Background Image"),
+                                useretBackgroundImage, __FILE__, __LINE__))
   {
-    systemError(this, useretBackgroundImage.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -450,9 +450,9 @@ bool userPreferences::save()
            .arg(_username->text()) );
     userave.bindValue(":password", passwd);
     userave.exec();
-    if (userave.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving User Information"),
+                                  userave, __FILE__, __LINE__))
     {
-      systemError(this, userave.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
 
@@ -630,9 +630,9 @@ void userPreferences::sAllWarehousesToggled(int pEvnttypeid)
     userAllWarehousesToggled.bindValue(":username", _user->currentText());
   userAllWarehousesToggled.bindValue(":evnttype_id", pEvnttypeid);
   userAllWarehousesToggled.exec();
-  if (userAllWarehousesToggled.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Selecting/De-Selecting All Warehouses For Selected Event"),
+                                userAllWarehousesToggled, __FILE__, __LINE__))
   {
-    systemError(this, userAllWarehousesToggled.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -663,9 +663,9 @@ void userPreferences::sWarehouseToggled(QTreeWidgetItem *selected)
   userWarehouseToggled.bindValue(":evnttype_id", _event->id());
   userWarehouseToggled.bindValue(":warehous_id", ((XTreeWidgetItem *)selected)->id());
   userWarehouseToggled.exec();
-  if (userWarehouseToggled.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Selecting/De-Selecting Warehouse For Selected Event"),
+                                userWarehouseToggled, __FILE__, __LINE__))
   {
-    systemError(this, userWarehouseToggled.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -693,9 +693,9 @@ void userPreferences::sFillWarehouseList()
       _warehouses->topLevelItem(i)->setText(0, tr("Yes"));
     else
       _warehouses->topLevelItem(i)->setText(0, tr("No"));
-    if (userFillWarehouseList.lastError().type() != QSqlError::NoError)
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving User Warehouse Information"),
+                                  userFillWarehouseList, __FILE__, __LINE__))
     {
-      systemError(this, userFillWarehouseList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

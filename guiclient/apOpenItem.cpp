@@ -30,6 +30,7 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::Window
   connect(_terms,          SIGNAL(newID(int)),                     this, SLOT(sPopulateDueDate()));
   connect(_vend,           SIGNAL(newId(int)),                     this, SLOT(sPopulateVendInfo(int)));
   connect(_amount,         SIGNAL(editingFinished()),              this, SLOT(sDetermineTaxAmount()));
+  connect(_taxzone,        SIGNAL(newID(int)),                     this, SLOT(sDetermineTaxAmount()));
   connect(_taxLit,         SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
   connect(_docNumber,      SIGNAL(textEdited(QString)),            this, SLOT(sReleaseNumber()));
   connect(_usePrepaid,     SIGNAL(toggled(bool)),                  this, SLOT(sToggleAccount()));

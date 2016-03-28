@@ -1150,6 +1150,9 @@ const struct {
 								0, "" },
   { "postInvTrans",	-3, "",	 -3, "insertGLTransaction" },
   { "postInvTrans",	-4, "",	 -4, "insertGLTransaction" },
+  { "postInvTrans",	-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not post this inventory transaction because"
+			       " the transaction will cause the Item Qty. on Hand to go negative which is not allowed."),
+								0, "" },
 
   { "postPoReceipt",	-1, "",	 -1, "postReceipt" },
   { "postPoReceipt",	-2, "",	 -2, "postReceipt" },

@@ -25,6 +25,7 @@
 #include "guiclient.h"
 #include "storedProcErrorLookup.h"
 #include "parameterwidget.h"
+#include "errorReporter.h"
 
 unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "unpostedPurchaseOrders", fl)
@@ -168,13 +169,16 @@ void unpostedPurchaseOrders::sDelete()
           unpostedDelete.bindValue(":pohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
           unpostedDelete.exec();
           if (unpostedDelete.first() && ! unpostedDelete.value("result").toBool())
-              systemError(this, tr("<p>Only Unposted Purchase Orders may be "
-                                   "deleted. Check the status of Purchase Order "
-                                   "%1. If it is 'U' then contact your system "
-                                   "Administrator.").arg(selected[i]->text(0)),
-                          __FILE__, __LINE__);
+              ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                               tr("%1: <p>Only Unposted Purchase Orders may be "
+                                  "deleted. Check the status of Purchase Order "
+                                  "%2. If it is 'U' then contact your system "
+                                  "Administrator.")
+                                   .arg(windowTitle())
+                                   .arg(selected[i]->text(0)),__FILE__,__LINE__);
           else if (unpostedDelete.lastError().type() != QSqlError::NoError)
-            systemError(this, unpostedDelete.lastError().databaseText(), __FILE__, __LINE__);
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Purchase Order"),
+                               unpostedDelete, __FILE__, __LINE__);
           else
             done = true;
         }
@@ -246,13 +250,15 @@ void unpostedPurchaseOrders::sRelease()
       {
         int result = unpostedRelease.value("result").toInt();
         if (result < 0)
-          systemError(this, storedProcErrorLookup("releasePurchaseOrder", result),
-                      __FILE__, __LINE__);
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Releasing Purchase Order"),
+                                 storedProcErrorLookup("releasePurchaseOrder", result),
+                                 __FILE__, __LINE__);
         else
           done = true;
       }
       else if (unpostedRelease.lastError().type() != QSqlError::NoError)
-        systemError(this, unpostedRelease.lastError().databaseText(), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Releasing Purchase Order"),
+                           unpostedRelease, __FILE__, __LINE__);
     }
   }
   if (done)
@@ -283,13 +289,15 @@ void unpostedPurchaseOrders::sUnrelease()
       {
         int result = unRelease.value("result").toInt();
         if (result < 0)
-          systemError(this, storedProcErrorLookup("unreleasePurchaseOrder", result),
-                      __FILE__, __LINE__);
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Unreleasing Purchase Order"),
+                                 storedProcErrorLookup("unreleasePurchaseOrder", result),
+                                 __FILE__, __LINE__);
         else
           done = true;
       }
       else if (unRelease.lastError().type() != QSqlError::NoError)
-        systemError(this, unRelease.lastError().databaseText(), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Unreleasing Purchase Order"),
+                           unRelease, __FILE__, __LINE__);
     }
   }
   if (done)

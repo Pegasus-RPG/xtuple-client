@@ -13,6 +13,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QValidator>
+#include "errorReporter.h"
 
 voucherMiscDistrib::voucherMiscDistrib(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -156,9 +157,8 @@ void voucherMiscDistrib::sSave()
       _vodistid = saveVoucher.value("_vodistid").toInt();
     else
     {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Voucher Information"),
+                           saveVoucher, __FILE__, __LINE__);
       return;
     }
 

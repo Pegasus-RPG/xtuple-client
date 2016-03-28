@@ -1067,9 +1067,9 @@ bool vendor::sPopulate()
     _lastPurchase->setDate(vendorPopulate.value("maxpodate").toDate());
     _backlog->setDouble(vendorPopulate.value("backlog").toDouble());
   }
-  else if (vendorPopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Vendor Information"),
+                                vendorPopulate, __FILE__, __LINE__))
   {
-    systemError(this, vendorPopulate.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
   
@@ -1089,9 +1089,9 @@ bool vendor::sPopulate()
   vendorPopulate = purchbydate.toQuery(params);
   if (vendorPopulate.first())
     _lastYearsPurchases->setDouble(vendorPopulate.value("purchases").toDouble());
-  else if (vendorPopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Vendor Information"),
+                                vendorPopulate, __FILE__, __LINE__))
   {
-    systemError(this, vendorPopulate.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
   
@@ -1102,9 +1102,9 @@ bool vendor::sPopulate()
   vendorPopulate = purchbydate.toQuery(ytdparams);
   if (vendorPopulate.first())
     _ytdPurchases->setDouble(vendorPopulate.value("purchases").toDouble());
-  else if (vendorPopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Vendor Information"),
+                                vendorPopulate, __FILE__, __LINE__))
   {
-    systemError(this, vendorPopulate.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
   
@@ -1116,9 +1116,9 @@ bool vendor::sPopulate()
   vendorPopulate = balm.toQuery(params);
   if (vendorPopulate.first())
     _openBalance->setDouble(vendorPopulate.value("balance").toDouble());
-  else if (vendorPopulate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retreiving Vendor Information"),
+                                vendorPopulate, __FILE__, __LINE__))
   {
-    systemError(this, vendorPopulate.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 

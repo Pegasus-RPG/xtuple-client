@@ -114,9 +114,9 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
     setVoucher.exec();
     if (setVoucher.first())
       _taxzoneid = setVoucher.value("vohead_taxzone_id").toInt();
-    else if (setVoucher.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Voucher Information"),
+                                  setVoucher, __FILE__, __LINE__))
     {
-      systemError(this, setVoucher.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
 	else
@@ -178,10 +178,9 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       if (setVoucher.value("itemsiteid") != -1)
         _item->setItemsiteid(setVoucher.value("itemsiteid").toInt());
     }
-    else if (setVoucher.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Voucher Information"),
+                                  setVoucher, __FILE__, __LINE__))
     {
-      systemError(this, _rejectedMsg.arg(setVoucher.lastError().databaseText()),
-                  __FILE__, __LINE__);
       reject();
       return UndefinedError;
     }
@@ -213,10 +212,9 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       _freightToVoucher->setLocalValue(setVoucher.value("voitem_freight").toDouble());
       _taxtype->setId(setVoucher.value("voitem_taxtype_id").toInt());
     }
-    else if (setVoucher.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Voucher Information"),
+                                  setVoucher, __FILE__, __LINE__))
     {
-      systemError(this, _rejectedMsg.arg(setVoucher.lastError().databaseText()),
-                  __FILE__, __LINE__);
       reject();
       return UndefinedError;
     }
@@ -239,10 +237,9 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
     setVoucher.exec();
     if (setVoucher.first())
 	  _tax->setLocalValue(setVoucher.value("taxamt").toDouble());
-	else if (setVoucher.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Voucher Information"),
+                                  setVoucher, __FILE__, __LINE__))
     {
-      systemError(this, _rejectedMsg.arg(setVoucher.lastError().databaseText()),
-                  __FILE__, __LINE__);
       reject();
       return UndefinedError;
     }
@@ -281,10 +278,9 @@ void voucherItem::sSave()
                            tr("You must make at least one distribution for this Voucher Item before you may save it.") );
     return;
   }
-  if (voucherSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Voucher Item Information"),
+                                voucherSave, __FILE__, __LINE__))
   {
-    systemError(this, _rejectedMsg.arg(voucherSave.lastError().databaseText()),
-                __FILE__, __LINE__);
     reject();
     return;
   }
@@ -321,10 +317,9 @@ void voucherItem::sSave()
           return;
     }
   }
-  else if (voucherSave.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Voucher Item Information"),
+                                voucherSave, __FILE__, __LINE__))
   {
-    systemError(this, _rejectedMsg.arg(voucherSave.lastError().databaseText()),
-                __FILE__, __LINE__);
     reject();
     return;
   }
@@ -348,10 +343,9 @@ void voucherItem::sSave()
   if (_taxtype->id() != -1)
     voucherSave.bindValue(":voitem_taxtype_id", _taxtype->id());
   voucherSave.exec();
-  if (voucherSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Voucher Item Information"),
+                                voucherSave, __FILE__, __LINE__))
   {
-    systemError(this, _rejectedMsg.arg(voucherSave.lastError().databaseText()),
-                __FILE__, __LINE__);
     reject();
     return;
   }
@@ -371,10 +365,9 @@ void voucherItem::sNew()
   voucherNew.bindValue(":vohead_id", _voheadid);
   voucherNew.bindValue(":poitem_id", _poitemid);
   voucherNew.exec();
-  if (voucherNew.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Voucher Item Information"),
+                                voucherNew, __FILE__, __LINE__))
   {
-    systemError(this, _rejectedMsg.arg(voucherNew.lastError().databaseText()),
-                __FILE__, __LINE__);
     reject();
     return;
   }
@@ -419,10 +412,9 @@ void voucherItem::sDelete()
              "WHERE (vodist_id=:vodist_id);" );
   voucherDelete.bindValue(":vodist_id", _vodist->id());
   voucherDelete.exec();
-  if (voucherDelete.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Voucher Item Information"),
+                                voucherDelete, __FILE__, __LINE__))
   {
-    systemError(this, _rejectedMsg.arg(voucherDelete.lastError().databaseText()),
-                __FILE__, __LINE__);
     reject();
     return;
   }
@@ -499,10 +491,9 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
     voucherToggleReceiving.exec();
     if (voucherToggleReceiving.first())
       _voitemid = (voucherToggleReceiving.value("voitemid").toInt());
-    else if (voucherToggleReceiving.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Voucher Item Information "),
+                                  voucherToggleReceiving, __FILE__, __LINE__))
     {
-      systemError(this, _rejectedMsg.arg(voucherToggleReceiving.lastError().databaseText()),
-                  __FILE__, __LINE__);
       reject();
       return;
     }
@@ -520,10 +511,9 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
   voucherToggleReceiving.bindValue(":voitem_qty", _qtyToVoucher->toDouble());
   voucherToggleReceiving.bindValue(":voitem_freight", _freightToVoucher->localValue());
   voucherToggleReceiving.exec();
-  if (voucherToggleReceiving.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Voucher Item Information"),
+                                voucherToggleReceiving, __FILE__, __LINE__))
   {
-    systemError(this, _rejectedMsg.arg(voucherToggleReceiving.lastError().databaseText()),
-                __FILE__, __LINE__);
     reject();
     return;
   }
@@ -558,10 +548,9 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
   voucherToggleReceiving.bindValue(":voitem_id", _voitemid);
   voucherToggleReceiving.bindValue(":target_id", item->id());
   voucherToggleReceiving.exec();
-  if (voucherToggleReceiving.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Voucher Item Information"),
+                                voucherToggleReceiving, __FILE__, __LINE__))
   {
-    systemError(this, _rejectedMsg.arg(voucherToggleReceiving.lastError().databaseText()),
-                __FILE__, __LINE__);
     reject();
     return;
   }
@@ -578,10 +567,9 @@ void voucherItem::sFillList()
   params.append("vohead_id", _voheadid);
   XSqlQuery distq = distmql.toQuery(params);
   _vodist->populate(distq);
-  if (distq.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Voucher Item Information"),
+                                distq, __FILE__, __LINE__))
   {
-    systemError(this, _rejectedMsg.arg(distq.lastError().databaseText()),
-                __FILE__, __LINE__);
     reject();
     return;
   }
@@ -593,10 +581,9 @@ void voucherItem::sFillList()
   params.append("reject", tr("Reject"));
   XSqlQuery recq = recmql.toQuery(params);
   _uninvoiced->populate(recq, true);
-  if (recq.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Voucher Item Information "),
+                                recq, __FILE__, __LINE__))
   {
-    systemError(this, _rejectedMsg.arg(recq.lastError().databaseText()),
-                __FILE__, __LINE__);
     reject();
     return;
   }
@@ -614,10 +601,9 @@ void voucherItem::sFillList()
     _totalDistributed->setLocalValue(totalDist.value("totalamount").toDouble() +
                                      _tax->localValue() +
                                      _freightToVoucher->localValue());
-  else if (totalDist.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Voucher Item Information"),
+                                totalDist, __FILE__, __LINE__))
   {
-    systemError(this, _rejectedMsg.arg(totalDist.lastError().databaseText()),
-                __FILE__, __LINE__);
     reject();
     return;
   }

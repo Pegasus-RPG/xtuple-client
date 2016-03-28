@@ -221,36 +221,6 @@ bool contract::sSave()
                           tr( "You must enter a Description before you may save this Contract." ) )
      ;
 
-  /* TODO - need this?
-  itemSave.prepare( "SELECT count(*) AS numberOfOverlaps "
-                    "FROM contrct "
-                    "WHERE (contrct_vend_id = :contrct_vend_id)"
-                    "  AND (contrct_id != :contrct_id)"
-                    "  AND ( (contrct_effective BETWEEN :contrct_effective AND :contrct_expires OR"
-                    "         contrct_expires BETWEEN :contrct_effective AND :contrct_expires)"
-                    "   OR   (contrct_effective <= :contrct_effective AND"
-                    "         contrct_expires   >= :contrct_expires) );" );
-  itemSave.bindValue(":contrct_id", _contrctid);
-  itemSave.bindValue(":contrct_vend_id", _vendor->id());
-  itemSave.bindValue(":contrct_effective", _dates->startDate());
-  itemSave.bindValue(":contrct_expires", _dates->endDate());
-  itemSave.exec();
-  if (itemSave.first())
-  {
-    if (itemSave.value("numberOfOverlaps").toInt() > 0)
-    {
-      errors << GuiErrorCheck(true, _dates,
-                              tr("The date range overlaps with another date range.\n"
-                                 "Please check the values of these dates."));
-    }
-  }
-  else if (itemSave.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
-    return false;
-  }
-  */
-
   if(_mode == cNew || _mode == cCopy)
   {
     itemSave.prepare( "SELECT contrct_id "
