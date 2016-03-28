@@ -592,16 +592,16 @@ void apOpenItem::sTaxDetail()
   if (_apopenid == -1)
   {
 
-      QList<GuiErrorCheck>errors;
-      errors<<GuiErrorCheck(!_docDate->isValid(), _docDate,
+    QList<GuiErrorCheck>errors;
+    errors<<GuiErrorCheck(!_docDate->isValid(), _docDate,
                             tr("You must enter a document date for this A/P Memo before you may set tax amounts."))
            <<GuiErrorCheck(!_dueDate->isValid(), _dueDate,
-                                       tr("You must enter a due date for this A/P Memo before you may set tax amounts."))
+                            tr("You must enter a due date for this A/P Memo before you may set tax amounts."))
            <<GuiErrorCheck(_amount->isZero(), _amount,
                            tr("You must enter an amount for this Payable Memo before you may set tax amounts."));
 
-      if(GuiErrorCheck::reportErrors(this,tr("Cannot Set Tax Amounts"),errors))
-          return;
+    if(GuiErrorCheck::reportErrors(this,tr("Cannot Set Tax Amounts"),errors))
+        return;
 
     if (!sInitializeMemo())
       return;
