@@ -591,21 +591,18 @@ void apOpenItem::sTaxDetail()
   XSqlQuery ap;
   if (_apopenid == -1)
   {
-    if (!_docDate->isValid() || !_dueDate->isValid())
-    {
-      QMessageBox::critical( this, tr("Cannot set tax amounts"),
-                             tr("You must enter document and due dates for this A/P Memo before you may set tax amounts.") );
-      _docDate->setFocus();
-      return;
-    }
 
-    if (_amount->isZero())
-    {
-      QMessageBox::critical( this, tr("Cannot set tax amounts"),
-                             tr("You must enter an amount for this Payable Memo before you may set tax amounts.") );
-      _amount->setFocus();
-      return;
-    }
+      QList<GuiErrorCheck>errors;
+      errors<<GuiErrorCheck(!_docDate->isValid(), _docDate,
+                            tr("You must enter a document date for this A/P Memo before you may set tax amounts."))
+           <<GuiErrorCheck(!_dueDate->isValid(), _dueDate,
+                                       tr("You must enter a due date for this A/P Memo before you may set tax amounts."))
+           <<GuiErrorCheck(_amount->isZero(), _amount,
+                           tr("You must enter an amount for this Payable Memo before you may set tax amounts."));
+
+      if(GuiErrorCheck::reportErrors(this,tr("Cannot Set Tax Amounts"),errors))
+          return;
+
     if (!sInitializeMemo())
       return;
   }
