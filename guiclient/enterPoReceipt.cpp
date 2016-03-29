@@ -376,7 +376,7 @@ void enterPoReceipt::sPost()
         XSqlQuery issue;
         issue.prepare("SELECT issueToShipping('SO', coitem_id, "
                       "  roundQty(item_fractional, (recv_qty * poitem_invvenduomratio / coitem_qty_invuomratio)), "
-                      "  :itemlocseries, recv_gldistdate, invhist_id ) AS result, "
+                      "  :itemlocseries, recv_gldistdate, invhist_id, TRUE ) AS result, "
                       "  coitem_cohead_id, soHoldType(cohead_id) AS holdtype "
                       "FROM invhist, recv "
                       " JOIN poitem ON (poitem_id=recv_orderitem_id) "
@@ -422,6 +422,7 @@ void enterPoReceipt::sPost()
                          "WHERE ( (shiphead_order_type='SO') "
                          " AND (shiphead_order_id=:cohead_id) "
                          " AND (NOT shiphead_shipped) "
+                         " AND (shiphead_dropship) "
                          " AND (recv_id=:recv_id) );");
             ship.bindValue(":cohead_id", _soheadid);
             ship.bindValue(":recv_id",  qi.value("recv_id").toInt());
