@@ -599,7 +599,9 @@ void salesOrderSimple::sHandleOrderNumber()
         int result = query.value("result").toInt();
         if (result < 0)
         {
-          systemError(this, storedProcErrorLookup("deleteSO", result), __FILE__, __LINE__);
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Sales Order"),
+                                 storedProcErrorLookup("deleteSO", result),
+                                 __FILE__, __LINE__);
           return;
         }
       }
@@ -840,7 +842,9 @@ void salesOrderSimple::sDelete()
       }
       else if (result < 0)
       {
-        systemError(this, storedProcErrorLookup("deleteSOItem", result),  __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Sales Order Item Information"),
+                                 storedProcErrorLookup("deleteSOItem", result),
+                                 __FILE__, __LINE__);
       }
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting SO Line"),
@@ -1021,7 +1025,7 @@ bool salesOrderSimple::deleteForCancel()
       _soitem->topLevelItemCount() > 0 &&
       !_captive)
   {
-    int answer;
+    int answer = QMessageBox::No;
     if (_mode == cNew)
       answer = QMessageBox::question(this, tr("Delete Sales Order?"),
                                       tr("<p>Are you sure you want to delete this "
@@ -1043,10 +1047,11 @@ bool salesOrderSimple::deleteForCancel()
     {
       int result = query.value("result").toInt();
       if (result < 0)
-        systemError(this, storedProcErrorLookup("deleteSO", result),
-                    __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Sales Order Information"),
+                               storedProcErrorLookup("deleteSO", result),
+                               __FILE__, __LINE__);
     }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting SO"),
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Sales Order Information"),
                                   query, __FILE__, __LINE__))
     {
       return false;
@@ -1571,7 +1576,7 @@ bool salesOrderSimple::sIssueLineBalance()
         prod.prepare("SELECT postSoItemProduction(:soitem_id, now()) AS result;");
         prod.bindValue(":soitem_id", _soitem->id());
         prod.exec();
-        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production"),
+        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production Information"),
                                  prod, __FILE__, __LINE__))
         {
           rollback.exec();
@@ -1584,8 +1589,9 @@ bool salesOrderSimple::sIssueLineBalance()
           if (itemlocSeries < 0)
           {
             rollback.exec();
-            systemError(this, storedProcErrorLookup("postProduction", itemlocSeries),
-                        __FILE__, __LINE__);
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production Information"),
+                                     storedProcErrorLookup("postProduction", itemlocSeries),
+                                     __FILE__, __LINE__);
             return false;
           }
           else if (distributeInventory::SeriesAdjust(itemlocSeries, this) == XDialog::Rejected)
@@ -1613,8 +1619,9 @@ bool salesOrderSimple::sIssueLineBalance()
           else
           {
             rollback.exec();
-            systemError(this, tr("Inventory history not found"),
-                        __FILE__, __LINE__);
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                                 tr("%1: Inventory History Not Found.")
+                                 .arg(windowTitle()),__FILE__,__LINE__);
             return false;
           }
         }
@@ -1640,9 +1647,10 @@ bool salesOrderSimple::sIssueLineBalance()
         if (result < 0)
         {
           rollback.exec();
-          systemError(this, storedProcErrorLookup("issueLineBalanceToShipping", result) +
-                      tr("<br>Line Item %1").arg(_soitem->topLevelItem(i)->text(0)),
-                      __FILE__, __LINE__);
+           ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Line Balance To Shipping Line Item %1")
+                                   .arg(_soitem->topLevelItem(i)->text(0)),
+                                   storedProcErrorLookup("issueLineBalanceToShipping", result),
+                                   __FILE__, __LINE__);
           return false;
         }
 
@@ -1658,8 +1666,10 @@ bool salesOrderSimple::sIssueLineBalance()
       else
       {
         rollback.exec();
-        systemError(this, tr("Line Item %1\n").arg(_soitem->topLevelItem(i)->text(0)) +
-                    issueSales.lastError().databaseText(), __FILE__, __LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Line Balance To Shipping"
+                                  "\n Line Item %1")
+                                  .arg(_soitem->topLevelItem(i)->text(0)),
+                                  issueSales, __FILE__, __LINE__);
         return false;
       }
     }
@@ -1714,8 +1724,9 @@ bool salesOrderSimple::sShipInvoice()
     if (result < 0)
     {
       rollback.exec();
-      systemError(this, storedProcErrorLookup("shipShipment", result),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Shipment Information"),
+                               storedProcErrorLookup("shipShipment", result),
+                               __FILE__, __LINE__);
       return false;
     }
   }
@@ -1728,7 +1739,8 @@ bool salesOrderSimple::sShipInvoice()
       errorStr = tr("One or more required accounts are not set or set incorrectly."
                     " Please make sure that all your Cost Category and Sales Account Assignments"
                     " are complete and correct.");
-    systemError(this, errorStr, __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Shipping Shipment"),
+                         errorStr, __FILE__, __LINE__);
     return false;
   }
   
@@ -1758,7 +1770,9 @@ bool salesOrderSimple::sShipInvoice()
     cobmiscid = shipq.value("result").toInt();
     if (cobmiscid < 0)
     {
-      systemError(this, storedProcErrorLookup("selectUninvoicedShipment", cobmiscid), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Shipment Information"),
+                               storedProcErrorLookup("selectUninvoicedShipment", cobmiscid),
+                               __FILE__, __LINE__);
       return false;
     }
     else if (0 == cobmiscid)
@@ -1773,14 +1787,13 @@ bool salesOrderSimple::sShipInvoice()
     omfgThis->sBillingSelectionUpdated(_soheadid, true);
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Selecting Shipment for Billing"),
+                                tr("%1: <p>Although Sales Order %2 was successfully shipped, "
+                                   "it was not selected for billing. You must manually "
+                                   "select this Sales Order for Billing.")
+                                .arg(windowTitle())
+                                .arg(_soheadid),
                                 shipq, __FILE__, __LINE__))
   {
-    systemError(this, shipq.lastError().databaseText() +
-                tr("<p>Although Sales Order %1 was successfully shipped, "
-                   "it was not selected for billing. You must manually "
-                   "select this Sales Order for Billing.")
-                .arg(_soheadid),
-                __FILE__, __LINE__);
     return false;
   }
 
@@ -1793,20 +1806,21 @@ bool salesOrderSimple::sShipInvoice()
     invcheadid = shipq.value("result").toInt();
     if (invcheadid < 0)
     {
-      systemError(this, storedProcErrorLookup("postBillingSelection", invcheadid), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Billing Information"),
+                               storedProcErrorLookup("postBillingSelection", invcheadid),
+                               __FILE__, __LINE__);
       return false;
     }
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating Invoice"),
+                                tr("%1: <p>Although Sales Order %2 was successfully shipped "
+                                   "and selected for billing, the Invoice was not "
+                                   "created properly. You may need to create an Invoice "
+                                   "manually from the Billing Selection.")
+                                .arg(windowTitle())
+                                .arg(_soheadid),
                                 shipq, __FILE__, __LINE__))
   {
-    systemError(this, shipq.lastError().databaseText() +
-                tr("<p>Although Sales Order %1 was successfully shipped "
-                   "and selected for billing, the Invoice was not "
-                   "created properly. You may need to create an Invoice "
-                   "manually from the Billing Selection.")
-                .arg(_soheadid),
-                __FILE__, __LINE__);
     return false;
   }
 
@@ -1829,19 +1843,21 @@ bool salesOrderSimple::sShipInvoice()
     // result of -10 indicates the invoice was posted when printed
     if (result < 0 && result != -10)
     {
-      systemError(this, storedProcErrorLookup("postInvoice", result), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Invoice Information"),
+                               storedProcErrorLookup("postInvoice", result),
+                               __FILE__, __LINE__);
       return false;
     }
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Invoice"),
                                 shipq, __FILE__, __LINE__))
   {
-    systemError(this, shipq.lastError().databaseText() +
-                tr("<p>Although Sales Order %1 was successfully shipped "
-                   "selected for billing, and an Invoice was created "
-                   "the Invoice was not posted properly. ")
-                .arg(_soheadid),
-                __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                         tr("%1: <p>Although Sales Order %2 was successfully shipped "
+                            "selected for billing, and an Invoice was created "
+                            "the Invoice was not posted properly. ")
+                         .arg(windowTitle())
+                         .arg(_soheadid),__FILE__,__LINE__);
     return false;
   }
   
@@ -2015,12 +2031,13 @@ void salesOrderSimple::sEnterCashPayment()
     int result = cashPost.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("postCashReceipt", result),
-                  __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt Information"),
+                               storedProcErrorLookup("postCashReceipt", result),
+                               __FILE__, __LINE__);
       return;
     }
   }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt"),
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt Information"),
                                 cashPost, __FILE__, __LINE__))
   {
     return;

@@ -121,9 +121,9 @@ void unappliedARCreditMemos::sFillList()
   
   XSqlQuery qry = mql.toQuery(params);
   _aropen->populate(qry);
-  if (qry.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Unapplied AR Credit Memo Information"),
+                                qry, __FILE__, __LINE__))
   {
-    systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

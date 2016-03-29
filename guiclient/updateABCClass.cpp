@@ -13,6 +13,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include "guiclient.h"
+#include "errorReporter.h"
 
 updateABCClass::updateABCClass(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -113,9 +114,8 @@ void updateABCClass::sUpdate()
                               tr("The ABC Class Code was updated for %1 Item Sites.")
                               .arg(updateUpdate.value("result").toInt()) );
   else
-    systemError(this, tr("A System Error occurred at %1::%2.")
-                      .arg(__FILE__)
-                      .arg(__LINE__) );
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating ABC Class Code Information"),
+                       updateUpdate, __FILE__, __LINE__);
 
   _close->setText(tr("&Close"));
 }

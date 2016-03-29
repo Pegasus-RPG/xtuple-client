@@ -51,9 +51,9 @@ todoListCalendar::todoListCalendar(QWidget* parent, const char * name, Qt::Windo
     _myUsrId = todotodoListCalendar.value("usr_id").toInt();
     _usr->setId(_myUsrId);
   }
-  else if (todotodoListCalendar.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving User Information"),
+                                todotodoListCalendar, __FILE__, __LINE__))
   {
-    systemError(this, todotodoListCalendar.lastError().databaseText(), __FILE__, __LINE__);
     close();
   }
 

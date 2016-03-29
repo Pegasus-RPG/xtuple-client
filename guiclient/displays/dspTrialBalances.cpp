@@ -23,6 +23,7 @@
 #include "metasql.h"
 #include "parameterwidget.h"
 #include "xtreewidget.h"
+#include "errorReporter.h"
 
 dspTrialBalances::dspTrialBalances(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspTrialBalances", fl)
@@ -107,13 +108,15 @@ void dspTrialBalances::sForwardUpdate()
     int result = dspForwardUpdate.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("forwardUpdateTrialBalance", result), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Trial Balance Information"),
+                             storedProcErrorLookup("forwardUpdateTrialBalance", result),
+                             __FILE__, __LINE__);
       return;
     }
   }
-  else if (dspForwardUpdate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Trial Balance Information"),
+                                dspForwardUpdate, __FILE__, __LINE__))
   {
-    systemError(this, dspForwardUpdate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -162,13 +165,15 @@ bool dspTrialBalances::forwardUpdate()
     int result = dspforwardUpdate.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("forwardUpdateTrialBalance", result), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Trial Balance Information"),
+                             storedProcErrorLookup("forwardUpdateTrialBalance", result),
+                             __FILE__, __LINE__);
       return false;
     }
   }
-  else if (dspforwardUpdate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Trial Balance Information"),
+                                dspforwardUpdate, __FILE__, __LINE__))
   {
-    systemError(this, dspforwardUpdate.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
   return true;

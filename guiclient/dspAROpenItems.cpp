@@ -892,6 +892,9 @@ void dspAROpenItems::sViewIncident()
 
 bool dspAROpenItems::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   _customerSelector->appendValue(params);
   if (_docDate->isChecked())
     _dates->appendValue(params);
