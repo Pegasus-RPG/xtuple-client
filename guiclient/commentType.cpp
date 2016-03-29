@@ -16,6 +16,7 @@
 
 #include "storedProcErrorLookup.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 commentType::commentType(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -114,14 +115,14 @@ void commentType::sSaveClicked()
 bool commentType::sSave()
 {
   XSqlQuery commentSave;
-  if (_name->text().length() == 0)
-  {
-    QMessageBox::information( this, tr("Cannot Save Comment Type"),
-                             tr("You must enter a valid Comment Type before saving this Item Type.") );
-    _name->setFocus();
-    return false;
-  }
-  
+
+  QList<GuiErrorCheck>errors;
+  errors<<GuiErrorCheck(_name->text().length() == 0, _name,
+                        tr("You must enter a valid Comment Name before saving this Comment Type."));
+
+  if(GuiErrorCheck::reportErrors(this,tr("Cannot Save Comment Type"),errors))
+      return false;
+
   if (_mode == cNew)
   {
     commentSave.prepare( "INSERT INTO cmnttype "

@@ -16,6 +16,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QValidator>
+#include "guiErrorCheck.h"
 
 cashReceiptMiscDistrib::cashReceiptMiscDistrib(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -110,21 +111,15 @@ void cashReceiptMiscDistrib::populate()
 void cashReceiptMiscDistrib::sSave()
 {
   XSqlQuery cashSave;
-  if (!_account->isValid())
-  {
-    QMessageBox::warning( this, tr("Select Account"),
-                          tr("You must select an Account to post this Miscellaneous Distribution to.") );
-    _account->setFocus();
-    return;
-  }
 
-  if (_amount->isZero())
-  {
-    QMessageBox::warning( this, tr("Enter Amount"),
-                          tr("You must enter an amount for this Miscellaneous Distribution.") );
-    _amount->setFocus();
-    return;
-  }
+  QList<GuiErrorCheck>errors;
+  errors<<GuiErrorCheck(!_account->isValid(), _account,
+                        tr("You must select an Account to post this Miscellaneous Distribution to."))
+       <<GuiErrorCheck(_amount->isZero(), _amount,
+                       tr("You must enter an amount for this Miscellaneous Distribution."));
+
+  if(GuiErrorCheck::reportErrors(this,tr("Cannot Post Transaction"),errors))
+      return;
 
   if (_mode == cNew)
   {

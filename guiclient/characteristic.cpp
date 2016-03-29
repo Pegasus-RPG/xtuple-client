@@ -27,6 +27,7 @@
 
 #include <metasql.h>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 #define DEBUG false
 
@@ -234,16 +235,15 @@ void characteristic::sSave()
 // TODO: verify that _mask      applies to all existing charass
 // TODO: verify that _validator applies to all existing charass
   XSqlQuery characteristicSave;
-  if (_name->text().trimmed().isEmpty())
-  {
-    QMessageBox::critical(this, tr("Missing Name"),
-			  tr("<p>You must name this Characteristic before "
-			     "saving it."));
-    _name->setFocus();
-    return;
-  }
 
-  bool allClear = true;
+  QList<GuiErrorCheck>errors;
+  errors<<GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                        tr("<p>You must name this Characteristic before saving it."));
+
+  if(GuiErrorCheck::reportErrors(this,tr("Unable To Save Characteristic"),errors))
+      return;
+
+   bool allClear = true;
   foreach (QCheckBox *cb, _d->checkboxMap.values())
   {
     if (cb && cb->isChecked())
