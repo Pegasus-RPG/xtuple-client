@@ -13,7 +13,7 @@
 QString _Name        = "xTuple ERP: %1 Edition";
 QString _Version     = "4.10.0Beta";
 QString _dbVersion   = "4.10.0Beta";
-QString _Copyright   = "Copyright (c) 1999-2015, OpenMFG, LLC.";
+QString _Copyright   = "Copyright (c) 1999-2016, OpenMFG, LLC.";
 QString _ConnAppName = "xTuple ERP (qt-client)";
 
 #ifdef __USEALTVERSION__
