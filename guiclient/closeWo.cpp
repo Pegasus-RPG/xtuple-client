@@ -17,6 +17,7 @@
 #include "inputManager.h"
 #include "returnWoMaterialItem.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 closeWo::closeWo(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -70,15 +71,15 @@ enum SetResponse closeWo::set(const ParameterList &pParams)
 bool closeWo::okToSave()
 {
   XSqlQuery closeokToSave;
-  if (!_transDate->isValid())
-  {
-    QMessageBox::critical(this, tr("Invalid date"),
-                          tr("You must enter a valid transaction date.") );
-    _transDate->setFocus();
-    return false;
-  }
 
-  // Return any tools that have been issued  
+  QList<GuiErrorCheck>errors;
+  errors<<GuiErrorCheck(!_transDate->isValid(), _transDate,
+                        tr("You must enter a valid transaction date."));
+
+  if(GuiErrorCheck::reportErrors(this,tr("Invalid Date"),errors))
+      return false;
+
+  // Return any tools that have been issued
   XSqlQuery tool;
   tool.prepare( "SELECT womatl_id"
                 "  FROM womatl "

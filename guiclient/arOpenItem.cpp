@@ -214,9 +214,9 @@ void arOpenItem::sSave()
 
     QList<GuiErrorCheck>errors;
     errors<<GuiErrorCheck(!_docDate->isValid(), _docDate,
-                            tr("You must enter a date for this Receivable Memo before you may save it."))
+                            tr("You must enter a document date for this Receivable Memo before you may save it."))
           <<GuiErrorCheck(!_dueDate->isValid(), _dueDate,
-                           tr("You must enter a date for this Receivable Memo before you may save it."))
+                           tr("You must enter a due date for this Receivable Memo before you may save it."))
           <<GuiErrorCheck(_amount->isZero(), _amount,
                           tr("You must enter an amount for this Receivable Memo before you may save it."))
           <<GuiErrorCheck(_tax->localValue() > _amount->localValue(), _tax,
