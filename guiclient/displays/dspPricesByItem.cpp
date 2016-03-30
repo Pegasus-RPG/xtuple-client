@@ -72,6 +72,7 @@ void dspPricesByItem::sHandleCosts(bool pShowCosts)
 bool dspPricesByItem::setParams(ParameterList & params)
 {
   XSqlQuery dspetParams;
+  double list = 0.0;
   double cost = 0.0;
 
   if(!_item->isValid())
@@ -81,20 +82,24 @@ bool dspPricesByItem::setParams(ParameterList & params)
     return false;
   }
 
+  dspetParams.prepare( "SELECT listPrice(:item_id) AS list;");
+  dspetParams.bindValue(":item_id", _item->id());
+  dspetParams.exec();
+  if (dspetParams.first())
+    list = dspetParams.value("list").toDouble();
+  else
+    return false;
+
   if (_showCosts->isChecked())
   {
     if (_useStandardCosts->isChecked())
     {
-      dspetParams.prepare( "SELECT (stdCost(item_id) * iteminvpricerat(item_id)) AS cost "
-                 "FROM item "
-                 "WHERE (item_id=:item_id);");
+      dspetParams.prepare( "SELECT (stdCost(:item_id) * iteminvpricerat(:item_id)) AS cost;");
       params.append("standardCosts"); // report only?
     }
     else if (_useActualCosts->isChecked())
     {
-      dspetParams.prepare( "SELECT (actCost(item_id) * iteminvpricerat(item_id)) AS cost "
-                 "FROM item "
-                 "WHERE (item_id=:item_id);");
+      dspetParams.prepare( "SELECT (actCost(:item_id) * iteminvpricerat(:item_id)) AS cost;");
       params.append("actualCosts"); // report only?
     }
 
@@ -117,6 +122,7 @@ bool dspPricesByItem::setParams(ParameterList & params)
   params.append("sale", tr("Sale"));
   params.append("listPrice", tr("List Price"));
   params.append("item_id", _item->id());
+  params.append("list", list);
   params.append("cost", cost);
   if (_showCosts->isChecked())
     params.append("showCosts");

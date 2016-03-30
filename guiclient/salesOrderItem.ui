@@ -151,6 +151,13 @@ to be bound by its terms.</comment>
         </spacer>
        </item>
        <item>
+        <widget class="XCheckBox" name="_reserveOnSave">
+         <property name="text">
+          <string>Reserve On Save</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="XCheckBox" name="_orderRefresh">
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
@@ -394,13 +401,6 @@ to be bound by its terms.</comment>
               </property>
              </spacer>
             </item>
-            <item row="0" column="2">
-             <widget class="XCheckBox" name="_reserveOnSave">
-              <property name="text">
-               <string>Reserve On Save</string>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
           <item row="1" column="1">
@@ -583,9 +583,9 @@ to be bound by its terms.</comment>
          </widget>
         </item>
         <item row="2" column="0">
-         <widget class="QLabel" name="_discountFromCustLit">
+         <widget class="QLabel" name="_discountFromListPriceLit">
           <property name="text">
-           <string>Discount %:</string>
+           <string>List Price Discount %:</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -630,7 +630,7 @@ to be bound by its terms.</comment>
         <item row="2" column="1">
          <layout class="QHBoxLayout">
           <item>
-           <widget class="XLineEdit" name="_discountFromCust">
+           <widget class="XLineEdit" name="_discountFromListPrice">
             <property name="maximumSize">
              <size>
               <width>80</width>
@@ -750,9 +750,9 @@ to be bound by its terms.</comment>
          </layout>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="_grossUnitPriceLit">
+         <widget class="QLabel" name="_listPriceLit">
           <property name="text">
-           <string>Gross Unit Price:</string>
+           <string>List Price:</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -762,7 +762,7 @@ to be bound by its terms.</comment>
         <item row="1" column="1">
          <layout class="QHBoxLayout" name="horizontalLayout_17">
           <item>
-           <widget class="CurrCluster" name="_grossUnitPrice">
+           <widget class="CurrCluster" name="_listPrice">
             <property name="currencyEditable" stdset="0">
              <bool>false</bool>
             </property>
@@ -2272,30 +2272,7 @@ to be bound by its terms.</comment>
             <string>Costs</string>
            </property>
            <layout class="QGridLayout">
-            <item row="3" column="1">
-             <widget class="QLabel" name="_discountFromListPriceLit">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>List Price Discount %:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
             <item row="1" column="2">
-             <widget class="CurrDisplay" name="_listPrice">
-              <property name="format">
-               <enum>CurrDisplay::SalesPrice</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2">
              <widget class="CurrDisplay" name="_customerPrice">
               <property name="format">
                <enum>CurrDisplay::SalesPrice</enum>
@@ -2303,6 +2280,22 @@ to be bound by its terms.</comment>
              </widget>
             </item>
             <item row="2" column="1">
+             <widget class="QLabel" name="_discountFromCustLit">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Customer Discount %:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
              <widget class="QLabel" name="_customerPriceLit">
               <property name="text">
                <string>Customer Price:</string>
@@ -2322,8 +2315,8 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="3" column="2">
-             <widget class="XLineEdit" name="_discountFromListPrice">
+            <item row="2" column="2">
+             <widget class="XLineEdit" name="_discountFromCust">
               <property name="enabled">
                <bool>false</bool>
               </property>
@@ -2332,27 +2325,14 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="8" column="2">
+            <item row="7" column="2">
              <widget class="XLineEdit" name="_markupFromUnitCost">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="_listPriceLit">
-              <property name="text">
-               <string>List Price:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="2">
-             <widget class="CurrDisplay" name="_margin"/>
-            </item>
-            <item row="11" column="1">
+            <item row="10" column="1">
              <spacer>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -2365,7 +2345,10 @@ to be bound by its terms.</comment>
               </property>
              </spacer>
             </item>
-            <item row="9" column="1">
+            <item row="8" column="2">
+             <widget class="CurrDisplay" name="_margin"/>
+            </item>
+            <item row="8" column="1">
              <widget class="QLabel" name="_marginLit">
               <property name="text">
                <string>Margin:</string>
@@ -2375,7 +2358,7 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="8" column="1">
+            <item row="7" column="1">
              <widget class="QLabel" name="_markupFromUnitCostLit">
               <property name="text">
                <string>Unit Cost Markup %:</string>
@@ -2636,7 +2619,7 @@ to be bound by its terms.</comment>
   <tabstop>_subItem</tabstop>
   <tabstop>_qtyOrdered</tabstop>
   <tabstop>_qtyUOM</tabstop>
-  <tabstop>_discountFromCust</tabstop>
+  <tabstop>_discountFromListPrice</tabstop>
   <tabstop>_netUnitPrice</tabstop>
   <tabstop>_priceUOM</tabstop>
   <tabstop>_scheduledDate</tabstop>
@@ -2809,38 +2792,6 @@ to be bound by its terms.</comment>
    <sender>_netUnitPrice</sender>
    <signal>effectiveChanged(QDate)</signal>
    <receiver>_customerPrice</receiver>
-   <slot>setEffective(QDate)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>589</x>
-     <y>316</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>158</x>
-     <y>527</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_netUnitPrice</sender>
-   <signal>idChanged(int)</signal>
-   <receiver>_listPrice</receiver>
-   <slot>setId(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>589</x>
-     <y>316</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>158</x>
-     <y>527</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_netUnitPrice</sender>
-   <signal>effectiveChanged(QDate)</signal>
-   <receiver>_listPrice</receiver>
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel">
