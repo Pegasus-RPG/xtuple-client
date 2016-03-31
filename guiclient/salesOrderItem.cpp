@@ -118,7 +118,6 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _invIsFractional       = false;
   _qtyreserved           = 0.0;
   _qtyatshipping         = 0.0;
-  _priceType             = "N";  // default to nominal
   _priceMode             = "D";  // default to discount
 
   _authNumber->hide();
@@ -261,6 +260,12 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _unallocated->setPrecision(omfgThis->qtyVal());
   _onOrder->setPrecision(omfgThis->qtyVal());
   _available->setPrecision(omfgThis->qtyVal());
+  
+  _listDiscount->setValidator(omfgThis->percentVal());
+  _ipsBasis->setValidator(omfgThis->costVal());
+  _ipsModifierPct->setValidator(omfgThis->percentVal());
+  _ipsModifierAmt->setValidator(omfgThis->moneyVal());
+  _ipsQtyBreak->setValidator(omfgThis->qtyVal());
 
   if (_metrics->boolean("EnableSOReservations"))
   {
@@ -491,12 +496,12 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
 
       prepare();
 
-      connect(_netUnitPrice,      SIGNAL(editingFinished()),    this,         SLOT(sCalculateDiscountPrcnt()));
-      connect(_discountFromCust,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
-      connect(_unitCost,          SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()));
-      connect(_markupFromUnitCost,SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()));
-      connect(_item,              SIGNAL(valid(bool)),          _listPrices,  SLOT(setEnabled(bool)));
-      connect(_createSupplyOrder, SIGNAL(toggled(bool)),        this,         SLOT(sHandleSupplyOrder()));
+      connect(_netUnitPrice,           SIGNAL(editingFinished()),    this,         SLOT(sCalculateDiscountPrcnt()));
+      connect(_discountFromListPrice,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
+      connect(_unitCost,               SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()));
+      connect(_markupFromUnitCost,     SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()));
+      connect(_item,                   SIGNAL(valid(bool)),          _listPrices,  SLOT(setEnabled(bool)));
+      connect(_createSupplyOrder,      SIGNAL(toggled(bool)),        this,         SLOT(sHandleSupplyOrder()));
 
       setSales.prepare("SELECT count(*) AS cnt"
                 "  FROM coitem"
@@ -542,11 +547,11 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
 
       prepare();
 
-      connect(_netUnitPrice,      SIGNAL(editingFinished()),    this,         SLOT(sCalculateDiscountPrcnt()));
-      connect(_discountFromCust,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
-      connect(_unitCost,          SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()));
-      connect(_markupFromUnitCost,SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()));
-      connect(_item,              SIGNAL(valid(bool)),          _listPrices,  SLOT(setEnabled(bool)));
+      connect(_netUnitPrice,           SIGNAL(editingFinished()),    this,         SLOT(sCalculateDiscountPrcnt()));
+      connect(_discountFromListPrice,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
+      connect(_unitCost,               SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()));
+      connect(_markupFromUnitCost,     SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()));
+      connect(_item,                   SIGNAL(valid(bool)),          _listPrices,  SLOT(setEnabled(bool)));
 
       setSales.prepare("SELECT count(*) AS cnt"
                 "  FROM quitem"
@@ -569,12 +574,12 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _listPrices->setEnabled(true);
       _comments->setType(Comments::SalesOrderItem);
 
-      connect(_qtyOrdered,        SIGNAL(editingFinished()),    this, SLOT(sCalculateExtendedPrice()));
-      connect(_netUnitPrice,      SIGNAL(editingFinished()),    this, SLOT(sCalculateDiscountPrcnt()));
-      connect(_discountFromCust,  SIGNAL(editingFinished()),    this, SLOT(sCalculateFromDiscount()));
-      connect(_unitCost,          SIGNAL(editingFinished()),    this, SLOT(sCalculateFromMarkup()));
-      connect(_markupFromUnitCost,SIGNAL(editingFinished()),    this, SLOT(sCalculateFromMarkup()));
-      connect(_createSupplyOrder, SIGNAL(toggled(bool)),        this, SLOT(sHandleSupplyOrder()));
+      connect(_qtyOrdered,             SIGNAL(editingFinished()),    this, SLOT(sCalculateExtendedPrice()));
+      connect(_netUnitPrice,           SIGNAL(editingFinished()),    this, SLOT(sCalculateDiscountPrcnt()));
+      connect(_discountFromListPrice,  SIGNAL(editingFinished()),    this, SLOT(sCalculateFromDiscount()));
+      connect(_unitCost,               SIGNAL(editingFinished()),    this, SLOT(sCalculateFromMarkup()));
+      connect(_markupFromUnitCost,     SIGNAL(editingFinished()),    this, SLOT(sCalculateFromMarkup()));
+      connect(_createSupplyOrder,      SIGNAL(toggled(bool)),        this, SLOT(sHandleSupplyOrder()));
       
       if (_metrics->boolean("EnableSOReservations"))
         _reserveOnSave->show();
@@ -597,11 +602,11 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _warranty->hide();
       _tabs->removeTab(_tabs->indexOf(_costofsalesTab));
 
-      connect(_qtyOrdered,        SIGNAL(editingFinished()),  this, SLOT(sCalculateExtendedPrice()));
-      connect(_netUnitPrice,      SIGNAL(editingFinished()),  this, SLOT(sCalculateDiscountPrcnt()));
-      connect(_discountFromCust,  SIGNAL(editingFinished()),  this, SLOT(sCalculateFromDiscount()));
-      connect(_unitCost,          SIGNAL(editingFinished()),  this, SLOT(sCalculateFromMarkup()));
-      connect(_markupFromUnitCost,SIGNAL(editingFinished()),  this, SLOT(sCalculateFromMarkup()));
+      connect(_qtyOrdered,             SIGNAL(editingFinished()),  this, SLOT(sCalculateExtendedPrice()));
+      connect(_netUnitPrice,           SIGNAL(editingFinished()),  this, SLOT(sCalculateDiscountPrcnt()));
+      connect(_discountFromListPrice,  SIGNAL(editingFinished()),  this, SLOT(sCalculateFromDiscount()));
+      connect(_unitCost,               SIGNAL(editingFinished()),  this, SLOT(sCalculateFromMarkup()));
+      connect(_markupFromUnitCost,     SIGNAL(editingFinished()),  this, SLOT(sCalculateFromMarkup()));
     }
     else if (param.toString() == "view")
     {
@@ -1044,7 +1049,7 @@ void salesOrderItem::sSave(bool pPartial)
                "  coitem_qtyshipped, coitem_qtyreturned,"
                "  coitem_unitcost, coitem_custprice, coitem_pricemode,"
                "  coitem_price, coitem_price_uom_id, coitem_price_invuomratio,"
-               "  coitem_order_type, coitem_order_id,"
+               "  coitem_listprice, coitem_order_type, coitem_order_id,"
                "  coitem_custpn, coitem_memo, coitem_substitute_item_id,"
                "  coitem_prcost, coitem_taxtype_id, coitem_warranty,"
                "  coitem_cos_accnt_id, coitem_rev_accnt_id) "
@@ -1053,7 +1058,7 @@ void salesOrderItem::sSave(bool pPartial)
                "       :soitem_qtyord, :qty_uom_id, :qty_invuomratio, 0, 0,"
                "       :soitem_unitcost, :soitem_custprice, :soitem_pricemode,"
                "       :soitem_price, :price_uom_id, :price_invuomratio,"
-               "       :soitem_order_type, :soitem_order_id,"
+               "       :soitem_listprice, :soitem_order_type, :soitem_order_id,"
                "       :soitem_custpn, :soitem_memo, :soitem_substitute_item_id,"
                "       :soitem_prcost, :soitem_taxtype_id, :soitem_warranty, "
                "       :soitem_cos_accnt_id, :soitem_rev_accnt_id "
@@ -1074,6 +1079,7 @@ void salesOrderItem::sSave(bool pPartial)
     salesSave.bindValue(":soitem_price", _netUnitPrice->localValue());
     salesSave.bindValue(":price_uom_id", _priceUOM->id());
     salesSave.bindValue(":price_invuomratio", _priceinvuomratio);
+    salesSave.bindValue(":soitem_listprice", _listPrice->localValue());
     salesSave.bindValue(":soitem_prcost", _supplyOverridePrice->localValue());
     salesSave.bindValue(":soitem_custpn", _customerPN->text());
     salesSave.bindValue(":soitem_memo", _notes->toPlainText());
@@ -1200,7 +1206,7 @@ void salesOrderItem::sSave(bool pPartial)
     salesSave.prepare( "INSERT INTO quitem "
                "( quitem_id, quitem_quhead_id, quitem_linenumber, quitem_itemsite_id,"
                "  quitem_item_id, quitem_scheddate, quitem_promdate, quitem_qtyord,"
-               "  quitem_qty_uom_id, quitem_qty_invuomratio,"
+               "  quitem_qty_uom_id, quitem_qty_invuomratio, quitem_listprice,"
                "  quitem_unitcost, quitem_custprice, quitem_price, quitem_pricemode,"
                "  quitem_price_uom_id, quitem_price_invuomratio,"
                "  quitem_custpn, quitem_memo, quitem_createorder, "
@@ -1209,7 +1215,7 @@ void salesOrderItem::sSave(bool pPartial)
                "VALUES(:quitem_id, :quitem_quhead_id, :quitem_linenumber,"
                "       (SELECT itemsite_id FROM itemsite WHERE ((itemsite_item_id=:item_id) AND (itemsite_warehous_id=:warehous_id))),"
                "       :item_id, :quitem_scheddate, :quitem_promdate, :quitem_qtyord,"
-               "       :qty_uom_id, :qty_invuomratio,"
+               "       :qty_uom_id, :qty_invuomratio, :quitem_listprice,"
                "       :quitem_unitcost, :quitem_custprice, :quitem_price, :quitem_pricemode,"
                "       :price_uom_id, :price_invuomratio,"
                "       :quitem_custpn, :quitem_memo, :quitem_createorder, "
@@ -1223,6 +1229,7 @@ void salesOrderItem::sSave(bool pPartial)
     salesSave.bindValue(":quitem_qtyord", _qtyOrdered->toDouble());
     salesSave.bindValue(":qty_uom_id", _qtyUOM->id());
     salesSave.bindValue(":qty_invuomratio", _qtyinvuomratio);
+    salesSave.bindValue(":quitem_listprice", _listPrice->localValue());
     salesSave.bindValue(":quitem_unitcost", _unitCost->localValue());
     salesSave.bindValue(":quitem_custprice", _customerPrice->localValue());
     salesSave.bindValue(":quitem_price", _netUnitPrice->localValue());
@@ -1427,7 +1434,8 @@ void salesOrderItem::sSave(bool pPartial)
         }
       }
       
-      _qtyOrderedCache = _qtyOrdered->toDouble();
+      // causes sDeterminePrice problem
+      //_qtyOrderedCache = _qtyOrdered->toDouble();
     }
 
     QString type = "SI";
@@ -1507,7 +1515,7 @@ void salesOrderItem::sSave(bool pPartial)
     return;
   }
 
-  if (_metrics->boolean("EnableSOReservations") && _reserveOnSave->isChecked())
+  if (ISORDER(_mode) && _metrics->boolean("EnableSOReservations") && _reserveOnSave->isChecked())
     sReserveStock();
 
   if ( (!_canceling) && (cNew == _mode || cNewQuote == _mode) )
@@ -1660,8 +1668,66 @@ void salesOrderItem::sListPrices()
        (_privileges->check("OverridePrice")) &&
        (!_metrics->boolean("DisableSalesOrderPriceOverride")) )
   {
-    _netUnitPrice->setLocalValue(newdlg._selectedPrice * (_priceinvuomratio / _priceRatio));
+//    _netUnitPrice->setLocalValue(newdlg._selectedPrice * (_priceinvuomratio / _priceRatio));
+//    sCalculateDiscountPrcnt();
+    double price = newdlg._selectedPrice;
+    QString _priceMethod = newdlg._selectedMethod;
+    QString _priceType = newdlg._selectedType;
+    if (_priceType == "N" || _priceType == "D" || _priceType == "P")  // nominal, discount, or list price
+      _priceMode = "D";
+    else  // markup or list cost
+      _priceMode = "M";
+    
+    _baseUnitPrice->setLocalValue(price);
+    _customerPrice->setLocalValue(price);
+    
+    _netUnitPrice->setLocalValue(price);
+    _listPrice->setLocalValue(newdlg._selectedBasis);
+    
     sCalculateDiscountPrcnt();
+    _qtyOrderedCache = _qtyOrdered->toDouble();
+    _priceUOMCache = _priceUOM->id();
+    _scheduledDateCache = _scheduledDate->date();
+    
+    // Pricing details
+    if (_priceMethod == "I" || _priceMethod == "S")
+    {
+      // IPS Schedule
+      _pricingStack->setCurrentWidget(_ipsPricePage);
+      _ipsSaleName->setText(newdlg._selectedSale);
+      _ipsSchedule->setText(newdlg._selectedSchedule);
+      if (_priceType == "N")
+      {
+        _ipsType->setText(tr("Nominal"));
+        _ipsBasisLit->setText(tr("List Price:"));
+        _ipsModifierPctLit->setText(tr("Discount %:"));
+        _ipsModifierAmtLit->setText(tr("Discount Amt:"));
+      }
+      else if (_priceType == "D")
+      {
+        _ipsType->setText(tr("Discount"));
+        _ipsBasisLit->setText(tr("List Price:"));
+        _ipsModifierPctLit->setText(tr("Discount %:"));
+        _ipsModifierAmtLit->setText(tr("Discount Amt:"));
+      }
+      else if (_priceType == "M")
+      {
+        _ipsType->setText(tr("Markup"));
+        _ipsBasisLit->setText(tr("Cost:"));
+        _ipsModifierPctLit->setText(tr("Markup %:"));
+        _ipsModifierAmtLit->setText(tr("Markup Amt:"));
+      }
+      _ipsBasis->setDouble(newdlg._selectedBasis);
+      _ipsModifierPct->setDouble(newdlg._selectedModifierPct * 100.0);
+      _ipsModifierAmt->setDouble(newdlg._selectedModifierAmt);
+      _ipsQtyBreak->setDouble(newdlg._selectedQtyBreak);
+    }
+    if (_priceMethod == "L")
+    {
+      // List Price
+      _pricingStack->setCurrentWidget(_listPricePage);
+      _listDiscount->setDouble(newdlg._selectedModifierPct * 100.0);
+    }
   }
 }
 
@@ -1837,7 +1903,8 @@ void salesOrderItem::sDeterminePrice(bool force)
     else
     {
       double price = itemprice.value("itemprice_price").toDouble();
-      _priceType = itemprice.value("itemprice_type").toString();
+      QString _priceMethod = itemprice.value("itemprice_method").toString();
+      QString _priceType = itemprice.value("itemprice_type").toString();
       if (_priceType == "N" || _priceType == "D" || _priceType == "P")  // nominal, discount, or list price
         _priceMode = "D";
       else  // markup or list cost
@@ -1846,12 +1913,55 @@ void salesOrderItem::sDeterminePrice(bool force)
       _baseUnitPrice->setLocalValue(price);
       _customerPrice->setLocalValue(price + charTotal);
       if (_updatePrice) // Configuration or user said they also want net unit price updated
+      {
         _netUnitPrice->setLocalValue(price + charTotal);
+        _listPrice->setLocalValue(itemprice.value("itemprice_listprice").toDouble());
+      }
 
       sCalculateDiscountPrcnt();
       _qtyOrderedCache = _qtyOrdered->toDouble();
       _priceUOMCache = _priceUOM->id();
       _scheduledDateCache = _scheduledDate->date();
+
+      // Pricing details
+      if (_priceMethod == "I" || _priceMethod == "S")
+      {
+        // IPS Schedule
+        _pricingStack->setCurrentWidget(_ipsPricePage);
+        _ipsSaleName->setText(itemprice.value("itemprice_sale").toString());
+        _ipsSchedule->setText(itemprice.value("itemprice_schedule").toString());
+        if (_priceType == "N")
+        {
+          _ipsType->setText(tr("Nominal"));
+          _ipsBasisLit->setText(tr("List Price:"));
+          _ipsModifierPctLit->setText(tr("Discount %:"));
+          _ipsModifierAmtLit->setText(tr("Discount Amt:"));
+        }
+        else if (_priceType == "D")
+        {
+          _ipsType->setText(tr("Discount"));
+          _ipsBasisLit->setText(tr("List Price:"));
+          _ipsModifierPctLit->setText(tr("Discount %:"));
+          _ipsModifierAmtLit->setText(tr("Discount Amt:"));
+        }
+        else if (_priceType == "M")
+        {
+          _ipsType->setText(tr("Markup"));
+          _ipsBasisLit->setText(tr("Cost:"));
+          _ipsModifierPctLit->setText(tr("Markup %:"));
+          _ipsModifierAmtLit->setText(tr("Markup Amt:"));
+        }
+        _ipsBasis->setDouble(itemprice.value("itemprice_basis").toDouble());
+        _ipsModifierPct->setDouble(itemprice.value("itemprice_modifierpct").toDouble() * 100.0);
+        _ipsModifierAmt->setDouble(itemprice.value("itemprice_modifieramt").toDouble());
+        _ipsQtyBreak->setDouble(itemprice.value("itemprice_qtybreak").toDouble());
+      }
+      if (_priceMethod == "L")
+      {
+        // List Price
+        _pricingStack->setCurrentWidget(_listPricePage);
+        _listDiscount->setDouble(itemprice.value("itemprice_modifierpct").toDouble() * 100.0);
+      }
     }
   }
   else if (itemprice.lastError().type() != QSqlError::NoError)
@@ -1932,7 +2042,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
 
       sFindSellingWarehouseItemsites(_item->id());
       sPopulateItemsiteInfo();
-      sCalculateDiscountPrcnt();
+//      sCalculateDiscountPrcnt();
 
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
@@ -3804,11 +3914,11 @@ void salesOrderItem::sDeleteWoMatl()
 void salesOrderItem::sCalculateFromDiscount()
 {
   // do not allow discount > 100 which results in negative price
-  if (_discountFromCust->toDouble() > 100.0)
-    _discountFromCust->setDouble(100.0);
+  if (_discountFromListPrice->toDouble() > 100.0)
+    _discountFromListPrice->setDouble(100.0);
   
-  if (_customerPrice->isZero())
-    _discountFromCust->setText(tr("N/A"));
+  if (_listPrice->isZero())
+    _discountFromListPrice->setText(tr("N/A"));
   else
   {
     if (_updatePrice)
@@ -3817,8 +3927,8 @@ void salesOrderItem::sCalculateFromDiscount()
 //        _netUnitPrice->setLocalValue(_customerPrice->localValue() +
 //                                    (_customerPrice->localValue() * _discountFromCust->toDouble() / 100.0));
 //      else  // discount
-        _netUnitPrice->setLocalValue(_customerPrice->localValue() -
-                                    (_customerPrice->localValue() * _discountFromCust->toDouble() / 100.0));
+        _netUnitPrice->setLocalValue(_listPrice->localValue() -
+                                    (_listPrice->localValue() * _discountFromListPrice->toDouble() / 100.0));
     }
     sCalculateDiscountPrcnt();
   }
@@ -3852,7 +3962,7 @@ void salesOrderItem::populate()
   QString sql;
   sql = "<? if exists('isSalesOrder') ?>"
           "SELECT itemsite_leadtime, warehous_id, warehous_code, "
-          "       item_id, uom_name, iteminvpricerat(item_id) AS invpricerat, item_listprice,"
+          "       item_id, uom_name, iteminvpricerat(item_id) AS invpricerat,"
           "       item_inv_uom_id, item_fractional,"
           "       coitem_status, coitem_cohead_id,"
           "       COALESCE(coitem_order_type, '') AS coitem_order_type,"
@@ -3869,6 +3979,7 @@ void salesOrderItem::populate()
           "       coitem_price, coitem_pricemode,"
           "       coitem_price_uom_id AS price_uom_id,"
           "       coitem_price_invuomratio AS price_invuomratio,"
+          "       coitem_listprice,"
           "       coitem_promdate AS promdate,"
           "       coitem_substitute_item_id, coitem_prcost,"
           "       qtyAtShipping(coitem_id) AS qtyatshipping,"
@@ -3889,7 +4000,7 @@ void salesOrderItem::populate()
           "<? else ?>"
             "SELECT itemsite_leadtime, COALESCE(warehous_id, -1) AS warehous_id, "
             "       warehous_code,"
-            "       item_id, uom_name, iteminvpricerat(item_id) AS invpricerat, item_listprice,"
+            "       item_id, uom_name, iteminvpricerat(item_id) AS invpricerat,"
             "       item_inv_uom_id, item_fractional,"
             "       'O' AS coitem_status, quitem_quhead_id AS coitem_cohead_id,"
             "       '' AS coitem_order_type, -1 AS coitem_order_id,"
@@ -3906,6 +4017,7 @@ void salesOrderItem::populate()
             "       quitem_price AS coitem_price, quitem_pricemode AS coitem_pricemode,"
             "       quitem_price_uom_id AS price_uom_id,"
             "       quitem_price_invuomratio AS price_invuomratio,"
+            "       quitem_listprice AS coitem_listprice,"
             "       quitem_promdate AS promdate,"
             "       -1 AS coitem_substitute_item_id, quitem_prcost AS coitem_prcost,"
             "       0.0 AS qtyatshipping, 0.0 AS kitatshipping,"
@@ -3968,7 +4080,7 @@ void salesOrderItem::populate()
       _subItem->setId(item.value("coitem_substitute_item_id").toInt());
     }
     _customerPrice->setLocalValue(item.value("coitem_custprice").toDouble());
-    _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
+    _listPrice->setBaseValue(item.value("coitem_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
     _netUnitPrice->setLocalValue(item.value("coitem_price").toDouble());
     _priceMode = item.value("coitem_pricemode").toString();
     _margin->setLocalValue(((_netUnitPrice->localValue() - _unitCost->localValue()) / _priceinvuomratio) * (_qtyOrdered->toDouble() * _qtyinvuomratio));
@@ -4066,7 +4178,7 @@ void salesOrderItem::sFindSellingWarehouseItemsites( int id )
 void salesOrderItem::sPriceGroup()
 {
   if (!omfgThis->singleCurrency())
-    _priceGroup->setTitle(tr("In %1:").arg(_netUnitPrice->currAbbr()));
+    _priceGroup->setTitle(tr("Prices in %1:").arg(_netUnitPrice->currAbbr()));
 }
 
 void salesOrderItem::sNext()

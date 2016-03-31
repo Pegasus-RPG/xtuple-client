@@ -69,7 +69,7 @@ updatePrices::updatePrices(QWidget* parent, const char* name, bool modal, Qt::Wi
   _group->hide();
   //	_value->setChecked(true);
 
-  populate();
+  _listpricesched = false;
 }
 
 updatePrices::~updatePrices()
@@ -80,6 +80,23 @@ updatePrices::~updatePrices()
 void updatePrices::languageChange()
 {
   retranslateUi(this);
+}
+
+enum SetResponse updatePrices::set(const ParameterList &pParams)
+{
+  bool     valid;
+  QVariant param;
+  
+  param = pParams.value("listpricesched", &valid);
+  if (valid)
+  {
+    _listpricesched = true;
+    setWindowTitle(tr("List Pricing Schedule Assignments"));
+  }
+  
+  populate();
+  
+  return NoError;
 }
 
 void updatePrices::closeEvent(QCloseEvent * /*pEvent*/)
@@ -174,6 +191,8 @@ void updatePrices::populate()
     params.append("showExpired", true);
   if (_showCurrent->isChecked())
     params.append("showCurrent", true);
+  if (_listpricesched)
+    params.append("listpricesched", true);
 
   MetaSQLQuery mql = mqlLoad("updateprices", "availsched");
   updatepopulate = mql.toQuery(params);

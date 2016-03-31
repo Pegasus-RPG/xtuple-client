@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>709</width>
+    <width>794</width>
     <height>371</height>
    </rect>
   </property>
@@ -357,7 +357,6 @@ to be bound by its terms.</comment>
  <tabstops>
   <tabstop>_name</tabstop>
   <tabstop>_descrip</tabstop>
-  <tabstop>_dates</tabstop>
   <tabstop>_currency</tabstop>
   <tabstop>_warehouse</tabstop>
   <tabstop>_ipsitem</tabstop>

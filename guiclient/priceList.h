@@ -25,6 +25,14 @@ public:
     ~priceList();
 
     double _selectedPrice;
+    QString _selectedMethod;
+    QString _selectedType;
+    QString _selectedSale;
+    QString _selectedSchedule;
+    double _selectedBasis;
+    double _selectedModifierPct;
+    double _selectedModifierAmt;
+    double _selectedQtyBreak;
     int _curr_id;
 
 public slots:

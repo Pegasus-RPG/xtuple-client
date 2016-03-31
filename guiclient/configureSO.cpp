@@ -92,6 +92,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _includePkgWeight->setChecked(_metrics->boolean("IncludePackageWeight"));
   _quoteafterSO->setChecked(_metrics->boolean("ShowQuotesAfterSO"));
   _itemPricingPrecedence->setChecked(_metrics->boolean("ItemPricingPrecedence"));
+  _useListPriceSchedules->setChecked(_metrics->boolean("AllowListPriceSchedules"));
   _wholesalePriceCosting->setChecked(_metrics->boolean("WholesalePriceCosting"));
   _long30Markups->setChecked(_metrics->boolean("Long30Markups"));
 
@@ -318,6 +319,7 @@ bool configureSO::sSave()
   _metrics->set("EnableSOReservations", _enableReservations->isChecked());
   _metrics->set("RequireSOReservations", _enableReservations->isChecked() && _requireReservations->isChecked());
   _metrics->set("ItemPricingPrecedence", _itemPricingPrecedence->isChecked());
+  _metrics->set("AllowListPriceSchedules", _useListPriceSchedules->isChecked());
   _metrics->set("WholesalePriceCosting", _wholesalePriceCosting->isChecked());
   _metrics->set("Long30Markups", _long30Markups->isChecked());
 
