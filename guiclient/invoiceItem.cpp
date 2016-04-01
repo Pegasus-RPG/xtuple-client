@@ -242,7 +242,7 @@ void invoiceItem::sSave()
                "  :invcitem_custpn,"
                "  :invcitem_ordered, :invcitem_billed, :invcitem_updateinv,"
                "  :qty_uom_id, :qty_invuomratio,"
-               "  :invcitem_custprice, :invcitem_price,"
+               "  :invcitem_custprice, :invcitem_price, :invcitem_listprice,"
                "  :price_uom_id, :price_invuomratio,"
                "  :invcitem_notes, "
                "  :invcitem_taxtype_id, :invcitem_rev_accnt_id);");
