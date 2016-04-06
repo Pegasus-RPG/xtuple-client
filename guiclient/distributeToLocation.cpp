@@ -130,15 +130,11 @@ void distributeToLocation::sDistribute()
     return;
   }
 
-  if (qty < 0 && _availToDistribute < qAbs(qty) &&
-      QMessageBox::question(this, tr("Distribute More Than Available?"),
-			    tr("<p>It appears you are trying to distribute "
-			       "more than is available to be distributed. "
-			       "Are you sure you want to distribute this "
-			       "quantity?"),
-			    QMessageBox::Yes,
-			    QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+
+  if (qty < 0 && _availToDistribute < qAbs(qty))
   {
+    QMessageBox::warning( this, tr("Cannot Distribute Quantity"),
+                          tr("You may not distribute more than is available to be distributed.") );
     _locationQty->setFocus();
     return;
   }
