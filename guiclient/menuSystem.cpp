@@ -430,7 +430,7 @@ void menuSystem::sCommunityForums()
 
 void menuSystem::sCommunityBlogs()
 {
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/blog");
+  omfgThis->launchBrowser(omfgThis, "http://xtuple.com/blog");
 }
 
 void menuSystem::sCommunityIssues()
@@ -440,6 +440,6 @@ void menuSystem::sCommunityIssues()
 
 void menuSystem::sCommunityXchange()
 {
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.com/xchange");
+  omfgThis->launchBrowser(omfgThis, "https://www.xtuple.org/xchange");
 }
 
