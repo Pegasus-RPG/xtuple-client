@@ -108,6 +108,7 @@ class salesOrder : public XWidget, public Ui::salesOrder
     virtual void        sPopulateShipments();
     virtual void        sViewItemWorkbench();
     virtual bool        creditLimitCheck();
+    virtual void	sHoldTypeChanged();
 
   protected slots:
     virtual void  languageChange();
@@ -140,6 +141,7 @@ class salesOrder : public XWidget, public Ui::salesOrder
     bool    _usesPos;
     bool    _ffShipto;
     bool    _captive;
+    bool    _holdOverride;
     int     _soheadid;
     int     _lineMode;
     AppLock _lock;
@@ -151,6 +153,7 @@ class salesOrder : public XWidget, public Ui::salesOrder
     int     _crmacctid;
     QDate   _orderDateCache;
     QDate   _shipDateCache;
+    QString _holdTypeCache;
 };
 
 #endif  // SALESORDER_H
