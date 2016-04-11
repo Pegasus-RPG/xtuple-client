@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Sales Credit Memo (Return)</string>
+   <string>Sales Credit</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">

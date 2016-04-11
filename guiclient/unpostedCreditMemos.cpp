@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -40,7 +40,7 @@ unpostedCreditMemos::unpostedCreditMemos(QWidget* parent, const char* name, Qt::
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
 
-    _cmhead->addColumn(tr("Return #"),      _orderColumn, Qt::AlignLeft,   true,  "cmhead_number"   );
+    _cmhead->addColumn(tr("Sales Credit #"),      _orderColumn, Qt::AlignLeft,   true,  "cmhead_number"   );
     _cmhead->addColumn(tr("Prnt'd"),        _orderColumn, Qt::AlignCenter, true,  "printed" );
     _cmhead->addColumn(tr("Customer"),      -1,           Qt::AlignLeft,   true,  "cmhead_billtoname"   );
     _cmhead->addColumn(tr("Memo Date"),   _dateColumn,  Qt::AlignCenter, true,  "cmhead_docdate" );
@@ -245,7 +245,7 @@ void unpostedCreditMemos::sPost()
             if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
             {
               rollback.exec();
-              QMessageBox::information( this, tr("Post Return"), tr("Transaction Canceled") );
+              QMessageBox::information( this, tr("Post Sales Credit"), tr("Transaction Canceled") );
               return;
             }
 
@@ -290,9 +290,9 @@ void unpostedCreditMemos::sPost()
 
 void unpostedCreditMemos::sDelete()
 {
-  if (QMessageBox::question(this, tr("Delete Selected Returns?"),
+  if (QMessageBox::question(this, tr("Delete Selected Sales Credits?"),
                             tr("<p>Are you sure that you want to delete the "
-			       "selected Returns?"),
+			       "selected Sales Credits?"),
                             QMessageBox::Yes, QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
     XSqlQuery delq;
@@ -357,7 +357,7 @@ bool unpostedCreditMemos::checkSitePrivs(int orderid)
     if (!check.value("result").toBool())
       {
         QMessageBox::critical(this, tr("Access Denied"),
-                                       tr("You may not view or edit this Return as it references "
+                                       tr("You may not view or edit this Sales Credit as it references "
                                        "a Site for which you have not been granted privileges.")) ;
         return false;
       }

@@ -132,7 +132,7 @@ void salesAccount::sSave()
     errors << GuiErrorCheck(!_sales->isValid(), _sales,
                             tr("<p>You must select a Sales Account for this Assignment."))
            << GuiErrorCheck(!_credit->isValid(), _credit,
-                            tr("<p>You must select a Return Account for this Assignment."))
+                            tr("<p>You must select a Sales Credit Account for this Assignment."))
            << GuiErrorCheck(!_cos->isValid(), _cos,
                             tr("<p>You must select a Cost of Sales Account for this Assignment."))
            << GuiErrorCheck(_metrics->boolean("EnableReturnAuth") && !_returns->isValid(), _returns,
