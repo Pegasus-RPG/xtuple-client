@@ -637,6 +637,16 @@ to be bound by its terms.</comment>
          <string>Characteristics</string>
         </attribute>
         <layout class="QVBoxLayout">
+         <item row="1" column="0">
+          <widget class="XLabel" name="_itemCharLit">
+           <property name="text">
+            <string>Work Order Item Characteristics:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QTreeView" name="_itemcharView">
            <property name="focusPolicy">
