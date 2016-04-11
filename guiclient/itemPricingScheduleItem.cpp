@@ -813,7 +813,7 @@ void itemPricingScheduleItem::sUpdateCosts(int pItemid)
                 "       iteminvpricerat(item_id) AS ratio,"
                 "       item_listprice, listPrice(item_id) AS schedlistprice,"
                 "       (stdcost(item_id) * iteminvpricerat(item_id)) AS standard,"
-                "       (actcost(item_id, :curr_id) * iteminvpricerat(item_id)) AS actual "
+                "       (actcost(item_id, NULL, :curr_id) * iteminvpricerat(item_id)) AS actual "
                 "  FROM item"
                 " WHERE (item_id=:item_id);" );
   cost.bindValue(":item_id", pItemid);

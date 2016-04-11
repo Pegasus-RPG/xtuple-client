@@ -497,7 +497,16 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       prepare();
 
       connect(_netUnitPrice,           SIGNAL(editingFinished()),    this,         SLOT(sCalculateDiscountPrcnt()));
-      connect(_discountFromListPrice,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
+      if (_metrics->boolean("AllowListPriceSchedules"))
+      {
+        _discountFromListPrice->setEnabled(true);
+        connect(_discountFromListPrice,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
+      }
+      else
+      {
+        _discountFromCust->setEnabled(true);
+        connect(_discountFromCust,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
+      }
       connect(_unitCost,               SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()));
       connect(_markupFromUnitCost,     SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()));
       connect(_item,                   SIGNAL(valid(bool)),          _listPrices,  SLOT(setEnabled(bool)));
@@ -548,7 +557,16 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       prepare();
 
       connect(_netUnitPrice,           SIGNAL(editingFinished()),    this,         SLOT(sCalculateDiscountPrcnt()));
-      connect(_discountFromListPrice,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
+      if (_metrics->boolean("AllowListPriceSchedules"))
+      {
+        _discountFromListPrice->setEnabled(true);
+        connect(_discountFromListPrice,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
+      }
+      else
+      {
+        _discountFromCust->setEnabled(true);
+        connect(_discountFromCust,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
+      }
       connect(_unitCost,               SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()));
       connect(_markupFromUnitCost,     SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()));
       connect(_item,                   SIGNAL(valid(bool)),          _listPrices,  SLOT(setEnabled(bool)));
@@ -576,7 +594,16 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
 
       connect(_qtyOrdered,             SIGNAL(editingFinished()),    this, SLOT(sCalculateExtendedPrice()));
       connect(_netUnitPrice,           SIGNAL(editingFinished()),    this, SLOT(sCalculateDiscountPrcnt()));
-      connect(_discountFromListPrice,  SIGNAL(editingFinished()),    this, SLOT(sCalculateFromDiscount()));
+      if (_metrics->boolean("AllowListPriceSchedules"))
+      {
+        _discountFromListPrice->setEnabled(true);
+        connect(_discountFromListPrice,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
+      }
+      else
+      {
+        _discountFromCust->setEnabled(true);
+        connect(_discountFromCust,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
+      }
       connect(_unitCost,               SIGNAL(editingFinished()),    this, SLOT(sCalculateFromMarkup()));
       connect(_markupFromUnitCost,     SIGNAL(editingFinished()),    this, SLOT(sCalculateFromMarkup()));
       connect(_createSupplyOrder,      SIGNAL(toggled(bool)),        this, SLOT(sHandleSupplyOrder()));
@@ -604,7 +631,16 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
 
       connect(_qtyOrdered,             SIGNAL(editingFinished()),  this, SLOT(sCalculateExtendedPrice()));
       connect(_netUnitPrice,           SIGNAL(editingFinished()),  this, SLOT(sCalculateDiscountPrcnt()));
-      connect(_discountFromListPrice,  SIGNAL(editingFinished()),  this, SLOT(sCalculateFromDiscount()));
+      if (_metrics->boolean("AllowListPriceSchedules"))
+      {
+        _discountFromListPrice->setEnabled(true);
+        connect(_discountFromListPrice,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
+      }
+      else
+      {
+        _discountFromCust->setEnabled(true);
+        connect(_discountFromCust,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
+      }
       connect(_unitCost,               SIGNAL(editingFinished()),  this, SLOT(sCalculateFromMarkup()));
       connect(_markupFromUnitCost,     SIGNAL(editingFinished()),  this, SLOT(sCalculateFromMarkup()));
     }
@@ -1682,7 +1718,7 @@ void salesOrderItem::sListPrices()
     _customerPrice->setLocalValue(price);
     
     _netUnitPrice->setLocalValue(price);
-    _listPrice->setLocalValue(newdlg._selectedBasis);
+    _listPrice->setBaseValue(newdlg._selectedBasis * (_priceinvuomratio / _priceRatio));
     
     sCalculateDiscountPrcnt();
     _qtyOrderedCache = _qtyOrdered->toDouble();
@@ -1915,7 +1951,7 @@ void salesOrderItem::sDeterminePrice(bool force)
       if (_updatePrice) // Configuration or user said they also want net unit price updated
       {
         _netUnitPrice->setLocalValue(price + charTotal);
-        _listPrice->setLocalValue(itemprice.value("itemprice_listprice").toDouble());
+        _listPrice->setBaseValue(itemprice.value("itemprice_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
       }
 
       sCalculateDiscountPrcnt();
@@ -1933,7 +1969,7 @@ void salesOrderItem::sDeterminePrice(bool force)
         if (_priceType == "N")
         {
           _ipsType->setText(tr("Nominal"));
-          _ipsBasisLit->setText(tr("List Price:"));
+          _ipsBasisLit->setText(tr("Nominal Price:"));
           _ipsModifierPctLit->setText(tr("Discount %:"));
           _ipsModifierAmtLit->setText(tr("Discount Amt:"));
         }
@@ -1981,9 +2017,8 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
 
     //  Grab the price for this item/customer/qty
     salesPopulateItemInfo.prepare( "SELECT item_type, item_config, uom_name,"
-               "       item_inv_uom_id, item_price_uom_id,"
+               "       item_inv_uom_id, item_price_uom_id, item_fractional,"
                "       iteminvpricerat(item_id) AS invpricerat,"
-               "       item_listprice, item_fractional,"
                "       itemsite_createsopo, itemsite_dropship, itemsite_costmethod,"
                "       getItemTaxType(item_id, :taxzone) AS taxtype_id "
                "FROM item JOIN uom ON (item_inv_uom_id=uom_id)"
@@ -2037,7 +2072,6 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       _qtyUOM->setId(salesPopulateItemInfo.value("item_inv_uom_id").toInt());
       _priceUOM->setId(salesPopulateItemInfo.value("item_price_uom_id").toInt());
 
-      _listPrice->setBaseValue(salesPopulateItemInfo.value("item_listprice").toDouble());
       _taxtype->setId(salesPopulateItemInfo.value("taxtype_id").toInt());
 
       sFindSellingWarehouseItemsites(_item->id());
@@ -3913,24 +3947,41 @@ void salesOrderItem::sDeleteWoMatl()
 
 void salesOrderItem::sCalculateFromDiscount()
 {
-  // do not allow discount > 100 which results in negative price
-  if (_discountFromListPrice->toDouble() > 100.0)
-    _discountFromListPrice->setDouble(100.0);
-  
-  if (_listPrice->isZero())
-    _discountFromListPrice->setText(tr("N/A"));
+  if (_metrics->boolean("AllowListPriceSchedules"))
+  {
+    // do not allow discount > 100 which results in negative price
+    if (_discountFromListPrice->toDouble() > 100.0)
+      _discountFromListPrice->setDouble(100.0);
+    
+    if (_listPrice->isZero())
+      _discountFromListPrice->setText(tr("N/A"));
+    else
+    {
+      if (_updatePrice)
+      {
+        _netUnitPrice->setLocalValue(_listPrice->localValue() -
+                                     (_listPrice->localValue() * _discountFromListPrice->toDouble() / 100.0));
+      }
+      sCalculateDiscountPrcnt();
+    }
+  }
   else
   {
-    if (_updatePrice)
+    // do not allow discount > 100 which results in negative price
+    if (_discountFromCust->toDouble() > 100.0)
+      _discountFromCust->setDouble(100.0);
+    
+    if (_customerPrice->isZero())
+      _discountFromCust->setText(tr("N/A"));
+    else
     {
-//      if (_priceMode == "M")  // markup
-//        _netUnitPrice->setLocalValue(_customerPrice->localValue() +
-//                                    (_customerPrice->localValue() * _discountFromCust->toDouble() / 100.0));
-//      else  // discount
-        _netUnitPrice->setLocalValue(_listPrice->localValue() -
-                                    (_listPrice->localValue() * _discountFromListPrice->toDouble() / 100.0));
+      if (_updatePrice)
+      {
+        _netUnitPrice->setLocalValue(_customerPrice->localValue() -
+                                     (_customerPrice->localValue() * _discountFromCust->toDouble() / 100.0));
+      }
+      sCalculateDiscountPrcnt();
     }
-    sCalculateDiscountPrcnt();
   }
 }
 
@@ -4080,7 +4131,7 @@ void salesOrderItem::populate()
       _subItem->setId(item.value("coitem_substitute_item_id").toInt());
     }
     _customerPrice->setLocalValue(item.value("coitem_custprice").toDouble());
-    _listPrice->setBaseValue(item.value("coitem_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
+    _listPrice->setLocalValue(item.value("coitem_listprice").toDouble());
     _netUnitPrice->setLocalValue(item.value("coitem_price").toDouble());
     _priceMode = item.value("coitem_pricemode").toString();
     _margin->setLocalValue(((_netUnitPrice->localValue() - _unitCost->localValue()) / _priceinvuomratio) * (_qtyOrdered->toDouble() * _qtyinvuomratio));
@@ -4743,8 +4794,7 @@ void salesOrderItem::sPriceUOMChanged()
   }
 
   XSqlQuery item;
-  item.prepare("SELECT item_listprice,"
-               "       itemCost(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
+  item.prepare("SELECT itemCost(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
                "                :curr_id, :effective, :asof, :warehous_id, :dropShip) AS unitcost "
                "  FROM item LEFT OUTER JOIN itemsite ON (itemsite_item_id=item_id AND itemsite_warehous_id=:warehous_id)"
                " WHERE(item_id=:item_id);");
@@ -4766,7 +4816,6 @@ void salesOrderItem::sPriceUOMChanged()
   item.bindValue(":dropShip", _supplyOrderDropShipCache);
   item.exec();
   item.first();
-  _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
   _unitCost->setBaseValue(item.value("unitcost").toDouble() * _priceinvuomratio);
   sDeterminePrice(true);
 }
