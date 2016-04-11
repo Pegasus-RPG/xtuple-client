@@ -223,7 +223,7 @@ void creditMemoItem::sSave()
   errors << GuiErrorCheck(_qtyToCredit->toDouble() == 0.0, _qtyToCredit,
                           tr("<p>You have not selected a quantity of the "
 			    "selected item to credit. If you wish to return a "
-			    "quantity to stock but not issue a Return "
+			    "quantity to stock but not issue a Sales Credit "
 			    "then you should enter a Return to Stock "
 			    "transaction from the I/M module.  Otherwise, you "
 			    "must enter a quantity to credit."))
@@ -662,7 +662,7 @@ void creditMemoItem::sPopulateUOM()
       params.append("global", tr("-Global"));
     }
     
-    // Also have to factor UOMs previously used on Return now inactive
+    // Also have to factor UOMs previously used on Sales Credit now inactive
     if (_cmitemid != -1)
     {
       XSqlQuery cmuom;
@@ -671,7 +671,7 @@ void creditMemoItem::sPopulateUOM()
                     " WHERE(cmitem_id=:cmitem_id);");
       cmuom.bindValue(":cmitem_id", _cmitemid);
       cmuom.exec();
-      if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Return UOMs"),
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Sales Credit UOMs"),
                                cmuom, __FILE__, __LINE__))
         return;
       else if (cmuom.first())

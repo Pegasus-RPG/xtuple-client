@@ -243,9 +243,9 @@ void taxBreakdown::sPopulate()
   }
   else if (_ordertype == "CM")
   {
-    _currencyLit->setText(tr("Return Currency:"));
-    _header->setText(tr("Tax Breakdown for Return:"));
-    _totalLit->setText(tr("Return Total:"));
+    _currencyLit->setText(tr("Sales Credit Currency:"));
+    _header->setText(tr("Tax Breakdown for Sales Credit:"));
+    _totalLit->setText(tr("Sales Credit Total:"));
 
     params.append("cmhead_id", _orderid);
   }

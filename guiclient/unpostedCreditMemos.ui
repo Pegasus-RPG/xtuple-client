@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>List Unposted Sales Credit Memos (Returns)</string>
+   <string>List Unposted Sales Credits</string>
   </property>
   <layout class="QHBoxLayout">
    <item>
@@ -32,7 +32,7 @@ to be bound by its terms.</comment>
      <item>
       <widget class="QLabel" name="_unpostedCreditMemosList">
        <property name="text">
-        <string>Unposted Credit Memos (Returns):</string>
+        <string>Unposted Sales Credits:</string>
        </property>
       </widget>
      </item>

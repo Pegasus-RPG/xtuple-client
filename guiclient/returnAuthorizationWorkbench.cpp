@@ -262,8 +262,8 @@ void returnAuthorizationWorkbench::sProcess()
     returnProcess.exec();
     if (returnProcess.first())
     {
-      QMessageBox::information( this, tr("New Return Created"),
-                                tr("<p>A new Return has been created and "
+      QMessageBox::information( this, tr("New Sales Credit Created"),
+                                tr("<p>A new Sales Credit has been created and "
 				                   "assigned #%1")
                                    .arg(returnProcess.value("cmhead_number").toString()));
 	  if (_printmemo->isChecked())
@@ -371,7 +371,7 @@ void returnAuthorizationWorkbench::setParams(ParameterList &params)
   _customerSelector->appendValue(params);
 
   params.append("credit",     tr("Credit"));
-  params.append("return",     tr("Return"));
+  params.append("return",     tr("Sales Credit"));
   params.append("replace",    tr("Replace"));
   params.append("service",    tr("Service"));
   params.append("none",       tr("None"));
