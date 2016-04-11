@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>945</width>
-    <height>942</height>
+    <width>897</width>
+    <height>946</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -545,7 +545,39 @@ to be bound by its terms.</comment>
         <string/>
        </property>
        <layout class="QGridLayout">
-        <item row="4" column="1">
+        <item row="3" column="0">
+         <widget class="QLabel" name="_priceUOMLit">
+          <property name="text">
+           <string>Pric&amp;e UOM:</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::RichText</enum>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="margin">
+           <number>5</number>
+          </property>
+          <property name="buddy">
+           <cstring>_priceUOM</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="_extendedPriceLit">
+          <property name="text">
+           <string>Extended Price:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+          </property>
+          <property name="margin">
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
          <layout class="QHBoxLayout">
           <item>
            <widget class="XComboBox" name="_priceUOM">
@@ -569,49 +601,7 @@ to be bound by its terms.</comment>
           </item>
          </layout>
         </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="_extendedPriceLit">
-          <property name="text">
-           <string>Extended Price:</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
-          </property>
-          <property name="margin">
-           <number>5</number>
-          </property>
-         </widget>
-        </item>
         <item row="2" column="0">
-         <widget class="QLabel" name="_discountFromListPriceLit">
-          <property name="text">
-           <string>List Price Discount %:</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="_priceUOMLit">
-          <property name="text">
-           <string>Pric&amp;e UOM:</string>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::RichText</enum>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-          <property name="margin">
-           <number>5</number>
-          </property>
-          <property name="buddy">
-           <cstring>_priceUOM</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
          <widget class="QLabel" name="_netUnitPriceLit">
           <property name="text">
            <string>&amp;Net Unit Price:</string>
@@ -627,40 +617,7 @@ to be bound by its terms.</comment>
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
-         <layout class="QHBoxLayout">
-          <item>
-           <widget class="XLineEdit" name="_discountFromListPrice">
-            <property name="maximumSize">
-             <size>
-              <width>80</width>
-              <height>32767</height>
-             </size>
-            </property>
-            <property name="focusPolicy">
-             <enum>Qt::StrongFocus</enum>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>0</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-        <item row="5" column="1">
+        <item row="4" column="2">
          <layout class="QHBoxLayout">
           <item>
            <widget class="CurrCluster" name="_extendedPrice">
@@ -699,7 +656,7 @@ to be bound by its terms.</comment>
           </item>
          </layout>
         </item>
-        <item row="3" column="1">
+        <item row="2" column="2">
          <layout class="QHBoxLayout">
           <item>
            <widget class="CurrCluster" name="_netUnitPrice">
@@ -734,8 +691,65 @@ to be bound by its terms.</comment>
             </property>
            </spacer>
           </item>
+         </layout>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="_customerPriceLit_2">
+          <property name="text">
+           <string>Customer Price:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="_listPriceLit_2">
+          <property name="text">
+           <string>List Price:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <layout class="QHBoxLayout" name="horizontalLayout_16">
           <item>
-           <spacer>
+           <widget class="CurrDisplay" name="_customerPrice">
+            <property name="format">
+             <enum>CurrDisplay::SalesPrice</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="_discountFromCustLit_2">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Discount %:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="XLineEdit" name="_discountFromCust">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_6">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -749,28 +763,41 @@ to be bound by its terms.</comment>
           </item>
          </layout>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="_listPriceLit">
-          <property name="text">
-           <string>List Price:</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
+        <item row="1" column="2">
          <layout class="QHBoxLayout" name="horizontalLayout_17">
           <item>
-           <widget class="CurrCluster" name="_listPrice">
-            <property name="currencyEditable" stdset="0">
-             <bool>false</bool>
+           <widget class="CurrDisplay" name="_listPrice">
+            <property name="format">
+             <enum>CurrDisplay::SalesPrice</enum>
             </property>
-            <property name="currencyVisible">
-             <bool>false</bool>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="_discountFromListPriceLit_2">
+            <property name="text">
+             <string>Discount %:</string>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="XLineEdit" name="_discountFromListPrice">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::StrongFocus</enum>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight</set>
             </property>
            </widget>
           </item>
@@ -781,7 +808,7 @@ to be bound by its terms.</comment>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>17</width>
+              <width>40</width>
               <height>20</height>
              </size>
             </property>
@@ -2272,36 +2299,16 @@ to be bound by its terms.</comment>
             <string>Costs</string>
            </property>
            <layout class="QGridLayout">
-            <item row="1" column="2">
-             <widget class="CurrDisplay" name="_customerPrice">
+            <item row="0" column="2">
+             <widget class="CurrCluster" name="_unitCost">
               <property name="format">
-               <enum>CurrDisplay::SalesPrice</enum>
+               <enum>CurrDisplay::Cost</enum>
               </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLabel" name="_discountFromCustLit">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
+              <property name="currencyEditable" stdset="0">
+               <bool>false</bool>
               </property>
-              <property name="text">
-               <string>Customer Discount %:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="_customerPriceLit">
-              <property name="text">
-               <string>Customer Price:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <property name="currencyVisible">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -2315,24 +2322,14 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="2" column="2">
-             <widget class="XLineEdit" name="_discountFromCust">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="2">
+            <item row="5" column="2">
              <widget class="XLineEdit" name="_markupFromUnitCost">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="10" column="1">
+            <item row="8" column="1">
              <spacer>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -2345,10 +2342,10 @@ to be bound by its terms.</comment>
               </property>
              </spacer>
             </item>
-            <item row="8" column="2">
+            <item row="6" column="2">
              <widget class="CurrDisplay" name="_margin"/>
             </item>
-            <item row="8" column="1">
+            <item row="6" column="1">
              <widget class="QLabel" name="_marginLit">
               <property name="text">
                <string>Margin:</string>
@@ -2358,26 +2355,13 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="7" column="1">
+            <item row="5" column="1">
              <widget class="QLabel" name="_markupFromUnitCostLit">
               <property name="text">
                <string>Unit Cost Markup %:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <widget class="CurrCluster" name="_unitCost">
-              <property name="format">
-               <enum>CurrDisplay::Cost</enum>
-              </property>
-              <property name="currencyEditable" stdset="0">
-               <bool>false</bool>
-              </property>
-              <property name="currencyVisible">
-               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -2619,7 +2603,6 @@ to be bound by its terms.</comment>
   <tabstop>_subItem</tabstop>
   <tabstop>_qtyOrdered</tabstop>
   <tabstop>_qtyUOM</tabstop>
-  <tabstop>_discountFromListPrice</tabstop>
   <tabstop>_netUnitPrice</tabstop>
   <tabstop>_priceUOM</tabstop>
   <tabstop>_scheduledDate</tabstop>
@@ -2784,38 +2767,6 @@ to be bound by its terms.</comment>
     </hint>
     <hint type="destinationlabel">
      <x>198</x>
-     <y>527</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_netUnitPrice</sender>
-   <signal>effectiveChanged(QDate)</signal>
-   <receiver>_customerPrice</receiver>
-   <slot>setEffective(QDate)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>589</x>
-     <y>316</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>158</x>
-     <y>527</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_netUnitPrice</sender>
-   <signal>idChanged(int)</signal>
-   <receiver>_customerPrice</receiver>
-   <slot>setId(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>589</x>
-     <y>316</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>158</x>
      <y>527</y>
     </hint>
    </hints>

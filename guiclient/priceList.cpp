@@ -238,7 +238,7 @@ void priceList::sNewItem()
 
 void priceList::sSelect()
 {
-  _selectedPrice = _price->rawValue("base_price").toDouble();
+  _selectedPrice = _price->rawValue("price").toDouble();
   _selectedMethod = _price->rawValue("method").toString();
   _selectedType = _price->rawValue("price_type").toString();
   _selectedSchedule = _price->rawValue("schedulename").toString();
@@ -294,20 +294,8 @@ void priceList::sFillList()
   pricelistp.append("asof",             _asOf);
   pricelistp.append("qty",              _qty->toDouble());
   pricelistp.append("item_listcost",    _listCost->toDouble());
-  pricelistp.append("item_unitcost",    (_unitCost->toDouble() / _iteminvpricerat));
-
-  QString sql = "SELECT listPrice(<? value('item_id') ?>,"
-                "                 <? value('cust_id') ?>,"
-                "                 <? value('shipto_id') ?>,"
-                "                 <? value('warehous_id') ?>) AS listprice;";
-  
-  MetaSQLQuery mql(sql);
-  XSqlQuery listpriceq = mql.toQuery(pricelistp);
-  listpriceq.exec();
-  if (listpriceq.first())
-    pricelistp.append("item_listprice", listpriceq.value("listprice").toDouble());
-  else
-    pricelistp.append("item_listprice", _listPrice->toDouble());
+  pricelistp.append("item_unitcost",    _unitCost->toDouble());
+  pricelistp.append("item_listprice",   _listPrice->toDouble());
 
   XSqlQuery pricelistq = pricelistm.toQuery(pricelistp);
   _price->populate(pricelistq, true);
