@@ -93,7 +93,7 @@ to be bound by its terms.</comment>
                 </size>
                </property>
                <property name="text">
-                <string>Credit Memo #:</string>
+                <string>Sales Credit #:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -184,7 +184,7 @@ to be bound by its terms.</comment>
                 </size>
                </property>
                <property name="text">
-                <string>Memo Date:</string>
+                <string>Credit Date:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
