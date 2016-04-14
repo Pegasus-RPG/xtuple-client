@@ -86,6 +86,12 @@ enum SetResponse distributeToLocation::set(const ParameterList &pParams)
     _locationQty->setDouble(locQty);
   }
 
+  param = pParams.value("itemsite_controlmethod", &valid);
+  if (valid)
+  {
+    _controlMethod = param.toString();
+  }
+
   param = pParams.value("distribute", &valid);
   if (valid)
   {
@@ -130,11 +136,24 @@ void distributeToLocation::sDistribute()
     return;
   }
 
-
-  if (qty < 0 && _availToDistribute < qAbs(qty))
+  if (qAbs(qty)>1 && _controlMethod=="S")
   {
     QMessageBox::warning( this, tr("Cannot Distribute Quantity"),
-                          tr("You may not distribute more than is available to be distributed.") );
+                          tr("You may not distribute more than one of the same serial controlled item.") );
+    _locationQty->setFocus();
+    return;
+  }
+  
+
+  if (qty < 0 && _availToDistribute < qAbs(qty) &&
+      QMessageBox::question(this, tr("Distribute More Than Available?"),
+			    tr("<p>It appears you are trying to distribute "
+			       "more than is available to be distributed. "
+			       "Are you sure you want to distribute this "
+			       "quantity?"),
+			    QMessageBox::Yes,
+			    QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+  {
     _locationQty->setFocus();
     return;
   }
