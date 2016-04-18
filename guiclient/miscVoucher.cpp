@@ -15,6 +15,8 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
+#include <metasql.h>
+#include <mqlutil.h>
 
 #include "guiErrorCheck.h"
 #include "errorReporter.h"
@@ -483,38 +485,15 @@ void miscVoucher::sDeleteMiscDistribution()
 
 void miscVoucher::sFillMiscList()
 {
-  XSqlQuery getq;
-  getq.prepare("SELECT vodist_id,"
-             " (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
-             "       vodist_notes,"
-             "       vodist_amount, 'curr' AS vodist_amount_xtnumericrole "
-             "FROM vodist, accnt "
-             "WHERE ( (vodist_poitem_id=-1)"
-             " AND (vodist_accnt_id=accnt_id)"
-             " AND (vodist_vohead_id=:vohead_id) ) "
-             "UNION ALL "
-             "SELECT vodist_id, (expcat_code || ' - ' || expcat_descrip) AS account,"
-             "       vodist_notes,"
-             "       vodist_amount, 'curr' AS vodist_amount_xtnumericrole "
-             "  FROM vodist, expcat "
-             " WHERE ( (vodist_poitem_id=-1)"
-             "   AND   (vodist_expcat_id=expcat_id)"
-             "   AND   (vodist_vohead_id=:vohead_id) ) "
-             "UNION ALL "
-             "SELECT vodist_id, (tax_code || ' - ' || tax_descrip) AS account,"
-             "       vodist_notes,"
-             "       vodist_amount, 'curr' AS vodist_amount_xtnumericrole "
-             "  FROM vodist, tax "
-             " WHERE ( (vodist_poitem_id=-1)"
-             "   AND   (vodist_tax_id=tax_id)"
-             "   AND   (vodist_vohead_id=:vohead_id) ) "
-             "ORDER BY account;" );
-  getq.bindValue(":vohead_id", _voheadid);
-  getq.exec();
-  _miscDistrib->populate(getq);
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Misc. Distributions"),
-                           getq, __FILE__, __LINE__))
-    return;
+  MetaSQLQuery mql = mqlLoad("voucher", "miscDistr");
+  ParameterList params;
+
+  params.append("vohead_id", _voheadid);
+  XSqlQuery miscFillList = mql.toQuery(params);
+  _miscDistrib->populate(miscFillList, true);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Misc Distributions"),
+                              miscFillList, __FILE__, __LINE__))
+      return;
 }
 
 void miscVoucher::sPopulateDistributed()
