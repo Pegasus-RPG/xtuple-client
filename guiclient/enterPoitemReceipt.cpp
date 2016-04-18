@@ -132,6 +132,7 @@ enum SetResponse enterPoitemReceipt::set(const ParameterList &pParams)
       _toReceiveLit->setText(tr("Correct Qty. to:"));
       _freightLit->setText(tr("Correct Freight to:"));
       _item->setEnabled(false);
+      _expcat->setEnabled(false);
       setWindowTitle(tr("Correct Item Receipt"));
     }
   }
@@ -234,9 +235,25 @@ void enterPoitemReceipt::populate()
       _orderType->setText(tr("R/A"));
 
     int itemsiteid = enterpopulate.value("itemsiteid").toInt();
-    if (itemsiteid > 0)
-      _item->setItemsiteid(itemsiteid);
-    _item->setEnabled(false);
+
+    if (enterpopulate.value("inventoryitem").toBool())   
+    {
+      if (itemsiteid > 0)
+        _item->setItemsiteid(itemsiteid);
+      _item->setEnabled(false);
+      _itemLitStack->setCurrentIndex(0);
+      _itemStack->setCurrentIndex(0);
+    }
+    else
+    {
+      int expcatid = enterpopulate.value("expcatid").toInt();
+      if (expcatid > 0)
+        _expcat->setId(expcatid);
+      _expcat->setEnabled(false);
+      _itemLitStack->setCurrentIndex(1);
+      _itemStack->setCurrentIndex(1);
+
+    }
 
     _purchCost->setId(enterpopulate.value("recv_purchcost_curr_id").toInt());
     _purchCost->setLocalValue(enterpopulate.value("recv_purchcost").toDouble());
