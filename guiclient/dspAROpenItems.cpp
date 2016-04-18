@@ -118,7 +118,7 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char*, Qt::WindowFlags fl)
   menuItem = newMenu->addAction(tr("Misc. Debit Memo"),   this, SLOT(sEnterMiscArDebitMemo()));
   menuItem->setEnabled(_privileges->check("MaintainARMemos"));
   newMenu->addSeparator();
-  menuItem = newMenu->addAction(tr("Sales Credit Memo"), this, SLOT(sNewCreditMemo()));
+  menuItem = newMenu->addAction(tr("Sales Credit"), this, SLOT(sNewCreditMemo()));
   menuItem->setEnabled(_privileges->check("MaintainCreditMemos"));
   menuItem = newMenu->addAction(tr("Misc. Credit Memo"),   this, SLOT(sEnterMiscArCreditMemo()));
   menuItem->setEnabled(_privileges->check("MaintainARMemos"));
@@ -197,7 +197,7 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
   else if (((XTreeWidgetItem *)pItem)->altId() == 1 && ((XTreeWidgetItem *)pItem)->id("docnumber") > -1)
   // Credit Memo
   {
-    menuItem = pMenu->addAction(tr("Edit Credit Memo..."), this, SLOT(sEdit()));
+    menuItem = pMenu->addAction(tr("Edit Sales Credit..."), this, SLOT(sEdit()));
     menuItem->setEnabled(_privileges->check("MaintainCreditMemos"));
   }
   else if (((XTreeWidgetItem *)pItem)->id() > 0)
@@ -244,11 +244,11 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
   {
     if(((XTreeWidgetItem *)pItem)->rawValue("posted") != 0)
     {
-      menuItem = pMenu->addAction(tr("Void Posted Credit Memo..."), this, SLOT(sVoidCreditMemo()));
+      menuItem = pMenu->addAction(tr("Void Posted Sales Credit..."), this, SLOT(sVoidCreditMemo()));
       menuItem->setEnabled(_privileges->check("VoidPostedARCreditMemos"));
     }
 
-    menuItem = pMenu->addAction(tr("View Credit Memo..."), this, SLOT(sViewCreditMemo()));
+    menuItem = pMenu->addAction(tr("View Sales Credit..."), this, SLOT(sViewCreditMemo()));
     menuItem->setEnabled(_privileges->check("MaintainCreditMemos") || _privileges->check("ViewCreditMemos"));
   }
   else if (((XTreeWidgetItem *)pItem)->altId() == 4)
@@ -904,7 +904,7 @@ bool dspAROpenItems::setParams(ParameterList &params)
     params.append("endDueDate", _dates->endDate());
   }
   params.append("invoice", tr("Invoice"));
-  params.append("return", tr("Sales Credit Memo"));
+  params.append("return", tr("Sales Credit"));
   params.append("creditMemo", tr("Credit Memo"));
   params.append("debitMemo", tr("Debit Memo"));
   params.append("cashdeposit", tr("Customer Deposit"));
@@ -934,7 +934,7 @@ void dspAROpenItems::sPreview()
     ParameterList params;
     params.append("cust_id", _customerSelector->custId());
     params.append("invoice",  tr("Invoice"));
-    params.append("return",   tr("Sales Credit Memo"));
+    params.append("return",   tr("Sales Credit"));
     params.append("debit",    tr("Debit Memo"));
     params.append("credit",   tr("Credit Memo"));
     params.append("deposit",  tr("Deposit"));

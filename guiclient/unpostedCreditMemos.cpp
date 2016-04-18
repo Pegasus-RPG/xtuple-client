@@ -43,7 +43,7 @@ unpostedCreditMemos::unpostedCreditMemos(QWidget* parent, const char* name, Qt::
     _cmhead->addColumn(tr("Sales Credit #"),      _orderColumn, Qt::AlignLeft,   true,  "cmhead_number"   );
     _cmhead->addColumn(tr("Prnt'd"),        _orderColumn, Qt::AlignCenter, true,  "printed" );
     _cmhead->addColumn(tr("Customer"),      -1,           Qt::AlignLeft,   true,  "cmhead_billtoname"   );
-    _cmhead->addColumn(tr("Memo Date"),   _dateColumn,  Qt::AlignCenter, true,  "cmhead_docdate" );
+    _cmhead->addColumn(tr("Credit Date"),   _dateColumn,  Qt::AlignCenter, true,  "cmhead_docdate" );
     _cmhead->addColumn(tr("Hold"),          _whsColumn,   Qt::AlignCenter, true,  "cmhead_hold" );
     _cmhead->addColumn(tr("G/L Dist Date"), _dateColumn,  Qt::AlignCenter, true,  "distdate" );
 
@@ -338,6 +338,10 @@ void unpostedCreditMemos::sFillList()
                      "            WHERE ( (cmitem_cmhead_id=cmhead_id)"
                      "              AND   (itemsite_id=cmitem_itemsite_id)"
                      "              AND   (warehous_id=itemsite_warehous_id) )) > 0) OR"
+                     "          ((SELECT COUNT(*)"
+                     "            FROM cmitem"
+                     "            WHERE ((cmitem_cmhead_id=cmhead_id)"
+                     "              AND  (cmitem_number IS NOT NULL) )) > 0) OR"
                      "          ((SELECT COUNT(*)"
                      "            FROM cmitem"
                      "            WHERE (cmitem_cmhead_id=cmhead_id)) = 0) ) ) "
