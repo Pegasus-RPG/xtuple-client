@@ -213,6 +213,10 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_classCode</tabstop>
+  <tabstop>_cutoffDate</tabstop>
+  <tabstop>_tolerance</tabstop>
+  <tabstop>_warehouse</tabstop>
   <tabstop>_useStandardCosts</tabstop>
  </tabstops>
  <resources/>
