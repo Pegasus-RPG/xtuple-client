@@ -173,6 +173,7 @@ Comments::Comments(QWidget *pParent, const char *name) :
 
   _newComment = new QPushButton(tr("New"), buttons);
   _newComment->setObjectName("_newComment");
+  _newComment->setEnabled(false); 
   buttonsLayout->addWidget(_newComment);
 
   _viewComment = new QPushButton(tr("View"), buttons);
@@ -225,6 +226,7 @@ void Comments::setType(QString sourceType)
 void Comments::setId(int pSourceid)
 {
   _sourceid = pSourceid;
+  _newComment->setEnabled(true); 
   refresh();
 }
 
