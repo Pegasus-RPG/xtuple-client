@@ -78,6 +78,19 @@ dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(Q
   list()->addColumn(tr("Qty. Before"),  _qtyColumn,          Qt::AlignRight,  true,  "lshist_qty_before"  );
   list()->addColumn(tr("Qty. After"),   _qtyColumn,          Qt::AlignRight,  true,  "lshist_qty_after"  );
 
+  list()->addColumn(tr("Customer #\nCustomer Name"),    170, Qt::AlignLeft,   false, "customerinfo");
+  list()->addColumn(tr("\nShipTo Name"),                170, Qt::AlignLeft,   false, "shiptoname");
+  list()->addColumn(tr("ShipTo\nLine1"),                200, Qt::AlignLeft,   false, "shiptol1");
+  list()->addColumn(tr("ShipTo\nLine2"),                200, Qt::AlignLeft,   false, "shiptol2");
+  list()->addColumn(tr("ShipTo\nLine3"),                200, Qt::AlignLeft,   false, "shiptol3");
+  list()->addColumn(tr("City/State\nZip"),              200, Qt::AlignLeft,   false, "citystatezip");
+  list()->addColumn(tr("\nCountry"),                    120, Qt::AlignLeft,   false, "country");
+  list()->addColumn(tr("\nContact"),                    120, Qt::AlignLeft,   false, "contact");
+  list()->addColumn(tr("Contact\nPhone"),               100, Qt::AlignLeft,   false, "contact_phone");
+  list()->addColumn(tr("Contact\nFax"),                 100, Qt::AlignLeft,   false, "contact_fax");
+  list()->addColumn(tr("Contact\nEmail"),               175, Qt::AlignLeft,   false, "contact_email");
+  list()->addColumn(tr("\nPhone"),                      100, Qt::AlignLeft,   false, "phone");
+  
   parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date);
   parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date);
   if (_metrics->boolean("MultiWhs"))
