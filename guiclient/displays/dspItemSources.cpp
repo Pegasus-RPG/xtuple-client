@@ -94,8 +94,9 @@ dspItemSources::dspItemSources(QWidget* parent, const char*, Qt::WindowFlags fl)
   }
 }
 
-void dspItemSources::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem*, int)
+void dspItemSources::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem *selected, int)
 {
+  XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
   QAction *menuItem;
 
   menuItem = menuThis->addAction(tr("Edit..."), this, SLOT(sEdit()));
@@ -105,7 +106,7 @@ void dspItemSources::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem*, int)
   menuItem->setEnabled(_privileges->check("MaintainItemSources") || _privileges->check("ViewItemSource"));
 
   menuItem = menuThis->addAction(tr("Set as Default..."), this, SLOT(sDefault()));
-  menuItem->setEnabled(_privileges->check("MaintainItemSources"));
+  menuItem->setEnabled(_privileges->check("MaintainItemSources") && item->rawValue("itemsrc_default") != "Yes");
 
 //  menuItem = menuThis->addAction(tr("Copy..."), this, SLOT(sCopy()));
 //  menuItem->setEnabled(_privileges->check("MaintainItemSources"));
