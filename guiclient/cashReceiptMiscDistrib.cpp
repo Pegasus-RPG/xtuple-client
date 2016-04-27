@@ -84,7 +84,10 @@ enum SetResponse cashReceiptMiscDistrib::set(const ParameterList &pParams)
   if (valid && param.toString() == "G")
     setGroup(pParams);
   if (valid && param.toString() == "C")
+  {
     _custSelector->setVisible(false);
+    _custSelLit->setVisible(false);
+  }
 
   return NoError;
 }
