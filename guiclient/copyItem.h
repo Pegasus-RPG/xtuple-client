@@ -28,11 +28,12 @@ public:
     Q_INVOKABLE inline  bool    captive() const { return _captive; }
     Q_INVOKABLE virtual bool    okToSave();
     Q_INVOKABLE virtual int     id()   const;
+    Q_INVOKABLE virtual void    cancelCopy();
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams);
     virtual void clear();
-    virtual void sSaveItem();
+    virtual void sUpdateItem();
     virtual void sCopyBom();
     virtual void sAddBomitem();
     virtual void sEditBomitem();
@@ -44,11 +45,16 @@ public slots:
     virtual void sEditItemsite();
     virtual void sRevokeItemsite();
     virtual void sFillItemsite();
+    virtual void sNext();
+    virtual void sCancel();
     virtual void sCopy();
     virtual void closeEvent( QCloseEvent * pEvent );
 
 protected slots:
     virtual void languageChange();
+    virtual void begin();
+    virtual void rollback();
+    virtual void commit();
 
 private:
     bool _captive;
