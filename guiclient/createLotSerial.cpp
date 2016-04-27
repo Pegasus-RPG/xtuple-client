@@ -19,6 +19,7 @@
 #include <parameter.h>
 #include <openreports.h>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl),
@@ -304,47 +305,25 @@ void createLotSerial::sAssign()
     return;
   }
 
-  if (_qtyToAssign->toDouble() == 0.0)
-  {
-    QMessageBox::critical( this, tr("Enter Quantity"),
-                           tr("<p>You must enter a positive value to assign to "
-                              "this Lot/Serial number.") );
-    _qtyToAssign->setFocus();
-    return;
-  }
+  QList<GuiErrorCheck>errors;
+  errors<<GuiErrorCheck(_qtyToAssign->toDouble() == 0.0, _qtyToAssign,
+                        tr("<p>You must enter a positive value to assign to "
+                           "this Lot/Serial number."))
+        <<GuiErrorCheck((_expiration->isEnabled()) && (!_expiration->isValid()), _expiration,
+                       tr("<p>You must enter an expiration date to this "
+                          "Perishable Lot/Serial number."))
+        <<GuiErrorCheck((_warranty->isEnabled()) && (!_warranty->isValid()), _warranty,
+                      tr("<p>You must enter a warranty expiration date for this "
+                         "Lot/Serial number."))
+        <<GuiErrorCheck((!_fractional) && (_qtyToAssign->toDouble() != _qtyToAssign->text().toInt()), _qtyToAssign,
+                     tr("<p>The Item in question is not stored in "
+                        "fractional quantities. You must enter a "
+                        "whole value to assign to this Lot/Serial "
+                        "number."));
 
-  if ( (_expiration->isEnabled()) && (!_expiration->isValid()) )
-  {
-    QMessageBox::critical( this, tr("Enter Expiration Date"),
-                           tr("<p>You must enter an expiration date to this "
-                              "Perishable Lot/Serial number.") );
-    _expiration->setFocus();
-    return;
-  }
-  
-  if ( (_warranty->isEnabled()) && (!_warranty->isValid()) )
-  {
-    QMessageBox::critical( this, tr("Enter Warranty Expire Date"),
-                           tr("<p>You must enter a warranty expiration date for this "
-                              "Lot/Serial number.") );
-    _warranty->setFocus();
-    return;
-  }
-
-  if (!_fractional)
-  {
-    if (_qtyToAssign->toDouble() != _qtyToAssign->text().toInt())
-    {
-      QMessageBox::critical( this, tr("Item is Non-Fractional"),
-                             tr( "<p>The Item in question is not stored in "
-                                 "fractional quantities. You must enter a "
-                                 "whole value to assign to this Lot/Serial "
-                                 "number." ) );
-      _qtyToAssign->setFocus();
+  if(GuiErrorCheck::reportErrors(this,tr("Cannot Assign Lot/Serial number"),errors))
       return;
-    }
-  }
-  
+
   if (_preassigned)
   {
     createAssign.prepare("SELECT SUM(lsd.lsdetail_qtytoassign) AS qtytoassign "

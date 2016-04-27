@@ -21,6 +21,7 @@
 #include "bomItem.h"
 #include "itemSite.h"
 #include "storedProcErrorLookup.h"
+#include "guiErrorCheck.h"
 
 copyItem::copyItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -500,13 +501,12 @@ bool copyItem::okToSave()
   XSqlQuery copyokToSave;
   _targetItemNumber->setText(_targetItemNumber->text().trimmed().toUpper());
 
-  if (_targetItemNumber->text().length() == 0)
-  {
-    QMessageBox::warning(this, tr("Enter Item Number"),
-                         tr("<p>Please enter a Target Item Number."));
-    _targetItemNumber->setFocus();
+  QList<GuiErrorCheck>errors;
+  errors<<GuiErrorCheck(_targetItemNumber->text().length() == 0, _targetItemNumber,
+                        tr("<p>Please enter a Target Item Number."));
+
+  if(GuiErrorCheck::reportErrors(this,tr("Missing Target Item Number"),errors))
     return false;
-  }
 
   copyokToSave.prepare( "SELECT item_number "
              "FROM item "

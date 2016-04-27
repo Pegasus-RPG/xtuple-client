@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 /*
  *  Constructs a copyBudget as a child of 'parent', with the
@@ -70,13 +71,13 @@ enum SetResponse copyBudget::set(const ParameterList &pParams)
 void copyBudget::sCopy()
 {
   XSqlQuery copyCopy;
-  if(_name->text().trimmed().isEmpty())
-  {
-    QMessageBox::warning(this, tr("Name Required"),
-        tr("Budget Name is a required field."));
-    _name->setFocus();
-    return;
-  }
+
+  QList<GuiErrorCheck>errors;
+  errors<<GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                        tr("Budget Name is a required field."));
+
+  if(GuiErrorCheck::reportErrors(this,tr("Cannot Copy Budget"),errors))
+      return;
 
   copyCopy.prepare("SELECT copyBudget(:budghead_id, :name, :descrip, :interval) AS result;");
   copyCopy.bindValue(":budghead_id", _budgheadid);
