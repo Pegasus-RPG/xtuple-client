@@ -192,29 +192,33 @@ void cashReceipt::activateButtons(bool c)
 void cashReceipt::sPopulateCustomerInfo(int)
 {
   activateButtons(_customerSelector->isValid());
-  if (_mode == cNew)
+  bool emptyGroup = true;
+  XSqlQuery cust;
+  QString sql;
+  ParameterList pList;
+
+  _customerSelector->appendValue(pList);
+
+  if (_customerSelector->isSelectedCust())
+    sql= "SELECT cust_curr_id FROM custinfo WHERE cust_id = <? value('cust_id') ?>;";
+  else
+    sql = "SELECT cust_curr_id FROM custinfo JOIN custgrpitem on cust_id=custgrpitem_cust_id "
+          "WHERE custgrpitem_custgrp_id =<? value ('custgrp_id') ?> LIMIT 1;";
+
+  MetaSQLQuery mql(sql);
+  cust = mql.toQuery(pList);
+  if (cust.first())
   {
-    XSqlQuery cust;
-    QString sql;
-    ParameterList pList;
-
-    _customerSelector->appendValue(pList);
-
-    if (_customerSelector->isSelectedCust())
-      sql= "SELECT cust_curr_id FROM custinfo WHERE cust_id = <? value('cust_id') ?>;";
-    else
-      sql = "SELECT cust_curr_id FROM custinfo JOIN custgrpitem on cust_id=custgrpitem_cust_id "
-            "WHERE custgrpitem_custgrp_id =<? value ('custgrp_id') ?> LIMIT 1;";
-
-    MetaSQLQuery mql(sql);
-    cust = mql.toQuery(pList);
-    if (cust.first())
+    emptyGroup = false;
+    if (_mode == cNew)
       _received->setId(cust.value("cust_curr_id").toInt());
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error populating Customer Info"),
-                                  cust, __FILE__, __LINE__))
-      return;
   }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error populating Customer Info"),
+                                cust, __FILE__, __LINE__))
+    return;
   sFillApplyList();
+  if(emptyGroup)
+    _add->setEnabled(false);
 }
 
 void cashReceipt::grpFillApplyList()
