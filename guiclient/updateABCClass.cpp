@@ -95,7 +95,7 @@ void updateABCClass::sUpdate()
   }
   else if (_warehouse->isSelected())
   {
-    if (_classCode->isSelected())
+    if (_classCode->isPattern())
       updateUpdate.prepare("SELECT updateABCClass(:classcode_pattern, :warehous_id, :aCutOff, :bCutOff, :startDate, :endDate) AS result;");
     else if (_classCode->isSelected())
       updateUpdate.prepare("SELECT updateABCClass(:classcode_id, :warehous_id, :aCutOff, :bCutOff, :startDate, :endDate) AS result;");
