@@ -687,6 +687,9 @@ void cashReceipt::sAdd()
       return;
   }
 
+  if (_customerSelector->isSelectedGroup())
+    save(true);
+
   ParameterList params = getParams();
   params.append("mode", "new");
 
