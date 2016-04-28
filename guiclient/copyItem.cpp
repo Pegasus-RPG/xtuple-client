@@ -115,6 +115,7 @@ void copyItem::sUpdateItem()
                 "WHERE (item_id=:sourceitemid);");
 
   query.bindValue(":sourceitemid", _source->id());
+  query.exec();
 
   if (query.first())
   {
@@ -122,6 +123,11 @@ void copyItem::sUpdateItem()
     _listPrice->setDouble(query.value("item_listprice").toDouble());
     _listCost->setDouble(query.value("item_listcost").toDouble());
     _isActive = query.value("item_active").toBool();
+    _next->setEnabled(true);
+  }
+  else
+  {
+    _next->setEnabled(false);
   }
 }
 
