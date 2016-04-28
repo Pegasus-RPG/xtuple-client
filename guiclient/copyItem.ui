@@ -340,13 +340,7 @@ to be bound by its terms.</comment>
               </layout>
              </item>
              <item>
-              <widget class="XTreeWidget" name="_availablebomitems">
-               <column>
-                <property name="text">
-                 <string notr="true">1</string>
-                </property>
-               </column>
-              </widget>
+              <widget class="XTreeWidget" name="_availablebomitems" />
              </item>
             </layout>
            </item>
@@ -414,13 +408,7 @@ to be bound by its terms.</comment>
               </widget>
              </item>
              <item>
-              <widget class="XTreeWidget" name="_addedbomitems">
-               <column>
-                <property name="text">
-                 <string notr="true">1</string>
-                </property>
-               </column>
-              </widget>
+              <widget class="XTreeWidget" name="_addedbomitems" />
              </item>
             </layout>
            </item>
@@ -441,13 +429,7 @@ to be bound by its terms.</comment>
               </widget>
              </item>
              <item>
-              <widget class="XTreeWidget" name="_addeditemsites">
-               <column>
-                <property name="text">
-                 <string notr="true">1</string>
-                </property>
-               </column>
-              </widget>
+              <widget class="XTreeWidget" name="_addeditemsites" />
              </item>
             </layout>
            </item>
@@ -560,38 +542,6 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_close</sender>
-   <signal>clicked()</signal>
-   <receiver>copyItem</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_cancel</sender>
-   <signal>clicked()</signal>
-   <receiver>copyItem</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>546</x>
-     <y>39</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>305</x>
-     <y>248</y>
     </hint>
    </hints>
   </connection>
