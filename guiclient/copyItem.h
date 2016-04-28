@@ -28,7 +28,6 @@ public:
     Q_INVOKABLE inline  bool    captive() const { return _captive; }
     Q_INVOKABLE virtual bool    okToSave();
     Q_INVOKABLE virtual int     id()   const;
-    Q_INVOKABLE virtual void    cancelCopy();
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams);
@@ -55,10 +54,13 @@ protected slots:
     virtual void begin();
     virtual void rollback();
     virtual void commit();
+    virtual void cancelCopy();
+    virtual bool saveItem();
 
 private:
     bool _captive;
     bool _inTransaction;
+    bool _isActive;
     int _newitemid;
 
 };

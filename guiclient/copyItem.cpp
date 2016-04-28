@@ -102,7 +102,7 @@ void copyItem::sNext()
 
     if (saveItem())
     {
-      _pages->setSelectedIndex(1);
+      _pages->setCurrentIndex(1);
     }
   }
 }
@@ -683,7 +683,7 @@ void copyItem::cancelCopy()
   { 
     XSqlQuery query;
     query.prepare("SELECT deleteItem(:itemid)");
-    query.bind(":itemid", _newitemid);
+    query.bindValue(":itemid", _newitemid);
     query.exec();
   }
 }
