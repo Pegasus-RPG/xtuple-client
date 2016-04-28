@@ -154,10 +154,10 @@ void uom::sSave()
   uomSave.bindValue(":uom_item_weight", QVariant(_weightUom->isChecked()));
   uomSave.exec();
 
-  if (uomSave.lastError().type() != QSqlError::NoError)
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving UOM Information"),
+                                uomSave, __FILE__, __LINE__))
   {
-    QMessageBox::critical(this, tr("Database Error"),
-                           uomSave.lastError().text());
+    return;
   }
   done(_uomid);
 }
