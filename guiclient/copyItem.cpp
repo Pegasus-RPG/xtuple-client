@@ -142,7 +142,7 @@ bool copyItem::saveItem()
   XSqlQuery itemsave;
 
   itemsave.prepare("SELECT copyItem(item_id, :targetitemnumber) AS result,"
-                   "       item_id"
+                   "       item_id "
                    "FROM item "
                    "WHERE (item_id=:sourceitemid);");
 
