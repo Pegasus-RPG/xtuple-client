@@ -183,6 +183,9 @@ bool copyItem::saveItem()
 
 void copyItem::sCopyBom()
 {
+  if (_newitemid < 0)
+    return;
+
   if (_copyBOM->isChecked())
   {
     XSqlQuery bomitemq;
@@ -388,6 +391,9 @@ void copyItem::sFillBomitem()
 
 void copyItem::sCopyItemsite()
 {
+  if (_newitemid < 0)
+    return;
+
   if (_copyItemsite->isChecked())
   {
     XSqlQuery itemsiteq;
