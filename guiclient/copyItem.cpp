@@ -156,8 +156,8 @@ bool copyItem::saveItem()
 
     // Set item inactive until copy is committed.
 
-    itemsave.prepare("UPDATE item SET item_active=false,"
-                     "                item_descrip1=:item_descrip1"
+    itemsave.prepare("UPDATE item SET item_active=false, "
+                     "                item_descrip1=:item_descrip1 "
                      "WHERE (item_id=:item_id);");
     itemsave.bindValue(":item_id", _newitemid);
     itemsave.bindValue(":item_descrip1", _targetItemDescrip->text());
@@ -563,8 +563,8 @@ void copyItem::sCopy()
   if (! okToSave())
     return;
 
-  copyCopy.prepare("UPDATE item SET item_active=:item_active,"
-                   "                item_listprice=:item_listprice,"
+  copyCopy.prepare("UPDATE item SET item_active=:item_active, "
+                   "                item_listprice=:item_listprice, "
                    "                item_listcost=:item_listcost "
                    "WHERE (item_id=:item_id);");
   copyCopy.bindValue(":item_id", _newitemid);
