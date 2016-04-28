@@ -560,8 +560,6 @@ bool copyItem::okToSave()
 void copyItem::sCopy()
 {
   XSqlQuery copyCopy;
-  if (! okToSave())
-    return;
 
   copyCopy.prepare("UPDATE item SET item_active=:item_active, "
                    "                item_listprice=:item_listprice, "
