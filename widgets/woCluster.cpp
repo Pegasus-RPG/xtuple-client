@@ -68,7 +68,7 @@ void WoLineEdit::init()
   _qtyReceived = 0.0;
 
   _query =  QString("SELECT wo_id AS id, "
-                    "       wo_number::text || '-' || wo_subnumber::text AS number,"
+                    "       formatWoNumber(wo_id) AS number,"
                     "       item_number AS name, "
                     "       (item_descrip1 || ' ' || item_descrip2) AS description, "
                     "       warehous_id,"
