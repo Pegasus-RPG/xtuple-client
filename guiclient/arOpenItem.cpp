@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -346,10 +346,12 @@ void arOpenItem::sSave()
       _last = arSave.value("result").toInt();
       if (_last < 0)
       {
-      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting A/R %1M").arg(_docType->code()),
+        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting A/R %1M").arg(_docType->code()),
                                     arSave, __FILE__, __LINE__))
-        reset();
-	return;
+        {
+          reset();
+        }
+        return;
       }
       if(_printOnPost->isChecked())
         sPrintOnPost(_last);

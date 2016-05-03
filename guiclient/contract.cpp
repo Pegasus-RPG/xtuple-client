@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2011 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -609,46 +609,40 @@ void contract::sHandleButtons(XTreeWidgetItem *pItem, int pCol)
     else
       _newPo->setEnabled(false);
 
-      if (!((oper == "Receipt") || (oper == "Return")) && (oper > " "))
+    if (!((oper == "Receipt") || (oper == "Return")) && (oper > " "))
+    {
+      if (_mode == cNew || _mode == cEdit)
+        _editPo->setEnabled(_privileges->check("MaintainPurchaseOrders"));
+      else
+        _editPo->setEnabled(false);
+
+      _viewPo->setEnabled(_privileges->check("ViewPurchaseOrders") || _privileges->check("MaintainPurchaseOrders"));
+
+      if (stat == "Unreleased" && _mode == cEdit)
       {
-        if (_mode == cNew || _mode == cEdit)
-          _editPo->setEnabled(_privileges->check("MaintainPurchaseOrders"));
-        else
-          _editPo->setEnabled(false);
-
-        _viewPo->setEnabled(_privileges->check("ViewPurchaseOrders") || _privileges->check("MaintainPurchaseOrders"));
-
-        if (stat == "Unreleased" && _mode == cEdit)
-        {
-          _deletePo->setEnabled(_privileges->check("MaintainPurchaseOrders"));
-          _releasePo->setEnabled(_privileges->check("ReleasePurchaseOrders"));
-        }
-        else
-        {
-          _deletePo->setEnabled(false);
-          _releasePo->setEnabled(false);
-        }
+        _deletePo->setEnabled(_privileges->check("MaintainPurchaseOrders"));
+        _releasePo->setEnabled(_privileges->check("ReleasePurchaseOrders"));
       }
       else
       {
-        _editPo->setEnabled(false);
-        _viewPo->setEnabled(false);
         _deletePo->setEnabled(false);
         _releasePo->setEnabled(false);
       }
+    }
+    else
+    {
+      _editPo->setEnabled(false);
+      _viewPo->setEnabled(false);
+      _deletePo->setEnabled(false);
+      _releasePo->setEnabled(false);
+    }
 
-      if (pItem->altId() > 0)
+    if (pItem->altId() > 0)
+    {
+      if (_mode == cNew || _mode == cEdit)
       {
-        if (_mode == cNew || _mode == cEdit)
-        {
-          _newRcpt->setEnabled(_privileges->check("EnterReceipts"));
-          _newRtrn->setEnabled(_privileges->check("EnterReturns"));
-        }
-        else
-        {
-          _newRcpt->setEnabled(false);
-          _newRtrn->setEnabled(false);
-        }
+        _newRcpt->setEnabled(_privileges->check("EnterReceipts"));
+        _newRtrn->setEnabled(_privileges->check("EnterReturns"));
       }
       else
       {
@@ -656,7 +650,12 @@ void contract::sHandleButtons(XTreeWidgetItem *pItem, int pCol)
         _newRtrn->setEnabled(false);
       }
     }
-
+    else
+    {
+      _newRcpt->setEnabled(false);
+      _newRtrn->setEnabled(false);
+    }
+  }
 }
 
 void contract::populate()
