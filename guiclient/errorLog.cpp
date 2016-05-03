@@ -146,10 +146,12 @@ void xTupleMessageOutput(QtMsgType type, const char *pMsg)
       notify = xtsettingsValue("catchQDebug").toBool();
       msg += " Debug: ";
       break;
+#if QT_VERSION >= 0x050500
     case QtInfoMsg:
       notify = xtsettingsValue("catchQWarning").toBool();
       msg += " Info: ";
       break;
+#endif
     case QtWarningMsg:
       notify = xtsettingsValue("catchQWarning").toBool();
       msg += " Warning: ";
