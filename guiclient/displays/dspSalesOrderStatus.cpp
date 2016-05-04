@@ -26,6 +26,8 @@ dspSalesOrderStatus::dspSalesOrderStatus(QWidget* parent, const char*, Qt::Windo
   setMetaSQLOptions("salesOrderStatus", "detail");
 
   _so->setAllowedTypes(OrderLineEdit::Sales);
+  
+  _so->setFocus();
 
   omfgThis->inputManager()->notify(cBCSalesOrder, this, _so, SLOT(setId(int)));
 

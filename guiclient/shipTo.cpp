@@ -123,10 +123,10 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
           }
         }
       }
-      if (cust.lastError().type() != QSqlError::NoError)
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Customer Information"),
+                                    cust, __FILE__, __LINE__))
       {
-	    systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
-	    return UndefinedError;
+        return UndefinedError;
       }
       sPopulateNumber();
       _name->setFocus();
@@ -190,7 +190,8 @@ void shipTo::sSave()
 
   if (! shipSave.exec("BEGIN"))
   {
-    systemError(this, shipSave.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Ship To Information"),
+                         shipSave, __FILE__, __LINE__);
     return;
   }
 
@@ -212,9 +213,8 @@ void shipTo::sSave()
   }
   if (saveResult < 0)	// not else-if: this is error check for CHANGE{ONE,ALL}
   {
-    systemError(this, tr("<p>There was an error saving this address (%1). "
-			 "Check the database server log for errors.")
-		      .arg(saveResult), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Ship To Information (%1). ")
+                         .arg(saveResult),shipSave, __FILE__, __LINE__);
     rollback.exec();
     _address->setFocus();
     return;
@@ -263,7 +263,8 @@ void shipTo::sSave()
   if (saveq.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, saveq.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Ship To Information"),
+                         saveq, __FILE__, __LINE__);
     return;
   }
 
@@ -340,9 +341,9 @@ void shipTo::populate()
     emit newId(_shiptoid);
     emit populated();
   }
-  else if (popq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Ship To Information"),
+                                popq, __FILE__, __LINE__))
   {
-    systemError(this, popq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -360,9 +361,9 @@ void shipTo::sPopulateNumber()
     nextnumq.exec();
     if (nextnumq.first())
       _shipToNumber->setText(nextnumq.value("n_shipto_num"));
-    else if (nextnumq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Ship To Information"),
+                                  nextnumq, __FILE__, __LINE__))
     {
-      systemError(this, nextnumq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -395,9 +396,9 @@ void shipTo::sPopulateNumber()
       _shipToNumber->setEnabled(false);
       _name->setFocus();
     }
-    else if (dupnumq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Ship To Information"),
+                                  dupnumq, __FILE__, __LINE__))
     {
-      systemError(this, dupnumq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -418,9 +419,9 @@ void shipTo::sPopulateNumber()
     newnumq.exec();
     if (newnumq.first())
       _shiptoid = newnumq.value("shipto_id").toInt();
-    else if (newnumq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Ship To Information"),
+                                  newnumq, __FILE__, __LINE__))
     {
-      systemError(this, newnumq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -440,9 +441,9 @@ void shipTo::sPopulateCommission(int pSalesrepid)
     commq.exec();
     if (commq.first())
       _commission->setDouble(commq.value("salesrep_commission").toDouble() * 100);
-    else if (commq.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Sales Rep Information"),
+                                  commq, __FILE__, __LINE__))
     {
-      systemError(this, commq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

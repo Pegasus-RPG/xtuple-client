@@ -78,6 +78,9 @@ bool dspSlowMovingInventoryByClassCode::setParams(ParameterList & params)
   _warehouse->appendValue(params);
   _classCode->appendValue(params);
 
+  if(_tolerance->value() > 0)
+    params.append("tolerance", _tolerance->value());
+
   if(_showValue->isChecked())
     params.append("showValue");
 

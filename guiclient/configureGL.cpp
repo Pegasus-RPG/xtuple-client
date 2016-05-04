@@ -17,6 +17,7 @@
 #include "configureEncryption.h"
 #include "guiclient.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::WindowFlags fl)
     : XAbstractConfigure(parent, fl)
@@ -509,41 +510,28 @@ bool configureGL::sSave()
   if (_metrics->boolean("ACHSupported"))
   {
     QString tmpCompanyId = _companyId->text();
-    struct {
-      bool    condition;
-      QString msg;
-      QWidget *widget;
-    } error[] = {
-      { _achGroup->isChecked() && _companyId->text().isEmpty(),
-        tr("Please enter a default Company Id if you are going to create "
-           "ACH files."),
-        _companyId },
-      { _achGroup->isChecked() &&
-        (_companyIdIsEIN->isChecked() || _companyIdIsDUNS->isChecked()) && 
-        tmpCompanyId.remove("-").size() != 9,
-        tr("EIN, TIN, and DUNS numbers are all 9 digit numbers. Other "
-           "characters (except dashes for readability) are not allowed."),
-        _companyId },
-      { _achGroup->isChecked() &&
-        _companyIdIsOther->isChecked() && _companyId->text().size() > 10,
-        tr("Company Ids must be 10 characters or shorter (not counting dashes "
-           "in EIN's, TIN's, and DUNS numbers)."),
-        _companyId },
-      { _achGroup->isChecked() &&
-        ! (_companyIdIsEIN->isChecked() || _companyIdIsDUNS->isChecked() ||
-           _companyIdIsOther->isChecked()),
-        tr("Please mark whether the Company Id is an EIN, TIN, DUNS number, "
-           "or Other."),
-        _companyIdIsEIN }
-    };
-    for (unsigned int i = 0; i < sizeof(error) / sizeof(error[0]); i++)
-      if (error[i].condition)
-      {
-        QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
-                              error[i].msg);
-        error[i].widget->setFocus();
+
+    QList<GuiErrorCheck>errors;
+    errors<<GuiErrorCheck(_achGroup->isChecked() && _companyId->text().isEmpty(), _companyId,
+                          tr("Please enter a default Company Id if you are going to create ACH files."))
+         <<GuiErrorCheck(_achGroup->isChecked() &&
+                         (_companyIdIsEIN->isChecked() || _companyIdIsDUNS->isChecked()) &&
+                         tmpCompanyId.remove("-").size() != 9, _companyId,
+                         tr("EIN, TIN, and DUNS numbers are all 9 digit numbers. Other "
+                            "characters (except dashes for readability) are not allowed."))
+        <<GuiErrorCheck(_achGroup->isChecked() &&
+                        _companyIdIsOther->isChecked() && _companyId->text().size() > 10, _companyId,
+                        tr("Company Ids must be 10 characters or shorter (not counting dashes "
+                           "in EIN's, TIN's, and DUNS numbers)."))
+       <<GuiErrorCheck(_achGroup->isChecked() &&
+                       ! (_companyIdIsEIN->isChecked() || _companyIdIsDUNS->isChecked() ||
+                          _companyIdIsOther->isChecked()), _companyIdIsEIN,
+                        tr("Please mark whether the Company Id is an EIN, TIN, DUNS number, "
+                           "or Other."));
+
+    if(GuiErrorCheck::reportErrors(this,tr("Cannot Post Transaction"),errors))
         return false;
-      }
+
   }
 
   if (!_useProfitCenters->isChecked() && _cacheuseProfitCenters)

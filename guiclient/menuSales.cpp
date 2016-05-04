@@ -194,7 +194,7 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.postInvoices",		     tr("Post &Invoices..."),		SLOT(sPostInvoices()), billingInvoicesMenu, "PostMiscInvoices",	NULL, NULL, true, NULL },
 
     // Sales | Billing | Credit Memos
-    { "menu",	tr("&Return"), (char*)billingCreditMemosMenu,	billingMenu,	"true",	NULL, NULL, true, NULL },
+    { "menu",	tr("&Sales Credit"), (char*)billingCreditMemosMenu,	billingMenu,	"true",	NULL, NULL, true, NULL },
     { "so.newCreditMemo",		     tr("&New..."),		SLOT(sNewCreditMemo()), billingCreditMemosMenu, "MaintainCreditMemos",	NULL, NULL, true, NULL },
     { "so.listUnpostedCreditMemos",	     tr("&List Unposted..."),	SLOT(sUnpostedCreditMemos()), billingCreditMemosMenu, "MaintainCreditMemos ViewCreditMemos",	NULL, NULL, true, NULL },
     { "so.creditMemoEditList",		     tr("&Edit List..."),	SLOT(sCreditMemoEditList()), billingCreditMemosMenu, "MaintainCreditMemos ViewCreditMemos",	NULL, NULL, true, NULL },
@@ -208,8 +208,8 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.printInvoices",		     tr("&Print Invoices..."),		SLOT(sPrintInvoices()), billingFormsMenu, "PrintInvoices",	NULL, NULL, true, NULL },
     { "so.reprintInvoices",		     tr("&Re-Print Invoices..."),	SLOT(sReprintInvoices()), billingFormsMenu, "PrintInvoices",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	billingFormsMenu,	"true",		NULL, NULL, true , NULL },
-    { "so.printCreditMemos",		     tr("Print &Returns..."),	SLOT(sPrintCreditMemos()), billingFormsMenu, "PrintCreditMemos",	NULL, NULL, true, NULL },
-    { "so.reprintCreditMemos",		     tr("Re-Print &Returns..."),	SLOT(sReprintCreditMemos()), billingFormsMenu, "PrintCreditMemos",	NULL, NULL, true, NULL },
+    { "so.printCreditMemos",		     tr("Print &Sales Credits..."),	SLOT(sPrintCreditMemos()), billingFormsMenu, "PrintCreditMemos",	NULL, NULL, true, NULL },
+    { "so.reprintCreditMemos",		     tr("Re-Print &Sales Credits..."),	SLOT(sReprintCreditMemos()), billingFormsMenu, "PrintCreditMemos",	NULL, NULL, true, NULL },
 
     // Sales | Return Authorizations
     { "menu",	tr("&Return Auth."),	(char*)returnsMenu,	mainMenu, "true",	NULL, NULL,  _metrics->boolean("EnableReturnAuth"), NULL },
@@ -302,9 +302,14 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.itemListPrice", tr("Item &List Price..."),	SLOT(sItemListPrice()), pricingMenu, "MaintainListPrices ViewListPrices",	NULL, NULL, true, NULL },
     { "so.updateListPricesByProductCategory", tr("&Update List Prices..."),	SLOT(sUpdateListPricesByProductCategory()), pricingMenu, "MaintainListPrices",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	pricingMenu,	"true",		NULL, NULL, true, NULL },
+    { "so.listPricingSchedules", tr("List Pricing &Schedules..."),	SLOT(sListPricingSchedules()), pricingMenu, "MaintainListPrices ViewListPrices",	NULL, NULL, _metrics->boolean("AllowListPriceSchedules"), NULL },
+    { "so.updateListPricingSchedules", tr("Update List Pricing Schedules..."),	SLOT(sUpdateListPrices()), pricingMenu, "UpdatePricingSchedules",	NULL, NULL, _metrics->boolean("AllowListPriceSchedules"), NULL },
+    { "so.listPricingScheduleAssignments", tr("List Pricing Schedule Assi&gnments..."),	SLOT(sListPricingScheduleAssignments()), pricingMenu, "AssignPricingSchedules",	NULL, NULL, _metrics->boolean("AllowListPriceSchedules"), NULL },
+    { "separator",	NULL,	NULL,	pricingMenu,	"true",		NULL, NULL, _metrics->boolean("AllowListPriceSchedules"), NULL },
     { "so.pricingSchedules", tr("Pricing &Schedules..."),	SLOT(sPricingSchedules()), pricingMenu, "MaintainListPrices ViewListPrices",	NULL, NULL, true, NULL },
     { "so.updatePricingSchedules", tr("Update Pricing Schedules..."),	SLOT(sUpdatePrices()), pricingMenu, "UpdatePricingSchedules",	NULL, NULL, true, NULL },
     { "so.pricingScheduleAssignments", tr("Pricing Schedule Assi&gnments..."),	SLOT(sPricingScheduleAssignments()), pricingMenu, "AssignPricingSchedules",	NULL, NULL, true, NULL },
+    { "separator",	NULL,	NULL,	pricingMenu,	"true",		NULL, NULL, true, NULL },
     { "so.sales", tr("S&ales..."),	SLOT(sSales()), pricingMenu, "CreateSales",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	pricingMenu,	"true",		NULL, NULL, true, NULL },
 
@@ -324,7 +329,7 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.updateCreditStatusByCustomer", tr("&Update Credit Status by Customer..."),	SLOT(sUpdateCreditStatusByCustomer()), utilitiesMenu, "MaintainCustomerMasters UpdateCustomerCreditStatus",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	utilitiesMenu,	"true",		NULL, NULL, true, NULL },
     { "so.purgeInvoices",		     tr("Purge &Invoices..."),		SLOT(sPurgeInvoices()), utilitiesMenu, "PurgeInvoices",	NULL, NULL, true, NULL },
-    { "so.purgeCreditMemos",		     tr("Purge &Returns..."),	SLOT(sPurgeCreditMemos()), utilitiesMenu, "PurgeCreditMemos",	NULL, NULL, true, NULL },
+    { "so.purgeCreditMemos",		     tr("Purge &Sales Credits..."),	SLOT(sPurgeCreditMemos()), utilitiesMenu, "PurgeCreditMemos",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	utilitiesMenu,	"true",		NULL, NULL, _metrics->boolean("EnableSOReservations"), NULL },
     { "so.allocateReservations", tr("Allocate Reser&vations..."), SLOT(sAllocateReservations()), utilitiesMenu, "MaintainReservations", NULL, NULL, _metrics->boolean("EnableSOReservations") , NULL },
     { "separator",	NULL,	NULL,	utilitiesMenu,	"true",		NULL, NULL, true, NULL },
@@ -585,12 +590,40 @@ void menuSales::sUpdateListPricesByProductCategory()
 
 void menuSales::sPricingSchedules()
 {
-  omfgThis->handleNewWindow(new itemPricingSchedules());
+  ParameterList params;
+  
+  itemPricingSchedules *newdlg = new itemPricingSchedules();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void menuSales::sListPricingSchedules()
+{
+  ParameterList params;
+  params.append("listpricesched", true);
+  
+  itemPricingSchedules *newdlg = new itemPricingSchedules();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void menuSales::sPricingScheduleAssignments()
 {
-  omfgThis->handleNewWindow(new pricingScheduleAssignments());
+  ParameterList params;
+  
+  pricingScheduleAssignments *newdlg = new pricingScheduleAssignments();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void menuSales::sListPricingScheduleAssignments()
+{
+  ParameterList params;
+  params.append("listpricesched", true);
+  
+  pricingScheduleAssignments *newdlg = new pricingScheduleAssignments();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void menuSales::sSales()
@@ -600,7 +633,21 @@ void menuSales::sSales()
 
 void menuSales::sUpdatePrices()
 {
-  updatePrices(parent, "", true).exec();
+  ParameterList params;
+  
+  updatePrices *newdlg = new updatePrices();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void menuSales::sUpdateListPrices()
+{
+  ParameterList params;
+  params.append("listpricesched", true);
+  
+  updatePrices *newdlg = new updatePrices();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void menuSales::sDspPricesByItem()

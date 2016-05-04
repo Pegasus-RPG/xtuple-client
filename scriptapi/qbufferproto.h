@@ -17,13 +17,14 @@ void setupQBufferProto(QScriptEngine *engine);
 
 #include <QBuffer>
 #include <QIODevice>
+#include "qiodeviceproto.h"
 
 Q_DECLARE_METATYPE(QBuffer*)
 //Q_DECLARE_METATYPE(QBuffer) // Is Q_DISABLE_COPY() in qbuffer.h
 
 QScriptValue constructQBuffer(QScriptContext *context, QScriptEngine *engine);
 
-class QBufferProto : public QObject, public QScriptable
+class QBufferProto : public QIODeviceProto
 {
   Q_OBJECT
 

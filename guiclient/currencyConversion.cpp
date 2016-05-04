@@ -29,7 +29,7 @@ class RateValidator : public QDoubleValidator {
 };
 
 RateValidator::RateValidator(QObject* parent, const char* name) :
-  QDoubleValidator(0.00001, 99999.99999, 5, parent)
+  QDoubleValidator(0.000001, 99999.999999, 6, parent)
 {
   if (name)
     setObjectName(name);
@@ -268,7 +268,7 @@ void currencyConversion::populate()
               _currency->setId(currencypopulate.value("curr_id").toInt());
               _dateCluster->setStartDate(currencypopulate.value("curr_effective").toDate());
               _dateCluster->setEndDate(currencypopulate.value("curr_expires").toDate());
-              _rate->setText(rateString.setNum(currencypopulate.value("curr_rate").toDouble(), 'f', 5));
+              _rate->setText(rateString.setNum(currencypopulate.value("curr_rate").toDouble(), 'f', 6));
           }
       }
   }

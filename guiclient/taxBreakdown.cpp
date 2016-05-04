@@ -18,6 +18,7 @@
 
 #include "taxCache.h"
 #include "taxDetail.h"
+#include "errorReporter.h"
 
 taxBreakdown::taxBreakdown(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -242,9 +243,9 @@ void taxBreakdown::sPopulate()
   }
   else if (_ordertype == "CM")
   {
-    _currencyLit->setText(tr("Return Currency:"));
-    _header->setText(tr("Tax Breakdown for Return:"));
-    _totalLit->setText(tr("Return Total:"));
+    _currencyLit->setText(tr("Sales Credit Currency:"));
+    _header->setText(tr("Tax Breakdown for Sales Credit:"));
+    _totalLit->setText(tr("Sales Credit Total:"));
 
     params.append("cmhead_id", _orderid);
   }
@@ -321,5 +322,6 @@ void taxBreakdown::sPopulate()
     _total->setLocalValue(_pretax->localValue() + _totalTax->localValue());
   }
   else if (taxPopulate.lastError().type() != QSqlError::NoError)
-    systemError(this, taxPopulate.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Tax Information"),
+                       taxPopulate, __FILE__, __LINE__);
 }

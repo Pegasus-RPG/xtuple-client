@@ -453,6 +453,11 @@ void issueLineToShipping::populate()
   {
     return;
   }
+  
+  if (_item->isFractional())
+    _qtyToIssue->setValidator(omfgThis->transQtyVal());
+  else
+    _qtyToIssue->setValidator(new QIntValidator(this));
 
   if (_qtyAtShip->toDouble() == 0.0)
   {
@@ -461,9 +466,4 @@ void issueLineToShipping::populate()
     else
       _qtyToIssue->setDouble(itemq.value("balance").toDouble());
   }
-
-  if (_item->isFractional())
-    _qtyToIssue->setValidator(omfgThis->transQtyVal());
-  else
-    _qtyToIssue->setValidator(new QIntValidator(this));
 }

@@ -23,12 +23,9 @@ pricingScheduleAssignment::pricingScheduleAssignment(QWidget* parent, const char
   connect(_shiptoIdCust, SIGNAL(newId(int)), this, SLOT(sCustomerSelected()));
 
   _customerTypes->setType(XComboBox::CustomerTypes);
+  _listpricesched = false;
 
   _ipshead->setAllowNull(true);
-  _ipshead->populate( "SELECT ipshead_id, (ipshead_name || ' - ' || ipshead_descrip) "
-                      "FROM ipshead "
-                      "WHERE (CURRENT_DATE < ipshead_expires) "
-                      "ORDER BY ipshead_name;" );
 }
 
 pricingScheduleAssignment::~pricingScheduleAssignment()
@@ -47,6 +44,28 @@ enum SetResponse pricingScheduleAssignment::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("listpricesched", &valid);
+  if (valid)
+  {
+    _listpricesched = true;
+    _shipZone->hide();
+    _selectedSaleType->hide();
+    _selectedShipZone->hide();
+    _saleType->hide();
+    setWindowTitle(tr("List Pricing Schedule Assignment"));
+    _ipshead->populate( "SELECT ipshead_id, (ipshead_name || ' - ' || ipshead_descrip) "
+                       "FROM ipshead "
+                       "WHERE (CURRENT_DATE < ipshead_expires) "
+                       "  AND (ipshead_listprice)"
+                       "ORDER BY ipshead_name;" );
+  }
+  else
+    _ipshead->populate( "SELECT ipshead_id, (ipshead_name || ' - ' || ipshead_descrip) "
+                       "FROM ipshead "
+                       "WHERE (CURRENT_DATE < ipshead_expires) "
+                       "  AND (NOT ipshead_listprice)"
+                       "ORDER BY ipshead_name;" );
+  
   param = pParams.value("ipsass_id", &valid);
   if (valid)
   {

@@ -23,6 +23,7 @@ public:
   ~updatePrices();
 
 public slots:
+  virtual SetResponse set( const ParameterList & pParams );
   virtual void sUpdate();
   virtual void populate();
   virtual void sAdd();
@@ -36,6 +37,9 @@ public slots:
 protected slots:
   virtual void languageChange();
 
+private:
+  bool _listpricesched;
+  
 };
 
 #endif // UPDATEPRICES_H

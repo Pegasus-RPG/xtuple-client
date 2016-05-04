@@ -46,7 +46,6 @@ protected slots:
 
     virtual void sSave();
     virtual void sCalculateExtendedPrice();
-    virtual void updatePriceInfo();
 
 private:
     int _mode;

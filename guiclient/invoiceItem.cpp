@@ -56,11 +56,13 @@ invoiceItem::invoiceItem(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _mode = cNew;
   _invcheadid	= -1;
   _custid	= -1;
+  _shiptoid	= -1;
   _invcitemid	= -1;
   _priceRatioCache = 1.0;
   _taxzoneid	= -1;
   _qtyinvuomratio = 1.0;
   _priceinvuomratio = 1.0;
+  _listprice = 0.0;
   _invuomid = -1;
   _trackqoh = true;
   
@@ -106,6 +108,7 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
     {
       _invoiceNumber->setText(invoiceet.value("invchead_invcnumber").toString());
       _custid = invoiceet.value("invchead_cust_id").toInt();
+      _shiptoid = invoiceet.value("invchead_shipto_id").toInt();
       _taxzoneid = invoiceet.value("invchead_taxzone_id").toInt();
       _tax->setId(invoiceet.value("invchead_curr_id").toInt());
       _price->setId(invoiceet.value("invchead_curr_id").toInt());
@@ -228,7 +231,7 @@ void invoiceItem::sSave()
                "  invcitem_custpn,"
                "  invcitem_ordered, invcitem_billed, invcitem_updateinv,"
                "  invcitem_qty_uom_id, invcitem_qty_invuomratio,"
-               "  invcitem_custprice, invcitem_price,"
+               "  invcitem_custprice, invcitem_price, invcitem_listprice,"
                "  invcitem_price_uom_id, invcitem_price_invuomratio,"
                "  invcitem_notes, "
                "  invcitem_taxtype_id, invcitem_rev_accnt_id) "
@@ -239,7 +242,7 @@ void invoiceItem::sSave()
                "  :invcitem_custpn,"
                "  :invcitem_ordered, :invcitem_billed, :invcitem_updateinv,"
                "  :qty_uom_id, :qty_invuomratio,"
-               "  :invcitem_custprice, :invcitem_price,"
+               "  :invcitem_custprice, :invcitem_price, :invcitem_listprice,"
                "  :price_uom_id, :price_invuomratio,"
                "  :invcitem_notes, "
                "  :invcitem_taxtype_id, :invcitem_rev_accnt_id);");
@@ -286,6 +289,7 @@ void invoiceItem::sSave()
   invoiceSave.bindValue(":qty_invuomratio", _qtyinvuomratio);
   invoiceSave.bindValue(":invcitem_custprice", _custPrice->localValue());
   invoiceSave.bindValue(":invcitem_price", _price->localValue());
+  invoiceSave.bindValue(":invcitem_listprice", _listPrice->baseValue());
   if(!_miscSelected->isChecked())
     invoiceSave.bindValue(":price_uom_id", _pricingUOM->id());
   invoiceSave.bindValue(":price_invuomratio", _priceinvuomratio);
@@ -312,9 +316,6 @@ void invoiceItem::populate()
   XSqlQuery invcitem;
   invcitem.prepare("SELECT invcitem.*,"
                    "       invchead_invcnumber, invchead_curr_id AS taxcurr_id,"
-                   "       CASE WHEN (item_id IS NULL) THEN :na"
-                   "            ELSE item_listprice"
-                   "       END AS f_listprice,"
                    "		   taxzone_id, itemsite_costmethod,"
                    "       COALESCE(cobill_id, -1) AS cobill_id "
                    " FROM invcitem JOIN invchead ON (invchead_id=invcitem_invchead_id)"
@@ -381,7 +382,6 @@ void invoiceItem::populate()
     }
     _price->setLocalValue(invcitem.value("invcitem_price").toDouble());
     _custPrice->setLocalValue(invcitem.value("invcitem_custprice").toDouble());
-    _listPrice->setBaseValue(invcitem.value("f_listprice").toDouble() * (_priceinvuomratio / _priceRatioCache));
 
     _custPn->setText(invcitem.value("invcitem_custpn").toString());
     _notes->setText(invcitem.value("invcitem_notes").toString());
@@ -436,7 +436,8 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
 
     invoicePopulateItemInfo.prepare( "SELECT item_inv_uom_id, item_price_uom_id,"
                                     "       iteminvpricerat(item_id) AS invpricerat,"
-                                    "       item_listprice, item_fractional, "
+                                    "       listPrice(item_id, :cust_id, :shipto_id, :whsid) AS listprice,"
+                                    "       item_fractional, "
                                     "       stdcost(item_id) AS f_unitcost,"
                                     "       getItemTaxType(item_id, :taxzone) AS taxtype_id,"
                                     "       itemsite_costmethod"
@@ -447,11 +448,14 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
     invoicePopulateItemInfo.bindValue(":item_id", pItemid);
     invoicePopulateItemInfo.bindValue(":taxzone", _taxzoneid);
     invoicePopulateItemInfo.bindValue(":whsid",   _warehouse->id());
+    invoicePopulateItemInfo.bindValue(":cust_id", _custid);
+    invoicePopulateItemInfo.bindValue(":shipto_id", _shiptoid);
     invoicePopulateItemInfo.exec();
     if (invoicePopulateItemInfo.first())
     {
       _priceRatioCache = invoicePopulateItemInfo.value("invpricerat").toDouble();
-      _listPrice->setBaseValue(invoicePopulateItemInfo.value("item_listprice").toDouble());
+      _listprice = invoicePopulateItemInfo.value("listprice").toDouble();
+      _listPrice->setBaseValue(_listprice  * (_priceinvuomratio / _priceRatioCache));
 
       _invuomid = invoicePopulateItemInfo.value("item_inv_uom_id").toInt();
       _qtyUOM->setId(invoicePopulateItemInfo.value("item_inv_uom_id").toInt());
@@ -486,6 +490,7 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
     _priceRatioCache = 1.0;
     _qtyinvuomratio = 1.0;
     _priceinvuomratio = 1.0;
+    _listprice = 0.0;
     _qtyUOM->clear();
     _pricingUOM->clear();
     _listPrice->clear();
@@ -499,11 +504,12 @@ void invoiceItem::sDeterminePrice()
   if ( (_itemSelected->isChecked()) && (_item->isValid()) && (_billed->toDouble()) && (_qtyUOM->id() > 0) && (_pricingUOM->id() > 0) )
   {
     XSqlQuery itemprice;
-    itemprice.prepare("SELECT itemPrice(item_id, :cust_id, -1, "
+    itemprice.prepare("SELECT itemPrice(item_id, :cust_id, :shipto_id, "
                       "		              :qty, :qtyUOM, :priceUOM, :curr_id, :effective) AS price "
                       "FROM item "
                       "WHERE (item_id=:item_id);" );
     itemprice.bindValue(":cust_id", _custid);
+    itemprice.bindValue(":shipto_id", _shiptoid);
     itemprice.bindValue(":qty", _billed->toDouble());
     itemprice.bindValue(":qtyUOM", _qtyUOM->id());
     itemprice.bindValue(":priceUOM", _pricingUOM->id());
@@ -745,14 +751,7 @@ void invoiceItem::sPriceUOMChanged()
                          invuom, __FILE__, __LINE__);
   }
 
-  XSqlQuery item;
-  item.prepare("SELECT item_listprice"
-               "  FROM item"
-               " WHERE(item_id=:item_id);");
-  item.bindValue(":item_id", _item->id());
-  item.exec();
-  item.first();
-  _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatioCache));
+  _listPrice->setBaseValue(_listprice * (_priceinvuomratio / _priceRatioCache));
   sDeterminePrice();
   sCalculateExtendedPrice();
 }
@@ -803,7 +802,7 @@ void invoiceItem::sListPrices()
 {
   ParameterList params;
   params.append("cust_id",   _custid);
-  //params.append("shipto_id", _shiptoid);
+  params.append("shipto_id", _shiptoid);
   params.append("item_id",   _item->id());
   params.append("warehous_id", _warehouse->id());
   params.append("qty",       _billed->toDouble() * _qtyinvuomratio);

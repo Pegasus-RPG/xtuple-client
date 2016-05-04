@@ -119,6 +119,13 @@ to be bound by its terms.</comment>
     </layout>
    </item>
    <item row="1" column="0">
+    <widget class="QLabel" name="_commentsLit">
+     <property name="text">
+      <string>Exchange Rate Comments:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
     <widget class="Comments" name="_FXcomments">
      <property name="type">
       <enum>Comments::ExchangeRate</enum>

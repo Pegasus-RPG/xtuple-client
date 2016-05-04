@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -161,6 +161,7 @@ configureIM::configureIM(QWidget* parent, const char* name, bool /*modal*/, Qt::
     _costStd->isChecked();
 
   _asOfQOH->setChecked(_metrics->boolean("EnableAsOfQOH"));
+  _preventNegInventory->setChecked(_metrics->boolean("DisallowNegativeInventory"));
   
   // Jobs at this time should always be checked and disabled
   // when this is changed in the future this should be replaced with
@@ -314,6 +315,7 @@ bool configureIM::sSave()
       return false;
   }
   _metrics->set("EnableAsOfQOH", _asOfQOH->isChecked());
+  _metrics->set("DisallowNegativeInventory", _preventNegInventory->isChecked());
 
   return true;
 }

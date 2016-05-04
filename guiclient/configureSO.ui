@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>714</width>
-    <height>728</height>
+    <height>751</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -106,7 +106,7 @@ to be bound by its terms.</comment>
        <item row="3" column="0">
         <widget class="QLabel" name="_creditMemoNumGenerationLit">
          <property name="text">
-          <string>Return # Generation:</string>
+          <string>Sales Credit # Generation:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -122,10 +122,10 @@ to be bound by its terms.</comment>
           </sizepolicy>
          </property>
          <property name="automaticText">
-          <string>Automatic, Use Return #'s</string>
+          <string>Automatic, Use Sales Credit #'s</string>
          </property>
          <property name="overrideText">
-          <string>Automatic, Use Return #'s, Allow Override</string>
+          <string>Automatic, Use Sales Credit #'s, Allow Override</string>
          </property>
          <property name="sharedText">
           <string>Automatic, Use S/O #'s</string>
@@ -432,20 +432,20 @@ to be bound by its terms.</comment>
                <item row="4" column="0" colspan="3">
                 <widget class="QGroupBox" name="groupBox_5">
                  <property name="title">
-                  <string>Return Control</string>
+                  <string>Sales Credit Control</string>
                  </property>
                  <layout class="QGridLayout">
                   <item row="0" column="0">
                    <widget class="QCheckBox" name="_restrictCreditMemos">
                     <property name="text">
-                     <string>Restrict Returns to Items on their Apply-To Document</string>
+                     <string>Restrict Sales Credits to Items on their Apply-To Document</string>
                     </property>
                    </widget>
                   </item>
                   <item row="1" column="0">
                    <widget class="QCheckBox" name="_autoAllocateCM">
                     <property name="text">
-                     <string>Allocate Returns to New Sales Order on Save</string>
+                     <string>Allocate Sales Credits to New Sales Order on Save</string>
                     </property>
                    </widget>
                   </item>
@@ -617,20 +617,6 @@ to be bound by its terms.</comment>
                   <string>Price Control</string>
                  </property>
                  <layout class="QGridLayout">
-                  <item row="1" column="0">
-                   <widget class="QCheckBox" name="_priceOverride">
-                    <property name="text">
-                     <string>Disallow Override of Sales Price on Sales Order</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="4" column="0">
-                   <widget class="QCheckBox" name="_wholesalePriceCosting">
-                    <property name="text">
-                     <string>Use Wholesale Price as Unit Cost for Markups</string>
-                    </property>
-                   </widget>
-                  </item>
                   <item row="0" column="0">
                    <widget class="QCheckBox" name="_allowDiscounts">
                     <property name="text">
@@ -638,7 +624,7 @@ to be bound by its terms.</comment>
                     </property>
                    </widget>
                   </item>
-                  <item row="5" column="0">
+                  <item row="6" column="0">
                    <widget class="QCheckBox" name="_long30Markups">
                     <property name="text">
                      <string>Use &quot;Gross Margin&quot; Method for Markups</string>
@@ -656,6 +642,27 @@ to be bound by its terms.</comment>
                    <widget class="QCheckBox" name="_itemPricingPrecedence">
                     <property name="text">
                      <string>Item Precedence Over Product Category Pricing</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="5" column="0">
+                   <widget class="QCheckBox" name="_wholesalePriceCosting">
+                    <property name="text">
+                     <string>Use Wholesale Price as Unit Cost for Markups</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QCheckBox" name="_priceOverride">
+                    <property name="text">
+                     <string>Disallow Override of Sales Price on Sales Order</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="4" column="0">
+                   <widget class="QCheckBox" name="_useListPriceSchedules">
+                    <property name="text">
+                     <string>Use List Price Schedules</string>
                     </property>
                    </widget>
                   </item>
@@ -889,7 +896,7 @@ to be bound by its terms.</comment>
          <item row="1" column="1">
           <widget class="XDocCopySetter" name="_creditMemoCopies">
            <property name="labelText">
-            <string>Default Return Copies:</string>
+            <string>Default Sales Credit Copies:</string>
            </property>
            <property name="numCopiesMetric">
             <string>CreditMemoCopies</string>
@@ -1372,7 +1379,7 @@ to be bound by its terms.</comment>
               </item>
               <item>
                <property name="text">
-                <string>Return</string>
+                <string>Sales Credit</string>
                </property>
               </item>
               <item>

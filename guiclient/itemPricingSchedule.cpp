@@ -54,6 +54,7 @@ itemPricingSchedule::itemPricingSchedule(QWidget* parent, const char* name, bool
   _currency->setType(XComboBox::Currencies);
   _currency->setLabel(_currencyLit);
   _updated = QDate::currentDate();
+  _listpricesched = false;
   
   itemitemPricingSchedule.exec("BEGIN;");
   _rejectedMsg = tr("The application has encountered an error and must "
@@ -77,6 +78,13 @@ enum SetResponse itemPricingSchedule::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("listpricesched", &valid);
+  if (valid)
+  {
+    _listpricesched = true;
+    setWindowTitle(tr("List Pricing Schedule"));
+  }
+  
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -188,20 +196,23 @@ bool itemPricingSchedule::sSave(bool p)
 
   if (_mode == cNew) 
     itemSave.prepare( "INSERT INTO ipshead "
-               "( ipshead_id, ipshead_name, ipshead_descrip,"
-               "  ipshead_effective, ipshead_expires, "
-	       "  ipshead_curr_id, ipshead_updated ) "
-               "VALUES "
-               "( :ipshead_id, :ipshead_name, :ipshead_descrip,"
-               "  :ipshead_effective, :ipshead_expires, "
-	       "  :ipshead_curr_id, CURRENT_DATE );" );
+                     "( ipshead_id, ipshead_name, ipshead_descrip,"
+                     "  ipshead_effective, ipshead_expires,"
+                     "  ipshead_curr_id, ipshead_listprice,"
+                     "  ipshead_updated ) "
+                     "VALUES "
+                     "( :ipshead_id, :ipshead_name, :ipshead_descrip,"
+                     "  :ipshead_effective, :ipshead_expires,"
+                     "  :ipshead_curr_id, :ipshead_listprice,"
+                     "  CURRENT_DATE );" );
   else if ( (_mode == cEdit) || (_mode == cCopy) )
     itemSave.prepare( "UPDATE ipshead "
-               "SET ipshead_name=:ipshead_name, ipshead_descrip=:ipshead_descrip,"
-               "    ipshead_effective=:ipshead_effective, ipshead_expires=:ipshead_expires, "
-	       "    ipshead_curr_id=:ipshead_curr_id, "
-	       "    ipshead_updated=CURRENT_DATE "
-               "WHERE (ipshead_id=:ipshead_id);" );
+                     "SET ipshead_name=:ipshead_name, ipshead_descrip=:ipshead_descrip,"
+                     "    ipshead_effective=:ipshead_effective, ipshead_expires=:ipshead_expires, "
+                     "    ipshead_curr_id=:ipshead_curr_id, "
+                     "    ipshead_listprice=:ipshead_listprice, "
+                     "    ipshead_updated=CURRENT_DATE "
+                     "WHERE (ipshead_id=:ipshead_id);" );
 
   itemSave.bindValue(":ipshead_id", _ipsheadid);
   itemSave.bindValue(":ipshead_name", _name->text());
@@ -209,6 +220,7 @@ bool itemPricingSchedule::sSave(bool p)
   itemSave.bindValue(":ipshead_effective", _dates->startDate());
   itemSave.bindValue(":ipshead_expires", _dates->endDate());
   itemSave.bindValue(":ipshead_curr_id", _currency->id());
+  itemSave.bindValue(":ipshead_listprice", _listpricesched);
   itemSave.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Item Pricing Information"),
                                 itemSave, __FILE__, __LINE__))
@@ -245,6 +257,8 @@ void itemPricingSchedule::sNew()
   params.append("ipshead_id", _ipsheadid);
   params.append("curr_id", _currency->id());
   params.append("updated", _updated);
+  if (_listpricesched)
+    params.append("listpricesched", true);
 
   itemPricingScheduleItem newdlg(this, "", true);
   newdlg.set(params);
@@ -265,6 +279,8 @@ void itemPricingSchedule::sEdit()
   params.append("mode", "edit");
   params.append("curr_id", _currency->id());
   params.append("updated", _updated);
+  if (_listpricesched)
+    params.append("listpricesched", true);
 
   if(_ipsitem->altId() == 1)
     params.append("ipsitem_id", _ipsitem->id());
@@ -372,9 +388,7 @@ void itemPricingSchedule::populate()
 {
   XSqlQuery itempopulate;
   XSqlQuery pop;
-  pop.prepare( "SELECT ipshead_name, ipshead_descrip,"
-             "       ipshead_effective, ipshead_expires, "
-	     "       ipshead_curr_id, ipshead_updated "
+  pop.prepare( "SELECT * "
              "FROM ipshead "
              "WHERE (ipshead_id=:ipshead_id);" );
   pop.bindValue(":ipshead_id", _ipsheadid);
@@ -387,6 +401,7 @@ void itemPricingSchedule::populate()
     _dates->setEndDate(pop.value("ipshead_expires").toDate());
     _currency->setId(pop.value("ipshead_curr_id").toInt());
     _currency->setEnabled(false);
+    _listpricesched = pop.value("ipshead_listprice").toBool();
     QDate tmpDate = pop.value("ipshead_updated").toDate();
     if (tmpDate.isValid() && ! tmpDate.isNull())
 	_updated = tmpDate;

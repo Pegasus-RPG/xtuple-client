@@ -2168,7 +2168,12 @@ void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloa
   {
     QWidget * fw = w->focusWidget();
     w->setAttribute(Qt::WA_DeleteOnClose);
-    QMdiSubWindow *subwin = _workspace->addSubWindow(w);
+
+    // this verboseness works around what appear to be qt bugs
+    QMdiSubWindow *subwin = new QMdiSubWindow();
+    subwin->setParent(_workspace);
+    subwin->setWidget(w);
+
     _workspace->setActiveSubWindow(subwin);
     connect(w, SIGNAL(destroyed(QObject*)), subwin, SLOT(close()));
     QRect r(pos, w->size());
