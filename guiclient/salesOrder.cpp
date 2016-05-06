@@ -214,6 +214,8 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
   _soitem->addColumn(tr("Extended"),        _priceColumn,          Qt::AlignRight,  true,  "extprice");
   _soitem->addColumn(tr("Cust. Price"),     _priceColumn,          Qt::AlignRight,  false, "coitem_custprice");
   _soitem->addColumn(tr("Cust. Discount"),  _priceColumn,          Qt::AlignRight,  false, "discountfromcust");
+  _soitem->addColumn(tr("List Price"),      _priceColumn,          Qt::AlignRight,  false, "coitem_listprice");
+  _soitem->addColumn(tr("List Discount"),   _priceColumn,          Qt::AlignRight,  false, "discountfromlist");
   if (_privileges->check("ViewSOItemUnitCost"))
     _soitem->addColumn(tr("Unit Cost"),       _costColumn,           Qt::AlignRight,  false, "coitem_unitcost");
   if (_privileges->check("ShowMarginsOnSalesOrder"))
