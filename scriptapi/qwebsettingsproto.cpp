@@ -63,12 +63,14 @@ void WebGraphicFromScriptValue(const QScriptValue &obj, QWebSettings::WebGraphic
 
 QScriptValue clearIconDatabaseForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   QWebSettings::clearIconDatabase();
   return engine->undefinedValue();
 }
 
 QScriptValue clearMemoryCachesForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   QWebSettings::clearMemoryCaches();
   return engine->undefinedValue();
 }
@@ -86,11 +88,13 @@ QScriptValue enablePersistentStorageForJS(QScriptContext* context, QScriptEngine
 
 QScriptValue globalSettingsForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   return engine->toScriptValue(QWebSettings::globalSettings());
 }
 
 QScriptValue iconDatabasePathForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   return engine->toScriptValue(QWebSettings::iconDatabasePath());
 }
 
@@ -109,26 +113,31 @@ QScriptValue iconForUrlForJS(QScriptContext* context, QScriptEngine* engine)
 
 QScriptValue maximumPagesInCacheForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   return engine->toScriptValue(QWebSettings::maximumPagesInCache());
 }
 
 QScriptValue offlineStorageDefaultQuotaForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   return engine->toScriptValue(QWebSettings::offlineStorageDefaultQuota());
 }
 
 QScriptValue offlineStoragePathForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   return engine->toScriptValue(QWebSettings::offlineStoragePath());
 }
 
 QScriptValue offlineWebApplicationCachePathForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   return engine->toScriptValue(QWebSettings::offlineWebApplicationCachePath());
 }
 
 QScriptValue offlineWebApplicationCacheQuotaForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   return engine->toScriptValue(QWebSettings::offlineWebApplicationCacheQuota());
 }
 

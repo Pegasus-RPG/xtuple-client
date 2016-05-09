@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -1834,13 +1834,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
          && QDateTime::currentDateTime() < certlist.at(0).expiryDate()  && !certlist.at(0).isBlacklisted())
         {
           if (DEBUG)
-            qDebug("Certificate details: valid from %s to %s, issued to %s @ %s in %s, %s",
-                   qPrintable(certlist.at(0).effectiveDate().toString("MMM-dd-yyyy")));
-                   /*qPrintable(certlist.at(0).expiryDate().toString("MMM-dd-yyyy")),
-                   qPrintable(certlist.at(0).issuerInfo(QSslCertificate::CommonName)),
-                   qPrintable(certlist.at(0).issuerInfo(QSslCertificate::Organization)),
-                   qPrintable(certlist.at(0).issuerInfo(QSslCertificate::LocalityName)),
-                   qPrintable(certlist.at(0).issuerInfo(QSslCertificate::CountryName)));*/
+            qDebug() << "Certificate:" << certlist.at(0);
           QSslConfiguration sslconf = QSslConfiguration::defaultConfiguration();
           sslconf.setLocalCertificate(certlist.at(0));
           QSslConfiguration::setDefaultConfiguration(sslconf);

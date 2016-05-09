@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -212,7 +212,7 @@ XTreeWidget::~XTreeWidget()
                     (header()->sortIndicatorOrder() == Qt::AscendingOrder ? "ASC" : "DESC" );
     else
       savedString = "-1,ASC";
-      xtsettingsSetValue(_settingsName + "/sortOrder", savedString);
+    xtsettingsSetValue(_settingsName + "/sortOrder", savedString);
   }
 
   for (int i = 0; i < _roles.size(); i++)

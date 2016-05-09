@@ -1344,7 +1344,7 @@ QByteArray QByteArrayProto::slice(int start, int end) const
       start = len;
     }
 
-    if (end == NULL) {
+    if (end == 0) {
       end = len;
     }
     if (end < 0) {

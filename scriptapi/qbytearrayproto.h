@@ -148,7 +148,7 @@ class QByteArrayProto : public QObject, public QScriptable
     Q_INVOKABLE QString toLatin1() const;
     Q_INVOKABLE QString toLocal8Bit() const;
     Q_INVOKABLE QString toUtf8() const;
-    Q_INVOKABLE QByteArray slice(int start = 0, int end = NULL) const;
+    Q_INVOKABLE QByteArray slice(int start = 0, int end = 0) const;
 
 };
 
