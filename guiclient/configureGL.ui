@@ -635,26 +635,32 @@ to be bound by its terms.</comment>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="3">
-                 <widget class="QRadioButton" name="_companyIdIsEIN">
-                  <property name="text">
-                   <string>EIN/TIN</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="3">
-                 <widget class="QRadioButton" name="_companyIdIsDUNS">
-                  <property name="text">
-                   <string>DUNS Number</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="3">
-                 <widget class="QRadioButton" name="_companyIdIsOther">
-                  <property name="text">
-                   <string>Other</string>
-                  </property>
-                 </widget>
+                <item row="1" column="3" rowspan="3">
+                  <widget class="QWidget">
+                    <layout class="QGridLayout">
+                      <item row="0" column="0">
+                        <widget class="QRadioButton" name="_companyIdIsEIN">
+                          <property name="text">
+                            <string>EIN/TIN</string>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="1" column="0">
+                        <widget class="QRadioButton" name="_companyIdIsDUNS">
+                          <property name="text">
+                            <string>DUNS Number</string>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="2" column="0">
+                        <widget class="QRadioButton" name="_companyIdIsOther">
+                          <property name="text">
+                            <string>Other</string>
+                          </property>
+                        </widget>
+                      </item>
+                    </layout>
+                  </widget>
                 </item>
                 <item row="6" column="0" colspan="4">
                  <widget class="QGroupBox" name="_eftStyle">
