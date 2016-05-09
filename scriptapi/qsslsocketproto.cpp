@@ -34,26 +34,31 @@ QScriptValue addDefaultCaCertificateForJS(QScriptContext* context, QScriptEngine
 
 QScriptValue sslLibraryBuildVersionNumberForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   return engine->toScriptValue(QSslSocket::sslLibraryBuildVersionNumber());
 }
 
 QScriptValue sslLibraryBuildVersionStringForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   return engine->toScriptValue(QSslSocket::sslLibraryBuildVersionString());
 }
 
 QScriptValue sslLibraryVersionNumberForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   return engine->toScriptValue(QSslSocket::sslLibraryVersionNumber());
 }
 
 QScriptValue sslLibraryVersionStringForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   return engine->toScriptValue(QSslSocket::sslLibraryVersionString());
 }
 
 QScriptValue supportsSslForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   return engine->toScriptValue(QSslSocket::supportsSsl());
 }
 
