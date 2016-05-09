@@ -150,6 +150,7 @@ HEADERS += setupscriptapi.h \
     crmacctlineeditsetup.h \
     currdisplaysetup.h \
     documentssetup.h \
+    engineevaluate.h \
     glclustersetup.h \
     itemlineeditsetup.h \
     jsconsole.h \
@@ -294,6 +295,7 @@ SOURCES += setupscriptapi.cpp \
     crmacctlineeditsetup.cpp \
     currdisplaysetup.cpp \
     documentssetup.cpp \
+    engineevaluate.cpp \
     glclustersetup.cpp \
     itemlineeditsetup.cpp \
     jsconsole.cpp \

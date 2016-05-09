@@ -19,6 +19,7 @@
 #include "currdisplaysetup.h"
 #include "documentssetup.h"
 #include "empcluster.h"
+#include "engineevaluate.h"
 #include "exporthelper.h"
 #include "filemoveselector.h"
 #include "glclustersetup.h"
@@ -183,6 +184,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupDocuments(engine);
   setupEmpCluster(engine);
   setupEmpClusterLineEdit(engine);
+  setupEngineEvaluate(engine);
   setupExportHelper(engine);
   setupFileMoveSelector(engine);
   setupGLCluster(engine);
