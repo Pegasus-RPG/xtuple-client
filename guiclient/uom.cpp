@@ -154,6 +154,11 @@ void uom::sSave()
   uomSave.bindValue(":uom_item_weight", QVariant(_weightUom->isChecked()));
   uomSave.exec();
 
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving UOM Information"),
+                                uomSave, __FILE__, __LINE__))
+  {
+    return;
+  }
   done(_uomid);
 }
 
