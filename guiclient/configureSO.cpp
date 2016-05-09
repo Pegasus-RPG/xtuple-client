@@ -13,6 +13,7 @@
 #include <QSqlError>
 #include <QMessageBox>
 #include <errorReporter.h>
+#include <guiErrorCheck.h>
 
 configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::WindowFlags fl)
     : XAbstractConfigure(parent, fl)
@@ -417,14 +418,13 @@ bool configureSO::sSave()
   
   if (_enableSSOS->isChecked())
   {
-    if(!_ssosCust->isValid())
-    {
-      QMessageBox::critical(this, tr("No Customer selected"),
-                           tr("<p>You must select a Cash Customer # "
-                              "if Simple S/O is enabled."));
-      _ssosCust->setFocus();
-      return false;
-    }
+
+    QList<GuiErrorCheck>errors;
+    errors<<GuiErrorCheck(!_ssosCust->isValid(), _ssosCust,
+                          tr("<p>You must select a Cash Customer # if Simple S/O is enabled."));
+
+    if(GuiErrorCheck::reportErrors(this,tr("Unable To Apply Sales Settings"),errors))
+        return false;
     
     _metrics->set("SSOSEnabled", true);
     _metrics->set("SSOSDefaultCustId", _ssosCust->id());

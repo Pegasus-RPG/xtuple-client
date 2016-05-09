@@ -14,6 +14,7 @@
 #include <QSqlError>
 #include <QVariant>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 customerType::customerType(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -117,13 +118,13 @@ void customerType::sCheck()
 void customerType::sSave()
 {
   XSqlQuery customerSave;
-  if (_code->text().trimmed().length() == 0)
-  {
-    QMessageBox::information( this, tr("Invalid Customer Type Code"),
-                              tr("You must enter a valid Code for this Customer Type before creating it.")  );
-    _code->setFocus();
-    return;
-  }
+
+  QList<GuiErrorCheck>errors;
+  errors<<GuiErrorCheck(_code->text().trimmed().length() == 0, _code,
+                        tr("You must enter a valid Code for this Customer Type before creating it."));
+
+  if(GuiErrorCheck::reportErrors(this,tr("Cannot Save Customer Type"),errors))
+      return;
 
   customerSave.prepare("SELECT custtype_id"
             "  FROM custtype"

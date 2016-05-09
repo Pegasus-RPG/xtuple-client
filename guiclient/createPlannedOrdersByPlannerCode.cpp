@@ -16,6 +16,7 @@
 #include <metasql.h>
 #include "mqlutil.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 createPlannedOrdersByPlannerCode::createPlannedOrdersByPlannerCode(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -97,14 +98,14 @@ void createPlannedOrdersByPlannerCode::sCreate(ParameterList params)
 
 bool createPlannedOrdersByPlannerCode::setParams(ParameterList &pParams)
 {
-  if (!_cutOffDate->isValid())
-  {
-    QMessageBox::warning( this, tr("Enter Cut Off Date"),
-                          tr( "You must enter a valid Cut Off Date before\n"
-                              "creating Planned Orders." ));
-    _cutOffDate->setFocus();
-    return false;
-  }
+
+  QList<GuiErrorCheck>errors;
+  errors<<GuiErrorCheck(!_cutOffDate->isValid(), _cutOffDate,
+                        tr("You must enter a valid Cut Off Date before\n"
+                           "creating Planned Orders."));
+
+  if(GuiErrorCheck::reportErrors(this,tr("Enter Cut Off Date"),errors))
+      return false;
 
   pParams.append("action_name", "RunMRP");
 
