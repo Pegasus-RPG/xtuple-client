@@ -89,6 +89,24 @@ bool QTimerProto::isSingleShot() const
   return false;
 }
 
+void QTimerProto::setTimerType(Qt::TimerType atype)
+{
+  QTimer *item = qscriptvalue_cast<QTimer*>(thisObject());
+  if (item) {
+    item->setTimerType(atype);
+  }
+}
+
+Qt::TimerType QTimerProto::timerType()  const
+{
+  QTimer *item = qscriptvalue_cast<QTimer*>(thisObject());
+  if (item) {
+    return item->timerType();
+  }
+
+  return Qt::CoarseTimer;
+}
+
 int QTimerProto::timerId() const
 {
   QTimer *item = qscriptvalue_cast<QTimer*>(thisObject());

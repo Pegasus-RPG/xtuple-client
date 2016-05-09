@@ -739,6 +739,11 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("TextEditorInteraction", QScriptValue(engine, Qt::TextEditorInteraction), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("TextBrowserInteraction", QScriptValue(engine, Qt::TextBrowserInteraction), QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
+  qScriptRegisterMetaType(engine, TimerTypetoScriptValue, TimerTypefromScriptValue);
+  widget.setProperty("PreciseTimer", QScriptValue(engine, Qt::PreciseTimer), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("CoarseTimer", QScriptValue(engine, Qt::CoarseTimer), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("VeryCoarseTimer", QScriptValue(engine, Qt::VeryCoarseTimer), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
   qScriptRegisterMetaType(engine, TimeSpectoScriptValue,	TimeSpecfromScriptValue);
   widget.setProperty("LocalTime", QScriptValue(engine, Qt::LocalTime), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("UTC", QScriptValue(engine, Qt::UTC), QScriptValue::ReadOnly | QScriptValue::Undeletable);
@@ -1233,6 +1238,11 @@ QScriptValue TextInteractionFlagtoScriptValue(QScriptEngine *engine, const enum 
   return QScriptValue(engine, (int)p);
 }
 
+QScriptValue TimerTypetoScriptValue(QScriptEngine *engine, const enum Qt::TimerType &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
 QScriptValue TimeSpectoScriptValue(QScriptEngine *engine, const enum Qt::TimeSpec &p)
 {
   return QScriptValue(engine, (int)p);
@@ -1543,6 +1553,11 @@ void TextFormatfromScriptValue(const QScriptValue &obj, enum Qt::TextFormat &p)
 void TextInteractionFlagfromScriptValue(const QScriptValue &obj, enum Qt::TextInteractionFlag &p)
 {
   p = (enum Qt::TextInteractionFlag)obj.toInt32();
+}
+
+void TimerTypefromScriptValue(const QScriptValue &obj, enum Qt::TimerType &p)
+{
+  p = (enum Qt::TimerType)obj.toInt32();
 }
 
 void TimeSpecfromScriptValue(const QScriptValue &obj, enum Qt::TimeSpec &p)
