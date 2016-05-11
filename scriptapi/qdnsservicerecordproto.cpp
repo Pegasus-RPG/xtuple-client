@@ -11,6 +11,11 @@
 #include "qdnsservicerecordproto.h"
 
 #if QT_VERSION < 0x050000
+void setupQDnsServiceRecordProto(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
 
 QScriptValue QListQDnsServiceRecordToScriptValue(QScriptEngine *engine, const QList<QDnsServiceRecord> &list)
 {
@@ -67,7 +72,7 @@ QDnsServiceRecordProto::~QDnsServiceRecordProto()
 
 QString QDnsServiceRecordProto::name() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsServiceRecord *item = qscriptvalue_cast<QDnsServiceRecord*>(thisObject());
   if (item)
     return item->name();
   return QString();
@@ -75,7 +80,7 @@ QString QDnsServiceRecordProto::name() const
 
 quint16 QDnsServiceRecordProto::port() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsServiceRecord *item = qscriptvalue_cast<QDnsServiceRecord*>(thisObject());
   if (item)
     return item->port();
   return quint16();
@@ -83,7 +88,7 @@ quint16 QDnsServiceRecordProto::port() const
 
 quint16 QDnsServiceRecordProto::priority() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsServiceRecord *item = qscriptvalue_cast<QDnsServiceRecord*>(thisObject());
   if (item)
     return item->priority();
   return quint16();
@@ -91,14 +96,14 @@ quint16 QDnsServiceRecordProto::priority() const
 
 void QDnsServiceRecordProto::swap(QDnsServiceRecord &other)
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsServiceRecord *item = qscriptvalue_cast<QDnsServiceRecord*>(thisObject());
   if (item)
     item->swap(other);
 }
 
 QString QDnsServiceRecordProto::target() const
 {
-   *item = qscriptvalue_cast<*>(thisObject());
+  QDnsServiceRecord *item = qscriptvalue_cast<QDnsServiceRecord*>(thisObject());
   if (item)
     return item->target();
   return QString();
@@ -106,7 +111,7 @@ QString QDnsServiceRecordProto::target() const
 
 quint32 QDnsServiceRecordProto::timeToLive() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsServiceRecord *item = qscriptvalue_cast<QDnsServiceRecord*>(thisObject());
   if (item)
     return item->timeToLive();
   return quint32();
@@ -114,7 +119,7 @@ quint32 QDnsServiceRecordProto::timeToLive() const
 
 quint16 QDnsServiceRecordProto::weight() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsServiceRecord *item = qscriptvalue_cast<QDnsServiceRecord*>(thisObject());
   if (item)
     return item->weight();
   return quint16();
@@ -122,9 +127,9 @@ quint16 QDnsServiceRecordProto::weight() const
 
 QString QDnsServiceRecordProto::toString() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsServiceRecord *item = qscriptvalue_cast<QDnsServiceRecord*>(thisObject());
   if (item)
-    return item->toString();
+    return item->name();
   return QString();
 }
 

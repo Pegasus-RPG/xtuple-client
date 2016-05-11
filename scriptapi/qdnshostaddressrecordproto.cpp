@@ -11,6 +11,11 @@
 #include "qdnshostaddressrecordproto.h"
 
 #if QT_VERSION < 0x050000
+void setupQDnsHostAddressRecordProto(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
 
 QScriptValue QListQDnsHostAddressRecordToScriptValue(QScriptEngine *engine, const QList<QDnsHostAddressRecord> &list)
 {
@@ -67,7 +72,7 @@ QDnsHostAddressRecordProto::~QDnsHostAddressRecordProto()
 
 QString QDnsHostAddressRecordProto::name() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsHostAddressRecord *item = qscriptvalue_cast<QDnsHostAddressRecord*>(thisObject());
   if (item)
     return item->name();
   return QString();
@@ -75,14 +80,14 @@ QString QDnsHostAddressRecordProto::name() const
 
 void QDnsHostAddressRecordProto::swap(QDnsHostAddressRecord &other)
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsHostAddressRecord *item = qscriptvalue_cast<QDnsHostAddressRecord*>(thisObject());
   if (item)
     item->swap(other);
 }
 
 quint32 QDnsHostAddressRecordProto::timeToLive() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsHostAddressRecord *item = qscriptvalue_cast<QDnsHostAddressRecord*>(thisObject());
   if (item)
     return item->timeToLive();
   return quint32();
@@ -90,7 +95,7 @@ quint32 QDnsHostAddressRecordProto::timeToLive() const
 
 QHostAddress QDnsHostAddressRecordProto::value() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsHostAddressRecord *item = qscriptvalue_cast<QDnsHostAddressRecord*>(thisObject());
   if (item)
     return item->value();
   return QHostAddress();
@@ -98,9 +103,9 @@ QHostAddress QDnsHostAddressRecordProto::value() const
 
 QString QDnsHostAddressRecordProto::toString() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsHostAddressRecord *item = qscriptvalue_cast<QDnsHostAddressRecord*>(thisObject());
   if (item)
-    return item->toString();
+    return item->value().toString();
   return QString();
 }
 

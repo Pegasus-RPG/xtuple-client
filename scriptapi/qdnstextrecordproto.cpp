@@ -11,6 +11,11 @@
 #include "qdnstextrecordproto.h"
 
 #if QT_VERSION < 0x050000
+void setupQDnsTextRecordProto(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
 
 QScriptValue QListQDnsTextRecordToScriptValue(QScriptEngine *engine, const QList<QDnsTextRecord> &list)
 {
@@ -67,7 +72,7 @@ QDnsTextRecordProto::~QDnsTextRecordProto()
 
 QString QDnsTextRecordProto::name() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsTextRecord *item = qscriptvalue_cast<QDnsTextRecord*>(thisObject());
   if (item)
     return item->name();
   return QString();
@@ -75,14 +80,14 @@ QString QDnsTextRecordProto::name() const
 
 void QDnsTextRecordProto::swap(QDnsTextRecord &other)
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsTextRecord *item = qscriptvalue_cast<QDnsTextRecord*>(thisObject());
   if (item)
     item->swap(other);
 }
 
 quint32 QDnsTextRecordProto::timeToLive() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsTextRecord *item = qscriptvalue_cast<QDnsTextRecord*>(thisObject());
   if (item)
     return item->timeToLive();
   return quint32();
@@ -90,7 +95,7 @@ quint32 QDnsTextRecordProto::timeToLive() const
 
 QList<QByteArray> QDnsTextRecordProto::values() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsTextRecord *item = qscriptvalue_cast<QDnsTextRecord*>(thisObject());
   if (item)
     return item->values();
   return QList<QByteArray>();
@@ -98,9 +103,9 @@ QList<QByteArray> QDnsTextRecordProto::values() const
 
 QString QDnsTextRecordProto::toString() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsTextRecord *item = qscriptvalue_cast<QDnsTextRecord*>(thisObject());
   if (item)
-    return item->toString();
+    return item->name();
   return QString();
 }
 

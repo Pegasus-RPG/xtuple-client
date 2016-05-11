@@ -13,7 +13,7 @@
 
 #include <QtScript>
 
-void setupQDnsMailExchangeRecordProto(engine);
+void setupQDnsMailExchangeRecordProto(QScriptEngine *engine);
 
 #if QT_VERSION >= 0x050000
 

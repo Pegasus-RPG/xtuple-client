@@ -13,7 +13,7 @@
 
 #include <QtScript>
 
-void setupQDnsTextRecordProto(engine);
+void setupQDnsTextRecordProto(QScriptEngine *engine);
 
 #if QT_VERSION >= 0x050000
 

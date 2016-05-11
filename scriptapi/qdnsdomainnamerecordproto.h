@@ -13,7 +13,7 @@
 
 #include <QtScript>
 
-void setupQDnsDomainNameRecordProto(engine);
+void setupQDnsDomainNameRecordProto(QScriptEngine *engine);
 
 #if QT_VERSION >= 0x050000
 

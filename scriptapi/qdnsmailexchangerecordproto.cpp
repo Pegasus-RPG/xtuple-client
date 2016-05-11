@@ -11,6 +11,11 @@
 #include "qdnsmailexchangerecordproto.h"
 
 #if QT_VERSION < 0x050000
+void setupQDnsMailExchangeRecordProto(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
 
 QScriptValue QListQDnsMailExchangeRecordToScriptValue(QScriptEngine *engine, const QList<QDnsMailExchangeRecord> &list)
 {
@@ -67,7 +72,7 @@ QDnsMailExchangeRecordProto::~QDnsMailExchangeRecordProto()
 
 QString QDnsMailExchangeRecordProto::exchange() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsMailExchangeRecord *item = qscriptvalue_cast<QDnsMailExchangeRecord*>(thisObject());
   if (item)
     return item->exchange();
   return QString();
@@ -75,7 +80,7 @@ QString QDnsMailExchangeRecordProto::exchange() const
 
 QString QDnsMailExchangeRecordProto::name() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsMailExchangeRecord *item = qscriptvalue_cast<QDnsMailExchangeRecord*>(thisObject());
   if (item)
     return item->name();
   return QString();
@@ -83,7 +88,7 @@ QString QDnsMailExchangeRecordProto::name() const
 
 quint16 QDnsMailExchangeRecordProto::preference() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsMailExchangeRecord *item = qscriptvalue_cast<QDnsMailExchangeRecord*>(thisObject());
   if (item)
     return item->preference();
   return quint16();
@@ -91,14 +96,14 @@ quint16 QDnsMailExchangeRecordProto::preference() const
 
 void QDnsMailExchangeRecordProto::swap(QDnsMailExchangeRecord &other)
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsMailExchangeRecord *item = qscriptvalue_cast<QDnsMailExchangeRecord*>(thisObject());
   if (item)
     item->swap(other);
 }
 
 quint32 QDnsMailExchangeRecordProto::timeToLive() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsMailExchangeRecord *item = qscriptvalue_cast<QDnsMailExchangeRecord*>(thisObject());
   if (item)
     return item->timeToLive();
   return quint32();
@@ -106,9 +111,9 @@ quint32 QDnsMailExchangeRecordProto::timeToLive() const
 
 QString QDnsMailExchangeRecordProto::toString() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsMailExchangeRecord *item = qscriptvalue_cast<QDnsMailExchangeRecord*>(thisObject());
   if (item)
-    return item->toString();
+    return item->name();
   return QString();
 }
 

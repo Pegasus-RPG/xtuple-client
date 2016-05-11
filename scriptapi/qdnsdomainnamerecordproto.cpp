@@ -11,6 +11,11 @@
 #include "qdnsdomainnamerecordproto.h"
 
 #if QT_VERSION < 0x050000
+void setupQDnsDomainNameRecordProto(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
 
 QScriptValue QListQDnsDomainNameRecordToScriptValue(QScriptEngine *engine, const QList<QDnsDomainNameRecord> &list)
 {
@@ -67,7 +72,7 @@ QDnsDomainNameRecordProto::~QDnsDomainNameRecordProto()
 
 QString QDnsDomainNameRecordProto::name() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsDomainNameRecord *item = qscriptvalue_cast<QDnsDomainNameRecord*>(thisObject());
   if (item)
     return item->name();
   return QString();
@@ -75,14 +80,14 @@ QString QDnsDomainNameRecordProto::name() const
 
 void QDnsDomainNameRecordProto::swap(QDnsDomainNameRecord &other)
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsDomainNameRecord *item = qscriptvalue_cast<QDnsDomainNameRecord*>(thisObject());
   if (item)
     item->swap(other);
 }
 
 quint32 QDnsDomainNameRecordProto::timeToLive() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsDomainNameRecord *item = qscriptvalue_cast<QDnsDomainNameRecord*>(thisObject());
   if (item)
     return item->timeToLive();
   return quint32();
@@ -90,7 +95,7 @@ quint32 QDnsDomainNameRecordProto::timeToLive() const
 
 QString QDnsDomainNameRecordProto::value() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsDomainNameRecord *item = qscriptvalue_cast<QDnsDomainNameRecord*>(thisObject());
   if (item)
     return item->value();
   return QString();
@@ -98,9 +103,9 @@ QString QDnsDomainNameRecordProto::value() const
 
 QString QDnsDomainNameRecordProto::toString() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsDomainNameRecord *item = qscriptvalue_cast<QDnsDomainNameRecord*>(thisObject());
   if (item)
-    return item->toString();
+    return item->value();
   return QString();
 }
 

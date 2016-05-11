@@ -13,7 +13,7 @@
 
 #include <QtScript>
 
-void setupQDnsLookupProto(engine);
+void setupQDnsLookupProto(QScriptEngine *engine);
 
 #if QT_VERSION >= 0x050000
 
@@ -26,7 +26,7 @@ void setupQDnsLookupProto(engine);
 #include <QHostAddress>
 
 Q_DECLARE_METATYPE(QDnsLookup*)
-Q_DECLARE_METATYPE(QDnsLookup)
+//Q_DECLARE_METATYPE(QDnsLookup)
 
 Q_DECLARE_METATYPE(enum QDnsLookup::Error)
 Q_DECLARE_METATYPE(enum QDnsLookup::Type)
@@ -40,7 +40,7 @@ class QDnsLookupProto : public QObject, public QScriptable
   Q_PROPERTY(QDnsLookup::Error    error           READ error)
   Q_PROPERTY(QString              errorString     READ errorString)
   Q_PROPERTY(QString              name            READ name           WRITE setName)
-  Q_PROPERTY(QString              nameserver      READ nameserver     WRITE setNameserver)
+  Q_PROPERTY(QHostAddress         nameserver      READ nameserver     WRITE setNameserver)
   Q_PROPERTY(QDnsLookup::Type     type            READ type           WRITE setType)
 
   public:
@@ -74,7 +74,7 @@ class QDnsLookupProto : public QObject, public QScriptable
     void  finished();
     void  nameChanged(const QString &name);
     void  nameserverChanged(const QHostAddress &nameserver);
-    void  typeChanged(Type type);
+    void  typeChanged(QDnsLookup::Type type);
 
 };
 

@@ -11,6 +11,11 @@
 #include "qdnslookupproto.h"
 
 #if QT_VERSION < 0x050000
+void setupQDnsLookupProto(QScriptEngine *engine)
+{
+  Q_UNUSED(engine);
+}
+#else
 
 QScriptValue ErrorToScriptValue(QScriptEngine *engine, const QDnsLookup::Error &item)
 {
@@ -36,7 +41,7 @@ void setupQDnsLookupProto(QScriptEngine *engine)
 
   QScriptValue proto = engine->newQObject(new QDnsLookupProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QDnsLookup*>(), proto);
-  engine->setDefaultPrototype(qMetaTypeId<QDnsLookup>(),  proto);
+  //engine->setDefaultPrototype(qMetaTypeId<QDnsLookup>(),  proto);
 
   QScriptValue constructor = engine->newFunction(constructQDnsLookup, proto);
   engine->globalObject().setProperty("QDnsLookup",  constructor);
@@ -67,19 +72,19 @@ QScriptValue constructQDnsLookup(QScriptContext *context, QScriptEngine *engine)
 {
   QDnsLookup *obj = 0;
   if (context->argumentCount() == 2 &&
-      context->argument(0).isString() &&
+      context->argument(0).isNumber() &&
       context->argument(1).isString()) {
 
-    obj = new QDnsLookup(context->argument(0).toString(),
-                         context->argument(1)).toString());
+    obj = new QDnsLookup((QDnsLookup::Type)context->argument(0).toInt32(),
+                         context->argument(1).toString());
   } else if (context->argumentCount() == 3 &&
-             context->argument(0).isString() &&
+             context->argument(0).isNumber() &&
              context->argument(1).isString() &&
              context->argument(2).isObject()) {
 
-    obj = new QDnsLookup(context->argument(0).toString(),
+    obj = new QDnsLookup((QDnsLookup::Type)context->argument(0).toInt32(),
                          context->argument(1).toString(),
-                         qscriptvalue_cast<QHostAddress>(context->argument(2)));
+                         QHostAddress(context->argument(2).toString()));
   } else {
     obj = new QDnsLookup();
   }
@@ -96,7 +101,7 @@ QDnsLookupProto::~QDnsLookupProto()
 
 QList<QDnsDomainNameRecord> QDnsLookupProto::canonicalNameRecords() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
     return item->canonicalNameRecords();
   return QList<QDnsDomainNameRecord>();
@@ -104,7 +109,7 @@ QList<QDnsDomainNameRecord> QDnsLookupProto::canonicalNameRecords() const
 
 QDnsLookup::Error QDnsLookupProto::error() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
     return item->error();
   return QDnsLookup::Error();
@@ -112,7 +117,7 @@ QDnsLookup::Error QDnsLookupProto::error() const
 
 QString QDnsLookupProto::errorString() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
     return item->errorString();
   return QString();
@@ -120,7 +125,7 @@ QString QDnsLookupProto::errorString() const
 
 QList<QDnsHostAddressRecord> QDnsLookupProto::hostAddressRecords() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
     return item->hostAddressRecords();
   return QList<QDnsHostAddressRecord>();
@@ -128,7 +133,7 @@ QList<QDnsHostAddressRecord> QDnsLookupProto::hostAddressRecords() const
 
 bool QDnsLookupProto::isFinished() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
     return item->isFinished();
   return false;
@@ -136,7 +141,7 @@ bool QDnsLookupProto::isFinished() const
 
 QList<QDnsMailExchangeRecord> QDnsLookupProto::mailExchangeRecords() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
     return item->mailExchangeRecords();
   return QList<QDnsMailExchangeRecord>();
@@ -144,7 +149,7 @@ QList<QDnsMailExchangeRecord> QDnsLookupProto::mailExchangeRecords() const
 
 QString QDnsLookupProto::name() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
     return item->name();
   return QString();
@@ -152,7 +157,7 @@ QString QDnsLookupProto::name() const
 
 QList<QDnsDomainNameRecord> QDnsLookupProto::nameServerRecords() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
     return item->nameServerRecords();
   return QList<QDnsDomainNameRecord>();
@@ -160,7 +165,7 @@ QList<QDnsDomainNameRecord> QDnsLookupProto::nameServerRecords() const
 
 QHostAddress QDnsLookupProto::nameserver() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
     return item->nameserver();
   return QHostAddress();
@@ -168,7 +173,7 @@ QHostAddress QDnsLookupProto::nameserver() const
 
 QList<QDnsDomainNameRecord> QDnsLookupProto::pointerRecords() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
     return item->pointerRecords();
   return QList<QDnsDomainNameRecord>();
@@ -176,7 +181,7 @@ QList<QDnsDomainNameRecord> QDnsLookupProto::pointerRecords() const
 
 QList<QDnsServiceRecord> QDnsLookupProto::serviceRecords() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
     return item->serviceRecords();
   return QList<QDnsServiceRecord>();
@@ -184,28 +189,28 @@ QList<QDnsServiceRecord> QDnsLookupProto::serviceRecords() const
 
 void QDnsLookupProto::setName(const QString &name)
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
     item->setName(name);
 }
 
 void QDnsLookupProto::setNameserver(const QHostAddress &nameserver)
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
     item->setNameserver(nameserver);
 }
 
 void QDnsLookupProto::setType(QDnsLookup::Type type)
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
     item->setType(type);
 }
 
 QList<QDnsTextRecord> QDnsLookupProto::textRecords() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
     return item->textRecords();
   return QList<QDnsTextRecord>();
@@ -213,7 +218,7 @@ QList<QDnsTextRecord> QDnsLookupProto::textRecords() const
 
 QDnsLookup::Type QDnsLookupProto::type() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
     return item->type();
   return QDnsLookup::Type();
@@ -221,10 +226,25 @@ QDnsLookup::Type QDnsLookupProto::type() const
 
 QString QDnsLookupProto::toString() const
 {
-  *item = qscriptvalue_cast<*>(thisObject());
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
   if (item)
-    return item->toString();
+    return item->name();
   return QString();
 }
 
+// Slots
+
+void QDnsLookupProto::abort()
+{
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
+  if (item)
+    item->abort();
+}
+
+void QDnsLookupProto::lookup()
+{
+  QDnsLookup *item = qscriptvalue_cast<QDnsLookup*>(thisObject());
+  if (item)
+    item->lookup();
+}
 #endif
