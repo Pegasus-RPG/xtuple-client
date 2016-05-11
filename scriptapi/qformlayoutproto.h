@@ -35,8 +35,7 @@ class QFormLayoutProto : public QObject, public QScriptable
 
     Q_INVOKABLE bool  activate();
     Q_INVOKABLE void  addItem(QLayoutItem *item);
-    Q_INVOKABLE void  addRow(QWidget *label, QWidget *field);
-    Q_INVOKABLE void  addRow(QWidget *label, QLayout *field);
+    Q_INVOKABLE void  addRow(QWidget *label, QObject *field);
     Q_INVOKABLE void  addRow(const QString &labelText, QWidget *field);
     Q_INVOKABLE void  addRow(const QString &labelText, QLayout *field);
     Q_INVOKABLE void  addRow(QWidget *widget);

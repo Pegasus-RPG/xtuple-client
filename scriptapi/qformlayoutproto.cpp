@@ -87,24 +87,26 @@ void QFormLayoutProto::addItem(QLayoutItem *item)
     formitem->addItem(item);
 }
 
-void QFormLayoutProto::addRow(QWidget *label, QWidget *field)
+void QFormLayoutProto::addRow(QWidget *label, QObject *field)
 {
   QFormLayout *item = qscriptvalue_cast<QFormLayout*>(thisObject());
   if (item)
-    item->addRow(label, field);
-}
-
-void QFormLayoutProto::addRow(QWidget *label, QLayout *field)
-{
-  QFormLayout *item = qscriptvalue_cast<QFormLayout*>(thisObject());
-  if (item)
-    item->addRow(label, field);
+  {
+    QWidget *w = qobject_cast<QWidget*>(field);
+    QLayout *l = qobject_cast<QLayout*>(field);
+    if (w)
+      item->addRow(label, w);
+    else if (l)
+      item->addRow(label, l);
+    else
+      context()->throwError(QScriptContext::UnknownError, QString("Could not determine correct overload."));
+  }
 }
 
 void QFormLayoutProto::addRow(const QString &labelText, QWidget *field)
 {
   QFormLayout *item = qscriptvalue_cast<QFormLayout*>(thisObject());
-  if (item)
+ if (item)
     item->addRow(labelText, field);
 }
 
