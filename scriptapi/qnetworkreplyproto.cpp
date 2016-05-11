@@ -47,8 +47,10 @@ void setupQNetworkReplyProto(QScriptEngine *engine)
   proto.setProperty("OperationCanceledError", QScriptValue(engine, QNetworkReply::OperationCanceledError), permanent);
   proto.setProperty("SslHandshakeFailedError", QScriptValue(engine, QNetworkReply::SslHandshakeFailedError), permanent);
   proto.setProperty("TemporaryNetworkFailureError", QScriptValue(engine, QNetworkReply::TemporaryNetworkFailureError), permanent);
+#if QT_VERSION >= 0x050000
   proto.setProperty("NetworkSessionFailedError", QScriptValue(engine, QNetworkReply::NetworkSessionFailedError), permanent);
   proto.setProperty("BackgroundRequestNotAllowedError", QScriptValue(engine, QNetworkReply::BackgroundRequestNotAllowedError), permanent);
+#endif
   // Not in Qt 5.5 //proto.setProperty("TooManyRedirectsError", QScriptValue(engine, QNetworkReply::TooManyRedirectsError), permanent);
   // Not in Qt 5.5 //proto.setProperty("InsecureRedirectError", QScriptValue(engine, QNetworkReply::InsecureRedirectError), permanent);
   proto.setProperty("ProxyConnectionRefusedError", QScriptValue(engine, QNetworkReply::ProxyConnectionRefusedError), permanent);
@@ -61,18 +63,22 @@ void setupQNetworkReplyProto(QScriptEngine *engine)
   proto.setProperty("ContentNotFoundError", QScriptValue(engine, QNetworkReply::ContentNotFoundError), permanent);
   proto.setProperty("AuthenticationRequiredError", QScriptValue(engine, QNetworkReply::AuthenticationRequiredError), permanent);
   proto.setProperty("ContentReSendError", QScriptValue(engine, QNetworkReply::ContentReSendError), permanent);
+#if QT_VERSION >= 0x050000
   proto.setProperty("ContentConflictError", QScriptValue(engine, QNetworkReply::ContentConflictError), permanent);
   proto.setProperty("ContentGoneError", QScriptValue(engine, QNetworkReply::ContentGoneError), permanent);
   proto.setProperty("InternalServerError", QScriptValue(engine, QNetworkReply::InternalServerError), permanent);
   proto.setProperty("OperationNotImplementedError", QScriptValue(engine, QNetworkReply::OperationNotImplementedError), permanent);
   proto.setProperty("ServiceUnavailableError", QScriptValue(engine, QNetworkReply::ServiceUnavailableError), permanent);
+#endif
   proto.setProperty("ProtocolUnknownError", QScriptValue(engine, QNetworkReply::ProtocolUnknownError), permanent);
   proto.setProperty("ProtocolInvalidOperationError", QScriptValue(engine, QNetworkReply::ProtocolInvalidOperationError), permanent);
   proto.setProperty("UnknownNetworkError", QScriptValue(engine, QNetworkReply::UnknownNetworkError), permanent);
   proto.setProperty("UnknownProxyError", QScriptValue(engine, QNetworkReply::UnknownProxyError), permanent);
   proto.setProperty("UnknownContentError", QScriptValue(engine, QNetworkReply::UnknownContentError), permanent);
   proto.setProperty("ProtocolFailure", QScriptValue(engine, QNetworkReply::ProtocolFailure), permanent);
+#if QT_VERSION >= 0x050000
   proto.setProperty("UnknownServerError", QScriptValue(engine, QNetworkReply::UnknownServerError), permanent);
+#endif
 }
 
 QNetworkReplyProto::QNetworkReplyProto(QObject *parent)

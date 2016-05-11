@@ -22,6 +22,7 @@
 class QByteArray;
 
 Q_DECLARE_METATYPE(QNetworkReply*)
+Q_DECLARE_METATYPE(enum QNetworkReply::NetworkError)
 
 void setupQNetworkReplyProto(QScriptEngine *engine);
 
