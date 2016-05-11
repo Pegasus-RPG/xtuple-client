@@ -43,6 +43,12 @@ HEADERS += setupscriptapi.h \
     qdialogbuttonboxproto.h \
     qdialogsetup.h \
     qdirproto.h \
+    qdnsdomainnamerecordproto.h \
+    qdnshostaddressrecordproto.h \
+    qdnslookupproto.h \
+    qdnsmailexchangerecordproto.h \
+    qdnsservicerecordproto.h \
+    qdnstextrecordproto.h \
     qdockwidgetproto.h \
     qdomattrproto.h \
     qdomcdatasectionproto.h \
@@ -188,6 +194,12 @@ SOURCES += setupscriptapi.cpp \
     qdialogbuttonboxproto.cpp \
     qdialogsetup.cpp \
     qdirproto.cpp \
+    qdnsdomainnamerecordproto.cpp \
+    qdnshostaddressrecordproto.cpp \
+    qdnslookupproto.cpp \
+    qdnsmailexchangerecordproto.cpp \
+    qdnsservicerecordproto.cpp \
+    qdnstextrecordproto.cpp \
     qdockwidgetproto.cpp \
     qdomattrproto.cpp \
     qdomcdatasectionproto.cpp \

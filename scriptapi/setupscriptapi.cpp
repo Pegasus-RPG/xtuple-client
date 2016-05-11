@@ -45,6 +45,12 @@
 #include "qdialogsetup.h"
 #include "qdialogbuttonboxproto.h"
 #include "qdirproto.h"
+#include "qdnsdomainnamerecordproto.h"
+#include "qdnshostaddressrecordproto.h"
+#include "qdnslookupproto.h"
+#include "qdnsmailexchangerecordproto.h"
+#include "qdnsservicerecordproto.h"
+#include "qdnstextrecordproto.h"
 #include "qdockwidgetproto.h"
 #include "qdomattrproto.h"
 #include "qdomcdatasectionproto.h"
@@ -211,6 +217,12 @@ void setupScriptApi(QScriptEngine *engine)
   setupQDialog(engine);
   setupQDialogButtonBoxProto(engine);
   setupQDirProto(engine);
+  setupQDnsDomainNameRecordProto(engine);
+  setupQDnsHostAddressRecordProto(engine);
+  setupQDnsLookupProto(engine);
+  setupQDnsMailExchangeRecordProto(engine);
+  setupQDnsServiceRecordProto(engine);
+  setupQDnsTextRecordProto(engine);
   setupQDockWidgetProto(engine);
   setupQDomAttrProto(engine);
   setupQDomCDATASectionProto(engine);
