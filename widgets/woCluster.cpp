@@ -41,14 +41,14 @@ void setupWoCluster(QScriptEngine *engine)
 }
 
 WoLineEdit::WoLineEdit(QWidget *pParent, const char *pName) :
-    VirtualClusterLineEdit(pParent, "wo", "wo_id", "wo_number::text || '-' || wo_subnumber::text", "item_number", "(item_descrip1 || ' ' || item_descrip2) ", 0, pName)
+    VirtualClusterLineEdit(pParent, "wo", "wo_id", "formatWoNumber(wo_id)", "item_number", "(item_descrip1 || ' ' || item_descrip2) ", 0, pName)
 {
   _woType = 0;
   init();
 }
 
 WoLineEdit::WoLineEdit(int pWoType, QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "wo", "wo_id", "wo_number::text || '-' || wo_subnumber::text", "item_number", "(item_descrip1 || ' ' || item_descrip2) ", 0, pName)
+    VirtualClusterLineEdit(pParent, "wo", "wo_id", "formatWoNumber(wo_id)", "item_number", "(item_descrip1 || ' ' || item_descrip2) ", 0, pName)
 {
   _woType = pWoType;
   init();
@@ -68,7 +68,7 @@ void WoLineEdit::init()
   _qtyReceived = 0.0;
 
   _query =  QString("SELECT wo_id AS id, "
-                    "       wo_number::text || '-' || wo_subnumber::text AS number,"
+                    "       formatWoNumber(wo_id) AS number,"
                     "       item_number AS name, "
                     "       (item_descrip1 || ' ' || item_descrip2) AS description, "
                     "       warehous_id,"
