@@ -89,10 +89,12 @@ void setupQNetworkRequestProto(QScriptEngine *engine)
   constructor.setProperty("CookieLoadControlAttribute", QScriptValue(engine, QNetworkRequest::CookieLoadControlAttribute), permanent);
   constructor.setProperty("CookieSaveControlAttribute", QScriptValue(engine, QNetworkRequest::CookieSaveControlAttribute), permanent);
   constructor.setProperty("AuthenticationReuseAttribute", QScriptValue(engine, QNetworkRequest::AuthenticationReuseAttribute), permanent);
+#if QT_VERSION >= 0x050000
   constructor.setProperty("BackgroundRequestAttribute", QScriptValue(engine, QNetworkRequest::BackgroundRequestAttribute), permanent);
   // Not needed //constructor.setProperty("SpdyAllowedAttribute", QScriptValue(engine, QNetworkRequest::SpdyAllowedAttribute), permanent);
   // Not needed //constructor.setProperty("SpdyWasUsedAttribute", QScriptValue(engine, QNetworkRequest::SpdyWasUsedAttribute), permanent);
   constructor.setProperty("EmitAllUploadProgressSignalsAttribute", QScriptValue(engine, QNetworkRequest::EmitAllUploadProgressSignalsAttribute), permanent);
+#endif
   // Not in Qt 5.5 //constructor.setProperty("FollowRedirectsAttribute", QScriptValue(engine, QNetworkRequest::FollowRedirectsAttribute), permanent);
   constructor.setProperty("User", QScriptValue(engine, QNetworkRequest::User), permanent);
   constructor.setProperty("UserMax", QScriptValue(engine, QNetworkRequest::UserMax), permanent);
@@ -111,8 +113,10 @@ void setupQNetworkRequestProto(QScriptEngine *engine)
   constructor.setProperty("LastModifiedHeader", QScriptValue(engine, QNetworkRequest::LastModifiedHeader), permanent);
   constructor.setProperty("CookieHeader", QScriptValue(engine, QNetworkRequest::CookieHeader), permanent);
   constructor.setProperty("SetCookieHeader", QScriptValue(engine, QNetworkRequest::SetCookieHeader), permanent);
+#if QT_VERSION >= 0x050000
   constructor.setProperty("UserAgentHeader", QScriptValue(engine, QNetworkRequest::UserAgentHeader), permanent);
   constructor.setProperty("ServerHeader", QScriptValue(engine, QNetworkRequest::ServerHeader), permanent);
+#endif
 
   qScriptRegisterMetaType(engine, LoadControlToScriptValue, LoadControlFromScriptValue);
   constructor.setProperty("Automatic", QScriptValue(engine, QNetworkRequest::Automatic), permanent);
@@ -159,7 +163,7 @@ bool QNetworkRequestProto::hasRawHeader(const QByteArray &headerName) const
   if (item)
     return item->hasRawHeader(headerName);
   return false;
-}    
+}
 
 QVariant QNetworkRequestProto::header(QNetworkRequest::KnownHeaders header) const
 {
