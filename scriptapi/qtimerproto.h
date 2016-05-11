@@ -37,9 +37,11 @@ class QTimerProto : public QObject, public QScriptable
     Q_INVOKABLE bool            isSingleShot() const;
     Q_INVOKABLE void            setInterval(int);
     Q_INVOKABLE void            setSingleShot(bool);
+#if QT_VERSION >= 0x050000
     Q_INVOKABLE void            setTimerType(Qt::TimerType atype = Qt::CoarseTimer);
-    Q_INVOKABLE int             timerId() const;
     Q_INVOKABLE Qt::TimerType   timerType() const;
+#endif
+    Q_INVOKABLE int             timerId() const;
 
   public slots:
     void start(int);

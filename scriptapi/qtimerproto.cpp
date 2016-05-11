@@ -28,8 +28,7 @@ void setupQTimerProto(QScriptEngine *engine)
   engine->setDefaultPrototype(qMetaTypeId<QTimer*>(), proto);
   //engine->setDefaultPrototype(qMetaTypeId<QTimer>(),  proto);
 
-  QScriptValue constructor = engine->newFunction(constructQTimer,
-                                                 proto);
+  QScriptValue constructor = engine->newFunction(constructQTimer, proto);
   engine->globalObject().setProperty("QTimer", constructor);
 }
 
@@ -89,6 +88,7 @@ bool QTimerProto::isSingleShot() const
   return false;
 }
 
+#if QT_VERSION >= 0x050000
 void QTimerProto::setTimerType(Qt::TimerType atype)
 {
   QTimer *item = qscriptvalue_cast<QTimer*>(thisObject());
@@ -106,6 +106,7 @@ Qt::TimerType QTimerProto::timerType()  const
 
   return Qt::CoarseTimer;
 }
+#endif
 
 int QTimerProto::timerId() const
 {
