@@ -55,6 +55,7 @@ priceList::priceList(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _prodcatid = -1;
   _custtypeid = -1;
   _custtypecode = "";
+  _listpriceschedule = "";
   _iteminvpricerat = 1.0;
 
   _qty->setValidator(omfgThis->qtyVal());
@@ -208,7 +209,8 @@ void priceList::sNewItem()
                   "       itemuomtouomratio(item_id, item_inv_uom_id, item_price_uom_id) AS iteminvpricerat,"
                   "       itemCost(:item_id, :cust_id, :shipto_id, :qty, item_inv_uom_id, item_price_uom_id,"
                   "                :curr_id, :effective, :asof, :warehous_id) AS item_unitcost,"
-                  "       listPrice(:item_id, :cust_id, :shipto_id, :warehous_id) AS item_unitprice"
+                  "       listPrice(:item_id, :cust_id, :shipto_id, :warehous_id) AS item_unitprice,"
+                  "       listPriceSchedule(:item_id, :cust_id, :shipto_id, :warehous_id) AS listpriceschedule"
                   "  FROM item LEFT OUTER JOIN itemsite ON (itemsite_item_id=item_id AND itemsite_warehous_id=:warehous_id)"
                   " WHERE (item_id=:item_id);");
     itemq.bindValue(":item_id",          _item->id());
@@ -227,6 +229,7 @@ void priceList::sNewItem()
       _unitCost->setDouble(itemq.value("item_unitcost").toDouble());
       _iteminvpricerat = itemq.value("iteminvpricerat").toDouble();
       _prodcatid = itemq.value("item_prodcat_id").toInt();
+      _listpriceschedule = itemq.value("listpriceschedule").toString();
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Price List Information"),
                                   itemq, __FILE__, __LINE__))
@@ -296,6 +299,7 @@ void priceList::sFillList()
   pricelistp.append("item_listcost",    _listCost->toDouble());
   pricelistp.append("item_unitcost",    _unitCost->toDouble());
   pricelistp.append("item_listprice",   _listPrice->toDouble());
+  pricelistp.append("listpricesched",   _listpriceschedule);
 
   XSqlQuery pricelistq = pricelistm.toQuery(pricelistp);
   _price->populate(pricelistq, true);
