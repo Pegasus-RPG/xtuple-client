@@ -22,6 +22,7 @@
 class QByteArray;
 
 Q_DECLARE_METATYPE(QNetworkReply*)
+Q_DECLARE_METATYPE(enum QNetworkReply::NetworkError)
 
 void setupQNetworkReplyProto(QScriptEngine *engine);
 
@@ -93,6 +94,12 @@ class QNetworkReplyProto : public QObject, public QScriptable
   public slots:
     Q_INVOKABLE void                              abort() const;
     Q_INVOKABLE void                              ignoreSslErrors();
+
+  signals:
+    void aboutToClose();
+    void bytesWritten(qint64 bytes);
+    void readChannelFinished();
+    void readyRead();
 };
 
 #endif

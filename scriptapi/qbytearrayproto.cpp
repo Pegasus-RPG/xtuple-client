@@ -10,6 +10,7 @@
 
 #include "qbytearrayproto.h"
 #include <QScriptValueIterator>
+#include <QDataStream>
 
 static QByteArray nullBA = QByteArray();
 
@@ -1053,7 +1054,6 @@ QString QByteArrayProto::toString() const
 }
 
 // Node.js Buffer emulation helper functions.
-#include <QDataStream>
 int QByteArrayProto::readInt16BE(int offset, bool noAssert) const
 {
   QByteArray *item = qscriptvalue_cast<QByteArray*>(thisObject());

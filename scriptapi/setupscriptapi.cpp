@@ -19,6 +19,7 @@
 #include "currdisplaysetup.h"
 #include "documentssetup.h"
 #include "empcluster.h"
+#include "engineevaluate.h"
 #include "exporthelper.h"
 #include "filemoveselector.h"
 #include "glclustersetup.h"
@@ -44,6 +45,12 @@
 #include "qdialogsetup.h"
 #include "qdialogbuttonboxproto.h"
 #include "qdirproto.h"
+#include "qdnsdomainnamerecordproto.h"
+#include "qdnshostaddressrecordproto.h"
+#include "qdnslookupproto.h"
+#include "qdnsmailexchangerecordproto.h"
+#include "qdnsservicerecordproto.h"
+#include "qdnstextrecordproto.h"
 #include "qdockwidgetproto.h"
 #include "qdomattrproto.h"
 #include "qdomcdatasectionproto.h"
@@ -183,6 +190,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupDocuments(engine);
   setupEmpCluster(engine);
   setupEmpClusterLineEdit(engine);
+  setupEngineEvaluate(engine);
   setupExportHelper(engine);
   setupFileMoveSelector(engine);
   setupGLCluster(engine);
@@ -209,6 +217,12 @@ void setupScriptApi(QScriptEngine *engine)
   setupQDialog(engine);
   setupQDialogButtonBoxProto(engine);
   setupQDirProto(engine);
+  setupQDnsDomainNameRecordProto(engine);
+  setupQDnsHostAddressRecordProto(engine);
+  setupQDnsLookupProto(engine);
+  setupQDnsMailExchangeRecordProto(engine);
+  setupQDnsServiceRecordProto(engine);
+  setupQDnsTextRecordProto(engine);
   setupQDockWidgetProto(engine);
   setupQDomAttrProto(engine);
   setupQDomCDATASectionProto(engine);
