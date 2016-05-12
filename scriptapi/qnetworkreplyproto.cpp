@@ -12,11 +12,11 @@
 
 #include <QNetworkReply>
 
-QScriptValue NetworkErrorToScriptValue(QScriptEngine *engine, const QNetworkReply::NetworkError &item)
+QScriptValue NetworkReplyNetworkErrorToScriptValue(QScriptEngine *engine, const QNetworkReply::NetworkError &item)
 {
   return engine->newVariant(item);
 }
-void NetworkErrorFromScriptValue(const QScriptValue &obj, QNetworkReply::NetworkError &item)
+void NetworkReplyNetworkErrorFromScriptValue(const QScriptValue &obj, QNetworkReply::NetworkError &item)
 {
   item = (QNetworkReply::NetworkError)obj.toInt32();
 }
@@ -38,7 +38,7 @@ void setupQNetworkReplyProto(QScriptEngine *engine)
   QScriptValue proto = engine->newQObject(new QNetworkReplyProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QNetworkReply*>(), proto);
 
-  qScriptRegisterMetaType(engine, NetworkErrorToScriptValue, NetworkErrorFromScriptValue);
+  qScriptRegisterMetaType(engine, NetworkReplyNetworkErrorToScriptValue, NetworkReplyNetworkErrorFromScriptValue);
   proto.setProperty("NoError", QScriptValue(engine, QNetworkReply::NoError), permanent);
   proto.setProperty("ConnectionRefusedError", QScriptValue(engine, QNetworkReply::ConnectionRefusedError), permanent);
   proto.setProperty("RemoteHostClosedError", QScriptValue(engine, QNetworkReply::RemoteHostClosedError), permanent);

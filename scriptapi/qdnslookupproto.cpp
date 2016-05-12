@@ -17,20 +17,20 @@ void setupQDnsLookupProto(QScriptEngine *engine)
 }
 #else
 
-QScriptValue ErrorToScriptValue(QScriptEngine *engine, const QDnsLookup::Error &item)
+QScriptValue DnsLookupErrorToScriptValue(QScriptEngine *engine, const QDnsLookup::Error &item)
 {
   return engine->newVariant(item);
 }
-void ErrorFromScriptValue(const QScriptValue &obj, QDnsLookup::Error &item)
+void DnsLookupErrorFromScriptValue(const QScriptValue &obj, QDnsLookup::Error &item)
 {
   item = (QDnsLookup::Error)obj.toInt32();
 }
 
-QScriptValue TypeToScriptValue(QScriptEngine *engine, const QDnsLookup::Type &item)
+QScriptValue DnsLookupTypeToScriptValue(QScriptEngine *engine, const QDnsLookup::Type &item)
 {
   return engine->newVariant(item);
 }
-void TypeFromScriptValue(const QScriptValue &obj, QDnsLookup::Type &item)
+void DnsLookupTypeFromScriptValue(const QScriptValue &obj, QDnsLookup::Type &item)
 {
   item = (QDnsLookup::Type)obj.toInt32();
 }
@@ -46,7 +46,7 @@ void setupQDnsLookupProto(QScriptEngine *engine)
   QScriptValue constructor = engine->newFunction(constructQDnsLookup, proto);
   engine->globalObject().setProperty("QDnsLookup",  constructor);
 
-  qScriptRegisterMetaType(engine, ErrorToScriptValue, ErrorFromScriptValue);
+  qScriptRegisterMetaType(engine, DnsLookupErrorToScriptValue, DnsLookupErrorFromScriptValue);
   constructor.setProperty("NoError", QScriptValue(engine, QDnsLookup::NoError), permanent);
   constructor.setProperty("ResolverError", QScriptValue(engine, QDnsLookup::ResolverError), permanent);
   constructor.setProperty("OperationCancelledError", QScriptValue(engine, QDnsLookup::OperationCancelledError), permanent);
@@ -56,7 +56,7 @@ void setupQDnsLookupProto(QScriptEngine *engine)
   constructor.setProperty("ServerRefusedError", QScriptValue(engine, QDnsLookup::ServerRefusedError), permanent);
   constructor.setProperty("NotFoundError", QScriptValue(engine, QDnsLookup::NotFoundError), permanent);
 
-  qScriptRegisterMetaType(engine, TypeToScriptValue, TypeFromScriptValue);
+  qScriptRegisterMetaType(engine, DnsLookupTypeToScriptValue, DnsLookupTypeFromScriptValue);
   constructor.setProperty("A", QScriptValue(engine, QDnsLookup::A), permanent);
   constructor.setProperty("AAAA", QScriptValue(engine, QDnsLookup::AAAA), permanent);
   constructor.setProperty("ANY", QScriptValue(engine, QDnsLookup::ANY), permanent);

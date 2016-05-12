@@ -18,47 +18,47 @@
 
 #define DEBUG false
 
-QScriptValue AttributeToScriptValue(QScriptEngine *engine, const QNetworkRequest::Attribute &item)
+QScriptValue NetworkRequestAttributeToScriptValue(QScriptEngine *engine, const QNetworkRequest::Attribute &item)
 {
   return engine->newVariant(item);
 }
-void AttributeFromScriptValue(const QScriptValue &obj, QNetworkRequest::Attribute &item)
+void NetworkRequestAttributeFromScriptValue(const QScriptValue &obj, QNetworkRequest::Attribute &item)
 {
   item = (QNetworkRequest::Attribute)obj.toInt32();
 }
 
-QScriptValue CacheLoadControlToScriptValue(QScriptEngine *engine, const QNetworkRequest::CacheLoadControl &item)
+QScriptValue NetworkRequestCacheLoadControlToScriptValue(QScriptEngine *engine, const QNetworkRequest::CacheLoadControl &item)
 {
   return engine->newVariant(item);
 }
-void CacheLoadControlFromScriptValue(const QScriptValue &obj, QNetworkRequest::CacheLoadControl &item)
+void NetworkRequestCacheLoadControlFromScriptValue(const QScriptValue &obj, QNetworkRequest::CacheLoadControl &item)
 {
   item = (QNetworkRequest::CacheLoadControl)obj.toInt32();
 }
 
-QScriptValue KnownHeadersToScriptValue(QScriptEngine *engine, const QNetworkRequest::KnownHeaders &item)
+QScriptValue NetworkRequestKnownHeadersToScriptValue(QScriptEngine *engine, const QNetworkRequest::KnownHeaders &item)
 {
   return engine->newVariant(item);
 }
-void KnownHeadersFromScriptValue(const QScriptValue &obj, QNetworkRequest::KnownHeaders &item)
+void NetworkRequestKnownHeadersFromScriptValue(const QScriptValue &obj, QNetworkRequest::KnownHeaders &item)
 {
   item = (QNetworkRequest::KnownHeaders)obj.toInt32();
 }
 
-QScriptValue LoadControlToScriptValue(QScriptEngine *engine, const QNetworkRequest::LoadControl &item)
+QScriptValue NetworkRequestLoadControlToScriptValue(QScriptEngine *engine, const QNetworkRequest::LoadControl &item)
 {
   return engine->newVariant(item);
 }
-void LoadControlFromScriptValue(const QScriptValue &obj, QNetworkRequest::LoadControl &item)
+void NetworkRequestLoadControlFromScriptValue(const QScriptValue &obj, QNetworkRequest::LoadControl &item)
 {
   item = (QNetworkRequest::LoadControl)obj.toInt32();
 }
 
-QScriptValue PriorityToScriptValue(QScriptEngine *engine, const QNetworkRequest::Priority &item)
+QScriptValue NetworkRequestPriorityToScriptValue(QScriptEngine *engine, const QNetworkRequest::Priority &item)
 {
   return engine->newVariant(item);
 }
-void PriorityFromScriptValue(const QScriptValue &obj, QNetworkRequest::Priority &item)
+void NetworkRequestPriorityFromScriptValue(const QScriptValue &obj, QNetworkRequest::Priority &item)
 {
   item = (QNetworkRequest::Priority)obj.toInt32();
 }
@@ -74,7 +74,7 @@ void setupQNetworkRequestProto(QScriptEngine *engine)
   QScriptValue constructor = engine->newFunction(constructQNetworkRequest,  netreqproto);
   engine->globalObject().setProperty("QNetworkRequest", constructor);
 
-  qScriptRegisterMetaType(engine, AttributeToScriptValue, AttributeFromScriptValue);
+  qScriptRegisterMetaType(engine, NetworkRequestAttributeToScriptValue, NetworkRequestAttributeFromScriptValue);
   constructor.setProperty("HttpStatusCodeAttribute", QScriptValue(engine, QNetworkRequest::HttpStatusCodeAttribute), permanent);
   constructor.setProperty("HttpReasonPhraseAttribute", QScriptValue(engine, QNetworkRequest::HttpReasonPhraseAttribute), permanent);
   constructor.setProperty("RedirectionTargetAttribute", QScriptValue(engine, QNetworkRequest::RedirectionTargetAttribute), permanent);
@@ -99,13 +99,13 @@ void setupQNetworkRequestProto(QScriptEngine *engine)
   constructor.setProperty("User", QScriptValue(engine, QNetworkRequest::User), permanent);
   constructor.setProperty("UserMax", QScriptValue(engine, QNetworkRequest::UserMax), permanent);
 
-  qScriptRegisterMetaType(engine, CacheLoadControlToScriptValue, CacheLoadControlFromScriptValue);
+  qScriptRegisterMetaType(engine, NetworkRequestCacheLoadControlToScriptValue, NetworkRequestCacheLoadControlFromScriptValue);
   constructor.setProperty("AlwaysNetwork", QScriptValue(engine, QNetworkRequest::AlwaysNetwork), permanent);
   constructor.setProperty("PreferNetwork", QScriptValue(engine, QNetworkRequest::PreferNetwork), permanent);
   constructor.setProperty("PreferCache", QScriptValue(engine, QNetworkRequest::PreferCache), permanent);
   constructor.setProperty("AlwaysCache", QScriptValue(engine, QNetworkRequest::AlwaysCache), permanent);
 
-  qScriptRegisterMetaType(engine, KnownHeadersToScriptValue, KnownHeadersFromScriptValue);
+  qScriptRegisterMetaType(engine, NetworkRequestKnownHeadersToScriptValue, NetworkRequestKnownHeadersFromScriptValue);
   constructor.setProperty("ContentDispositionHeader", QScriptValue(engine, QNetworkRequest::ContentDispositionHeader), permanent);
   constructor.setProperty("ContentTypeHeader", QScriptValue(engine, QNetworkRequest::ContentTypeHeader), permanent);
   constructor.setProperty("ContentLengthHeader", QScriptValue(engine, QNetworkRequest::ContentLengthHeader), permanent);
@@ -118,11 +118,11 @@ void setupQNetworkRequestProto(QScriptEngine *engine)
   constructor.setProperty("ServerHeader", QScriptValue(engine, QNetworkRequest::ServerHeader), permanent);
 #endif
 
-  qScriptRegisterMetaType(engine, LoadControlToScriptValue, LoadControlFromScriptValue);
+  qScriptRegisterMetaType(engine, NetworkRequestLoadControlToScriptValue, NetworkRequestLoadControlFromScriptValue);
   constructor.setProperty("Automatic", QScriptValue(engine, QNetworkRequest::Automatic), permanent);
   constructor.setProperty("Manual", QScriptValue(engine, QNetworkRequest::Manual), permanent);
 
-  qScriptRegisterMetaType(engine, PriorityToScriptValue, PriorityFromScriptValue);
+  qScriptRegisterMetaType(engine, NetworkRequestPriorityToScriptValue, NetworkRequestPriorityFromScriptValue);
   constructor.setProperty("HighPriority", QScriptValue(engine, QNetworkRequest::HighPriority), permanent);
   constructor.setProperty("NormalPriority", QScriptValue(engine, QNetworkRequest::NormalPriority), permanent);
   constructor.setProperty("LowPriority", QScriptValue(engine, QNetworkRequest::LowPriority), permanent);
