@@ -22,8 +22,9 @@
 class QByteArray;
 
 Q_DECLARE_METATYPE(QNetworkReply*)
-// Q_DECLARE_METATYPE(enum QNetworkReply::NetworkError) // Already decleared in qnetworkreply.h
-
+#if QT_VERSION <= 0x050000
+ Q_DECLARE_METATYPE(enum QNetworkReply::NetworkError) // Already decleared in qnetworkreply.h in Qt 5.
+#endif
 void setupQNetworkReplyProto(QScriptEngine *engine);
 
 class QNetworkReplyProto : public QObject, public QScriptable
