@@ -28,14 +28,20 @@ QScriptValue QListQDnsMailExchangeRecordToScriptValue(QScriptEngine *engine, con
 void QListQDnsMailExchangeRecordFromScriptValue(const QScriptValue &obj, QList<QDnsMailExchangeRecord> &list)
 {
   list = QList<QDnsMailExchangeRecord>();
-  QScriptValueIterator it(obj);
 
-  while (it.hasNext()) {
-    it.next();
-    if (it.flags() & QScriptValue::SkipInEnumeration)
-      continue;
-    QDnsMailExchangeRecord item = qscriptvalue_cast<QDnsMailExchangeRecord>(it.value());
-    list.insert(it.name().toInt(), item);
+  if (obj.isArray()) {
+    QScriptValueIterator it(obj);
+
+    while (it.hasNext()) {
+      it.next();
+      if (it.flags() & QScriptValue::SkipInEnumeration)
+        continue;
+
+      if (it.value().isString()) {
+        QDnsMailExchangeRecord item = qscriptvalue_cast<QDnsMailExchangeRecord>(it.value());
+        list.insert(it.name().toInt(), item);
+      }
+    }
   }
 }
 

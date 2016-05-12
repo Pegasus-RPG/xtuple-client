@@ -28,14 +28,20 @@ QScriptValue QListQDnsHostAddressRecordToScriptValue(QScriptEngine *engine, cons
 void QListQDnsHostAddressRecordFromScriptValue(const QScriptValue &obj, QList<QDnsHostAddressRecord> &list)
 {
   list = QList<QDnsHostAddressRecord>();
-  QScriptValueIterator it(obj);
 
-  while (it.hasNext()) {
-    it.next();
-    if (it.flags() & QScriptValue::SkipInEnumeration)
-      continue;
-    QDnsHostAddressRecord item = qscriptvalue_cast<QDnsHostAddressRecord>(it.value());
-    list.insert(it.name().toInt(), item);
+  if (obj.isArray()) {
+    QScriptValueIterator it(obj);
+
+    while (it.hasNext()) {
+      it.next();
+      if (it.flags() & QScriptValue::SkipInEnumeration)
+        continue;
+
+      if (it.value().isString()) {
+        QDnsHostAddressRecord item = qscriptvalue_cast<QDnsHostAddressRecord>(it.value());
+        list.insert(it.name().toInt(), item);
+      }
+    }
   }
 }
 

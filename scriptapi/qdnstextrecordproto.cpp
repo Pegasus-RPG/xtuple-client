@@ -28,14 +28,20 @@ QScriptValue QListQDnsTextRecordToScriptValue(QScriptEngine *engine, const QList
 void QListQDnsTextRecordFromScriptValue(const QScriptValue &obj, QList<QDnsTextRecord> &list)
 {
   list = QList<QDnsTextRecord>();
-  QScriptValueIterator it(obj);
 
-  while (it.hasNext()) {
-    it.next();
-    if (it.flags() & QScriptValue::SkipInEnumeration)
-      continue;
-    QDnsTextRecord item = qscriptvalue_cast<QDnsTextRecord>(it.value());
-    list.insert(it.name().toInt(), item);
+  if (obj.isArray()) {
+    QScriptValueIterator it(obj);
+
+    while (it.hasNext()) {
+      it.next();
+      if (it.flags() & QScriptValue::SkipInEnumeration)
+        continue;
+
+      if (it.value().isString()) {
+        QDnsTextRecord item = qscriptvalue_cast<QDnsTextRecord>(it.value());
+        list.insert(it.name().toInt(), item);
+      }
+    }
   }
 }
 

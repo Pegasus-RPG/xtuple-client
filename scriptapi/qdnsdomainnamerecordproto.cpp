@@ -28,14 +28,20 @@ QScriptValue QListQDnsDomainNameRecordToScriptValue(QScriptEngine *engine, const
 void QListQDnsDomainNameRecordFromScriptValue(const QScriptValue &obj, QList<QDnsDomainNameRecord> &list)
 {
   list = QList<QDnsDomainNameRecord>();
-  QScriptValueIterator it(obj);
 
-  while (it.hasNext()) {
-    it.next();
-    if (it.flags() & QScriptValue::SkipInEnumeration)
-      continue;
-    QDnsDomainNameRecord item = qscriptvalue_cast<QDnsDomainNameRecord>(it.value());
-    list.insert(it.name().toInt(), item);
+  if (obj.isArray()) {
+    QScriptValueIterator it(obj);
+
+    while (it.hasNext()) {
+      it.next();
+      if (it.flags() & QScriptValue::SkipInEnumeration)
+        continue;
+
+      if (it.value().isString()) {
+        QDnsDomainNameRecord item = qscriptvalue_cast<QDnsDomainNameRecord>(it.value());
+        list.insert(it.name().toInt(), item);
+      }
+    }
   }
 }
 
