@@ -168,7 +168,7 @@ bool copyItem::saveItem()
     itemupdate.bindValue(":item_descrip1", _targetItemDescrip->text());
     itemupdate.exec();
 
-    if (ErrorReporter::error(QtCriticalMsg, this tr("Error Copying Item"),
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item"),
                                itemupdate, __FILE__, __LINE__))
     {
       // Remove the copied item since the Update failed.
