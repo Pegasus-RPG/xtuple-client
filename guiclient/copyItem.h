@@ -61,6 +61,7 @@ private:
     bool _captive;
     bool _inTransaction;
     bool _isActive;
+    bool _committed;
     int _newitemid;
 
 };

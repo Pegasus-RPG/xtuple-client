@@ -62,6 +62,7 @@ copyItem::copyItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlag
   _isActive = false;
   _inTransaction = false;
   _captive = false;
+  _committed = false;
 }
 
 copyItem::~copyItem()
@@ -103,6 +104,10 @@ void copyItem::sNext()
     if (saveItem())
     {
       _pages->setCurrentIndex(1);
+
+      begin();
+      sCopyBom();
+      sCopyItemsite();
     }
   }
 }
@@ -138,8 +143,8 @@ bool copyItem::saveItem()
   if(_source->id() == -1)
     return saved;
 
-  XSqlQuery xact;
   XSqlQuery itemsave;
+  XSqlQuery itemupdate;
 
   itemsave.prepare("SELECT copyItem(item_id, :targetitemnumber) AS result,"
                    "       item_id "
@@ -156,25 +161,27 @@ bool copyItem::saveItem()
 
     // Set item inactive until copy is committed.
 
-    itemsave.prepare("UPDATE item SET item_active=false, "
-                     "                item_descrip1=:item_descrip1 "
-                     "WHERE (item_id=:item_id);");
-    itemsave.bindValue(":item_id", _newitemid);
-    itemsave.bindValue(":item_descrip1", _targetItemDescrip->text());
-    itemsave.exec();
+    itemupdate.prepare("UPDATE item SET item_active=false, "
+                       "                item_descrip1=:item_descrip1 "
+                       "WHERE (item_id=:item_id);");
+    itemupdate.bindValue(":item_id", _newitemid);
+    itemupdate.bindValue(":item_descrip1", _targetItemDescrip->text());
+    itemupdate.exec();
 
-    begin();
-
-    sCopyBom();
-    sCopyItemsite();
-
-    saved = true;
+    if (ErrorReporter::error(QtCriticalMsg, this tr("Error Copying Item"),
+                               itemupdate, __FILE__, __LINE__))
+    {
+      // Remove the copied item since the Update failed.
+      cancelCopy();
+    }
+    else
+    {
+      saved = true;
+    }
   }
-
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item"),
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item"),
                                   itemsave, __FILE__, __LINE__))
   {
-    cancelCopy();
     saved = false;
   }
 
@@ -724,13 +731,17 @@ void copyItem::commit()
   {
     XSqlQuery xact;
     xact.exec("COMMIT;");
+    _committed = true;
     _inTransaction = false;
   }
 } 
 
 void copyItem::clear()
 {
+  _newitemid = -1;
+  _committed = false;
   _source->setId(-1);
+  _pages->setCurrentIndex(0);
   _targetItemNumber->clear();
   _targetItemDescrip->clear();
   _listCost->clear();
@@ -744,7 +755,9 @@ void copyItem::clear()
 
 void copyItem::closeEvent(QCloseEvent *pEvent)
 {
-  cancelCopy();
+  if (!_committed)
+    cancelCopy(); 
+
   XDialog::closeEvent(pEvent);
 }
 
