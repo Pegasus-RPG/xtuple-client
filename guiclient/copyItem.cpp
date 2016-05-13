@@ -187,7 +187,7 @@ bool copyItem::saveItem()
 
       // Then report the error to the user.
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item"),
-                               itemupdate, __FILE__, __LINE__))
+                               itemupdate, __FILE__, __LINE__));
     }
     else
     {
