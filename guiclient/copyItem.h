@@ -51,9 +51,6 @@ public slots:
 
 protected slots:
     virtual void languageChange();
-    virtual void begin();
-    virtual void rollback();
-    virtual void commit();
     virtual void cancelCopy();
     virtual bool saveItem();
 

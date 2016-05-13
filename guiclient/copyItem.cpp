@@ -103,11 +103,23 @@ void copyItem::sNext()
 
     if (saveItem())
     {
-      _pages->setCurrentIndex(1);
-
-      begin();
+      // Copy Itemsites and BOM if those check boxes are already checked
+      // due to the restoration of the previous state of the screen from the
+      // last time copyItem was used.
+ 
       sCopyBom();
       sCopyItemsite();
+
+      // Display the next page so the user can make alterations to the staged
+      // copy of child relations and decide what else to copy.  With the item
+      // in existence, not just in a pending transaction, other users will
+      // not be able to select the same item number in a separate, attempted copy.
+
+      _pages->setCurrentIndex(1);
+
+      // Ultimately, the user will either click "Copy" (sCopy), click "Cancel"
+      // (sCancel), or close the window (closeEvent).  In the latter two cases,
+      // the creation of the item and child objects will be undone.
     }
   }
 }
@@ -168,11 +180,14 @@ bool copyItem::saveItem()
     itemupdate.bindValue(":item_descrip1", _targetItemDescrip->text());
     itemupdate.exec();
 
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item"),
-                               itemupdate, __FILE__, __LINE__))
+    if (itemupdate.lastError().type() != QSqlError::NoError)
     {
       // Remove the copied item since the Update failed.
       cancelCopy();
+
+      // Then report the error to the user.
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item"),
+                               itemupdate, __FILE__, __LINE__))
     }
     else
     {
@@ -673,7 +688,7 @@ void copyItem::sCopy()
     return;
   }
 
-  commit();
+  _committed = true;
 
   omfgThis->sItemsUpdated(_newitemid, true);
 
@@ -688,53 +703,47 @@ void copyItem::sCopy()
 
 void copyItem::sCancel()
 {
+  // The user decided not to copy the item.
   cancelCopy();
   close();
 }
 
 void copyItem::cancelCopy()
 {
-  rollback();
- 
   if (_newitemid > 0)
   { 
+    // Delete the item's BOM (if any)
+
+    XSqlQuery bomitemq;
+    bomitemq.prepare("SELECT deleteBom(:targetitemid) AS result;");
+    bomitemq.bindValue(":targetitemid", _newitemid);
+    bomitemq.exec();
+
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Deleting Bom"),
+                             bomitemq, __FILE__, __LINE__))
+    {
+      return;
+    }
+
+    // Delete the item sites (if any)
+
+    XSqlQuery itemsiteq;
+    itemsiteq.prepare("DELETE FROM itemsite "
+                      "WHERE (itemsite_item_id=:targetitemid);");
+    itemsiteq.bindValue(":targetitemid", _newitemid);
+    itemsiteq.exec();
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Deleting Itemsite"),
+                             itemsiteq, __FILE__, __LINE__))
+      return;
+    
+    // Delete the item
+
     XSqlQuery query;
     query.prepare("SELECT deleteItem(:itemid)");
     query.bindValue(":itemid", _newitemid);
     query.exec();
   }
 }
-
-void copyItem::begin()
-{
-  if (!_inTransaction)
-  {
-    _inTransaction = true;
-    XSqlQuery xact;
-    xact.exec("BEGIN;");
-  }
-}
-
-void copyItem::rollback()
-{
-  if (_inTransaction)
-  {
-    XSqlQuery xact;
-    xact.exec("ROLLBACK;");
-    _inTransaction = false;
-  }
-}
-
-void copyItem::commit()
-{
-  if (_inTransaction)
-  {
-    XSqlQuery xact;
-    xact.exec("COMMIT;");
-    _committed = true;
-    _inTransaction = false;
-  }
-} 
 
 void copyItem::clear()
 {
