@@ -182,12 +182,12 @@ bool copyItem::saveItem()
 
     if (itemupdate.lastError().type() != QSqlError::NoError)
     {
-      // Remove the copied item since the Update failed.
+      // Remove the copied item since the update failed.
       cancelCopy();
 
       // Then report the error to the user.
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Copying Item"),
-                               itemupdate, __FILE__, __LINE__));
+                               itemupdate, __FILE__, __LINE__);
     }
     else
     {
