@@ -1999,44 +1999,8 @@ void GUIClient::sCustomCommand()
   */
 void GUIClient::launchBrowser(QWidget * w, const QString & url)
 {
-#if defined(Q_OS_WIN) && QT_VERSION < 0x050000
-  // Windows - let the OS do the work , needs qt5 replacement
-  QT_WA( {
-      ShellExecute(w->winId(), 0, (TCHAR*)url.utf16(), 0, 0, SW_SHOWNORMAL );
-    } , {
-      ShellExecuteA(w->winId(), 0, url.toLocal8Bit(), 0, 0, SW_SHOWNORMAL );
-    } );
-#else
-  const char *b = getenv("BROWSER");
-  QStringList browser;
-  if(b) {
-    QString t(b);
-    browser = t.split(':', QString::SkipEmptyParts);
-  }
-#if defined(Q_OS_MAC)
-  browser.append("/usr/bin/open");
-#else
-  // append this on linux just as a good guess
-  browser.append("/usr/bin/firefox");
-  browser.append("/usr/bin/mozilla");
-#endif
-  for(QStringList::const_iterator cit=browser.begin(); cit!=browser.end(); ++cit) {
-    QString app = *cit;
-    if(app.contains("%s")) {
-      app.replace("%s", url);
-    } else {
-      app += " " + url;
-    }
-    app.replace("%%", "%");
-    QProcess *proc = new QProcess(w);
-    connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), proc, SLOT(deleteLater()));
-    QStringList args = app.split(QRegExp(" +"));
-    QString cmd = args.first();
-    args.removeFirst();
-    proc->start(cmd, args);
-    if (proc->waitForStarted())
-      return;
-  }
+  if(QDesktopServices::openUrl(url))
+    return;
 
   // There was an error. Offer the user a chance to look at the online help to
   // tell them about the BROWSER variable
@@ -2047,7 +2011,6 @@ void GUIClient::launchBrowser(QWidget * w, const QString & url)
                                 "the environment variable BROWSER to point "
                                 "to the browser executable.") );
   }
-#endif
 }
 
 /** @brief Return the list of windows opened by GUIClient::handleNewWindow().
