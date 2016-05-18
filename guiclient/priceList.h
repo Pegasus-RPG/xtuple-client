@@ -49,6 +49,7 @@ protected:
     int _custtypeid;
     double _iteminvpricerat;
     QString _custtypecode;
+    QString _listpriceschedule;
     QDate _effective;
     QDate _asOf;
 
