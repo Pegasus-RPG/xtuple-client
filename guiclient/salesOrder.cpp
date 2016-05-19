@@ -2265,7 +2265,10 @@ void salesOrder::sHandleButtons()
     else
     {
       _lineMode = 0;
-      _edit->setEnabled(false);
+      if (_mode == cView)
+        _edit->setEnabled(true);
+      else
+        _edit->setEnabled(false);
       _action->setEnabled(false);
       _delete->setEnabled(false);
     }
