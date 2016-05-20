@@ -121,4 +121,10 @@ void massReplaceComponent::sReplace()
     _close->setText(tr("&Close"));
     _original->setFocus();
   }
+  else
+  {
+    QMessageBox::critical( this, tr("Mass Replace"),
+                          tr("Please provide a valid Original Item, Replacement Item, and Effective Date.") );
+    return;
+  }
 }
