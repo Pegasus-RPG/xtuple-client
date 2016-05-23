@@ -938,6 +938,7 @@ HEADERS = ../common/format.h                    \
           jsHighlighter.h               \
           labelForm.h                   \
           labelForms.h                  \
+          ledgerControl.h               \
           listRecurringInvoices.h       \
           locales.h                     \
           location.h                    \
@@ -1553,6 +1554,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           jsHighlighter.cpp             \
           labelForm.cpp                 \
           labelForms.cpp                \
+          ledgerControl.cpp             \
           listRecurringInvoices.cpp     \
           locales.cpp                   \
           location.cpp                  \
