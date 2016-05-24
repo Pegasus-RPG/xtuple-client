@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -541,8 +541,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _splash->showMessage(tr("Completing Initialization"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
   _splash->finish(this);
-
-  connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(sFocusChanged(QWidget*,QWidget*))); // Need this?
 
   //Restore Window Size Saved on Close
   QRect availableGeometry = QApplication::desktop()->availableGeometry();
@@ -2215,31 +2213,6 @@ void GUIClient::tabifyDockWidget ( QDockWidget * first, QDockWidget * second )
 void GUIClient::setCentralWidget(QWidget * widget)
 {
   QMainWindow::setCentralWidget(widget);
-}
-
-/** @brief A slot called when the user's focus has changed from one window
-           to another.
-
-    This slot should not be used except internally by GUIClient.
-  */
-void GUIClient::sFocusChanged(QWidget *old, QWidget *now)
-{
-  Q_UNUSED(old);
-  Q_UNUSED(now);
-  QWidget * thisActive = workspace()->activeSubWindow();
-  if(omfgThis->showTopLevel())
-    thisActive = qApp->activeWindow();
-  if(thisActive == this)
-    return;
-  if(thisActive && thisActive->inherits("QMessageBox"))
-    return;
-  _activeWindow = thisActive;
-}
-
-/** @brief Return the currently active window. */
-QWidget * GUIClient::myActiveWindow()
-{
-  return _activeWindow;
 }
 
 /** @brief Create a window from extension scripts to adjust inventory .

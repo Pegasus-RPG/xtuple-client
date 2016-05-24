@@ -231,7 +231,6 @@ class GUIClient : public QMainWindow
     QString _singleWindow;
 
     Q_INVOKABLE        void  launchBrowser(QWidget*, const QString &);
-    Q_INVOKABLE     QWidget *myActiveWindow();
     Q_INVOKABLE inline bool  shuttingDown() { return _shuttingDown; }
 
     void loadScriptGlobals(QScriptEngine * engine);
@@ -309,8 +308,6 @@ class GUIClient : public QMainWindow
     void sWorkOrdersUpdated(int, bool);
 
     void sIdleTimeout();
-
-    void sFocusChanged(QWidget* old, QWidget* now);
 
     void sClearErrorMessages();
     void sNewErrorMessage();
