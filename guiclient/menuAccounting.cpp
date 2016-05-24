@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -103,6 +103,7 @@
 #include "dspGLSeries.h"
 #include "dspTrialBalances.h"
 #include "dspJournals.h"
+#include "ledgerControl.h"
 
 #include "companies.h"
 #include "profitCenters.h"
@@ -369,7 +370,9 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "gl.dspGLSeries",			tr("&Series..."),			SLOT(sDspGLSeries()),			glReportsMenu, "ViewGLTransactions",	NULL, NULL, true, NULL },
     { "gl.dspStandardJournalHistory",	tr("Standard &Journal History..."),	SLOT(sDspStandardJournalHistory()),	glReportsMenu, "ViewGLTransactions",	NULL, NULL, true, NULL },
     { "separator", NULL, NULL, glReportsMenu, "true", NULL, NULL, _metrics->boolean("UseJournals"), NULL },
-    { "gl.dspJournals",	tr("Journals..."),	SLOT(sDspJournals()),	glReportsMenu, "ViewJournals",	NULL, NULL, _metrics->boolean("UseJournals"), NULL },
+    { "gl.dspJournals",	  tr("Journals..."),	SLOT(sDspJournals()),	glReportsMenu, "ViewJournals",	     NULL, NULL, _metrics->boolean("UseJournals"), NULL },
+    { "separator",        NULL,                 NULL,                   glReportsMenu, "true",               NULL, NULL, true, NULL },
+    { "gl.ledgerControl", tr("Ledger Control"), SLOT(sLedgerControl()), glReportsMenu, "ViewGLTransactions", NULL, NULL, true, NULL },
 
     { "menu",			tr("&Bank Reconciliation"), 	(char*)bankrecMenu,		mainMenu,    "true",						NULL, NULL, true, NULL },
     { "gl.reconcileBankaccnt",	tr("&Reconcile..."),SLOT(sReconcileBankaccount()),	bankrecMenu, "MaintainBankRec", new QPixmap(":/images/bankReconciliation.png"), toolBar,  true, tr("Reconcile Bank Account") },
@@ -944,6 +947,11 @@ void menuAccounting::sDspStandardJournalHistory()
 void menuAccounting::sDspTrialBalances()
 {
   omfgThis->handleNewWindow(new dspTrialBalances());
+}
+
+void menuAccounting::sLedgerControl()
+{
+  omfgThis->handleNewWindow(new ledgerControl());
 }
 
 //  Master Information
