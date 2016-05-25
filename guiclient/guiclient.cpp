@@ -394,7 +394,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 {
   XSqlQuery _GGUIClient;
   _menuBar = 0;
-  _activeWindow = 0;
   _shown = false;
   _shuttingDown = false;
 
