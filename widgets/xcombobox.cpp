@@ -61,7 +61,6 @@ XComboBoxPrivate::XComboBoxPrivate(XComboBox *pParent)
     _default(XComboBox::First),
     _editButton(0),
     _label(0),
-    _lastId(-1),
     _parent(pParent),
     _popupCounter(0),
     _mapper(0)
@@ -1255,12 +1254,12 @@ void XComboBox::setCode(const QString &pString)
       if (_data->_codes.at(counter) == pString)
       {
         if (DEBUG)
-          qDebug("%s::setCode(%s) found at %d with _ids.count %d & _lastId %d",
+          qDebug("%s::setCode(%s) found at %d with _ids.count %d & id() %d",
                  objectName().toLatin1().data(), pString.toLatin1().data(),
-                 counter, _data->_ids.count(), _data->_lastId);
+                 counter, _data->_ids.count(), id());
         setCurrentIndex(counter);
 
-        if (_data->_ids.count() && _data->_lastId!=_data->_ids.at(counter))
+        if (_data->_ids.count() && id()!=_data->_ids.at(counter))
           setId(_data->_ids.at(counter));
 
         return;
@@ -1313,11 +1312,8 @@ void XComboBox::setId(int pTarget)
       {
         if (_data->_ids.at(counter) == id)
         {
-          setCurrentIndex(counter);
-
-          if(_data->_lastId!=id)
+          if(this->id()!=id)
           {
-            _data->_lastId = id;
             updateMapperData();
             emit newID(pTarget);
             emit valid(true);
@@ -1325,6 +1321,8 @@ void XComboBox::setId(int pTarget)
             if (allowNull())
               emit notNull(true);
           }
+
+          setCurrentIndex(counter);
 
           return;
         }
@@ -1337,11 +1335,8 @@ void XComboBox::setId(int pTarget)
     {
       if (_data->_ids.at(counter) == pTarget)
       {
-        setCurrentIndex(counter);
-
-        if(_data->_lastId!=pTarget)
+        if(id()!=pTarget)
         {
-          _data->_lastId = pTarget;
           updateMapperData();
           emit newID(pTarget);
           emit valid(true);
@@ -1349,6 +1344,8 @@ void XComboBox::setId(int pTarget)
           if (allowNull())
             emit notNull(true);
         }
+
+        setCurrentIndex(counter);
 
         return;
       }
@@ -1406,8 +1403,6 @@ void XComboBox::setNull()
 {
   if (allowNull())
   {
-    _data->_lastId = -1;
-
     setCurrentIndex(0);
     updateMapperData();
     emit newID(-1);
@@ -1473,8 +1468,8 @@ void XComboBox::populate(XSqlQuery pQuery, int pSelected)
 
   // TODO: why doesn't setId() handle the following as expected? {
   updateMapperData();
-  emit newID(_data->_lastId);
-  emit valid((_data->_lastId != -1));
+  emit newID(id());
+  emit valid(isValid());
   // } end why
 }
 
@@ -1569,15 +1564,14 @@ void XComboBox::sHandleNewIndex(int pIndex)
     qDebug("%s::sHandleNewIndex(%d)",objectName().toLatin1().data(), pIndex);
 
   if ((pIndex >= 0) && (pIndex < _data->_ids.count()) &&
-      (_data->_ids.at(pIndex) != _data->_lastId))
+      (_data->_ids.at(pIndex) != id()))
   {
-    _data->_lastId = _data->_ids.at(pIndex);
     updateMapperData();
-    emit newID(_data->_lastId);
+    emit newID(_data->_ids.at(pIndex));
 
     if (DEBUG)
       qDebug("%s::sHandleNewIndex() emitted %d",
-             objectName().toLatin1().data(), _data->_lastId);
+             objectName().toLatin1().data(), _data->_ids.at(pIndex));
 
     if (allowNull())
     {
