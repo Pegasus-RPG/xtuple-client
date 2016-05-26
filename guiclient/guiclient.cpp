@@ -391,14 +391,17 @@ GUIClient *omfgThis;
     Do not call this more than once or bad things will happen.
   */
 GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
+  :
+    _databaseURL(pDatabaseURL),
+    _username(pUsername),
+    _menuBar(0),
+    _inputManager(0),
+    _shown(false),
+    _shuttingDown(false),
+    _menu(0)
 {
   XSqlQuery _GGUIClient;
-  _menuBar = 0;
-  _shown = false;
-  _shuttingDown = false;
 
-  _databaseURL = pDatabaseURL;
-  _username = pUsername;
   __saveSizePositionEventFilter = new SaveSizePositionEventFilter(this);
 
   _splash->showMessage(tr("Initializing Internal Data"), SplashTextAlignment, SplashTextColor);
@@ -458,38 +461,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   qApp->installEventFilter(_inputManager);
 
   setWindowTitle();
-
-  // load plugins before building the menus
-  // TODO? add a step later to add to the menus from the plugins?
-  QStringList checkForPlugins;
-  checkForPlugins << QApplication::applicationDirPath()
-                  << QString("/usr/lib/postbooks");
-  foreach (QString dirname, checkForPlugins)
-  {
-    QDir pluginsDir(dirname);
-    while (! pluginsDir.exists("plugins") && pluginsDir.cdUp())
-      ;
-    if (pluginsDir.cd("plugins"))
-    {
-      foreach (QString fileName, pluginsDir.entryList(QDir::Files))
-        new QPluginLoader(pluginsDir.absoluteFilePath(fileName), this);
-    }
-  }
-
-//  Populate the menu bar
-  XSqlQuery window;
-  window.prepare("SELECT usr_window "
-                 "  FROM usr "
-                 " WHERE (usr_username=getEffectiveXtUser());");
-  window.exec();
-  // keep synchronized with user.ui.h
-  _singleWindow = "";
-  if (window.first())
-    _singleWindow = window.value("usr_window").toString();
-  if (_singleWindow.isEmpty())
-    initMenuBar();
-  else
-    _showTopLevel = true; // if we are in single level mode we want to run toplevel always
 
   _splash->showMessage(tr("Loading the Background Image"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
@@ -575,10 +546,11 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
                     availableGeometry.top()));
     move(pos);
   }
-  #ifdef Q_OS_MAC
-    _menu = new QMenu(this);
-    updateMacDockMenu(this);
-  #endif
+
+#ifdef Q_OS_MAC
+  _menu = new QMenu(this);
+  updateMacDockMenu(this);
+#endif
 
   setDocumentMode(true);
 
@@ -587,6 +559,38 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   connect(_fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(handleDocument(QString)));
 
   hunspell_initialize();
+
+  // load plugins before building the menus
+  // TODO? add a step later to add to the menus from the plugins?
+  QStringList checkForPlugins;
+  checkForPlugins << QApplication::applicationDirPath()
+                  << QString("/usr/lib/postbooks");
+  foreach (QString dirname, checkForPlugins)
+  {
+    QDir pluginsDir(dirname);
+    while (! pluginsDir.exists("plugins") && pluginsDir.cdUp())
+      ;
+    if (pluginsDir.cd("plugins"))
+    {
+      foreach (QString fileName, pluginsDir.entryList(QDir::Files))
+        new QPluginLoader(pluginsDir.absoluteFilePath(fileName), this);
+    }
+  }
+
+//  Populate the menu bar
+  XSqlQuery window;
+  window.prepare("SELECT usr_window "
+                 "  FROM usr "
+                 " WHERE (usr_username=getEffectiveXtUser());");
+  window.exec();
+  // keep synchronized with user.ui.h
+  _singleWindow = "";
+  if (window.first())
+    _singleWindow = window.value("usr_window").toString();
+  if (_singleWindow.isEmpty())
+    initMenuBar();
+  else
+    _showTopLevel = true; // if we are in single level mode we want to run toplevel always
 
 }
 
@@ -2629,30 +2633,37 @@ void GUIClient::sEmitNotifyHeard(const QString &note)
     else if(note == "messagePosted")
         emit messageNotify();
 }
+
 #ifdef Q_OS_MAC
-    void GUIClient::updateMacDockMenu(QWidget *w)
+void GUIClient::updateMacDockMenu(QWidget *w)
+{
+  if (! w || ! _menu)
+    return;
+
+  QAction *action = new QAction(w);
+  action->setText(w->windowTitle());
+
+  _menu->addAction(action);
+
+  qt_mac_set_dock_menu(_menu);
+
+  connect(action, SIGNAL(triggered()), w, SLOT(hide()));
+  connect(action, SIGNAL(triggered()), w, SLOT(show()));
+}
+
+void GUIClient::removeFromMacDockMenu(QWidget *w)
+{
+  if (! w || ! _menu)
+    return;
+
+  foreach (QAction *action, _menu->actions())
+  {
+    if(action->text().compare(w->windowTitle()) == 0)
     {
-        QAction *action = new QAction(w);
-        action->setText(w->windowTitle());
-
-        _menu->addAction(action);
-
-        qt_mac_set_dock_menu(_menu);
-
-        connect(action, SIGNAL(triggered()), w, SLOT(hide()));
-        connect(action, SIGNAL(triggered()), w, SLOT(show()));
+      _menu->removeAction(action);
     }
+  }
 
-    void GUIClient::removeFromMacDockMenu(QWidget *w)
-    {
-        foreach (QAction *action, _menu->actions())
-        {
-            if(action->text().compare(w->windowTitle()) == 0)
-            {
-                _menu->removeAction(action);
-            }
-        }
-
-        qt_mac_set_dock_menu(_menu);
-    }
+  qt_mac_set_dock_menu(_menu);
+}
 #endif
