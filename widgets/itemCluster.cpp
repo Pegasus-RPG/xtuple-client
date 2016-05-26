@@ -869,6 +869,8 @@ void ItemLineEdit::sParse()
       if (item.first())
       {
         setId(item.value("item_id").toInt());
+        if(_itemNumber != item.value("number").toString())
+          emit aliasChanged(item.value("number").toString());
         return;
       }
       // item number not found, check upccode
