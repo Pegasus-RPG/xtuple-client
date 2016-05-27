@@ -807,6 +807,9 @@ to be bound by its terms.</comment>
            </property>
            <item>
             <widget class="QPushButton" name="_new">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>&amp;New</string>
              </property>
@@ -1064,6 +1067,12 @@ to be bound by its terms.</comment>
      <y>488</y>
     </hint>
    </hints>
+  </connection>
+  <connection>
+   <sender>_poNumber</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_new</receiver>
+   <slot>setEnabled(bool)</slot>
   </connection>
   <connection>
    <sender>_miscDistrib</sender>
