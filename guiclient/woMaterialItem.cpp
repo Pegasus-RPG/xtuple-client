@@ -31,7 +31,8 @@ woMaterialItem::woMaterialItem(QWidget* parent, const char* name, bool modal, Qt
   connect(_qtyPer, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQtyRequired()));
   connect(_scrap, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQtyRequired()));
   connect(_uom, SIGNAL(newID(int)), this, SLOT(sUOMChanged()));
-  connect(_item, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
+  connect(_wo, SIGNAL(valid(bool)), this, SLOT(sEnableSave()));
+  connect(_item, SIGNAL(valid(bool)), this, SLOT(sEnableSave()));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sItemIdChanged()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
@@ -189,6 +190,11 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
   }
 
   return NoError;
+}
+
+void woMaterialItem::sEnableSave()
+{
+  _save->setEnabled(_wo->isValid() && _item->isValid());
 }
 
 void woMaterialItem::sSave()
