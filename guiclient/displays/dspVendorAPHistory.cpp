@@ -158,7 +158,7 @@ bool dspVendorAPHistory::setParams(ParameterList &params)
   {
     if (!_vend->isValid())
     {
-      QMessageBox::warning( this, tr("Select Number"),
+      QMessageBox::warning( this, tr("Select Vendor"),
                             tr("Please select a valid Vendor.") );
       _vend->setFocus();
       return false;
