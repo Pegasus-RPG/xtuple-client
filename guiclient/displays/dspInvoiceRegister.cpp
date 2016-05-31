@@ -234,6 +234,10 @@ bool dspInvoiceRegister::setParams(ParameterList &params)
 
 void dspInvoiceRegister::sFillList()
 {
+  ParameterList params;
+  if (!setParams(params))
+    return;
+  
   display::sFillList();
   list()->expandAll();
 
