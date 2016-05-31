@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -1254,10 +1254,9 @@ void XComboBox::setCode(const QString &pString)
       if (_data->_codes.at(counter) == pString)
       {
         if (DEBUG)
-          qDebug("%s::setCode(%s) found at %d with _ids.count %d & id() %d",
-                 objectName().toLatin1().data(), pString.toLatin1().data(),
+          qDebug("%s::setCode(%s) found at %d with _ids.count %d & id %d",
+                 qPrintable(objectName()), qPrintable(pString),
                  counter, _data->_ids.count(), id());
-        setCurrentIndex(counter);
 
         if (_data->_ids.count() && id()!=_data->_ids.at(counter))
           setId(_data->_ids.at(counter));
@@ -1561,17 +1560,16 @@ bool XComboBox::isValid() const
 void XComboBox::sHandleNewIndex(int pIndex)
 {
   if (DEBUG)
-    qDebug("%s::sHandleNewIndex(%d)",objectName().toLatin1().data(), pIndex);
+    qDebug() << objectName() << "::sHandleNewIndex" << pIndex << "/" << id();
 
-  if ((pIndex >= 0) && (pIndex < _data->_ids.count()) &&
-      (_data->_ids.at(pIndex) != id()))
+  if (pIndex >= 0 && pIndex < _data->_ids.count())
   {
     updateMapperData();
     emit newID(_data->_ids.at(pIndex));
 
     if (DEBUG)
-      qDebug("%s::sHandleNewIndex() emitted %d",
-             objectName().toLatin1().data(), _data->_ids.at(pIndex));
+      qDebug() << objectName() << "::sHandleNewIndex emitted"
+               << _data->_ids.at(pIndex);
 
     if (allowNull())
     {
@@ -1581,8 +1579,7 @@ void XComboBox::sHandleNewIndex(int pIndex)
   }
 
   if (DEBUG)
-    qDebug("%s::sHandleNewIndex() returning",
-           objectName().toLatin1().data());
+    qDebug() << objectName() << "::sHandleNewIndex() returning";
 }
 
 void XComboBox::mousePressEvent(QMouseEvent *event)
