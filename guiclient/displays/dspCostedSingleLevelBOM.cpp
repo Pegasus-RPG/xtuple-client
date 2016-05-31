@@ -30,6 +30,10 @@ bool dspCostedSingleLevelBOM::setParams(ParameterList &params)
 
 void dspCostedSingleLevelBOM::sFillList()
 {
+  ParameterList params;
+  if (!setParams(params))
+    return;
+  
   dspCostedBOMBase::sFillList();
 
   XSqlQuery qq;
