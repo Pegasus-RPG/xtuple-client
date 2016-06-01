@@ -20,6 +20,8 @@
 #include "storedProcErrorLookup.h"
 
 #include <parameter.h>
+#include <metasql.h>
+#include "mqlutil.h"
 
 #include "errorReporter.h"
 #include "hotkey.h"
@@ -40,6 +42,11 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
 
   if(!_privileges->check("MaintainPreferencesOthers"))
     _selectedUser->setEnabled(false);
+  if(!_privileges->check("MaintainPreferencesSelf"))
+  {
+    _currentUser->setEnabled(false);
+    _selectedUser->setChecked(true);
+  }
 
   QPushButton* apply = _buttonBox->button(QDialogButtonBox::Apply);
   connect(apply, SIGNAL(clicked()), this, SLOT(sApply()));
@@ -87,7 +94,21 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
   _backgroundList->setMaximumWidth(25);
 #endif
 
-  _user->setType(XComboBox::Users);
+  //_user->setType(XComboBox::Users);
+  XSqlQuery userPref;
+  QString qryUser = "SELECT usr_id, usr_username, usr_username "
+                    "FROM usr "
+                    "WHERE ((true) "
+                    "<? if not exists('maintainSelf') ?> "
+                    " AND NOT (usr_username = geteffectivextuser()) "
+                    "<? endif ?>) "
+                    "ORDER BY usr_username;";
+  MetaSQLQuery mql(qryUser);
+  ParameterList params;
+  if(_privileges->check("MaintainPreferencesSelf"))
+    params.append("maintainSelf", true);
+  userPref = mql.toQuery(params);
+  _user->populate(userPref);
 
   _ellipsesAction->append(1, tr("List"));
   _ellipsesAction->append(2, tr("Search"));
