@@ -37,6 +37,7 @@ protected slots:
     virtual void sItemIdChanged();
     virtual void sPopulateUOM();
     virtual void sUOMChanged();
+    virtual void sEnableSave();
 
 private:
     int _bomitemid;
