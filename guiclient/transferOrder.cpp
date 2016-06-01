@@ -743,7 +743,8 @@ void transferOrder::sPopulateMenu(QMenu *pMenu)
       }
     }
 
-    if(_metrics->boolean("EnableTOShipping"))
+    if(_metrics->boolean("EnableTOShipping") &&
+       (_lineMode == cActiveOpen || _lineMode == cInactiveOpen))
     {
       if(_numSelected == 1)
         pMenu->addSeparator();
