@@ -176,8 +176,8 @@ void XSqlTableModel::applyColumnRoles()
 {
   QHashIterator<int, QPair<QVariant, int> > i(_columnRoles);
   while (i.hasNext()) {
-    applyColumnRole(i.key(), i.value().second, i.value().first );
     i.next();
+    applyColumnRole(i.key(), i.value().second, i.value().first );
   }
 }
 
@@ -185,8 +185,8 @@ void XSqlTableModel::applyColumnRoles(int row)
 {
   QHashIterator<int, QPair<QVariant, int> > i(_columnRoles);
   while (i.hasNext()) {
-    setData(index(row,i.key()), i.value().first, i.value().second);
     i.next();
+    setData(index(row,i.key()), i.value().first, i.value().second);
   }
 }
 
