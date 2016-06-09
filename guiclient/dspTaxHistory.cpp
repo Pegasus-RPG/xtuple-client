@@ -55,7 +55,10 @@ dspTaxHistory::dspTaxHistory(QWidget* parent, const char* name, Qt::WindowFlags 
   _taxdet->addColumn(tr("Unit Price"),          _moneyColumn,    Qt::AlignRight, false, "unitprice"  );
   _taxdet->addColumn(tr("Extension"),           _moneyColumn,    Qt::AlignRight, false, "amount"  );
   _taxdet->addColumn(tr("Tax"),                 _moneyColumn,    Qt::AlignRight, true,  "taxlocal"  );
-  _taxdet->addColumn(tr("Currency"),            _currencyColumn, Qt::AlignRight, true,  "curr_abbr"  ); 
+  _taxdet->addColumn(tr("Currency"),            _currencyColumn, Qt::AlignRight, true,  "curr_abbr"  );
+  _taxdet->addColumn(tr("Currency \nRate"),     _uomColumn,      Qt::AlignRight, false, "rate"  );
+  _taxdet->addColumn(tr("Sales %1").arg(base),    _moneyColumn,  Qt::AlignRight, false, "salesbase"  );
+  _taxdet->addColumn(tr("Purchase %1").arg(base), _moneyColumn,  Qt::AlignRight, false, "purchasebase"  );
   _taxdet->addColumn(tr("Tax %1").arg(base),    _moneyColumn,    Qt::AlignRight,  true, "taxbase"  );
 
   sHandleType();
