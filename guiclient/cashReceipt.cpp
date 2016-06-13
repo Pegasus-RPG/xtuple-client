@@ -964,8 +964,6 @@ bool cashReceipt::save(bool partial)
   }
   if(_project->isValid())
     cashave.bindValue(":cashrcpt_prj_id", _project->id());
-  else
-    cashave.bindValue(":cashrcpt_prj_id", -1);
   cashave.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Cash Receipt"),
                                 cashave, __FILE__, __LINE__))
