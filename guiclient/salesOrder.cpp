@@ -1379,23 +1379,34 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
         pMenu->addAction(tr("Open Line..."), this, SLOT(sAction()));
       else if (_lineMode == cActiveOpen)
       {
-        pMenu->addAction(tr("Edit Line..."), this, SLOT(sEdit()));
-        menuItem = pMenu->addAction(tr("Firm Line..."), this, SLOT(sFirm()));
-        menuItem->setEnabled(_privileges->check("FirmSalesOrder"));
+        if (_lineFirm == 1)
+        {
+          pMenu->addAction(tr("Edit Line..."), this, SLOT(sEdit()));
+          menuItem = pMenu->addAction(tr("Firm Line..."), this, SLOT(sFirm()));
+          menuItem->setEnabled(_privileges->check("FirmSalesOrder"));
+        }
+        else
+        {
+          menuItem = pMenu->addAction(tr("Soften Line..."), this, SLOT(sSoften()));
+          menuItem->setEnabled(_privileges->check("FirmSalesOrder"));
+        }
         pMenu->addAction(tr("Close Line..."), this, SLOT(sAction()));
       }
       else if (_lineMode == cInactiveOpen)
       {
-        pMenu->addAction(tr("Edit Line..."), this, SLOT(sEdit()));
-        menuItem = pMenu->addAction(tr("Firm Line..."), this, SLOT(sFirm()));
-        menuItem->setEnabled(_privileges->check("FirmSalesOrder"));
+        if (_lineFirm == 1)
+        {
+          pMenu->addAction(tr("Edit Line..."), this, SLOT(sEdit()));
+          menuItem = pMenu->addAction(tr("Firm Line..."), this, SLOT(sFirm()));
+          menuItem->setEnabled(_privileges->check("FirmSalesOrder"));
+        }
+        else
+        {
+          menuItem = pMenu->addAction(tr("Soften Line..."), this, SLOT(sSoften()));
+          menuItem->setEnabled(_privileges->check("FirmSalesOrder"));
+        }
         pMenu->addAction(tr("Close Line..."), this, SLOT(sAction()));
         pMenu->addAction(tr("Delete Line..."), this, SLOT(sDelete()));
-      }
-      else
-      {
-        menuItem = pMenu->addAction(tr("Soften Line..."), this, SLOT(sSoften()));
-        menuItem->setEnabled(_privileges->check("FirmSalesOrder"));
       }
     }
 
@@ -2179,10 +2190,17 @@ void salesOrder::sHandleButtons()
     _reserveStock->setEnabled(_privileges->check("MaintainReservations"));
     _reserveLineBalance->setEnabled(_privileges->check("MaintainReservations"));
 
-    if ( (_numSelected == 1) && (!selected->rawValue("coitem_firm").toBool()) )
+    if (_numSelected == 1)
     {
-      _edit->setEnabled(true);
-      _delete->setEnabled(true);
+      if (!selected->rawValue("coitem_firm").toBool())
+      {
+        _lineFirm = 1;
+        _edit->setEnabled(true);
+        _delete->setEnabled(true);
+      }
+      else
+        _lineFirm = 0;
+      
       int lineMode = selected->altId();
 
       if (ISQUOTE(_mode))

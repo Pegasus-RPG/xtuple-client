@@ -144,6 +144,7 @@ class salesOrder : public XWidget, public Ui::salesOrder
     bool    _holdOverride;
     int     _soheadid;
     int     _lineMode;
+    int     _lineFirm;
     AppLock _lock;
     int     _mode;
     int     _numSelected;
