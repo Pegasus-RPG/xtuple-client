@@ -1198,7 +1198,8 @@ void returnAuthorization::sFillList()
     _commission->setEnabled(true);
     _taxzone->setEnabled(true);
     _disposition->setEnabled(true);
-    _timing->setEnabled(true);
+// this overrides the setting of _timing in sDispositionChanged
+//    _timing->setEnabled(true);
     _cust->setEnabled(!_origso->isValid());
     _billToName->setEnabled(true);
     _billToAddr->setEnabled(true);
