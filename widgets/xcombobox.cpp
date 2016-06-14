@@ -1313,6 +1313,7 @@ void XComboBox::setId(int pTarget)
         {
           if(this->id()!=id)
           {
+            setCurrentIndex(counter);
             updateMapperData();
             emit newID(pTarget);
             emit valid(true);
@@ -1320,8 +1321,6 @@ void XComboBox::setId(int pTarget)
             if (allowNull())
               emit notNull(true);
           }
-
-          setCurrentIndex(counter);
 
           return;
         }
@@ -1336,6 +1335,7 @@ void XComboBox::setId(int pTarget)
       {
         if(id()!=pTarget)
         {
+          setCurrentIndex(counter);
           updateMapperData();
           emit newID(pTarget);
           emit valid(true);
@@ -1343,8 +1343,6 @@ void XComboBox::setId(int pTarget)
           if (allowNull())
             emit notNull(true);
         }
-
-        setCurrentIndex(counter);
 
         return;
       }
