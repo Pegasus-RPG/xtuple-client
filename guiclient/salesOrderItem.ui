@@ -3074,5 +3074,117 @@ to be bound by its terms.</comment>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>effectiveChanged(QDate)</signal>
+   <receiver>_listPrice</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>509</x>
+     <y>332</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>487</x>
+     <y>253</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>idChanged(int)</signal>
+   <receiver>_listPrice</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>509</x>
+     <y>332</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>487</x>
+     <y>253</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>effectiveChanged(QDate)</signal>
+   <receiver>_customerPrice</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>509</x>
+     <y>332</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>487</x>
+     <y>291</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>idChanged(int)</signal>
+   <receiver>_customerPrice</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>509</x>
+     <y>332</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>487</x>
+     <y>291</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>effectiveChanged(QDate)</signal>
+   <receiver>_supplyOverridePricePR</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>509</x>
+     <y>332</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>119</x>
+     <y>591</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>idChanged(int)</signal>
+   <receiver>_supplyOverridePricePR</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>509</x>
+     <y>332</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>119</x>
+     <y>591</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>idChanged(int)</signal>
+   <receiver>_tax</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>509</x>
+     <y>332</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>746</x>
+     <y>608</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>
