@@ -232,7 +232,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
       _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured |
                          ItemLineEdit::cActive);
                          
-      connect(_priority, SIGNAL(editingFinished ()), this, SLOT(sReprioritizeParent()));
+      connect(_priority, SIGNAL(valueChanged(int)), this, SLOT(sReprioritizeParent()));
       connect(_qty, SIGNAL(editingFinished()), this, SLOT(sChangeParentQty()));
       connect(_startDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
       connect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
@@ -536,7 +536,7 @@ void workOrder::sCreate()
         disconnect(_qty, SIGNAL(editingFinished()), this, SLOT(sCreate()));
         disconnect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sCreate()));
 
-        connect(_priority, SIGNAL(editingFinished ()), this, SLOT(sReprioritizeParent()));
+        connect(_priority, SIGNAL(valueChanged(int)), this, SLOT(sReprioritizeParent()));
         connect(_qty, SIGNAL(editingFinished()), this, SLOT(sChangeParentQty()));
         connect(_startDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
         connect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
