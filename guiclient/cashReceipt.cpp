@@ -166,7 +166,10 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   }
   else
     _altExchRate->hide();
-  
+ 
+  if(!_metrics->boolean("UseProjects"))
+    _project->hide();
+ 
   _overapplied = false;
   _cashrcptid = -1;
   _posted = false;
@@ -447,6 +450,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       _newCC->setEnabled(false);
       _editCC->setEnabled(false);
       _customerSelector->setEnabled(false);
+      _project->setEnabled(false);
       disconnect(_cashrcptmisc, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       disconnect(_cashrcptmisc, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
     }
@@ -901,13 +905,13 @@ bool cashReceipt::save(bool partial)
                     "  cashrcpt_fundstype, cashrcpt_bankaccnt_id, cashrcpt_curr_id, "
                     "  cashrcpt_usecustdeposit, cashrcpt_docnumber, cashrcpt_docdate, "
                     "  cashrcpt_notes, cashrcpt_salescat_id, cashrcpt_number, cashrcpt_applydate, "
-                    "  cashrcpt_discount, cashrcpt_alt_curr_rate ) "
+                    "  cashrcpt_discount, cashrcpt_alt_curr_rate, cashrcpt_prj_id ) "
                     "VALUES "
                     "( :cashrcpt_id, :cashrcpt_cust_id, :cashrcpt_custgrp_id, :cashrcpt_distdate, :cashrcpt_amount,"
                     "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :curr_id, "
                     "  :cashrcpt_usecustdeposit, :cashrcpt_docnumber, :cashrcpt_docdate, "
                     "  :cashrcpt_notes, :cashrcpt_salescat_id, :cashrcpt_number, :cashrcpt_applydate, "
-                    "  :cashrcpt_discount, ROUND(:cashrcpt_alt_curr_rate, 8) );";
+                    "  :cashrcpt_discount, ROUND(:cashrcpt_alt_curr_rate, 8), :cashrcpt_prj_id );";
   else
     sql= "UPDATE cashrcpt "
                     "SET cashrcpt_cust_id=:cashrcpt_cust_id,"
@@ -925,6 +929,7 @@ bool cashReceipt::save(bool partial)
                     "    cashrcpt_applydate=:cashrcpt_applydate,"
                     "    cashrcpt_discount=:cashrcpt_discount, "
                     "    cashrcpt_alt_curr_rate= ROUND(:cashrcpt_alt_curr_rate, 8), "
+                    "    cashrcpt_prj_id=:cashrcpt_prj_id, "
                     "    cashrcpt_curr_rate=null " // force a curr rate re-evaluation
                     "WHERE (cashrcpt_id=:cashrcpt_id);";
 
@@ -957,6 +962,8 @@ bool cashReceipt::save(bool partial)
     else
       cashave.bindValue(":cashrcpt_alt_curr_rate", _exchRate->toDouble());
   }
+  if(_project->isValid())
+    cashave.bindValue(":cashrcpt_prj_id", _project->id());
   cashave.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Cash Receipt"),
                                 cashave, __FILE__, __LINE__))
@@ -1153,6 +1160,7 @@ void cashReceipt::populate()
 
     _origFunds = cashpopulate.value("cashrcpt_fundstype").toString();
     _fundsType->setCode(_origFunds);
+    _project->setId(cashpopulate.value("cashrcpt_prj_id").toInt());
 
     sFillApplyList();
     sFillMiscList();
