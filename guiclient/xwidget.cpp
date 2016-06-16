@@ -137,6 +137,7 @@ void XWidget::showEvent(QShowEvent *event)
 	// this verboseness works around what appear to be qt bugs
         QMdiSubWindow *subwin = new QMdiSubWindow();
         subwin->setParent(omfgThis->workspace());
+        omfgThis->workspace()->addSubWindow(subwin);
         subwin->setWidget(this);
 
         omfgThis->workspace()->setActiveSubWindow(subwin);
