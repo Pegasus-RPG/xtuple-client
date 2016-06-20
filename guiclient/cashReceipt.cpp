@@ -124,7 +124,7 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _aropen->addColumn(tr("Customer"),  -1,              Qt::AlignLeft, true, "cust_number");
   _aropen->addColumn(tr("Customer Name"),  -1,         Qt::AlignLeft, true, "cust_name");
 
-  _cashrcptmisc->addColumn(tr("Account #"), _itemColumn,     Qt::AlignCenter, true, "account");
+  _cashrcptmisc->addColumn(tr("Account"), _itemColumn,     Qt::AlignCenter, true, "account");
   _cashrcptmisc->addColumn(tr("Notes"),     -1,              Qt::AlignLeft,  true, "firstline");
   _cashrcptmisc->addColumn(tr("Amount"),    _bigMoneyColumn, Qt::AlignRight, true, "cashrcptmisc_amount");
 
@@ -1072,11 +1072,13 @@ void cashReceipt::sFillMiscList()
 {
   XSqlQuery misc;
   misc.prepare("SELECT cashrcptmisc_id,"
-               "       formatGLAccount(cashrcptmisc_accnt_id) AS account,"
+               "       COALESCE(tax_code||' - '||tax_descrip, "
+               "          formatGLAccount(cashrcptmisc_accnt_id)) AS account,"
                "       firstLine(cashrcptmisc_notes) AS firstline, "
                "       cashrcptmisc_amount,"
                "       'curr' AS cashrcptmisc_amount_xtnumericrole "
                "FROM cashrcptmisc "
+               " LEFT OUTER JOIN tax ON (tax_id=cashrcptmisc_tax_id) "
                "WHERE (cashrcptmisc_cashrcpt_id=:cashrcpt_id);" );
   misc.bindValue(":cashrcpt_id", _cashrcptid);
   misc.exec();

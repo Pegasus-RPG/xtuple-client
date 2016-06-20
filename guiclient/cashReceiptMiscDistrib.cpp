@@ -62,13 +62,6 @@ enum SetResponse cashReceiptMiscDistrib::set(const ParameterList &pParams)
   if (valid)
     _amount->setEffective(param.toDate());
 
-  param = pParams.value("cashrcptmisc_id", &valid);
-  if (valid)
-  {
-    _cashrcptmiscid = param.toInt();
-    populate();
-  }
-
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -78,6 +71,14 @@ enum SetResponse cashReceiptMiscDistrib::set(const ParameterList &pParams)
     {
       _mode = cEdit;
     }
+  }
+
+  param = pParams.value("cashrcptmisc_id", &valid);
+  if (valid)
+  {
+    _cashrcptmiscid = param.toInt();
+    if (_mode == cEdit)
+      populate();
   }
 
   param = pParams.value("custSelector", &valid);
@@ -95,7 +96,7 @@ enum SetResponse cashReceiptMiscDistrib::set(const ParameterList &pParams)
 void cashReceiptMiscDistrib::populate()
 {
   XSqlQuery cashpopulate;
-  cashpopulate.prepare( "SELECT cashrcptmisc_accnt_id, cashrcptmisc_notes,"
+  cashpopulate.prepare( "SELECT cashrcptmisc_accnt_id, cashrcptmisc_tax_id, cashrcptmisc_notes,"
              "       cashrcptmisc_amount, cashrcpt_curr_id, cashrcpt_distdate "
              "FROM cashrcptmisc JOIN cashrcpt ON (cashrcptmisc_cashrcpt_id = cashrcpt_id) "
              "WHERE (cashrcptmisc_id=:cashrcptmisc_id);" );
@@ -108,6 +109,11 @@ void cashReceiptMiscDistrib::populate()
     		 cashpopulate.value("cashrcpt_curr_id").toInt(),
 		 cashpopulate.value("cashrcpt_distdate").toDate(), false);
     _notes->setText(cashpopulate.value("cashrcptmisc_notes").toString());
+    if (cashpopulate.value("cashrcptmisc_tax_id").toInt() > 0)
+    {
+      _taxCodeSelected->setChecked(true);
+      _taxCode->setId(cashpopulate.value("cashrcptmisc_tax_id").toInt());
+    }
   }
 }
 
@@ -116,70 +122,54 @@ void cashReceiptMiscDistrib::sSave()
   XSqlQuery cashSave;
 
   QList<GuiErrorCheck>errors;
-  errors<<GuiErrorCheck(!_account->isValid(), _account,
-                        tr("You must select an Account to post this Miscellaneous Distribution to."))
+  errors<<GuiErrorCheck(!_account->isValid() && !_taxCode->isValid(), _account,
+                        tr("You must select an Account or Tax Code to post this Miscellaneous Distribution to."))
        <<GuiErrorCheck(_amount->isZero(), _amount,
                        tr("You must enter an amount for this Miscellaneous Distribution."));
 
-  if(GuiErrorCheck::reportErrors(this,tr("Cannot Post Transaction"),errors))
+  if(GuiErrorCheck::reportErrors(this,tr("Cannot Save Transaction"),errors))
       return;
 
   if (_mode == cNew)
-  {
-    cashSave.exec("SELECT NEXTVAL('cashrcptmisc_cashrcptmisc_id_seq') AS _cashrcptmisc_id;");
-    if (cashSave.first())
-      _cashrcptmiscid = cashSave.value("_cashrcptmisc_id").toInt();
-//  ToDo
-
     cashSave.prepare( "INSERT INTO cashrcptmisc "
-               "( cashrcptmisc_id, cashrcptmisc_cashrcpt_id,"
+               "( cashrcptmisc_cashrcpt_id,"
                "  cashrcptmisc_accnt_id, cashrcptmisc_amount,"
-               "  cashrcptmisc_notes ) "
+               "  cashrcptmisc_tax_id, cashrcptmisc_notes, "
+               "  cashrcptmisc_cust_id ) "
                "VALUES "
-               "( :cashrcptmisc_id, :cashrcptmisc_cashrcpt_id,"
+               "( :cashrcptmisc_cashrcpt_id,"
                "  :cashrcptmisc_accnt_id, :cashrcptmisc_amount,"
-               "  :cashrcptmisc_notes );" );
-  }
+               "  :cashrcptmisc_tax_id, :cashrcptmisc_notes, "
+               "  :cashrcptmisc_cust_id ) "
+               " RETURNING cashrcptmisc_id AS cashrcptmiscid;" );
   else if (_mode == cEdit)
     cashSave.prepare( "UPDATE cashrcptmisc "
                "SET cashrcptmisc_accnt_id=:cashrcptmisc_accnt_id,"
-               "    cashrcptmisc_amount=:cashrcptmisc_amount, cashrcptmisc_notes=:cashrcptmisc_notes "
-               "WHERE (cashrcptmisc_id=:cashrcptmisc_id);" );
+               "    cashrcptmisc_tax_id=:cashrcptmisc_tax_id, "
+               "    cashrcptmisc_amount=:cashrcptmisc_amount, "
+               "    cashrcptmisc_cust_id=:cashrcptmisc_cust_id, "
+               "    cashrcptmisc_notes=:cashrcptmisc_notes "
+               "WHERE (cashrcptmisc_id=:cashrcptmisc_id) "
+               " RETURNING cashrcptmisc_id AS cashrcptmiscid;" );
 
   cashSave.bindValue(":cashrcptmisc_id", _cashrcptmiscid);
   cashSave.bindValue(":cashrcptmisc_cashrcpt_id", _cashrcptid);
-  cashSave.bindValue(":cashrcptmisc_accnt_id", _account->id());
+  if (_account->isValid())
+    cashSave.bindValue(":cashrcptmisc_accnt_id", _account->id());
+  if (_taxCodeSelected->isChecked() && _taxCode->isValid())
+    cashSave.bindValue(":cashrcptmisc_tax_id", _taxCode->id());
   cashSave.bindValue(":cashrcptmisc_amount", _amount->localValue());
   cashSave.bindValue(":cashrcptmisc_notes",       _notes->toPlainText().trimmed());
+  if (_custSelector->id() > 0)
+    cashSave.bindValue(":cashrcptmisc_cust_id", _custSelector->id());
   cashSave.exec();
+  if (cashSave.first())
+    _cashrcptmiscid = cashSave.value("cashrcptmiscid").toInt();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Cash Receipt"),
+                           cashSave, __FILE__, __LINE__))
+      return;
 
   done(_cashrcptmiscid);
-
-  //cashrcptbycustgrp::gsave()
-  int cashmisc = -1;
-  XSqlQuery query;
-
-  if (_custSelector->id() == 0)
-    return;
-
-  if (_mode == cNew)
-  {
-    query.prepare("SELECT currval('cashrcptmisc_cashrcptmisc_id_seq') AS _cashrcptmisc_id;");
-    query.exec();
-    if (query.first())
-      cashmisc = query.value("_cashrcptmisc_id").toInt();
-  }
-  else
-    cashmisc = _cashmisc;
-
-  query.prepare("UPDATE cashrcptmisc SET cashrcptmisc_cust_id =:cust "
-            "WHERE cashrcptmisc_id =:cashmisc;");
-  query.bindValue(":cashmisc", cashmisc);
-  query.bindValue(":cust", _custSelector->id());
-  query.exec();
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Cash Receipt"),
-                           query, __FILE__, __LINE__))
-      return;
 }
 
 //cash_receipt_by_customer_group

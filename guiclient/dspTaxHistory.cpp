@@ -223,6 +223,7 @@ bool dspTaxHistory::setParams(ParameterList &params)
   params.append("invoice",tr("Invoice"));
   params.append("creditmemo",tr("Credit Memo"));
   params.append("debitmemo",tr("Debit Memo"));
+  params.append("cashreceipt",tr("Cash Receipt"));
   params.append("other",tr("Other"));
   params.append("none",tr("None"));
   params.append("sales",tr("Sales"));
