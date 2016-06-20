@@ -6,128 +6,76 @@ import re
 
 #Used in translate function to format the output translation to match the source text format in the xml file. There was a problem with google translate adding/removing spaces before/after &amp;, &gt;, and &lt;.
 #Google translate was also changing the encoding(i.e. &lt; to u\003c)
-def space_handler(source, translated):
-    #SECTION 1: INITIALIZING VARIABLES
+def append_to_dict(phrase_to_find, text, dict_name, dict_entry):
+
+    regex = re.compile(phrase_to_find)
+    num_indexes = [m.start(0) for m in re.finditer(regex, text)]
+    for index in num_indexes:
+        dict_name[index] = dict_entry
+
+
+def assemble_partial_string(should_chop, partial_strings, index_tracker, index_list_tr, index_list_sr, source_text, translated_text, iteration, constant, target_phrase):
+
+    index_tracker.append(index_list_tr[iteration] + constant)
+    temp_string = translated_text[index_tracker[iteration]:index_tracker[iteration+1]]
+    temp_string = temp_string.replace(r'\u003e', '&gt;')
+    temp_string = temp_string.replace(r'\u003c', '&lt;')
+
+    #if the translation added a space before the target then chop it off
+    if translated_text[index_list_tr[iteration]-1] == ' ' and source_text[index_list_sr[iteration]-1] != ' ':
+        temp_string = temp_string.replace(' ' + target_phrase, target_phrase, 1)
+
+    #should chop is method through which spaces are taken away from the end of previous targets
+    if should_chop[0]:
+        if temp_string[0] == ' ':
+            temp_string = temp_string.replace(' ', '', 1)
+        should_chop[0] = False
+
+    #if the translation added a space after the target then chop through bool(should_chop[0]). Conversely if translation took away a space at the end then add it back.
+    if len(translated_text)-1 >= index_list_tr[iteration]+constant and len(source_text)-1 >= index_list_sr[iteration]+constant:
+        if translated_text[index_list_tr[iteration]+constant] == ' ' and source_text[index_list_sr[iteration]+constant] != ' ':
+            should_chop[0] = True
+        if translated_text[index_list_tr[iteration]+constant] != ' ' and source_text[index_list_sr[iteration]+constant] == ' ':
+            temp_string += ' '
+
+    #if the translation took away a space before the target then add it back
+    if translated_text[index_list_tr[iteration]-1] != ' ' and translated_text[index_list_sr[iteration]-1] == ' ':
+        new_string = ''
+        index = temp_string.index(target_phrase)
+        for z in range(0,len(temp_string)):
+            if z != index:
+                new_string += temp_string[z]
+            else:
+                new_string += ' '
+                new_string += temp_string[z]
+        temp_string = new_string
+
+    #add formatted string to partial strings list
+    partial_strings.append(temp_string)
+
+
+def space_handler(source_text, translated_text):
+
+    # SECTION 1: INITIALIZING VARIABLES
     index_tracker = [0]
     partial_strings = []
     output_string = ''
+    should_chop = [False]
 
-    amp_count = translated.count('&amp;')
-
-    # numregex1 = re.compile(r'&#[0-9]{2};')
-    # numregex2 = re.compile(r'&#[0-9]{3};')
-
-    gt_count_sr = source.count('&gt;')
-    lt_count_sr = source.count('&lt;')
-
-    lt_count_tr = translated.count('&lt;')
-    ul_count_tr = translated.count('\\u003c')
-
-    gt_count_tr = translated.count('&gt;')
-    ug_count_tr = translated.count('\\u003e')
-
-
-    index_dict_tr = {}
     index_dict_sr = {}
-    index_list_tr = []
+    index_dict_tr = {}
     index_list_sr = []
+    index_list_tr = []
 
-    should_chop = False
+    append_to_dict(r'&amp;', source_text, index_dict_sr, 'a')
+    append_to_dict(r'&amp;', translated_text, index_dict_tr, 'a')
+    append_to_dict(r'&gt;', source_text, index_dict_sr, 'ga')
+    append_to_dict(r'&gt;', translated_text, index_dict_tr, 'ga')
+    append_to_dict('\\\\u003e', translated_text, index_dict_tr, 'gu')
+    append_to_dict(r'&lt;', source_text, index_dict_sr, 'la')
+    append_to_dict(r'&lt;', translated_text, index_dict_tr, 'la')
+    append_to_dict('\\\\u003e', translated_text, index_dict_tr, 'lu')
 
-    #SECTION 2: CREATE 2 DICTIONARIES THAT CONTAIN WHAT TYPE OF INDEX EACH IMPORTANT INDEX IS
-    ignore_counter = 0
-    ignore_counter2 = 0
-    for i in range(0, amp_count):
-        holder = translated
-        for j in range(0,ignore_counter+1):
-            if j == ignore_counter:
-                index_dict_tr[holder.index('&amp;')] = 'a'
-                ignore_counter += 1
-            else:
-                holder = holder.replace('&amp;', 'filll',1)
-        holder = source
-        for z in range(0,ignore_counter2+1):
-            if z == ignore_counter2:
-                index_dict_sr[holder.index('&amp;')] = 'a'
-                ignore_counter2+= 1
-            else:
-                holder = holder.replace('&amp;', 'filll', 1)
-
-    # # mo1 = numregex1.findall(translated)
-    # num_indexes = [m.start(0) for m in re.finditer(numregex1, translated)]
-    # for index in num_indexes:
-    #     index_dict_tr[index] = 'n1'
-    # num_indexes = [m.start(0) for m in re.finditer(numregex1, source)]
-    # for index in num_indexes:
-    #     index_dict_sr[index] = 'n1'
-    #
-    # # mo2 = numregex2.findall(translated)
-    # num_indexes = [m.start(0) for m in re.finditer(numregex2, translated)]
-    # for index in num_indexes:
-    #     index_dict_tr[index] = 'n2'
-    # num_indexes = [m.start(0) for m in re.finditer(numregex2, source)]
-    # for index in num_indexes:
-    #     index_dict_sr[index] = 'n2'
-
-    ignore_counter2 = 0
-    for i in range(0, gt_count_sr):
-        holder = source
-        for z in range(0,ignore_counter2+1):
-            if z == ignore_counter2:
-                index_dict_sr[holder.index('&gt;')] = 'ga'
-                ignore_counter2+= 1
-            else:
-                holder = holder.replace('&gt;', 'fill', 1)
-
-    ignore_counter = 0
-    for i in range(0, gt_count_tr):
-        holder = translated
-        for j in range(0, ignore_counter+1):
-            if j == ignore_counter:
-                index_dict_tr[holder.index('&gt;')] = 'ga'
-                ignore_counter += 1
-            else:
-                holder = holder.replace('&gt;', 'fill', 1)
-
-    ignore_counter = 0
-    for i in range(0,ug_count_tr):
-        holder = translated
-        for j in range(0, ignore_counter+1):
-            if j == ignore_counter:
-                index_dict_tr[holder.index('\\u003e')] = 'gu'
-                ignore_counter += 1
-            else:
-                holder = holder.replace('\\u003e', 'fillll', 1)
-
-    ignore_counter2 = 0
-    for i in range(0, lt_count_sr):
-        holder = source
-        for z in range(0,ignore_counter2+1):
-            if z == ignore_counter2:
-                index_dict_sr[holder.index('&lt;')] = 'la'
-                ignore_counter2+= 1
-            else:
-                holder = holder.replace('&lt;', 'fill', 1)
-
-    ignore_counter = 0
-    for i in range(0, lt_count_tr):
-        holder = translated
-        for j in range(0, ignore_counter+1):
-            if j == ignore_counter:
-                index_dict_tr[holder.index('&lt;')] = 'la'
-                ignore_counter += 1
-            else:
-                holder = holder.replace('&lt;', 'fill', 1)
-
-    ignore_counter = 0
-    for i in range(0,ul_count_tr):
-        holder = translated
-        for j in range(0, ignore_counter+1):
-            if j == ignore_counter:
-                index_dict_tr[holder.index('\\u003c')] = 'lu'
-                ignore_counter += 1
-            else:
-                holder = holder.replace('\\u003c', 'fillll', 1)
 
 
 
@@ -142,260 +90,39 @@ def space_handler(source, translated):
 
 
 
+
     #SECTION 4: DIVIDE TRANSLATION UP INTO PARTIAL STRINGS AND REPLACE PARTS OF THE STRING ACCORDINGLY
-    # mo1_count = 0
-    # mo2_count = 0
     for i in range(0,len(index_list_tr)+1):
 
         if i == len(index_list_tr):
-            temp_string = translated[index_tracker[i]::]
-            if should_chop:
+            temp_string = translated_text[index_tracker[i]::]
+            if should_chop[0]:
                if temp_string[0] == ' ':
                     temp_string = temp_string.replace(' ','',1)
-            should_chop = False
             partial_strings.append(temp_string)
             break
 
-
         if index_dict_tr[index_list_tr[i]] == 'a':
-            index_tracker.append(index_list_tr[i] + 5)
-            temp_string = translated[index_tracker[i] : index_tracker[i+1]]
-            #if the translation added a space before the target then chop it off
-            if translated[index_list_tr[i]-1] == ' ' and source[index_list_sr[i]-1] != ' ':
-                temp_string = temp_string.replace(' &amp;', '&amp;', 1)
-            #should chop is method through which spaces are taken away from the end of previous targets
-            if should_chop:
-                if temp_string[0] == ' ':
-                    temp_string = temp_string.replace(' ','',1)
-                should_chop = False
-            #if the translation added a space after the target then chop through bool(should_chop). Conversely if translation took away a space at the end then add it back.
-            if len(translated)-1 >= index_list_tr[i]+5 and len(source)-1 >= index_list_sr[i]+5:
-                if translated[index_list_tr[i]+5] == ' ' and source[index_list_sr[i]+5] != ' ':
-                    should_chop = True
-                if translated[index_list_tr[i]+5] != ' ' and source[index_list_sr[i]+5] == ' ':
-                    temp_string += ' '
-            #if the translation took away a space before the target then add it back
-            if translated[index_list_tr[i]-1] != ' ' and source[index_list_sr[i]-1] == ' ':
-                new_string = ''
-                index = temp_string.index('&amp;')
-                for z in range(0,len(temp_string)):
-                    if z != index:
-                        new_string += temp_string[z]
-                    else:
-                        new_string += ' '
-                        new_string += temp_string[z]
-                temp_string = new_string
-            #add formatted string to partial strings list
-            partial_strings.append(temp_string)
-
-
+            assemble_partial_string(should_chop, partial_strings, index_tracker, index_list_tr, index_list_sr, source_text, translated_text, i, 5, '&amp;')
 
         if index_dict_tr[index_list_tr[i]] == 'ga':
-            index_tracker.append(index_list_tr[i] + 4)
-            temp_string = translated[index_tracker[i]:index_tracker[i+1]]
-            #if the translation added a space before the target then chop it off
-            if translated[index_list_tr[i]-1] == ' ' and source[index_list_sr[i]-1] != ' ':
-                temp_string = temp_string.replace(' &gt;', '&gt.', 1)
-            #should chop is method through which spaces are taken away from the end of previous targets
-            if should_chop:
-                if temp_string[0] == ' ':
-                    temp_string = temp_string.replace(' ', '', 1)
-                should_chop = False
-            #if the translation added a space after the target then chop through bool(should_chop). Conversely if translation took away a space at the end then add it back.
-            if len(translated)-1 >= index_list_tr[i]+4 and len(source)-1 >= index_list_sr[i]+4:
-                if translated[index_list_tr[i]+4] == ' ' and source[index_list_sr[i]+4] != ' ':
-                    should_chop = True
-                if translated[index_list_tr[i]+4] != ' ' and source[index_list_sr[i]+4] == ' ':
-                    temp_string += ' '
-            #if the translation took away a space before the target then add it back
-            if translated[index_list_tr[i]-1] != ' ' and source[index_list_sr[i]-1] == ' ':
-                new_string = ''
-                index = temp_string.index('&gt;')
-                for z in range(0,len(temp_string)):
-                    if z != index:
-                        new_string += temp_string[z]
-                    else:
-                        new_string += ' '
-                        new_string += temp_string[z]
-                temp_string = new_string
-            #add formatted string to partial strings list
-            partial_strings.append(temp_string)
-
-
-
+            assemble_partial_string(should_chop, partial_strings, index_tracker, index_list_tr, index_list_sr, source_text, translated_text, i, 4, '&gt;')
 
         if index_dict_tr[index_list_tr[i]] == 'gu':
-            index_tracker.append(index_list_tr[i] + 6)
-            temp_string = translated[index_tracker[i]:index_tracker[i+1]]
-            temp_string = temp_string.replace('\\u003e', '&gt;')
-            #if the translation added a space before the target then chop it off
-            if translated[index_list_tr[i]-1] == ' ' and source[index_list_sr[i]-1] != ' ':
-                temp_string = temp_string.replace(' &gt;', '&gt;', 1)
-            #should chop is method through which spaces are taken away from the end of previous targets
-            if should_chop:
-                if temp_string[0] == ' ':
-                    temp_string = temp_string.replace(' ','',1)
-                should_chop = False
-            #if the translation added a space after the target then chop through bool(should_chop). Conversely if translation took away a space at the end then add it back.
-            if len(translated)-1 >= index_list_tr[i]+6 and len(source)-1 >= index_list_sr[i]+6:
-                if translated[index_list_tr[i]+6] == ' ' and source[index_list_sr[i]+6] != ' ':
-                    should_chop = True
-                if translated[index_list_tr[i]+6] != ' ' and source[index_list_sr[i]+6] == ' ':
-                    temp_string += ' '
-            #if the translation took away a space before the target then add it back
-            if translated[index_list_tr[i]-1] != ' ' and source[index_list_sr[i]-1] == ' ':
-                new_string = ''
-                index = temp_string.index('&gt;')
-                for z in range(0,len(temp_string)):
-                    if z != index:
-                        new_string += temp_string[z]
-                    else:
-                        new_string += ' '
-                        new_string += temp_string[z]
-                temp_string = new_string
-            #add formatted string to partial strings list
-            partial_strings.append(temp_string)
-
-
-
-        if index_dict_tr[index_list_tr[i]] == 'lu':
-            index_tracker.append(index_list_tr[i] + 6)
-            temp_string = translated[index_tracker[i]:index_tracker[i+1]]
-            temp_string = temp_string.replace('\\u003c', '&lt;')
-            #if the translation added a space before the target then chop it off
-            if translated[index_list_tr[i]-1] == ' ' and source[index_list_sr[i]-1] != ' ':
-                temp_string = temp_string.replace(' &lt;', '&lt;', 1)
-            #should chop is method through which spaces are taken away from the end of previous targets
-            if should_chop:
-                if temp_string[0] == ' ':
-                    temp_string = temp_string.replace(' ','',1)
-                should_chop = False
-            #if the translation added a space after the target then chop through bool(should_chop). Conversely if translation took away a space at the end then add it back.
-            if len(translated)-1 >= index_list_tr[i]+6 and len(source)-1 >= index_list_sr[i]+6:
-                if translated[index_list_tr[i]+6] == ' ' and source[index_list_sr[i]+6] != ' ':
-                    should_chop = True
-                if translated[index_list_tr[i]+6] != ' ' and source[index_list_sr[i]+6] == ' ':
-                    temp_string += ' '
-            #if the translation took away a space before the target then add it back
-            if translated[index_list_tr[i]-1] != ' ' and source[index_list_sr[i]-1] == ' ':
-                new_string = ''
-                index = temp_string.index('&lt;')
-                for z in range(0,len(temp_string)):
-                    if z != index:
-                        new_string += temp_string[z]
-                    else:
-                        new_string += ' '
-                        new_string += temp_string[z]
-                temp_string = new_string
-            #add formatted string to partial strings list
-            partial_strings.append(temp_string)
-
-
+            assemble_partial_string(should_chop, partial_strings, index_tracker, index_list_tr, index_list_sr, source_text, translated_text, i, 6, '&gt;')
 
         if index_dict_tr[index_list_tr[i]] == 'la':
-            index_tracker.append(index_list_tr[i] + 4)
-            temp_string = translated[index_tracker[i]:index_tracker[i+1]]
-            #if the translation added a space before the target then chop it off
-            if translated[index_list_tr[i]-1] == ' ' and source[index_list_sr[i]-1] != ' ':
-                temp_string = temp_string.replace(' &lt;', '&lt;', 1)
-            #should chop is method through which spaces are taken away from the end of previous targets
-            if should_chop:
-                if temp_string[0] == ' ':
-                    temp_string = temp_string.replace(' ','',1)
-                should_chop = False
-            #if the translation added a space after the target then chop through bool(should_chop). Conversely if translation took away a space at the end then add it back.
-            if len(translated)-1 >= index_list_tr[i]+4 and len(source)-1 >= index_list_sr[i]+4:
-                if translated[index_list_tr[i]+4] == ' ' and source[index_list_sr[i]+4] != ' ':
-                    should_chop = True
-                if translated[index_list_tr[i]+4] != ' ' and source[index_list_sr[i]+4] == ' ':
-                    temp_string += ' '
-            #if the translation took away a space before the target then add it back
-            if translated[index_list_tr[i]-1] != ' ' and source[index_list_sr[i]-1] == ' ':
-                new_string = ''
-                index = temp_string.index('&lt;')
-                for z in range(0,len(temp_string)):
-                    if z != index:
-                        new_string += temp_string[z]
-                    else:
-                        new_string += ' '
-                        new_string += temp_string[z]
-                temp_string = new_string
-            #add formatted string to partial strings list
-            partial_strings.append(temp_string)
+            assemble_partial_string(should_chop, partial_strings, index_tracker, index_list_tr, index_list_sr, source_text, translated_text, i, 4, '&lt;')
+
+        if index_dict_tr[index_list_tr[i]] == 'lu':
+            assemble_partial_string(should_chop, partial_strings, index_tracker, index_list_tr, index_list_sr, source_text, translated_text, i, 6, '&lt;')
 
 
-
-        # if index_dict_tr[index_list_tr[i]] == 'n1':
-        #     index_tracker.append(index_list_tr[i]+5)
-        #     temp_string = translated[index_tracker[i]:index_tracker[i+1]]
-        #     # #if the translation added a space before the target then chop it off
-        #     # if translated[index_list_tr[i]-1] == ' ' and source[index_list_sr[i]-1] != ' ':
-        #     #     temp_string = temp_string.replace(' ' + mo1[mo1_count] , mo1[mo1_count], 1)
-        #     #should chop is method through which spaces are taken away from the end of previous targets
-        #     if should_chop:
-        #         if temp_string[0] == ' ':
-        #             temp_string = temp_string.replace(' ','',1)
-        #         should_chop = False
-        #     # #if the translation added a space after the target then chop through bool(should_chop). Conversely if translation took away a space at the end then add it back.
-        #     # if len(translated)-1 >= index_list_tr[i]+5 and len(source)-1 >= index_list_sr[i]+5:
-        #     #     if translated[index_list_tr[i]+5] == ' ' and source[index_list_sr[i]+5] != ' ':
-        #     #         should_chop = True
-        #     #     if translated[index_list_tr[i]+5] != ' ' and source[index_list_sr[i]+5] == ' ':
-        #     #         temp_string += ' '
-        #     # #if the translation took away a space before the target then add it back
-        #     # if translated[index_list_tr[i]-1] != ' ' and source[index_list_sr[i]-1] == ' ':
-        #     #     new_string = ''
-        #     #     index = temp_string.index(mo1[mo1_count])
-        #     #     for z in range(0,len(temp_string)):
-        #     #         if z != index:
-        #     #             new_string += temp_string[z]
-        #     #         else:
-        #     #             new_string += ' '
-        #     #             new_string += temp_string[z]
-        #     #     temp_string = new_string
-        #     # #add formatted string to partial strings list
-        #     partial_strings.append(temp_string)
-        #     # mo1_count += 1
-
-
-
-        # if index_dict_tr[index_list_tr[i]] == 'n2':
-        #     index_tracker.append(index_list_tr[i]+6)
-        #     temp_string = translated[index_tracker[i]:index_tracker[i+1]]
-        #     # #if the translation added a space before the target then chop it off
-        #     # if translated[index_list_tr[i]-1] == ' ' and source[index_list_sr[i]-1] != ' ':
-        #     #     temp_string = temp_string.replace(' ' + mo2[mo2_count] , mo2[mo2_count], 1)
-        #     #should chop is method through which spaces are taken away from the end of previous targets
-        #     if should_chop:
-        #         if temp_string[0] == ' ':
-        #             temp_string = temp_string.replace(' ','',1)
-        #         should_chop = False
-        #     # #if the translation added a space after the target then chop through bool(should_chop). Conversely if translation took away a space at the end then add it back.
-        #     # if len(translated)-1 >= index_list_tr[i]+6 and len(source)-1 >= index_list_sr[i]+6:
-        #     #     if translated[index_list_tr[i]+6] == ' ' and source[index_list_sr[i]+6] != ' ':
-        #     #         should_chop = True
-        #     #     if translated[index_list_tr[i]+6] != ' ' and source[index_list_sr[i]+6] == ' ':
-        #     #         temp_string += ' '
-        #     # #if the translation took away a space before the target then add it back
-        #     # if translated[index_list_tr[i]-1] != ' ' and source[index_list_sr[i]-1] == ' ':
-        #     #     new_string = ''
-        #     #     index = temp_string.index(mo2[mo2_count])
-        #     #     for z in range(0,len(temp_string)):
-        #     #         if z != index:
-        #     #             new_string += temp_string[z]
-        #     #         else:
-        #     #             new_string += ' '
-        #     #             new_string += temp_string[z]
-        #     #     temp_string = new_string
-        #     # #add formatted string to partial strings list
-        #     partial_strings.append(temp_string)
-        #     # mo2_count += 1
 
 
     #SECTION 5: GENERATE OUTPUT
     for string in partial_strings:
         output_string += string
-
 
     return output_string
 
@@ -414,7 +141,7 @@ def translate(context, phrase, lang = 'fr' ): # will have to get information fro
     reserved_characters = [' ','!','*','\'','(',')',';',':','@','&','=','+','$',',','/','?','%','#','[',']']
 
     base_url = 'https://www.googleapis.com/language/translate/v2?key='
-    API_key = '' #manually insert API key
+    API_key = '' #MANUALLY ENTER API KEY
     source_language = 'source=en'
     translation_language = 'target=' + lang
     formatted_phrase = ''
@@ -465,17 +192,15 @@ def translate(context, phrase, lang = 'fr' ): # will have to get information fro
 ns = etree.FunctionNamespace("mynamespace")
 ns['translate'] = translate
 
-dom = etree.parse(r'C:\Users\Andrew\PycharmProjects\xTuple\fr.ts.xml')
+dom = etree.parse(r'C:\Users\Andrew\PycharmProjects\xTuple\fr.ts.xml') #MANUALLY: place the base.ts as the argument
 
-xslt = etree.parse("translate.xslt")
+xslt = etree.parse("translate.xslt") #MANUALLY: place the xslt stylesheet as the argument
 transform = etree.XSLT(xslt)
 
 newdom = transform(dom)
 
-filename = 'output.xml'
+filename = 'output.xml' #MANUALLY: name the output file
 output_xml = open(filename,'w')
-xml_declaration = '<?xml version="1.0" encoding="utf-8"?>\n'
-output_xml.write(xml_declaration)
 output_xml.write(str(newdom))
 output_xml.close()
 
