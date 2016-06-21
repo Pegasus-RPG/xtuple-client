@@ -89,7 +89,7 @@ bool QTcpServerProto::isListening() const
   return false;
 }
 
-bool QTcpServerProto::listen(const QHostAddress::SpecialAddress & address, quint16 port)
+bool QTcpServerProto::listen(const QHostAddress & address, quint16 port)
 {
   QTcpServer *item = qscriptvalue_cast<QTcpServer*>(thisObject());
   if (item)
