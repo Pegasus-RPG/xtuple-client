@@ -73,10 +73,21 @@ void setupQHostAddressProto(QScriptEngine *engine)
 QScriptValue constructQHostAddress(QScriptContext *context, QScriptEngine  *engine)
 {
   QHostAddress *obj = 0;
-  if (context->argumentCount() == 1 && context->argument(0).isString())
+  if (context->argumentCount() == 1 && context->argument(0).isString()) {
     obj = new QHostAddress(context->argument(0).toString());
-  else
+  } else if (context->argumentCount() == 1 && context->argument(0).isNumber()) {
+    if (context->argument(0).isNumber() >= 0 && context->argument(0).isNumber() <= 6) {
+      QHostAddress::SpecialAddress addr = qscriptvalue_cast<QHostAddress::SpecialAddress>(context->argument(0));
+      obj = new QHostAddress(addr);
+    } else {
+      obj = new QHostAddress(context->argument(0).toInt32());
+    }
+  } else if (context->argumentCount() == 1 && context->argument(0).isObject()) {
+    QHostAddress hostAddr = qscriptvalue_cast<QHostAddress>(context->argument(0));
+    obj = new QHostAddress(hostAddr);
+  } else {
     obj = new QHostAddress();
+  }
   return engine->toScriptValue(obj);
 }
 
