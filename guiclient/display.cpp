@@ -89,7 +89,7 @@ public:
     _expandAct->setVisible(false);
 
     _collapseBtn = new QToolButton(_toolBar);
-    _collapseBtn->setObjectName("_expandBtn");
+    _collapseBtn->setObjectName("_collapseBtn");
     _collapseBtn->setFocusPolicy(Qt::NoFocus);
     _collapseAct = _toolBar->addWidget(_collapseBtn);
     _collapseAct->setVisible(false);
