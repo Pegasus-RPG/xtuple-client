@@ -1728,12 +1728,13 @@ void item::sFillListItemSites()
   params.append("item_id", _itemid);
   params.append("regular", tr("Regular"));
   params.append("none", tr("None"));
-  params.append("lotNumber", tr("Lot #"));
-  params.append("serialNumber", tr("Serial #"));
+  params.append("lot", tr("Lot #"));
+  params.append("serial", tr("Serial #"));
   params.append("standard", tr("Standard"));
   params.append("job", tr("Job"));
   params.append("average", tr("Average"));
   params.append("na", tr("N/A"));
+  params.append("never", tr("Never"));
 
   itemFillListItemSites  = mql.toQuery(params);
   _itemSite->populate(itemFillListItemSites);
