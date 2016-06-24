@@ -487,7 +487,7 @@ CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
   setTabOrder(_listTab,		_buttonBox);
   setTabOrder(_buttonBox,	_search);
 
-  resize(800, size().height());
+  resize(800, 600);
   
   _parent = pParent;
   setObjectName("crmacctSearch");
