@@ -16,6 +16,7 @@
 #include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
+#include <xdateinputdialog.h>
 #include <QMessageBox>
 
 #include "apOpenItem.h"
@@ -612,31 +613,42 @@ void selectPayments::sVoidVoucher()
   QList<XTreeWidgetItem*> list = _apopen->selectedItems();
   XTreeWidgetItem * cursor = 0;
   XSqlQuery dspVoidVoucher;
-  dspVoidVoucher.prepare("SELECT voidApopenVoucher(:apopen_id) AS result;");
+  dspVoidVoucher.prepare("SELECT voidApopenVoucher(:apopen_id, :voidDate) AS result;");
   for(int i = 0; i < list.size(); i++)
   {
     cursor = (XTreeWidgetItem*)list.at(i);
     if ( (cursor->rawValue("doctype") == tr("Voucher")) && (cursor->rawValue("selected") == 0.0) )
     {
-      dspVoidVoucher.bindValue(":apopen_id", cursor->id());
-      dspVoidVoucher.exec();
-      
-      if(dspVoidVoucher.first())
+      XDateInputDialog newdlg(this, "", true);
+      ParameterList params;
+      params.append("label", tr("On what date did you void the Voucher?"));
+      params.append("default", cursor->rawValue("apopen_docdate"));
+      newdlg.set(params);
+      int returnVal = newdlg.exec();
+      if (returnVal == XDialog::Accepted)
       {
-        if(dspVoidVoucher.value("result").toInt() < 0)
+        QDate voidDate = newdlg.getDate();
+        dspVoidVoucher.bindValue(":apopen_id", cursor->id());
+        dspVoidVoucher.bindValue(":voidDate", voidDate);
+        dspVoidVoucher.exec();
+      
+        if(dspVoidVoucher.first())
         {
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error Voiding Voucher"),
+          if(dspVoidVoucher.value("result").toInt() < 0)
+          {
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Voiding Voucher"),
+                                 dspVoidVoucher, __FILE__, __LINE__);
+            return;
+          }
+        }
+        else
+        {
+          ErrorReporter::error(QtCriticalMsg, this, tr("Voiding Voucher"),
                                dspVoidVoucher, __FILE__, __LINE__);
           return;
         }
+        update = true;
       }
-      else
-      {
-        ErrorReporter::error(QtCriticalMsg, this, tr("Voiding Voucher"),
-                             dspVoidVoucher, __FILE__, __LINE__);
-        return;
-      }
-      update = true;
     }
   }
   if(update)
