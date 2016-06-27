@@ -175,8 +175,11 @@ void dspOrderActivityByProject::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, i
 
   if(list()->altId() == 35)
   {
-    menuItem = pMenu->addAction(tr("Edit Invoice..."), this, SLOT(sEdit()));
-    menuItem->setEnabled(_privileges->check("MaintainMiscInvoices"));
+    if (list()->rawValue("status") != "Posted")
+    {
+      menuItem = pMenu->addAction(tr("Edit Invoice..."), this, SLOT(sEdit()));
+      menuItem->setEnabled(_privileges->check("MaintainMiscInvoices"));
+    }
 
     menuItem = pMenu->addAction(tr("View Invoice..."), this, SLOT(sView()));
     menuItem->setEnabled(_privileges->check("MaintainMiscInvoices") ||
@@ -185,8 +188,11 @@ void dspOrderActivityByProject::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, i
 
   if(list()->altId() == 37)
   {
-    menuItem = pMenu->addAction(tr("Edit Invoice Item..."), this, SLOT(sEdit()));
-    menuItem->setEnabled(_privileges->check("MaintainMiscInvoices"));
+    if (list()->rawValue("status") != "Posted")
+    {
+      menuItem = pMenu->addAction(tr("Edit Invoice Item..."), this, SLOT(sEdit()));
+      menuItem->setEnabled(_privileges->check("MaintainMiscInvoices"));
+    }
 
     menuItem = pMenu->addAction(tr("View Invoice Item..."), this, SLOT(sView()));
     menuItem->setEnabled(_privileges->check("MaintainMiscInvoices") ||
