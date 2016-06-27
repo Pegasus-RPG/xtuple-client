@@ -15,6 +15,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
+#include <xdateinputdialog.h>
 
 #include "apOpenItem.h"
 #include "voucher.h"
@@ -221,21 +222,32 @@ void dspVendorAPHistory::sSearchInvoiceNum()
 void dspVendorAPHistory::sVoidVoucher()
 {
   XSqlQuery dspVoidVoucher;
-  dspVoidVoucher.prepare("SELECT voidApopenVoucher(:apopen_id) AS result;");
-  dspVoidVoucher.bindValue(":apopen_id", list()->id());
-  dspVoidVoucher.exec();
-
-  if(dspVoidVoucher.first())
+  dspVoidVoucher.prepare("SELECT voidApopenVoucher(:apopen_id, :voidDate) AS result;");
+  XDateInputDialog newdlg(this, "", true);
+  ParameterList params;
+  params.append("label", tr("On what date did you void the Voucher?"));
+  params.append("default", list()->rawValue("docdate"));
+  newdlg.set(params);
+  int returnVal = newdlg.exec();
+  if (returnVal == XDialog::Accepted)
   {
-    if(dspVoidVoucher.value("result").toInt() < 0)
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Voucher Information"),
-                         dspVoidVoucher, __FILE__, __LINE__);
+    QDate voidDate = newdlg.getDate();
+    dspVoidVoucher.bindValue(":apopen_id", list()->id());
+    dspVoidVoucher.bindValue(":voidDate", voidDate);
+    dspVoidVoucher.exec();
+
+    if(dspVoidVoucher.first())
+    {
+      if(dspVoidVoucher.value("result").toInt() < 0)
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Voucher Information"),
+                             dspVoidVoucher, __FILE__, __LINE__);
+      else
+        sFillList();
+    }
     else
-      sFillList();
+      ErrorReporter::error(QtCriticalMsg, this, tr("Voiding Voucher"),
+                           dspVoidVoucher, __FILE__, __LINE__);
   }
-  else
-    ErrorReporter::error(QtCriticalMsg, this, tr("Voiding Voucher"),
-                         dspVoidVoucher, __FILE__, __LINE__);
 
 }
 
