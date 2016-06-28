@@ -99,7 +99,11 @@ class checkForUpdatesPrivate {
 #endif
 #ifdef Q_OS_LINUX
       _newExePath   = "../xTuple-" + _serverVersion + "-Linux/xtuple";
-      _downloadFile = "xTuple-"    + _serverVersion + "-Linux.tar.bz2";
+      #ifdef Q_PROCESSOR_X86_64
+        _downloadFile = "xTuple-"    + _serverVersion + "-Linux64.tar.bz2";
+      #else
+        _downloadFile = "xTuple-"    + _serverVersion + "-Linux.tar.bz2";
+      #endif
       _destdir = "..";
 #endif
     }
