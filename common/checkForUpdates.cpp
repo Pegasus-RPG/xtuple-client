@@ -68,8 +68,8 @@ class Sudoable : public QProcess {
       QString password;
       bool retry = false;
       do {
-        password = QInputDialog::getText(0, tr("Need Password to Install"),
-                                          tr("Password:"),
+        password = QInputDialog::getText(0, tr("Password Required"),
+                                          tr("Enter System Password:"),
                                           QLineEdit::Password, password, ok);
         start(password, "echo testing");
         if (! waitForFinished(1000))
