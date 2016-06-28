@@ -93,7 +93,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
       TransferOrderCommentTypes, TransferOrderItemCommentTypes,
       UOMs, Users, ActiveUsers, VendorCommentTypes, VendorGroups,
       VendorTypes, WarehouseCommentTypes, WoProjects,
-      WorkCenters, WorkOrderCommentTypes
+      WorkCenters, WorkCentersActive, WorkOrderCommentTypes
       };
 
     static GuiClientInterface *_guiClientInterface;
