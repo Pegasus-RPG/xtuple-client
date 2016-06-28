@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -16,12 +16,16 @@
 #include <QSettings>
 #include <QTextStream>
 #include <QVariant>
+#include <QDomDocument>
+#include <QAction>
+#include <QTextCursor>
 
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "jsHighlighter.h"
 #include "package.h"
 #include "storedProcErrorLookup.h"
+#include "uiformchooser.h"
 
 #define DEBUG false
 
@@ -33,12 +37,12 @@ scriptEditor::scriptEditor(QWidget* parent, const char* name, Qt::WindowFlags fl
   setupUi(this);
   setWindowModality(Qt::WindowModal);
 
-  connect(_export,          SIGNAL(clicked()), this, SLOT(sSaveFile()));
-  connect(_find,            SIGNAL(clicked()), this, SLOT(sFind()));
-  connect(_findText,SIGNAL(editingFinished()), this, SLOT(sFindSignal()));
-  connect(_import,          SIGNAL(clicked()), this, SLOT(sImport()));
-  connect(_line,    SIGNAL(editingFinished()), this, SLOT(sGoto()));
-  connect(_save,            SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_export,         SIGNAL(clicked()),         this, SLOT(sSaveFile()));
+  connect(_find,           SIGNAL(clicked()),         this, SLOT(sFind()));
+  connect(_findText,       SIGNAL(editingFinished()), this, SLOT(sFindSignal()));
+  connect(_import,         SIGNAL(clicked()),         this, SLOT(sImport()));
+  connect(_line,           SIGNAL(editingFinished()), this, SLOT(sGoto()));
+  connect(_save,           SIGNAL(clicked()),         this, SLOT(sSave()));
 
   _highlighter = new JSHighlighter(_source->document());
   _document = _source->document();
@@ -60,6 +64,20 @@ scriptEditor::scriptEditor(QWidget* parent, const char* name, Qt::WindowFlags fl
   
   QSettings settings("xTuple.com", "scriptEditor");
   lastSaveDir = settings.value("LastDirectory").toString();
+
+  QMenu *extractMenu = new QMenu(_extractWidgets);
+  QAction *withLabels = new QAction(this);
+  withLabels->setObjectName("withLabels");
+  withLabels->setText("Including Labels");
+  connect(withLabels, SIGNAL(triggered()), this, SLOT(sExtractWidgetsWithLabels()));
+  extractMenu->addAction(withLabels);
+  QAction *withoutLabels = new QAction(this);
+  withoutLabels->setObjectName("withoutLabels");
+  withoutLabels->setText("Excluding Labels");
+  connect(withoutLabels, SIGNAL(triggered()), this, SLOT(sExtractWidgetsWithoutLabels()));
+  extractMenu->addAction(withoutLabels);
+  _extractWidgets->setMenu(extractMenu);
+
 }
 
 scriptEditor::~scriptEditor()
@@ -480,4 +498,83 @@ void scriptEditor::sBlockCountChanged(const int p)
 void scriptEditor::sPositionChanged()
 {
   _line->setValue(_source->textCursor().blockNumber() + 1);
+}
+
+void scriptEditor::sExtractWidgetsWithLabels() {
+  sExtractWidgets(true);
+}
+
+void scriptEditor::sExtractWidgetsWithoutLabels() {
+  sExtractWidgets(false);
+}
+
+void scriptEditor::sExtractWidgets(const bool pInclude) {
+  int longest = 0;
+  QMap<QString,QString> vars;
+  QString output = "";
+  QString source = "";
+  XSqlQuery uisource;
+  uisource.prepare(" SELECT uiform_id, uiform_name, uiform_notes, "
+                   "        uiform_order, uiform_source, uiform_enabled "
+                   " FROM uiform "
+                   " WHERE uiform_name = :uiform_name;" );
+  uisource.bindValue(":uiform_name", _name->text());
+  uisource.exec();
+  if (uisource.size() > 1) {
+    QMap<int,QString> sources;
+    while (uisource.next())
+      sources.insert(uisource.value("uiform_id").toInt(),
+                     uisource.value("uiform_source").toString());
+
+    uiformchooser uc(this);
+    uc.populate(uisource);
+    if (uc.exec() > 0) {
+      source = sources.value(uc.result());
+    }
+    else {
+      return;
+    }
+  }
+  else {
+    if (uisource.first()) {
+      source = uisource.value("uiform_source").toString();
+    }
+    else {
+      return;
+    }
+  }
+  QDomDocument report;
+  report.setContent(source);
+
+  QDomNodeList widgets = report.elementsByTagName("widget");
+  for (int i = 0; i < widgets.size(); i += 1) {
+    QDomNode domNode = widgets.item(i);
+    QDomElement element = domNode.toElement();
+    // skip the root widget
+    if (element.attribute("class") == "QWidget"
+     || element.attribute("class") == "QDialog"
+     || element.attribute("class") == "XWidget"
+     || element.attribute("class") == "XDialog")
+      continue;
+    if (!pInclude && (element.attribute("class") == "QLabel" || element.attribute("class") == "XLabel"))
+      continue;
+    vars.insert(element.attribute("name"), element.attribute("class"));
+    if (element.attribute("name").length() > longest)
+      longest = element.attribute("name").length();
+  }
+
+  foreach (QString key, vars.keys()) {
+    QString firstpart = key;
+    QString middlepart = "\"" + key + "\");";
+    QString lastpart = vars.value(key);
+    while (firstpart.length() < longest)
+      firstpart += " ";
+    while (middlepart.length() < longest+4) // 4 for the ""); added above
+      middlepart += " ";
+    output += QString("var %1 = mywindow.findChild(%2 // %3\n")
+                     .arg(firstpart).arg(middlepart).arg(lastpart);
+  }
+
+  QTextCursor cursor(_source->textCursor());
+  cursor.insertText(output);
 }

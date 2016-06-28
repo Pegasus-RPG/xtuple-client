@@ -595,6 +595,7 @@ FORMS =   absoluteCalendarItem.ui               \
           transformTrans.ui                     \
           translations.ui                       \
           uiform.ui                             \
+          uiformchooser.ui                      \
           uiforms.ui                            \
           unappliedAPCreditMemos.ui             \
           unappliedARCreditMemos.ui             \
@@ -648,7 +649,8 @@ FORMS =   absoluteCalendarItem.ui               \
           xdateinputdialog.ui                   \
           xsltMap.ui                            \
           zeroUncountedCountTagsByWarehouse.ui  \
-    printStatementsByCustomerGroup.ui
+          printStatementsByCustomerGroup.ui
+
 
 HEADERS = ../common/format.h                    \
           SaveSizePositionEventFilter.h         \
@@ -1201,6 +1203,7 @@ HEADERS = ../common/format.h                    \
           transformTrans.h              \
           translations.h                \
           uiform.h                      \
+          uiformchooser.h               \
           uiforms.h                     \
           unappliedAPCreditMemos.h      \
           unappliedARCreditMemos.h      \
@@ -1269,7 +1272,7 @@ HEADERS = ../common/format.h                    \
           xwidget.h                     \
           yourpayprocessor.h            \
           zeroUncountedCountTagsByWarehouse.h \
-    printStatementsByCustomerGroup.h
+          printStatementsByCustomerGroup.h
 
 SOURCES = absoluteCalendarItem.cpp              \
           account1099.cpp                       \
@@ -1818,6 +1821,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           transformTrans.cpp                    \
           translations.cpp                      \
           uiform.cpp                            \
+          uiformchooser.cpp                     \
           uiforms.cpp                           \
           unappliedAPCreditMemos.cpp            \
           unappliedARCreditMemos.cpp            \
@@ -1886,7 +1890,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           xwidget.cpp                           \
           yourpayprocessor.cpp                  \
           zeroUncountedCountTagsByWarehouse.cpp \
-    printStatementsByCustomerGroup.cpp
+          printStatementsByCustomerGroup.cpp
 
 include( displays/displays.pri )
 include( hunspell.pri )
