@@ -288,6 +288,7 @@ void XComboBox::init()
   insertEditor(WarehouseCommentTypes,"commentTypes","MaintainCommentTypes");
   insertEditor(WoProjects,"projects","MaintainAllProjects");
   insertEditor(WorkCenters,"workCenters","MaintainWorkCenters");
+  insertEditor(WorkCentersActive,"workCenters","MaintainWorkCenters");
   insertEditor(WorkOrderCommentTypes,"commentTypes","MaintainCommentTypes");
 }
 
@@ -1048,6 +1049,13 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "ORDER BY wrkcnt_code;" );
       break;
 
+    case WorkCentersActive:
+      query.exec( "SELECT wrkcnt_id, (wrkcnt_code || '-' || wrkcnt_descrip), wrkcnt_code"
+                 "  FROM xtmfg.wrkcnt "
+                 " WHERE (wrkcnt_active) "
+                 "ORDER BY wrkcnt_code;" );
+      break;
+      
     case CRMAccounts:
       setAllowNull(true);
       query.exec( "SELECT crmacct_id, (crmacct_number || '-' || crmacct_name), crmacct_number"
@@ -1790,6 +1798,7 @@ void setupXComboBox(QScriptEngine *engine)
   widget.setProperty("VendorTypes",          QScriptValue(engine, XComboBox::VendorTypes),          QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("WoProjects",           QScriptValue(engine, XComboBox::WoProjects),           QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("WorkCenters",          QScriptValue(engine, XComboBox::WorkCenters),          QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("WorkCentersActive",    QScriptValue(engine, XComboBox::WorkCentersActive),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   engine->globalObject().setProperty("XComboBox", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }
