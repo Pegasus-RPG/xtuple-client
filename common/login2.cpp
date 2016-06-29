@@ -343,7 +343,7 @@ void login2::sLogin()
 
   if (db.isOpen())
   {
-    QString earliest = "9.1.0",
+    QString earliest = "9.3.0",
             latest   = "9.5.0";
     XSqlQuery checkVersion;   // include earliest in the range but exclude latest
     checkVersion.prepare("SELECT compareVersion(:earliest) <= 0"
