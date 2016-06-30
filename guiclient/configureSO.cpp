@@ -325,7 +325,7 @@ bool configureSO::sSave()
   _metrics->set("Long30Markups", _long30Markups->isChecked());
 
   _metrics->set("EnableSOReservationsByLocation", _enableReservations->isChecked() && _locationGroup->isChecked());
-  _metrics->set("SOManualReservations", _enableReservations->isChecked() && _manualReservations->isChecked());
+  _metrics->set("SOManualReservations", _enableReservations->isChecked() && _locationGroup->isChecked() && _manualReservations->isChecked());
   //SOReservationLocationMethod are three Options Either
   // Lowest quantity first,
   // Highest quantity first,
