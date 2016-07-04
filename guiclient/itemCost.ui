@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>492</width>
-    <height>195</height>
+    <width>459</width>
+    <height>188</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,14 @@ to be bound by its terms.</comment>
    <item>
     <layout class="QHBoxLayout">
      <item>
-      <widget class="ItemCluster" name="_item"/>
+      <widget class="ItemCluster" name="_item">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </item>
      <item>
       <layout class="QVBoxLayout">
@@ -61,7 +68,7 @@ to be bound by its terms.</comment>
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
+          <enum>QSizePolicy::Fixed</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
