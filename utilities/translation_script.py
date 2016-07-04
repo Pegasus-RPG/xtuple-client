@@ -1,8 +1,24 @@
-#xslt with working the space handler
+#HOW TO USE THIS FROM THE COMMAND LINE
+#Format your entry as:
+#File_path_to_python.exe [SPACE] file_path_to_python_script [SPACE] (optional) -o preferred_filename [SPACE] API_key [SPACE] Untranslated_xml
+
+
 from lxml import etree
 import urllib.request
 from urllib.parse import quote
 import re
+import sys
+import getopt
+
+
+#Used to generate the output name of the new xml file
+def output_name(input_name):
+    output_string = ''
+    for i in range(0,len(input_name)-3):
+        output_string += input_name[i]
+    output_string += '.ts'
+    return output_string
+
 
 #Used in translate function to format the output translation to match the source text format in the xml file. There was a problem with google translate adding/removing spaces before/after &amp;, &gt;, and &lt;.
 #Google translate was also changing the encoding(i.e. &lt; to u\003c)
@@ -39,7 +55,7 @@ def assemble_partial_string(should_chop, partial_strings, index_tracker, index_l
             temp_string += ' '
 
     #if the translation took away a space before the target then add it back
-    if translated_text[index_list_tr[iteration]-1] != ' ' and translated_text[index_list_sr[iteration]-1] == ' ':
+    if translated_text[index_list_tr[iteration]-1] != ' ' and source_text[index_list_sr[iteration]-1] == ' ':
         new_string = ''
         index = temp_string.index(target_phrase)
         for z in range(0,len(temp_string)):
@@ -74,7 +90,7 @@ def space_handler(source_text, translated_text):
     append_to_dict('\\\\u003e', translated_text, index_dict_tr, 'gu')
     append_to_dict(r'&lt;', source_text, index_dict_sr, 'la')
     append_to_dict(r'&lt;', translated_text, index_dict_tr, 'la')
-    append_to_dict('\\\\u003e', translated_text, index_dict_tr, 'lu')
+    append_to_dict('\\\\u003c', translated_text, index_dict_tr, 'lu')
 
 
 
@@ -141,7 +157,7 @@ def translate(context, phrase, lang = 'fr' ): # will have to get information fro
     reserved_characters = [' ','!','*','\'','(',')',';',':','@','&','=','+','$',',','/','?','%','#','[',']']
 
     base_url = 'https://www.googleapis.com/language/translate/v2?key='
-    API_key = '' #MANUALLY ENTER API KEY
+    API_key = args[0]#MANUALLY ENTER API KEY
     source_language = 'source=en'
     translation_language = 'target=' + lang
     formatted_phrase = ''
@@ -168,39 +184,48 @@ def translate(context, phrase, lang = 'fr' ): # will have to get information fro
         mo = translation_regex.findall(line)
         if len(mo) != 0:
             translated_text.append(mo[0])
-    print(phrase)
 
     translated_string = translated_text[0]
-    print(translated_string)
 
     #Since values get unencoded when reading the source text in xml files, reencode the ones that are used in the space_handler() function
     source_text = phrase
     source_text = source_text.replace('&', '&amp;')
     source_text = source_text.replace('<', '&lt;')
     source_text = source_text.replace('>', '&gt;')
-    print(source_text)
+    print("Out of Google Translate:      " + phrase)
+    print("Reformatted source_text:      " + source_text)
+    print("Original translation:         " + translated_string)
 
     #reformat spaces in translated string to match those in the source text
     translated_string = space_handler(source_text, translated_string)
-    print(translated_string)
+    print("Space handled translation:    " + translated_string)
     print()
 
 
     return translated_string
 
+arg_info = getopt.getopt(sys.argv[1:], "o:")
+args = arg_info[1]
 
 ns = etree.FunctionNamespace("mynamespace")
 ns['translate'] = translate
 
-dom = etree.parse(r'C:\Users\Andrew\PycharmProjects\xTuple\fr.ts.xml') #MANUALLY: place the base.ts as the argument
+dom = etree.parse(args[1]) #MANUALLY: place the base.ts as the argument
 
 xslt = etree.parse("translate.xslt") #MANUALLY: place the xslt stylesheet as the argument
 transform = etree.XSLT(xslt)
 
 newdom = transform(dom)
 
-filename = 'output.xml' #MANUALLY: name the output file
-output_xml = open(filename,'w')
+
+#if there is a filename specified in the command line
+if len(arg_info[0]) > 0:
+    filename = arg_info[0][0][1]
+else:
+    filename = output_name(args[1]) #MANUALLY: name the output file
+
+
+output_xml = open(filename,'w+')
 output_xml.write(str(newdom))
 output_xml.close()
 
