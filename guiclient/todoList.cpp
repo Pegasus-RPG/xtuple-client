@@ -180,7 +180,7 @@ void todoList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
   {
     editPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalProjects")) ||
-        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalProjects")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalProjects") && list()->altId() == 4) ||
         (_privileges->check("MaintainAllProjects"));
 
     viewPriv =
