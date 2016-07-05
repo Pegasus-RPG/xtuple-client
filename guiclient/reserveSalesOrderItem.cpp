@@ -46,70 +46,43 @@ reserveSalesOrderItem::reserveSalesOrderItem(QWidget* parent, const char* name, 
   _allocated->setPrecision(omfgThis->qtyVal());
   _unreserved->setPrecision(omfgThis->qtyVal());
 
-  if (_metrics->boolean("SOManualReservations"))
-  {
-    connect(_bcReserve,       SIGNAL(clicked()), this, SLOT(sBcReserve()));
-    connect(_reserve,         SIGNAL(clicked()), this, SLOT(sReserveLocation()));
-    connect(_unreserve,       SIGNAL(clicked()), this, SLOT(sUnreserveLocation()));
-    connect(_itemloc, SIGNAL(itemSelected(int)), this, SLOT(sReserveLocation()));
-    connect(_bc,   SIGNAL(textChanged(QString)), this, SLOT(sBcChanged(QString)));
-    
-    omfgThis->inputManager()->notify(cBCLotSerialNumber, this, this, SLOT(sCatchLotSerialNumber(QString)));
-    
-    _itemloc->addColumn(tr("Location"),       _itemColumn, Qt::AlignLeft,  true, "location");
-    _itemloc->addColumn(tr("Lot/Serial #"),   -1,          Qt::AlignLeft,  true, "lotserial");
-    _itemloc->addColumn(tr("Expiration"),     _dateColumn, Qt::AlignCenter,true, "f_expiration");
-    _itemloc->addColumn(tr("This Reserved"),  _qtyColumn,  Qt::AlignRight, true, "reserved");
-    _itemloc->addColumn(tr("Total Reserved"), _qtyColumn,  Qt::AlignRight, true, "totalreserved");
-    _itemloc->addColumn(tr("Unreserved"),     _qtyColumn,  Qt::AlignRight, true, "unreserved");
+  _itemloc->addColumn(tr("Location"),       _itemColumn, Qt::AlignLeft,  true, "location");
+  _itemloc->addColumn(tr("Lot/Serial #"),   -1,          Qt::AlignLeft,  true, "lotserial");
+  _itemloc->addColumn(tr("Expiration"),     _dateColumn, Qt::AlignCenter,true, "f_expiration");
+  _itemloc->addColumn(tr("This Reserved"),  _qtyColumn,  Qt::AlignRight, true, "reserved");
+  _itemloc->addColumn(tr("Total Reserved"), _qtyColumn,  Qt::AlignRight, true, "totalreserved");
+  _itemloc->addColumn(tr("Unreserved"),     _qtyColumn,  Qt::AlignRight, true, "unreserved");
 
-    //If not lot serial control, hide info
-    if (!_metrics->boolean("LotSerialControl"))
-    {
-      _bcLit->hide();
-      _bc->hide();
-      _bcQtyLit->hide();
-      _bcQty->hide();
-      _bcReserve->hide();
-    }
-    else
-    {
-      // Add columns for lotserial characteristics
-      QString column;
-      QString name;
-      QString sql = QString("SELECT char_id, char_name, char_type "
-                            "FROM char "
-                            "WHERE (char_lotserial) "
-                            " AND (char_search) "
-                            "ORDER BY char_name;");
-      XSqlQuery chars;
-      chars.exec(sql);
-      while (chars.next())
-      {
-        characteristic::Type chartype = (characteristic::Type)chars.value("char_type").toInt();
-        column = QString("char%1").arg(chars.value("char_id").toString());
-        name = chars.value("char_name").toString();
-        _itemloc->addColumn(name, -1, Qt::AlignLeft , true, column );
-        if (chartype == characteristic::Text)
-        {
-          _charidstext.append(chars.value("char_id").toInt());
-        }
-        else if (chartype == characteristic::List)
-        {
-          _charidslist.append(chars.value("char_id").toInt());
-        }
-        else if (chartype == characteristic::Date)
-        {
-          _charidsdate.append(chars.value("char_id").toInt());
-        }
-      }
-    }
-  }
-  else
+  // Add columns for lotserial characteristics
+  QString charcolumn;
+  QString charname;
+  QString sql = QString("SELECT char_id, char_name, char_type "
+                        "FROM char "
+                        "WHERE (char_lotserial) "
+                        " AND (char_search) "
+                        "ORDER BY char_name;");
+  XSqlQuery chars;
+  chars.exec(sql);
+  while (chars.next())
   {
-    _locationGroup->hide();
+    characteristic::Type chartype = (characteristic::Type)chars.value("char_type").toInt();
+    charcolumn = QString("char%1").arg(chars.value("char_id").toString());
+    charname = chars.value("char_name").toString();
+    _itemloc->addColumn(charname, -1, Qt::AlignLeft , true, charcolumn );
+    if (chartype == characteristic::Text)
+    {
+      _charidstext.append(chars.value("char_id").toInt());
+    }
+    else if (chartype == characteristic::List)
+    {
+      _charidslist.append(chars.value("char_id").toInt());
+    }
+    else if (chartype == characteristic::Date)
+    {
+      _charidsdate.append(chars.value("char_id").toInt());
+    }
   }
-  
+
   XSqlQuery reserveSalesOrderItem;
   reserveSalesOrderItem.exec("BEGIN;");
 
@@ -154,7 +127,7 @@ void reserveSalesOrderItem::sSave()
   if (_qtyToReserve->toDouble() > 0.0)
     _update = true;
   
-  if (_update && _metrics->boolean("SOManualReservations"))
+  if (_update && _metrics->boolean("SOManualReservations") && (_locControl || _controlMethod == "L" || _controlMethod == "S"))
   {
     if (QMessageBox::question(this, tr("Reserve Balance?"),
                               tr("<p>Reserve the balance using the Reservations "
@@ -205,7 +178,7 @@ void reserveSalesOrderItem::reject()
 void reserveSalesOrderItem::populate()
 {
   XSqlQuery distributepopulate;
-  distributepopulate.prepare("SELECT itemsite_controlmethod "
+  distributepopulate.prepare("SELECT itemsite_loccntrl, itemsite_controlmethod "
                              "FROM coitem JOIN itemsite ON (itemsite_id=coitem_itemsite_id) "
                              "WHERE (coitem_id=:soitem_id);");
   
@@ -213,14 +186,44 @@ void reserveSalesOrderItem::populate()
   distributepopulate.exec();
   if (distributepopulate.first())
   {
+    _locControl = distributepopulate.value("itemsite_loccntrl").toBool();
     _controlMethod = distributepopulate.value("itemsite_controlmethod").toString();
-    _bc->setEnabled(_controlMethod == "L" || _controlMethod == "S");
-    _bcQty->setEnabled(_controlMethod == "L");
-    _bcReserve->setEnabled(_controlMethod == "L" || _controlMethod == "S");
-    if (_controlMethod == "S")
-      _bcQty->setText("1");
+
+    if (_metrics->boolean("SOManualReservations") && (_locControl || _controlMethod == "L" || _controlMethod == "S"))
+    {
+      connect(_bcReserve,       SIGNAL(clicked()), this, SLOT(sBcReserve()));
+      connect(_reserve,         SIGNAL(clicked()), this, SLOT(sReserveLocation()));
+      connect(_unreserve,       SIGNAL(clicked()), this, SLOT(sUnreserveLocation()));
+      connect(_itemloc, SIGNAL(itemSelected(int)), this, SLOT(sReserveLocation()));
+      connect(_bc,   SIGNAL(textChanged(QString)), this, SLOT(sBcChanged(QString)));
+      
+      //If not lot serial control, hide info
+      if (!_metrics->boolean("LotSerialControl"))
+      {
+        _bcLit->hide();
+        _bc->hide();
+        _bcQtyLit->hide();
+        _bcQty->hide();
+        _bcReserve->hide();
+      }
+      else
+      {
+        omfgThis->inputManager()->notify(cBCLotSerialNumber, this, this, SLOT(sCatchLotSerialNumber(QString)));
+        
+        _bc->setEnabled(_controlMethod == "L" || _controlMethod == "S");
+        _bcQty->setEnabled(_controlMethod == "L");
+        _bcReserve->setEnabled(_controlMethod == "L" || _controlMethod == "S");
+        if (_controlMethod == "S")
+          _bcQty->setText("1");
+        else
+          _bcQty->clear();
+
+      }
+    }
     else
-      _bcQty->clear();
+    {
+      _locationGroup->hide();
+    }
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Sales Order Information"),
                                 distributepopulate, __FILE__, __LINE__))
