@@ -103,9 +103,11 @@
 #include "qserialportinfoproto.h"
 #include "qsizepolicyproto.h"
 #include "qspaceritemproto.h"
+#include "qsqlproto.h"
 #include "qsqldatabaseproto.h"
 #include "qsqldriverproto.h"
 #include "qsqlerrorproto.h"
+#include "qsqlqueryproto.h"
 #include "qsqlrecordproto.h"
 #include "qsslcertificateextensionproto.h"
 #include "qsslcertificateproto.h"
@@ -275,9 +277,11 @@ void setupScriptApi(QScriptEngine *engine)
   setupQSerialPortInfoProto(engine);
   setupQSizePolicy(engine);
   setupQSpacerItem(engine);
+  setupQSqlProto(engine);
   setupQSqlDatabaseProto(engine);
   setupQSqlDriverProto(engine);
   setupQSqlErrorProto(engine);
+  setupQSqlQueryProto(engine);
   setupQSqlRecordProto(engine);
   setupQSslCertificateExtensionProto(engine);
   setupQSslCertificateProto(engine);

@@ -101,9 +101,11 @@ HEADERS += setupscriptapi.h \
     qserialportinfoproto.h \
     qsizepolicyproto.h \
     qspaceritemproto.h \
+    qsqlproto.h \
     qsqldatabaseproto.h \
     qsqldriverproto.h \
     qsqlerrorproto.h \
+    qsqlqueryproto.h \
     qsqlrecordproto.h \
     qsslcertificateextensionproto.h \
     qsslcertificateproto.h \
@@ -252,9 +254,11 @@ SOURCES += setupscriptapi.cpp \
     qserialportinfoproto.cpp \
     qsizepolicyproto.cpp \
     qspaceritemproto.cpp \
+    qsqlproto.cpp \
     qsqldatabaseproto.cpp \
     qsqldriverproto.cpp \
     qsqlerrorproto.cpp \
+    qsqlqueryproto.cpp \
     qsqlrecordproto.cpp \
     qsslcertificateextensionproto.cpp \
     qsslcertificateproto.cpp \
