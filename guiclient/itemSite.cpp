@@ -358,8 +358,6 @@ bool itemSite::sSave()
          << GuiErrorCheck(_plannerCode->id() == -1, _plannerCode,
                           tr("<p>You must select a Planner Code for this "
                              "Item Site before you may save it."))
-         << GuiErrorCheck(_mode == cEdit && _costcat->id() != _costcatid && _qohCache != 0, _costcat,
-                          tr("This Item Site has a quantity on hand and Cost Category cannot be changed."))
          << GuiErrorCheck(!_active->isChecked() && _qohCache != 0, _active,
                           tr("This Item Site has a quantity on hand and must be marked as active."))
   ;
