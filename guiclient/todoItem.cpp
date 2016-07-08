@@ -18,6 +18,47 @@
 #include "storedProcErrorLookup.h"
 #include "errorReporter.h"
 
+bool todoItem::userHasPriv(const int pMode, const int pId)
+{
+  bool allPriv = _privileges->check("MaintainAllToDoItems");
+  bool personalPriv = _privileges->check("MaintainPersonalToDoItems");
+  if(pMode==cView)
+  {
+    allPriv = allPriv || _privileges->check("ViewAllToDoItems");
+    personalPriv = personalPriv || _privileges->check("ViewPersonalToDoItems");
+  }
+
+  if(pMode==cNew)
+    if(allPriv||personalPriv)
+      return true;
+    else
+      return false;
+  else
+  {
+    bool isOwner = false;
+    bool isAssigned = false;
+
+    XSqlQuery usernameCheck;
+    usernameCheck.prepare( "SELECT todoitem_owner_username AS owner, "
+                           " todoitem_username AS assigned "
+                           "FROM todoitem "
+                            "WHERE (todoitem_id=:todoitem_id);" );
+    usernameCheck.bindValue(":todoitem_id", pId);
+    usernameCheck.exec();
+
+    if (usernameCheck.first())
+    {
+      isOwner = (omfgThis->username() == usernameCheck.value("owner").toString());
+      isAssigned = (omfgThis->username() == usernameCheck.value("assigned").toString());
+    }
+
+    if(((isOwner||isAssigned)&&personalPriv)||allPriv)
+      return true;
+    else
+      return false;
+  }
+}
+
 todoItem::todoItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {

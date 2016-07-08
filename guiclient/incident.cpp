@@ -24,6 +24,47 @@
 
 #include <openreports.h>
 
+bool incident::userHasPriv(const int pMode, const int pId)
+{
+  bool allPriv = _privileges->check("MaintainAllIncidents");
+  bool personalPriv = _privileges->check("MaintainPersonalIncidents");
+  if(pMode==cView)
+  {
+    allPriv = allPriv || _privileges->check("ViewAllIncidents");
+    personalPriv = personalPriv || _privileges->check("ViewPersonalIncidents");
+  }
+
+  if(pMode==cNew)
+    if(allPriv||personalPriv)
+      return true;
+    else
+      return false;
+  else
+  {
+    bool isOwner = false;
+    bool isAssigned = false;
+
+    XSqlQuery usernameCheck;
+    usernameCheck.prepare( "SELECT incdt_owner_username AS owner, "
+                           " incdt_assigned_username AS assigned "
+                           "FROM incdt "
+                            "WHERE (incdt_id=:incdt_id);" );
+    usernameCheck.bindValue(":incdt_id", pId);
+    usernameCheck.exec();
+
+    if (usernameCheck.first())
+    {
+      isOwner = (omfgThis->username() == usernameCheck.value("owner").toString());
+      isAssigned = (omfgThis->username() == usernameCheck.value("assigned").toString());
+    }
+
+    if(((isOwner||isAssigned)&&personalPriv)||allPriv)
+      return true;
+    else
+      return false;
+  }
+}
+
 incident::incident(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {

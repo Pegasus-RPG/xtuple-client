@@ -35,6 +35,47 @@
 
 const char *_projectStatuses[] = { "P", "O", "C" };
 
+bool project::userHasPriv(const int pMode, const int pId)
+{
+  bool allPriv = _privileges->check("MaintainAllProjects");
+  bool personalPriv = _privileges->check("MaintainPersonalProjects");
+  if(pMode==cView)
+  {
+    allPriv = allPriv || _privileges->check("ViewAllProjects");
+    personalPriv = personalPriv || _privileges->check("ViewPersonalProjects");
+  }
+
+  if(pMode==cNew)
+    if(allPriv||personalPriv)
+      return true;
+    else
+      return false;
+  else
+  {
+    bool isOwner = false;
+    bool isAssigned = false;
+
+    XSqlQuery usernameCheck;
+    usernameCheck.prepare( "SELECT prj_owner_username AS owner, "
+                           " prj_username AS assigned "
+                           "FROM prj "
+                            "WHERE (prj_id=:prj_id);" );
+    usernameCheck.bindValue(":prj_id", pId);
+    usernameCheck.exec();
+
+    if (usernameCheck.first())
+    {
+      isOwner = (omfgThis->username() == usernameCheck.value("owner").toString());
+      isAssigned = (omfgThis->username() == usernameCheck.value("assigned").toString());
+    }
+
+    if(((isOwner||isAssigned)&&personalPriv)||allPriv)
+      return true;
+    else
+      return false;
+  }
+}
+
 project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl),
       _prjid(-1)

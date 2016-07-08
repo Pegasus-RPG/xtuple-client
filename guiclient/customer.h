@@ -37,6 +37,8 @@ public:
     customer(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
     ~customer();
 
+    static bool userHasPriv(const int = cView);
+
     Q_INVOKABLE virtual int id()   const;
     Q_INVOKABLE virtual int mode() const;
 
