@@ -126,6 +126,7 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   _prjtask->addColumn(tr("Exp. Budget"),      _priceColumn,   Qt::AlignRight,  true,  "exp_budget"  );
   _prjtask->addColumn(tr("Exp. Actual"),      _priceColumn,   Qt::AlignRight,  true,  "exp_actual"  );
   _prjtask->addColumn(tr("Exp. Balance"),      _priceColumn,   Qt::AlignRight,  true,  "exp_balance"  );
+  _prjtask->setSortingEnabled(false);
 
   _owner->setUsername(omfgThis->username());
   _assignedTo->setUsername(omfgThis->username());
