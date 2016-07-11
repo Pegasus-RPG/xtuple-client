@@ -35,6 +35,35 @@
 
 const char *_projectStatuses[] = { "P", "O", "C" };
 
+bool project::userHasPriv(const int pMode, const int pId)
+{
+  if (_privileges->check("MaintainAllProjects"))
+    return true;
+  bool personalPriv = _privileges->check("MaintainPersonalProjects");
+  if(pMode==cView)
+  {
+    if(_privileges->check("ViewAllProjects"))
+      return true;
+    personalPriv = personalPriv || _privileges->check("ViewPersonalProjects");
+  }
+
+  if(pMode==cNew)
+    return personalPriv;
+  else
+  {
+    XSqlQuery usernameCheck;
+    usernameCheck.prepare( "SELECT getEffectiveXtUser() IN (prj_owner_username, prj_username) AS canModify "
+                           "FROM prj "
+                            "WHERE (prj_id=:prj_id);" );
+    usernameCheck.bindValue(":prj_id", pId);
+    usernameCheck.exec();
+
+    if (usernameCheck.first())
+      return usernameCheck.value("canModify").toBool()&&personalPriv;
+    return false;
+  }
+}
+
 project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl),
       _prjid(-1)

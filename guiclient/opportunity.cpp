@@ -27,6 +27,35 @@
 #include "printQuote.h"
 #include "printSoForm.h"
 
+bool opportunity::userHasPriv(const int pMode, const int pId)
+{
+  if (_privileges->check("MaintainAllOpportunities"))
+    return true;
+  bool personalPriv = _privileges->check("MaintainPersonalOpportunities");
+  if(pMode==cView)
+  {
+    if(_privileges->check("ViewAllOpportunities"))
+      return true;
+    personalPriv = personalPriv || _privileges->check("ViewPersonalOpportunities");
+  }
+
+  if(pMode==cNew)
+    return personalPriv;
+  else
+  {
+    XSqlQuery usernameCheck;
+    usernameCheck.prepare( "SELECT getEffectiveXtUser() IN (ophead_owner_username, ophead_username) AS canModify "
+                           "FROM ophead "
+                            "WHERE (ophead_id=:ophead_id);" );
+    usernameCheck.bindValue(":ophead_id", pId);
+    usernameCheck.exec();
+
+    if (usernameCheck.first())
+      return usernameCheck.value("canModify").toBool()&&personalPriv;
+    return false;
+  }
+}
+
 opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {

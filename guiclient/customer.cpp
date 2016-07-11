@@ -33,6 +33,14 @@
 #include "xcombobox.h"
 #include "parameterwidget.h"
 
+bool customer::userHasPriv(const int pMode, const int pId)
+{
+  bool priv = _privileges->check("MaintainCustomerMasters");
+  if(pMode==cView)
+    priv = priv || _privileges->check("ViewCustomerMasters");
+  return priv;
+}
+
 customer::customer(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {

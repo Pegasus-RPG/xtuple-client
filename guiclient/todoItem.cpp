@@ -18,6 +18,35 @@
 #include "storedProcErrorLookup.h"
 #include "errorReporter.h"
 
+bool todoItem::userHasPriv(const int pMode, const int pId)
+{
+  if (_privileges->check("MaintainAllToDoItems"))
+    return true;
+  bool personalPriv = _privileges->check("MaintainPersonalToDoItems");
+  if(pMode==cView)
+  {
+    if(_privileges->check("ViewAllToDoItems"))
+      return true;
+    personalPriv = personalPriv || _privileges->check("ViewPersonalToDoItems");
+  }
+
+  if(pMode==cNew)
+    return personalPriv;
+  else
+  {
+    XSqlQuery usernameCheck;
+    usernameCheck.prepare( "SELECT getEffectiveXtUser() IN (todoitem_owner_username, todoitem_username) AS canModify "
+                           "FROM todoitem "
+                            "WHERE (todoitem_id=:todoitem_id);" );
+    usernameCheck.bindValue(":todoitem_id", pId);
+    usernameCheck.exec();
+
+    if (usernameCheck.first())
+      return usernameCheck.value("canModify").toBool()&&personalPriv;
+    return false;
+  }
+}
+
 todoItem::todoItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
