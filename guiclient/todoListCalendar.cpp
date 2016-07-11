@@ -113,7 +113,7 @@ enum SetResponse todoListCalendar::set(const ParameterList& pParams)
 
 void todoListCalendar::sOpen()
 {
-  if (_list->currentItem()->text(0) == "T")
+  if (_list->rawValue("type") == "T")
   {
     bool editPriv =
         (omfgThis->username() == _list->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalToDoItems")) ||
@@ -130,7 +130,7 @@ void todoListCalendar::sOpen()
     else if (viewPriv)
       sView();
   }
-   else if (_list->currentItem()->text(0) == "PR")
+   else if (_list->rawValue("type") == "PR")
   {
     bool editPriv =
         (omfgThis->username() == _list->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalProjects")) ||
@@ -153,7 +153,7 @@ void todoListCalendar::sPopulateMenu(QMenu *pMenu)
 {
   QAction *menuItem;
 
-  if (_list->currentItem()->text(0) == "T")
+  if (_list->rawValue("type") == "T")
   {
     bool editPriv =
         (omfgThis->username() == _list->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalToDoItems")) ||
@@ -178,7 +178,7 @@ void todoListCalendar::sPopulateMenu(QMenu *pMenu)
     menuItem->setEnabled(editPriv);
   }
 
-  if (_list->currentItem()->text(0) == "PR")
+  if (_list->rawValue("type") == "PR")
   {
     bool editPriv =
         (omfgThis->username() == _list->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalProjects")) ||
@@ -200,7 +200,7 @@ void todoListCalendar::sPopulateMenu(QMenu *pMenu)
     menuItem->setEnabled(viewPriv);
   }
 
-  if (! _list->currentItem()->text(9).isEmpty())
+  if (! (_list->rawValue("cust") == ""))
   {
     menuItem = pMenu->addAction(tr("Edit Customer"), this, SLOT(sEditCustomer()));
     menuItem->setEnabled(_privileges->check("MaintainCustomerMasters"));
@@ -317,7 +317,7 @@ void todoListCalendar::sEditCustomer()
 {
   XSqlQuery cust;
   cust.prepare("SELECT cust_id FROM custinfo WHERE (cust_number=:number);");
-  cust.bindValue(":number", _list->currentItem()->text(9));
+  cust.bindValue(":number", _list->rawValue("cust"));
   if (cust.exec() && cust.first())
   {
     ParameterList params;
@@ -338,7 +338,7 @@ void todoListCalendar::sViewCustomer()
 {
   XSqlQuery cust;
   cust.prepare("SELECT cust_id FROM custinfo WHERE (cust_number=:number);");
-  cust.bindValue(":number", _list->currentItem()->text(9));
+  cust.bindValue(":number", _list->rawValue("cust"));
   if (cust.exec() && cust.first())
   {
     ParameterList params;
