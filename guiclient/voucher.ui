@@ -1069,12 +1069,6 @@ to be bound by its terms.</comment>
    </hints>
   </connection>
   <connection>
-   <sender>_poNumber</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_new</receiver>
-   <slot>setEnabled(bool)</slot>
-  </connection>
-  <connection>
    <sender>_miscDistrib</sender>
    <signal>itemSelected(int)</signal>
    <receiver>_edit</receiver>
