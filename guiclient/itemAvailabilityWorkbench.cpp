@@ -30,6 +30,7 @@
 #include "dspSalesHistory.h"
 #include "dspSalesOrdersByItem.h"
 #include "dspSingleLevelWhereUsed.h"
+#include "dspSingleLevelBOM.h"
 #include "item.h"
 #include "parameterwidget.h"
 
@@ -81,6 +82,13 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _dspSingleLevelWhereUsed->setCloseVisible(false);
   _dspSingleLevelWhereUsed->setQueryOnStartEnabled(false);
   _dspSingleLevelWhereUsed->findChild<QWidget*>("_item")->hide();
+  
+  _dspSingleLevelBOM = new dspSingleLevelBOM(this, "dspSingleLevelBOM", Qt::Widget);
+  _dspSingleLevelBOM->setObjectName("dspSingleLevelBOM");
+  _singleLevelBOMPage->layout()->addWidget(_dspSingleLevelBOM);
+  _dspSingleLevelBOM->setCloseVisible(false);
+  _dspSingleLevelBOM->setQueryOnStartEnabled(false);
+  _dspSingleLevelBOM->findChild<QWidget*>("_item")->hide();
   
   _dspInventoryHistory = new dspInventoryHistory(this, "dspInventoryHistory", Qt::Widget);
   _dspInventoryHistory->setObjectName("dspInventoryHistory");
@@ -188,6 +196,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   connect(_availabilityButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_runningAvailabilityButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_locationDetailButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_singleLevelBOMButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_costedIndentedBOMButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_whereUsedButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_inventoryHistoryButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
@@ -201,7 +210,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
 
   // General
   if (!_privileges->check("ViewInventoryAvailability") && !_privileges->check("ViewQOH"))
-    _tab->removeTab(0);
+    _tab->removeTab(_tab->indexOf(_availabilityTab));
   else
   {
     if (!_privileges->check("ViewInventoryAvailability"))
@@ -214,7 +223,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   }
   
   if (!_privileges->check("ViewPurchaseOrders") && !_privileges->check("ViewSalesOrders") && !_privileges->check("ViewQuotes"))
-    _tab->removeTab(1);
+    _tab->removeTab(_tab->indexOf(_ordersTab));
   else
   {
     if (!_privileges->check("ViewPurchaseOrders"))
@@ -226,7 +235,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   }
   
   if (!_privileges->check("ViewInventoryHistory") && !_privileges->check("ViewReceiptsReturns") && !_privileges->check("ViewSalesHistory"))
-    _tab->removeTab(2);
+    _tab->removeTab(_tab->indexOf(_historyTab));
   else
   {
     if (!_privileges->check("ViewInventoryHistory"))
@@ -238,16 +247,21 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   }
 
   if (!_privileges->check("ViewItemMaster") && !_privileges->check("MaintainItemMasters"))
-    _tab->removeTab(3);
+    _tab->removeTab(_tab->indexOf(_itemTab));
 
   if (!_privileges->check("ViewCosts") && !_privileges->check("ViewBOMs"))
-    _tab->removeTab(4);
+    _tab->removeTab(_tab->indexOf(_bomTab));
   else
   {
     if (!_privileges->check("ViewCosts"))
       _costedIndentedBOMButton->hide();
     if (!_privileges->check("ViewBOMs"))
+    {
+      _singleLevelBOMButton->hide();
       _whereUsedButton->hide();
+      _costedIndentedBOMButton->setChecked(true);
+      sHandleButtons();
+    }
   }
 }
 
@@ -277,32 +291,34 @@ enum SetResponse itemAvailabilityWorkbench::set( const ParameterList & pParams )
 void itemAvailabilityWorkbench::sHandleButtons()
 {
   if (_availabilityButton->isChecked())
-    _availabilityStack->setCurrentIndex(0);
+    _availabilityStack->setCurrentWidget(_availabilityPage);
   else if (_runningAvailabilityButton->isChecked())
-    _availabilityStack->setCurrentIndex(1);
+    _availabilityStack->setCurrentWidget(_runningAvailabilityPage);
   else if (_locationDetailButton->isChecked())
-    _availabilityStack->setCurrentIndex(2);
+    _availabilityStack->setCurrentWidget(_locationDetailPage);
   
-  if (_costedIndentedBOMButton->isChecked())
-    _bomStack->setCurrentIndex(0);
+  if (_singleLevelBOMButton->isChecked())
+    _bomStack->setCurrentWidget(_singleLevelBOMPage);
+  else if (_costedIndentedBOMButton->isChecked())
+    _bomStack->setCurrentWidget(_costedIndentedBOMPage);
   else if (_whereUsedButton->isChecked())
-    _bomStack->setCurrentIndex(1);
+    _bomStack->setCurrentWidget(_whereUsedPage);
 
   if (_inventoryHistoryButton->isChecked())
-    _historyStack->setCurrentIndex(0);
+    _historyStack->setCurrentWidget(_inventoryHistoryPage);
   else if (_receivingHistoryButton->isChecked())
-    _historyStack->setCurrentIndex(1);
+    _historyStack->setCurrentWidget(_receivingHistoryPage);
   else if (_salesHistoryButton->isChecked())
-    _historyStack->setCurrentIndex(2);
+    _historyStack->setCurrentWidget(_salesHistoryPage);
   
   if (_purchaseOrderItemsButton->isChecked())
-    _ordersStack->setCurrentIndex(0);
+    _ordersStack->setCurrentWidget(_purchaseOrderItemsPage);
   else if (_salesOrderItemsButton->isChecked())
-    _ordersStack->setCurrentIndex(1);
+    _ordersStack->setCurrentWidget(_salesOrderItemsPage);
   else if (_quoteItemsButton->isChecked())
-    _ordersStack->setCurrentIndex(2);
+    _ordersStack->setCurrentWidget(_quoteItemsPage);
   else if (_customerPricesButton->isChecked())
-    _ordersStack->setCurrentIndex(3);
+    _ordersStack->setCurrentWidget(_customerPricesPage);
   
   sFillList();
 }
@@ -312,6 +328,7 @@ void itemAvailabilityWorkbench::populate()
   _dspInventoryAvailability->setItemId(_item->id());
   _dspRunningAvailability->findChild<ItemCluster*>("_item")->setId(_item->id());
   _dspInventoryLocator->findChild<ItemCluster*>("_item")->setId(_item->id());
+  _dspSingleLevelBOM->findChild<ItemCluster*>("_item")->setId(_item->id());
   _dspCostedIndentedBOM->findChild<ItemCluster*>("_item")->setId(_item->id());
   _dspSingleLevelWhereUsed->findChild<ItemCluster*>("_item")->setId(_item->id());
   _dspInventoryHistory->setItemId(_item->id());
@@ -355,6 +372,8 @@ void itemAvailabilityWorkbench::sFillList()
       _dspCostedIndentedBOM->sFillList();
     else if (_whereUsedButton->isChecked())
       _dspSingleLevelWhereUsed->sFillList();
+    else if (_singleLevelBOMButton->isChecked())
+      _dspSingleLevelBOM->sFillList();
   }
   else if (_tab->currentIndex() == _tab->indexOf(_historyTab))
   {
