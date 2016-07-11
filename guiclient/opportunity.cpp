@@ -29,42 +29,30 @@
 
 bool opportunity::userHasPriv(const int pMode, const int pId)
 {
-  bool allPriv = _privileges->check("MaintainAllOpportunities");
+  if (_privileges->check("MaintainAllOpportunities"))
+    return true;
   bool personalPriv = _privileges->check("MaintainPersonalOpportunities");
   if(pMode==cView)
   {
-    allPriv = allPriv || _privileges->check("ViewAllOpportunities");
+    if(_privileges->check("ViewAllOpportunities"))
+      return true;
     personalPriv = personalPriv || _privileges->check("ViewPersonalOpportunities");
   }
 
   if(pMode==cNew)
-    if(allPriv||personalPriv)
-      return true;
-    else
-      return false;
+    return personalPriv;
   else
   {
-    bool isOwner = false;
-    bool isAssigned = false;
-
     XSqlQuery usernameCheck;
-    usernameCheck.prepare( "SELECT ophead_owner_username AS owner, "
-                           " ophead_username AS assigned "
+    usernameCheck.prepare( "SELECT getEffectiveXtUser() IN (ophead_owner_username, ophead_username) AS canModify "
                            "FROM ophead "
                             "WHERE (ophead_id=:ophead_id);" );
     usernameCheck.bindValue(":ophead_id", pId);
     usernameCheck.exec();
 
     if (usernameCheck.first())
-    {
-      isOwner = (omfgThis->username() == usernameCheck.value("owner").toString());
-      isAssigned = (omfgThis->username() == usernameCheck.value("assigned").toString());
-    }
-
-    if(((isOwner||isAssigned)&&personalPriv)||allPriv)
-      return true;
-    else
-      return false;
+      return usernameCheck.value("canModify").toBool()&&personalPriv;
+    return false;
   }
 }
 

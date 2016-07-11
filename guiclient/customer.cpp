@@ -33,7 +33,7 @@
 #include "xcombobox.h"
 #include "parameterwidget.h"
 
-bool customer::userHasPriv(const int pMode)
+bool customer::userHasPriv(const int pMode, const int pId)
 {
   bool priv = _privileges->check("MaintainCustomerMasters");
   if(pMode==cView)

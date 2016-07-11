@@ -20,42 +20,30 @@
 
 bool todoItem::userHasPriv(const int pMode, const int pId)
 {
-  bool allPriv = _privileges->check("MaintainAllToDoItems");
+  if (_privileges->check("MaintainAllToDoItems"))
+    return true;
   bool personalPriv = _privileges->check("MaintainPersonalToDoItems");
   if(pMode==cView)
   {
-    allPriv = allPriv || _privileges->check("ViewAllToDoItems");
+    if(_privileges->check("ViewAllToDoItems"))
+      return true;
     personalPriv = personalPriv || _privileges->check("ViewPersonalToDoItems");
   }
 
   if(pMode==cNew)
-    if(allPriv||personalPriv)
-      return true;
-    else
-      return false;
+    return personalPriv;
   else
   {
-    bool isOwner = false;
-    bool isAssigned = false;
-
     XSqlQuery usernameCheck;
-    usernameCheck.prepare( "SELECT todoitem_owner_username AS owner, "
-                           " todoitem_username AS assigned "
+    usernameCheck.prepare( "SELECT getEffectiveXtUser() IN (todoitem_owner_username, todoitem_username) AS canModify "
                            "FROM todoitem "
                             "WHERE (todoitem_id=:todoitem_id);" );
     usernameCheck.bindValue(":todoitem_id", pId);
     usernameCheck.exec();
 
     if (usernameCheck.first())
-    {
-      isOwner = (omfgThis->username() == usernameCheck.value("owner").toString());
-      isAssigned = (omfgThis->username() == usernameCheck.value("assigned").toString());
-    }
-
-    if(((isOwner||isAssigned)&&personalPriv)||allPriv)
-      return true;
-    else
-      return false;
+      return usernameCheck.value("canModify").toBool()&&personalPriv;
+    return false;
   }
 }
 

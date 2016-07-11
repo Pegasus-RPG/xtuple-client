@@ -22,42 +22,30 @@ const char *_taskStatuses[] = { "P", "O", "C" };
 
 bool task::userHasPriv(const int pMode, const int pId)
 {
-  bool allPriv = _privileges->check("MaintainAllProjects");
+  if (_privileges->check("MaintainAllProjects"))
+    return true;
   bool personalPriv = _privileges->check("MaintainPersonalProjects");
   if(pMode==cView)
   {
-    allPriv = allPriv || _privileges->check("ViewAllProjects");
+    if(_privileges->check("ViewAllProjects"))
+      return true;
     personalPriv = personalPriv || _privileges->check("ViewPersonalProjects");
   }
 
   if(pMode==cNew)
-    if(allPriv||personalPriv)
-      return true;
-    else
-      return false;
+    return personalPriv;
   else
   {
-    bool isOwner = false;
-    bool isAssigned = false;
-
     XSqlQuery usernameCheck;
-    usernameCheck.prepare( "SELECT prjtask_owner_username AS owner, "
-                           " prjtask_username AS assigned "
+    usernameCheck.prepare( "SELECT getEffectiveXtUser() IN (prjtask_owner_username, prjtask_username) AS canModify "
                            "FROM prjtask "
                             "WHERE (prjtask_id=:prjtask_id);" );
     usernameCheck.bindValue(":prjtask_id", pId);
     usernameCheck.exec();
 
     if (usernameCheck.first())
-    {
-      isOwner = (omfgThis->username() == usernameCheck.value("owner").toString());
-      isAssigned = (omfgThis->username() == usernameCheck.value("assigned").toString());
-    }
-
-    if(((isOwner||isAssigned)&&personalPriv)||allPriv)
-      return true;
-    else
-      return false;
+      return usernameCheck.value("canModify").toBool()&&personalPriv;
+    return false;
   }
 }
 
