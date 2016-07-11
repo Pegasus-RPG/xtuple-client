@@ -661,6 +661,8 @@ void voucher::sPopulatePoInfo()
     // TODO: replace with a compact AddressCluster when such exists
     _vendAddress1->setText(po.value("addr_line1").toString());
     _vendAddress2->setText(po.value("addr_line2").toString());
+    if (_mode != cView)
+      _new->setEnabled(true);
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting P/O Information"),
                                 po, __FILE__, __LINE__))
