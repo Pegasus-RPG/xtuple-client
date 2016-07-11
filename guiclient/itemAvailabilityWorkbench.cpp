@@ -210,7 +210,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
 
   // General
   if (!_privileges->check("ViewInventoryAvailability") && !_privileges->check("ViewQOH"))
-    _tab->removeTab(0);
+    _tab->removeTab(_tab->indexOf(_availabilityTab));
   else
   {
     if (!_privileges->check("ViewInventoryAvailability"))
@@ -223,7 +223,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   }
   
   if (!_privileges->check("ViewPurchaseOrders") && !_privileges->check("ViewSalesOrders") && !_privileges->check("ViewQuotes"))
-    _tab->removeTab(1);
+    _tab->removeTab(_tab->indexOf(_ordersTab));
   else
   {
     if (!_privileges->check("ViewPurchaseOrders"))
@@ -235,7 +235,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   }
   
   if (!_privileges->check("ViewInventoryHistory") && !_privileges->check("ViewReceiptsReturns") && !_privileges->check("ViewSalesHistory"))
-    _tab->removeTab(2);
+    _tab->removeTab(_tab->indexOf(_historyTab));
   else
   {
     if (!_privileges->check("ViewInventoryHistory"))
@@ -247,10 +247,10 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   }
 
   if (!_privileges->check("ViewItemMaster") && !_privileges->check("MaintainItemMasters"))
-    _tab->removeTab(3);
+    _tab->removeTab(_tab->indexOf(_itemTab));
 
   if (!_privileges->check("ViewCosts") && !_privileges->check("ViewBOMs"))
-    _tab->removeTab(4);
+    _tab->removeTab(_tab->indexOf(_bomTab));
   else
   {
     if (!_privileges->check("ViewCosts"))
@@ -291,34 +291,34 @@ enum SetResponse itemAvailabilityWorkbench::set( const ParameterList & pParams )
 void itemAvailabilityWorkbench::sHandleButtons()
 {
   if (_availabilityButton->isChecked())
-    _availabilityStack->setCurrentIndex(0);
+    _availabilityStack->setCurrentWidget(_availabilityPage);
   else if (_runningAvailabilityButton->isChecked())
-    _availabilityStack->setCurrentIndex(1);
+    _availabilityStack->setCurrentWidget(_runningAvailabilityPage);
   else if (_locationDetailButton->isChecked())
-    _availabilityStack->setCurrentIndex(2);
+    _availabilityStack->setCurrentWidget(_locationDetailPage);
   
   if (_singleLevelBOMButton->isChecked())
-    _bomStack->setCurrentIndex(0);
+    _bomStack->setCurrentWidget(_singleLevelBOMPage);
   else if (_costedIndentedBOMButton->isChecked())
-    _bomStack->setCurrentIndex(1);
+    _bomStack->setCurrentWidget(_costedIndentedBOMPage);
   else if (_whereUsedButton->isChecked())
-    _bomStack->setCurrentIndex(2);
+    _bomStack->setCurrentWidget(_whereUsedPage);
 
   if (_inventoryHistoryButton->isChecked())
-    _historyStack->setCurrentIndex(0);
+    _historyStack->setCurrentWidget(_inventoryHistoryPage);
   else if (_receivingHistoryButton->isChecked())
-    _historyStack->setCurrentIndex(1);
+    _historyStack->setCurrentWidget(_receivingHistoryPage);
   else if (_salesHistoryButton->isChecked())
-    _historyStack->setCurrentIndex(2);
+    _historyStack->setCurrentWidget(_salesHistoryPage);
   
   if (_purchaseOrderItemsButton->isChecked())
-    _ordersStack->setCurrentIndex(0);
+    _ordersStack->setCurrentWidget(_purchaseOrderItemsPage);
   else if (_salesOrderItemsButton->isChecked())
-    _ordersStack->setCurrentIndex(1);
+    _ordersStack->setCurrentWidget(_salesOrderItemsPage);
   else if (_quoteItemsButton->isChecked())
-    _ordersStack->setCurrentIndex(2);
+    _ordersStack->setCurrentWidget(_quoteItemsPage);
   else if (_customerPricesButton->isChecked())
-    _ordersStack->setCurrentIndex(3);
+    _ordersStack->setCurrentWidget(_customerPricesPage);
   
   sFillList();
 }
