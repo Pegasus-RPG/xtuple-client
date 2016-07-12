@@ -15,6 +15,7 @@
 #include <QValidator>
 #include "itemcluster.h"
 #include "errorReporter.h"
+#include "storedProcErrorLookup.h"
 
 location::location(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -27,6 +28,7 @@ location::location(QWidget* parent, const char* name, bool modal, Qt::WindowFlag
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sHandleWarehouse(int)));
+  connect(_active,    SIGNAL(toggled(bool)), this, SLOT(sActiveCheck()));
 
   _locitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft, true, "item_number" );
   _locitem->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "item_descrip" );
@@ -210,12 +212,14 @@ void location::sSave()
                "( location_id, location_warehous_id,"
                "  location_aisle, location_rack, location_bin,  location_name,"
                "  location_whsezone_id, location_descrip,"
-               "  location_netable, location_usable, location_restrict ) "
+               "  location_netable, location_usable, location_restrict, "
+               "  location_active ) "
                "VALUES "
                "( :location_id, :location_warehous_id,"
                "  :location_aisle, :location_rack, :location_bin, :location_name,"
                "  :location_whsezone_id, :location_descrip,"
-               "  :location_netable, :location_usable, :location_restrict );" );
+               "  :location_netable, :location_usable, :location_restrict, "
+               "  :location_active );" );
   else if (_mode == cEdit)
     locationSave.prepare( "UPDATE location "
                "SET location_warehous_id=:location_warehous_id,"
@@ -227,7 +231,8 @@ void location::sSave()
                "    location_descrip=:location_descrip,"
                "    location_netable=:location_netable,"
                "    location_usable=:location_usable,"
-               "    location_restrict=:location_restrict "
+               "    location_restrict=:location_restrict, "
+               "    location_active=:location_active "
                "WHERE (location_id=:location_id);" );
 
   locationSave.bindValue(":location_id", _locationid);
@@ -241,6 +246,7 @@ void location::sSave()
   locationSave.bindValue(":location_netable", QVariant(_netable->isChecked()));
   locationSave.bindValue(":location_usable", QVariant(_usable->isChecked()));
   locationSave.bindValue(":location_restrict", QVariant(_restricted->isChecked()));
+  locationSave.bindValue(":location_active",   QVariant(_active->isChecked()));
   locationSave.exec();
 
   done(_locationid);
@@ -431,6 +437,35 @@ void location::sDelete()
   sFillList();
 }
 
+void location::sActiveCheck()
+{
+  if (_active->isChecked())
+    return;
+
+  XSqlQuery locationCheck;
+  locationCheck.prepare("SELECT checkLocation(:location_id) AS result;");
+  locationCheck.bindValue(":location_id", _locationid);
+  locationCheck.exec();
+  if (locationCheck.first())
+  {  
+    int result = locationCheck.value("result").toInt();
+    if (result < 0 && result > -4)  // reuse deleteLocation handling but ignore -4 result
+    {
+       ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Location"),
+                            storedProcErrorLookup("deleteLocation", result),
+                            __FILE__, __LINE__);
+       _active->setChecked(true);
+       return;
+    }
+  }
+  else if (!ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Location"),
+                         locationCheck, __FILE__, __LINE__))
+  {
+       _active->setChecked(true);
+       return;
+  }
+}
+
 void location::sFillList()
 {
   XSqlQuery locationFillList;
@@ -462,6 +497,7 @@ void location::populate()
     _netable->setChecked(locationpopulate.value("location_netable").toBool());
     _usable->setChecked(locationpopulate.value("location_usable").toBool());
     _restricted->setChecked(locationpopulate.value("location_restrict").toBool());
+    _active->setChecked(locationpopulate.value("location_active").toBool());
 
     int whsezoneid = locationpopulate.value("location_whsezone_id").toInt();
     _warehouse->setId(locationpopulate.value("location_warehous_id").toInt());

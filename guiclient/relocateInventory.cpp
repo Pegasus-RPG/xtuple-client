@@ -297,7 +297,8 @@ void relocateInventory::sFillList()
                    "WHERE ( (itemsite_warehous_id=:warehous_id)"
                    " AND (location_warehous_id=:warehous_id)"
                    " AND (itemsite_item_id=:item_id)"
-                   " AND  (validLocation(location_id, itemsite_id)) ) "
+                   " AND (location_active) "
+                   " AND (validLocation(location_id, itemsite_id)) ) "
                    "ORDER BY locationname ) AS data" );
     query.bindValue(":warehous_id", _warehouse->id());
     query.bindValue(":item_id", _item->id());
