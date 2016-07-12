@@ -35132,7 +35132,7 @@ Total</source>
     </message>
     <message>
         <source>Account #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Account #</translation>
     </message>
     <message>
         <source>A/R</source>
@@ -36430,7 +36430,7 @@ Rate</source>
     </message>
     <message>
         <source>Account #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Account #</translation>
     </message>
     <message>
         <source>End</source>
@@ -50077,25 +50077,6 @@ You must reassign the Locales for these Users before you may delete the selected
     </message>
     <message>
         <source>&lt;p&gt;The database server is at version %1 but xTuple ERP only supports from %2 up to but not including %3.&lt;/p&gt;&lt;p&gt;Continue anyway?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>login2Options</name>
-    <message>
-        <source>Login Options</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>S&amp;erver:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Port:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Database:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -82301,117 +82282,6 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     <message>
         <source>&amp;Edit</source>
         <translation>&amp;Bewerk</translation>
-    </message>
-</context>
-<context>
-    <name>vendorWorkBench</name>
-    <message>
-        <source>Vendor Workbench</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished">Naam</translation>
-    </message>
-    <message>
-        <source>Default Terms:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Default Ship Via:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Vendor #:</source>
-        <translation type="unfinished">Leverancier #:</translation>
-    </message>
-    <message>
-        <source>Account...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Active</source>
-        <translation type="unfinished">Actief</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished">Sluiten</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation type="unfinished">Afdrukken</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>First Purchase:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Last Year&apos;s Purchases:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Most Recent Purchase:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>YTD Purchases:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Backlog:</source>
-        <translation type="unfinished">Orderportefeuille:</translation>
-    </message>
-    <message>
-        <source>Open Balance:</source>
-        <translation type="unfinished">Balans open:</translation>
-    </message>
-    <message>
-        <source>Contact 1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Contact 2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Contacts</source>
-        <translation type="unfinished">Kontaktpersonen</translation>
-    </message>
-    <message>
-        <source>Purchase Orders</source>
-        <translation type="unfinished">Inkoop orders</translation>
-    </message>
-    <message>
-        <source>Receipts and Returns</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Payables</source>
-        <translation type="unfinished">Open Rekeningen</translation>
-    </message>
-    <message>
-        <source>Credit Memos</source>
-        <translation type="unfinished">Credit facturen</translation>
-    </message>
-    <message>
-        <source>A/P History</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Checks</source>
-        <translation type="unfinished">Cheques</translation>
     </message>
 </context>
 <context>

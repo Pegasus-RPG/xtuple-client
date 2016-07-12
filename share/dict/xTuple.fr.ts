@@ -1188,7 +1188,7 @@ Address:</source>
     <name>CmheadClusterLineEdit</name>
     <message>
         <source>Return</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Renvoi</translation>
     </message>
     <message>
         <source>Returns</source>
@@ -33482,7 +33482,7 @@ Total</source>
     </message>
     <message>
         <source>Return</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Renvoi</translation>
     </message>
     <message>
         <source>Replace</source>
@@ -44904,7 +44904,7 @@ Are you sure that you want to Implode the selected Work Order?</source>
     </message>
     <message>
         <source>No Misc. Charge Account Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aucun Numéro de Compte Frais Divers</translation>
     </message>
     <message>
         <source>&lt;p&gt;You may not enter a Misc. Charge without indicating the G/L Sales Account number for the charge.  Please set the Misc. Charge amount to 0 or select a Misc. Charge Sales Account.</source>
@@ -50070,25 +50070,6 @@ You must reassign the Locales for these Users before you may delete the selected
     </message>
 </context>
 <context>
-    <name>login2Options</name>
-    <message>
-        <source>Login Options</source>
-        <translation type="unfinished">Options Ouverture de Session</translation>
-    </message>
-    <message>
-        <source>&amp;Database:</source>
-        <translation>Base de &amp;Données:</translation>
-    </message>
-    <message>
-        <source>&amp;Port:</source>
-        <translation>&amp;Port:</translation>
-    </message>
-    <message>
-        <source>S&amp;erver:</source>
-        <translation>S&amp;erveur:</translation>
-    </message>
-</context>
-<context>
     <name>lotSerial</name>
     <message>
         <source>Lot</source>
@@ -54087,7 +54068,7 @@ You must reassign these Item Sites before you may delete the selected Planner Co
     </message>
     <message>
         <source>Return</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Renvoi</translation>
     </message>
     <message>
         <source>Customer P/O Number</source>
@@ -59655,7 +59636,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Return</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Renvoi</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -82290,117 +82271,6 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     <message>
         <source>&amp;Print</source>
         <translation>Im&amp;primer</translation>
-    </message>
-</context>
-<context>
-    <name>vendorWorkBench</name>
-    <message>
-        <source>Vendor Workbench</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name:</source>
-        <translation type="unfinished">Nom:</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished">Nom</translation>
-    </message>
-    <message>
-        <source>Default Terms:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Default Ship Via:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Vendor #:</source>
-        <translation type="unfinished"># Fournisseur:</translation>
-    </message>
-    <message>
-        <source>Account...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Active</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished">Fermer</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation type="unfinished">Imprimer</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>First Purchase:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Last Year&apos;s Purchases:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Most Recent Purchase:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>YTD Purchases:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Backlog:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open Balance:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Contact 1</source>
-        <translation type="unfinished">Contacte 1</translation>
-    </message>
-    <message>
-        <source>Contact 2</source>
-        <translation type="unfinished">Contacte 2</translation>
-    </message>
-    <message>
-        <source>Contacts</source>
-        <translation type="unfinished">Contacts</translation>
-    </message>
-    <message>
-        <source>Purchase Orders</source>
-        <translation type="unfinished">Bons de Commande</translation>
-    </message>
-    <message>
-        <source>Receipts and Returns</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Payables</source>
-        <translation type="unfinished">Dettes</translation>
-    </message>
-    <message>
-        <source>Credit Memos</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>A/P History</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Checks</source>
-        <translation type="unfinished">Chèques</translation>
     </message>
 </context>
 <context>

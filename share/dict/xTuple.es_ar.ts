@@ -50105,25 +50105,6 @@ Debajo encontrará más detalles del problema con la conección:
     </message>
 </context>
 <context>
-    <name>login2Options</name>
-    <message>
-        <source>&amp;Database:</source>
-        <translation type="unfinished">Base &amp;Datos</translation>
-    </message>
-    <message>
-        <source>Login Options</source>
-        <translation>Opciones Ingreso</translation>
-    </message>
-    <message>
-        <source>&amp;Port:</source>
-        <translation>&amp;Puerto:</translation>
-    </message>
-    <message>
-        <source>S&amp;erver:</source>
-        <translation>S&amp;ervidor:</translation>
-    </message>
-</context>
-<context>
     <name>lotSerial</name>
     <message>
         <source>Serial</source>
@@ -71861,7 +71842,7 @@ You must reassign these Sites before deleting this Site Type.</source>
     </message>
     <message>
         <source>Enter Expiration Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ingresar Fecha Vencimiento</translation>
     </message>
     <message>
         <source>Never</source>
@@ -82353,117 +82334,6 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     <message>
         <source>&amp;Print</source>
         <translation>Im&amp;primir</translation>
-    </message>
-</context>
-<context>
-    <name>vendorWorkBench</name>
-    <message>
-        <source>Vendor Workbench</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name:</source>
-        <translation type="unfinished">Nombre:</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished">Nombre</translation>
-    </message>
-    <message>
-        <source>Default Terms:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation type="unfinished">Tipo:</translation>
-    </message>
-    <message>
-        <source>Default Ship Via:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Vendor #:</source>
-        <translation type="unfinished">Proveedor #:</translation>
-    </message>
-    <message>
-        <source>Account...</source>
-        <translation type="unfinished">Cuenta...</translation>
-    </message>
-    <message>
-        <source>Active</source>
-        <translation type="unfinished">Activo</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished">Cerrar</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation type="unfinished">Imprimir</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation type="unfinished">Editar</translation>
-    </message>
-    <message>
-        <source>First Purchase:</source>
-        <translation type="unfinished">Primera Compra:</translation>
-    </message>
-    <message>
-        <source>Last Year&apos;s Purchases:</source>
-        <translation type="unfinished">Compras Año Pasado:</translation>
-    </message>
-    <message>
-        <source>Most Recent Purchase:</source>
-        <translation type="unfinished">Última Compra:</translation>
-    </message>
-    <message>
-        <source>YTD Purchases:</source>
-        <translation type="unfinished">Compras del Año:</translation>
-    </message>
-    <message>
-        <source>Backlog:</source>
-        <translation type="unfinished">Entregas Pendientes:</translation>
-    </message>
-    <message>
-        <source>Open Balance:</source>
-        <translation type="unfinished">Saldo Pendiente:</translation>
-    </message>
-    <message>
-        <source>Contact 1</source>
-        <translation type="unfinished">Contacto 1</translation>
-    </message>
-    <message>
-        <source>Contact 2</source>
-        <translation type="unfinished">Contacto 2</translation>
-    </message>
-    <message>
-        <source>Contacts</source>
-        <translation type="unfinished">Contactos</translation>
-    </message>
-    <message>
-        <source>Purchase Orders</source>
-        <translation type="unfinished">Órdenes de Compra</translation>
-    </message>
-    <message>
-        <source>Receipts and Returns</source>
-        <translation type="unfinished">Recepciones y Devoluciones</translation>
-    </message>
-    <message>
-        <source>Payables</source>
-        <translation type="unfinished">Cuentas x Pagar</translation>
-    </message>
-    <message>
-        <source>Credit Memos</source>
-        <translation type="unfinished">Notas de Crédito</translation>
-    </message>
-    <message>
-        <source>A/P History</source>
-        <translation type="unfinished">Historial CxP</translation>
-    </message>
-    <message>
-        <source>Checks</source>
-        <translation type="unfinished">Cheques</translation>
     </message>
 </context>
 <context>

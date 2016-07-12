@@ -50077,25 +50077,6 @@ You must reassign the Locales for these Users before you may delete the selected
     </message>
 </context>
 <context>
-    <name>login2Options</name>
-    <message>
-        <source>&amp;Port:</source>
-        <translation type="unfinished">ポート:</translation>
-    </message>
-    <message>
-        <source>&amp;Database:</source>
-        <translation>データベース:</translation>
-    </message>
-    <message>
-        <source>Login Options</source>
-        <translation>ログインオプション</translation>
-    </message>
-    <message>
-        <source>S&amp;erver:</source>
-        <translation>サーバー:</translation>
-    </message>
-</context>
-<context>
     <name>lotSerial</name>
     <message>
         <source>Lot#:</source>
@@ -56625,7 +56606,7 @@ transfer the production to the intended Site.</source>
     </message>
     <message>
         <source>Invalid date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">無効な日付</translation>
     </message>
     <message>
         <source>Same Transfer and Production Sites</source>
@@ -65045,7 +65026,7 @@ You must instead return each Work Order Material item individually.
     </message>
     <message>
         <source>Invalid date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">無効な日付</translation>
     </message>
     <message>
         <source>Material Return</source>
@@ -65112,7 +65093,7 @@ You must instead return each Work Order Material item individually.
     </message>
     <message>
         <source>Invalid date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">無効な日付</translation>
     </message>
     <message>
         <source>You must enter a valid transaction date.</source>
@@ -69153,7 +69134,7 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Invalid date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">無効な日付</translation>
     </message>
     <message>
         <source>Qty. Scrapped from WIP:</source>
@@ -82298,117 +82279,6 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     <message>
         <source>&amp;New</source>
         <translation>(&amp;N)新規</translation>
-    </message>
-</context>
-<context>
-    <name>vendorWorkBench</name>
-    <message>
-        <source>Vendor Workbench</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished">名前</translation>
-    </message>
-    <message>
-        <source>Default Terms:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation type="unfinished">タイプ:</translation>
-    </message>
-    <message>
-        <source>Default Ship Via:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Vendor #:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Account...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Active</source>
-        <translation type="unfinished">アクティブ</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished">閉じる</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation type="unfinished">印刷</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation type="unfinished">編集</translation>
-    </message>
-    <message>
-        <source>First Purchase:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Last Year&apos;s Purchases:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Most Recent Purchase:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>YTD Purchases:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Backlog:</source>
-        <translation type="unfinished">受注残</translation>
-    </message>
-    <message>
-        <source>Open Balance:</source>
-        <translation type="unfinished">オープニングバランス：</translation>
-    </message>
-    <message>
-        <source>Contact 1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Contact 2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Contacts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Purchase Orders</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Receipts and Returns</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Payables</source>
-        <translation type="unfinished">買掛金</translation>
-    </message>
-    <message>
-        <source>Credit Memos</source>
-        <translation type="unfinished">貸方割戻金(返金Credit Memo)</translation>
-    </message>
-    <message>
-        <source>A/P History</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Checks</source>
-        <translation type="unfinished">小切手（チェック）</translation>
     </message>
 </context>
 <context>
