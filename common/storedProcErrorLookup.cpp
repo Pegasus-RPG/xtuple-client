@@ -543,6 +543,19 @@ const struct {
   { "deleteItemUOMConv", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This UOM Conversion cannot be deleted as "
 			       "there are records for this Item which use this "
                                "UOM."), 	                        0, "" },
+  { "deleteLocation", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "There are one or more Item Sites that use the "
+                              "selected Location as their default Location. "
+                              "You must reassign the default Location for all Item Sites that use the "
+                              "selected Location before you may delete it or deactivate it."),       0, "" },
+  { "deleteLocation", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "There is Inventory contained in the selected Location. "
+                              "You must move all Inventory out of the selected Location "
+                              "and may then set its status to inactive." ),       0, "" },
+  { "deleteLocation", -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "There are one or more undistributed Location records "
+                              "that have been posted against the selected Locations. "
+                              "This probably indicates a system error."
+                              "Please contact your Systems Adminstrator to have this resolved."),       0, "" },
+  { "deleteLocation", -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Location cannot be deleted as there has "
+                              "been Inventory Transaction History posted against it."),       0, "" },
 
   { "deleteOpenRecurringItems",  -1, "",                 -1, "deleteIncident" },
   { "deleteOpenRecurringItems",  -2, "",                 -2, "deleteIncident" },

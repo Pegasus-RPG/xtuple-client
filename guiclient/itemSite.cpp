@@ -372,6 +372,7 @@ bool itemSite::sSave()
     locationid.prepare( "SELECT location_id "
                         "FROM location "
                         "WHERE ((location_warehous_id=:warehous_id)"
+                        " AND (location_active) "
                         " AND ( (NOT location_restrict) OR"
                         "       ( (location_restrict) AND"
                         "         (location_id IN ( SELECT locitem_location_id"
@@ -1344,12 +1345,14 @@ void itemSite::populateLocations()
     query.prepare( "SELECT location_id, formatLocationName(location_id) AS locationname "
                    "FROM location "
                    "WHERE ( (location_warehous_id=:warehous_id)"
-                   " AND (NOT location_restrict) ) "
+                   " AND (NOT location_restrict) "
+                   " AND (location_active) ) "
 		       
                    "UNION SELECT location_id, formatLocationName(location_id) AS locationname "
                    "FROM location, locitem "
                    "WHERE ( (location_warehous_id=:warehous_id)"
-                   " AND (location_restrict)"
+                   " AND (location_restrict) "
+                   " AND (location_active) "
                    " AND (locitem_location_id=location_id)"
                    " AND (locitem_item_id=:item_id) ) "
 		       
@@ -1618,7 +1621,8 @@ void itemSite::sFillRestricted()
             "       (locitem_id IS NOT NULL) AS allowed"
             "  FROM location LEFT OUTER JOIN locitem"
             "         ON (locitem_location_id=location_id AND locitem_item_id=:item_id)"
-            " WHERE ((location_restrict)"
+            " WHERE ((location_restrict) "
+            "   AND  (location_active) "
             "   AND  (location_warehous_id=:warehouse_id) ) "
             "ORDER BY location_name; ");
   itemFillRestricted.bindValue(":warehouse_id", _warehouse->id());
