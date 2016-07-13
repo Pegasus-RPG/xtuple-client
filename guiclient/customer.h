@@ -45,6 +45,7 @@ public:
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
     virtual void setId(int);
+    virtual void sIdChanged(int);
     virtual void currentTabChanged(int index);
     virtual void populate();
     virtual void sCancel();

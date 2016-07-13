@@ -126,6 +126,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _cctrans->findChild<XTreeWidget*>("_preauth")->hideColumn("cust_number");
   _cctrans->findChild<XTreeWidget*>("_preauth")->hideColumn("cust_name");
 
+  connect(this, SIGNAL(newId(int)), this, SLOT(sIdChanged(int)));
   connect(_close, SIGNAL(clicked()), this, SLOT(sCancel()));
   connect(_crmacct, SIGNAL(clicked()), this, SLOT(sCrmAccount()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSaveClicked()));
@@ -1714,6 +1715,22 @@ void customer::setId(int p)
   _custid=p;
   populate();
   emit newId(_custid);
+}
+
+void customer::sIdChanged(int id)
+{
+  XSqlQuery qry;
+  qry.prepare("SELECT crmacct_id "
+                    "FROM crmacct "
+                    "WHERE crmacct_cust_id=:cust_id;" );
+  qry.bindValue(":cust_id", id);
+  qry.exec();
+
+  if(qry.first())
+    _contacts->parameterWidget()->setDefault(tr("Account"), qry.value("crmacct_id").toInt(), true);
+  else if(qry.lastError().type() != QSqlError::NoError)
+    QMessageBox::warning(this, tr("Database Error"),
+                         qry.lastError().text());
 }
 
 void customer::sClear()
