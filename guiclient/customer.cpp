@@ -1727,7 +1727,11 @@ void customer::sIdChanged(int id)
   qry.exec();
 
   if(qry.first())
+  {
     _contacts->parameterWidget()->setDefault(tr("Account"), qry.value("crmacct_id").toInt(), true);
+    _billCntct->setSearchAcct(qry.value("crmacct_id").toInt());
+    _corrCntct->setSearchAcct(qry.value("crmacct_id").toInt());
+  }
   else if(qry.lastError().type() != QSqlError::NoError)
     QMessageBox::warning(this, tr("Database Error"),
                          qry.lastError().text());
