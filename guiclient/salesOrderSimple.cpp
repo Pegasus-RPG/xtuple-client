@@ -84,6 +84,7 @@ salesOrderSimple::salesOrderSimple(QWidget *parent, const char *name, Qt::Window
   connect(_custPONumber,        SIGNAL(editingFinished()),                      this,         SLOT(sHandleRequiredFields()));
   
   _saved = false;
+  _closeThis = true;
 
   _soheadid          = -1;
   _orderNumberGen    = 0;
@@ -1160,6 +1161,23 @@ void salesOrderSimple::prepareLine()
   }
 }
 
+void salesOrderSimple::sClose()
+{
+  if(omfgThis->_singleWindow == "salesOrderSimple")
+  {
+    int count = 0;
+    foreach(QWidget *child, QApplication::topLevelWidgets())
+      if(child->objectName()=="salesOrderSimple new")
+        count++;
+    if(count==1)
+      _closeThis = false;
+  }
+
+  close();
+
+  _closeThis = true;
+}
+
 void salesOrderSimple::closeEvent(QCloseEvent *pEvent)
 {
   if (!_close->isEnabled())
@@ -1178,6 +1196,33 @@ void salesOrderSimple::closeEvent(QCloseEvent *pEvent)
 
   if (cNew == _mode && _saved)
     omfgThis->sSalesOrdersUpdated(-1);
+
+  if(!_closeThis)
+  {
+    pEvent->ignore();
+
+    _saved = false;
+    _soheadid = -1;
+    _orderNumberGen = 0;
+    _numSelected = 0;
+    _captive = false;
+    _authCC = 0.0;
+    _qty->setDouble(1.0);
+    _cust->setId(-1);
+    _shipTo->setId(-1);
+    _custPONumber->setText("");
+    _docNumber->setText("");
+    _docDate->setDate(omfgThis->dbDate(), true);
+    _bankaccnt->clear();
+    _bankaccnt->setType(XComboBox::ARBankAccounts);
+
+    connect(_orderNumber, SIGNAL(editingFinished()), this, SLOT(sHandleOrderNumber()));
+    ParameterList params;
+    params.append("mode", "new");
+    set(params);
+
+    return;
+  }
 
   XWidget::closeEvent(pEvent);
 }
