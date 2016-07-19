@@ -1719,6 +1719,13 @@ void customer::setId(int p)
 
 void customer::sIdChanged(int id)
 {
+  _orders->parameterWidget()->setDefault(tr("Customer"), id, true);
+  _quotes->parameterWidget()->setDefault(tr("Customer"), id, true);
+  _returns->findChild<CustomerSelector*>("_customerSelector")->setCustId(id);
+  _aritems->findChild<CustomerSelector*>("_customerSelector")->setCustId(id);
+  _cashreceipts->findChild<CustomerSelector*>("_customerSelector")->setCustId(id);
+  _cctrans->findChild<CustomerSelector*>("_customerSelector")->setCustId(id);
+
   XSqlQuery qry;
   qry.prepare("SELECT crmacct_id "
                     "FROM crmacct "
@@ -1727,7 +1734,10 @@ void customer::sIdChanged(int id)
   qry.exec();
 
   if(qry.first())
+  {
     _contacts->parameterWidget()->setDefault(tr("Account"), qry.value("crmacct_id").toInt(), true);
+    _todoList->parameterWidget()->setDefault(tr("Account"), qry.value("crmacct_id").toInt(), true);
+  }
   else if(qry.lastError().type() != QSqlError::NoError)
     QMessageBox::warning(this, tr("Database Error"),
                          qry.lastError().text());
