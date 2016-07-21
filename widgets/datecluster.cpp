@@ -392,10 +392,14 @@ void XDateEdit::setDataWidgetMap(XDataWidgetMapper* m)
 
 void XDateEdit::setCalendarSiteId(int siteId)
 {
+  int tmpSite = _siteId;
   _siteId = siteId;
-  QDate tmpDate = _currentDate;
-  setNull();
-  checkDate(tmpDate);
+  if(siteId!=tmpSite&&tmpSite!=-1)
+  {
+    QDate tmpDate = _currentDate;
+    setNull();
+    checkDate(tmpDate);
+  }
 }
 
 void XDateEdit::setNull()
