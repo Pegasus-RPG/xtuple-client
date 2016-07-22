@@ -517,6 +517,8 @@ void ParameterWidget::applySaved(int pId, int filter_id)
     if ( !(tempFilter.isEmpty()) )
     {
       //0 is filterType, 1 is filterValue, 2 is parameterwidgettype
+      //Text fields may have : in them, in this case, the last value
+      // is parameterwidgettype, and filterValue spans all middle indices
       QStringList tempFilterList = tempFilter.split(":");
       QString key = this->getParameterTypeKey(tempFilterList[0]);
       if (key.isEmpty())
@@ -551,7 +553,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
 
         found = getFilterWidget(windowIdx);
 
-        int widgetType = tempFilterList[2].toInt();
+        int widgetType = tempFilterList[tempFilterList.size()-1].toInt();
 
         switch (widgetType)
         {
@@ -722,7 +724,15 @@ void ParameterWidget::applySaved(int pId, int filter_id)
             QLineEdit *lineEdit = qobject_cast<QLineEdit*>(found);
             if (lineEdit != 0)
             {
-              lineEdit->setText(tempFilterList[1]);
+              QString text = "";
+              int i;
+              for (i=1; i<tempFilterList.size()-1; i++)
+              {
+                text+=tempFilterList[i];
+                if (i!=tempFilterList.size()-2)
+                  text+=":";
+              }
+              lineEdit->setText(text);
               storeFilterValue(-1, lineEdit);
             }
           }
