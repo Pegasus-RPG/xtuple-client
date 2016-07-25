@@ -183,7 +183,7 @@ enum SetResponse todoList::set(const ParameterList& pParams)
 void todoList::sNew()
 {
   //Need an extra priv check because of display trigger
-  if (todoItem::userHasPriv(cNew))
+  if (!todoItem::userHasPriv(cNew))
     return;
 
   ParameterList params;

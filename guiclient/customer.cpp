@@ -1226,6 +1226,20 @@ void customer::sPopulateCommission()
 void customer::populate()
 {
   XSqlQuery cust;
+  XSqlQuery salesRep;
+
+  salesRep.prepare("SELECT salesrep_id, (salesrep_number || '-' || salesrep_name), salesrep_number "
+                   "FROM salesrep "
+                   "WHERE (salesrep_active) "
+                   "UNION "
+                   "SELECT salesrep_id, (salesrep_number || '-' || salesrep_name), salesrep_number "
+                   "FROM salesrep "
+                   "WHERE (salesrep_id=(SELECT cust_salesrep_id FROM custinfo WHERE cust_id=:cust)) "
+                   "ORDER by salesrep_number;");
+  salesRep.bindValue(":cust", _custid);
+  salesRep.exec();
+  _salesrep->populate(salesRep);
+
   _notice = false;
   cust.prepare( "SELECT custinfo.*, "
                 "       cust_commprcnt, cust_discntprcnt,"
@@ -1731,6 +1745,7 @@ void customer::sIdChanged(int id)
     _contacts->parameterWidget()->setDefault(tr("Account"), qry.value("crmacct_id").toInt(), true);
     _billCntct->setSearchAcct(qry.value("crmacct_id").toInt());
     _corrCntct->setSearchAcct(qry.value("crmacct_id").toInt());
+    _todoList->parameterWidget()->setDefault(tr("Account"), qry.value("crmacct_id").toInt(), true);
   }
   else if(qry.lastError().type() != QSqlError::NoError)
     QMessageBox::warning(this, tr("Database Error"),
