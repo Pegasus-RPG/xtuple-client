@@ -1226,6 +1226,20 @@ void customer::sPopulateCommission()
 void customer::populate()
 {
   XSqlQuery cust;
+  XSqlQuery salesRep;
+
+  salesRep.prepare("SELECT salesrep_id, (salesrep_number || '-' || salesrep_name), salesrep_number "
+                   "FROM salesrep "
+                   "WHERE (salesrep_active) "
+                   "UNION "
+                   "SELECT salesrep_id, (salesrep_number || '-' || salesrep_name), salesrep_number "
+                   "FROM salesrep "
+                   "WHERE (salesrep_id=(SELECT cust_salesrep_id FROM custinfo WHERE cust_id=:cust)) "
+                   "ORDER by salesrep_number;");
+  salesRep.bindValue(":cust", _custid);
+  salesRep.exec();
+  _salesrep->populate(salesRep);
+
   _notice = false;
   cust.prepare( "SELECT custinfo.*, "
                 "       cust_commprcnt, cust_discntprcnt,"
