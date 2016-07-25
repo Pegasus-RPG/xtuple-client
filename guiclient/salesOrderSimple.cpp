@@ -106,6 +106,10 @@ salesOrderSimple::salesOrderSimple(QWidget *parent, const char *name, Qt::Window
   _total->setEffective(omfgThis->dbDate());
   _balance->setEffective(omfgThis->dbDate());
   _availCredit->setEffective(omfgThis->dbDate());
+  _cashTotal->setEffective(omfgThis->dbDate());
+  _cashBalance->setEffective(omfgThis->dbDate());
+  _cashReceived->setEffective(omfgThis->dbDate());
+  _CCAmount->setEffective(omfgThis->dbDate());
 
   _item->setType(ItemLineEdit::cSold | ItemLineEdit::cActive);
 
@@ -707,6 +711,10 @@ void salesOrderSimple::sPopulateCustomerInfo(int pCustid)
       _total->setId(cust.value("cust_curr_id").toInt());
       _balance->setId(cust.value("cust_curr_id").toInt());
       _availCredit->setId(cust.value("cust_curr_id").toInt());
+      _cashTotal->setId(cust.value("cust_curr_id").toInt());
+      _cashBalance->setId(cust.value("cust_curr_id").toInt());
+      _cashReceived->setId(cust.value("cust_curr_id").toInt());
+      _CCAmount->setId(cust.value("cust_curr_id").toInt());
 
       _fundsType->clear();
       if (_creditlmt > 0.0)
