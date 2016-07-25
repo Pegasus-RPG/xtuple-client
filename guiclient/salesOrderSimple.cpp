@@ -1200,27 +1200,7 @@ void salesOrderSimple::closeEvent(QCloseEvent *pEvent)
   if(!_closeThis)
   {
     pEvent->ignore();
-
-    _saved = false;
-    _soheadid = -1;
-    _orderNumberGen = 0;
-    _numSelected = 0;
-    _captive = false;
-    _authCC = 0.0;
-    _qty->setDouble(1.0);
-    _cust->setId(-1);
-    _shipTo->setId(-1);
-    _custPONumber->setText("");
-    _docNumber->setText("");
-    _docDate->setDate(omfgThis->dbDate(), true);
-    _bankaccnt->clear();
-    _bankaccnt->setType(XComboBox::ARBankAccounts);
-
-    connect(_orderNumber, SIGNAL(editingFinished()), this, SLOT(sHandleOrderNumber()));
-    ParameterList params;
-    params.append("mode", "new");
-    set(params);
-
+    prepare();
     return;
   }
 
