@@ -156,6 +156,8 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
       _docNumber->setEnabled(false);
       _orderNumber->setEnabled(false);
       _journalNumber->setEnabled(false);
+      _amount->setEnabled(false);
+      _taxzone->setEnabled(false);
       _terms->setEnabled(false);
       _useAltPrepaid->setEnabled(false);
       _altPrepaid->setEnabled(false);
@@ -177,6 +179,7 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
       _salesrep->setEnabled(false);
       _commissionDue->setEnabled(false);
       _rsnCode->setEnabled(false);
+      _taxzone->setEnabled(false);
       _useAltPrepaid->setEnabled(false);
       _altPrepaid->setEnabled(false);
       _notes->setReadOnly(true);
@@ -737,6 +740,9 @@ void arOpenItem::sTaxDetail()
 
 void arOpenItem::sDetermineTaxAmount()
 {
+  if (_mode != cNew)
+    return;
+
   XSqlQuery ar;
   if (_aropenid == -1)
   {
