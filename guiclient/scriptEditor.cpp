@@ -168,6 +168,7 @@ void scriptEditor::setMode(const int pmode)
       _notes->setReadOnly(false);
       _source->setReadOnly(false);
       _enabled->setEnabled(true);
+      _extractWidgets->setEnabled(true);
       _save->show();
       if (pmode == cNew)
         _name->setFocus();
@@ -185,6 +186,7 @@ void scriptEditor::setMode(const int pmode)
       _enabled->setEnabled(false);
       _save->hide();
       _import->setEnabled(false);
+      _extractWidgets->setEnabled(false);
       _package->setEnabled(false);
       _close->setFocus();
   };
@@ -225,18 +227,18 @@ bool scriptEditor::sSave()
   save.exec();
   if (save.clickedButton() == (QAbstractButton*)db && sSaveToDB())
   {
-    close();
+    sClose();
     return true;
   }
   else if (save.clickedButton() == (QAbstractButton*)file && sSaveFile())
   {
-    close();
+    sClose();
     return true;
   }
   else if (save.clickedButton() == (QAbstractButton*)both
            && sSaveFile() && sSaveToDB())
   {
-    close();
+    sClose();
     return true;
   }
   else if (save.clickedButton() == (QAbstractButton*)cancel)
@@ -249,7 +251,16 @@ bool scriptEditor::sSave()
 
   return false;
 }
-  
+
+void scriptEditor::sClose() {
+  if (!_lock.release()) {
+    ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"), _lock.lastError(), __FILE__, __LINE__);
+    return;
+  } else {
+    close();
+  }
+}
+
 bool scriptEditor::sSaveToDB()
 {
   XSqlQuery saveq;
@@ -327,6 +338,9 @@ bool scriptEditor::sSaveToDB()
 
 void scriptEditor::populate()
 {
+  if ((_mode == cEdit)  && !_lock.acquire("script", _scriptid, AppLock::Interactive)) {
+    setMode(cView);;
+  }
   XSqlQuery getq;
   getq.prepare( "SELECT script.*, COALESCE(pkghead_id, -1) AS pkghead_id, "
             "        COALESCE(pkghead_indev,true) AS editable "

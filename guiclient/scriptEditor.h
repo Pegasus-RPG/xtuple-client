@@ -14,6 +14,7 @@
 #include "guiclient.h"
 #include "xwidget.h"
 #include <parameter.h>
+#include "applock.h"
 
 #include "ui_scriptEditor.h"
 
@@ -48,6 +49,7 @@ protected slots:
     virtual void sPositionChanged();
     virtual void sFindSignal();
     virtual void sFindDo();
+    virtual void sClose();
 
   protected:
     virtual void closeEvent(QCloseEvent *);
@@ -59,6 +61,7 @@ private:
     JSHighlighter *_highlighter;
     QTextDocument *_document;
     int _findCnt;
+    AppLock _lock;
 
 };
 
