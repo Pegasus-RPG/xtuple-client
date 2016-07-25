@@ -676,12 +676,22 @@ bool customer::sSave()
   //Save characteristics
   if (charProfile && QMessageBox::question(this, tr("Delete?"),
                             tr("Do you want to DELETE all characteristics related to the old Customer Type?"),
-                            QMessageBox::Yes,
-                            QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No) == QMessageBox::Yes)
   {
     XSqlQuery deleteChar;
 
-    deleteChar.prepare("DELETE FROM charass USING (SELECT DISTINCT b.charass_id AS id FROM custtype JOIN charass a ON (a.charass_target_type='CT') AND (a.charass_target_id=custtype_id) JOIN charass b ON (b.charass_target_type='C') AND (b.charass_target_id=:cust_id) AND (a.charass_char_id=b.charass_char_id) WHERE (custtype_id=:custtype_id)) qry WHERE charass_id=qry.id;");
+    deleteChar.prepare("DELETE FROM charass "
+                       "USING "
+                       " (SELECT DISTINCT b.charass_id AS id "
+                       "  FROM custtype "
+                       "  JOIN charass a ON (a.charass_target_type='CT') "
+                       "   AND (a.charass_target_id=custtype_id) "
+                       "  JOIN charass b ON (b.charass_target_type='C') "
+                       "   AND (b.charass_target_id=:cust_id) "
+                       "   AND (a.charass_char_id=b.charass_char_id) "
+                       "  WHERE (custtype_id=:custtype_id)) qry "
+                       "WHERE charass_id=qry.id;");
     deleteChar.bindValue(":cust_id", _custid);
     deleteChar.bindValue(":custtype_id", custtype_id);
     deleteChar.exec();
