@@ -87,6 +87,7 @@ HEADERS += setupscriptapi.h \
     qlayoutitemproto.h \
     qmainwindowproto.h \
     qmenuproto.h \
+    qmenubarproto.h \
     qmessageboxsetup.h \
     qnetworkaccessmanagerproto.h \
     qnetworkinterfaceproto.h \
@@ -240,6 +241,7 @@ SOURCES += setupscriptapi.cpp \
     qlayoutproto.cpp \
     qmainwindowproto.cpp \
     qmenuproto.cpp \
+    qmenubarproto.cpp \
     qmessageboxsetup.cpp \
     qnetworkaccessmanagerproto.cpp \
     qnetworkinterfaceproto.cpp \

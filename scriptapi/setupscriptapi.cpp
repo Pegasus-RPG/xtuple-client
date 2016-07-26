@@ -89,6 +89,7 @@
 #include "qlayoutproto.h"
 #include "qmainwindowproto.h"
 #include "qmenuproto.h"
+#include "qmenubarproto.h"
 #include "qmessageboxsetup.h"
 #include "qnetworkaccessmanagerproto.h"
 #include "qnetworkinterfaceproto.h"
@@ -263,6 +264,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQLayoutProto(engine);
   setupQMainWindowProto(engine);
   setupQMenuProto(engine);
+  setupQMenuBarProto(engine);
   setupQMessageBox(engine);
   setupQNetworkAccessManagerProto(engine);
   setupQNetworkInterfaceProto(engine);
