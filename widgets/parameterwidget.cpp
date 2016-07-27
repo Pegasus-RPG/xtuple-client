@@ -724,15 +724,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
             QLineEdit *lineEdit = qobject_cast<QLineEdit*>(found);
             if (lineEdit != 0)
             {
-              QString text = "";
-              int i;
-              for (i=1; i<tempFilterList.size()-1; i++)
-              {
-                text+=tempFilterList[i];
-                if (i!=tempFilterList.size()-2)
-                  text+=":";
-              }
-              lineEdit->setText(text);
+              lineEdit->setText(tempFilterList.mid(1, tempFilterList.size()-2).join(":"));
               storeFilterValue(-1, lineEdit);
             }
           }
