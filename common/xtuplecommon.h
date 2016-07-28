@@ -18,7 +18,7 @@
 /**
 	@def TATTLE
 	Use in classes that inherit @c guiclient.h or @c widgets.h .
-	TATTLE may be written after the opening bracked of most member functions to allow signal and function call information to be written to the output stream.
+	TATTLE may be written after the opening bracket of most member functions to allow signal and function call information to be written to the output stream.
 	If only @c SIGTRACK is defined true for a class, then only member functions that are called by a Qt Signal will be written to the output stream with information about the sender.
 	If only @c FUNTRACK is defined true for a class, then all member functions that are called will be written to the output stream.
 	If both @c SIGTRACK and @c FUNTRACK are defined true for a class, then all member functions that are called will be written to the output stream, but functions that
