@@ -3,7 +3,7 @@
 #define FUNTRACK false
 
 /**	@addtogroup globals Global Variables and Functions
-	@}
+	@{
 	*/
 /**
 	@def SIGTRACK
