@@ -1143,6 +1143,8 @@ void itemSite::sHandleControlMethod()
     _costStd->setEnabled(false);
     _costJob->setEnabled(false);
   }
+  else if (_itemType == 'C' || _itemType == 'Y')
+    _costAvg->setEnabled(false);
   else
   {
     if(_costStd->isVisibleTo(this) && !_costAvg->isChecked() && !_costJob->isChecked())
@@ -1217,6 +1219,8 @@ void itemSite::sCacheItemType(char pItemType)
     _costStd->setEnabled(false);
     _costJob->setEnabled(false);
   }
+  else if (_itemType == 'C' || _itemType == 'Y')
+    _costAvg->setEnabled(false);
   else
   {
     if(_costStd->isVisibleTo(this) && !_costAvg->isChecked())
