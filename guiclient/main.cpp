@@ -110,6 +110,7 @@
 #include "xtupleplugin.h"
 #include "xtupleproductkey.h"
 
+#include "createfiscalyear.h"
 #include "errorReporter.h"
 #include "login2.h"
 #include "currenciesDialog.h"
@@ -837,17 +838,15 @@ int main(int argc, char *argv[])
 
 //  Check for valid current Fiscal period
   XSqlQuery periodCheck;
-  periodCheck.prepare("SELECT EXISTS(SELECT * FROM period "
+  periodCheck.prepare("SELECT EXISTS(SELECT 1 FROM period "
             "     WHERE ((current_date BETWEEN period_start AND period_end) "
-            "       AND (NOT period_closed))) AS result; ");
+            "       AND (NOT period_closed))) AS found; ");
   periodCheck.exec();
-  if(periodCheck.first() && periodCheck.value("result").toBool() != true)
-    QMessageBox::warning( omfgThis, QObject::tr("Additional Configuration Required"),
-      QObject::tr("<p>Your system does not have a valid or open Accounting period "
-                  "for the current date. "
-                  "You should define the Accounting periods in 'Accounting | "
-                  "Fiscal Calendar | Accounting Periods...' before posting any "
-                  "transactions in the system.") );
+  if(periodCheck.first() && ! periodCheck.value("found").toBool())
+  {
+    createFiscalYear newdlg(NULL);
+    (void)newdlg.exec();
+  }
 
 //  Check for valid current exchange rates
   XSqlQuery xrateCheck("SELECT curr_abbr"
