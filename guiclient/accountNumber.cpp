@@ -167,13 +167,13 @@ void accountNumber::sSave()
   ParameterList params;
   params.append("accnt_number", _number->text().trimmed());
 
-  if (_metrics->value("GLCompanySize").toInt())
+  if (_metrics->value("GLCompanySize").toInt() > 0)
     params.append("accnt_company", _company->currentText());
 
-  if (_metrics->value("GLProfitSize").toInt())
+  if (_metrics->value("GLProfitSize").toInt() > 0)
     params.append("accnt_profit", _profit->currentText());
 
-  if (_metrics->value("GLSubaccountSize").toInt())
+  if (_metrics->value("GLSubaccountSize").toInt() > 0)
     params.append("accnt_sub", _sub->currentText());
 
   if (_mode == cEdit)
@@ -241,9 +241,11 @@ void accountNumber::sSave()
 
   accountSave.bindValue(":accnt_id", _accntid);
   accountSave.bindValue(":accnt_company", _company->currentText());
-  accountSave.bindValue(":accnt_profit", _profit->currentText());
+  if (_profit->isVisible())
+    accountSave.bindValue(":accnt_profit", _profit->currentText());
   accountSave.bindValue(":accnt_number", _number->text());
-  accountSave.bindValue(":accnt_sub", _sub->currentText());
+  if (_sub->isVisible())
+    accountSave.bindValue(":accnt_sub", _sub->currentText());
   accountSave.bindValue(":accnt_descrip", _description->text());
   accountSave.bindValue(":accnt_extref", _extReference->text());
   accountSave.bindValue(":accnt_forwardupdate", QVariant(_forwardUpdate->isChecked()));
@@ -288,13 +290,13 @@ void accountNumber::populate()
   populateAccount.exec();
   if (populateAccount.first())
   {
-    if (_metrics->value("GLCompanySize").toInt())
+    if (_metrics->value("GLCompanySize").toInt() > 0)
       _company->setText(populateAccount.value("accnt_company"));
 
-    if (_metrics->value("GLProfitSize").toInt())
+    if (_metrics->value("GLProfitSize").toInt() > 0)
       _profit->setText(populateAccount.value("accnt_profit"));
 
-    if (_metrics->value("GLSubaccountSize").toInt())
+    if (_metrics->value("GLSubaccountSize").toInt() > 0)
       _sub->setText(populateAccount.value("accnt_sub"));
 
     _number->setText(populateAccount.value("accnt_number"));
