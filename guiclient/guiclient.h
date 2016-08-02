@@ -21,6 +21,8 @@
 #include "../common/format.h"
 #include "../hunspell/hunspell.hxx"
 
+#include <xtuplecommon.h>
+
 class QCheckBox;
 class QCloseEvent;
 class QDockWidget;
