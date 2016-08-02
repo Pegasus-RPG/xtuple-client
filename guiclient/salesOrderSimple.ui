@@ -996,7 +996,7 @@ to be bound by its terms.</comment>
    <sender>_close</sender>
    <signal>clicked()</signal>
    <receiver>salesOrderSimple</receiver>
-   <slot>close()</slot>
+   <slot>sClose()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>1059</x>

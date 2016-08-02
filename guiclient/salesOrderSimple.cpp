@@ -84,6 +84,7 @@ salesOrderSimple::salesOrderSimple(QWidget *parent, const char *name, Qt::Window
   connect(_custPONumber,        SIGNAL(editingFinished()),                      this,         SLOT(sHandleRequiredFields()));
   
   _saved = false;
+  _closeThis = true;
 
   _soheadid          = -1;
   _orderNumberGen    = 0;
@@ -1168,6 +1169,23 @@ void salesOrderSimple::prepareLine()
   }
 }
 
+void salesOrderSimple::sClose()
+{
+  if(omfgThis->_singleWindow == "salesOrderSimple")
+  {
+    int count = 0;
+    foreach(QWidget *child, QApplication::topLevelWidgets())
+      if(child->objectName()=="salesOrderSimple new")
+        count++;
+    if(count==1)
+      _closeThis = false;
+  }
+
+  close();
+
+  _closeThis = true;
+}
+
 void salesOrderSimple::closeEvent(QCloseEvent *pEvent)
 {
   if (!_close->isEnabled())
@@ -1186,6 +1204,13 @@ void salesOrderSimple::closeEvent(QCloseEvent *pEvent)
 
   if (cNew == _mode && _saved)
     omfgThis->sSalesOrdersUpdated(-1);
+
+  if(!_closeThis)
+  {
+    pEvent->ignore();
+    prepare();
+    return;
+  }
 
   XWidget::closeEvent(pEvent);
 }
