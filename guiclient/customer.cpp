@@ -528,8 +528,22 @@ bool customer::sSave()
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Customer"), errors))
     return false;
 
+  int custtype_id = -1;
+  bool charProfile = false;
+
   if (_mode == cEdit)
-  {
+  { 
+    XSqlQuery customerType;
+
+    customerType.prepare("SELECT cust_custtype_id, custtype_char FROM custinfo JOIN custtype ON (cust_custtype_id=custtype_id) WHERE cust_id=:cust_id;");
+    customerType.bindValue(":cust_id", _custid);
+    customerType.exec();
+    if (customerType.first())
+    {
+      custtype_id = customerType.value("cust_custtype_id").toInt();
+      charProfile = customerType.value("custtype_char").toBool();
+    }
+
     customerSave.prepare( "UPDATE custinfo SET "
                "       cust_number=:cust_number, cust_name=:cust_name,"
                "       cust_salesrep_id=:cust_salesrep_id,"
@@ -660,6 +674,29 @@ bool customer::sSave()
   }
 
   //Save characteristics
+  if (charProfile && QMessageBox::question(this, tr("Delete?"),
+                            tr("Do you want to DELETE all characteristics related to the old Customer Type?"),
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No) == QMessageBox::Yes)
+  {
+    XSqlQuery deleteChar;
+
+    deleteChar.prepare("DELETE FROM charass "
+                       "USING "
+                       " (SELECT DISTINCT b.charass_id AS id "
+                       "  FROM custtype "
+                       "  JOIN charass a ON (a.charass_target_type='CT') "
+                       "   AND (a.charass_target_id=custtype_id) "
+                       "  JOIN charass b ON (b.charass_target_type='C') "
+                       "   AND (b.charass_target_id=:cust_id) "
+                       "   AND (a.charass_char_id=b.charass_char_id) "
+                       "  WHERE (custtype_id=:custtype_id)) qry "
+                       "WHERE charass_id=qry.id;");
+    deleteChar.bindValue(":cust_id", _custid);
+    deleteChar.bindValue(":custtype_id", custtype_id);
+    deleteChar.exec();
+  }
+
   if (_widgetStack->currentIndex() == 1)
   {
     customerSave.prepare("SELECT updateCharAssignment('C', :target_id, :char_id, :char_value);");
