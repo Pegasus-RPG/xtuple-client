@@ -132,10 +132,11 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
       _docNumber->setEnabled(false);
       _poNumber->setEnabled(false);
       _journalNumber->setEnabled(false);
-      _amount->setCurrencyEditable(false);
+      _amount->setEnabled(false);
       _terms->setEnabled(false);
       _notes->setReadOnly(false);
       _usePrepaid->setEnabled(false);
+      _taxzone->setEnabled(false);
       _accntId->setEnabled(false);
     }
     else if (param.toString() == "view")
@@ -156,6 +157,7 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
       _usePrepaid->setEnabled(false);
       _accntId->setEnabled(false);
       _status->setEnabled(false);
+      _taxzone->setEnabled(false);
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }
@@ -652,6 +654,9 @@ void apOpenItem::sTaxDetail()
 
 void apOpenItem::sDetermineTaxAmount()
 {
+  if (_mode != cNew)
+    return;
+
   XSqlQuery ap;
   if (_apopenid == -1)
   {
