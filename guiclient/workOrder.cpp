@@ -15,6 +15,8 @@
 #include <QValidator>
 #include <QVariant>
 
+#include <metasql.h>
+
 #include "changeWoQty.h"
 #include "closeWo.h"
 #include "correctProductionPosting.h"
@@ -28,6 +30,7 @@
 #include "implodeWo.h"
 #include "inputManager.h"
 #include "issueWoMaterialItem.h"
+#include "mqlutil.h"
 #include "postProduction.h"
 #include "printWoTraveler.h"
 #include "printWoTraveler.h"
@@ -860,76 +863,14 @@ void workOrder::sHandleButtons()
 
 void workOrder::sFillList()
 {
-  XSqlQuery workFillList;
-   //The wodata_id_type column is used to indicate the source of the wodata_id
-   //there are three different tables used wo, womatl and womatlvar
-   //wodata_id_type = 1 = wo_id
-   //wodata_id_type = 2 = womatl_id
-   //wodata_id_type = 3 = womatlvar_id
-   QString sql(
-    "     SELECT wodata_id, "
-    "           wodata_id_type, "
-    "           CASE WHEN wodata_id_type = 1 THEN "
-    "                  wodata_number || '-' || wodata_subnumber "
-    "                WHEN wodata_id_type = 3 THEN "
-    "                  wodata_subnumber::text "
-    "           END AS wonumber, "
-    "           wodata_itemnumber, "
-    "           wodata_descrip, "
-    "           wodata_status, "
-    "           wodata_startdate, "
-    "           wodata_duedate, "
-    "           wodata_adhoc,    "
-    "           wodata_itemsite_id, "
-    "           wodata_qoh AS qoh, "
-    "           wodata_short AS short, "
-    "           wodata_qtyper AS qtyper, "
-    "           wodata_qtyiss AS qtyiss,    "
-    "           wodata_qtyrcv AS qtyrcv,  "
-    "           wodata_qtyordreq AS qtyordreq, "
-    "           wodata_qtyuom, "
-    "           wodata_scrap AS scrap, "
-    "           wodata_setup, "
-    "           wodata_run, "
-    "           wodata_notes, "
-    "           wodata_ref, "
-    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
-    "                WHEN (wodata_qoh = 0) THEN 'warning' "
-    "                WHEN (wodata_qoh < 0) THEN 'error' "
-    "           END AS qoh_qtforegroundrole, "
-    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
-    "                WHEN (wodata_qtyiss = 0) THEN 'warning' "
-    "           END AS qtyiss_qtforegroundrole, "
-    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
-    "                WHEN (wodata_short > 0) THEN 'error' "
-    "           END AS short_qtforegroundrole, "
-    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
-    "                WHEN (wodata_startdate <= current_date) THEN 'error' "
-    "           END AS wodata_startdate_qtforegroundrole,   "
-    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
-    "                WHEN (wodata_duedate <= current_date) THEN 'error' "
-    "           END AS wodata_duedate_qtforegroundrole,   "
-    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
-    "                WHEN (wodata_id_type = 3) THEN 'emphasis' "
-    "                WHEN (wodata_id_type = 1) THEN 'altemphasis' "
-    "           ELSE null END AS qtforegroundrole, "
-    "           'qty' AS qoh_xtnumericrole, "
-    "           'qtyper' AS qty_per_xtnumericrole, "
-    "           'qty' AS qtyiss_xtnumericrole, "
-    "           'qty' AS qtyrcv_xtnumericrole, "
-    "           'qty' AS qtyordreq_xtnumericrole, "
-    "           'qty' AS short_xtnumericrole, "
-    "           'qty' AS setup_xtnumericrole,"
-    "           'qty' AS run_xtnumericrole,"
-    "           'qty' AS scrap_xtnumericrole, "
-    "           wodata_level AS xtindentrole "
-    "    FROM indentedwo(:wo_id, :showops, :showmatl, :showindent) ");
-  workFillList.prepare(sql);
-  workFillList.bindValue(":wo_id", _woid);
-  workFillList.bindValue(":showops", QVariant(_showOperations->isVisible() && _showOperations->isChecked()));
-  workFillList.bindValue(":showmatl", QVariant(_showMaterials->isChecked()));
-  workFillList.bindValue(":showindent", QVariant(_indented->isChecked()));
-  workFillList.exec();
+  MetaSQLQuery mql = mqlLoad("workOrder", "detail");
+
+  ParameterList params;
+  params.append("wo_id", _woid);
+  params.append("showops", QVariant(_showOperations->isVisible() && _showOperations->isChecked()));
+  params.append("showmatl", QVariant(_showMaterials->isChecked()));
+  params.append("showindent", QVariant(_indented->isChecked()));
+  XSqlQuery workFillList = mql.toQuery(params);
   _woIndentedList->populate(workFillList, true);
   _woIndentedList->expandAll();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
@@ -2153,10 +2094,5 @@ void workOrder::populate()
       close();
   }
 }
-
-
-
-
-
 
 
