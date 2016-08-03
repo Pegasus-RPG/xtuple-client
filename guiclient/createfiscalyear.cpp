@@ -64,6 +64,8 @@ createFiscalYear::createFiscalYear(QWidget *parent) :
   _fy->populate(q, true);
   if (_fy->topLevelItemCount() < 0)
     _choose->setCode("NEWFY");
+  else
+    _fy->setCurrentItem(_fy->topLevelItem(0));
 
   q.prepare("SELECT period_start + interval '1 month' AS start,"
             "       period_end   + interval '1 month' AS end,"
@@ -96,8 +98,8 @@ void createFiscalYear::sHandleButtons()
 {
   XTreeWidgetItem *lastFY = _fy->topLevelItem(0);
   bool newAP  = _choose->code() == "PERIOD" && _period->allValid()
-                && lastFY->rawValue("start") <= QDate::currentDate()
-                && lastFY->rawValue("end")   >= QDate::currentDate();
+                && lastFY->rawValue("start").toDate() <= QDate::currentDate()
+                && lastFY->rawValue("end").toDate()   >= QDate::currentDate();
   bool newFY  = _choose->code() == "NEWFY"
                 && _firstDay->isValid() && _style->isValid();
   bool copyFY = _choose->code() == "COPYFY" && _fy->id() != -1;
@@ -110,8 +112,8 @@ void createFiscalYear::sHandleChoice(int selection)
   QWidget *page = NULL;
   XTreeWidgetItem *lastFY = _fy->topLevelItem(0);
   bool fyExists = (lastFY != NULL);
-  bool fyIsCurrent = lastFY->rawValue("start") <= QDate::currentDate()
-                  && lastFY->rawValue("end")   >= QDate::currentDate();
+  bool fyIsCurrent = lastFY->rawValue("start").toDate() <= QDate::currentDate()
+                  && lastFY->rawValue("end").toDate()   >= QDate::currentDate();
 
   _fy->setEnabled(hasPriv(cEdit));
   _period->setEnabled(hasPriv(cEdit));
@@ -155,11 +157,14 @@ void createFiscalYear::sSave()
   switch (_choose->id()) {
     case 1:
       funcname = "createAccountingPeriod";
-      q.prepare("SELECT createAccountingPeriod(:start, :end, :fy, :qtr) AS result;");
-      q.bindValue("start", _period->startDate());
-      q.bindValue(":end",  _period->endDate());
-      q.bindValue(":fy",   _fy->id());
-      q.bindValue(":qtr",  0);  // TODO: 0 is wrong
+      q.prepare("SELECT createAccountingPeriod(:start, :end, yearperiod_id,"
+                "       EXTRACT(QUARTER FROM"
+                "               justify_days(timestamp :end - yearperiod_start)"
+                "       )::INTEGER) AS result"
+                "  FROM yearperiod WHERE yearperiod_id = :fy;");
+      q.bindValue(":start", _period->startDate());
+      q.bindValue(":end",   _period->endDate());
+      q.bindValue(":fy",    _fy->id());
       break;
     case 2:
     {
