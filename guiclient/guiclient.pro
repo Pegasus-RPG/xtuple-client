@@ -209,6 +209,7 @@ FORMS =   absoluteCalendarItem.ui               \
           createPlannedOrdersByPlannerCode.ui   \
           createRecurringInvoices.ui            \
           createRecurringItems.ui               \
+          createfiscalyear.ui                   \
           creditCard.ui                         \
           creditMemo.ui                         \
           creditMemoEditList.ui                 \
@@ -772,6 +773,7 @@ HEADERS = ../common/format.h                    \
           createPlannedOrdersByPlannerCode.h    \
           createRecurringInvoices.h             \
           createRecurringItems.h                \
+          createfiscalyear.h                    \
           creditCard.h                          \
           creditMemo.h                          \
           creditMemoEditList.h                  \
@@ -1392,6 +1394,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           createPlannedOrdersByPlannerCode.cpp  \
           createRecurringInvoices.cpp           \
           createRecurringItems.cpp              \
+          createfiscalyear.cpp                  \
           creditCard.cpp                        \
           creditMemo.cpp                        \
           creditMemoEditList.cpp                \
