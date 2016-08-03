@@ -22,6 +22,8 @@
 #include "../hunspell/hunspell.hxx"
 
 #include <xtuplecommon.h>
+#include <version.h>
+#include <data.h>
 
 class QCheckBox;
 class QCloseEvent;
@@ -176,10 +178,15 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE void setCaption();
     Q_INVOKABLE void saveToolbarPositions();
 
-    Q_INVOKABLE inline QMdiArea *workspace()         { return _workspace;    }
+    Q_INVOKABLE inline QMdiArea *workspace()           { return _workspace;    }
     Q_INVOKABLE inline InputManager *inputManager()    { return _inputManager; }
     Q_INVOKABLE inline QString databaseURL()           { return _databaseURL;  }
     Q_INVOKABLE inline QString username()              { return _username;     }
+
+    // runtime versions
+    Q_INVOKABLE inline QString version()               { return _Version;         }
+    Q_INVOKABLE inline QString qtVersion()             { return QT_VERSION_STR;   }
+    Q_INVOKABLE inline QString openrptVersion()        { return OpenRPT::version; }
 
     Q_INVOKABLE inline const QDate startOfTime()       { return _startOfTime;  }
     Q_INVOKABLE inline const QDate endOfTime()         { return _endOfTime;    }
