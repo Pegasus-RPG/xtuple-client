@@ -3899,9 +3899,9 @@ void salesOrder::populateCMInfo()
 
   populateSales.prepare("SELECT COALESCE(SUM(currToCurr(invchead_curr_id, :curr_id,"
                         "                               calcInvoiceAmt(invchead_id), :effective)),0) AS amount"
-                        "  FROM coitem JOIN invcitem ON (invcitem_coitem_id=coitem_id)"
-                        "              JOIN invchead ON (invchead_id=invcitem_invchead_id AND invchead_posted) "
-                        " WHERE (coitem_cohead_id=:doc_id);");
+						" FROM invchead where invchead_id IN"
+						"      (select invchead_id from coitem join invcitem on (invcitem_coitem_id=coitem_id) join invchead on (invchead_id=invcitem_invchead_id and invchead_posted) where (coitem_cohead_id=:doc_id) group by invchead_id)");
+	
   populateSales.bindValue(":doc_id",    _soheadid);
   populateSales.bindValue(":curr_id",   _allocatedCM->id());
   populateSales.bindValue(":effective", _allocatedCM->effective());
