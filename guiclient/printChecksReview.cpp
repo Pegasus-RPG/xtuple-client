@@ -13,6 +13,7 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include "printChecksReviewEdit.h"
 #include "guiclient.h"
 #include "storedProcErrorLookup.h"
 #include "errorReporter.h"
@@ -23,6 +24,7 @@ printChecksReview::printChecksReview(QWidget* parent, const char* name, bool mod
   setupUi(this);
 
   connect(_complete,  SIGNAL(clicked()), this, SLOT(sComplete()));
+  connect(_edit,      SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_printed,   SIGNAL(clicked()), this, SLOT(sMarkPrinted()));
   connect(_replace,   SIGNAL(clicked()), this, SLOT(sMarkReplaced()));
   connect(_selectAll, SIGNAL(clicked()), this, SLOT(sSelectAll()));
@@ -139,6 +141,36 @@ void printChecksReview::sComplete()
   // TODO: after refactoring, handle any errors in the loop here and *return*
 
   close();
+}
+
+void printChecksReview::sEdit()
+{
+  QList<XTreeWidgetItem*> selected = _checks->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
+
+    ParameterList params;
+    params.append("checkhead_id", cursor->id());
+
+    printChecksReviewEdit newdlg(this, "", true);
+    newdlg.set(params);
+    newdlg.exec();
+
+    XSqlQuery checkNumber;
+    checkNumber.prepare( "SELECT checkhead_number "
+                         "FROM checkhead "
+                         "WHERE checkhead_id=:checkhead_id;");
+    checkNumber.bindValue(":checkhead_id", cursor->id());
+    checkNumber.exec();
+    if(checkNumber.first())
+    {
+      cursor->setText(0, checkNumber.value("checkhead_number").toString());
+    }
+    else if (checkNumber.lastError().type() != QSqlError::NoError)
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error fetching Check Number"),
+                           checkNumber, __FILE__, __LINE__);
+  }
 }
 
 void printChecksReview::sUnmark()

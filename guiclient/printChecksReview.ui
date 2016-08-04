@@ -71,6 +71,13 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="_edit">
+           <property name="text">
+            <string>&amp;Edit Number</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="_unmark">
            <property name="text">
             <string>&amp;Unmark</string>

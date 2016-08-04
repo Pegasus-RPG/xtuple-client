@@ -420,6 +420,7 @@ FORMS =   absoluteCalendarItem.ui               \
           printCheck.ui                         \
           printChecks.ui                        \
           printChecksReview.ui                  \
+          printChecksReviewEdit.ui              \
           printCreditMemo.ui                    \
           printCreditMemos.ui                   \
           printInvoice.ui                       \
@@ -1020,6 +1021,7 @@ HEADERS = ../common/format.h                    \
           printCheck.h                  \
           printChecks.h                 \
           printChecksReview.h           \
+          printChecksReviewEdit.h       \
           printCreditMemo.h             \
           printCreditMemos.h            \
           printInvoice.h                \
@@ -1639,6 +1641,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           printCheck.cpp                        \
           printChecks.cpp                       \
           printChecksReview.cpp                 \
+          printChecksReviewEdit.cpp             \
           printCreditMemo.cpp                   \
           printCreditMemos.cpp                  \
           printInvoice.cpp                      \

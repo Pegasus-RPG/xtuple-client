@@ -95,13 +95,12 @@ void printChecks::sPrint()
       printPrint.prepare("SELECT checkhead_id "
                          "FROM checkhead "
                          "WHERE ( (checkhead_bankaccnt_id=:bankaccnt_id) "
-                         "  AND   (checkhead_id <> :checkhead_id) "
                          "  AND   (checkhead_number=:nextCheckNumber));");
       printPrint.bindValue(":bankaccnt_id", _bankaccnt->id());
       printPrint.bindValue(":checkhead_id", checks.value("checkhead_id").toInt());
       printPrint.bindValue(":nextCheckNumber", countCheckNum);
       printPrint.exec();
-      if (printPrint.first())
+      if (printPrint.first() && !_metrics->boolean("ReprintPaymentNumbers"))
       {
         QMessageBox::information( this, tr("Payment Number Already Used"),
                                  tr("<p>A Payment Number has already been used.") );
