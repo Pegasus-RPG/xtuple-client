@@ -42,6 +42,7 @@ priceList::priceList(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _price->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,  true, "currency");
   _price->addColumn(tr("Price (in Base)"), _priceColumn, Qt::AlignRight, true, "price");
   // column title reset in priceList::set
+  _price->addColumn(tr("Method"), 0, Qt::AlignRight, false, "method");
 
   if (omfgThis->singleCurrency())
   {
@@ -54,6 +55,7 @@ priceList::priceList(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _prodcatid = -1;
   _custtypeid = -1;
   _custtypecode = "";
+  _listpriceschedule = "";
   _iteminvpricerat = 1.0;
 
   _qty->setValidator(omfgThis->qtyVal());
@@ -206,7 +208,9 @@ void priceList::sNewItem()
     itemq.prepare("SELECT item_listprice, item_listcost, item_prodcat_id,"
                   "       itemuomtouomratio(item_id, item_inv_uom_id, item_price_uom_id) AS iteminvpricerat,"
                   "       itemCost(:item_id, :cust_id, :shipto_id, :qty, item_inv_uom_id, item_price_uom_id,"
-                  "                :curr_id, :effective, :asof, :warehous_id) AS item_unitcost"
+                  "                :curr_id, :effective, :asof, :warehous_id) AS item_unitcost,"
+                  "       listPrice(:item_id, :cust_id, :shipto_id, :warehous_id) AS item_unitprice,"
+                  "       listPriceSchedule(:item_id, :cust_id, :shipto_id, :warehous_id) AS listpriceschedule"
                   "  FROM item LEFT OUTER JOIN itemsite ON (itemsite_item_id=item_id AND itemsite_warehous_id=:warehous_id)"
                   " WHERE (item_id=:item_id);");
     itemq.bindValue(":item_id",          _item->id());
@@ -220,11 +224,12 @@ void priceList::sNewItem()
     itemq.exec();
     if (itemq.first())
     {
-      _listPrice->setDouble(itemq.value("item_listprice").toDouble());
+      _listPrice->setDouble(itemq.value("item_unitprice").toDouble());
       _listCost->setDouble(itemq.value("item_listcost").toDouble());
       _unitCost->setDouble(itemq.value("item_unitcost").toDouble());
       _iteminvpricerat = itemq.value("iteminvpricerat").toDouble();
       _prodcatid = itemq.value("item_prodcat_id").toInt();
+      _listpriceschedule = itemq.value("listpriceschedule").toString();
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Price List Information"),
                                   itemq, __FILE__, __LINE__))
@@ -236,7 +241,14 @@ void priceList::sNewItem()
 
 void priceList::sSelect()
 {
-  _selectedPrice = _price->rawValue("base_price").toDouble();
+  _selectedPrice = _price->rawValue("price").toDouble();
+  _selectedMethod = _price->rawValue("method").toString();
+  _selectedType = _price->rawValue("price_type").toString();
+  _selectedSchedule = _price->rawValue("schedulename").toString();
+  _selectedBasis = _listPrice->toDouble();
+  _selectedModifierPct = _price->rawValue("discountpercent").toDouble();
+  _selectedModifierAmt = _price->rawValue("discountfixed").toDouble();
+  _selectedQtyBreak = _price->rawValue("qty_break").toDouble();
 
   accept();
 }
@@ -271,20 +283,23 @@ void priceList::sFillList()
   pricelistp.append("discount",         tr("Discount"));
   pricelistp.append("markup",           tr("Markup"));
   pricelistp.append("item_id",          _item->id());
+  pricelistp.append("warehous_id",      _warehouse->id());
   pricelistp.append("prodcat_id",       _prodcatid);
   pricelistp.append("cust_id",          _cust->id());
   pricelistp.append("custtype_id",      _custtypeid);
   pricelistp.append("custtype_code",    _custtypecode);
   pricelistp.append("saletype_id",      _saletypeid);
-  pricelistp.append("shipzone_id",        _shipzoneid);
+  pricelistp.append("shipzone_id",      _shipzoneid);
   pricelistp.append("shipto_id",        _shiptoid);
   pricelistp.append("shipto_num",       _shiptonum);
   pricelistp.append("curr_id",          _curr_id);
   pricelistp.append("effective",        _effective);
   pricelistp.append("asof",             _asOf);
-  pricelistp.append("item_listprice",   _listPrice->toDouble());
+  pricelistp.append("qty",              _qty->toDouble());
   pricelistp.append("item_listcost",    _listCost->toDouble());
-  pricelistp.append("item_unitcost",    (_unitCost->toDouble() / _iteminvpricerat));
+  pricelistp.append("item_unitcost",    _unitCost->toDouble());
+  pricelistp.append("item_listprice",   _listPrice->toDouble());
+  pricelistp.append("listpricesched",   _listpriceschedule);
 
   XSqlQuery pricelistq = pricelistm.toQuery(pricelistp);
   _price->populate(pricelistq, true);

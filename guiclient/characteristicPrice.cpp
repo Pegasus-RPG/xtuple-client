@@ -14,6 +14,7 @@
 #include <QSqlError>
 #include <QVariant>
 #include <errorReporter.h>
+#include "guiErrorCheck.h"
 
 characteristicPrice::characteristicPrice(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -104,13 +105,14 @@ enum SetResponse characteristicPrice::set(const ParameterList &pParams)
 void characteristicPrice::sSave()
 {
   XSqlQuery characteristicSave;
-  if (_char->id() == -1)
-  {
-    QMessageBox::information( this, tr("No Characteristic Selected"),
-                              tr("You must select a Characteristic before saving this Item Characteristic.") );
-    _char->setFocus();
-    return;
-  }
+
+  QList<GuiErrorCheck>errors;
+  errors<<GuiErrorCheck(_char->id() == -1, _char,
+                        tr("You must select a Characteristic before saving this Item Characteristic."));
+
+  if(GuiErrorCheck::reportErrors(this,tr("No Characteristic Selected"),errors))
+      return;
+
   if (_mode == cNew)
   {
     characteristicSave.exec("SELECT nextval('ipsitemchar_ipsitemchar_id_seq') AS result;");

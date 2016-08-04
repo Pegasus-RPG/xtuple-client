@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -138,7 +138,7 @@ public:
   enum Mode          { Edit, View, Select };
 
   ContactWidget(QWidget*, const char* = 0);
-  inline virtual AddressCluster* addressWidget() const { return _address; }
+  Q_INVOKABLE inline virtual AddressCluster* addressWidget() { return _address; }
   inline virtual bool    ownerVisible()   const { return _owner->isVisible(); }
   inline virtual bool    ownerEnabled()   const { return _owner->isEnabled(); }
   inline virtual bool    numberVisible()  const { return _number->isVisible(); }

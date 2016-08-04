@@ -145,6 +145,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
   connect(_newCharacteristic,   SIGNAL(clicked()),                              this,         SLOT(sNewCharacteristic()));
   connect(_editCharacteristic,  SIGNAL(clicked()),                              this,         SLOT(sEditCharacteristic()));
   connect(_deleteCharacteristic,SIGNAL(clicked()),                              this,         SLOT(sDeleteCharacteristic()));
+  connect(_holdType,            SIGNAL(newID(int)),                             this,         SLOT(sHoldTypeChanged()));
 
   connect(_billToAddr,          SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _billToCntct, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
@@ -169,7 +170,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
   _crmacctid         =-1;
 
   _captive       = false;
-
+  _holdOverride  = false;
   _ignoreSignals = true;
 
   _holdType->append(0, tr("None"),     "N");
@@ -213,6 +214,8 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
   _soitem->addColumn(tr("Extended"),        _priceColumn,          Qt::AlignRight,  true,  "extprice");
   _soitem->addColumn(tr("Cust. Price"),     _priceColumn,          Qt::AlignRight,  false, "coitem_custprice");
   _soitem->addColumn(tr("Cust. Discount"),  _priceColumn,          Qt::AlignRight,  false, "discountfromcust");
+  _soitem->addColumn(tr("List Price"),      _priceColumn,          Qt::AlignRight,  false, "coitem_listprice");
+  _soitem->addColumn(tr("List Discount"),   _priceColumn,          Qt::AlignRight,  false, "discountfromlist");
   if (_privileges->check("ViewSOItemUnitCost"))
     _soitem->addColumn(tr("Unit Cost"),       _costColumn,           Qt::AlignRight,  false, "coitem_unitcost");
   if (_privileges->check("ShowMarginsOnSalesOrder"))
@@ -2262,7 +2265,10 @@ void salesOrder::sHandleButtons()
     else
     {
       _lineMode = 0;
-      _edit->setEnabled(false);
+      if (_mode == cView)
+        _edit->setEnabled(true);
+      else
+        _edit->setEnabled(false);
       _action->setEnabled(false);
       _delete->setEnabled(false);
     }
@@ -2581,7 +2587,7 @@ void salesOrder::populate()
       _shipTo->setCustid(_cust->id());
       _ignoreSignals=false;
 
-      if (_mode == cView)
+      if (ISVIEW(_mode))
         _shipTo->setEnabled(false);
 
       _custPONumber->setText(so.value("cohead_custponumber"));
@@ -2589,11 +2595,12 @@ void salesOrder::populate()
 
       _fob->setText(so.value("cohead_fob"));
       _holdType->setCode(so.value("cohead_holdtype").toString());
-      if (_holdType->code() != "N" && !_privileges->check("OverrideSOHoldType"))
+      if (ISVIEW(_mode) || (_holdType->code() != "N" && !_privileges->check("OverrideSOHoldType")))
         _holdType->setEnabled(false);
       else
         _holdType->setEnabled(true);
-
+       if (ISEDIT(_mode))
+         _holdTypeCache = _holdType->code();
 
       _miscCharge->setLocalValue(so.value("cohead_misc").toDouble());
       _miscChargeDescription->setText(so.value("cohead_misc_descrip"));
@@ -5538,6 +5545,9 @@ bool salesOrder::creditLimitCheck()
   XSqlQuery creditCheck;
   double    customerCurrent;
 
+  if (_holdOverride)
+    return true;
+
   creditCheck.prepare("SELECT * FROM creditlimitcheck(:cust_id);");
   creditCheck.bindValue(":cust_id", _cust->id());
   creditCheck.exec();
@@ -5560,3 +5570,8 @@ bool salesOrder::creditLimitCheck()
   return false;
 }
 
+void salesOrder::sHoldTypeChanged()
+{
+  if (ISEDIT(_mode) && _holdTypeCache == "C" && _holdType->code() != "C")
+    _holdOverride = true;
+}

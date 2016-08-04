@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2011 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -220,36 +220,6 @@ bool contract::sSave()
          << GuiErrorCheck(_descrip->isNull(), _descrip,
                           tr( "You must enter a Description before you may save this Contract." ) )
      ;
-
-  /* TODO - need this?
-  itemSave.prepare( "SELECT count(*) AS numberOfOverlaps "
-                    "FROM contrct "
-                    "WHERE (contrct_vend_id = :contrct_vend_id)"
-                    "  AND (contrct_id != :contrct_id)"
-                    "  AND ( (contrct_effective BETWEEN :contrct_effective AND :contrct_expires OR"
-                    "         contrct_expires BETWEEN :contrct_effective AND :contrct_expires)"
-                    "   OR   (contrct_effective <= :contrct_effective AND"
-                    "         contrct_expires   >= :contrct_expires) );" );
-  itemSave.bindValue(":contrct_id", _contrctid);
-  itemSave.bindValue(":contrct_vend_id", _vendor->id());
-  itemSave.bindValue(":contrct_effective", _dates->startDate());
-  itemSave.bindValue(":contrct_expires", _dates->endDate());
-  itemSave.exec();
-  if (itemSave.first())
-  {
-    if (itemSave.value("numberOfOverlaps").toInt() > 0)
-    {
-      errors << GuiErrorCheck(true, _dates,
-                              tr("The date range overlaps with another date range.\n"
-                                 "Please check the values of these dates."));
-    }
-  }
-  else if (itemSave.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
-    return false;
-  }
-  */
 
   if(_mode == cNew || _mode == cCopy)
   {
@@ -609,46 +579,40 @@ void contract::sHandleButtons(XTreeWidgetItem *pItem, int pCol)
     else
       _newPo->setEnabled(false);
 
-      if (!((oper == "Receipt") || (oper == "Return")) && (oper > " "))
+    if (!((oper == "Receipt") || (oper == "Return")) && (oper > " "))
+    {
+      if (_mode == cNew || _mode == cEdit)
+        _editPo->setEnabled(_privileges->check("MaintainPurchaseOrders"));
+      else
+        _editPo->setEnabled(false);
+
+      _viewPo->setEnabled(_privileges->check("ViewPurchaseOrders") || _privileges->check("MaintainPurchaseOrders"));
+
+      if (stat == "Unreleased" && _mode == cEdit)
       {
-        if (_mode == cNew || _mode == cEdit)
-          _editPo->setEnabled(_privileges->check("MaintainPurchaseOrders"));
-        else
-          _editPo->setEnabled(false);
-
-        _viewPo->setEnabled(_privileges->check("ViewPurchaseOrders") || _privileges->check("MaintainPurchaseOrders"));
-
-        if (stat == "Unreleased" && _mode == cEdit)
-        {
-          _deletePo->setEnabled(_privileges->check("MaintainPurchaseOrders"));
-          _releasePo->setEnabled(_privileges->check("ReleasePurchaseOrders"));
-        }
-        else
-        {
-          _deletePo->setEnabled(false);
-          _releasePo->setEnabled(false);
-        }
+        _deletePo->setEnabled(_privileges->check("MaintainPurchaseOrders"));
+        _releasePo->setEnabled(_privileges->check("ReleasePurchaseOrders"));
       }
       else
       {
-        _editPo->setEnabled(false);
-        _viewPo->setEnabled(false);
         _deletePo->setEnabled(false);
         _releasePo->setEnabled(false);
       }
+    }
+    else
+    {
+      _editPo->setEnabled(false);
+      _viewPo->setEnabled(false);
+      _deletePo->setEnabled(false);
+      _releasePo->setEnabled(false);
+    }
 
-      if (pItem->altId() > 0)
+    if (pItem->altId() > 0)
+    {
+      if (_mode == cNew || _mode == cEdit)
       {
-        if (_mode == cNew || _mode == cEdit)
-        {
-          _newRcpt->setEnabled(_privileges->check("EnterReceipts"));
-          _newRtrn->setEnabled(_privileges->check("EnterReturns"));
-        }
-        else
-        {
-          _newRcpt->setEnabled(false);
-          _newRtrn->setEnabled(false);
-        }
+        _newRcpt->setEnabled(_privileges->check("EnterReceipts"));
+        _newRtrn->setEnabled(_privileges->check("EnterReturns"));
       }
       else
       {
@@ -656,7 +620,12 @@ void contract::sHandleButtons(XTreeWidgetItem *pItem, int pCol)
         _newRtrn->setEnabled(false);
       }
     }
-
+    else
+    {
+      _newRcpt->setEnabled(false);
+      _newRtrn->setEnabled(false);
+    }
+  }
 }
 
 void contract::populate()

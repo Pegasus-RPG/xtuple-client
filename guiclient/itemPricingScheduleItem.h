@@ -53,7 +53,8 @@ private:
     int _ipsitemid;
     int _ipsfreightid;
     int _invuomid;
-
+    bool _listpricesched;
+ 
 };
 
 #endif // ITEMPRICINGSCHEDULEITEM_H

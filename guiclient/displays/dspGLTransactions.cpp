@@ -33,6 +33,7 @@
 #include "storedProcErrorLookup.h"
 #include "dspJournals.h"
 #include "creditMemo.h"
+#include "errorReporter.h"
 
 dspGLTransactions::dspGLTransactions(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspGLTransactions", fl)
@@ -311,10 +312,10 @@ bool dspGLTransactions::setParams(ParameterList &params)
         beginning   = begq.value("trialbal_beginning").toDouble();
         periodStart = begq.value("period_start").toDate();
       }
-      else if (begq.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Trial Balance Information"),
+                                    begq, __FILE__, __LINE__))
       {
-	systemError(this, begq.lastError().databaseText(), __FILE__, __LINE__);
-	return false;
+        return false;
       }
 
       XSqlQuery glq;
@@ -339,10 +340,10 @@ bool dspGLTransactions::setParams(ParameterList &params)
       glq.exec();
       if (glq.first())
         beginning   += glq.value("glamount").toDouble();
-      else if (glq.lastError().type() != QSqlError::NoError)
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving GL Transaction Information"),
+                                    glq, __FILE__, __LINE__))
       {
-	systemError(this, glq.lastError().databaseText(), __FILE__, __LINE__);
-	return false;
+        return false;
       }
 
       params.append("beginningBalance", beginning);
@@ -630,13 +631,15 @@ bool dspGLTransactions::forwardUpdate()
     int result = mq.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("forwardUpdateTrialBalance", result), __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating GL Account Information"),
+                           storedProcErrorLookup("forwardUpdateTrialBalance", result),
+                           __FILE__, __LINE__);
       return false;
     }
   }
-  else if (mq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating GL Account Information"),
+                                mq, __FILE__, __LINE__))
   {
-    systemError(this, mq.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
   return true;

@@ -743,24 +743,8 @@ bool user::sPopulate()
       _ssosOnly->hide();
     }
     
-    usrq.prepare( "SELECT priv_module "
-               "FROM usrpriv, priv "
-               "WHERE ( (usrpriv_priv_id=priv_id)"
-               " AND (usrpriv_username=:username) ) "
-               "ORDER BY priv_module "
-               "LIMIT 1;" );
-    usrq.bindValue(":username", _cUsername);
-    usrq.exec();
-    if (usrq.first())
-    {
-      _module->setCode(usrq.value("priv_module").toString());
-      sModuleSelected(_module->currentText());
-    }
-    else
-    {
-      _module->setCurrentIndex(0);
-      sModuleSelected(_module->itemText(0));
-    }
+    _module->setCurrentIndex(0);
+    sModuleSelected(_module->itemText(0));
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting User Account"),
                                 usrq, __FILE__, __LINE__))

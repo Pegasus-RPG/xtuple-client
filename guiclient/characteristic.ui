@@ -219,26 +219,6 @@ to be bound by its terms.</comment>
                    <property name="nullStr">
                     <string/>
                    </property>
-                   <item>
-                    <property name="text">
-                     <string notr="true">[Y|N]</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string notr="true">\S+</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string notr="true">[1-9]\d{0,3}</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string notr="true">[A-Z]\d{5}[1-9]</string>
-                    </property>
-                   </item>
                   </widget>
                  </item>
                 </layout>

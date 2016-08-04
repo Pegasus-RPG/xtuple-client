@@ -62,9 +62,9 @@ void postCreditMemos::sPost()
 
     if ( ( (unprinted) && (!printed) ) && (!_postUnprinted->isChecked()) )
     {
-      QMessageBox::warning( this, tr("No Returns to Post"),
-                            tr( "Although there are unposted Returns, there are no unposted Returns that have been printed.\n"
-                                "You must manually print these Returns or select 'Post Unprinted Returns' before these Returns\n"
+      QMessageBox::warning( this, tr("No Sales Credits to Post"),
+                            tr( "Although there are unposted Sales Credits, there are no unposted Sales Credits that have been printed.\n"
+                                "You must manually print these Sales Credits or select 'Post Unprinted Sales Credits' before these Sales Credits\n"
                                 "may be posted." ) );
       _postUnprinted->setFocus();
       return;
@@ -72,8 +72,8 @@ void postCreditMemos::sPost()
   }
   else
   {
-    QMessageBox::warning( this, tr("No Returns to Post"),
-                          tr("There are no Returns, printed or not, to post.\n" ) );
+    QMessageBox::warning( this, tr("No Sales Credits to Post"),
+                          tr("There are no Sales Credits, printed or not, to post.\n" ) );
     _close->setFocus();
     return;
   }
@@ -103,11 +103,11 @@ void postCreditMemos::sPost()
     if (result == -5)
     {
       rollback.exec();
-      QMessageBox::critical( this, tr("Cannot Post one or more Returns"),
-                             tr( "The Ledger Account Assignments for one or more of the Returns that you are trying to post are not\n"
-                                 "configured correctly.  Because of this, G/L Transactions cannot be posted for these Returns.\n"
+      QMessageBox::critical( this, tr("Cannot Post one or more Sales Credits"),
+                             tr( "The Ledger Account Assignments for one or more of the Sales Credits that you are trying to post are not\n"
+                                 "configured correctly.  Because of this, G/L Transactions cannot be posted for these Sales Credits.\n"
                                  "You must contact your Systems Administrator to have this corrected before you may\n"
-                                 "post these Returns." ) );
+                                 "post these Sales Credits." ) );
       return;
     }
     else if (result < 0)
@@ -120,7 +120,7 @@ void postCreditMemos::sPost()
     else if (distributeInventory::SeriesAdjust(postPost.value("result").toInt(), this) == XDialog::Rejected)
     {
       rollback.exec();
-      QMessageBox::information( this, tr("Post Returns"), tr("Transaction Canceled") );
+      QMessageBox::information( this, tr("Post Sales Credits"), tr("Transaction Canceled") );
       return;
     }
 

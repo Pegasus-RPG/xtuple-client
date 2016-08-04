@@ -17,6 +17,7 @@
 #include "crmacctcluster.h"
 #include "customerGroup.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 customerGroup::customerGroup(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -151,13 +152,13 @@ void customerGroup::sClose()
 void customerGroup::sSave()
 {
   XSqlQuery customerSave;
-  if(_name->text().trimmed().isEmpty())
-  {
-    QMessageBox::warning(this, tr("Cannot Save Customer Group"),
-      tr("You cannot have an empty name."));
-    _name->setFocus();
-    return;
-  }
+
+  QList<GuiErrorCheck>errors;
+  errors<<GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                        tr("You cannot have an empty name."));
+
+  if(GuiErrorCheck::reportErrors(this,tr("Cannot Save Customer Group"),errors))
+      return;
 
   customerSave.prepare("SELECT custgrp_id"
             "  FROM custgrp"

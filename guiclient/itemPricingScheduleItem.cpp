@@ -64,6 +64,7 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
   _ipsitemid = -1;
   _ipsfreightid = -1;
   _invuomid = -1;
+  _listpricesched = false;
   
   _charprice->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true,  "char_name" );
   _charprice->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true,  "ipsitemchar_value" );
@@ -160,6 +161,26 @@ enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
     populate();
   }
 
+  param = pParams.value("listpricesched", &valid);
+  if (valid)
+  {
+    _listpricesched = true;
+    _freightSelected->setChecked(false);
+    _freightSelected->hide();
+    _qtyBreak->setDouble(1.0);
+    _qtyBreak->setEnabled(false);
+    _qtyBreakCat->setDouble(1.0);
+    _qtyBreakCat->setEnabled(false);
+    _markupQtyBreakCat->setDouble(1.0);
+    _markupQtyBreakCat->setEnabled(false);
+    _dscbyprodcat->setChecked(false);
+    _dscbyprodcat->setEnabled(false);
+    _markupbyprodcat->setChecked(false);
+    _markupbyprodcat->setEnabled(false);
+    _listPriceLit->setText(tr("Item List Price"));
+    setWindowTitle(tr("List Pricing Schedule Item"));
+  }
+  
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -790,9 +811,9 @@ void itemPricingScheduleItem::sUpdateCosts(int pItemid)
   XSqlQuery cost;
   cost.prepare( "SELECT item_inv_uom_id, item_price_uom_id,"
                 "       iteminvpricerat(item_id) AS ratio,"
-                "       item_listprice, "
+                "       item_listprice, listPrice(item_id) AS schedlistprice,"
                 "       (stdcost(item_id) * iteminvpricerat(item_id)) AS standard,"
-                "       (actcost(item_id, :curr_id) * iteminvpricerat(item_id)) AS actual "
+                "       (actcost(item_id, NULL, :curr_id) * iteminvpricerat(item_id)) AS actual "
                 "  FROM item"
                 " WHERE (item_id=:item_id);" );
   cost.bindValue(":item_id", pItemid);
@@ -801,7 +822,10 @@ void itemPricingScheduleItem::sUpdateCosts(int pItemid)
   if (cost.first())
   {
     _invuomid = cost.value("item_inv_uom_id").toInt();
-    _listPrice->setBaseValue(cost.value("item_listprice").toDouble());
+    if (_listpricesched)
+      _listPrice->setBaseValue(cost.value("item_listprice").toDouble());
+    else
+      _listPrice->setBaseValue(cost.value("schedlistprice").toDouble());
     _pricingRatio->setDouble(cost.value("ratio").toDouble());
 
     _stdCost->setBaseValue(cost.value("standard").toDouble());
@@ -1027,6 +1051,7 @@ void itemPricingScheduleItem::sPriceUOMChanged()
   cost.prepare( "SELECT "
                 "       itemuomtouomratio(item_id, :qtyuomid, :priceuomid) AS ratio,"
                 "       ((item_listprice / iteminvpricerat(item_id)) * itemuomtouomratio(item_id, :priceuomid, item_inv_uom_id)) AS listprice, "
+                "       ((listPrice(item_id) / iteminvpricerat(item_id)) * itemuomtouomratio(item_id, :priceuomid, item_inv_uom_id)) AS schedlistprice, "
                 "       (stdcost(item_id) * itemuomtouomratio(item_id, :priceuomid, item_inv_uom_id)) AS standard,"
                 "       (actcost(item_id, :curr_id) * itemuomtouomratio(item_id, :priceuomid, item_inv_uom_id)) AS actual "
                 "  FROM item"
@@ -1038,7 +1063,10 @@ void itemPricingScheduleItem::sPriceUOMChanged()
   cost.exec();
   if (cost.first())
   {
-    _listPrice->setBaseValue(cost.value("listprice").toDouble());
+    if (_listpricesched)
+      _listPrice->setBaseValue(cost.value("listprice").toDouble());
+    else
+      _listPrice->setBaseValue(cost.value("schedlistprice").toDouble());
     _pricingRatio->setDouble(cost.value("ratio").toDouble());
 
     _stdCost->setBaseValue(cost.value("standard").toDouble());

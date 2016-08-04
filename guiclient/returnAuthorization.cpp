@@ -1796,8 +1796,8 @@ void returnAuthorization::sRefund()
     if (ccq.first())
     {
       int ccpayid = ccq.value("ccpay_id").toInt();
-      QMessageBox::information( this, tr("New Return Created"),
-                                tr("<p>A new Return has been created and "
+      QMessageBox::information( this, tr("New Sales Credit Created"),
+                                tr("<p>A new Sales Credit has been created and "
                                    "assigned #%1")
                                    .arg(ccq.value("cmhead_number").toString()));
       CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
@@ -1861,7 +1861,6 @@ void returnAuthorization::sRefund()
     }
     else if (ccq.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, ccq.lastError().databaseText(), __FILE__, __LINE__);
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Credit Memo Information"),
                                               ccq, __FILE__, __LINE__);
        XSqlQuery rollback("ROLLBACK;");
@@ -1879,7 +1878,7 @@ void returnAuthorization::sRefund()
   else if (cmq.lastError().type() != QSqlError::NoError)
   {
     XSqlQuery rollback("ROLLBACK;");
-    ErrorReporter::error(QtCriticalMsg, this, tr("Creating R/A Return"),
+    ErrorReporter::error(QtCriticalMsg, this, tr("Creating R/A Sales Credit"),
                          cmq, __FILE__, __LINE__);
     return;
   }

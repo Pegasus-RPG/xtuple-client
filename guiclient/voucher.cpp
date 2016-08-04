@@ -20,6 +20,8 @@
 #include <QSqlError>
 #include <QValidator>
 #include <QVariant>
+#include <metasql.h>
+#include <mqlutil.h>
 
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
@@ -85,6 +87,7 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
 
   _miscDistrib->addColumn(tr("Account"),    -1,           Qt::AlignLeft,   true,  "account"  );
   _miscDistrib->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight,  true,  "vodist_amount" );
+  _miscDistrib->addColumn(tr("Notes"),      -1,           Qt::AlignLeft,   true,  "vodist_notes" );
 
   _charass->setType("VCH");
 
@@ -592,86 +595,22 @@ void voucher::sFillList()
 {
   if (_poNumber->isValid())
   {
-    XSqlQuery getq;
-    getq.prepare( "SELECT poitem_id, poitem_linenumber,"
-               "       CASE WHEN(poitem_status='C') THEN :closed"
-               "            WHEN(poitem_status='U') THEN :unposted"
-               "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered>(poitem_qty_received-poitem_qty_returned))) THEN :partial"
-               "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered<=(poitem_qty_received-poitem_qty_returned))) THEN :received"
-               "            WHEN(poitem_status='O') THEN :open"
-               "            ELSE poitem_status"
-               "       END AS poitemstatus,"
-               "       COALESCE(item_number, poitem_vend_item_number) AS itemnumber,"
-               "       COALESCE(uom_name, poitem_vend_uom) AS uom,"
-               "       poitem_vend_item_number, poitem_vend_uom,"
-               "       poitem_qty_ordered,"
-               "       ( SELECT COALESCE(SUM(recv_qty), 0)"
-               "         FROM recv"
-               "         WHERE ( (recv_posted)"
-               "           AND (recv_invoiced)"
-               "           AND (recv_order_type='PO')"
-               "           AND (recv_orderitem_id=poitem_id) ) ) AS qtyinvoiced,"
-               "       ( SELECT COALESCE(SUM(recv_qty), 0)"
-               "         FROM recv"
-               "         WHERE ( (recv_posted)"
-               "           AND (NOT recv_invoiced)"
-               "           AND (recv_vohead_id IS NULL)"
-               "           AND (recv_order_type='PO')"
-               "           AND (recv_orderitem_id=poitem_id) ) ) AS qtyreceived,"
-               "       ( SELECT COALESCE(SUM(poreject_qty), 0)"
-               "         FROM poreject"
-               "         WHERE ( (poreject_posted)"
-               "           AND (NOT poreject_invoiced)"
-               "           AND (poreject_vohead_id IS NULL)"
-               "           AND (poreject_poitem_id=poitem_id) ) ) AS qtyrejected,"
-               "       ( SELECT COALESCE(SUM(vodist_qty), 0)"
-               "         FROM vodist"
-               "         WHERE vodist_poitem_id=poitem_id"
-               "           AND vodist_vohead_id=:vohead_id ) AS invoiceqty, "
-               "       ( SELECT COALESCE(SUM(vodist_amount), 0)"
-               "         FROM vodist"
-               "         WHERE vodist_poitem_id=poitem_id"
-               "           AND vodist_vohead_id=:vohead_id ) "
-               "     + ( SELECT COALESCE(SUM(COALESCE(voitem_freight,0)), 0)"
-               "         FROM voitem"
-               "         WHERE voitem_poitem_id=poitem_id"
-               "           AND   voitem_vohead_id=:vohead_id ) AS invoiceamount,"
-               "       poitem_unitprice,"
-               "       (poitem_unitprice * poitem_qty_ordered) AS extprice,"
-               "       poitem_freight,"
-               "       'qty' AS poitem_qty_ordered_xtnumericrole,"
-               "       'qty' AS qtyinvoiced_xtnumericrole,"
-               "       'qty' AS qtyreceived_xtnumericrole,"
-               "       'qty' AS qtyrejected_xtnumericrole,"
-               "       'qty' AS invoiceqty_xtnumericrole,"
-               "       'curr' AS invoiceamount_xtnumericrole,"
-               "       'purchprice' AS poitem_unitprice_xtnumericrole,"
-               "       'curr' AS extprice_xtnumericrole,"
-               "       'curr' AS poitem_freight_xtnumericrole "
-               "FROM poitem JOIN pohead ON (pohead_id=poitem_pohead_id)"
-               "            LEFT OUTER JOIN ( itemsite JOIN item ON (itemsite_item_id=item_id)"
-               "                                       JOIN uom ON (item_inv_uom_id=uom_id) )"
-               "                                ON (poitem_itemsite_id=itemsite_id) "
-               "WHERE (poitem_pohead_id=:pohead_id) "
-               "GROUP BY poitem_id, poitem_linenumber, poitem_status,"
-               "         item_number, uom_name,"
-               "         poitem_vend_item_number, poitem_vend_uom,"
-               "         poitem_unitprice, poitem_freight,"
-               "         poitem_qty_ordered, poitem_qty_received, poitem_qty_returned,"
-               "         itemsite_id, pohead_curr_id "
-               "ORDER BY poitem_linenumber;" );
-    getq.bindValue(":vohead_id", _voheadid);
-    getq.bindValue(":pohead_id", _poNumber->id());
-    getq.bindValue(":closed", tr("Closed"));
-    getq.bindValue(":unposted", tr("Unposted"));
-    getq.bindValue(":partial", tr("Partial"));
-    getq.bindValue(":received", tr("Received"));
-    getq.bindValue(":open", tr("Open"));
-    getq.exec();
-    _poitem->populate(getq);
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting P/O Information"),
-                             getq, __FILE__, __LINE__))
-      return;
+    MetaSQLQuery mql = mqlLoad("voucher", "poitems");
+    ParameterList params;
+
+    params.append("vohead_id", _voheadid);
+    params.append("pohead_id", _poNumber->id());
+    params.append("closed",    tr("Closed"));
+    params.append("unposted",  tr("Unposted"));
+    params.append("partial",   tr("Partial"));
+    params.append("received",  tr("Received"));
+    params.append("open",      tr("Open"));
+
+    XSqlQuery poitemFillList = mql.toQuery(params);
+    _poitem->populate(poitemFillList, true);
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving PO Items"),
+                                poitemFillList, __FILE__, __LINE__))
+        return;
 
     _freight->setId(_amountToDistribute->id());
   }
@@ -683,35 +622,15 @@ void voucher::sFillMiscList()
 {
   if (_poNumber->isValid())
   {
-    XSqlQuery getq;
-    getq.prepare( "SELECT vodist_id, (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
-               "       vodist_amount, 'curr' AS vodist_amount_xtnumericrole "
-               "FROM vodist, accnt "
-               "WHERE ( (vodist_poitem_id=-1)"
-               " AND (vodist_accnt_id=accnt_id)"
-               " AND (vodist_vohead_id=:vohead_id) ) "
-               "UNION ALL "
-               "SELECT vodist_id, (expcat_code || ' - ' || expcat_descrip) AS account,"
-               "       vodist_amount, 'curr' AS vodist_amount_xtnumericrole "
-               "  FROM vodist, expcat "
-               " WHERE ( (vodist_poitem_id=-1)"
-               "   AND   (vodist_expcat_id=expcat_id)"
-               "   AND   (vodist_vohead_id=:vohead_id) ) "
-               "UNION ALL "
-               "SELECT vodist_id, (tax_code || ' - ' || tax_descrip) AS account,"
-               "       vodist_amount, 'curr' AS vodist_amount_xtnumericrole "
-               "  FROM vodist, tax "
-               " WHERE ( (vodist_poitem_id=-1)"
-               "   AND   (vodist_tax_id=tax_id)"
-               "   AND   (vodist_vohead_id=:vohead_id) ) "
-               "ORDER BY account;" );
-    getq.bindValue(":vohead_id", _voheadid);
-    getq.exec();
-    _miscDistrib->populate(getq);
-    if (ErrorReporter::error(QtCriticalMsg, this,
-                             tr("Getting Misc. Distributions"),
-                             getq, __FILE__, __LINE__))
-      return;
+    MetaSQLQuery mql = mqlLoad("voucher", "miscDistr");
+    ParameterList params;
+
+    params.append("vohead_id", _voheadid);
+    XSqlQuery miscFillList = mql.toQuery(params);
+    _miscDistrib->populate(miscFillList, true);
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Misc Distributions"),
+                                miscFillList, __FILE__, __LINE__))
+        return;
   }
 }
 

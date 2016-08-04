@@ -28,6 +28,7 @@ void NextProtocolNegotiationStatusFromScriptValue(const QScriptValue &obj, QSslC
 
 QScriptValue defaultConfigurationForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   QSslConfiguration defaultConfiguration = QSslConfiguration::defaultConfiguration();
   return engine->toScriptValue(defaultConfiguration);
 }
@@ -56,6 +57,7 @@ QScriptValue supportedCiphersForJS(QScriptContext* context, QScriptEngine* engin
 
 QScriptValue supportedEllipticCurvesForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   QVector<QSslEllipticCurve> curves = QSslConfiguration::supportedEllipticCurves();
   QScriptValue newArray = engine->newArray();
   for (int i = 0; i < curves.size(); i += 1) {
@@ -66,6 +68,7 @@ QScriptValue supportedEllipticCurvesForJS(QScriptContext* context, QScriptEngine
 
 QScriptValue systemCaCertificatesForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  Q_UNUSED(context);
   QList<QSslCertificate> certificates = QSslConfiguration::systemCaCertificates();
   QScriptValue newArray = engine->newArray();
   for (int i = 0; i < certificates.size(); i += 1) {

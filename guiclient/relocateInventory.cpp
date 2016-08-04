@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -327,20 +327,16 @@ void relocateInventory::sShowHideDefaultToTarget()
                  "  WHERE (itemsite_item_id=:item_id) "
                  "  AND (itemsite_warehous_id=:warehous_id);");
    query.bindValue(":item_id", _item->id());
-    query.bindValue(":warehous_id", _warehouse->id());
+   query.bindValue(":warehous_id", _warehouse->id());
    query.exec();
    if(query.first())
    {
       if(query.value("itemsite_id").toInt() != -1
          && query.value("itemsite_loccntrl").toBool())
       {
-         _defaultToTarget->show();
-        //Allow default location update with correct privileges
-        if (_privileges->check("MaintainItemSites"))
-            _defaultToTarget->setEnabled(true);
-        else
-            _defaultToTarget->setEnabled(false);
-            _defaultToTarget->setChecked(false);
+        _defaultToTarget->show();
+        _defaultToTarget->setEnabled(_privileges->check("MaintainItemSites"));
+        _defaultToTarget->setChecked(false);
       }
       else
       {

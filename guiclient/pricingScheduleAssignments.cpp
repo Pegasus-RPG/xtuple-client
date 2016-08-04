@@ -63,8 +63,8 @@ pricingScheduleAssignments::pricingScheduleAssignments(QWidget* parent, const ch
     _new->setEnabled(false);
     connect(_ipsass, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
-
-  sFillList();
+  
+  _listpricesched = false;
 }
 
 /*
@@ -84,6 +84,23 @@ void pricingScheduleAssignments::languageChange()
     retranslateUi(this);
 }
 
+enum SetResponse pricingScheduleAssignments::set(const ParameterList &pParams)
+{
+  bool     valid;
+  QVariant param;
+  
+  param = pParams.value("listpricesched", &valid);
+  if (valid)
+  {
+    _listpricesched = true;
+    setWindowTitle(tr("List Pricing Schedule Assignments"));
+  }
+  
+  sFillList();
+  
+  return NoError;
+}
+
 void pricingScheduleAssignments::sPrint()
 {
   orReport report("PricingScheduleAssignments");
@@ -97,6 +114,8 @@ void pricingScheduleAssignments::sNew()
 {
   ParameterList params;
   params.append("mode", "new");
+  if (_listpricesched)
+    params.append("listpricesched", true);
 
   pricingScheduleAssignment newdlg(this, "", true);
   newdlg.set(params);
@@ -110,6 +129,8 @@ void pricingScheduleAssignments::sEdit()
   ParameterList params;
   params.append("mode", "edit");
   params.append("ipsass_id", _ipsass->id());
+  if (_listpricesched)
+    params.append("listpricesched", true);
 
   pricingScheduleAssignment newdlg(this, "", true);
   newdlg.set(params);
@@ -145,6 +166,8 @@ void pricingScheduleAssignments::sFillList()
   MetaSQLQuery mql = mqlLoad("pricingScheduleAssignment", "detail");
 
   ParameterList params;
+  if (_listpricesched)
+    params.append("listpricesched", true);
   XSqlQuery ps = mql.toQuery(params);
   if(!ErrorReporter::error(QtCriticalMsg, this, tr("Pricing Schedule Assignments "),
                          ps.lastError(), __FILE__, __LINE__))

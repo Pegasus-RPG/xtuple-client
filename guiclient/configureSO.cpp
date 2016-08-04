@@ -13,6 +13,7 @@
 #include <QSqlError>
 #include <QMessageBox>
 #include <errorReporter.h>
+#include <guiErrorCheck.h>
 
 configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::WindowFlags fl)
     : XAbstractConfigure(parent, fl)
@@ -92,6 +93,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _includePkgWeight->setChecked(_metrics->boolean("IncludePackageWeight"));
   _quoteafterSO->setChecked(_metrics->boolean("ShowQuotesAfterSO"));
   _itemPricingPrecedence->setChecked(_metrics->boolean("ItemPricingPrecedence"));
+  _useListPriceSchedules->setChecked(_metrics->boolean("AllowListPriceSchedules"));
   _wholesalePriceCosting->setChecked(_metrics->boolean("WholesalePriceCosting"));
   _long30Markups->setChecked(_metrics->boolean("Long30Markups"));
 
@@ -318,6 +320,7 @@ bool configureSO::sSave()
   _metrics->set("EnableSOReservations", _enableReservations->isChecked());
   _metrics->set("RequireSOReservations", _enableReservations->isChecked() && _requireReservations->isChecked());
   _metrics->set("ItemPricingPrecedence", _itemPricingPrecedence->isChecked());
+  _metrics->set("AllowListPriceSchedules", _useListPriceSchedules->isChecked());
   _metrics->set("WholesalePriceCosting", _wholesalePriceCosting->isChecked());
   _metrics->set("Long30Markups", _long30Markups->isChecked());
 
@@ -415,14 +418,13 @@ bool configureSO::sSave()
   
   if (_enableSSOS->isChecked())
   {
-    if(!_ssosCust->isValid())
-    {
-      QMessageBox::critical(this, tr("No Customer selected"),
-                           tr("<p>You must select a Cash Customer # "
-                              "if Simple S/O is enabled."));
-      _ssosCust->setFocus();
-      return false;
-    }
+
+    QList<GuiErrorCheck>errors;
+    errors<<GuiErrorCheck(!_ssosCust->isValid(), _ssosCust,
+                          tr("<p>You must select a Cash Customer # if Simple S/O is enabled."));
+
+    if(GuiErrorCheck::reportErrors(this,tr("Unable To Apply Sales Settings"),errors))
+        return false;
     
     _metrics->set("SSOSEnabled", true);
     _metrics->set("SSOSDefaultCustId", _ssosCust->id());

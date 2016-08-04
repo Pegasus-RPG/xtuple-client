@@ -69,7 +69,7 @@ ParameterList printStatementsByCustomerGroup::getParams()
   params.append("docid",      _custgrp->id());
   params.append("custgrp",    _custgrp->id());
   params.append("invoice",    tr("Invoice"));
-  params.append("return",     tr("Return"));
+  params.append("return",     tr("Sales Credit"));
   params.append("debitMemo",  tr("Debit Memo"));
   params.append("creditMemo", tr("Credit Memo"));
   params.append("deposit",    tr("Deposit"));

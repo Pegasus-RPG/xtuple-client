@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -21,6 +21,7 @@
 #include "storedProcErrorLookup.h"
 #include "taxDetail.h"
 #include "currcluster.h"
+#include "guiErrorCheck.h"
 
 arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -41,6 +42,7 @@ arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::Window
   connect(_taxLit,         SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
   connect(_amount,         SIGNAL(valueChanged()),            this, SLOT(sCalculateCommission()));
   connect(_amount,         SIGNAL(editingFinished()),         this, SLOT(sDetermineTaxAmount()));
+  connect(_taxzone,        SIGNAL(newID(int)),                this, SLOT(sDetermineTaxAmount()));
   connect(_docNumber,      SIGNAL(textEdited(QString)),       this, SLOT(sReleaseNumber()));
 
   _last = -1;
@@ -209,53 +211,29 @@ void arOpenItem::sSave()
 
   if (_mode == cNew)
   {
-    if (!_docDate->isValid())
-    {
-      QMessageBox::critical( this, tr("Cannot Save Receivable Memo"),
-                             tr("You must enter a date for this Receivable Memo before you may save it") );
-      _docDate->setFocus();
-      return;
-    }
 
-    if (!_dueDate->isValid())
-    {
-      QMessageBox::critical( this, tr("Cannot Save Receivable Memo"),
-                             tr("You must enter a date for this Receivable Memo before you may save it") );
-      _dueDate->setFocus();
-      return;
-    }
+    QList<GuiErrorCheck>errors;
+    errors<<GuiErrorCheck(!_docDate->isValid(), _docDate,
+                            tr("You must enter a document date for this Receivable Memo before you may save it."))
+          <<GuiErrorCheck(!_dueDate->isValid(), _dueDate,
+                           tr("You must enter a due date for this Receivable Memo before you may save it."))
+          <<GuiErrorCheck(_amount->isZero(), _amount,
+                          tr("You must enter an amount for this Receivable Memo before you may save it."))
+          <<GuiErrorCheck(_tax->localValue() > _amount->localValue(), _tax,
+                          tr("The tax amount may not be greater than the total Receivable Memo amount."));
 
-    if (_amount->isZero())
-    {
-      QMessageBox::critical( this, tr("Cannot Save Receivable Memo"),
-                             tr("You must enter an amount for this Receivable Memo before you may save it") );
-      _amount->setFocus();
-      return;
-    }
-    
-    if(_tax->localValue() > _amount->localValue())
-    {
-      QMessageBox::critical( this, tr("Cannot Save Receivable Memo"),
-                             tr("The tax amount may not be greater than the total Receivable Memo amount.") );
-      return;
-    }
 
     if (_useAltPrepaid->isChecked())
     {
-      if(_altSalescatidSelected->isChecked() && !_altSalescatid->isValid())
-      {
-        QMessageBox::critical( this, tr("Cannot Save Receivable Memo"),
-                               tr("You must choose a valid Alternate Sales Category for this Receivable Memo before you may save it") );
-        return;
-      }
+      errors<<GuiErrorCheck(_altSalescatidSelected->isChecked() && !_altSalescatid->isValid(), _altSalescatid,
+                           tr("You must choose a valid Alternate Sales Category for this Receivable Memo before you may save it."))
+            <<GuiErrorCheck(_altAccntidSelected->isChecked() && !_altAccntid->isValid(), _altAccntid,
+                          tr("You must choose a valid Alternate Prepaid Account Number for this Receivable Memo before you may save it."));
 
-      if(_altAccntidSelected->isChecked() && !_altAccntid->isValid())
-      {
-        QMessageBox::critical( this, tr("Cannot Save Receivable Memo"),
-                               tr("You must choose a valid Alternate Prepaid Account Number for this Receivable Memo before you may save it.") );
-        return;
-      }
     }
+
+    if(GuiErrorCheck::reportErrors(this,tr("Cannot Save Receivable Memo"),errors))
+        return;
 
     if (_docType->code() == "C")
     {
@@ -346,10 +324,12 @@ void arOpenItem::sSave()
       _last = arSave.value("result").toInt();
       if (_last < 0)
       {
-      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting A/R %1M").arg(_docType->code()),
+        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting A/R %1M").arg(_docType->code()),
                                     arSave, __FILE__, __LINE__))
-        reset();
-	return;
+        {
+          reset();
+        }
+        return;
       }
       if(_printOnPost->isChecked())
         sPrintOnPost(_last);
@@ -696,21 +676,17 @@ void arOpenItem::sTaxDetail()
   XSqlQuery ar;
   if (_aropenid == -1)
   {
-    if (!_docDate->isValid() || !_dueDate->isValid())
-    {
-      QMessageBox::critical( this, tr("Cannot set tax amounts"),
-                             tr("You must enter document and due dates for this Receivable Memo before you may set tax amounts.") );
-      _docDate->setFocus();
-      return;
-    }
-    
-    if (_amount->isZero())
-    {
-      QMessageBox::critical( this, tr("Cannot set tax amounts"),
-                             tr("You must enter an amount for this Receivable Memo before you may set tax amounts.") );
-      _amount->setFocus();
-      return;
-    }
+    QList<GuiErrorCheck>errors;
+    errors<<GuiErrorCheck(!_docDate->isValid(), _docDate,
+                            tr("You must enter a document date for this Receivable Memo before you may set tax amounts."))
+          <<GuiErrorCheck(!_dueDate->isValid(), _dueDate,
+                            tr("You must enter a due date for this Receivable Memo before you may set tax amounts."))
+          <<GuiErrorCheck(_amount->isZero(), _amount,
+                           tr("You must enter an amount for this Receivable Memo before you may set tax amounts."));
+
+    if(GuiErrorCheck::reportErrors(this,tr("Cannot Set Tax Amounts"),errors))
+        return;
+
 
     if (!sInitializeMemo())
       return;

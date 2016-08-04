@@ -1767,10 +1767,9 @@ void purchaseOrder::sViewWo()
 {
   XSqlQuery fetchwo;
   fetchwo.prepare( "SELECT womatl_wo_id "
-                   "FROM pohead JOIN poitem ON (poitem_pohead_id=pohead_id AND poitem_order_type='W')"
-                   "            JOIN womatl ON (womatl_id=poitem_order_id) "
-                   "WHERE (pohead_id=:pohead_id);" );
-  fetchwo.bindValue(":pohead_id", _poheadid);
+                   "FROM poitem JOIN womatl ON (womatl_id=poitem_order_id) "
+                   "WHERE (poitem_id=:poitem_id);" );
+  fetchwo.bindValue(":poitem_id", _poitem->id());
   fetchwo.exec();
   if (fetchwo.first())
   {
@@ -1788,10 +1787,9 @@ void purchaseOrder::sEditWo()
 {
   XSqlQuery fetchwo;
   fetchwo.prepare( "SELECT womatl_wo_id "
-                   "FROM pohead JOIN poitem ON (poitem_pohead_id=pohead_id AND poitem_order_type='W')"
-                   "            JOIN womatl ON (womatl_id=poitem_order_id) "
-                   "WHERE (pohead_id=:pohead_id);" );
-  fetchwo.bindValue(":pohead_id", _poheadid);
+                  "FROM poitem JOIN womatl ON (womatl_id=poitem_order_id) "
+                  "WHERE (poitem_id=:poitem_id);" );
+  fetchwo.bindValue(":poitem_id", _poitem->id());
   fetchwo.exec();
   if (fetchwo.first())
   {

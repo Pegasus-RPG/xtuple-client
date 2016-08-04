@@ -19,6 +19,7 @@
 #include "inputManager.h"
 #include "storedProcErrorLookup.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 correctProductionPosting::correctProductionPosting(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -82,20 +83,16 @@ enum SetResponse correctProductionPosting::set(const ParameterList &pParams)
 
 bool correctProductionPosting::okToPost()
 {
-  if (!_transDate->isValid())
-  {
-    QMessageBox::critical(this, tr("Invalid date"),
-                          tr("You must enter a valid transaction date.") );
-    _transDate->setFocus();
-    return false;
-  }
-  else if (_qty->toDouble() > _qtyReceivedCache)
-  {
-    QMessageBox::warning( this, tr("Cannot Post Correction"),
-                          tr( "The Quantity to correct must be less than or equal to the Quantity already Posted." ) );
-    _qty->setFocus();
-    return false;
-  }
+
+  QList<GuiErrorCheck>errors;
+  errors<<GuiErrorCheck(!_transDate->isValid(), _transDate,
+                        tr("You must enter a valid transaction date."))
+        <<GuiErrorCheck(_qty->toDouble() > _qtyReceivedCache, _qty,
+                        tr("The Quantity to correct must be less than or equal to the Quantity already posted."));
+
+  if(GuiErrorCheck::reportErrors(this,tr("Cannot Post Transaction"),errors))
+      return false;
+
 
   XSqlQuery itemtypeq;
   itemtypeq.prepare( "SELECT itemsite_costmethod, itemsite_qtyonhand "

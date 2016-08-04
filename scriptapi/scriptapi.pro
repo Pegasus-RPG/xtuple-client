@@ -43,6 +43,12 @@ HEADERS += setupscriptapi.h \
     qdialogbuttonboxproto.h \
     qdialogsetup.h \
     qdirproto.h \
+    qdnsdomainnamerecordproto.h \
+    qdnshostaddressrecordproto.h \
+    qdnslookupproto.h \
+    qdnsmailexchangerecordproto.h \
+    qdnsservicerecordproto.h \
+    qdnstextrecordproto.h \
     qdockwidgetproto.h \
     qdomattrproto.h \
     qdomcdatasectionproto.h \
@@ -150,6 +156,7 @@ HEADERS += setupscriptapi.h \
     crmacctlineeditsetup.h \
     currdisplaysetup.h \
     documentssetup.h \
+    engineevaluate.h \
     glclustersetup.h \
     itemlineeditsetup.h \
     jsconsole.h \
@@ -187,6 +194,12 @@ SOURCES += setupscriptapi.cpp \
     qdialogbuttonboxproto.cpp \
     qdialogsetup.cpp \
     qdirproto.cpp \
+    qdnsdomainnamerecordproto.cpp \
+    qdnshostaddressrecordproto.cpp \
+    qdnslookupproto.cpp \
+    qdnsmailexchangerecordproto.cpp \
+    qdnsservicerecordproto.cpp \
+    qdnstextrecordproto.cpp \
     qdockwidgetproto.cpp \
     qdomattrproto.cpp \
     qdomcdatasectionproto.cpp \
@@ -294,6 +307,7 @@ SOURCES += setupscriptapi.cpp \
     crmacctlineeditsetup.cpp \
     currdisplaysetup.cpp \
     documentssetup.cpp \
+    engineevaluate.cpp \
     glclustersetup.cpp \
     itemlineeditsetup.cpp \
     jsconsole.cpp \

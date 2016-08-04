@@ -181,7 +181,7 @@ void returnAuthCheck::populate()
   XSqlQuery returnpopulate;
   returnpopulate.prepare("SELECT cust_id,cust_name,cmhead_number,cmhead_curr_id, "
 	        "'Return Authorization ' || rahead_number::text AS memo, "
-			"'Applied Against Return ' || cmhead_number::text AS note, "
+			"'Applied Against Sales Credit ' || cmhead_number::text AS note, "
 			"aropen_id,aropen_amount "
 			"FROM rahead,cmhead,custinfo,aropen "
 			"WHERE ((cmhead_cust_id=cust_id) "

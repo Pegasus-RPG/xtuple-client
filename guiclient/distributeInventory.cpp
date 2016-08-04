@@ -458,6 +458,8 @@ void distributeInventory::sSelectLocation()
   else if (_itemloc->altId() == cItemloc)
     params.append("itemlocdist_id", _itemloc->id());
 
+  params.append("itemsite_controlmethod", _controlMethod);
+
   distributeToLocation newdlg(this, "", true);
   newdlg.set(params);
 
@@ -708,6 +710,8 @@ void distributeInventory::sBcDistribute()
   params.append("source_itemlocdist_id", _itemlocdistid);
   params.append("qty",                   _bcQty->text());
   params.append("distribute");
+
+  params.append("itemsite_controlmethod", _controlMethod);
 
   distributeToLocation newdlg(this, "", true);
   if (newdlg.set(params) != NoError)

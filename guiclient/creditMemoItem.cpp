@@ -57,6 +57,7 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
   _invoiceNumber = -1;
   _priceRatio = 1.0;
   _qtyShippedCache = 0.0;
+  _listPriceCache = 0.0;
   _shiptoid = -1;
   _taxzoneid	= -1;
   _qtyinvuomratio = 1.0;
@@ -222,7 +223,7 @@ void creditMemoItem::sSave()
   errors << GuiErrorCheck(_qtyToCredit->toDouble() == 0.0, _qtyToCredit,
                           tr("<p>You have not selected a quantity of the "
 			    "selected item to credit. If you wish to return a "
-			    "quantity to stock but not issue a Return "
+			    "quantity to stock but not issue a Sales Credit "
 			    "then you should enter a Return to Stock "
 			    "transaction from the I/M module.  Otherwise, you "
 			    "must enter a quantity to credit."))
@@ -255,14 +256,14 @@ void creditMemoItem::sSave()
                "  cmitem_qtyreturned, cmitem_qtycredit, cmitem_updateinv,"
                "  cmitem_qty_uom_id, cmitem_qty_invuomratio,"
                "  cmitem_price_uom_id, cmitem_price_invuomratio,"
-               "  cmitem_unitprice, cmitem_taxtype_id,"
+               "  cmitem_unitprice, cmitem_listprice, cmitem_taxtype_id,"
                "  cmitem_comments, cmitem_rsncode_id, "
                "  cmitem_number, cmitem_descrip, cmitem_salescat_id, cmitem_rev_accnt_id ) "
                "SELECT :cmitem_id, :cmhead_id, :cmitem_linenumber, :itemsite_id,"
                "       :cmitem_qtyreturned, :cmitem_qtycredit, :cmitem_updateinv,"
                "       :qty_uom_id, :qty_invuomratio,"
                "       :price_uom_id, :price_invuomratio,"
-               "       :cmitem_unitprice, :cmitem_taxtype_id,"
+               "       :cmitem_unitprice, :cmitem_listprice, :cmitem_taxtype_id,"
                "       :cmitem_comments, :cmitem_rsncode_id, "
                "       :cmitem_number, :cmitem_descrip, :cmitem_salescat_id, :cmitem_rev_accnt_id ;");
   }
@@ -298,6 +299,7 @@ void creditMemoItem::sSave()
     creditSave.bindValue(":price_uom_id", _pricingUOM->id());
   creditSave.bindValue(":price_invuomratio", _priceinvuomratio);
   creditSave.bindValue(":cmitem_unitprice", _netUnitPrice->localValue());
+  creditSave.bindValue(":cmitem_listprice", _listPrice->baseValue());
   if (_taxType->isValid())
     creditSave.bindValue(":cmitem_taxtype_id",	_taxType->id());
   creditSave.bindValue(":cmitem_comments", _comments->toPlainText());
@@ -347,13 +349,16 @@ void creditMemoItem::sPopulateItemInfo()
   XSqlQuery item;
   item.prepare( "SELECT item_inv_uom_id, item_price_uom_id,"
                 "       iteminvpricerat(item_id) AS iteminvpricerat,"
-                "       item_listprice, "
+                "       listPrice(item_id, :cust_id, :shipto_id, :whsid) AS listprice,"
                 "       stdCost(item_id) AS f_cost,"
-		"       getItemTaxType(item_id, :taxzone) AS taxtype_id "
+		            "       getItemTaxType(item_id, :taxzone) AS taxtype_id "
                 "  FROM item"
                 " WHERE (item_id=:item_id);" );
   item.bindValue(":item_id", _item->id());
   item.bindValue(":taxzone", _taxzoneid);
+  item.bindValue(":whsid",   _warehouse->id());
+  item.bindValue(":cust_id", _custid);
+  item.bindValue(":shipto_id", _shiptoid);
   item.exec();
   if (item.first())
   {
@@ -365,7 +370,8 @@ void creditMemoItem::sPopulateItemInfo()
     _qtyinvuomratio = 1.0;
     _ratio=item.value("iteminvpricerat").toDouble();
     // {_listPrice,_unitCost}->setBaseValue() because they're stored in base
-    _listPrice->setBaseValue(item.value("item_listprice").toDouble());
+    _listPriceCache = item.value("listprice").toDouble();
+    _listPrice->setBaseValue(_listPriceCache);
     _unitCost->setBaseValue(item.value("f_cost").toDouble());
     _taxType->setId(item.value("taxtype_id").toInt());
   }
@@ -571,98 +577,21 @@ void creditMemoItem::sPriceGroup()
 
 void creditMemoItem::sListPrices()
 {
-  XSqlQuery creditListPrices;
-  creditListPrices.prepare( "SELECT currToCurr(ipshead_curr_id, :curr_id, ipsprice_price, :effective) AS price"
-             "       FROM ipsass, ipshead, ipsprice "
-             "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
-             "        AND (ipsprice_ipshead_id=ipshead_id)"
-             "        AND (ipsprice_item_id=:item_id)"
-             "        AND (ipsass_cust_id=:cust_id)"
-             "        AND (COALESCE(LENGTH(ipsass_shipto_pattern), 0) = 0)"
-             "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1) ) )"
-
-             "       UNION SELECT ipsprice_price AS price"
-             "       FROM ipsass, ipshead, ipsprice "
-             "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
-             "        AND (ipsprice_ipshead_id=ipshead_id)"
-             "        AND (ipsprice_item_id=:item_id)"
-             "        AND (ipsass_shipto_id=:shipto_id)"
-             "        AND (ipsass_shipto_id != -1)"
-             "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
-
-             "       UNION SELECT ipsprice_price AS price"
-             "       FROM ipsass, ipshead, ipsprice, custinfo "
-             "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
-             "        AND (ipsprice_ipshead_id=ipshead_id)"
-             "        AND (ipsprice_item_id=:item_id)"
-             "        AND (ipsass_custtype_id=cust_custtype_id)"
-             "        AND (cust_id=:cust_id)"
-             "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
-
-             "       UNION SELECT ipsprice_price AS price"
-             "       FROM ipsass, ipshead, ipsprice, custtype, custinfo "
-             "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
-             "        AND (ipsprice_ipshead_id=ipshead_id)"
-             "        AND (ipsprice_item_id=:item_id)"
-             "        AND (coalesce(length(ipsass_custtype_pattern), 0) > 0)"
-             "        AND (custtype_code ~ ipsass_custtype_pattern)"
-             "        AND (cust_custtype_id=custtype_id)"
-             "        AND (cust_id=:cust_id)"
-             "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)))"
-
-             "       UNION SELECT ipsprice_price AS price"
-             "       FROM ipsass, ipshead, ipsprice, shiptoinfo "
-             "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
-             "        AND (ipsprice_ipshead_id=ipshead_id)"
-             "        AND (ipsprice_item_id=:item_id)"
-             "        AND (shipto_id=:shipto_id)"
-             "        AND (COALESCE(LENGTH(ipsass_shipto_pattern), 0) > 0)"
-             "        AND (shipto_num ~ ipsass_shipto_pattern)"
-             "        AND (ipsass_cust_id=:cust_id)"
-             "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
-
-             "       UNION SELECT ipsprice_price AS price"
-             "       FROM sale, ipshead, ipsprice "
-             "       WHERE ((sale_ipshead_id=ipshead_id)"
-             "        AND (ipsprice_ipshead_id=ipshead_id)"
-             "        AND (ipsprice_item_id=:item_id)"
-             "        AND (CURRENT_DATE BETWEEN sale_startdate AND (sale_enddate - 1)) ) "
-
-             "       UNION SELECT (item_listprice - (item_listprice * cust_discntprcnt)) AS price "
-             "       FROM item, custinfo "
-             "       WHERE ( (item_sold)"
-             "        AND (NOT item_exclusive)"
-             "        AND (item_id=:item_id)"
-             "        AND (cust_id=:cust_id) );");
-  creditListPrices.bindValue(":item_id", _item->id());
-  creditListPrices.bindValue(":cust_id", _custid);
-  creditListPrices.bindValue(":shipto_id", _shiptoid);
-  creditListPrices.bindValue(":curr_id", _netUnitPrice->id());
-  creditListPrices.bindValue(":effective", _netUnitPrice->effective());
-  creditListPrices.exec();
-  if (creditListPrices.size() == 1)
+  ParameterList params;
+  params.append("cust_id", _custid);
+  params.append("shipto_id", _shiptoid);
+  params.append("item_id", _item->id());
+  params.append("warehous_id", _warehouse->id());
+  // don't params.append("qty", ...) as we don't know how many were purchased
+  params.append("curr_id", _netUnitPrice->id());
+  params.append("effective", _netUnitPrice->effective());
+  
+  priceList newdlg(this);
+  newdlg.set(params);
+  if (newdlg.exec() == XDialog::Accepted)
   {
-	creditListPrices.first();
-	_netUnitPrice->setLocalValue(creditListPrices.value("price").toDouble() * (_priceinvuomratio / _priceRatio));
-  }
-  else
-  {
-    ParameterList params;
-    params.append("cust_id", _custid);
-    params.append("shipto_id", _shiptoid);
-    params.append("item_id", _item->id());
-    params.append("warehous_id", _warehouse->id());
-    // don't params.append("qty", ...) as we don't know how many were purchased
-    params.append("curr_id", _netUnitPrice->id());
-    params.append("effective", _netUnitPrice->effective());
-
-    priceList newdlg(this);
-    newdlg.set(params);
-    if (newdlg.exec() == XDialog::Accepted)
-    {
-      _netUnitPrice->setLocalValue(newdlg._selectedPrice * (_priceinvuomratio / _priceRatio));
-      sCalculateDiscountPrcnt();
-    }
+    _netUnitPrice->setLocalValue(newdlg._selectedPrice * (_priceinvuomratio / _priceRatio));
+    sCalculateDiscountPrcnt();
   }
 }
 
@@ -733,7 +662,7 @@ void creditMemoItem::sPopulateUOM()
       params.append("global", tr("-Global"));
     }
     
-    // Also have to factor UOMs previously used on Return now inactive
+    // Also have to factor UOMs previously used on Sales Credit now inactive
     if (_cmitemid != -1)
     {
       XSqlQuery cmuom;
@@ -742,7 +671,7 @@ void creditMemoItem::sPopulateUOM()
                     " WHERE(cmitem_id=:cmitem_id);");
       cmuom.bindValue(":cmitem_id", _cmitemid);
       cmuom.exec();
-      if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Return UOMs"),
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Sales Credit UOMs"),
                                cmuom, __FILE__, __LINE__))
         return;
       else if (cmuom.first())
@@ -881,19 +810,7 @@ void creditMemoItem::sPriceUOMChanged()
   }
   _ratio=_priceinvuomratio;
 
-  updatePriceInfo();
-}
-
-void creditMemoItem::updatePriceInfo()
-{
-  XSqlQuery item;
-  item.prepare("SELECT item_listprice"
-               "  FROM item"
-               " WHERE(item_id=:item_id);");
-  item.bindValue(":item_id", _item->id());
-  item.exec();
-  item.first();
-  _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
+  _listPrice->setBaseValue(_listPriceCache * (_priceinvuomratio / _priceRatio));
 }
 
 void creditMemoItem::sHandleSelection()

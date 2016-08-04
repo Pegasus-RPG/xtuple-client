@@ -22,7 +22,9 @@
 class QByteArray;
 
 Q_DECLARE_METATYPE(QNetworkReply*)
-
+#if QT_VERSION <= 0x050000
+ Q_DECLARE_METATYPE(enum QNetworkReply::NetworkError) // Already decleared in qnetworkreply.h in Qt 5.
+#endif
 void setupQNetworkReplyProto(QScriptEngine *engine);
 
 class QNetworkReplyProto : public QObject, public QScriptable
@@ -93,6 +95,12 @@ class QNetworkReplyProto : public QObject, public QScriptable
   public slots:
     Q_INVOKABLE void                              abort() const;
     Q_INVOKABLE void                              ignoreSslErrors();
+
+  signals:
+    void aboutToClose();
+    void bytesWritten(qint64 bytes);
+    void readChannelFinished();
+    void readyRead();
 };
 
 #endif

@@ -136,6 +136,20 @@ class QByteArrayProto : public QObject, public QScriptable
 
     Q_INVOKABLE QString toString() const;
 
+    // Node.js Buffer emulation helper functions.
+    Q_INVOKABLE int readInt16BE(int offset = 0, bool noAssert = false) const;
+    Q_INVOKABLE int readInt16LE(int offset = 0, bool noAssert = false) const;
+    Q_INVOKABLE uint readUInt16BE(int offset = 0, bool noAssert = false) const;
+    Q_INVOKABLE uint readUInt16LE(int offset = 0, bool noAssert = false) const;
+    Q_INVOKABLE int readInt32BE(int offset = 0, bool noAssert = false) const;
+    Q_INVOKABLE int readInt32LE(int offset = 0, bool noAssert = false) const;
+    Q_INVOKABLE uint readUInt32BE(int offset = 0, bool noAssert = false) const;
+    Q_INVOKABLE uint readUInt32LE(int offset = 0, bool noAssert = false) const;
+    Q_INVOKABLE QString toLatin1() const;
+    Q_INVOKABLE QString toLocal8Bit() const;
+    Q_INVOKABLE QString toUtf8() const;
+    Q_INVOKABLE QByteArray slice(int start = 0, int end = 0) const;
+
 };
 
 #endif

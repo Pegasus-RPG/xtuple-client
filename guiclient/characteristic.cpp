@@ -27,6 +27,7 @@
 
 #include <metasql.h>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 #define DEBUG false
 
@@ -157,6 +158,12 @@ characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_charoptView, SIGNAL(clicked(QModelIndex)), this, SLOT(sCharoptClicked(QModelIndex)));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+
+  _validator->append(0, "[Y|N]");
+  _validator->append(1, "\\S+");
+  _validator->append(2, "[1-9]\\d{0,3}");
+  _validator->append(3, "[A-Z]\\d{5}[1-9]");
+  _validator->append(4, "(https?:\\/\\/(?:www\\.|(?!www))[^\\s\\.]+\\.[^\\s]{2,}|www\\.[^\\s]+\\.[^\\s]{2,})");
 }
 
 characteristic::~characteristic()
@@ -228,16 +235,15 @@ void characteristic::sSave()
 // TODO: verify that _mask      applies to all existing charass
 // TODO: verify that _validator applies to all existing charass
   XSqlQuery characteristicSave;
-  if (_name->text().trimmed().isEmpty())
-  {
-    QMessageBox::critical(this, tr("Missing Name"),
-			  tr("<p>You must name this Characteristic before "
-			     "saving it."));
-    _name->setFocus();
-    return;
-  }
 
-  bool allClear = true;
+  QList<GuiErrorCheck>errors;
+  errors<<GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                        tr("<p>You must name this Characteristic before saving it."));
+
+  if(GuiErrorCheck::reportErrors(this,tr("Unable To Save Characteristic"),errors))
+      return;
+
+   bool allClear = true;
   foreach (QCheckBox *cb, _d->checkboxMap.values())
   {
     if (cb && cb->isChecked())

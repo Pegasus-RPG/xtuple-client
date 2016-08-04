@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -23,6 +23,7 @@
 #include "invoiceList.h"
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
+#include "guiErrorCheck.h"
 
 creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -259,14 +260,13 @@ void creditMemo::setNumber()
 void creditMemo::sSave()
 {
   //  Make sure that all of the required field have been populated
-  if (_memoNumber->text().length() == 0)
-  {
-    QMessageBox::warning( this, tr("Invalid Memo # Entered"),
-                          tr( "<p>You must enter a valid Memo # for this Credit "
-                          "Memo before you may save it." ) );
-    _memoNumber->setFocus();
-    return;
-  }
+  QList<GuiErrorCheck>errors;
+  errors<<GuiErrorCheck(_memoNumber->text().length() == 0, _memoNumber,
+                        tr("<p>You must enter a valid Memo # for this Credit "
+                           "Memo before you may save it."));
+
+  if(GuiErrorCheck::reportErrors(this,tr("Cannot Save Credit Memo"),errors))
+      return;
 
   if ( _mode == cNew &&
        ( (_metrics->value("CMNumberGeneration") == "O") ||
@@ -291,33 +291,18 @@ void creditMemo::sSave()
     }
   }
 
-  if (!_cust->isValid())
-  {
-    QMessageBox::information(this, tr("Select a Customer"),
-                             tr("Please select a Customer before continuing.") );
-    _cust->setFocus();
-    return;
-  }
-
-  if ( ! _miscCharge->isZero() && (!_miscChargeAccount->isValid()) )
-  {
-    QMessageBox::warning( this, tr("No Misc. Charge Account Number"),
+  errors<<GuiErrorCheck(!_cust->isValid(), _cust,
+                        tr("Please select a Customer before continuing.."))
+        <<GuiErrorCheck(_total->localValue() < 0, _total,
+                       tr("<p>The Total must be a positive value."))
+        <<GuiErrorCheck(! _miscCharge->isZero() && !_miscChargeAccount->isValid(), _miscCharge,
                          tr("<p>You may not enter a Misc. Charge without "
-			    "indicating the G/L Sales Account number for the "
-			    "charge. Please set the Misc. Charge amount to 0 "
-			    "or select a Misc. Charge Sales Account." ) );
-    _creditMemoInformation->setCurrentIndex(_creditMemoInformation->indexOf(_itemsTab));
-    _miscChargeAccount->setFocus();
-    return;
-  }
+                         "indicating the G/L Sales Account number for the "
+                         "charge. Please set the Misc. Charge amount to 0 "
+                         "or select a Misc. Charge Sales Account."));
 
-  if (_total->localValue() < 0 )
-  {
-    QMessageBox::information(this, tr("Total Less than Zero"),
-                             tr("<p>The Total must be a positive value.") );
-    _cust->setFocus();
-    return;
-  }
+  if(GuiErrorCheck::reportErrors(this,tr("Cannot Save Credit Memo"),errors))
+      return;
 
   // save the cmhead
   if (!save())
@@ -749,7 +734,7 @@ void creditMemo::sDelete()
     if (creditDelete.value("cmhead_posted").toBool())
     {
       QMessageBox::information(this, "Line Item cannot be delete",
-                               tr("<p>This Return has been Posted and "
+                               tr("<p>This Sales Credit has been Posted and "
 				"this cannot be modified.") );
       return;
     }

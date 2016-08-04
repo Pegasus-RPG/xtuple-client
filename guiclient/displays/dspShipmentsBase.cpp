@@ -24,6 +24,7 @@
 #include "inputManager.h"
 #include "printShippingForm.h"
 
+
 dspShipmentsBase::dspShipmentsBase(QWidget* parent, const char* name, Qt::WindowFlags fl)
   : display(parent, name, fl)
 {
@@ -328,9 +329,9 @@ void dspShipmentsBase::sFillURL()
                                  "the shipper %1. The tracking number is %2.")
                                   .arg(shipvia, tracknum));
   }
-  else if (shq.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Shipment Information"),
+                                shq, __FILE__, __LINE__))
   {
-    systemError(this, shq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

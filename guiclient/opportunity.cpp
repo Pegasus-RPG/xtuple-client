@@ -1104,7 +1104,7 @@ void opportunity::sHandleSalesPrivs()
       (0 == _salesList->currentItem()->altId() && _privileges->check("MaintainQuotes")) ||
       (1 == _salesList->currentItem()->altId() && _privileges->check("MaintainSalesOrders")) );
 
-    viewPriv = (cNew == _mode || cEdit == _mode) && (
+    viewPriv = (cNew == _mode || cEdit == _mode || cView == _mode) && (
       (0 == _salesList->currentItem()->altId() && _privileges->check("ViewQuotes")) ||
       (1 == _salesList->currentItem()->altId() && _privileges->check("ViewSalesOrders")) );
 
