@@ -209,6 +209,7 @@ FORMS =   absoluteCalendarItem.ui               \
           createPlannedOrdersByPlannerCode.ui   \
           createRecurringInvoices.ui            \
           createRecurringItems.ui               \
+          createfiscalyear.ui                   \
           creditCard.ui                         \
           creditMemo.ui                         \
           creditMemoEditList.ui                 \
@@ -419,6 +420,7 @@ FORMS =   absoluteCalendarItem.ui               \
           printCheck.ui                         \
           printChecks.ui                        \
           printChecksReview.ui                  \
+          printChecksReviewEdit.ui              \
           printCreditMemo.ui                    \
           printCreditMemos.ui                   \
           printInvoice.ui                       \
@@ -772,6 +774,7 @@ HEADERS = ../common/format.h                    \
           createPlannedOrdersByPlannerCode.h    \
           createRecurringInvoices.h             \
           createRecurringItems.h                \
+          createfiscalyear.h                    \
           creditCard.h                          \
           creditMemo.h                          \
           creditMemoEditList.h                  \
@@ -1018,6 +1021,7 @@ HEADERS = ../common/format.h                    \
           printCheck.h                  \
           printChecks.h                 \
           printChecksReview.h           \
+          printChecksReviewEdit.h       \
           printCreditMemo.h             \
           printCreditMemos.h            \
           printInvoice.h                \
@@ -1392,6 +1396,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           createPlannedOrdersByPlannerCode.cpp  \
           createRecurringInvoices.cpp           \
           createRecurringItems.cpp              \
+          createfiscalyear.cpp                  \
           creditCard.cpp                        \
           creditMemo.cpp                        \
           creditMemoEditList.cpp                \
@@ -1636,6 +1641,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           printCheck.cpp                        \
           printChecks.cpp                       \
           printChecksReview.cpp                 \
+          printChecksReviewEdit.cpp             \
           printCreditMemo.cpp                   \
           printCreditMemos.cpp                  \
           printInvoice.cpp                      \
