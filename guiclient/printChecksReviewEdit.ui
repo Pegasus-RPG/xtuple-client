@@ -24,11 +24,22 @@ to be bound by its terms.</comment>
     <widget class="QLineEdit" name="_number"/>
    </item>
    <item>
-    <widget class="QPushButton" name="_save">
-     <property name="text">
-      <string>Save</string>
-     </property>
-    </widget>
+    <layout class="QVBoxLayout">
+     <item>
+      <widget class="QPushButton" name="_save">
+       <property name="text">
+        <string>Save</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="_close">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -39,5 +50,12 @@ to be bound by its terms.</comment>
   <tabstop>_save</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>printChecksReviewEdit</receiver>
+   <slot>close()</slot>
+  </connection>
+ </connections>
 </ui>

@@ -56,9 +56,14 @@ enum SetResponse printChecksReviewEdit::set(const ParameterList &pParams)
       _number->setText(checkNumber.value("checkhead_number").toString());
     }
     else if (checkNumber.lastError().type() != QSqlError::NoError)
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error fetching Check Number"),
-                           checkNumber, __FILE__, __LINE__);
+    {
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error fetching Check Number"),
+                             checkNumber, __FILE__, __LINE__);
+        return UndefinedError;
+    }
   }
+
+  return NoError;
 }
 
 void printChecksReviewEdit::sSave()
