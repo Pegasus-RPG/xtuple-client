@@ -98,6 +98,7 @@ void createFiscalYear::sHandleButtons()
 {
   XTreeWidgetItem *lastFY = _fy->topLevelItem(0);
   bool newAP  = _choose->code() == "PERIOD" && _period->allValid()
+                && lastFY
                 && lastFY->rawValue("start").toDate() <= QDate::currentDate()
                 && lastFY->rawValue("end").toDate()   >= QDate::currentDate();
   bool newFY  = _choose->code() == "NEWFY"
@@ -112,7 +113,8 @@ void createFiscalYear::sHandleChoice(int selection)
   QWidget *page = NULL;
   XTreeWidgetItem *lastFY = _fy->topLevelItem(0);
   bool fyExists = (lastFY != NULL);
-  bool fyIsCurrent = lastFY->rawValue("start").toDate() <= QDate::currentDate()
+  bool fyIsCurrent = fyExists
+                  && lastFY->rawValue("start").toDate() <= QDate::currentDate()
                   && lastFY->rawValue("end").toDate()   >= QDate::currentDate();
 
   _fy->setEnabled(hasPriv(cEdit));
