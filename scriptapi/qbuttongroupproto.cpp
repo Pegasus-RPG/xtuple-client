@@ -12,6 +12,7 @@
 
 #include <QScriptEngine>
 #include <QButtonGroup>
+#include <QAbstractButton>
 
 QScriptValue QButtonGrouptoScriptValue(QScriptEngine *engine, QButtonGroup* const &item)
 {
