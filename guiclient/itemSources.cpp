@@ -33,6 +33,7 @@ itemSources::itemSources(QWidget* parent, const char*, Qt::WindowFlags fl)
   setParameterWidgetVisible(true);
   setNewVisible(true);
   setQueryOnStartEnabled(true);
+  setSearchVisible(true);
 
   parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
   parameterWidget()->append(tr("Vendor"), "vend_id", ParameterWidget::Vendor);
