@@ -39,6 +39,7 @@
 #include "qapplicationproto.h"
 #include "qboxlayoutproto.h"
 #include "qbufferproto.h"
+#include "qbuttongroupproto.h"
 #include "qbytearrayproto.h"
 #include "qcoreapplicationproto.h"
 #include "qcryptographichashproto.h"
@@ -214,6 +215,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQApplicationProto(engine);
   setupQBoxLayoutProto(engine);
   setupQBufferProto(engine);
+  setupQButtonGroupProto(engine);
   setupQByteArrayProto(engine);
   setupQCoreApplicationProto(engine);
   setupQCryptographicHashProto(engine);
