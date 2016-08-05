@@ -37,6 +37,7 @@ HEADERS += setupscriptapi.h \
     qapplicationproto.h \
     qboxlayoutproto.h \
     qbufferproto.h \
+    qbuttongroupproto.h \
     qbytearrayproto.h \
     qcoreapplicationproto.h \
     qcryptographichashproto.h \
@@ -191,6 +192,7 @@ SOURCES += setupscriptapi.cpp \
     qapplicationproto.cpp \
     qboxlayoutproto.cpp \
     qbufferproto.cpp \
+    qbuttongroupproto.cpp \
     qbytearrayproto.cpp \
     qcoreapplicationproto.cpp \
     qcryptographichashproto.cpp \
