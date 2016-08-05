@@ -29,7 +29,7 @@ class QButtonGroupProto : public QObject, public QScriptable
 
     Q_INVOKABLE  void addButton(QAbstractButton *button);
     Q_INVOKABLE  QList<QAbstractButton *> buttons() const;
-    Q_INVOKABLE  bool exlusive();
+    Q_INVOKABLE  bool exclusive();
     Q_INVOKABLE  void removeButton(QAbstractButton *button);
     Q_INVOKABLE  void setExclusive(bool exclusive);
 };

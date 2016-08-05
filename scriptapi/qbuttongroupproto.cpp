@@ -81,17 +81,17 @@ bool QButtonGroupProto::exclusive()
   QButtonGroup *item = qscriptvalue_cast<QButtonGroup*>(thisObject());
   if (item)
   {
-    return item->exlusive();
+    return item->exclusive();
   }
   return false;
 }
 
-void QButtonGroupProto::setExclusive(bool exlusive)
+void QButtonGroupProto::setExclusive(bool exclusive)
 {
   QButtonGroup *item = qscriptvalue_cast<QButtonGroup*>(thisObject());
   if (item)
   {
-    item->setExclusive(exlusive);
+    item->setExclusive(exclusive);
   }
 }
 
