@@ -39,7 +39,7 @@ void setupQButtonGroupProto(QScriptEngine *engine)
 QScriptValue constructQButtonGroup(QScriptContext *context, QScriptEngine *engine)
 {
   QButtonGroup *obj = 0;
-  if (context->argumentCount() == 1)
+  if (context->argumentCount() == 1 && context->argument(0).isObject())
   {
     obj = new QButtonGroup(qobject_cast<QWidget*>(context->argument(0).toQObject()));
   }
