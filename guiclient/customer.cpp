@@ -35,6 +35,7 @@
 
 bool customer::userHasPriv(const int pMode, const int pId)
 {
+  Q_UNUSED(pId);
   bool priv = _privileges->check("MaintainCustomerMasters");
   if(pMode==cView)
     priv = priv || _privileges->check("ViewCustomerMasters");
@@ -535,7 +536,9 @@ bool customer::sSave()
   { 
     XSqlQuery customerType;
 
-    customerType.prepare("SELECT cust_custtype_id, custtype_char FROM custinfo JOIN custtype ON (cust_custtype_id=custtype_id) WHERE cust_id=:cust_id;");
+    customerType.prepare("SELECT cust_custtype_id, custtype_char"
+                         "  FROM custinfo JOIN custtype ON (cust_custtype_id=custtype_id)"
+                         " WHERE cust_id=:cust_id;");
     customerType.bindValue(":cust_id", _custid);
     customerType.exec();
     if (customerType.first())
@@ -674,7 +677,8 @@ bool customer::sSave()
   }
 
   //Save characteristics
-  if (charProfile && QMessageBox::question(this, tr("Delete?"),
+  if (charProfile && _custtype->id() != custtype_id &&
+      QMessageBox::question(this, tr("Delete?"),
                             tr("Do you want to DELETE all characteristics related to the old Customer Type?"),
                             QMessageBox::Yes | QMessageBox::No,
                             QMessageBox::No) == QMessageBox::Yes)
