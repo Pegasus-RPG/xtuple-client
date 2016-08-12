@@ -145,20 +145,6 @@ extern void xTupleMessageOutput(QtMsgType type, const QMessageLogContext &contex
 #else
 extern void xTupleMessageOutput(QtMsgType type, const char *msg);
 #endif
-// helps determine which edition we're running & what splash screen to present
-struct editionDesc {
-  editionDesc(QString ed, QString splash, bool check, QString query)
-    : editionName(ed),
-      splashResource(splash),
-      shouldCheckLicense(check),
-      queryString(query)
-  {}
-
-  QString editionName;
-  QString splashResource;
-  bool    shouldCheckLicense;
-  QString queryString;
-};
 
 int main(int argc, char *argv[])
 {
