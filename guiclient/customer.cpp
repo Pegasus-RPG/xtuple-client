@@ -1766,7 +1766,7 @@ void customer::setId(int p)
   if (_mode == cEdit && !_lock.acquire("custinfo", p, AppLock::Interactive))
     setViewMode();
 
-  _charfilled = false;
+  sClear();
   _custid=p;
   populate();
   emit newId(_custid);
