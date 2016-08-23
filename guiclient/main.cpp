@@ -311,8 +311,7 @@ int main(int argc, char *argv[])
   }
   else
   {
-    ErrorReporter::error(QtCriticalMsg, 0, QObject::tr("Error finding edition"),
-                         q, __FILE__, __LINE__);
+    edition = _metrics->value("Application");
   }
 
   qDebug() << edition;
