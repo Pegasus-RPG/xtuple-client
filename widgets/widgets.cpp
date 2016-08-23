@@ -43,6 +43,7 @@
 #include "plugins/invoicelineeditplugin.h"
 #include "plugins/incidentclusterplugin.h"
 #include "plugins/itemclusterplugin.h"
+#include "plugins/itemgroupclusterplugin.h"
 #include "plugins/itemlineeditplugin.h"
 #include "plugins/lotserialclusterplugin.h"
 #include "plugins/lotserialseqclusterplugin.h"
@@ -124,6 +125,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new InvoiceLineEditPlugin(this));
   m_plugins.append(new IncidentClusterPlugin(this));
   m_plugins.append(new ItemClusterPlugin(this));
+  m_plugins.append(new ItemGroupClusterPlugin(this));
   m_plugins.append(new ItemLineEditPlugin(this));
   m_plugins.append(new LotserialClusterPlugin(this));
   m_plugins.append(new LotserialseqClusterPlugin(this));
