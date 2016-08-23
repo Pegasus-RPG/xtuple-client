@@ -9,7 +9,6 @@
  */
 
 #ifndef _itemGroupCluster_h
-
 #define _itemGroupCluster_h
 
 #include "virtualCluster.h"

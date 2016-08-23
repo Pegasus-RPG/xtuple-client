@@ -2,17 +2,18 @@ include( ../global.pri )
 TARGET = xtuplewidgets
 TEMPLATE = lib
 CONFIG += qt \
-    warn_on \
-    designer \
-    plugin \
-    uitools
+          warn_on \
+          plugin
 
 greaterThan(QT_MAJOR_VERSION, 4) {
-    QT += widgets printsupport sql script designer
+  QT += widgets printsupport sql script designer uitools designer
+} else {
+  CONFIG += designer uitools
 }
+
 # INCLUDEPATH += $$QT_SOURCE_TREE/tools/designer/interfaces ../common .
 INCLUDEPATH += ../common \
-    .
+
 DBFILE = widgets.db
 LANGUAGE = C++
 DEPENDPATH += ../common
@@ -26,7 +27,7 @@ dynamic {
     OBJECTS_DIR = tmp/dll
     UI_DIR = tmp/dll
 }
-else { 
+else {
     DESTDIR = ../lib
     CONFIG += staticlib
     MOC_DIR = tmp/lib
@@ -65,6 +66,7 @@ HEADERS += plugins/addressclusterplugin.h \
     plugins/invoicelineeditplugin.h \
     plugins/incidentclusterplugin.h \
     plugins/itemclusterplugin.h \
+    plugins/itemgroupclusterplugin.h \
     plugins/itemlineeditplugin.h \
     plugins/lotserialclusterplugin.h \
     plugins/lotserialseqclusterplugin.h \
@@ -154,6 +156,7 @@ SOURCES += widgets.cpp \
     invoiceLineEdit.cpp \
     itemAliasList.cpp \
     itemCluster.cpp \
+    itemgroupcluster.cpp \
     lotserialCluster.cpp \
     lotserialseqcluster.cpp \
     menubutton.cpp \
@@ -248,6 +251,7 @@ HEADERS += widgets.h \
     invoicelineedit.h \
     itemAliasList.h \
     itemcluster.h \
+    itemgroupcluster.h \
     lotserialCluster.h \
     lotserialseqcluster.h \
     menubutton.h        \
