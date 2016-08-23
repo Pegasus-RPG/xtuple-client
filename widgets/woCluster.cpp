@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -157,13 +157,9 @@ void WoLineEdit::silentSetId(const int pId)
   }
   else
   {
-    _id    = -1;
-    _valid = false;
+    VirtualClusterLineEdit::clear();
     _currentWarehouseid = -1;
 
-    XLineEdit::clear();
-
-    emit newId(-1);
     emit newItemid(-1);
     emit warehouseChanged("");
     emit itemNumberChanged("");
@@ -177,8 +173,7 @@ void WoLineEdit::silentSetId(const int pId)
     emit qtyBalanceChanged(0);
     emit statusChanged("");
     emit methodChanged("");
-    emit valid(false);
-      
+
     _qtyOrdered  = 0;
     _qtyReceived = 0;
   }
@@ -350,14 +345,14 @@ void WoCluster::constructor()
   _line2Layout->setContentsMargins(0, 0, 0, 0);
   _statusLayout->setContentsMargins(0, 0, 0, 0);
 
-  _mainLayout->setSpacing(2); 
-  _woLayout->setSpacing(5); 
-  _warehouseLayout->setSpacing(5); 
-  _line1Layout->setSpacing(7); 
-  _itemLayout->setSpacing(5); 
-  _uomLayout->setSpacing(5); 
-  _line2Layout->setSpacing(7); 
-  _statusLayout->setSpacing(5); 
+  _mainLayout->setSpacing(2);
+  _woLayout->setSpacing(5);
+  _warehouseLayout->setSpacing(5);
+  _line1Layout->setSpacing(7);
+  _itemLayout->setSpacing(5);
+  _uomLayout->setSpacing(5);
+  _line2Layout->setSpacing(7);
+  _statusLayout->setSpacing(5);
 
   _woNumberLit = new QLabel(tr("Work Order #:"), this);
   _woNumberLit->setObjectName("woNumberLit");
@@ -491,7 +486,7 @@ void WoCluster::setWoNumber(const QString& number)
 {
   if (_woNumber->text() == number)
     return;
-    
+
   _woNumber->setText(number);
   _woNumber->sParse();
 }
@@ -680,7 +675,7 @@ void WomatlCluster::setWooperid(int pWooperid)
     _valid = false;
     _required = 0.0;
     _issued  = 0.0;
-    
+
     emit newId(-1);
     emit newQtyRequired(0.0);
     emit newQtyIssued(0.0);
@@ -764,7 +759,7 @@ void WomatlCluster::setWoid(int pWoid)
     _valid = false;
     _required = 0.0;
     _issued  = 0.0;
-    
+
     emit newId(-1);
     emit newQtyRequired(0.0);
     emit newQtyIssued(0.0);
