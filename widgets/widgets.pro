@@ -13,6 +13,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 
 # INCLUDEPATH += $$QT_SOURCE_TREE/tools/designer/interfaces ../common .
 INCLUDEPATH += ../common \
+               . #current directory
 
 DBFILE = widgets.db
 LANGUAGE = C++
