@@ -85,9 +85,11 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
     _application->setText(q.value("edition").toString());
     _numOfDatabaseUsers->setText(q.value("databaseusers").toString());
     _numOfServerUsers->setText(q.value("serverusers").toString());
-  } else
+  } else {
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting User Data"),
                          q, __FILE__, __LINE__);
+    _application->setText(_metrics->value("Application"));
+  }
 
   if (!_privileges->check("ConfigDatabaseInfo"))
   {
