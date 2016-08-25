@@ -157,6 +157,15 @@ void WoLineEdit::silentSetId(const int pId)
   }
   else
   {
+    clear();
+  }
+
+  _parsed = true;
+  emit parsed();
+}
+
+void WoLineEdit::clear()
+{
     VirtualClusterLineEdit::clear();
     _currentWarehouseid = -1;
 
@@ -176,10 +185,6 @@ void WoLineEdit::silentSetId(const int pId)
 
     _qtyOrdered  = 0;
     _qtyReceived = 0;
-  }
-
-  _parsed = true;
-  emit parsed();
 }
 
 void WoLineEdit::sList()

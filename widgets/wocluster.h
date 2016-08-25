@@ -102,6 +102,7 @@ friend class WoCluster;
     Q_INVOKABLE inline int     warehouse() const              { return _warehouseid;         }
 
   public slots:
+    virtual void clear();
     virtual void silentSetId(const int);
     virtual void sList();
     virtual void sSearch();

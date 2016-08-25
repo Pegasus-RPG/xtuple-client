@@ -69,9 +69,10 @@ dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char
 
   disconnect(newAction(), SIGNAL(triggered()), this, SLOT(sNew()));
   connect(newAction(), SIGNAL(triggered()), this, SLOT(sNewProjectTask()));
-  connect(_showSo, SIGNAL(checked()), this, SLOT(sFillList()));
-  connect(_showPo, SIGNAL(checked()), this, SLOT(sFillList()));
-  connect(_showWo, SIGNAL(checked()), this, SLOT(sFillList()));
+  connect(_project,   SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_showSo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_showPo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_showWo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
   QToolButton * newBtn = (QToolButton*)toolBar()->widgetForAction(newAction());
   newBtn->setPopupMode(QToolButton::MenuButtonPopup);
@@ -434,8 +435,7 @@ bool dspOrderActivityByProject::setParams(ParameterList &params)
 {
   if(_project->id() == -1)
   {
-    QMessageBox::warning(this, tr("Project Required"),
-      tr("You must specify a Project."));
+    list()->clear();
     return false;
   }
 
