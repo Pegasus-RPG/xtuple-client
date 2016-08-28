@@ -38,13 +38,8 @@ ConfigAuthorizeDotNetProcessor::ConfigAuthorizeDotNetProcessor(QWidget* parent, 
   _anMD5HashWarn->setChecked(_metrics->value("CCANMD5HashAction") == "W");
   _anMD5HashFail->setChecked(_metrics->value("CCANMD5HashAction") == "F");
 
-  if (_metrics->value("CCANCurrency") == "TRANS")
-    _anCurrTransaction->setChecked(true);
-  else if (! _metrics->value("CCANCurrency").isEmpty())
-  {
-    _anCurrFixed->setChecked(true);
+  if (! _metrics->value("CCANCurrency").isEmpty())
     _anCurrFixedValue->setId(_metrics->value("CCANCurrency").toInt());
-  }
 
   _anUsingWellsFargoSecureSource->setChecked(_metrics->boolean("CCANWellsFargoSecureSource"));
   _anIgnoreSSLErrors->setChecked(_metrics->boolean("CCANIgnoreSSLErrors"));
@@ -79,10 +74,7 @@ bool ConfigAuthorizeDotNetProcessor::sSave()
   else if (_anMD5HashFail->isChecked())
     _metrics->set("CCANMD5HashAction", QString("F"));
 
-  if (_anCurrFixed->isChecked())
-    _metrics->set("CCANCurrency", _anCurrFixedValue->id());
-  else // if (_anCurrTransaction->isChecked())
-    _metrics->set("CCANCurrency", QString("TRANS"));
+  _metrics->set("CCANCurrency", _anCurrFixedValue->id());
   _metrics->set("CCANWellsFargoSecureSource", _anUsingWellsFargoSecureSource->isChecked());
   _metrics->set("CCANMD5HashSetOnGateway", _anMD5HashSetOnGateway->isChecked());
   _metrics->set("CCANIgnoreSSLErrors",     _anIgnoreSSLErrors->isChecked());
