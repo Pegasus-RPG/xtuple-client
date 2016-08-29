@@ -519,7 +519,8 @@ bool returnAuthorization::sSave(bool partial)
   returnSave.bindValue(":rahead_calcfreight", _calcfreight);
   returnSave.bindValue(":rahead_warehous_id", _warehouse->id());
   returnSave.bindValue(":rahead_cohead_warehous_id", _shipWhs->id());
-  returnSave.bindValue(":rahead_shipzone_id", _shippingZone->id());
+  if (_shippingZone->id() != -1)
+    returnSave.bindValue(":rahead_shipzone_id", _shippingZone->id());
   returnSave.bindValue(":rahead_saletype_id", _saleType->id());
 
   returnSave.exec();
