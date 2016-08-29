@@ -63,6 +63,8 @@ salesOrderSimple::salesOrderSimple(QWidget *parent, const char *name, Qt::Window
   connect(_postCash,            SIGNAL(clicked()),                              this,         SLOT(sEnterCashPayment()));
   connect(_cust,                SIGNAL(newId(int)),                             this,         SLOT(sPopulateCustomerInfo(int)));
   connect(_shipTo,              SIGNAL(newId(int)),                             this,         SLOT(sPopulateShiptoInfo()));
+  connect(_warehouse,           SIGNAL(newID(int)),                             this,         SLOT(sPopulateWhsInfo()));
+  connect(_taxZone,             SIGNAL(newID(int)),                             this,         SLOT(sSave()));
   connect(_item,                SIGNAL(newId(int)),                             this,         SLOT(sPopulateItemInfo()));
   connect(_fundsType,           SIGNAL(newID(int)),                             this,         SLOT(sHandleFundsType()));
   connect(_newCC,               SIGNAL(clicked()),                              this,         SLOT(sNewCreditCard()));
@@ -390,6 +392,10 @@ bool salesOrderSimple::save(bool partial)
   params.append("custponumber", _custPONumber->text().trimmed());
   if (_shipTo->id() > 0)
     params.append("shipto_id", _shipTo->id());
+  if (_warehouse->id() > 0)
+    params.append("warehous_id", _warehouse->id());
+  if (_taxZone->id() > 0)
+    params.append("taxzone_id", _taxZone->id());
   
   if ((_mode == cNew) && _saved)
   {
@@ -426,6 +432,7 @@ bool salesOrderSimple::save(bool partial)
     
   }
 
+  sRecalculatePrice();
   emit saved(_soheadid);
 
   return true;
@@ -747,7 +754,6 @@ void salesOrderSimple::sPopulateCustomerInfo(int pCustid)
     }
     
     sSave();
-    sRecalculatePrice();
     sHandleRequiredFields();
     setItemExtraClause();
   }
@@ -763,8 +769,37 @@ void salesOrderSimple::sPopulateShiptoInfo()
   if (_cust->isValid())
   {
     sSave();
-    sRecalculatePrice();
     setItemExtraClause();
+    sPopulateTaxZone();
+  }
+}
+
+void salesOrderSimple::sPopulateWhsInfo()
+{
+  if (_cust->isValid())
+  {
+    sSave();
+    setItemExtraClause();
+    sPopulateTaxZone();
+  }
+}
+
+void salesOrderSimple::sPopulateTaxZone()
+{
+  QString sql("SELECT COALESCE(shipto_taxzone_id, warehous_taxzone_id, cust_taxzone_id, -1) AS taxzoneid "
+              "FROM whsinfo, custinfo LEFT OUTER JOIN shiptoinfo ON (shipto_id=<? value(\"shipto_id\") ?>) "
+              "WHERE (warehous_id=<? value(\"warehous_id\") ?>)"
+              "  AND (cust_id=<? value(\"cust_id\") ?>);");
+  
+  MetaSQLQuery  mql(sql);
+  ParameterList params;
+  params.append("warehous_id", _warehouse->id());
+  params.append("shipto_id", _shipTo->id());
+  params.append("cust_id", _cust->id());
+  XSqlQuery taxzone = mql.toQuery(params);
+  if (taxzone.first())
+  {
+    _taxZone->setId(taxzone.value("taxzoneid").toInt());
   }
 }
 
@@ -1139,6 +1174,7 @@ void salesOrderSimple::prepare()
   // set to configured default cash customer
   _cust->setEnabled(true);
   _cust->setId(_metrics->value("SSOSDefaultCustId").toInt());
+  sPopulateCustomerInfo(_cust->id());
   
   // save the order
   sSave();
