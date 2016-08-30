@@ -27,7 +27,7 @@ bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::Wind
   connect(_transmitGroup,  SIGNAL(toggled(bool)), this, SLOT(sHandleTransmitGroup()));
   connect(_type,  SIGNAL(currentIndexChanged(int)), this, SLOT(sHandleType()));
 
-  _nextCheckNum->setValidator(omfgThis->orderVal());
+  _nextCheckNum->setValidator(new QIntValidator(1,999999999));
 
   QRegExp tmpregex = QRegExp(_metrics->value("EFTAccountRegex"));
   _accountValidator = new QRegExpValidator (tmpregex, this);

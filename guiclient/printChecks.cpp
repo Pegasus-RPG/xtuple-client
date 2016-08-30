@@ -38,6 +38,8 @@ printChecks::printChecks(QWidget* parent, const char* name, bool modal, Qt::Wind
   connect(_createEFT, SIGNAL(clicked()),  this, SLOT(sCreateEFT()));
   connect(_print,     SIGNAL(clicked()),  this, SLOT(sPrint()));
 
+  _nextCheckNum->setValidator(new QIntValidator(1,999999999));
+
   _setCheckNumber = -1;
 
   _bankaccnt->setAllowNull(true);

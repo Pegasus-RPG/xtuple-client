@@ -41,6 +41,8 @@ printCheck::printCheck(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_print,     SIGNAL(clicked()),  this, SLOT(sPrint()));
   connect(_printed,   SIGNAL(clicked()),  this, SLOT(sPrintedAlready()));
 
+  _nextCheckNum->setValidator(new QIntValidator(1,999999999));
+
   _captive = false;
   _setCheckNumber = -1;
 
