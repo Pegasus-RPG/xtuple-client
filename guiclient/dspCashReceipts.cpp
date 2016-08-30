@@ -63,6 +63,10 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char*, Qt::WindowFlags f
 
 bool dspCashReceipts::setParams(ParameterList &pParams)
 {
+  if (!display::setParams(pParams)) {
+    return false;
+  }
+
   if (!_dates->startDate().isValid())
   {
     QMessageBox::critical( this, tr("Enter Start Date"),

@@ -68,19 +68,6 @@
 #define iAskToUpdate  2
 #define iJustUpdate   3
 
-// TODO: Query the fundstype table?
-const struct {
-    const char * full;
-    QString abbr;
-    bool    cc;
-} _fundsTypes[] = {
-    { QT_TRANSLATE_NOOP("cashReceipt", "Cash"),             "K", false },
-    { QT_TRANSLATE_NOOP("cashReceipt", "Check"),            "C", false },
-    { QT_TRANSLATE_NOOP("cashReceipt", "Certified Check"),  "T", false },
-    { QT_TRANSLATE_NOOP("cashReceipt", "Wire Transfer"),    "W", false },
-    { QT_TRANSLATE_NOOP("cashReceipt", "Other"),            "O", false }
-};
-
 salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
   : XWidget(parent, name, fl)
 {
@@ -300,9 +287,12 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
 
   _miscChargeAccount->setType(GLCluster::cRevenue | GLCluster::cExpense);
 
-  for (unsigned int i = 0; i < sizeof(_fundsTypes) / sizeof(_fundsTypes[1]); i++)
+  XSqlQuery qryType;
+  qryType.exec("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype WHERE NOT fundstype_creditcard;");
+  while (qryType.next())
   {
-    _fundsType->append(i, tr(_fundsTypes[i].full), _fundsTypes[i].abbr);
+    const char *fundsTypeame = qryType.value("fundstype_name").toByteArray().data();
+    _fundsType->append(qryType.value("fundstype_id").toInt(), tr(fundsTypeame), qryType.value("fundstype_code").toString());
   }
 
   _bankaccnt->setType(XComboBox::ARBankAccounts);

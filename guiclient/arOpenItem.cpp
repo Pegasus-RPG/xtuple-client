@@ -505,16 +505,6 @@ void arOpenItem::populate()
       arpopulate.prepare( "SELECT arapply_id, arapply_source_aropen_id,"
                  "       CASE WHEN (arapply_source_doctype = 'C') THEN :creditMemo"
                  "            WHEN (arapply_source_doctype = 'R') THEN :cashdeposit"
-                 "            WHEN (arapply_fundstype='C') THEN :check"
-                 "            WHEN (arapply_fundstype='T') THEN :certifiedCheck"
-                 "            WHEN (arapply_fundstype='M') THEN :masterCard"
-                 "            WHEN (arapply_fundstype='V') THEN :visa"
-                 "            WHEN (arapply_fundstype='A') THEN :americanExpress"
-                 "            WHEN (arapply_fundstype='D') THEN :discoverCard"
-                 "            WHEN (arapply_fundstype='R') THEN :otherCreditCard"
-                 "            WHEN (arapply_fundstype='K') THEN :cash"
-                 "            WHEN (arapply_fundstype='W') THEN :wireTransfer"
-                 "            WHEN (arapply_fundstype='O') THEN :other"
                  "            ELSE getFundsTypeName(arapply_fundstype)"
                  "       END AS doctype,"
                  "       CASE WHEN (arapply_source_doctype IN ('C','R')) THEN arapply_source_docnumber"
@@ -532,16 +522,6 @@ void arOpenItem::populate()
 
       arpopulate.bindValue(":creditMemo", tr("Credit Memo"));
       arpopulate.bindValue(":cashdeposit", tr("Cash Deposit"));
-      arpopulate.bindValue(":check", tr("Check"));
-      arpopulate.bindValue(":certifiedCheck", tr("Certified Check"));
-      arpopulate.bindValue(":masterCard", tr("Master Card"));
-      arpopulate.bindValue(":visa", tr("Visa"));
-      arpopulate.bindValue(":americanExpress", tr("American Express"));
-      arpopulate.bindValue(":discoverCard", tr("Discover Card"));
-      arpopulate.bindValue(":otherCreditCard", tr("Other Credit Card"));
-      arpopulate.bindValue(":cash", tr("Cash"));
-      arpopulate.bindValue(":wireTransfer", tr("Wire Transfer"));
-      arpopulate.bindValue(":other", tr("Other"));
     }
     else if (docType == "C" || docType == "R")
     {

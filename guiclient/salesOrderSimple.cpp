@@ -41,20 +41,6 @@
 
 #define ISNEW(mode)   (((mode) & 0x0F) == cNew)
 
-// TODO: Query the fundstype table?
-const struct {
-    const char * full;
-    QString abbr;
-    bool    cc;
-} _fundsTypes[] = {
-    { QT_TRANSLATE_NOOP("cashReceipt", "On Account"),       "A", false },
-    { QT_TRANSLATE_NOOP("cashReceipt", "Cash"),             "K", false },
-    { QT_TRANSLATE_NOOP("cashReceipt", "Check"),            "C", false },
-    { QT_TRANSLATE_NOOP("cashReceipt", "Certified Check"),  "T", false },
-    { QT_TRANSLATE_NOOP("cashReceipt", "Wire Transfer"),    "W", false },
-    { QT_TRANSLATE_NOOP("cashReceipt", "Other"),            "O", false }
-};
-
 salesOrderSimple::salesOrderSimple(QWidget *parent, const char *name, Qt::WindowFlags fl)
   : XWidget(parent, name, fl)
 {
@@ -719,19 +705,18 @@ void salesOrderSimple::sPopulateCustomerInfo(int pCustid)
       _CCAmount->setId(cust.value("cust_curr_id").toInt());
 
       _fundsType->clear();
+
       if (_creditlmt > 0.0)
       {
-        for (unsigned int i = 0; i < sizeof(_fundsTypes) / sizeof(_fundsTypes[1]); i++)
-        {
-          _fundsType->append(i, tr(_fundsTypes[i].full), _fundsTypes[i].abbr);
-        }
+        _fundsType->append(0, QT_TRANSLATE_NOOP("cashReceipt", "On Account"), "1");
       }
-      else
+
+      XSqlQuery qryType;
+      qryType.exec("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype WHERE NOT fundstype_creditcard;");
+      while (qryType.next())
       {
-        for (unsigned int i = 1; i < sizeof(_fundsTypes) / sizeof(_fundsTypes[1]); i++)
-        {
-          _fundsType->append(i, tr(_fundsTypes[i].full), _fundsTypes[i].abbr);
-        }
+        const char *fundsTypeame = qryType.value("fundstype_name").toByteArray().data();
+        _fundsType->append(qryType.value("fundstype_id").toInt(), tr(fundsTypeame), qryType.value("fundstype_code").toString());
       }
 
       if (cust.value("shiptoid").toInt() != -1)
@@ -1899,7 +1884,7 @@ bool salesOrderSimple::sShipInvoice()
 
 void salesOrderSimple::sHandleFundsType()
 {
-  if (_fundsType->code() == "A")
+  if (_fundsType->code() == "1")
   {
     _cashReceived->setLocalValue(0.0);
     _cashReceived->setEnabled(false);
@@ -1931,7 +1916,7 @@ void salesOrderSimple::sEnterCashPayment()
   XSqlQuery cashsave;
 
   // check for on account
-  if (_fundsType->code() == "A")
+  if (_fundsType->code() == "1")
   {
     sCalculateTotal();
     sCompleteOrder();
