@@ -41,6 +41,7 @@
 
 #define ISNEW(mode)   (((mode) & 0x0F) == cNew)
 
+// TODO: Query the fundstype table?
 const struct {
     const char * full;
     QString abbr;
@@ -67,7 +68,7 @@ salesOrderSimple::salesOrderSimple(QWidget *parent, const char *name, Qt::Window
   connect(_fundsType,           SIGNAL(newID(int)),                             this,         SLOT(sHandleFundsType()));
   connect(_newCC,               SIGNAL(clicked()),                              this,         SLOT(sNewCreditCard()));
   connect(_viewCC,              SIGNAL(clicked()),                              this,         SLOT(sViewCreditCard()));
-  
+
   connect(_orderNumber,         SIGNAL(editingFinished()),                      this,         SLOT(sHandleOrderNumber()));
   connect(_orderNumber,         SIGNAL(textChanged(const QString &)),           this,         SLOT(sSetUserEnteredOrderNumber()));
   connect(_salesOrderInformation, SIGNAL(currentChanged(int)),                  this,         SLOT(sChangeState(int)));
@@ -82,7 +83,7 @@ salesOrderSimple::salesOrderSimple(QWidget *parent, const char *name, Qt::Window
 
   connect(_qty,                 SIGNAL(editingFinished()),                      this,         SLOT(sSaveLine()));
   connect(_custPONumber,        SIGNAL(editingFinished()),                      this,         SLOT(sHandleRequiredFields()));
-  
+
   _saved = false;
   _closeThis = true;
 
@@ -204,7 +205,7 @@ enum SetResponse salesOrderSimple:: set(const ParameterList &pParams)
     {
       return UndefinedError;
     }
-    
+
     populateCCInfo();
     sFillCcardList();
 
@@ -236,7 +237,7 @@ enum SetResponse salesOrderSimple:: set(const ParameterList &pParams)
   param = pParams.value("captive", &valid);
   if (valid)
     _captive = true;
-  
+
   _item->setFocus();
   _lineGroup->setTitle(tr("Adding Line"));
 
@@ -274,7 +275,7 @@ void salesOrderSimple::sHoldClicked()
       newdlgX.set(params);
       newdlgX.exec();
     }
-    
+
     if (_captive)
       close();
     else
@@ -288,25 +289,25 @@ void salesOrderSimple::sCompleteOrder()
   {
     ParameterList params;
     params.append("sohead_id", _soheadid);
-    
+
     if (_metrics->boolean("AutoAllocateCreditMemos"))
     {
       sAllocateCreditMemos();
     }
-    
+
     if (_balance->localValue() > _creditlmt)
     {
       QMessageBox::critical( this, tr("Over Credit Limit"),
                             tr( "The Balance is more than the Customer's credit limit.  You must post a payment." ) );
       return;
     }
-    
+
     if (!sIssueLineBalance())
       return;
-    
+
     if (!sShipInvoice())
       return;
-    
+
     if (_captive)
       close();
     else
@@ -333,7 +334,7 @@ bool salesOrderSimple::save(bool partial)
          << GuiErrorCheck(_orderNumber->text().toInt() == 0, _orderNumber,
                           tr( "<p>You must enter a valid Number for this order before you may save it." ) )
   ;
-  
+
   if (_usesPos && !partial)
   {
     if (_custPONumber->text().trimmed().length() == 0)
@@ -341,7 +342,7 @@ bool salesOrderSimple::save(bool partial)
       errors << GuiErrorCheck(true, _custPONumber,
                               tr("You must enter a Customer P/O for this Sales Order before you may save it.") );
     }
-    
+
     if (!_blanketPos)
     {
       saveSales.prepare( "SELECT cohead_id"
@@ -382,7 +383,7 @@ bool salesOrderSimple::save(bool partial)
       return false;
 
   MetaSQLQuery mql = mqlLoad("salesOrder", "simple");
-  
+
   ParameterList params;
   params.append("id", _soheadid );
   params.append("number", _orderNumber->text());
@@ -390,7 +391,7 @@ bool salesOrderSimple::save(bool partial)
   params.append("custponumber", _custPONumber->text().trimmed());
   if (_shipTo->id() > 0)
     params.append("shipto_id", _shipTo->id());
-  
+
   if ((_mode == cNew) && _saved)
   {
     params.append("EditMode", true);
@@ -423,7 +424,7 @@ bool salesOrderSimple::save(bool partial)
   else
   {
     populateCCInfo();
-    
+
   }
 
   emit saved(_soheadid);
@@ -438,14 +439,14 @@ void salesOrderSimple::sSaveLine()
     _item->setFocus();
     return;
   }
-  
+
   if (!(_qty->toDouble() > 0))
   {
     _qty->setFocus();
     _qty->selectAll();
     return;
   }
-  
+
   XSqlQuery salesSave;
   QList<GuiErrorCheck> errors;
   errors
@@ -453,13 +454,13 @@ void salesOrderSimple::sSaveLine()
                     _qty->validator()->inherits("QIntValidator")), _qty,
                    tr("This UOM for this Item does not allow fractional quantities. Please fix the quantity."))
   ;
-  
+
   ParameterList params;
   params.append("sohead_id", _soheadid);
   params.append("item_id", _item->id());
-  
+
   MetaSQLQuery mql = mqlLoad("salesOrderItem", "simple");
-  
+
   // check to see if this item can be priced
   params.append("CheckPriceMode", true);
   params.append("qtycheck", _qty->toDouble());
@@ -479,7 +480,7 @@ void salesOrderSimple::sSaveLine()
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Sales Order Item"), errors))
     return;
-  
+
   if (_lineMode == cNew)
   {
     // check to see if this item is already on the order
@@ -509,14 +510,14 @@ void salesOrderSimple::sSaveLine()
     params.append("qtyord", _qty->toDouble());
     params.append("EditMode", true);
   }
-  
+
   salesSave = mql.toQuery(params);
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating SO Line"),
                                 salesSave, __FILE__, __LINE__))
   {
     return;
   }
-  
+
   prepareLine();
   sFillItemList();
   _item->setFocus();
@@ -745,7 +746,7 @@ void salesOrderSimple::sPopulateCustomerInfo(int pCustid)
     {
       return;
     }
-    
+
     sSave();
     sRecalculatePrice();
     sHandleRequiredFields();
@@ -836,7 +837,7 @@ void salesOrderSimple::sDelete()
   {
     XSqlQuery deleteSales;
     MetaSQLQuery mql = mqlLoad("salesOrderItem", "simple");
-    
+
     ParameterList params;
     params.append("id", _soitem->id());
     params.append("DeleteMode", true);
@@ -861,7 +862,7 @@ void salesOrderSimple::sDelete()
     {
       return;
     }
-    
+
     sFillItemList();
     _item->setFocus();
   }
@@ -895,7 +896,7 @@ void salesOrderSimple::populate()
     {
       if (so.value("cohead_status").toString() == "C")
         return;
-      
+
       _orderNumber->setText(so.value("cohead_number").toString());
       _orderNumber->setEnabled(false);
       _cust->setId(so.value("cohead_cust_id").toInt());
@@ -919,7 +920,7 @@ void salesOrderSimple::sFillItemList()
 
   _soitem->clear();
   MetaSQLQuery mql = mqlLoad("salesOrderItems", "list");
-  
+
   ParameterList params;
   params.append("excludeCancelled", true);
   params.append("sohead_id", _soheadid);
@@ -930,7 +931,7 @@ void salesOrderSimple::sFillItemList()
   {
     return;
   }
-  
+
   //  Determine the subtotal
   fillSales.prepare("SELECT SUM(round((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2)) AS subtotal,"
                     "       SUM(round((coitem_qtyord * coitem_qty_invuomratio) * (coitem_unitcost / coitem_price_invuomratio),2)) AS totalcost "
@@ -961,7 +962,7 @@ void salesOrderSimple::sCalculateTax()
                "FROM tax "
                " JOIN calculateTaxDetailSummary(:type, :cohead_id, 'T') ON (taxdetail_tax_id=tax_id)"
                "GROUP BY tax_id) AS data;" );
-  
+
   taxq.bindValue(":cohead_id", _soheadid);
   taxq.bindValue(":type","S");
   taxq.exec();
@@ -1004,7 +1005,7 @@ void salesOrderSimple::sCalculateTotal()
   _balance->setLocalValue(balance);
   _cashBalance->setLocalValue(balance);
   sHandleFundsType();
-  
+
   // Unallocated C/M's
   populateSales.prepare("SELECT SUM(amount) AS f_amount"
                         " FROM (SELECT aropen_id,"
@@ -1135,17 +1136,17 @@ void salesOrderSimple::prepare()
   _saved = false;
 
   populateOrderNumber();
-  
+
   // set to configured default cash customer
   _cust->setEnabled(true);
   _cust->setId(_metrics->value("SSOSDefaultCustId").toInt());
-  
+
   // save the order
   sSave();
-  
+
   prepareLine();
   _item->setFocus();
-  
+
 }
 
 void salesOrderSimple::prepareLine()
@@ -1154,7 +1155,7 @@ void salesOrderSimple::prepareLine()
   _qty->setDouble(1.0);
   _lineMode = cNew;
   _lineGroup->setTitle(tr("Adding Line"));
-  
+
   XSqlQuery salesprepare;
   //  Grab the next coitem_id
   salesprepare.exec("SELECT NEXTVAL('coitem_coitem_id_seq') AS _coitem_id");
@@ -1193,7 +1194,7 @@ void salesOrderSimple::closeEvent(QCloseEvent *pEvent)
     pEvent->ignore();
     return;
   }
-  
+
   if (!deleteForCancel())
   {
     pEvent->ignore();
@@ -1326,7 +1327,7 @@ void salesOrderSimple::sChargeCC()
   // save the order checking for errors
   if (!save(false))
     return;
-  
+
   if (!okToProcessCC())
     return;
 
@@ -1447,7 +1448,7 @@ void salesOrderSimple::sCreditAllocate()
   params.append("balance",  _balance->localValue());
   params.append("curr_id",   _balance->id());
   params.append("effective", _balance->effective());
-  
+
   allocateARCreditMemo newdlg(this, "", true);
   if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
   {
@@ -1483,21 +1484,21 @@ void salesOrderSimple::sAllocateCreditMemos()
     {
       return;
     }
-    
+
     double    amount     = 0.0;
     XSqlQuery allocCM;
     allocCM.prepare("INSERT INTO aropenalloc"
                     "      (aropenalloc_aropen_id, aropenalloc_doctype, aropenalloc_doc_id, "
                     "       aropenalloc_amount, aropenalloc_curr_id)"
                     "VALUES(:aropen_id, 'S', :doc_id, :amount, :curr_id);");
-    
+
     while (balance > 0.0 && allocateSales.next())
     {
       amount     = allocateSales.value("amount").toDouble();
-      
+
       if (amount <= 0.0)  // if this credit memo does not have a positive value just ignore it
         continue;
-      
+
       if (amount > balance) // make sure we don't apply more to a credit memo than we have left.
         amount = balance;
       // apply credit memo's to this sales order until the balance is 0.
@@ -1516,7 +1517,7 @@ void salesOrderSimple::sAllocateCreditMemos()
         balance -= amount;
       }
     }
-    
+
     _balance->setLocalValue(balance);
   }
 }
@@ -1717,7 +1718,7 @@ bool salesOrderSimple::sShipInvoice()
   int shipheadid = -1;
   int cobmiscid = -1;
   int invcheadid = -1;
-  
+
   XSqlQuery shipq;
   shipq.prepare("SELECT shiphead_id"
                 "  FROM shiphead"
@@ -1739,13 +1740,13 @@ bool salesOrderSimple::sShipInvoice()
                           tr( "An unshipped Shipper for this Sales Order cannot be found." ) );
     return false;
   }
-  
+
   // ship the shipment
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
   // failed insertGLTransaction RETURNs -5 rather than RAISE EXCEPTION
   shipq.exec("BEGIN;");
-  
+
   shipq.prepare( "SELECT shipShipment(:shiphead_id, CURRENT_DATE) AS result;");
   shipq.bindValue(":shiphead_id", shipheadid);
   shipq.exec();
@@ -1774,7 +1775,7 @@ bool salesOrderSimple::sShipInvoice()
                          errorStr, __FILE__, __LINE__);
     return false;
   }
-  
+
   shipq.exec("COMMIT;");
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Committing Shipment Transaction"),
                            shipq, __FILE__, __LINE__))
@@ -1787,7 +1788,7 @@ bool salesOrderSimple::sShipInvoice()
     // print the packing list
     params.append("shiphead_id", shipheadid);
     params.append("print");
-    
+
     printPackingList newdlg(this, "", true);
     newdlg.set(params);
   }
@@ -1814,7 +1815,7 @@ bool salesOrderSimple::sShipInvoice()
                                   "for billing again."));
       return false;
     }
-    
+
     omfgThis->sBillingSelectionUpdated(_soheadid, true);
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Selecting Shipment for Billing"),
@@ -1857,14 +1858,14 @@ bool salesOrderSimple::sShipInvoice()
 
   params.append("invchead_id", invcheadid);
   params.append("print");
-  
+
   if (_metrics->boolean("SSOSPrintInvoice"))
   {
     printInvoice newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }
-  
+
   shipq.prepare("SELECT postInvoice(:invchead_id) AS result;");
   shipq.bindValue(":invchead_id", invcheadid);
   shipq.exec();
@@ -1891,7 +1892,7 @@ bool salesOrderSimple::sShipInvoice()
                          .arg(_soheadid),__FILE__,__LINE__);
     return false;
   }
-  
+
   omfgThis->sInvoicesUpdated(invcheadid, true);
   return true;
 }
@@ -1908,7 +1909,7 @@ void salesOrderSimple::sHandleFundsType()
     _cashReceived->setLocalValue(_balance->localValue());
     _cashReceived->setEnabled(true);
   }
-  
+
   if (_balance->localValue() == 0.0)
   {
     _CCAmount->setLocalValue(0.0);
@@ -1926,7 +1927,7 @@ void salesOrderSimple::sEnterCashPayment()
   // save the order checking for errors
   if (!save(false))
     return;
-  
+
   XSqlQuery cashsave;
 
   // check for on account
@@ -1936,7 +1937,7 @@ void salesOrderSimple::sEnterCashPayment()
     sCompleteOrder();
     return;
   }
-  
+
   if (_cashReceived->localValue() == 0.0)
   {
     QMessageBox::critical( this, tr("Zero Amount Received"),
@@ -1950,14 +1951,14 @@ void salesOrderSimple::sEnterCashPayment()
                             QMessageBox::No,
                             QMessageBox::Yes | QMessageBox::Default) == QMessageBox::Yes)
     _cashReceived->setLocalValue(_balance->localValue());
-  
+
   if (_cashReceived->localValue() >  _balance->localValue() &&
       QMessageBox::question(this, tr("Overapplied?"),
                             tr("The Cash Payment is more than the Balance.  Do you want to continue?"),
                             QMessageBox::Yes,
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
     return;
-  
+
   int _bankaccnt_curr_id = -1;
   QString _bankaccnt_currAbbr;
   cashsave.prepare( "SELECT bankaccnt_curr_id, "
@@ -1976,7 +1977,7 @@ void salesOrderSimple::sEnterCashPayment()
   {
     return;
   }
-  
+
   if (_cashReceived->currencyEnabled() && _cashReceived->id() != _bankaccnt_curr_id &&
       QMessageBox::question(this, tr("Bank Currency?"),
                             tr("<p>This Sales Order is specified in %1 while the "
@@ -1992,7 +1993,7 @@ void salesOrderSimple::sEnterCashPayment()
     _bankaccnt->setFocus();
     return;
   }
-  
+
   QString _cashrcptnumber;
   int _cashrcptid = -1;
 
@@ -2007,7 +2008,7 @@ void salesOrderSimple::sEnterCashPayment()
   {
     return;
   }
-    
+
   cashsave.prepare( "INSERT INTO cashrcpt "
                     "( cashrcpt_id, cashrcpt_cust_id, cashrcpt_distdate, cashrcpt_amount,"
                     "  cashrcpt_fundstype, cashrcpt_bankaccnt_id, cashrcpt_curr_id, "
@@ -2039,11 +2040,11 @@ void salesOrderSimple::sEnterCashPayment()
   {
     return;
   }
-    
+
   // Post the Cash Receipt
   XSqlQuery cashPost;
   int journalNumber = -1;
-    
+
   cashPost.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
   if (cashPost.first())
     journalNumber = cashPost.value("journalnumber").toInt();
@@ -2052,7 +2053,7 @@ void salesOrderSimple::sEnterCashPayment()
   {
     return;
   }
-    
+
   cashPost.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
   cashPost.bindValue(":cashrcpt_id", _cashrcptid);
   cashPost.bindValue(":journalNumber", journalNumber);
@@ -2118,7 +2119,7 @@ void salesOrderSimple::sRecalculatePrice()
 {
   XSqlQuery salesSave;
   MetaSQLQuery mql = mqlLoad("salesOrderItem", "simple");
-  
+
   ParameterList params;
   params.append("sohead_id", _soheadid);
   params.append("RepriceMode", true);
@@ -2128,7 +2129,7 @@ void salesOrderSimple::sRecalculatePrice()
   {
     return;
   }
-  
+
   sFillItemList();
   _item->setFocus();
 }
@@ -2163,7 +2164,7 @@ void salesOrderSimple::newSalesOrder()
 {
   ParameterList params;
   params.append("mode", "new");
-  
+
   salesOrderSimple *newdlg = new salesOrderSimple();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);

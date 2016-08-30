@@ -96,7 +96,7 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
-  
+
   param = pParams.value("docType", &valid);
   if (valid)
   {
@@ -189,7 +189,7 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
     else
       return UndefinedError;
   }
-  
+
   param = pParams.value("cust_id", &valid);
   if (valid)
   {
@@ -276,7 +276,7 @@ void arOpenItem::sSave()
                "    aropen_amount=:aropen_amount,"
                "    aropen_commission_due=:aropen_commission_due, aropen_notes=:aropen_notes,"
                "    aropen_rsncode_id=:aropen_rsncode_id, "
-	       "    aropen_curr_id=:curr_id, "
+               "    aropen_curr_id=:curr_id, "
                "    aropen_taxzone_id=:taxzone "
                "WHERE (aropen_id=:aropen_id);" );
   }
@@ -458,8 +458,8 @@ void arOpenItem::populate()
     _orderNumber->setText(arpopulate.value("aropen_ordernumber").toString());
     _journalNumber->setText(arpopulate.value("aropen_journalnumber").toString());
     _amount->set(arpopulate.value("aropen_amount").toDouble(),
-		 arpopulate.value("aropen_curr_id").toInt(),
-		 arpopulate.value("aropen_docdate").toDate(), false);
+                 arpopulate.value("aropen_curr_id").toInt(),
+                 arpopulate.value("aropen_docdate").toDate(), false);
     _paid->setLocalValue(arpopulate.value("aropen_paid").toDouble());
     _balance->setLocalValue(arpopulate.value("f_balance").toDouble());
     _terms->setId(arpopulate.value("aropen_terms_id").toInt());
@@ -515,6 +515,7 @@ void arOpenItem::populate()
                  "            WHEN (arapply_fundstype='K') THEN :cash"
                  "            WHEN (arapply_fundstype='W') THEN :wireTransfer"
                  "            WHEN (arapply_fundstype='O') THEN :other"
+                 "            ELSE getFundsTypeName(arapply_fundstype)"
                  "       END AS doctype,"
                  "       CASE WHEN (arapply_source_doctype IN ('C','R')) THEN arapply_source_docnumber"
                  "            WHEN (arapply_source_doctype = 'K') THEN arapply_refnumber"
@@ -650,7 +651,7 @@ bool arOpenItem::sInitializeMemo()
     return false;
   else
     return false;
-   
+
   ar.prepare("INSERT INTO aropen "
     "( aropen_id, aropen_docdate, aropen_duedate, aropen_doctype, "
     "  aropen_docnumber, aropen_curr_id, aropen_open, aropen_posted, aropen_amount ) "
@@ -694,7 +695,7 @@ void arOpenItem::sTaxDetail()
     if (!sInitializeMemo())
       return;
   }
-  
+
   taxDetail newdlg(this, "", true);
   ParameterList params;
 
@@ -707,14 +708,14 @@ void arOpenItem::sTaxDetail()
 
   ar.exec("SELECT getadjustmenttaxtypeid() as taxtype;");
   if(ar.first())
-    params.append("taxtype_id", ar.value("taxtype").toInt());  
-   
+    params.append("taxtype_id", ar.value("taxtype").toInt());
+
   params.append("order_type", "AR");
   params.append("order_id", _aropenid);
   params.append("display_type", "A");
   params.append("subtotal", _amount->localValue());
   params.append("adjustment");
-  if (newdlg.set(params) == NoError)  
+  if (newdlg.set(params) == NoError)
   {
     newdlg.exec();
     XSqlQuery taxq;
@@ -768,4 +769,3 @@ void arOpenItem::sDetermineTaxAmount()
   if (ar.first())
     _tax->setLocalValue(ar.value("tax").toDouble());
 }
-

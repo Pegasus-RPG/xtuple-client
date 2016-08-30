@@ -24,6 +24,7 @@
 #include "mqlutil.h"
 #include "storedProcErrorLookup.h"
 
+// TODO: Query the fundstype table?
 const struct {
   const char * full;
   QString abbr;
@@ -166,10 +167,10 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   }
   else
     _altExchRate->hide();
- 
+
   if(!_metrics->boolean("UseProjects"))
     _project->hide();
- 
+
   _overapplied = false;
   _cashrcptid = -1;
   _posted = false;
