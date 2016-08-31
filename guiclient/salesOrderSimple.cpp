@@ -707,7 +707,7 @@ void salesOrderSimple::sPopulateCustomerInfo(int pCustid)
       _fundsType->clear();
 
       _fundsType->nullStr = tr("On Account");
-      _fundsType->allowNull(_creditLmt > 0.0);
+      _fundsType->allowNull(_creditlmt > 0.0);
       _fundsType->populate("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype WHERE NOT fundstype_creditcard;");
 
       if (cust.value("shiptoid").toInt() != -1)
