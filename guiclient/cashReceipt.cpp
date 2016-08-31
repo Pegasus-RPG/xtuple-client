@@ -118,19 +118,13 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _cc->addColumn(tr("Name"),    _itemColumn, Qt::AlignLeft, true, "ccard_name");
   _cc->addColumn(tr("Expiration Date"),  -1, Qt::AlignLeft, true, "expiration");
 
-  XSqlQuery qryType;
   // Only show credit card funds types if the user can process cc transactions.
   if (_metrics->boolean("CCAccept") && _privileges->check("ProcessCreditCards"))
   {
-    qryType.exec("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype;");
+    _fundsType->populate("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype;");
   } else
   {
-    qryType.exec("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype WHERE NOT fundstype_creditcard;");
-  }
-  while (qryType.next())
-  {
-    const char *fundsTypeame = qryType.value("fundstype_name").toByteArray().data();
-    _fundsType->append(qryType.value("fundstype_id").toInt(), tr(fundsTypeame), qryType.value("fundstype_code").toString());
+    _fundsType->populate("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype WHERE NOT fundstype_creditcard;");
   }
 
   if (!_metrics->boolean("CCAccept") || ! _privileges->check("ProcessCreditCards"))

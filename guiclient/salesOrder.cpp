@@ -287,13 +287,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
 
   _miscChargeAccount->setType(GLCluster::cRevenue | GLCluster::cExpense);
 
-  XSqlQuery qryType;
-  qryType.exec("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype WHERE NOT fundstype_creditcard;");
-  while (qryType.next())
-  {
-    const char *fundsTypeame = qryType.value("fundstype_name").toByteArray().data();
-    _fundsType->append(qryType.value("fundstype_id").toInt(), tr(fundsTypeame), qryType.value("fundstype_code").toString());
-  }
+  _fundsType->populate("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype WHERE NOT fundstype_creditcard;");
 
   _bankaccnt->setType(XComboBox::ARBankAccounts);
   _salescat->setType(XComboBox::SalesCategoriesActive);

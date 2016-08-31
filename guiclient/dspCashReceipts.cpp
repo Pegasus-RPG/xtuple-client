@@ -32,13 +32,7 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char*, Qt::WindowFlags f
   setNewVisible(true);
   setUseAltId(true);
 
-  XSqlQuery qryType;
-  qryType.exec("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype;");
-  while (qryType.next())
-  {
-    const char *fundsTypeame = qryType.value("fundstype_name").toByteArray().data();
-    _fundsType->append(qryType.value("fundstype_id").toInt(), tr(fundsTypeame), qryType.value("fundstype_code").toString());
-  }
+  _fundsType->populate("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype;");
 
   connect(_applications, SIGNAL(toggled(bool)), list(), SLOT(clear()));
 
