@@ -60,6 +60,8 @@ XWidget::XWidget(QWidget * parent, Qt::WindowFlags flags)
   {
     setWindowModality(Qt::ApplicationModal);
   }
+  if(!parent || !parent->isModal())
+    setParent(omfgThis);
 
   _private = new XWidgetPrivate(this);
 }
@@ -77,6 +79,8 @@ XWidget::XWidget(QWidget * parent, const char * name, Qt::WindowFlags flags)
 
   if(name)
     setObjectName(name);
+  if(!parent || !parent->isModal())
+    setParent(omfgThis);
 
   _private = new XWidgetPrivate(this);
 }
