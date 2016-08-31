@@ -1875,7 +1875,8 @@ bool salesOrderSimple::sShipInvoice()
 
 void salesOrderSimple::sHandleFundsType()
 {
-  if (_fundsType->code() == "1")
+  // The _fundsType->nullStr() "On Account" value is set.
+  if (!_fundsType->isValid())
   {
     _cashReceived->setLocalValue(0.0);
     _cashReceived->setEnabled(false);
@@ -1906,8 +1907,8 @@ void salesOrderSimple::sEnterCashPayment()
 
   XSqlQuery cashsave;
 
-  // check for on account
-  if (_fundsType->code() == "1")
+  // The _fundsType->nullStr() "On Account" value is set.
+  if (!_fundsType->isValid())
   {
     sCalculateTotal();
     sCompleteOrder();
