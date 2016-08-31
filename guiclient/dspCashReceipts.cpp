@@ -16,7 +16,6 @@
 
 #include <datecluster.h>
 #include <openreports.h>
-#include <parameterwidget.h>
 #include "arOpenItem.h"
 #include "cashReceipt.h"
 #include "storedProcErrorLookup.h"
@@ -32,37 +31,21 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char*, Qt::WindowFlags f
   setMetaSQLOptions("cashReceipts", "detail");
   setNewVisible(true);
   setUseAltId(true);
-  setParameterWidgetVisible(false);
-  
-  QString qryType = QString("SELECT  1, '%1', 'K' UNION "
-                            "SELECT  2, '%2', 'C' UNION "
-                            "SELECT  3, '%3', 'T'  UNION "
-                            "SELECT  4, '%4', 'M' UNION "
-                            "SELECT  5, '%5', 'V' UNION "
-                            "SELECT  6, '%6', 'A' UNION "
-                            "SELECT  7, '%7', 'D' UNION "
-                            "SELECT  8, '%8', 'O' UNION "
-                            "SELECT  9, '%9', 'W' UNION "
-                            "SELECT  10, '%10', 'R'")
-  .arg(tr("Cash"))
-  .arg(tr("Check"))
-  .arg(tr("Cert. Check"))
-  .arg(tr("Master Card"))
-  .arg(tr("Visa"))
-  .arg(tr("AmEx"))
-  .arg(tr("Discover"))
-  .arg(tr("Other C/C"))
-  .arg(tr("Wire Trans."))
-  .arg(tr("Other"));
 
-  _fundsType->populate(qryType);
+  XSqlQuery qryType;
+  qryType.exec("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype;");
+  while (qryType.next())
+  {
+    const char *fundsTypeame = qryType.value("fundstype_name").toByteArray().data();
+    _fundsType->append(qryType.value("fundstype_id").toInt(), tr(fundsTypeame), qryType.value("fundstype_code").toString());
+  }
 
   connect(_applications, SIGNAL(toggled(bool)), list(), SLOT(clear()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
   _dates->setStartDate(QDate().currentDate().addDays(-90));
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
-  
+
   list()->addColumn(tr("Number"),      _orderColumn,    Qt::AlignLeft, true,  "cashrcpt_number" );
   list()->addColumn(tr("Source"),      _itemColumn,     Qt::AlignLeft,   true,  "source" );
   list()->addColumn(tr("Cust. #"),     _orderColumn,    Qt::AlignLeft, true,  "cust_number" );
@@ -74,15 +57,16 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char*, Qt::WindowFlags f
   list()->addColumn(tr("Amount"),      _moneyColumn, Qt::AlignRight,  true,  "applied"  );
   list()->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
   list()->addColumn(tr("Base Amount"), _moneyColumn, Qt::AlignRight,  true,  "base_applied"  );
-  
+
   newAction()->setEnabled(_privileges->check("MaintainCashReceipts"));
 }
 
 bool dspCashReceipts::setParams(ParameterList &pParams)
 {
-  if (!display::setParams(pParams))
+  if (!display::setParams(pParams)) {
     return false;
-  
+  }
+
   if (!_dates->startDate().isValid())
   {
     QMessageBox::critical( this, tr("Enter Start Date"),
@@ -120,7 +104,7 @@ bool dspCashReceipts::setParams(ParameterList &pParams)
   pParams.append("unapplied", tr("Customer Deposit"));
   pParams.append("unposted", tr("Unposted"));
   pParams.append("voided", tr("Voided"));
-    
+
   if (_applications->isChecked())
   {
     list()->hideColumn("cashrcpt_number");
@@ -130,49 +114,16 @@ bool dspCashReceipts::setParams(ParameterList &pParams)
     list()->showColumn("cashrcpt_number");
   pParams.append("includeFormatted");
 
-  bool valid;
-  QVariant param;
-  
-  param = pParams.value("fundstype_id", &valid);
-  if (valid)
-  {
-    int typid = param.toInt();
-    QString type;
-    
-    if (typid == 1)
-      type = "K";
-    else if (typid ==2)
-      type = "C";
-    else if (typid ==3)
-      type = "T";
-    else if (typid ==4)
-      type = "M";
-    else if (typid ==5)
-      type = "V";
-    else if (typid ==6)
-      type = "A";
-    else if (typid ==7)
-      type = "D";
-    else if (typid ==8)
-      type = "R";
-    else if (typid ==9)
-      type = "W";
-    else if (typid ==10)
-      type = "O";
-    
-    pParams.append("fundstype", type);
-  }
-  
   return true;
 }
 
 void dspCashReceipts::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem = 0;
-  
+
   if (list()->id() > -1)
   {
-    // Cash Receipt              
+    // Cash Receipt
     if (!list()->currentItem()->rawValue("posted").toBool() && !list()->currentItem()->rawValue("voided").toBool())
     {
       menuItem = pMenu->addAction(tr("Edit Cash Receipt..."), this, SLOT(sEditCashrcpt()));
@@ -183,9 +134,9 @@ void dspCashReceipts::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
     menuItem->setEnabled(_privileges->check("ViewCashReceipts") || _privileges->check("MaintainCashReceipts"));
 
     if (!list()->currentItem()->rawValue("voided").toBool())
-    {      
+    {
       if (!list()->currentItem()->rawValue("posted").toBool())
-      {   
+      {
         menuItem = pMenu->addAction(tr("Post Cash Receipt"), this, SLOT(sPostCashrcpt()));
         menuItem->setEnabled(_privileges->check("PostCashReceipts"));
       }
@@ -209,7 +160,7 @@ void dspCashReceipts::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 }
 
 void dspCashReceipts::sEditAropen()
-{   
+{
   ParameterList params;
   params.append("mode", "edit");
   params.append("aropen_id", list()->currentItem()->id("target"));
@@ -248,7 +199,7 @@ void dspCashReceipts::sNewCashrcpt()
 }
 
 void dspCashReceipts::sEditCashrcpt()
-{    
+{
   ParameterList params;
   params.append("mode", "edit");
   params.append("cashrcpt_id", list()->currentItem()->id("source"));
@@ -308,7 +259,7 @@ void dspCashReceipts::sPostCashrcpt()
     tx.exec("ROLLBACK;");
     return;
   }
-    
+
   tx.exec("COMMIT;");
   omfgThis->sCashReceiptsUpdated(list()->currentItem()->id("source"), true);
   sFillList();
@@ -323,7 +274,7 @@ void dspCashReceipts::sReversePosted()
                                      "to do this?"),
                                      QMessageBox::Yes | QMessageBox::Default,
                                      QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
-  {                     
+  {
     dspReversePosted.prepare("SELECT reverseCashReceipt(:cashrcpt_id, fetchJournalNumber('C/R')) AS result;");
     dspReversePosted.bindValue(":cashrcpt_id", list()->currentItem()->id("source"));
     dspReversePosted.exec();

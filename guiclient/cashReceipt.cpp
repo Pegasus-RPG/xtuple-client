@@ -24,23 +24,6 @@
 #include "mqlutil.h"
 #include "storedProcErrorLookup.h"
 
-const struct {
-  const char * full;
-  QString abbr;
-  bool    cc;
-} _fundsTypes[] = {
-  { QT_TRANSLATE_NOOP("cashReceipt", "Check"),            "C", false },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Certified Check"),  "T", false },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Master Card"),      "M", true  },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Visa"),             "V", true  },
-  { QT_TRANSLATE_NOOP("cashReceipt", "American Express"), "A", true  },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Discover Card"),    "D", true  },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Other Credit Card"),"O", true  },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Cash"),             "K", false },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Wire Transfer"),    "W", false },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Other"),            "R", false }
-};
-
 cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
@@ -135,13 +118,19 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _cc->addColumn(tr("Name"),    _itemColumn, Qt::AlignLeft, true, "ccard_name");
   _cc->addColumn(tr("Expiration Date"),  -1, Qt::AlignLeft, true, "expiration");
 
-  for (unsigned int i = 0; i < sizeof(_fundsTypes) / sizeof(_fundsTypes[1]); i++)
+  XSqlQuery qryType;
+  // Only show credit card funds types if the user can process cc transactions.
+  if (_metrics->boolean("CCAccept") && _privileges->check("ProcessCreditCards"))
   {
-    // only show credit card funds types if the user can process cc transactions
-    if (! _fundsTypes[i].cc ||
-        (_fundsTypes[i].cc && _metrics->boolean("CCAccept") &&
-         _privileges->check("ProcessCreditCards")) )
-      _fundsType->append(i, tr(_fundsTypes[i].full), _fundsTypes[i].abbr);
+    qryType.exec("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype;");
+  } else
+  {
+    qryType.exec("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype WHERE NOT fundstype_creditcard;");
+  }
+  while (qryType.next())
+  {
+    const char *fundsTypeame = qryType.value("fundstype_name").toByteArray().data();
+    _fundsType->append(qryType.value("fundstype_id").toInt(), tr(fundsTypeame), qryType.value("fundstype_code").toString());
   }
 
   if (!_metrics->boolean("CCAccept") || ! _privileges->check("ProcessCreditCards"))
@@ -166,10 +155,10 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   }
   else
     _altExchRate->hide();
- 
+
   if(!_metrics->boolean("UseProjects"))
     _project->hide();
- 
+
   _overapplied = false;
   _cashrcptid = -1;
   _posted = false;
@@ -846,9 +835,17 @@ bool cashReceipt::save(bool partial)
 
   if (!partial)
   {
-    if (!_ccEdit &&
-        (_fundsType->code() == "A" || _fundsType->code() == "D" ||
-         _fundsType->code() == "M" || _fundsType->code() == "V"))
+    XSqlQuery isCreditCardQry;
+    bool isCreditCard = false;
+    isCreditCardQry.prepare("SELECT isCreditCardFundsType(:fundstypecode) AS iscreditcard;");
+    isCreditCardQry.bindValue(":fundstypecode", _fundsType->code());
+    isCreditCardQry.exec();
+    if (isCreditCardQry.first())
+    {
+      isCreditCard = isCreditCardQry.value("iscreditcard").toBool();
+    }
+
+    if (!_ccEdit && isCreditCard)
     {
       if (_cc->id() <= -1)
       {
@@ -1216,8 +1213,15 @@ void cashReceipt::setCreditCard()
   if (! _metrics->boolean("CCAccept"))
     return;
 
-  if (! _fundsTypes[_fundsType->id()].cc)
-    return;
+  XSqlQuery isCreditCardQry;
+  isCreditCardQry.prepare("SELECT isCreditCardFundsType(:fundstypecode) AS iscreditcard;");
+  isCreditCardQry.bindValue(":fundstypecode", _fundsType->code());
+  isCreditCardQry.exec();
+  if (isCreditCardQry.first())
+  {
+    if (!isCreditCardQry.value("iscreditcard").toBool())
+      return;
+  }
 
   XSqlQuery bankq;
   bankq.prepare("SELECT COALESCE(ccbank_bankaccnt_id, -1) AS ccbank_bankaccnt_id"
