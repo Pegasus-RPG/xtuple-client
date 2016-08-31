@@ -713,18 +713,9 @@ void salesOrderSimple::sPopulateCustomerInfo(int pCustid)
 
       _fundsType->clear();
 
-      if (_creditlmt > 0.0)
-      {
-        _fundsType->append(0, QT_TRANSLATE_NOOP("cashReceipt", "On Account"), "1");
-      }
-
-      XSqlQuery qryType;
-      qryType.exec("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype WHERE NOT fundstype_creditcard;");
-      while (qryType.next())
-      {
-        const char *fundsTypeame = qryType.value("fundstype_name").toByteArray().data();
-        _fundsType->append(qryType.value("fundstype_id").toInt(), tr(fundsTypeame), qryType.value("fundstype_code").toString());
-      }
+      _fundsType->setNullStr(tr("On Account"));
+      _fundsType->setAllowNull(_creditlmt > 0.0);
+      _fundsType->populate("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype WHERE NOT fundstype_creditcard;");
 
       if (cust.value("shiptoid").toInt() != -1)
         _shipTo->setId(cust.value("shiptoid").toInt());
@@ -1920,7 +1911,8 @@ bool salesOrderSimple::sShipInvoice()
 
 void salesOrderSimple::sHandleFundsType()
 {
-  if (_fundsType->code() == "1")
+  // The _fundsType->nullStr() "On Account" value is set.
+  if (!_fundsType->isValid())
   {
     _cashReceived->setLocalValue(0.0);
     _cashReceived->setEnabled(false);
@@ -1951,8 +1943,8 @@ void salesOrderSimple::sEnterCashPayment()
 
   XSqlQuery cashsave;
 
-  // check for on account
-  if (_fundsType->code() == "1")
+  // The _fundsType->nullStr() "On Account" value is set.
+  if (!_fundsType->isValid())
   {
     sCalculateTotal();
     sCompleteOrder();
