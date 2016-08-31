@@ -78,7 +78,7 @@ void dspWoHistoryByNumber::sView()
   params.append("mode", "view");
   params.append("wo_id", list()->id());
 
-  workOrder *newdlg = new workOrder();
+  workOrder *newdlg = new workOrder(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
