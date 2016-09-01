@@ -39,16 +39,10 @@ priceList::priceList(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _price->addColumn(tr("Percent"),         _prcntColumn, Qt::AlignRight, true, "discountpercent");
   _price->addColumn(tr("Fixed Amt."),      _priceColumn, Qt::AlignRight, true, "discountfixed");
   _price->addColumn(tr("Type"),             _itemColumn, Qt::AlignLeft,  true, "price_type");
-  _price->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,  true, "currency");
-  _price->addColumn(tr("Price (in Base)"), _priceColumn, Qt::AlignRight, true, "price");
+  _price->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "currency");
+  _price->addColumn(tr("Price (in Base)"), _priceColumn, Qt::AlignRight, !omfgThis->singleCurrency(), "price");
   // column title reset in priceList::set
   _price->addColumn(tr("Method"), 0, Qt::AlignRight, false, "method");
-
-  if (omfgThis->singleCurrency())
-  {
-    _price->hideColumn(_price->column("price"));
-    _price->hideColumn(_price->column("currency"));
-  }
 
   _shiptoid = -1;
   _shiptonum = "";

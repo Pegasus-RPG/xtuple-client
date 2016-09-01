@@ -49,9 +49,6 @@ cashReceiptsEditList::cashReceiptsEditList(QWidget* parent, const char* name, Qt
   _cashrcpt->addColumn(tr("Amount"),        _bigMoneyColumn, Qt::AlignRight, true, "cashrcpt_amount");
   _cashrcpt->addColumn(tr("Currency"),      _currencyColumn, Qt::AlignLeft,  true, "currabbr");
 
-  if (omfgThis->singleCurrency())
-      _cashrcpt->hideColumn("cashrcpt_curr_id");
-
   if (_privileges->check("PostCashReceipts"))
     connect(_cashrcpt, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
     

@@ -70,17 +70,11 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   _itemcost->addColumn(tr("Element"),     -1,           Qt::AlignLeft,   true, "costelem_type");
   _itemcost->addColumn(tr("Lower"),       _costColumn,  Qt::AlignCenter, true, "itemcost_lowlevel" );
   _itemcost->addColumn(tr("Std. Cost"),   _costColumn,  Qt::AlignRight,  true, "itemcost_stdcost"  );
-  _itemcost->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,true, "baseCurr" );
+  _itemcost->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,!omfgThis->singleCurrency(), "baseCurr" );
   _itemcost->addColumn(tr("Posted"),      _dateColumn,  Qt::AlignCenter, true, "itemcost_posted" );
   _itemcost->addColumn(tr("Act. Cost"),   _costColumn,  Qt::AlignRight,  true, "itemcost_actcost"  );
-  _itemcost->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,true, "costCurr" );
+  _itemcost->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,!omfgThis->singleCurrency(), "costCurr" );
   _itemcost->addColumn(tr("Updated"),     _dateColumn,  Qt::AlignCenter, true, "itemcost_updated" );
-
-  if (omfgThis->singleCurrency())
-  {
-      _itemcost->hideColumn(3);
-      _itemcost->hideColumn(6);
-  }
 
   _invuomid=-1;
   _parentitemid=0;

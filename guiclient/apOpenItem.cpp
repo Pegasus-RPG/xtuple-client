@@ -48,12 +48,9 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::Window
   _apapply->addColumn( tr("Doc. #"),               -1, Qt::AlignLeft,  true, "docnumber");
   _apapply->addColumn( tr("Apply Date"),  _dateColumn, Qt::AlignCenter,true, "apapply_postdate");
   _apapply->addColumn( tr("Amount"),     _moneyColumn, Qt::AlignRight, true, "apapply_amount");
-  _apapply->addColumn( tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
+  _apapply->addColumn( tr("Currency"),_currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "currabbr");
 
   _printOnPost->setVisible(false);
-
-  if (omfgThis->singleCurrency())
-      _apapply->hideColumn("currabbr");
 
   _terms->setType(XComboBox::APTerms);
   _journalNumber->setEnabled(false);
