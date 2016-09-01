@@ -894,11 +894,17 @@ void GUIClient::showEvent(QShowEvent *event)
     // We only want the scripting to work on the NEO menu
     // START script code
       XSqlQuery sq;
-      sq.prepare("SELECT script_source, script_order"
-              "  FROM script"
-              " WHERE((script_name=:script_name)"
-              "   AND (script_enabled))"
-              " ORDER BY script_order;");
+      sq.prepare("SELECT script_source "
+                 "FROM (SELECT sequence_value, "
+                 "(SELECT regexp_split_to_array(buildsearchpath(), ','))[sequence_value] AS pkg "
+                 "FROM sequence) ord "
+                 "JOIN script "
+                 "ON ((pkg || '.pkgscript')=tableoid::regclass::text "
+                 "OR (pkg='public' AND tableoid::regclass::text='script')) "
+                 "WHERE((script_name=:script_name)"
+                 "AND (script_enabled))"
+                 "ORDER BY script_order, sequence_value;");
+
       sq.bindValue(":script_name", "initMenu");
       sq.exec();
       QScriptEngine * engine = 0;
