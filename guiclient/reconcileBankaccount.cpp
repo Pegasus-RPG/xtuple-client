@@ -506,9 +506,7 @@ void reconcileBankaccount::sImport()
 
   // import the reconciliation file
   importData *newdlg = new importData();
-  newdlg->setWindowModality(Qt::WindowModal);
-  newdlg->setParent(NULL);
-  omfgThis->handleNewWindow(newdlg);
+  omfgThis->handleNewWindow(newdlg, Qt::ApplicationModal);
 }
 
 void reconcileBankaccount::sAddAdjustment()
@@ -519,10 +517,8 @@ void reconcileBankaccount::sAddAdjustment()
   params.append("bankaccnt_id", _bankaccnt->id());
 
   bankAdjustment *newdlg = new bankAdjustment();
-  newdlg->setWindowModality(Qt::WindowModal);
-  newdlg->setParent(NULL);
   newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  omfgThis->handleNewWindow(newdlg, Qt::ApplicationModal);
 }
 
 void reconcileBankaccount::sReceiptsToggleCleared()
