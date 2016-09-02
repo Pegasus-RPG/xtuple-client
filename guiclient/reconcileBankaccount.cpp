@@ -507,6 +507,7 @@ void reconcileBankaccount::sImport()
   // import the reconciliation file
   importData *newdlg = new importData();
   newdlg->setWindowModality(Qt::WindowModal);
+  newdlg->setParent(NULL);
   omfgThis->handleNewWindow(newdlg);
 }
 
@@ -519,6 +520,7 @@ void reconcileBankaccount::sAddAdjustment()
 
   bankAdjustment *newdlg = new bankAdjustment();
   newdlg->setWindowModality(Qt::WindowModal);
+  newdlg->setParent(NULL);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
