@@ -827,7 +827,7 @@ bool cashReceipt::save(bool partial)
   }
   _received->setCurrencyDisabled(true);
 
-  if (!partial)
+  if (!partial && _metrics->boolean("CCAccept") && _privileges->check("ProcessCreditCards"))
   {
     XSqlQuery isCreditCardQry;
     bool isCreditCard = false;
