@@ -814,7 +814,7 @@ void opportunity::sConvertQuote()
         params.append("mode", "edit");
         params.append("sohead_id", soheadid);
     
-        salesOrder *newdlg = new salesOrder();
+        salesOrder *newdlg = new salesOrder(this);
         newdlg->setWindowModality(Qt::WindowModal);
         newdlg->set(params);
         omfgThis->handleNewWindow(newdlg);
@@ -842,7 +842,7 @@ void opportunity::sNewQuote()
     params.append("cust_id", _prospectid);
   params.append("ophead_id", _opheadid);
 
-  salesOrder *newdlg = new salesOrder();
+  salesOrder *newdlg = new salesOrder(this);
   newdlg->setWindowModality(Qt::WindowModal);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
@@ -893,7 +893,7 @@ void opportunity::sEditQuote()
   params.append("mode", "editQuote");
   params.append("quhead_id", _salesList->id());
     
-  salesOrder *newdlg = new salesOrder();
+  salesOrder *newdlg = new salesOrder(this);
   newdlg->setWindowModality(Qt::WindowModal);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
@@ -906,7 +906,7 @@ void opportunity::sViewQuote()
   params.append("mode", "viewQuote");
   params.append("quhead_id", _salesList->id());
     
-  salesOrder *newdlg = new salesOrder();
+  salesOrder *newdlg = new salesOrder(this);
   newdlg->setWindowModality(Qt::WindowModal);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
@@ -963,7 +963,7 @@ void opportunity::sNewSalesOrder()
   params.append("cust_id", _custid);
   params.append("ophead_id", _opheadid);
 
-  salesOrder *newdlg = new salesOrder();
+  salesOrder *newdlg = new salesOrder(this);
   newdlg->setWindowModality(Qt::WindowModal);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
@@ -1014,7 +1014,7 @@ void opportunity::sEditSalesOrder()
   params.append("mode", "edit");
   params.append("sohead_id", _salesList->id());
     
-  salesOrder *newdlg = new salesOrder();
+  salesOrder *newdlg = new salesOrder(this);
   newdlg->setWindowModality(Qt::WindowModal);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
@@ -1027,7 +1027,7 @@ void opportunity::sViewSalesOrder()
   params.append("mode", "view");
   params.append("sohead_id", _salesList->id());
     
-  salesOrder *newdlg = new salesOrder();
+  salesOrder *newdlg = new salesOrder(this);
   newdlg->setWindowModality(Qt::WindowModal);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);

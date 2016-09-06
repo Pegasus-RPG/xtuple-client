@@ -1337,7 +1337,6 @@ QWidget *ScriptToolbox::openWindow(QString pname, QWidget *parent, Qt::WindowMod
 
     window->setCentralWidget(ui);
     window->setWindowTitle(ui->windowTitle());
-    window->setWindowModality(modality);
     window->resize(size);
 
     if (ui->inherits("QDialog"))
@@ -1358,12 +1357,12 @@ QWidget *ScriptToolbox::openWindow(QString pname, QWidget *parent, Qt::WindowMod
         qWarning("Could not find the script engine to embed a dialog inside "
                "a placeholder window");
 
-      omfgThis->handleNewWindow(window);
+      omfgThis->handleNewWindow(window, modality);
       returnVal = ui;
     }
     else
     {
-      omfgThis->handleNewWindow(window);
+      omfgThis->handleNewWindow(window, modality);
       returnVal = window;
     }
     _lastWindow = window;

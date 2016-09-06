@@ -59,7 +59,7 @@ void scripts::sNew()
   scriptEditor *newdlg = new scriptEditor();
   newdlg->set(params);
 
-  omfgThis->handleNewWindow(newdlg);
+  omfgThis->handleNewWindow(newdlg, Qt::ApplicationModal);
   connect(newdlg, SIGNAL(destroyed()), this, SLOT(sFillList()));
 }
 
@@ -72,7 +72,7 @@ void scripts::sEdit()
   scriptEditor *newdlg = new scriptEditor();
   newdlg->set(params);
 
-  omfgThis->handleNewWindow(newdlg);
+  omfgThis->handleNewWindow(newdlg, Qt::ApplicationModal);
   connect(newdlg, SIGNAL(destroyed()), this, SLOT(sFillList()));
 }
 
