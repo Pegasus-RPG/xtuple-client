@@ -895,17 +895,13 @@ void GUIClient::showEvent(QShowEvent *event)
     // START script code
       XSqlQuery sq;
       sq.prepare("SELECT script_source "
-                 "FROM (SELECT sequence_value, "
-                 "(SELECT regexp_split_to_array(buildsearchpath(), ','))[sequence_value] AS pkg "
-                 "FROM sequence) ord "
-                 "JOIN script "
-                 "ON ((pkg || '.pkgscript')=tableoid::regclass::text "
-                 "OR (pkg='public' AND tableoid::regclass::text='script')) "
-                 "WHERE((script_name=:script_name)"
-                 "AND (script_enabled))"
-                 "ORDER BY script_order, sequence_value;");
-
-      sq.bindValue(":script_name", "initMenu");
+                 "  FROM script "
+                 "JOIN (SELECT regexp_split_to_table AS pkgname, row_number() over () AS seq "
+                 "  FROM regexp_split_to_table(buildsearchpath(), ',')) AS path "
+                 "ON pkgname || '.pkgscript' = tableoid::regclass::text "
+                 "OR (pkgname = 'public' AND tableoid::regclass::text = 'script') "
+                 " WHERE script_enabled AND script_name = 'initMenu' "
+                 "ORDER BY script_order, seq;");
       sq.exec();
       QScriptEngine * engine = 0;
       QScriptEngineDebugger * debugger = 0;
