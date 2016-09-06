@@ -43,11 +43,8 @@ unappliedARCreditMemos::unappliedARCreditMemos(QWidget* parent, const char* name
   _aropen->addColumn( tr("Customer"), -1,              Qt::AlignLeft,   true,  "cust_name"   );
   _aropen->addColumn( tr("Amount"),   _moneyColumn,    Qt::AlignRight,  true,  "aropen_amount"  );
   _aropen->addColumn( tr("Applied"),  _moneyColumn,    Qt::AlignRight,  true,  "applied"  );
-  _aropen->addColumn( tr("Balance"),  _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
+  _aropen->addColumn( tr("Balance"),  _moneyColumn,    Qt::AlignRight,  !omfgThis->singleCurrency(),  "balance"  );
   _aropen->addColumn( tr("Currency"), _currencyColumn, Qt::AlignLeft,   true,  "currAbbr" );
-
-  if (omfgThis->singleCurrency())
-    _aropen->hideColumn(5);
 
   if (_privileges->check("ApplyARMemos"))
     connect(_aropen, SIGNAL(valid(bool)), _apply, SLOT(setEnabled(bool)));

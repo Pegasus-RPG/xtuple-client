@@ -43,11 +43,8 @@ unappliedAPCreditMemos::unappliedAPCreditMemos(QWidget* parent, const char* name
   _apopen->addColumn( tr("Applied"),      _moneyColumn,    Qt::AlignRight,  true,  "apopen_paid"  );
   _apopen->addColumn( tr("Applied (%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight, false, "base_applied"  );
   _apopen->addColumn( tr("Balance"),      _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
-  _apopen->addColumn( tr("Currency"),     _currencyColumn, Qt::AlignCenter, true,  "currAbbr" );
+  _apopen->addColumn( tr("Currency"),     _currencyColumn, Qt::AlignCenter, !omfgThis->singleCurrency(),  "currAbbr" );
   _apopen->addColumn( tr("Balance (%1)").arg(CurrDisplay::baseCurrAbbr()), _bigMoneyColumn, Qt::AlignRight, true, "basebalance");
-
-  if (omfgThis->singleCurrency())
-    _apopen->hideColumn("currAbbr");
 
   if (_privileges->check("ApplyAPMemos"))
     connect(_apopen, SIGNAL(valid(bool)), _apply, SLOT(setEnabled(bool)));

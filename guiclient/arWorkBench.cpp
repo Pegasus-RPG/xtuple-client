@@ -96,7 +96,7 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WindowFlags fl)
 
   _cashrcpt->addColumn(tr("Cust. #"),       _bigMoneyColumn, Qt::AlignLeft,  true, "cust_number");                                                                
   _cashrcpt->addColumn(tr("Name"),                       -1, Qt::AlignLeft,  true, "cust_name"); 
-  _cashrcpt->addColumn(tr("Check/Doc. #"),     _orderColumn, Qt::AlignLeft,  true, "cashrcpt_docnumber");
+  _cashrcpt->addColumn(tr("Check/Doc. #"),     _orderColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "cashrcpt_docnumber");
   _cashrcpt->addColumn(tr("Bank Account"),     _orderColumn, Qt::AlignLeft,  true, "bankaccnt_name");
   _cashrcpt->addColumn(tr("Dist. Date"),        _dateColumn, Qt::AlignCenter,true, "cashrcpt_distdate");
   _cashrcpt->addColumn(tr("Funds Type"),    _bigMoneyColumn, Qt::AlignCenter,true, "cashrcpt_fundstype");
@@ -119,9 +119,6 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WindowFlags fl)
   if(_privileges->check("PostCashReceipts"))
     connect(_cashrcpt, SIGNAL(itemSelected(int)), _editCashrcpt, SLOT(animateClick()));
   connect(omfgThis, SIGNAL(cashReceiptsUpdated(int, bool)), this, SLOT(sFillList()));
-
-  if (omfgThis->singleCurrency())
-    _cashrcpt->hideColumn(2);
 
   if (!_metrics->boolean("CCAccept") || !_privileges->check("ProcessCreditCards"))
     _tab->removeTab(_tab->indexOf(_creditCardTab));

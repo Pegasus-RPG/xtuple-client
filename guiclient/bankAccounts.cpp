@@ -37,10 +37,7 @@ bankAccounts::bankAccounts(QWidget* parent, const char* name, Qt::WindowFlags fl
   _bankaccnt->addColumn(tr("Type"),        _dateColumn, Qt::AlignCenter,true, "type");
   _bankaccnt->addColumn(tr("A/P"),           _ynColumn, Qt::AlignCenter,true, "bankaccnt_ap");
   _bankaccnt->addColumn(tr("A/R"),           _ynColumn, Qt::AlignCenter,true, "bankaccnt_ar");
-  _bankaccnt->addColumn(tr("Currency"),_currencyColumn, Qt::AlignCenter,true, "currabbr");
-
-  if (omfgThis->singleCurrency())
-      _bankaccnt->hideColumn("currabbr");
+  _bankaccnt->addColumn(tr("Currency"),_currencyColumn, Qt::AlignCenter,!omfgThis->singleCurrency(), "currabbr");
 
   if (_privileges->check("MaintainBankAccounts"))
   {
