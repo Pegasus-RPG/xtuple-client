@@ -90,10 +90,21 @@ void splitReceipt::sSplit()
   XSqlQuery splitSplit;
   int result = 0;
 
+  splitSplit.prepare("UPDATE recv SET recv_freight=:freight, recv_date=:date WHERE recv_id=:recvid;");
+  splitSplit.bindValue(":recvid",	_recvid);
+  splitSplit.bindValue(":freight",	_freight->localValue());
+  splitSplit.bindValue(":date",		_receiptDate->date());
+  splitSplit.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Receipt Information"),
+                                splitSplit, __FILE__, __LINE__))
+  {
+    return;
+  }
+
   splitSplit.prepare("SELECT splitReceipt(:recvid, :qty, :freight) AS result;");
   splitSplit.bindValue(":recvid",	_recvid);
   splitSplit.bindValue(":qty",		_toSplit->toDouble());
-  splitSplit.bindValue(":freight",	_freight->localValue());
+  splitSplit.bindValue(":freight",	_freightSplit->localValue());
   splitSplit.exec();
   if (splitSplit.first())
   {

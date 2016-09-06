@@ -131,9 +131,6 @@ to be bound by its terms.</comment>
      </item>
      <item row="0" column="1">
       <widget class="DLineEdit" name="_receiptDate">
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
       </widget>
      </item>
      <item row="1" column="0">
@@ -171,9 +168,6 @@ to be bound by its terms.</comment>
      </item>
      <item row="1" column="3">
       <widget class="CurrCluster" name="_freight">
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
        <property name="currencyEditable" stdset="0">
         <bool>false</bool>
        </property>
