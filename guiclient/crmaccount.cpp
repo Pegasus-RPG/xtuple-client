@@ -516,6 +516,14 @@ void crmaccount::sSave()
     return;
   }
 
+  disconnect(omfgThis, SIGNAL(customersUpdated(int, bool)), this, SLOT(sUpdateRelationships()));
+  disconnect(omfgThis, SIGNAL(employeeUpdated(int)), this, SLOT(sUpdateRelationships()));
+  disconnect(omfgThis, SIGNAL(prospectsUpdated()),   this, SLOT(sUpdateRelationships()));
+  disconnect(omfgThis, SIGNAL(salesRepUpdated(int)), this, SLOT(sUpdateRelationships()));
+  disconnect(omfgThis, SIGNAL(taxAuthsUpdated(int)), this, SLOT(sUpdateRelationships()));
+  disconnect(omfgThis, SIGNAL(vendorsUpdated()),     this, SLOT(sUpdateRelationships()));
+  disconnect(omfgThis, SIGNAL(userUpdated(QString)), this, SLOT(sUpdateRelationships()));
+
   omfgThis->sCrmAccountsUpdated(_crmacctId);
   omfgThis->sCustomersUpdated(-1, true);
   omfgThis->sEmployeeUpdated(-1);
