@@ -357,7 +357,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-	  _transType = cEdit;
+      _transType = cEdit;
 
       param = pParams.value("cashrcpt_id", &valid);
       if (valid)
@@ -438,10 +438,18 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       disconnect(_cashrcptmisc, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
     }
 
-    // if this cash receipt was by credit card cash then prevent changes
-    _ccEdit = (_mode == cEdit) &&
-	      (_origFunds == "A" || _origFunds == "D" ||
-	       _origFunds == "M" || _origFunds == "V");
+    // If this cash receipt was by an external processor transaction then prevent changes.
+    XSqlQuery isExternalQry;
+    bool isExternal = false;
+    isExternalQry.prepare("SELECT isExternalFundsType(:fundstypecode) AS isexternal;");
+    isExternalQry.bindValue(":fundstypecode", _origFunds);
+    isExternalQry.exec();
+    if (isExternalQry.first())
+    {
+      isExternal = isExternalQry.value("isexternal").toBool();
+    }
+
+    _ccEdit = (_mode == cEdit) && (isExternal);
 
     if(_ccEdit)
     {
@@ -815,7 +823,7 @@ bool cashReceipt::save(bool partial)
                           tr("<p>This transaction is specified in %1 while the "
                              "Bank Account is specified in %2. Do you wish to "
                              "convert at the current Exchange Rate?"
-			     "<p>If not, click NO "
+                             "<p>If not, click NO "
                              "and change the Bank Account in the POST TO field.")
                           .arg(_received->currAbbr())
                           .arg(_bankaccnt_currAbbr),
@@ -861,24 +869,24 @@ bool cashReceipt::save(bool partial)
       _save->setEnabled(false);
       int ccpayid = -1;
       QString neworder = _docNumber->text().isEmpty() ?
-	  	      QString::number(_cashrcptid) : _docNumber->text();
+                           QString::number(_cashrcptid) : _docNumber->text();
       QString reforder = neworder; // 2 sep variables because they're passed by ref
       int returnVal = cardproc->charge(_cc->id(),
-				     _CCCVV->text(),
-				     _received->localValue(),
-				     0, false, 0, 0,
-				     _received->id(),
-				     neworder, reforder, ccpayid,
-				     QString("cashrcpt"), _cashrcptid);
+                                       _CCCVV->text(),
+                                       _received->localValue(),
+                                       0, false, 0, 0,
+                                       _received->id(),
+                                       neworder, reforder, ccpayid,
+                                       QString("cashrcpt"), _cashrcptid);
       if (returnVal < 0)
         QMessageBox::critical(this, tr("Credit Card Processing Error"),
-		  	    cardproc->errorMsg());
+                              cardproc->errorMsg());
       else if (returnVal > 0)
         QMessageBox::warning(this, tr("Credit Card Processing Warning"),
-			   cardproc->errorMsg());
+                             cardproc->errorMsg());
       else if (! cardproc->errorMsg().isEmpty())
         QMessageBox::information(this, tr("Credit Card Processing Note"),
-			   cardproc->errorMsg());
+                                 cardproc->errorMsg());
 
       _save->setEnabled(true);
       if (returnVal < 0)
@@ -1158,6 +1166,8 @@ void cashReceipt::populate()
     sFillApplyList();
     sFillMiscList();
     setCreditCard();
+
+    emit populated();
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Cash Receipt Information"),
                                 cashpopulate, __FILE__, __LINE__))
