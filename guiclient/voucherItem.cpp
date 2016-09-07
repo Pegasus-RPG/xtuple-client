@@ -64,12 +64,6 @@ voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::Wind
   _uninvoiced->addColumn(tr("Qty."),           _qtyColumn,  Qt::AlignRight,  true, "qty");
   _uninvoiced->addColumn(tr("Unit Price"),     _moneyColumn,Qt::AlignRight,  true, "unitprice");
   _uninvoiced->addColumn(tr("Tagged"),         _ynColumn,   Qt::AlignCenter, true, "f_tagged");
-  
-  _rejectedMsg = tr("The application has encountered an error and must "
-                    "stop editing this Voucher Item.\n%1");
-
-  _inTransaction = true;
-  voucherItem.exec("BEGIN;"); //Lot's of things can happen in here that can cause problems if cancelled out.  Let's make it easy to roll it back.
 }
 
 voucherItem::~voucherItem()
@@ -247,6 +241,25 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       _tax->clear();
   }
 
+  //Reset recv table in case application previously closed without reject or save
+
+  setVoucher.prepare( "UPDATE recv "
+                      "SET recv_vohead_id=CASE WHEN (recv_voitem_id IS NULL) THEN NULL ELSE :vohead_id END "
+                      "WHERE ( (NOT recv_invoiced) "
+                      "AND     (recv_posted) "
+                      "AND     ((recv_vohead_id IS NULL) OR (recv_vohead_id=:vohead_id)) "
+                      "AND     (recv_order_type='PO') "
+                      "AND     (recv_orderitem_id=:poitem_id) );" );
+  setVoucher.bindValue(":vohead_id", _voheadid);
+  setVoucher.bindValue(":poitem_id", _poitemid);
+  setVoucher.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Voucher Information"),
+                                                setVoucher, __FILE__, __LINE__))
+  {
+    reject();
+    return UndefinedError;
+  }
+
   sFillList();
   _saved = true;
   return NoError;
@@ -325,16 +338,43 @@ void voucherItem::sSave()
   }
 
   // Update the qty vouchered
-  voucherSave.prepare( "UPDATE voitem "
-             "SET voitem_close=:voitem_close,"
-             "    voitem_freight=:voitem_freight, "
-			 "    voitem_taxtype_id=:voitem_taxtype_id "
-             "WHERE (voitem_id=:voitem_id);"
-             "UPDATE vodist "
-             "SET vodist_qty=:qty "
-             "WHERE ((vodist_vohead_id=:vohead_id)"
-             " AND (vodist_poitem_id=:poitem_id) );" );
+  voucherSave.prepare( "UPDATE vodist "
+               "SET vodist_qty=:qty "
+               "WHERE ((vodist_vohead_id=:vohead_id)"
+               " AND (vodist_poitem_id=:poitem_id) );" );
   voucherSave.bindValue(":qty", _qtyToVoucher->toDouble());
+  voucherSave.bindValue(":poitem_id", _poitemid);
+  voucherSave.bindValue(":vohead_id", _voheadid);
+  voucherSave.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Voucher Item Information "),
+                                voucherSave, __FILE__, __LINE__))
+  {
+    reject();
+    return;
+  }
+
+  // Save the voitem information
+  if (_voitemid != -1)
+  {
+    voucherSave.prepare( "UPDATE voitem "
+               "SET voitem_close=:voitem_close,"
+               "    voitem_qty=:voitem_qty, "
+               "    voitem_freight=:voitem_freight, "
+	  		 "    voitem_taxtype_id=:voitem_taxtype_id "
+               "WHERE (voitem_id=:voitem_id) "
+               "RETURNING voitem_id;" );
+    voucherSave.bindValue(":voitem_id", _voitemid);
+  }
+  else
+  {
+    voucherSave.prepare( "INSERT INTO voitem "
+               "(voitem_vohead_id, voitem_poitem_id, voitem_close, voitem_qty, voitem_freight) "
+               "VALUES "
+               "(:vohead_id, :poitem_id, :voitem_close, :voitem_qty, :voitem_freight); "
+               "RETURNING voitem_id;" );
+  }
+
+  voucherSave.bindValue(":voitem_qty", _qtyToVoucher->toDouble());
   voucherSave.bindValue(":poitem_id", _poitemid);
   voucherSave.bindValue(":voitem_id", _voitemid);
   voucherSave.bindValue(":vohead_id", _voheadid);
@@ -343,15 +383,35 @@ void voucherItem::sSave()
   if (_taxtype->id() != -1)
     voucherSave.bindValue(":voitem_taxtype_id", _taxtype->id());
   voucherSave.exec();
+  if (voucherSave.first())
+    _voitemid = voucherSave.value("voitem_id").toInt();
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Voucher Item Information"),
+                                voucherSave, __FILE__, __LINE__))
+  {
+    reject();
+    return;
+  }
+
+  //Save 'tagged' status stored in rev_vohead_id to recv_voitem_id
+
+  voucherSave.prepare( "UPDATE recv "
+                       "SET recv_voitem_id=CASE WHEN (recv_vohead_id IS NULL) THEN NULL ELSE :voitem_id END "
+                       "WHERE ( (NOT recv_invoiced) "
+                       "AND     (recv_posted) "
+                       "AND     ((recv_vohead_id IS NULL) OR (recv_vohead_id=:vohead_id)) "
+                       "AND     (recv_order_type='PO') "
+                       "AND     (recv_orderitem_id=:poitem_id) );" );
+  voucherSave.bindValue(":voitem_id", _voitemid);
+  voucherSave.bindValue(":vohead_id", _voheadid);
+  voucherSave.bindValue(":poitem_id", _poitemid);
+  voucherSave.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Voucher Item Information"),
                                 voucherSave, __FILE__, __LINE__))
   {
     reject();
     return;
   }
-  voucherSave.exec("COMMIT;");
-  
-  _inTransaction = false;
+
   accept();
 }
 
@@ -475,55 +535,13 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
         _closePoitem->setChecked(true);
   else
 	_closePoitem->setChecked(false);
-  
-  // Save the voitem information
-  if (_voitemid != -1)
-  {
-    voucherToggleReceiving.prepare( "UPDATE voitem "
-               "SET voitem_qty=:voitem_qty "
-               "WHERE (voitem_id=:voitem_id);" );
-    voucherToggleReceiving.bindValue(":voitem_id", _voitemid);
-  }
-  else
-  {
-  // Get next voitem id
-    voucherToggleReceiving.prepare("SELECT NEXTVAL('voitem_voitem_id_seq') AS voitemid");
-    voucherToggleReceiving.exec();
-    if (voucherToggleReceiving.first())
-      _voitemid = (voucherToggleReceiving.value("voitemid").toInt());
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Voucher Item Information "),
-                                  voucherToggleReceiving, __FILE__, __LINE__))
-    {
-      reject();
-      return;
-    }
     
-    voucherToggleReceiving.prepare( "INSERT INTO voitem "
-               "(voitem_id, voitem_vohead_id, voitem_poitem_id, voitem_close, voitem_qty, voitem_freight) "
-               "VALUES "
-               "(:voitem_id, :vohead_id, :poitem_id, :voitem_close, :voitem_qty, :voitem_freight);" );
-  }
-
-  voucherToggleReceiving.bindValue(":voitem_id", _voitemid);
-  voucherToggleReceiving.bindValue(":vohead_id", _voheadid);
-  voucherToggleReceiving.bindValue(":poitem_id", _poitemid);
-  voucherToggleReceiving.bindValue(":voitem_close", QVariant(_closePoitem->isChecked()));
-  voucherToggleReceiving.bindValue(":voitem_qty", _qtyToVoucher->toDouble());
-  voucherToggleReceiving.bindValue(":voitem_freight", _freightToVoucher->localValue());
-  voucherToggleReceiving.exec();
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Voucher Item Information"),
-                                voucherToggleReceiving, __FILE__, __LINE__))
-  {
-    reject();
-    return;
-  }
-  
   // Update the receipt record
-  if (item->text(4) == "Yes")
+  if (item->text("f_tagged") == "Yes")
   {
     if (item->altId() == 1)
       voucherToggleReceiving.prepare( "UPDATE recv "
-                 "SET recv_vohead_id=:vohead_id,recv_voitem_id=:voitem_id "
+                 "SET recv_vohead_id=:vohead_id "
                  "WHERE (recv_id=:target_id);" );
     else if (item->altId() == 2)
       voucherToggleReceiving.prepare( "UPDATE poreject "
@@ -534,7 +552,7 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
   {
     if (item->altId() == 1)
       voucherToggleReceiving.prepare( "UPDATE recv "
-                 "SET recv_vohead_id=NULL,recv_voitem_id=NULL "
+                 "SET recv_vohead_id=NULL "
                  "WHERE ((recv_id=:target_id)"
                  "  AND  (recv_vohead_id=:vohead_id));" );
     else if (item->altId() == 2)
@@ -642,25 +660,35 @@ void voucherItem::sPopulateMenu(QMenu *pMenu,  XTreeWidgetItem *selected)
   }
 }
 
+void voucherItem::rollback()
+{
+  XSqlQuery rollback;
+
+  //Undo 'tagged' status stored in rev_vohead_id to initial state stored in recv_voitem_id
+
+  rollback.prepare( "UPDATE recv "
+                      "SET recv_vohead_id=CASE WHEN (recv_voitem_id IS NULL) THEN NULL ELSE :vohead_id END "
+                      "WHERE ( (NOT recv_invoiced) "
+                      "AND     (recv_posted) "
+                      "AND     ((recv_vohead_id IS NULL) OR (recv_vohead_id=:vohead_id)) "
+                      "AND     (recv_order_type='PO') "
+                      "AND     (recv_orderitem_id=:poitem_id) );" );
+  rollback.bindValue(":vohead_id", _voheadid);
+  rollback.bindValue(":poitem_id", _poitemid);
+  rollback.exec();
+}
+
 void voucherItem::reject()
 {
-  XSqlQuery voucherreject;
-  if(_inTransaction)
-  {
-    voucherreject.exec("ROLLBACK;");
-    _inTransaction = false;
-  }
+  rollback();
+
   XDialog::reject();
 }
 
 void voucherItem::closeEvent(QCloseEvent * event)
 {
-  XSqlQuery vouchercloseEvent;
-  if(_inTransaction)
-  {
-    vouchercloseEvent.exec("ROLLBACK;");
-    _inTransaction = false;
-  }
+  rollback();
+
   XDialog::closeEvent(event);
 }
 
