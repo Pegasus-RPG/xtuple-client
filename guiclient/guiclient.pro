@@ -30,6 +30,7 @@ win32-msvc* {
   PRE_TARGETDEPS += ../lib/xtuplecommon.$${XTLIBEXT}    \
                     ../lib/xtuplescriptapi.lib          \
                     ../lib/xtuplewidgets.lib            \
+                    $${OPENRPT_LIBDIR}/qzint.$${OPENRPTLIBEXT}    \
                     $${OPENRPT_LIBDIR}/MetaSQL.$${OPENRPTLIBEXT}  \
                     $${OPENRPT_LIBDIR}/renderer.$${OPENRPTLIBEXT} \
                     $${OPENRPT_LIBDIR}/wrtembed.$${OPENRPTLIBEXT} \
@@ -38,6 +39,7 @@ win32-msvc* {
   PRE_TARGETDEPS += ../lib/libxtuplecommon.$${XTLIBEXT} \
                     ../lib/libxtuplescriptapi.a         \
                     ../lib/libxtuplewidgets.a           \
+                    $${OPENRPT_LIBDIR}/libqzint.$${OPENRPTLIBEXT}    \
                     $${OPENRPT_LIBDIR}/libMetaSQL.$${OPENRPTLIBEXT}  \
                     $${OPENRPT_LIBDIR}/librenderer.$${OPENRPTLIBEXT} \
                     $${OPENRPT_LIBDIR}/libwrtembed.$${OPENRPTLIBEXT} \
@@ -46,7 +48,7 @@ win32-msvc* {
 
 QMAKE_LIBDIR = ../lib $${OPENRPT_LIBDIR} $$QMAKE_LIBDIR
 LIBS        += -lxtuplecommon -lxtuplewidgets -lwrtembed -lopenrptcommon
-LIBS        += -lrenderer -lxtuplescriptapi $${DMTXLIB} -lMetaSQL
+LIBS        += -lrenderer -lxtuplescriptapi -lqzint $${DMTXLIB} -lMetaSQL
 
 lessThan(QT_MAJOR_VERSION, 5) {
 #not the best way to handle this, but it should do
