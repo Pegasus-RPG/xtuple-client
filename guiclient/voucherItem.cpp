@@ -361,26 +361,17 @@ void voucherItem::sSave()
                "    voitem_qty=:voitem_qty, "
                "    voitem_freight=:voitem_freight, "
 	  		 "    voitem_taxtype_id=:voitem_taxtype_id "
-               "WHERE (voitem_id=:voitem_id);" );
+               "WHERE (voitem_id=:voitem_id) "
+               "RETURNING voitem_id;" );
+    voucherSave.bindValue(":voitem_id", _voitemid);
   }
   else
   {
-  // Get next voitem id
-    voucherSave.prepare("SELECT NEXTVAL('voitem_voitem_id_seq') AS voitemid");
-    voucherSave.exec();
-    if (voucherSave.first())
-      _voitemid = (voucherSave.value("voitemid").toInt());
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Voucher Item Information "),
-                                  voucherSave, __FILE__, __LINE__))
-    {
-      reject();
-      return;
-    }
-    
     voucherSave.prepare( "INSERT INTO voitem "
-               "(voitem_id, voitem_vohead_id, voitem_poitem_id, voitem_close, voitem_qty, voitem_freight) "
+               "(voitem_vohead_id, voitem_poitem_id, voitem_close, voitem_qty, voitem_freight) "
                "VALUES "
-               "(:voitem_id, :vohead_id, :poitem_id, :voitem_close, :voitem_qty, :voitem_freight);" );
+               "(:vohead_id, :poitem_id, :voitem_close, :voitem_qty, :voitem_freight); "
+               "RETURNING voitem_id;" );
   }
 
   voucherSave.bindValue(":voitem_qty", _qtyToVoucher->toDouble());
@@ -392,7 +383,9 @@ void voucherItem::sSave()
   if (_taxtype->id() != -1)
     voucherSave.bindValue(":voitem_taxtype_id", _taxtype->id());
   voucherSave.exec();
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Voucher Item Information"),
+  if (voucherSave.first())
+    _voitemid = voucherSave.value("voitem_id").toInt();
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Voucher Item Information"),
                                 voucherSave, __FILE__, __LINE__))
   {
     reject();
@@ -544,7 +537,7 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
 	_closePoitem->setChecked(false);
     
   // Update the receipt record
-  if (item->text(4) == "Yes")
+  if (item->text("f_tagged") == "Yes")
   {
     if (item->altId() == 1)
       voucherToggleReceiving.prepare( "UPDATE recv "
