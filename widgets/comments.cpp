@@ -74,7 +74,7 @@ bool Comments::addToMap(int id,        QString key, QString trans,
 // Inconsistencies between here and the rest of the app: S? Q?
 QMap<QString, struct CommentMap *> &Comments::commentMap() {
   if (_strMap.isEmpty()) {
-    addToMap(Uninitialized,     "",      tr("[Pick a Document Type]")                                       );
+    addToMap(Uninitialized,     "",      tr("[Pick a Document Type]")                                        );
     addToMap(Address,           "ADDR",  tr("Address")                                                       );
     addToMap(BBOMHead,          "BBH",   tr("Breeder BOM Head")                                              );
     addToMap(BBOMItem,          "BBI",   tr("Breeder BOM Item")                                              );
