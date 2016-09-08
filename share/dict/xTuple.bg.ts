@@ -1389,13 +1389,13 @@ Address:</source>
         <source>Exchange Rate</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Rental Item</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConfigAuthorizeDotNetProcessor</name>
-    <message>
-        <source>Same as Order</source>
-        <translation></translation>
-    </message>
     <message>
         <source>Using Wells Fargo SecureSource</source>
         <translation type="unfinished"></translation>
@@ -1823,10 +1823,6 @@ What would you like to do?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;There are no Certificates in %1. This may cause communication problems.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The Credit Card Processing Company</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1848,27 +1844,11 @@ What would you like to do?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid Certificate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;The Certificate in %1 appears to be invalid. This may cause communication problems.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Confirm Preauthorization of Credit Card Purchase</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Could not find PEM file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;p&gt;Are you sure that you want to preauthorize a charge to credit card %1 in the amount of %2 %3?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Failed to find the PEM file %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2151,19 +2131,11 @@ What would you like to do?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Failed to load Certificate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>partially</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Could not find a Credit Card with internal ID %1.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Failed to load a Certificate from the PEM file %1. This may cause communication problems.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3744,6 +3716,42 @@ returned %2
     </message>
 </context>
 <context>
+    <name>ItemGroupClusterLineEdit</name>
+    <message>
+        <source>Item Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Item Groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ItemGroupInfo</name>
+    <message>
+        <source>Name:</source>
+        <translation type="unfinished">Име:</translation>
+    </message>
+</context>
+<context>
+    <name>ItemGroupList</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ItemGroupSearch</name>
+    <message>
+        <source>Search through Names</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ItemLineEdit</name>
     <message>
         <source>Item</source>
@@ -4567,10 +4575,6 @@ returned %2
     </message>
     <message>
         <source>&lt;p&gt;This client was designed to work against database version %1 and your database is currently at version %2. If you continue some functionality may not work properly or at all. You may also cause other problems on the database.&lt;p&gt;Do you want to continue anyway?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Your system does not have a valid or open Accounting period for the current date. You should define the Accounting periods in &apos;Accounting | Fiscal Calendar | Accounting Periods...&apos; before posting any transactions in the system.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6017,6 +6021,34 @@ returned %2
     </message>
     <message>
         <source>If LinkShield is enabled then the cutoff score should be set between 1 and 100 but it is currently set to %1. Higher Numbers indicate higher risk.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not find PEM file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Failed to find the PEM file %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to load Certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;There are no Certificates in %1. This may cause communication problems.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Failed to load a Certificate from the PEM file %1. This may cause communication problems.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid Certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;The Certificate in %1 appears to be invalid. This may cause communication problems.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8500,46 +8532,6 @@ Are you sure that you want to save this change?</source>
         <translation>Не</translation>
     </message>
     <message>
-        <source>Check</source>
-        <translation>Чек</translation>
-    </message>
-    <message>
-        <source>Certified Check</source>
-        <translation>Сертифициран чек</translation>
-    </message>
-    <message>
-        <source>Master Card</source>
-        <translation>Master Card</translation>
-    </message>
-    <message>
-        <source>Visa</source>
-        <translation>Visa</translation>
-    </message>
-    <message>
-        <source>American Express</source>
-        <translation>American Express</translation>
-    </message>
-    <message>
-        <source>Discover Card</source>
-        <translation>Discover Card</translation>
-    </message>
-    <message>
-        <source>Other Credit Card</source>
-        <translation>Друга кредитна карта</translation>
-    </message>
-    <message>
-        <source>Cash</source>
-        <translation>В брой</translation>
-    </message>
-    <message>
-        <source>Wire Transfer</source>
-        <translation>Банков превод</translation>
-    </message>
-    <message>
-        <source>Other</source>
-        <translation>Други</translation>
-    </message>
-    <message>
         <source>Invoice</source>
         <translation>Фактура</translation>
     </message>
@@ -10592,10 +10584,6 @@ Are you sure that you want to save this change?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Visa</source>
-        <translation type="unfinished">Visa</translation>
-    </message>
-    <message>
         <source>Doc. Date</source>
         <translation>Дата на док.</translation>
     </message>
@@ -10632,20 +10620,8 @@ Are you sure that you want to save this change?</source>
         <translation>Док. №</translation>
     </message>
     <message>
-        <source>Discover Card</source>
-        <translation type="unfinished">Discover Card</translation>
-    </message>
-    <message>
         <source>Amount</source>
         <translation>Сума</translation>
-    </message>
-    <message>
-        <source>Cash</source>
-        <translation type="unfinished">В брой</translation>
-    </message>
-    <message>
-        <source>Check</source>
-        <translation type="unfinished">Чек</translation>
     </message>
     <message>
         <source>Discover</source>
@@ -10664,20 +10640,8 @@ Are you sure that you want to save this change?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Certified Check</source>
-        <translation type="unfinished">Сертифициран чек</translation>
-    </message>
-    <message>
-        <source>Other Credit Card</source>
-        <translation type="unfinished">Друга кредитна карта</translation>
-    </message>
-    <message>
         <source>Credit Card Processing Note</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Master Card</source>
-        <translation type="unfinished">Master Card</translation>
     </message>
     <message>
         <source>Type</source>
@@ -10702,10 +10666,6 @@ Are you sure that you want to save this change?</source>
     <message>
         <source>Invoice</source>
         <translation>Фактура</translation>
-    </message>
-    <message>
-        <source>Wire Transfer</source>
-        <translation type="unfinished">Банков превод</translation>
     </message>
     <message>
         <source>&lt;p&gt;Cannot find the Bank Account to post this transaction against. Either this card type is not accepted or the Credit Card configuration is not complete.</source>
@@ -11021,10 +10981,6 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Error Setting Alt Exch Rate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>On Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -13712,6 +13668,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cannot Post Transaction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow Reprinting Payment #</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -17789,6 +17749,81 @@ Please contact your Systems Administrator and report this issue.</source>
     </message>
 </context>
 <context>
+    <name>createFiscalYear</name>
+    <message>
+        <source>Create Accounting Period(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You do not have permission to create Fiscal Years and Accounting Periods. Please ask an administrator to create them or grant you the &lt;span style=&quot; font-style:italic;&quot;&gt;MaintainAccountingPeriods&lt;/span&gt; privilege.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There is no Fiscal Year to put a new period in. Please choose one of the other options above.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>First Day of the Fiscal Year:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type of Fiscal Year:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There is no Fiscal Year to copy. Please choose one of the other options above.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Запис</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Отказ</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Your system does not have a valid or open Accounting Period for the current date. You should define account periods before posting any transactions in the system.&lt;/p&gt;&lt;p&gt;Please select one of the options below, fill in the necessary data, and click &lt;span style=&quot; font-weight:600;&quot;&gt;Save&lt;/span&gt;. If you &lt;span style=&quot; font-weight:600;&quot;&gt;Cancel&lt;/span&gt;, you will need to create accounting periods with &lt;span style=&quot; font-weight:600;&quot;&gt;Accounting&lt;/span&gt; &amp;gt; &lt;span style=&quot; font-weight:600;&quot;&gt;Fiscal Calendar&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add a new accounting period</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add a new Fiscal Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy an existing Fiscal Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Starting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ending</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Monthly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quarterly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy Fiscal Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Saving</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>createInvoices</name>
     <message>
         <source>Consolidate By Customer</source>
@@ -20965,6 +21000,18 @@ Please check the values of these dates.</source>
         <source>The customer record was automatically saved to the database. The committed changes will not be cancelled.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Delete?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you want to DELETE all characteristics related to the old Customer Type?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Database Error</source>
+        <translation type="unfinished">Грешка в базата данни</translation>
+    </message>
 </context>
 <context>
     <name>customerFormAssignment</name>
@@ -21647,6 +21694,10 @@ Please check the values of these dates.</source>
     <message>
         <source>Days</source>
         <translation type="unfinished">Дни</translation>
+    </message>
+    <message>
+        <source>Error Getting User Data</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -25848,6 +25899,10 @@ Would you like to post it anyway?</source>
         <source>Please enter a valid End Date.</source>
         <translation>Моля въведете валидена крайна дата.</translation>
     </message>
+    <message>
+        <source>Active:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>dspDetailedInventoryHistoryByLotSerial</name>
@@ -29858,10 +29913,6 @@ Total</source>
     </message>
     <message>
         <source>Work Order</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You must specify a Project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -49862,17 +49913,17 @@ You must reassign the Locales for these Users before you may delete the selected
         <source>&lt;p&gt;Non Netable inventory cannot be Usable inventory.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Active</source>
+        <translation type="unfinished">Aктивен</translation>
+    </message>
+    <message>
+        <source>Error Deleting Location</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>locations</name>
-    <message>
-        <source>&lt;p&gt;There are one or more Item Sites that use the selected Location as their default Location. You must assign the default Location for all Item Sites that use the selected Location before you may delete it.&lt;/p&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;The selected Location cannot be deleted as there has been Inventory Transaction History posted against it.&lt;/p&gt; </source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Description</source>
         <translation>Описание</translation>
@@ -49892,10 +49943,6 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <source>&amp;Print</source>
         <translation>&amp;Печат</translation>
-    </message>
-    <message>
-        <source>Cannot Delete Selected Location</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -49922,14 +49969,6 @@ You must reassign the Locales for these Users before you may delete the selected
         <translation>&amp;Изтриване</translation>
     </message>
     <message>
-        <source>&lt;p&gt;There is Inventory contained in the selected Location. You must move all Inventory out of the selected Location and may then set its status to inactive.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;There are one or more undistributed Location records that have been posted against the selected Locations. This probably indicates a system error.&lt;br&gt;&lt;br&gt;Please contact your Systems Adminstrator to have this resolved.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Site</source>
         <translation type="unfinished"></translation>
     </message>
@@ -49947,6 +49986,18 @@ You must reassign the Locales for these Users before you may delete the selected
     </message>
     <message>
         <source>Usable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Inactive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Active</source>
+        <translation type="unfinished">Aктивен</translation>
+    </message>
+    <message>
+        <source>Error Deleting Location</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -57634,6 +57685,41 @@ post Vouchers.</source>
     </message>
     <message>
         <source>Error Retrieving Check Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Edit Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error fetching Check Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>printChecksReviewEdit</name>
+    <message>
+        <source>Edit Payment Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Payment #:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Запис</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Отказ</translation>
+    </message>
+    <message>
+        <source>Error fetching Check Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error setting Check Number</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -68825,6 +68911,22 @@ Are you sure you want to do this?</source>
         <source>Error Retrieving Item Site Information</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Site:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tax Zone:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished">Никои</translation>
+    </message>
+    <message>
+        <source>On Account</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>salesRep</name>
@@ -69306,6 +69408,10 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>E&amp;xtract Widgets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locking Error</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -73741,6 +73847,22 @@ You must first delete the Bill of Materials for the selected target item before 
     </message>
     <message>
         <source>Could not post this inventory transaction because the transaction will cause the Item Qty. on Hand to go negative which is not allowed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There are one or more Item Sites that use the selected Location as their default Location. You must reassign the default Location for all Item Sites that use the selected Location before you may delete it or deactivate it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There is Inventory contained in the selected Location. You must move all Inventory out of the selected Location and may then set its status to inactive.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There are one or more undistributed Location records that have been posted against the selected Locations. This probably indicates a system error.Please contact your Systems Adminstrator to have this resolved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The selected Location cannot be deleted as there has been Inventory Transaction History posted against it.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -80159,6 +80281,19 @@ Illegal parameter value &apos;%2&apos; for &apos;costtype&apos;</source>
         <source>&amp;Cancel</source>
         <translation>&amp;Отказ</translation>
     </message>
+    <message>
+        <source>Error Loading Item Site Lead Times</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Site: %1
+Item: %2 - %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Updating Item Site Lead Times</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>updateLateCustCreditStatus</name>
@@ -82987,11 +83122,6 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     <message>
         <source>Unit Price</source>
         <translation type="unfinished">Цена за единица</translation>
-    </message>
-    <message>
-        <source>The application has encountered an error and must stop editing this Voucher Item.
-%1</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>0</source>
