@@ -65,7 +65,10 @@ class ScanEvent
 #endif
 
 ReceiverItem::ReceiverItem()
-  : _null(true)
+  : _type(0),
+    _parent(0),
+    _target(0),
+    _null(true)
 {
 }
 
@@ -153,6 +156,8 @@ void InputManager::notify(int pType, QObject *pParent, QObject *pTarget, const Q
  */
 QString InputManager::slotName(const QString &slotname)
 {
+  if (DEBUG)
+    qDebug("slotName(%s) entered", qPrintable(slotname));
   return QString("1") + slotname;
 }
 
@@ -414,6 +419,11 @@ void InputManagerPrivate::dispatchScan(int type)
   ReceiverItem receiver = findReceiver(type);
   if (! receiver.isNull())
   {
+    if (DEBUG)
+      qDebug() << "dispatchScan() receiver:"     << receiver.type()
+               << receiver.parent()      << "->" << receiver.target()
+               << "[" << receiver.slot() << "]"  << receiver.isNull();
+
     QString number    = _buffer.left(_length1);
     QString subNumber = _buffer.mid(_length1, _length2);
     QString seqNumber = _buffer.right(_length3);
