@@ -896,10 +896,14 @@ void GUIClient::showEvent(QShowEvent *event)
       XSqlQuery sq;
       sq.prepare("SELECT script_source "
                  "  FROM script "
+                 "JOIN (SELECT relfilenode, n.nspname AS schema "
+                 "  FROM pg_class AS c "
+                 "  JOIN pg_namespace AS n ON c.relnamespace=n.oid) AS schema_table "
+                 "ON script.tableoid=relfilenode "
                  "JOIN (SELECT regexp_split_to_table AS pkgname, row_number() over () AS seq "
-                 "  FROM regexp_split_to_table(buildsearchpath(), ',')) AS path "
-                 "ON pkgname || '.pkgscript' = tableoid::regclass::text "
-                 "OR (pkgname = 'public' AND tableoid::regclass::text = 'script') "
+                 "  FROM regexp_split_to_table(buildsearchpath(), ',') "
+                 "  UNION SELECT 'xtcore', 0) AS path "
+                 "ON pkgname = schema "
                  " WHERE script_enabled AND script_name = 'initMenu' "
                  "ORDER BY script_order, seq;");
       sq.exec();
