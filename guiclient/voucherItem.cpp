@@ -368,9 +368,11 @@ void voucherItem::sSave()
   else
   {
     voucherSave.prepare( "INSERT INTO voitem "
-               "(voitem_vohead_id, voitem_poitem_id, voitem_close, voitem_qty, voitem_freight) "
+               "(voitem_vohead_id, voitem_poitem_id, voitem_close, voitem_qty, "
+               " voitem_freight, voitem_taxtype_id ) "
                "VALUES "
-               "(:vohead_id, :poitem_id, :voitem_close, :voitem_qty, :voitem_freight) "
+               "(:vohead_id, :poitem_id, :voitem_close, :voitem_qty, "
+               " :voitem_freight, :voitem_taxtype_id) "
                "RETURNING voitem_id;" );
   }
 

@@ -288,6 +288,8 @@ void taxBreakdown::sPopulate()
     _header->setText(tr("Tax Breakdown for Voucher:"));
     _totalLit->setText(tr("Voucher Total:"));
     _freightLit->setText(tr("Total Voucher Freight:"));
+    _adjTaxLit->setVisible(false);
+    _adjTax->setVisible(false);
     params.append("vohead_id", _orderid);
   }
   else if (_ordertype == "VI")

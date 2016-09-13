@@ -47,6 +47,8 @@ public slots:
     virtual void sPopulateDistributed();
     virtual void sPopulateBalanceDue();
     virtual void sCalculateTax();
+    virtual void sUpdateVoucherTax();
+    virtual void sNewDistDate();
     virtual void sTaxDetail();
     virtual void populateNumber();
     virtual void populate();

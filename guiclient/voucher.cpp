@@ -50,6 +50,7 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_edit,                     SIGNAL(clicked()),                                 this,          SLOT(sEditMiscDistribution()));
   connect(_delete,                   SIGNAL(clicked()),                                 this,          SLOT(sDeleteMiscDistribution()));
   connect(_invoiceDate,              SIGNAL(newDate(const QDate&)),                     this,          SLOT(sPopulateDistDate()));
+  connect(_distributionDate,         SIGNAL(newDate(const QDate&)),                     this,          SLOT(sNewDistDate()));
   connect(_taxLit,                   SIGNAL(leftClickedURL(const QString&)),            this,          SLOT(sTaxDetail()));
   connect(_terms,                    SIGNAL(newID(int)),                                this,          SLOT(sPopulateDueDate()));
   connect(_poitem,                   SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this,          SLOT(sPopulateMenu(QMenu*)));
@@ -540,6 +541,7 @@ void voucher::sNewMiscDistribution()
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
   {
+    sUpdateVoucherTax();
     sFillMiscList();
     sPopulateDistributed();
   }
@@ -561,6 +563,7 @@ void voucher::sEditMiscDistribution()
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
   {
+    sUpdateVoucherTax();
     sFillMiscList();
     sPopulateDistributed();
   }
@@ -586,9 +589,12 @@ void voucher::sDeleteMiscDistribution()
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Deleting Distributions"),
                            delq, __FILE__, __LINE__))
     return;
-
-  sFillMiscList();
-  sPopulateDistributed();
+  else
+  {
+    sUpdateVoucherTax();
+    sFillMiscList();
+    sPopulateDistributed();
+  }
 }
 
 void voucher::sFillList()
@@ -965,6 +971,32 @@ void voucher::sTaxDetail()
   taxBreakdown newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
+}
+
+void voucher::sUpdateVoucherTax()
+{
+  if (!_taxzone->isValid() || !_distributionDate->isValid())
+    return;
+
+  XSqlQuery updTax;
+  updTax.prepare("SELECT updatemiscvouchertax(:voheadid,:taxzone,:distdate,:curr) as ret;");
+  updTax.bindValue(":voheadid", _voheadid);
+  updTax.bindValue(":taxzone",  _taxzone->id());
+  updTax.bindValue(":distdate", _distributionDate->date());
+  updTax.bindValue(":curr", _amountToDistribute->id());
+  updTax.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Adding Tax to Voucher"),
+                         updTax, __FILE__, __LINE__))
+    return;
+}
+
+void voucher::sNewDistDate()
+{
+  if (_miscDistrib->topLevelItemCount())
+  {
+     sUpdateVoucherTax();
+     sFillMiscList();
+  }
 }
 
 void voucher::enableWindowModifiedSetting()
