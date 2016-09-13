@@ -897,9 +897,11 @@ void GUIClient::showEvent(QShowEvent *event)
       sq.prepare("SELECT script_source "
                  "  FROM script "
                  "JOIN (SELECT regexp_split_to_table AS pkgname, row_number() over () AS seq "
-                 "  FROM regexp_split_to_table(buildsearchpath(), ',')) AS path "
+                 "  FROM regexp_split_to_table(buildsearchpath(), ',') "
+                 "  UNION SELECT 'xtcore', 0) AS path "
                  "ON pkgname || '.pkgscript' = tableoid::regclass::text "
                  "OR (pkgname = 'public' AND tableoid::regclass::text = 'script') "
+                 "OR (tableoid::regclass::text = 'pkgscript' AND seq=1) "
                  " WHERE script_enabled AND script_name = 'initMenu' "
                  "ORDER BY script_order, seq;");
       sq.exec();
