@@ -419,15 +419,7 @@ void login2::sLogin()
                              "<p>This may be due to a problem with your user name, password, or server connection information. "
                              "<p>Below is more detail on the connection problem: "
                              "<p>%1" ).arg(db.lastError().text()));
-
-    if (!_captive)
-    {
-      _username->setText("");
-      _username->setFocus();
-    }
-    else
-      _password->setFocus();
-
+    _password->setFocus();
     _password->setText("");
     return;
   }
