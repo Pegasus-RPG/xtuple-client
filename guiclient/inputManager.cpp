@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -320,8 +320,6 @@ bool InputManager::eventFilter(QObject *, QEvent *pEvent)
 
         if (_private->_cursor == (_private->_length1 + _private->_length2 + _private->_length3))
         {
-          _private->_state = cIdle;
-
           // make sure we got a recognized scan event
           switch (_private->_event->type)
           {
@@ -343,7 +341,7 @@ bool InputManager::eventFilter(QObject *, QEvent *pEvent)
             case cBCLocationIssue:
             case cBCLocationContents:
               _private->dispatchScan(_private->_event->type);
-              break;
+              // FALLTHROUGH
 
             default:
               _private->_state = cIdle;
@@ -461,7 +459,6 @@ void InputManagerPrivate::dispatchScan(int type)
       message(tr("Scanned %1").arg(descrip), 1000);
 
       QString fieldName = queryFieldName(type, receiver.type());
-      QGenericArgument arg1     = Q_ARG(int, q.value(fieldName).toInt());
 
       if (fieldName.isEmpty())
       {
@@ -470,14 +467,17 @@ void InputManagerPrivate::dispatchScan(int type)
         return;
       }
 
+      int id = q.value(fieldName).toInt();
+      QGenericArgument idArg = Q_ARG(int, id);
       // convert "1methodName(args)(stuff)" to just "methodName"
       QString methodName = receiver.slot();
       methodName.replace(QRegExp("^1([a-z][a-z0-9_]*).*", Qt::CaseInsensitive), "\\1");
 
       if (DEBUG)
-        qDebug() << receiver.target() << methodName.toLatin1().data() << q.value(fieldName).toInt();
-      (void)QMetaObject::invokeMethod(receiver.target(), methodName.toLatin1().data(), arg1);
-      emit gotBarCode(type, q.value(fieldName).toInt());
+        qDebug() << receiver.target() << methodName.toLatin1().data() << id;
+      (void)QMetaObject::invokeMethod(receiver.target(),
+                                      methodName.toLatin1().data(), idArg);
+      emit gotBarCode(type, id);
     }
     else if (q.lastError().type() != QSqlError::NoError)
       message(tr("Error Scanning %1: %2").arg(descrip, q.lastError().text()), 1000);
