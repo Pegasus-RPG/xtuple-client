@@ -212,6 +212,8 @@ enum SetResponse salesOrderSimple:: set(const ParameterList &pParams)
     _cust->setId(_metrics->value("SSOSDefaultCustId").toInt());
   }
 
+  sPopulateTaxZone();
+
   param = pParams.value("sohead_id", &valid);
   if (valid)
   {
