@@ -2601,9 +2601,9 @@ to be bound by its terms.</comment>
   <tabstop>_customerPN</tabstop>
   <tabstop>_subItem</tabstop>
   <tabstop>_qtyOrdered</tabstop>
-  <tabstop>_netUnitPrice</tabstop>
   <tabstop>_discountFromListPrice</tabstop>
   <tabstop>_discountFromCust</tabstop>
+  <tabstop>_netUnitPrice</tabstop>
   <tabstop>_scheduledDate</tabstop>
   <tabstop>_promisedDate</tabstop>
   <tabstop>_warranty</tabstop>
