@@ -53,6 +53,7 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
     Q_INVOKABLE virtual bool             isRecurring()      const;
     Q_INVOKABLE virtual int              max()              const;
     /*useprop*/ virtual bool             maxVisible()       const;
+    Q_INVOKABLE virtual QString          style()            const;
     Q_INVOKABLE virtual RecurrencePeriod minPeriod()        const;
     Q_INVOKABLE virtual bool             modified()         const;
     Q_INVOKABLE virtual int              parentId()         const;
@@ -69,8 +70,8 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
   public slots:
     virtual void clear();
     virtual bool save(bool intxn, RecurrenceChangePolicy cp, QString *msg = 0);
-    virtual void set(bool recurring = false, int frequency = 1, QString period = QString("W"), QDate startDate = QDate::currentDate(), QDate endDate = QDate(), int max = 1);
-    virtual void set(bool recurring, int frequency, QString period, QDateTime startDateTime, QDateTime endDateTime, int max);
+    virtual void set(bool recurring = false, int frequency = 1, QString period = QString("W"), QDate startDate = QDate::currentDate(), QDate endDate = QDate(), int max = 1, QString style = "KeepNone");
+    virtual void set(bool recurring, int frequency, QString period, QDateTime startDateTime, QDateTime endDateTime, int max, QString style = "KeepNone");
     virtual void setEndDate(QDate p);
     virtual void setEndDateTime(QDateTime p);
     virtual void setEndDateVisible(bool p);
@@ -79,6 +80,7 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
     virtual void setFrequency(int p);
     virtual void setMax(int p);
     virtual void setMaxVisible(bool p);
+    virtual void setStyle(QString p);
     virtual void setMinPeriod(RecurrencePeriod minPeriod);
     virtual bool setParent(int pid, QString ptype);
     virtual void setPeriod(RecurrencePeriod p);
@@ -101,6 +103,7 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
    QDateTime        _prevEndDateTime;
    int              _prevFrequency;
    int              _prevMax;
+   QString          _prevStyle;
    int              _prevParentId;
    QString          _prevParentType;
    RecurrencePeriod _prevPeriod;
