@@ -879,22 +879,25 @@ bool salesOrder::save(bool partial)
 //  S/O Credit Check
     if (_saving && _metrics->boolean("CreditCheckSOOnSave"))
     {
-      if (!creditLimitCheck() && _holdType->code() != "C")
+      if (!creditLimitCheck())
       {
         if (_privileges->check("CreateSOForHoldCustomer"))
         {
-          if (QMessageBox::question(this, tr("Sales Order Credit Check"),
-                          tr("<p>The customer has exceeded their credit limit "
-                             "and this order will be placed on Credit Hold.\n"
-                             "Do you wish to continue saving the order?"),
-                          QMessageBox::Yes,
-                          QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+          if(_holdType->code() != "C")
           {
-            _holdType->setCode("C");
-          }
-          else
-          {
-            return false;
+            if (QMessageBox::question(this, tr("Sales Order Credit Check"),
+                            tr("<p>The customer has exceeded their credit limit "
+                               "and this order will be placed on Credit Hold.\n"
+                               "Do you wish to continue saving the order?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+            {
+              _holdType->setCode("C");
+            }
+            else
+            {
+              return false;
+            }
           }
         }
         else
@@ -4255,6 +4258,9 @@ void salesOrder::sReturnStock()
 
 void salesOrder::sIssueStock()
 {
+  if (!creditLimitCheckIssue())
+    return;
+
   bool update = false;
   QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
@@ -4284,6 +4290,9 @@ void salesOrder::sIssueStock()
 
 void salesOrder::sIssueLineBalance()
 {
+  if (!creditLimitCheckIssue())
+    return;
+
   XSqlQuery issueSales;
   bool job = false;
   QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
@@ -5567,6 +5576,39 @@ bool salesOrder::creditLimitCheck()
   }
 
   return false;
+}
+
+bool salesOrder::creditLimitCheckIssue()
+{
+  if (_metrics->boolean("CreditCheckSOOnSave"))
+  {
+    if (!creditLimitCheck())
+    {
+      if (_privileges->check("CreateSOForHoldCustomer"))
+      {
+        if(_holdType->code() != "C")
+        {
+          QMessageBox::warning(this, tr("Sales Order Credit Check"),
+                               tr("<p>The customer has exceeded their credit limit "
+                                  "and this order will be placed on Credit Hold."));
+          _holdType->setCode("C");
+        }
+      }
+      else
+      {
+        QMessageBox::critical(this, tr("Sales Order Credit Check"),
+                                    tr("<p>The customer has exceeded their credit limit "
+                                       "and you have insufficient privileges to issue stock for "
+                                       "this order. You will need to edit the order to ensure "
+                                       "it falls within the credit limit or obtain a payment first."));
+        return false;
+      }
+    }
+  }
+
+  save(true);
+
+  return true;
 }
 
 void salesOrder::sHoldTypeChanged()
