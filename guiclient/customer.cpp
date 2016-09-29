@@ -1856,7 +1856,12 @@ void customer::sClear()
     _blanketPos->setEnabled(cView != _mode && _usesPOs->isChecked());
     _blanketPos->setChecked(false);
     _currency->setId(CurrCluster::baseId());
-    _inGoodStanding->setChecked(true);
+    if (_metrics->value("SOCreditStatus") == "H")
+      _onCreditHold->setChecked(true);
+    else if (_metrics->value("SOCreditStatus") == "W")
+      _onCreditWarning->setChecked(true);
+    else
+      _inGoodStanding->setChecked(true);
 
     _shipto->clear();
     _custchar->removeRows(0, _custchar->rowCount());

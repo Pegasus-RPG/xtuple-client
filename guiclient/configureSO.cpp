@@ -118,6 +118,16 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _creditLimit->setText(_metrics->value("SOCreditLimit"));
   _creditRating->setText(_metrics->value("SOCreditRate"));
 
+  metric = _metrics->value("SoCreditStatus");
+    if (metric == "G")
+      _creditStatus->setCurrentIndex(0);
+    else if (metric == "W")
+      _creditStatus->setCurrentIndex(1);
+    else if (metric == "H")
+      _creditStatus->setCurrentIndex(2);
+    else
+      _creditStatus->setCurrentIndex(3);
+
   if (_metrics->value("soPriceEffective") == "OrderDate")
     _priceOrdered->setChecked(true);
   else if (_metrics->value("soPriceEffective") == "ScheduleDate")
@@ -265,6 +275,7 @@ bool configureSO::sSave()
   const char *dispositionTypes[] = { "C", "R", "P", "V", "M", "" };
   const char *timingTypes[] = { "I", "R", "" };
   const char *creditMethodTypes[] = { "N", "M", "K", "C", "" };
+  const char *creditStatuses[] = { "G", "W", "H", "" };
 
   if ( (_metrics->boolean("EnableSOReservationsByLocation")) &&
        (!_locationGroup->isChecked()) )
@@ -339,6 +350,7 @@ bool configureSO::sSave()
 
   _metrics->set("SOCreditLimit", _creditLimit->text());
   _metrics->set("SOCreditRate", _creditRating->text());
+  _metrics->set("SOCreditStatus", QString(creditStatuses[_creditStatus->currentIndex()]));
 
   if (_priceOrdered->isChecked())
     _metrics->set("soPriceEffective", QString("OrderDate"));
