@@ -87,17 +87,15 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WindowFla
   list()->addColumn(tr("Number"),      _orderColumn,Qt::AlignLeft, true, "incdt_number" );
   list()->addColumn(tr("Created"),     _dateColumn, Qt::AlignLeft, true, "incdt_timestamp" );
   list()->addColumn(tr("Account"),     _itemColumn, Qt::AlignLeft, true, "crmacct_name" );
-  list()->addColumn(tr("Status"),      _itemColumn, Qt::AlignLeft, true, "incdt_status" );
+  list()->addColumn(tr("Status"),      _itemColumn, Qt::AlignLeft, true, "status" );
   list()->addColumn(tr("Updated"),     _dateColumn, Qt::AlignLeft, true, "incdt_updated" );
   list()->addColumn(tr("Assigned To"), _userColumn, Qt::AlignLeft, true, "incdt_assigned_username" );
   list()->addColumn(tr("Owner"),       _userColumn, Qt::AlignLeft, true, "incdt_owner_username" );
   list()->addColumn(tr("Summary"),     -1,          Qt::AlignLeft, true, "incdt_summary" );
   list()->addColumn(tr("Category"),    _userColumn, Qt::AlignLeft, false, "incdtcat_name");
-  list()->addColumn(tr("Severity"),    _userColumn, Qt::AlignLeft, false, "incdtseverity_name");
-  list()->addColumn(tr("Priority"),    _userColumn, Qt::AlignLeft, false, "incdtpriority_name");
-  list()->addColumn(tr("Priority Order"),    _userColumn, Qt::AlignLeft, false, "incdtpriority_order");
-  list()->addColumn(tr("Resolution"),    _userColumn, Qt::AlignLeft, false, "incdtresolution_name");
-  list()->addColumn(tr("Resolution Order"),    _userColumn, Qt::AlignLeft, false, "incdtresolution_order");
+  list()->addColumn(tr("Severity"),    _userColumn, Qt::AlignLeft, false, "severity");
+  list()->addColumn(tr("Priority"),    _userColumn, Qt::AlignLeft, false, "priority");
+  list()->addColumn(tr("Resolution"),    _userColumn, Qt::AlignLeft, false, "resolution");
   list()->addColumn(tr("Contact"),     _userColumn, Qt::AlignLeft, false, "cntct_name");
   list()->addColumn(tr("Project"),     _userColumn, Qt::AlignLeft, false, "prj_number");
   if(_metrics->boolean("IncidentsPublicPrivate"))
