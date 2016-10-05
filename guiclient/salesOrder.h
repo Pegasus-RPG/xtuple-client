@@ -34,6 +34,7 @@ class salesOrder : public XWidget, public Ui::salesOrder
     Q_INVOKABLE virtual int   id() { return _soheadid; }
     Q_INVOKABLE virtual int   modeType() const;
     Q_INVOKABLE virtual int   modeState() const;
+    Q_INVOKABLE virtual bool  creditLimitCheckIssue();
 
   public slots:
     virtual SetResponse set(const ParameterList &pParams );
