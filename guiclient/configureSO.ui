@@ -1220,26 +1220,6 @@ to be bound by its terms.</comment>
                     <property name="focusPolicy">
                      <enum>Qt::ClickFocus</enum>
                     </property>
-                    <item>
-                     <property name="text">
-                      <string>In Good Standing</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>On Credit Warning</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>On Credit Hold</string>
-                    </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>[ no default ]</string>
-                     </property>
-                    </item>
                    </widget>
                   </item>
                  </layout>
