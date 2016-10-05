@@ -34,9 +34,9 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _nextInNumber->setValidator(omfgThis->orderVal());
   _creditLimit->setValidator(omfgThis->moneyVal());
 
-  _creditStatus->append(0, "In Good Standing", "G");
-  _creditStatus->append(1, "On Credit Warning", "W");
-  _creditStatus->append(2, "On Credit Hold", "H");
+  _creditStatus->append(0, tr("In Good Standing"), "G");
+  _creditStatus->append(1, tr("On Credit Warning"), "W");
+  _creditStatus->append(2, tr("On Credit Hold"), "H");
 
   _orderNumGeneration->setMethod(_metrics->value("CONumberGeneration"));
   _quoteNumGeneration->setMethod(_metrics->value("QUNumberGeneration"));
