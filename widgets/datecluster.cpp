@@ -153,7 +153,9 @@ void XDateEdit::parseDate()
 
   _valid = false;
 
-  if (dateString.contains(QRegExp("[0-9]+[-][0-9]+"))) //user enters hyphens instead of slashes
+  if (dateString.contains(QRegExp("[0-9]+[-][0-9]+")) &&
+      QLocale().dateFormat(QLocale::ShortFormat).contains(QRegExp("(M+|y+|d+)/(M+|y+|d+)")))
+  //user enters hyphens instead of slashes and locale uses slashes
   {
     dateString.replace("-", "/");
   }
