@@ -42,6 +42,7 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WindowFlag
   connect(_startDate, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
   connect(_endDate, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
   connect(_onOrBeforeDate, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_select, SIGNAL(clicked()), this, SLOT(sSelect()));
   connect(_selectDiscount, SIGNAL(clicked()), this, SLOT(sSelectDiscount()));
