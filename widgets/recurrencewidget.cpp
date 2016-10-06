@@ -38,6 +38,21 @@
   A recurrence with the period set to W (= week) and frequency of 3 will repeat
   once every three weeks.
 
+  In addition, there are three options for how to handle recurrences if a recurrence is missed
+  (this can happen by having the client closed when a scheduled action was supposed to occur,
+  or by having a long-running action fail to finish before another scheduled action is supposed
+  to occur).
+  If a recurrence is missed, upon running the next one will be scheduled for the  first time that
+  it would have run that is after the current time (For example, if an event is scheduled to occur
+  every 5 minutes and runs at 4:10 PM, but the application is closed at 4:11 PM and not reopened
+  until 4:53 PM, the next one will be scheduled at 4:55 PM). If there are multiple recurrences
+  scheduled in the series for times that have also past, the three ways to handle them are
+  -Keep None: Delete all of them, and schedule events from using the given interval from the current time
+  -Keep One: Delete all but the most recent, reschedule it for the current time, and schedule the rest
+   from the current time
+  -Keep All: Reschedule all passed events to the current time, and schedule the next one
+   using the interval from the current time
+
   To add a new kind of recurring event or %item, you need to change data in the
   database, stored procedures, triggers, and application code.
   We'll use Invoice in the examples here, with 'I' as the internal code value,
