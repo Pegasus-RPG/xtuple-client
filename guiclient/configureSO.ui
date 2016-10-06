@@ -1205,6 +1205,23 @@ to be bound by its terms.</comment>
                   <item row="1" column="1">
                    <widget class="XLineEdit" name="_creditRating"/>
                   </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="_creditStatusLit">
+                    <property name="text">
+                     <string>Credit Status:</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="XComboBox" name="_creditStatus">
+                    <property name="focusPolicy">
+                     <enum>Qt::ClickFocus</enum>
+                    </property>
+                   </widget>
+                  </item>
                  </layout>
                 </widget>
                </item>

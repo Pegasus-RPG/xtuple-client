@@ -34,6 +34,10 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _nextInNumber->setValidator(omfgThis->orderVal());
   _creditLimit->setValidator(omfgThis->moneyVal());
 
+  _creditStatus->append(0, tr("In Good Standing"), "G");
+  _creditStatus->append(1, tr("On Credit Warning"), "W");
+  _creditStatus->append(2, tr("On Credit Hold"), "H");
+
   _orderNumGeneration->setMethod(_metrics->value("CONumberGeneration"));
   _quoteNumGeneration->setMethod(_metrics->value("QUNumberGeneration"));
   _creditMemoNumGeneration->setMethod(_metrics->value("CMNumberGeneration"));
@@ -117,6 +121,9 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
 
   _creditLimit->setText(_metrics->value("SOCreditLimit"));
   _creditRating->setText(_metrics->value("SOCreditRate"));
+
+  if(_metrics->value("SoCreditStatus")!="")
+    _creditStatus->setCode(_metrics->value("SoCreditStatus"));
 
   if (_metrics->value("soPriceEffective") == "OrderDate")
     _priceOrdered->setChecked(true);
@@ -339,6 +346,7 @@ bool configureSO::sSave()
 
   _metrics->set("SOCreditLimit", _creditLimit->text());
   _metrics->set("SOCreditRate", _creditRating->text());
+  _metrics->set("SOCreditStatus", _creditStatus->code());
 
   if (_priceOrdered->isChecked())
     _metrics->set("soPriceEffective", QString("OrderDate"));
