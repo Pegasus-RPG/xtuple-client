@@ -896,10 +896,10 @@ void GUIClient::showEvent(QShowEvent *event)
       XSqlQuery sq;
       sq.prepare("SELECT script_source "
                  "  FROM script "
-                 "JOIN (SELECT relfilenode, n.nspname AS schema "
+                 "JOIN (SELECT c.oid, n.nspname AS schema "
                  "  FROM pg_class AS c "
                  "  JOIN pg_namespace AS n ON c.relnamespace=n.oid) AS schema_table "
-                 "ON script.tableoid=relfilenode "
+                 "ON script.tableoid=schema_table.oid "
                  "JOIN (SELECT regexp_split_to_table AS pkgname, row_number() over () AS seq "
                  "  FROM regexp_split_to_table(buildsearchpath(), ',') "
                  "  UNION SELECT 'xtcore', 0) AS path "
