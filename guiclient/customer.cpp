@@ -775,7 +775,7 @@ void customer::sCheck()
   customerCheck.exec();
   if (customerCheck.first())
   {
-    if ((customerCheck.value("type").toInt() == 1) && (_notice))
+    if ((customerCheck.value("type").toInt() == 1) && (customerCheck.value("cust_id").toInt() != _custid) && (_notice))
     {
       if (QMessageBox::question(this, tr("Customer Exists"),
               tr("<p>This number is currently used by an existing Customer. "
