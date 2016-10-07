@@ -867,7 +867,7 @@ void workOrder::sFillList()
 
   ParameterList params;
   params.append("wo_id", _woid);
-  params.append("showops", QVariant(_showOperations->isVisible() && _showOperations->isChecked()));
+  params.append("showops", QVariant(_metrics->boolean("Routings") && _showOperations->isChecked()));
   params.append("showmatl", QVariant(_showMaterials->isChecked()));
   params.append("showindent", QVariant(_indented->isChecked()));
   XSqlQuery workFillList = mql.toQuery(params);
