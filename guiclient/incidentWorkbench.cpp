@@ -77,7 +77,6 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WindowFla
   parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
   if (_metrics->boolean("LotSerialControl"))
     parameterWidget()->append(tr("Lot/Serial Pattern"), "lspattern", ParameterWidget::Text);
-  parameterWidget()->applyDefaultFilterSet();
 
   connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
 
@@ -104,7 +103,6 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WindowFla
   list()->addColumn(tr("Lot/Serial"),   _itemColumn, Qt::AlignLeft, false, "ls_number");
 
   setupCharacteristics("INCDT");
-  parameterWidget()->applyDefaultFilterSet();
 }
 
 enum SetResponse incidentWorkbench::set(const ParameterList &pParams)
