@@ -26,6 +26,8 @@ bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::Wind
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_transmitGroup,  SIGNAL(toggled(bool)), this, SLOT(sHandleTransmitGroup()));
   connect(_type,  SIGNAL(currentIndexChanged(int)), this, SLOT(sHandleType()));
+  connect(_useCompanyIdType, SIGNAL(clicked()), this, SLOT(sTogglePrefix()));
+  connect(_usePrefix, SIGNAL(clicked()), this, SLOT(sTogglePrefix()));
 
   _nextCheckNum->setValidator(new QIntValidator(1,999999999));
 
@@ -47,19 +49,24 @@ bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::Wind
                    "WHERE form_key='Chck' "
                    "ORDER BY form_name;" );
 
+  if (_metrics->value("ACHCompanyIdPrefix")!="")
+  {
+    _useCompanyIdType->setChecked(false);
+    _usePrefix->setChecked(true);
+    _prefix->setEnabled(true);
+    _prefix->setText(_metrics->value("ACHCompanyIdPrefix"));
+  } 
+
   if (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled"))
   {
     XSqlQuery bankbankAccount;
     bankbankAccount.prepare("SELECT fetchMetricText('ACHCompanyName') AS name, "
-                                   "fetchMetricText('ACHCompanyId') AS number;" );
+                                   "formatACHCompanyId() AS number;" );
     bankbankAccount.exec();
     if (bankbankAccount.first())
     {
       _useCompanyIdOrigin->setText(bankbankAccount.value("name").toString());
-
-      QString defaultOriginValue = bankbankAccount.value("number").toString();
-      defaultOriginValue.remove("-");
-      _defaultOrigin->setText(defaultOriginValue);
+      _defaultOrigin->setText(bankbankAccount.value("number").toString());
     }
     else
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Bank Account Information"),
@@ -375,6 +382,14 @@ void bankAccount::sSave()
     return;
   }
 
+  if (_usePrefix->isChecked())
+    if (_prefix->text() != "" && _prefix->text().at(0).unicode() < 128)
+      _metrics->set("ACHCompanyIdPrefix", _prefix->text());
+    else
+      _metrics->set("ACHCompanyIdPrefix", QString(" "));
+  else
+    _metrics->set("ACHCompanyIdPrefix", QString());
+
   omfgThis->sBankAccountsUpdated();
   done(_bankaccntid);
 }
@@ -461,4 +476,12 @@ void bankAccount::sHandleType()
     _assetAccountLit->setText(tr("Liability Account"));
   else
     _assetAccountLit->setText(tr("Asset Account"));
+}
+
+void bankAccount::sTogglePrefix()
+{
+  if (_usePrefix->isChecked())
+    _prefix->setEnabled(true);
+  else
+    _prefix->setEnabled(false);
 }
