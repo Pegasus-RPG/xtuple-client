@@ -823,6 +823,8 @@ void creditMemo::populate()
     else
       _status->setText(tr("Unposted"));
 
+    _memoNumber->setText(cmhead.value("cmhead_number"));
+    _memoDate->setDate(cmhead.value("cmhead_docdate").toDate(), true);
     _cust->setId(cmhead.value("cmhead_cust_id").toInt());
     _shipTo->setId(cmhead.value("cmhead_shipto_id").toInt());
 
@@ -833,8 +835,6 @@ void creditMemo::populate()
     if (!cmhead.value("cmhead_taxzone_id").isNull() && cmhead.value("cmhead_taxzone_id").toInt() != -1)
       _taxzone->setId(cmhead.value("cmhead_taxzone_id").toInt());
 
-    _memoNumber->setText(cmhead.value("cmhead_number"));
-    _memoDate->setDate(cmhead.value("cmhead_docdate").toDate(), true);
     _customerPO->setText(cmhead.value("cmhead_custponumber"));
     _hold->setChecked(cmhead.value("cmhead_hold").toBool());
 
