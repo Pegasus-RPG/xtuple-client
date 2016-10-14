@@ -41,6 +41,7 @@ dspWoMaterialsByWorkOrder::dspWoMaterialsByWorkOrder(QWidget* parent, const char
   }
 
   list()->addColumn(tr("Component Item"),  _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  list()->addColumn(tr("Component Item Description"),  _itemColumn,  Qt::AlignLeft,   true,  "descrip"   );
   if (_manufacturing)
     list()->addColumn(tr("Oper. #"),         _dateColumn,  Qt::AlignCenter, true,  "wooperseq" );
   list()->addColumn(tr("Iss. Meth.") ,     _orderColumn, Qt::AlignCenter, true,  "issuemethod" );
