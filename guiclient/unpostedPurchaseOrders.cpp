@@ -337,10 +337,10 @@ void unpostedPurchaseOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem,
 
   pMenu->addSeparator();
 
-  menuItem = pMenu->addAction(tr("Release..."), this, SLOT(sRelease()));
+  menuItem = pMenu->addAction(tr("Release"), this, SLOT(sRelease()));
   menuItem->setEnabled(_privileges->check("ReleasePurchaseOrders") &&
                        item->rawValue("pohead_status").toString() == "U");
-  menuItem = pMenu->addAction(tr("Unrelease..."), this, SLOT(sUnrelease()));
+  menuItem = pMenu->addAction(tr("Unrelease"), this, SLOT(sUnrelease()));
   menuItem->setEnabled(_privileges->check("UnreleasePurchaseOrders") &&
                        item->rawValue("pohead_status").toString() == "O");
 }
