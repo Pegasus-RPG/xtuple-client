@@ -605,6 +605,20 @@ bool itemSite::sSave()
     }
   }
 
+  if(_createPo->isChecked() && _metrics->boolean("RequireStdCostForPOItem"))
+  {
+    itemSave.prepare("SELECT stdCost(item_id) AS stdcost "
+                     "FROM item "
+                     "WHERE (item_id=:item_id);");
+    itemSave.bindValue(":item_id", _item->id());
+    itemSave.exec();
+    if (itemSave.first() && itemSave.value("stdcost").toDouble() == 0.0)
+    {
+        errors << GuiErrorCheck(true, _createPo,
+                                tr("The selected item has no Std. Costing Information. Cannot create Purchase Orders linked to Sales Orders."));
+    }
+  }
+
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Item Site"), errors))
     return false;
 
