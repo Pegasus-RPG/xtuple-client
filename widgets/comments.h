@@ -71,6 +71,7 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
       BOOHead,           BOOItem,
       CRMAccount,        Contact,
       Customer,          Employee,
+      FixedAsset,        MaintOrder,
       ExchangeRate,      Incident,
       Item,              ItemSite,
       ItemSource,        Location,
