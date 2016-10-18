@@ -607,6 +607,23 @@ void item::sSave()
                               tr("You may not rename this Item to the entered Item Number as it is in use by another Item."));
     }
   }
+
+  if (_metrics->boolean("EnforceUniqueBarcodes"))
+  {
+    itemSave.prepare( "SELECT EXISTS(SELECT 1 FROM item "
+                      "WHERE ((item_active) "
+                      "AND (item_upccode = :item_upccode) "
+                      "AND (item_id <> :item_id))) AS result;");
+    itemSave.bindValue(":item_id", _itemid);
+    itemSave.bindValue(":item_upccode", _upcCode->text());
+    itemSave.exec();
+    if (itemSave.first() && itemSave.value("result").toBool())
+    {
+      errors << GuiErrorCheck(true, _upcCode,
+                              tr("You may not use this Item Bar Code (%1) as it is used by another Item.")
+                                .arg(_upcCode->text()));
+    }
+  }
   
   errors << GuiErrorCheck(_disallowPlanningType && QString(_itemTypes[_itemtype->currentIndex()]) == "L", _itemtype,
                           tr("This item is part of one or more Bills of Materials and cannot be a Planning Item."))
