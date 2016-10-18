@@ -31,6 +31,7 @@ configurePD::configurePD(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _changeLog->setChecked(_metrics->boolean("ItemChangeLog"));
   _allowDelete->setChecked(_metrics->boolean("AllowBOMItemDelete"));
   _autoItemSearch->setChecked(_metrics->boolean("AutoItemSearch"));
+  _uniqueBarcodes->setChecked(_metrics->boolean("EnforceUniqueBarcodes"));
 
   QString issueMethod = _metrics->value("DefaultWomatlIssueMethod");
   if (issueMethod == "S")
@@ -131,6 +132,25 @@ bool configurePD::sSave()
       return false;
   }
 
+  if (!_metrics->boolean("EnforceUniqueBarcodes") && (_uniqueBarcodes->isChecked()))
+  {
+    // Check for existing duplicated UPC Codes if switching on
+    QString usql = "SELECT EXISTS(SELECT 1 FROM item "
+                   " WHERE ((item_active) AND (item_upccode IS NOT NULL)) "
+                   " GROUP BY item_upccode "
+                   " HAVING count(*) > 1) AS result;";
+    configureSave.exec(usql);
+    if (configureSave.first() && (configureSave.value("result").toBool()))
+    {
+      QMessageBox::warning(this, tr("Unique Barcodes"),
+      tr("You cannot enable unique bar codes on items "
+         "when duplicates exist.  Please first remove all "
+         "duplicate bar codes on active items, then enable this setting."));
+      _uniqueBarcodes->setChecked(false);
+      return false;
+    }
+  }
+
   _metrics->set("Transforms", ((_transforms->isChecked()) && (!_transforms->isHidden())));
   _metrics->set("RevControl", ((_revControl->isChecked()) && (!_revControl->isHidden())));
   _metrics->set("AllowInactiveBomItems", _inactiveBomItems->isChecked());
@@ -138,6 +158,7 @@ bool configurePD::sSave()
   _metrics->set("ItemChangeLog", _changeLog->isChecked());
   _metrics->set("AllowBOMItemDelete", _allowDelete->isChecked());
   _metrics->set("AutoItemSearch", _autoItemSearch->isChecked());
+  _metrics->set("EnforceUniqueBarcodes", _uniqueBarcodes->isChecked());
   
   if (_issueMethod->currentIndex() == 0)
     _metrics->set("DefaultWomatlIssueMethod", QString("S"));

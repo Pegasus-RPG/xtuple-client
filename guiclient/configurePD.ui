@@ -70,6 +70,13 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
+          <widget class="QCheckBox" name="_uniqueBarcodes">
+           <property name="text">
+            <string>Enforce Unique Item Bar Codes</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QGroupBox" name="_defaultGroup">
            <property name="title">
             <string>Defaults</string>
