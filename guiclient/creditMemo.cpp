@@ -321,7 +321,7 @@ void creditMemo::sSave()
 
 bool creditMemo::save()
 {
-  if(_memoNumber->text().length() == 0)
+  if(_memoNumber->text().trimmed().length() == 0)
     return false;
 
   XSqlQuery creditave;
