@@ -1546,9 +1546,63 @@ void customer::sDeleteCreditCard()
     return;
 
   XSqlQuery m;
-  m.prepare("DELETE FROM ccard WHERE ccard_id=:ccard_id;");
+
+  m.prepare("SELECT date_part('month', expire) AS expire_month, "
+            "       date_part('year', expire) AS expire_year "
+            "FROM ( "
+            " SELECT CASE WHEN ccpay_transaction_datetime > "
+            "                  date_trunc('month', now()) THEN "
+            "                  now() "
+            "             ELSE "
+            "                  now() - '1 month'::INTERVAL "
+            "            END AS expire "
+            " FROM ccpay "
+            " WHERE ccpay_ccard_id=:ccard_id "
+            " ORDER BY ccpay_transaction_datetime DESC "
+            " LIMIT 1) qry;");
   m.bindValue(":ccard_id", _cc->id());
   m.exec();
+
+  if (m.first())
+  {
+    QString month = m.value("expire_month").toString();
+    QString year = m.value("expire_year").toString();
+
+    m.prepare("UPDATE ccard "
+              "SET ccard_active=FALSE, "
+              "    ccard_month_expired=encrypt(setbytea(lpad(:month, 2, '0')), setbytea(:key), 'bf'), "
+              "    ccard_year_expired=encrypt(setbytea(:year), setbytea(:key), 'bf') "
+              "WHERE ccard_id=:ccard_id;");
+    m.bindValue(":ccard_id", _cc->id());
+    m.bindValue(":month", month);
+    m.bindValue(":year", year);
+    m.bindValue(":key", omfgThis->_key);
+    m.exec();
+    if (m.lastError().type() != QSqlError::NoError)
+    {
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Credit Card"),
+                           m.lastError(), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (m.lastError().type() != QSqlError::NoError)
+  {
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Credit Card"),
+                         m.lastError(), __FILE__, __LINE__);
+    return;
+  }
+  else
+  {
+    m.prepare("DELETE FROM ccard WHERE ccard_id=:ccard_id;");
+    m.bindValue(":ccard_id", _cc->id());
+    m.exec();
+    if (m.lastError().type() != QSqlError::NoError)
+    {
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Credit Card"),
+                           m.lastError(), __FILE__, __LINE__);
+      return;
+    }
+  }
 
   sFillCcardList();
 }
