@@ -42,6 +42,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void        sListPrices();
     virtual void        sDeterminePrice();
     virtual void        sDeterminePrice( bool force );
+    virtual void        sPopulatePrices( bool update, bool allPrices, double charTotal );
     virtual void        sRecalcPrice();
     virtual void        sPopulateItemInfo( int pItemid );
     virtual void        sRecalcAvailability();
