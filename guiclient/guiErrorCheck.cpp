@@ -100,15 +100,12 @@ static QScriptValue guierrorcheck_reporterrors(QScriptContext *context, QScriptE
   return QScriptValue(result);
 }
 
-void setupGuiErrorCheckProto(QScriptEngine *engine)
+void setupGuiErrorCheck(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QListGuiErrorChecktoScriptValue, QListGuiErrorCheckfromScriptValue);
 
-  QScriptValue proto = engine->newQObject(new GuiErrorCheckProto(engine));
-  engine->setDefaultPrototype(qMetaTypeId<GuiErrorCheck>(), proto);
-
-  QScriptValue constructor = engine->newFunction(constructGuiErrorCheck,  proto);
-  engine->globalObject().setProperty("GuiErrorCheck",  constructor, CTORPROPFLAGS);
+  QScriptValue constructor = engine->newFunction(constructGuiErrorCheck);
+  engine->globalObject().setProperty("GuiErrorCheck", constructor, CTORPROPFLAGS);
 
   constructor.setProperty("reportErrors", engine->newFunction(guierrorcheck_reporterrors), STATICPROPFLAGS);
 }
@@ -131,37 +128,4 @@ QScriptValue constructGuiErrorCheck(QScriptContext *context, QScriptEngine *engi
   }
 
   return engine->toScriptValue(obj);
-}
-
-GuiErrorCheckProto::GuiErrorCheckProto(QObject *parent)
-    : QObject(parent)
-{
-}
-
-bool GuiErrorCheckProto::hasError() const
-{
-  GuiErrorCheck item = qscriptvalue_cast<GuiErrorCheck>(thisObject());
-  return item.hasError;
-}
-
-QWidget *GuiErrorCheckProto::widget() const
-{
-  GuiErrorCheck item = qscriptvalue_cast<GuiErrorCheck>(thisObject());
-  if (item.widget)
-    return item.widget;
-  return 0;
-}
-
-QString GuiErrorCheckProto::msg() const
-{
-  GuiErrorCheck item = qscriptvalue_cast<GuiErrorCheck>(thisObject());
-  return item.msg;
-}
-
-QString GuiErrorCheckProto::toString() const
-{
-  GuiErrorCheck item = qscriptvalue_cast<GuiErrorCheck>(thisObject());
-  if (item.hasError)
-    return QString("GuiErrorCheck(error)");
-  return QString("GuiErrorCheck(noError)");
 }

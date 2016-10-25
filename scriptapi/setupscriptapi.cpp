@@ -23,7 +23,6 @@
 #include "exporthelper.h"
 #include "filemoveselector.h"
 #include "glclustersetup.h"
-#include "../guiclient/guiErrorCheck.h"
 #include "include.h"
 #include "itemlineeditsetup.h"
 #include "itemgroupcluster.h"
@@ -200,7 +199,6 @@ void setupScriptApi(QScriptEngine *engine)
   setupExportHelper(engine);
   setupFileMoveSelector(engine);
   setupGLCluster(engine);
-  setupGuiErrorCheckProto(engine);
   setupInclude(engine);
   setupItemLineEdit(engine);
   setupItemGroupCluster(engine);
