@@ -2083,7 +2083,7 @@ to be bound by its terms.</comment>
                <enum>QFrame::NoFrame</enum>
               </property>
               <property name="currentIndex">
-               <number>2</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="_listPricePage">
                <layout class="QVBoxLayout" name="verticalLayout_11">
