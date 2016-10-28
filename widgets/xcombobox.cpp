@@ -1109,8 +1109,7 @@ void XComboBox::setType(XComboBoxTypes pType)
     case Agent:
       query.exec( "SELECT usr_id, usr_username, usr_username "
                   "  FROM usr"
-                  " WHERE ((usr_agent) "
-                  "   AND  (usr_active)) "
+                  " WHERE (usr_agent) "
                   " ORDER BY usr_username;" );
       break;
 
