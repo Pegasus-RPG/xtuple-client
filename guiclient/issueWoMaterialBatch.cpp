@@ -131,6 +131,36 @@ void issueWoMaterialBatch::sIssue()
     }
   }
 
+  sqlissue = ("SELECT CASE WHEN (womatl_qtyreq >= 0) THEN "
+              "  itemsite_qtyonhand < roundQty(item_fractional, itemuomtouom(item_id, womatl_uom_id, NULL, roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyreq - womatl_qtyiss)))) "
+              "ELSE "
+              "  itemsite_qtyonhand < roundQty(item_fractional, itemuomtouom(item_id, womatl_uom_id, NULL, roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyiss * -1)))) "
+              "END AS isqtyavail "
+              "FROM womatl "
+              "JOIN itemsite ON (womatl_itemsite_id = itemsite_id) "
+              "JOIN item ON (itemsite_item_id = item_id) "
+              "WHERE (fetchMetricBool('DisallowNegativeInventory') OR itemsite_costmethod='A') "
+              " AND (womatl_issuemethod IN ('S', 'M')) "
+              " <? if exists(\"pickItemsOnly\") ?> "
+              " AND (womatl_picklist) "
+              " <? endif ?> "
+              " AND (womatl_wo_id=<? value(\"wo_id\") ?>);");
+  mqlissue.setQuery(sqlissue);
+  params = ParameterList();
+  params.append("wo_id", _wo->id());
+  if (!_nonPickItems->isChecked())
+    params.append("pickItemsOnly", true);
+  issue = mqlissue.toQuery(params);
+  while(issue.next())
+  {
+    if(!(issue.value("isqtyavail").toBool()))
+      if(QMessageBox::question(this, tr("Continue?"), tr("One or more items cannot be issued due to insufficient inventory. Issue all other items?"),
+                               QMessageBox::No | QMessageBox::Default, QMessageBox::Yes) == QMessageBox::No)
+        return;
+      else
+        break;
+  }
+
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
@@ -168,13 +198,13 @@ void issueWoMaterialBatch::sIssue()
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Information; Work Order ID #%1")
                              .arg(_wo->id()),
                              issue, __FILE__, __LINE__);
-        return;
+        continue;
       }
       if (distributeInventory::SeriesAdjust(issue.value("result").toInt(), this) == XDialog::Rejected)
       {
         rollback.exec();
         QMessageBox::information( this, tr("Material Issue"), tr("Transaction Canceled") );
-        return;
+        continue;
       }
 
       if (_metrics->boolean("LotSerialControl"))
@@ -198,22 +228,14 @@ void issueWoMaterialBatch::sIssue()
           rollback.exec();
           ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Material"),
                                lsdetail, __FILE__, __LINE__);
-          return;
+          continue;
         }
       }
-      
+
+      issue.exec("COMMIT;");      
     }
     else
-    {
       rollback.exec();
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
-                           tr("Window:%1/n Error Issuing Material: Work Order ID #%2")
-                           .arg(windowTitle())
-                           .arg(_wo->id()),__FILE__,__LINE__);
-      return;
-    }
-
-    issue.exec("COMMIT;");
   }
 
   omfgThis->sWorkOrdersUpdated(_wo->id(), true);
