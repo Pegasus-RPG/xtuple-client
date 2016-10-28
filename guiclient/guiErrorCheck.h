@@ -14,6 +14,7 @@
 #include <QString>
 #include <QObject>
 #include <QtScript>
+#include <QList>
 
 class QWidget;
 
@@ -35,6 +36,7 @@ class GuiErrorCheck
 
 // Script exposure
 Q_DECLARE_METATYPE(GuiErrorCheck)
+Q_DECLARE_METATYPE(QList<GuiErrorCheck>)
 void setupGuiErrorCheck(QScriptEngine *engine);
 QScriptValue constructGuiErrorCheck(QScriptContext *context, QScriptEngine *engine);
 
