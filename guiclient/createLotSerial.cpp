@@ -457,7 +457,7 @@ void createLotSerial::sAssign()
        * next ls_id.  Fetch the last ls_id */
       int ls_id = -1;
       XSqlQuery ls_id_query;
-      ls_id_query.prepare("SELECT ls_id FROM ls WHERE ls_number=:lotserial");
+      ls_id_query.prepare("SELECT ls_id FROM ls WHERE ls_number=:lotserial ORDER BY ls_id DESC");
       ls_id_query.bindValue(":lotserial", _lotSerial->currentText().toUpper());
       ls_id_query.exec();
       if (ls_id_query.first()) {
