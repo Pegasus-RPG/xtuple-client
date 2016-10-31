@@ -902,8 +902,7 @@ void GUIClient::showEvent(QShowEvent *event)
                  "  JOIN pg_namespace AS n ON c.relnamespace=n.oid) AS schema_table "
                  "ON script.tableoid=schema_table.oid "
                  "JOIN (SELECT regexp_split_to_table AS pkgname, row_number() over () AS seq "
-                 "  FROM regexp_split_to_table(buildsearchpath(), ',') "
-                 "  UNION SELECT 'xtcore', 0) AS path "
+                 "  FROM regexp_split_to_table(buildsearchpath(), ',')) AS path "
                  "ON pkgname = schema "
                  " WHERE script_enabled AND script_name = 'initMenu' "
                  "ORDER BY script_order, seq;");
