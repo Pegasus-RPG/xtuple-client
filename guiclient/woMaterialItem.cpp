@@ -406,6 +406,14 @@ void woMaterialItem::sItemIdChanged()
     
     _pickList->setChecked(uom.value("item_picklist").toBool());
   }
+  else
+  {
+    _qtyFxd->clear();
+    _qtyPer->clear();
+    _qtyRequired->clear();
+    _scrap->clear();
+    _pickList->setChecked(false);
+  }
 }
 
 void woMaterialItem::sPopulateUOM()
