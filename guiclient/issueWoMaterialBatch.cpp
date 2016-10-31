@@ -131,25 +131,17 @@ void issueWoMaterialBatch::sIssue()
     }
   }
 
-  sqlissue = ("SELECT CASE WHEN (womatl_qtyreq >= 0) THEN "
-              "  itemsite_qtyonhand < roundQty(item_fractional, itemuomtouom(item_id, womatl_uom_id, NULL, roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyreq - womatl_qtyiss)))) "
-              "ELSE "
-              "  itemsite_qtyonhand < roundQty(item_fractional, itemuomtouom(item_id, womatl_uom_id, NULL, roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyiss * -1)))) "
-              "END AS isqtyavail "
+  sqlissue = ("SELECT itemsite_qtyonhand < roundQty(item_fractional, itemuomtouom(item_id, womatl_uom_id, NULL, roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(CASE WHEN (womatl_qtyreq >= 0) THEN womatl_qtyreq - womatl_qtyiss ELSE womatl_qtyiss * -1 END)))) AS isqtyavail "
               "FROM womatl "
               "JOIN itemsite ON (womatl_itemsite_id = itemsite_id) "
               "JOIN item ON (itemsite_item_id = item_id) "
               "WHERE (fetchMetricBool('DisallowNegativeInventory') OR itemsite_costmethod='A') "
               " AND (womatl_issuemethod IN ('S', 'M')) "
-              " <? if exists(\"pickItemsOnly\") ?> "
+              " <? if exists('pickItemsOnly') ?> "
               " AND (womatl_picklist) "
               " <? endif ?> "
-              " AND (womatl_wo_id=<? value(\"wo_id\") ?>);");
+              " AND (womatl_wo_id=<? value('wo_id') ?>);");
   mqlissue.setQuery(sqlissue);
-  params = ParameterList();
-  params.append("wo_id", _wo->id());
-  if (!_nonPickItems->isChecked())
-    params.append("pickItemsOnly", true);
   issue = mqlissue.toQuery(params);
   while(issue.next())
   {
