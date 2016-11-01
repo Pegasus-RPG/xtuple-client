@@ -320,6 +320,7 @@ bool InputManager::eventFilter(QObject *, QEvent *pEvent)
 
         if (_private->_cursor == (_private->_length1 + _private->_length2 + _private->_length3))
         {
+          _private->_state = cIdle;
           // make sure we got a recognized scan event
           switch (_private->_event->type)
           {
