@@ -1885,6 +1885,22 @@ void salesOrderItem::sDeterminePrice(bool force)
     }
   }
   // Now get item price information
+  sPopulatePrices(_updatePrice, true, charTotal);
+
+  sCheckSupplyOrder();
+}
+
+void salesOrderItem::sPopulatePrices(bool update, bool allPrices, double charTotal)
+{
+  QDate asOf;
+
+  if (_metrics->value("soPriceEffective") == "ScheduleDate")
+    asOf = _scheduledDate->date();
+  else if (_metrics->value("soPriceEffective") == "OrderDate")
+    asOf = _netUnitPrice->effective();
+  else
+    asOf = omfgThis->dbDate();
+
   XSqlQuery itemprice;
   itemprice.prepare( "SELECT * FROM "
                      "itemIpsPrice(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
@@ -1906,7 +1922,7 @@ void salesOrderItem::sDeterminePrice(bool force)
   {
     if (itemprice.value("itemprice_price").toDouble() == -9999.0)
     {
-      if (!_updatePrice)
+      if (!update)
       {
         sCheckSupplyOrder();
         return;
@@ -1925,7 +1941,7 @@ void salesOrderItem::sDeterminePrice(bool force)
       _customerPrice->clear();
       _netUnitPrice->clear();
 
-      if (qtyChanged)
+      if (_qtyOrderedCache != _qtyOrdered->toDouble())
       {
         _qtyOrdered->clear();
         _qtyOrdered->setFocus();
@@ -1946,15 +1962,19 @@ void salesOrderItem::sDeterminePrice(bool force)
       else  // markup or list cost
         _priceMode = "M";
 
-      _baseUnitPrice->setLocalValue(price);
-      _customerPrice->setLocalValue(price + charTotal);
-      if (_updatePrice) // Configuration or user said they also want net unit price updated
+      if (allPrices)
       {
-        _netUnitPrice->setLocalValue(price + charTotal);
-        _listPrice->setBaseValue(itemprice.value("itemprice_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
+        _baseUnitPrice->setLocalValue(price);
+        _customerPrice->setLocalValue(price + charTotal);
+        if (update) // Configuration or user said they also want net unit price updated
+        {
+          _netUnitPrice->setLocalValue(price + charTotal);
+          _listPrice->setBaseValue(itemprice.value("itemprice_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
+        }
+
+        sCalculateDiscountPrcnt();
       }
 
-      sCalculateDiscountPrcnt();
       _qtyOrderedCache = _qtyOrdered->toDouble();
       _priceUOMCache = _priceUOM->id();
       _scheduledDateCache = _scheduledDate->date();
@@ -2003,8 +2023,6 @@ void salesOrderItem::sDeterminePrice(bool force)
   else if (itemprice.lastError().type() != QSqlError::NoError)
             ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Pricing Information"),
                                 itemprice, __FILE__, __LINE__);
-
-  sCheckSupplyOrder();
 }
 
 void salesOrderItem::sPopulateItemInfo(int pItemid)
@@ -4168,6 +4186,7 @@ void salesOrderItem::populate()
     sCalculateDiscountPrcnt();
     sLookupTax();
     sDetermineAvailability();
+    sPopulatePrices(false, false, 0.0);
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
                                 item, __FILE__, __LINE__))
