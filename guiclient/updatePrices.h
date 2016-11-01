@@ -32,7 +32,6 @@ public slots:
   virtual void sRemoveAll();
   virtual void sHandleBy(bool toggled);
   virtual void sHandleCharPrice();
-  virtual void closeEvent( QCloseEvent * pEvent );
 
 protected slots:
   virtual void languageChange();

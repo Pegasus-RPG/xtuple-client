@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -10,11 +10,10 @@
 
 #include "updatePrices.h"
 
-#include <QCloseEvent>
 #include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QValidator>
+
 #include <metasql.h>
 #include <parameter.h>
 #include "errorReporter.h"
@@ -29,12 +28,10 @@ updatePrices::updatePrices(QWidget* parent, const char* name, bool modal, Qt::Wi
   XSqlQuery updateupdatePrices;
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_byItem,             SIGNAL(toggled(bool)), this, SLOT(sHandleBy(bool)));
   connect(_byItemGroup,        SIGNAL(toggled(bool)), this, SLOT(sHandleBy(bool)));
   connect(_byProductCategory,  SIGNAL(toggled(bool)), this, SLOT(sHandleBy(bool)));
-  connect(_close,              SIGNAL(clicked()),     this, SLOT(close()));
+  connect(_close,              SIGNAL(clicked()),     this, SLOT(reject()));
   connect(_add,                SIGNAL(clicked()),     this, SLOT(sAdd()));
   connect(_addAll,             SIGNAL(clicked()),     this, SLOT(sAddAll()));
   connect(_remove,             SIGNAL(clicked()),     this, SLOT(sRemove()));
@@ -67,14 +64,17 @@ updatePrices::updatePrices(QWidget* parent, const char* name, bool modal, Qt::Wi
   _sel->addColumn(tr("Description"),     -1,          Qt::AlignLeft,  true,  "ipshead_descrip");
 
   _group->hide();
-  //	_value->setChecked(true);
 
   _listpricesched = false;
 }
 
 updatePrices::~updatePrices()
 {
-  // no need to delete child widgets, Qt does it all for us
+  MetaSQLQuery mql = mqlLoad("updateprices", "dropselsched");
+  ParameterList params;
+  XSqlQuery dropq = mql.toQuery(params);
+  ErrorReporter::error(QtCriticalMsg, this, tr("Error Dropping Table Information"),
+                       dropq, __FILE__, __LINE__);
 }
 
 void updatePrices::languageChange()
@@ -97,17 +97,6 @@ enum SetResponse updatePrices::set(const ParameterList &pParams)
   populate();
   
   return NoError;
-}
-
-void updatePrices::closeEvent(QCloseEvent * /*pEvent*/)
-{
-  XSqlQuery updatecloseEvent;
-  MetaSQLQuery mql = mqlLoad("updateprices", "dropselsched");
-  ParameterList params;
-  updatecloseEvent = mql.toQuery(params);
-  if (updatecloseEvent.lastError().type() != QSqlError::NoError)
-    ErrorReporter::error(QtCriticalMsg, this, tr("Error Dropping Table Information "),
-                       updatecloseEvent, __FILE__, __LINE__);
 }
 
 void updatePrices::sUpdate()
