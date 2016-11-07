@@ -95,12 +95,12 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
   connect(_new,                 SIGNAL(clicked()),                              this,         SLOT(sNew()));
   connect(_newCC,               SIGNAL(clicked()),                              this,         SLOT(sNewCreditCard()));
   //connect(_newCust,             SIGNAL(clicked()),                              this,         SLOT(sNewCust()));
-  connect(_orderNumber,         SIGNAL(editingFinished()),                            this,         SLOT(sHandleOrderNumber()));
+  connect(_orderNumber,         SIGNAL(editingFinished()),                      this,         SLOT(sHandleOrderNumber()));
   connect(_orderNumber,         SIGNAL(textChanged(const QString &)),           this,         SLOT(sSetUserEnteredOrderNumber()));
   connect(_save,                SIGNAL(clicked()),                              this,         SLOT(sSave()));
   connect(_saveAndAdd,          SIGNAL(clicked()),                              this,         SLOT(sSaveAndAdd()));
   connect(_shippingCharges,     SIGNAL(newID(int)),                             this,         SLOT(sHandleShipchrg(int)));
-  connect(_shipVia,             SIGNAL(editTextChanged(const QString &)),           this,         SLOT(sFillItemList()));
+  //connect(_shipVia,             SIGNAL(editTextChanged(const QString &)),           this,         SLOT(sFillItemList()));
   connect(_shipToAddr,          SIGNAL(changed()),                              this,         SLOT(sConvertShipTo()));
   connect(_shipToName,          SIGNAL(textChanged(const QString &)),           this,         SLOT(sConvertShipTo()));
   connect(_shipTo,              SIGNAL(newId(int)),                             this,         SLOT(sParseShipToNumber()));
@@ -1301,7 +1301,9 @@ bool salesOrder::save(bool partial)
 
     if ( (_mode == cNew) || (_mode == cEdit) )
     {
+      disconnect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
       omfgThis->sSalesOrdersUpdated(_soheadid);
+      connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
       omfgThis->sProjectsUpdated(_soheadid);
     }
     else if ( (_mode == cNewQuote) || (_mode == cEditQuote) )
@@ -2042,8 +2044,6 @@ void salesOrder::populateShipto(int pShiptoid)
 
   if (_saved)
     save(true);
-
-  sFillItemList();
 }
 
 void salesOrder::sConvertShipTo()
@@ -2103,7 +2103,7 @@ void salesOrder::sNew()
   newdlg.set(params);
 
   newdlg.exec();
-    sFillItemList();
+  sFillItemList();
 }
 
 void salesOrder::sCopyToShipto()
@@ -3317,7 +3317,6 @@ void salesOrder::sHandleShipchrg(int pShipchrgid)
       {
         _calcfreight = _metrics->boolean("CalculateFreight");
         _freight->setEnabled(true);
-        sFillItemList();
       }
       else
       {
@@ -5137,7 +5136,6 @@ void salesOrder::sOrderDateChanged()
 
   sRecalculatePrice();
   _orderDateCache = _orderDate->date();
-  sFillItemList();
   omfgThis->sSalesOrdersUpdated(_soheadid);
 }
 
@@ -5342,7 +5340,6 @@ void salesOrder::sShipDateChanged()
   if (_metrics->value("soPriceEffective") == "ScheduleDate")
     sRecalculatePrice();
   _shipDateCache = _shipDate->date();
-  sFillItemList();
   omfgThis->sSalesOrdersUpdated(_soheadid);
 }
 
