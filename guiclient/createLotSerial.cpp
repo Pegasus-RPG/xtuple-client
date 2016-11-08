@@ -210,9 +210,12 @@ void createLotSerial::sHandleCharacteristics()
     {
         XSqlQuery charQuery;
         charQuery.prepare(QString("SELECT DISTINCT char.char_name, char.char_type, charass.charass_value "
-                          " FROM charass INNER JOIN char ON charass.charass_char_id=char.char_id "
-                          " WHERE charass.charass_target_type='LS' AND "
-                          " charass.charass_target_id=%1 "
+                          " FROM charass "
+                          " JOIN char ON (charass_char_id = char_id) "
+                          " JOIN charuse ON (charuse_char_id = char_id) "
+                          " WHERE ((charass.charass_target_type = 'LS') "
+                          "  AND   (charass.charass_target_id=%1) "
+                          "  AND   (charuse_target_type = 'LS')) "
                           " ORDER BY char.char_name ASC").arg(ls_id));
         success = charQuery.exec();
         if (!success)
