@@ -157,7 +157,7 @@ void issueWoMaterialBatch::sIssue()
                 "         roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyreq - womatl_qtyiss))"
                 "       ELSE"
                 "         roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyiss * -1))"
-                "       END AS qty"
+                "       END AS qty, item_number"
                 "  FROM womatl, itemsite, item"
                 " WHERE((womatl_itemsite_id=itemsite_id)"
                 "   AND (itemsite_item_id=item_id)"
@@ -168,6 +168,10 @@ void issueWoMaterialBatch::sIssue()
                 "   AND (womatl_wo_id=<? value(\"wo_id\") ?>)); ");
   MetaSQLQuery mqlitems(sqlitems);
   XSqlQuery items = mqlitems.toQuery(params);
+
+  int succeeded = 0;;
+  QList<QString> failedItems;
+  QList<QString> errors;
   while(items.next())
   {
     issue.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
@@ -219,11 +223,26 @@ void issueWoMaterialBatch::sIssue()
         }
       }
 
+      succeeded++;
       issue.exec("COMMIT;");      
     }
     else
+    {
       rollback.exec();
+      failedItems.append(items.value("item_number").toString());
+      errors.append(issue.lastError().text());
+    }
   }
+
+  QMessageBox dlg(QMessageBox::Critical, "Errors Issuing Material", "", QMessageBox::Ok, this);
+  dlg.setText(tr("%1 Items succeeded.\n%2 Items failed.").arg(succeeded).arg(failedItems.size()));
+
+  QString details;
+  for (int i=0; i<failedItems.size(); i++)
+    details += tr("Item %1 failed with:\n%2\n").arg(failedItems[i]).arg(errors[i]);
+  dlg.setDetailedText(details);
+
+  dlg.exec();
 
   omfgThis->sWorkOrdersUpdated(_wo->id(), true);
 
