@@ -91,6 +91,11 @@ dspWoSchedule::dspWoSchedule(QWidget* parent, const char*, Qt::WindowFlags fl)
   list()->addColumn(tr("Due Date"),       _dateColumn,   Qt::AlignRight,  true,  "wo_duedate"  );
   list()->addColumn(tr("Condition"),      _dateColumn,   Qt::AlignLeft,   true,  "condition"   );
 
+  list()->addColumn(tr("Wip Value"),      _bigMoneyColumn,   Qt::AlignLeft,   true,  "wo_wipvalue"   );
+  list()->addColumn(tr("Cost Est."),      _bigMoneyColumn,   Qt::AlignLeft,   true,  "plancost"   );
+  list()->addColumn(tr("Variance Est."),  _bigMoneyColumn,   Qt::AlignLeft,   true,  "wopvar"   );
+  list()->addColumn(tr("Cost Method"),    _orderColumn,   Qt::AlignLeft,   true,  "costmethod"   );
+
   if (_privileges->check("MaintainWorkOrders"))
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
   else
