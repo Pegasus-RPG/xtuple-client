@@ -201,6 +201,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _taxreg->addColumn(tr("Registration #"), -1, Qt::AlignLeft, true, "taxreg_number");
 
   _shipto->addColumn(tr("Default"), _itemColumn, Qt::AlignLeft, true, "shipto_default");
+  _shipto->addColumn(tr("Active"),  _itemColumn, Qt::AlignLeft, true, "shipto_active");  
   _shipto->addColumn(tr("Number"),  _itemColumn, Qt::AlignLeft, true, "shipto_num");
   _shipto->addColumn(tr("Name"),            150, Qt::AlignLeft, true, "shipto_name");
   _shipto->addColumn(tr("Address"),         150, Qt::AlignLeft, true, "addr_line1");
@@ -1165,7 +1166,7 @@ void customer::sPopulateShiptoMenu(QMenu *menuThis)
 void customer::sFillShiptoList()
 {
   XSqlQuery r;
-  r.prepare( "SELECT shipto_id, shipto_default,"
+  r.prepare( "SELECT shipto_id, shipto_default, shipto_active, "
              "       shipto_num, shipto_name, addr_line1,"
              "       (addr_city || ', ' || addr_state || '  ' || addr_postalcode) AS shipto_csz "
              "  FROM shiptoinfo LEFT OUTER JOIN addr ON shipto_addr_id=addr_id"
