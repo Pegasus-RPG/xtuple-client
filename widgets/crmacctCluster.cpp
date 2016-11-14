@@ -63,6 +63,7 @@ static QString _listAndSearchQueryString(
       "    SELECT vend_id AS id,         vend_number AS number,"
       "           vend_name AS name,     vend_cntct1_id AS cntct_id,"
       "           vend_active AS active, COALESCE(cntct_addr_id, vend_addr_id) AS addr_id,"
+      "           vend_vendtype_id AS combo_id,"
       "           vendtype_code AS type"
       "      FROM vendinfo"
       "      JOIN vendtype ON (vend_vendtype_id=vendtype_id)"
@@ -82,6 +83,7 @@ static QString _listAndSearchQueryString(
       "<? if exists('searchString') ?>"
       "   WHERE "
       "    <? if exists('activeOnly') ?> active AND <? endif ?>"
+      "    <? if exists('combo_id') ?> combo_id = <? value('combo_id') ?> AND <? endif ?>"
       "      (false "
       "    <? if exists('searchNumber') ?>"
       "       OR (UPPER(number) ~ <? value('searchString') ?>)"
@@ -664,7 +666,8 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     _searchNumber->setText(tr("Vendor Number"));
     _searchName->setText(tr("Vendor Name"));
     _addressLit->setText(tr("Main Address:"));
-    _listTab->addColumn("Vend. Type", _itemColumn, Qt::AlignLeft, true, "type");
+    if (!(_listTab->column("type") > 0))
+      _listTab->addColumn("Vend. Type", _itemColumn, Qt::AlignLeft, true, "type");
     break;
 
   case CRMAcctLineEdit::CustAndProspect:
