@@ -637,6 +637,27 @@ bool configureGL::sSave()
     }
   }
 
+  if (_achGroup->isChecked())
+  {
+    // Check ACH Batch Number is greater than existing value
+    XSqlQuery check;
+    check.exec("SELECT max(checkhead_ach_batch)::INTEGER AS maxbatch "
+               " FROM checkhead; ");
+    if (check.first())
+    {
+      if (check.value("maxbatch") >= _nextACHBatchNumber->text().toInt())
+      {
+        if (QMessageBox::question(this, tr("Confirm ACH Batch"),
+                                tr("The ACH batch number is less than a batch number already used. "
+                                   "This may cause duplicated batch numbers in the future. "
+                                   "Would you like to proceed?"),
+                                    QMessageBox::Yes | QMessageBox::Default,
+                                    QMessageBox::No ) == QMessageBox::No)
+          return false;
+      }
+    }
+  }
+
   // AP
   configureSave.prepare("SELECT setNextAPMemoNumber(:armemo_number) AS result;");
   configureSave.bindValue(":armemo_number", _nextAPMemoNumber->text().toInt());
