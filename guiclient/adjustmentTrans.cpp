@@ -253,6 +253,7 @@ void adjustmentTrans::sPost()
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
                                 adjustmentPost, __FILE__, __LINE__))
   {
+      rollback.exec();
       return;
   }
   else
