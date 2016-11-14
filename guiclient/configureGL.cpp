@@ -645,7 +645,8 @@ bool configureGL::sSave()
                " FROM checkhead; ");
     if (check.first())
     {
-      if (check.value("maxbatch") >= _nextACHBatchNumber->text().toInt())
+      int ach = _nextACHBatchNumber->text().toInt();
+      if (check.value("maxbatch").toInt() >= ach)
       {
         if (QMessageBox::question(this, tr("Confirm ACH Batch"),
                                 tr("The ACH batch number is less than a batch number already used. "
