@@ -265,7 +265,8 @@ void arWorkBench::sDeleteCashrcpt()
     if (result < 0)
     {
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Cash Receipt"),
-                                  arDeleteCashrcpt, __FILE__, __LINE__);
+                           storedProcErrorLookup("deleteCashrcpt", result),
+                           __FILE__, __LINE__);
       return;
     }
   }
