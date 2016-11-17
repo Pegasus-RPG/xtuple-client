@@ -15,12 +15,14 @@
 XCheckBox::XCheckBox(QWidget *pParent) :
   QCheckBox(pParent)
 {
+  connect(this, SIGNAL(objectNameChanged(const QString &)), this, SLOT(init()));
   constructor();
 }
 
 XCheckBox::XCheckBox(const QString &pText, QWidget *pParent) :
   QCheckBox(pText, pParent)
 {
+  connect(this, SIGNAL(objectNameChanged(const QString &)), this, SLOT(init()));
   constructor();
 }
 
@@ -33,10 +35,8 @@ void XCheckBox::constructor()
   _default=false;
   setForgetful(false);
   _initialized = false;
-    
-  _mapper = new XDataWidgetMapper(this);
 
-  init();
+  _mapper = new XDataWidgetMapper(this);
 }
 
 void XCheckBox::setData()
@@ -46,13 +46,28 @@ void XCheckBox::setData()
   _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), isChecked());
 }
 
+QWidget* getRootWidget(QWidget* child)
+{
+  while (child->parentWidget() != Q_NULLPTR) {
+    if (child->parentWidget()->objectName() != "") {
+      child = child->parentWidget();
+    } else {
+      break;
+    }
+  }
+
+  return child;
+}
+
 void XCheckBox::init()
 {
   if(_initialized)
     return;
+
   QString pname;
-  if(window())
-    pname = window()->objectName() + "/";
+  if (parent()) {
+    pname = getRootWidget(this)->objectName() + "/";
+  }
   _settingsName = pname + objectName();
 
   if(_x_preferences)
@@ -69,24 +84,18 @@ void XCheckBox::setForgetful(bool p)
     _forgetful = _x_preferences->value("XCheckBox/forgetful").startsWith("t", Qt::CaseInsensitive);
   else
     _forgetful = p;
-    
+
   if (! _forgetful)
   {
     Q_INIT_RESOURCE(widgets);
     if (! _checkedIcon)
       _checkedIcon = new QPixmap(":/widgets/images/xcheckbox.png");
-      
+
     setIcon(*_checkedIcon);
     setIconSize(_checkedIcon->size());
   }
   else
-    setIcon(QPixmap());    
-}
-
-void XCheckBox::showEvent(QShowEvent * event)
-{
-  init();
-  QCheckBox::showEvent(event);
+    setIcon(QPixmap());
 }
 
 XCheckBox::~XCheckBox()
@@ -104,7 +113,7 @@ void XCheckBox::setDataWidgetMap(XDataWidgetMapper* m)
 {
   m->addMapping(this, _fieldName, "checked", "defaultChecked");
   _mapper=m;
-  connect(this, SIGNAL(stateChanged(int)), this, SLOT(setData())); 
+  connect(this, SIGNAL(stateChanged(int)), this, SLOT(setData()));
 }
 
 // scripting exposure /////////////////////////////////////////////////////////
