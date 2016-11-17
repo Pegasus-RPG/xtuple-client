@@ -35,6 +35,8 @@ void XCheckBox::constructor()
   _initialized = false;
     
   _mapper = new XDataWidgetMapper(this);
+
+  init();
 }
 
 void XCheckBox::setData()
