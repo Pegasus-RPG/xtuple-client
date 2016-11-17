@@ -48,7 +48,7 @@ void XCheckBox::setData()
 
 QWidget* getRootWidget(QWidget* child)
 {
-  while (child->parentWidget() != Q_NULLPTR) {
+  while (child->parentWidget()) {
     if (child->parentWidget()->objectName() != "") {
       child = child->parentWidget();
     } else {
