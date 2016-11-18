@@ -206,6 +206,9 @@ bool dspQOHByLocation::setParams(ParameterList &params)
 
   _warehouse->appendValue(params);
 
+  if (_metrics->boolean("MultiWhs"))
+    params.append("MultiWhs");
+
   if (_location->id() != -1)
     params.append("location_id", _location->id());
 
