@@ -544,8 +544,7 @@ bool configureGL::sSave()
                                  "the Profit Centers from your "
                                  "Chart of Accounts.  Are you sure "
                                  "you want to do this?"),
-                                  QMessageBox::Yes | QMessageBox::Default,
-                                  QMessageBox::No ) == QMessageBox::Yes)
+                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes))
     {
       XSqlQuery check;
       check.exec("SELECT flitem_id FROM flitem "
@@ -586,8 +585,7 @@ bool configureGL::sSave()
                                  "the Subaccounts from your "
                                  "Chart of Accounts.  Are you sure "
                                  "you want to do this?"),
-                                  QMessageBox::Yes | QMessageBox::Default,
-                                  QMessageBox::No ) == QMessageBox::Yes)
+                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes))
     {
       XSqlQuery check;
       check.exec("SELECT flitem_id FROM flitem "
@@ -652,8 +650,7 @@ bool configureGL::sSave()
                                 tr("The ACH batch number is less than a batch number already used. "
                                    "This may cause duplicated batch numbers in the future. "
                                    "Would you like to proceed?"),
-                                    QMessageBox::Yes | QMessageBox::Default,
-                                    QMessageBox::No ) == QMessageBox::No)
+                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::No))
           return false;
       }
     }
@@ -857,8 +854,7 @@ bool configureGL::sSave()
                                    "checking information for Vendors until you "
                                    "configure encryption. Would you like to do "
                                    "this now?"),
-                                    QMessageBox::Yes | QMessageBox::Default,
-                                    QMessageBox::No ) == QMessageBox::Yes)
+                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes))
         return false;
     }
     else
