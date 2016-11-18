@@ -33,19 +33,19 @@ packingListBatch::packingListBatch(QWidget* parent, const char* name, Qt::Window
 {
   setupUi(this);
 
-  connect(_add,		     SIGNAL(clicked()), this, SLOT(sAddSO()));
-  connect(_addTO,	     SIGNAL(clicked()), this, SLOT(sAddTO()));
+  connect(_add,		           SIGNAL(clicked()),     this, SLOT(sAddSO()));
+  connect(_addTO,	           SIGNAL(clicked()),     this, SLOT(sAddTO()));
   connect(_autoUpdate,	     SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
-  connect(_delete,	     SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_deletePrinted,    SIGNAL(clicked()), this, SLOT(sClearPrinted()));
+  connect(_delete,	         SIGNAL(clicked()),     this, SLOT(sDelete()));
+  connect(_deletePrinted,    SIGNAL(clicked()),     this, SLOT(sClearPrinted()));
   connect(_pack, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_printBatch,       SIGNAL(clicked()), this, SLOT(sPrintBatch()));
-  connect(_printEditList,    SIGNAL(clicked()), this, SLOT(sPrintEditList()));
-  connect(_printPackingList, SIGNAL(clicked()), this, SLOT(sPrintPackingList()));
-  connect(_warehouse,        SIGNAL(updated()), this, SLOT(sFillList()));
-  connect(_creditHold,       SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_packHold,       SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_shipHold,       SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_printBatch,       SIGNAL(clicked()),     this, SLOT(sPrintBatch()));
+  connect(_printEditList,    SIGNAL(clicked()),     this, SLOT(sPrintEditList()));
+  connect(_printPackingList, SIGNAL(clicked()),     this, SLOT(sPrintPackingList()));
+  connect(_warehouse,        SIGNAL(updated()),     this, SLOT(sFillList()));
+  connect(_creditHold,       SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_packHold,         SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_shipHold,         SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
   setAcceptDrops(true);
 
@@ -133,7 +133,7 @@ void packingListBatch::sPrintBatch()
       usePickForm = false;
     else
       usePickForm = true;
-      
+
     // skip when PackForm and no shiphead_id
     if (!usePickForm && osmiscid <= 0)
         continue;
@@ -252,7 +252,7 @@ void packingListBatch::sPopulateMenu(QMenu *pMenu)
     menuItem->setEnabled(_privileges->check("MaintainSalesOrders") ||
                         _privileges->check("ViewSalesOrders"));
   }
-    
+
   if (_pack->currentItem()->rawValue("pack_head_type") == "TO")
   {
     menuItem = pMenu->addAction(tr("View Transfer Order..."), this, SLOT(sViewTransferOrder()));
@@ -277,7 +277,7 @@ void packingListBatch::sAddSO()
   ParameterList params;
   params.append("soType", cSoOpen);
   _warehouse->appendValue(params);
-  
+
   salesOrderList newdlg(this, "", true);
   newdlg.set(params);
 
@@ -304,7 +304,7 @@ void packingListBatch::sAddTO()
   ParameterList params;
   params.append("toType", cToOpen);
   _warehouse->appendValue(params);
-  
+
   transferOrderList newdlg(this, "", true);
   newdlg.set(params);
 
