@@ -107,8 +107,8 @@ to be bound by its terms.</comment>
                <property name="text">
                 <string>&amp;Select</string>
                </property>
-               <property name="default">
-                <bool>true</bool>
+               <property name="enabled">
+                <bool>false</bool>
                </property>
               </widget>
              </item>
@@ -212,8 +212,8 @@ to be bound by its terms.</comment>
   <tabstop>_cust</tabstop>
   <tabstop>_dates</tabstop>
   <tabstop>_invoice</tabstop>
-  <tabstop>_select</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_select</tabstop>
  </tabstops>
  <includes>
   <include location="global">parameter.h</include>
