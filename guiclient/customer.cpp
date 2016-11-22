@@ -1422,27 +1422,23 @@ void customer::sPopulateSummary()
     _lastSaleDate->setDate(query.value("lastdate").toDate());
   }
 
-  // exclude some credit card charges so they don't cancel the actual sales figures
-  query.prepare( "SELECT COALESCE(SUM(round(cohist_qtyshipped * cohist_unitprice,2)), 0) AS lysales "
-                 "FROM cohist "
-                 "WHERE ( (cohist_invcdate BETWEEN (DATE_TRUNC('year', CURRENT_TIMESTAMP) - INTERVAL '1 year') AND"
-                 "                                 (DATE_TRUNC('year', CURRENT_TIMESTAMP) - INTERVAL '1 day'))"
-                 " AND (cohist_cohead_ccpay_id IS NULL)"
-                 " AND (cohist_cust_id=:cust_id) );" );
-  query.bindValue(":cust_id", _custid);
-  query.exec();
+  ParameterList params;
+  params.append("cust_id", _custid);
+  MetaSQLQuery lySales = mqlLoad("customer", "lastYearSales");
+  query = lySales.toQuery(params);
   if (query.first())
     _lastYearSales->setDouble(query.value("lysales").toDouble());
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Customer Sales History"),
+                                  query, __FILE__, __LINE__))
+      return;
 
-  query.prepare( "SELECT COALESCE(SUM(round(cohist_qtyshipped * cohist_unitprice,2)), 0) AS ytdsales "
-                 "FROM cohist "
-                 "WHERE ( (cohist_invcdate>=DATE_TRUNC('year', CURRENT_TIMESTAMP))"
-                 " AND (cohist_cohead_ccpay_id IS NULL)"
-                 " AND (cohist_cust_id=:cust_id) );" );
-  query.bindValue(":cust_id", _custid);
-  query.exec();
+  MetaSQLQuery ytdSales = mqlLoad("customer", "ytdSales");
+  query = ytdSales.toQuery(params);
   if (query.first())
     _ytdSales->setDouble(query.value("ytdsales").toDouble());
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Customer Sales History"),
+                                  query, __FILE__, __LINE__))
+      return;
 
   query.prepare( "SELECT COALESCE( SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
                  "                                   (coitem_price / coitem_price_invuomratio) ), 0 ) AS backlog "
