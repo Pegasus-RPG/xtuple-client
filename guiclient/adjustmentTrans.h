@@ -37,9 +37,12 @@ protected slots:
 
 private:
     int _mode;
+    int _itemsiteId;
+    int _itemlocSeries;
     double _cachedQOH;
     double _cachedValue;
     bool _captive;
+    bool _controlledItem;
     QButtonGroup* _adjustmentTypeGroupInt;
     QString _costMethod;
 
