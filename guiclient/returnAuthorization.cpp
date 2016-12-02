@@ -401,7 +401,7 @@ bool returnAuthorization::sSave(bool partial)
   << GuiErrorCheck((!partial && disposition.isEmpty()), _disposition,
                    tr("<p>You must enter a Disposition."))
   << GuiErrorCheck((!partial && timing.isEmpty()), _timing,
-                   tr("<p>You must enter a Timing."))
+                   tr("<p>You must enter a Credit/Ship Timing."))
   << GuiErrorCheck((!partial && creditBy.isEmpty()), _creditBy,
                    tr("<p>You must enter a Credit Method."))
   << GuiErrorCheck(_authNumber->text().isEmpty(), _authNumber,
