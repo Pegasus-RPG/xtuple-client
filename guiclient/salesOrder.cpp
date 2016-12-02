@@ -792,8 +792,6 @@ bool salesOrder::save(bool partial)
                           tr("You must select a Ship-To for this order before you may save it.") )
          << GuiErrorCheck(!partial && _total->localValue() < 0, _cust,
                           tr("<p>The Total must be a positive value.") )
-         << GuiErrorCheck(!partial && _soitem->topLevelItemCount() == 0, _new,
-                          tr("<p>You must create at least one Line Item for this order before you may save it.") )
          << GuiErrorCheck(_orderNumber->text().toInt() == 0, _orderNumber,
                           tr( "<p>You must enter a valid Number for this order before you may save it." ) )
          << GuiErrorCheck((!_miscCharge->isZero()) && (!_miscChargeAccount->isValid()), _miscChargeAccount,
@@ -806,6 +804,10 @@ bool salesOrder::save(bool partial)
          << GuiErrorCheck(!partial && !_project->isValid() && _metrics->boolean("RequireProjectAssignment"), _project,
                           tr("<p>You must enter a Project for this order before you may save it."))
   ;
+  if (!(_metrics->boolean("EnableRentals") && ISORDER(_mode))) {
+      errors << GuiErrorCheck(!partial && _soitem->topLevelItemCount() == 0, _new,
+                           tr("<p>You must create at least one Line Item for this order before you may save it.") );
+  }
 
   if (_opportunity->isValid())
   {
