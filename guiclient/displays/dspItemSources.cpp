@@ -35,9 +35,16 @@ dspItemSources::dspItemSources(QWidget* parent, const char*, Qt::WindowFlags fl)
 //  setNewVisible(true);
 //  setQueryOnStartEnabled(true);
 
+  QString qrySite = "SELECT 0, 'All Sites' AS name, '' AS code "
+                    "UNION "
+                    "SELECT warehous_id, warehous_code, warehous_code "
+                    "FROM site() "
+                    "WHERE warehous_active "
+                    "ORDER BY code;";
+
   if (_metrics->boolean("MultiWhs"))
   {
-    parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
+    parameterWidget()->appendComboBox(tr("Site"), "warehous_id", qrySite);
     parameterWidget()->append(tr("Drop Ship Only"), "showDropShip", ParameterWidget::Exists);
   }
   parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
