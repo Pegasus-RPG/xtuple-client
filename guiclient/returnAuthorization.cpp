@@ -404,7 +404,7 @@ bool returnAuthorization::sSave(bool partial)
                    tr("<p>You must enter a Credit/Ship Timing."))
   << GuiErrorCheck((!partial && creditBy.isEmpty()), _creditBy,
                    tr("<p>You must enter a Credit Method."))
-  << GuiErrorCheck(_authNumber->text().isEmpty(), _authNumber,
+  << GuiErrorCheck(!partial && _authNumber->text().isEmpty(), _authNumber,
                    tr("You must enter a valid Authorization Number."))
   << GuiErrorCheck(!_authDate->isValid(), _authDate,
                    tr("You must enter a valid Authorization Date."))
