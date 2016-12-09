@@ -65,8 +65,10 @@ adjustmentTrans::adjustmentTrans(QWidget* parent, const char * name, Qt::WindowF
     _tab->removeTab(0);
 
   _item->setFocus();
+  _itemsiteId = 0;
   _controlledItem = false;
-  _itemlocSeries = 0;
+  _lsControlled = false;
+  _locControlled = false;
 }
 
 adjustmentTrans::~adjustmentTrans()
@@ -170,6 +172,7 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
 void adjustmentTrans::sPost()
 {
   XSqlQuery adjustmentPost;
+  int _itemlocSeries = 0;
   double qty = _qty->toDouble();
   double cost = _cost->toDouble();
 
@@ -193,10 +196,12 @@ void adjustmentTrans::sPost()
   if(GuiErrorCheck::reportErrors(this,tr("Cannot Post Transaction"),errors))
     return;
 
+  // Handle everything possible with distribution detail before inventory transaction
   if (_controlledItem)
   {
+    // Create the 'parent' itemlocdist record
     XSqlQuery newSeries;
-    newSeries.prepare("SELECT createitemlocdistseries(:itemsite_id, :qty, 'AD', '') AS itemlocseries;");
+    newSeries.prepare("SELECT createitemlocdistseries(:itemsite_id, :qty, 'AD', '') AS result;");
     newSeries.bindValue(":itemsite_id", _itemsiteId);
     newSeries.bindValue(":qty", qty);
     newSeries.exec();
@@ -206,7 +211,7 @@ void adjustmentTrans::sPost()
                                 newSeries, __FILE__, __LINE__);
       return;
     }
-    _itemlocSeries = newSeries.value("itemlocseries").toInt();
+    _itemlocSeries = newSeries.value("result").toInt();
     
     if (distributeInventory::SeriesAdjust(_itemlocSeries, this) == XDialog::Rejected)
     {
@@ -216,21 +221,20 @@ void adjustmentTrans::sPost()
     } 
   }
 
-  //XSqlQuery rollback;
-  //rollback.prepare("ROLLBACK;");
-  //adjustmentPost.exec("BEGIN;");  // because of possible distribution cancelations
-  adjustmentPost.prepare( "SELECT invAdjustment(itemsite_id, :qty, :docNumber,"
-             "                     :comments, :date, :cost, :itemlocSeries) AS result "
-             "FROM itemsite "
-             "WHERE ( (itemsite_item_id=:item_id)"
-             " AND (itemsite_warehous_id=:warehous_id) );" );
+  // Create inventory transaction
+  adjustmentPost.prepare( "SELECT invAdjustment(itemsite_id, :qty, :docNumber, :comments, :date, "
+                          " :cost, NULL::INTEGER, :itemlocSeries) AS result "
+                          "FROM itemsite "
+                          "WHERE itemsite_item_id=:item_id "
+                          " AND itemsite_warehous_id=:warehous_id;");
   adjustmentPost.bindValue(":qty", qty);
   adjustmentPost.bindValue(":docNumber", _documentNum->text());
   adjustmentPost.bindValue(":comments",    _notes->toPlainText());
   adjustmentPost.bindValue(":item_id", _item->id());
   adjustmentPost.bindValue(":warehous_id", _warehouse->id());
   adjustmentPost.bindValue(":date",        _transDate->date());
-  adjustmentPost.bindValue(":itemlocSeries", _itemlocSeries);
+  if(_itemlocSeries != 0)
+    adjustmentPost.bindValue(":itemlocSeries", _itemlocSeries);
   if(!_costAdjust->isChecked())
     adjustmentPost.bindValue(":cost", 0.0);
   else if(_costManual->isChecked())
@@ -238,21 +242,36 @@ void adjustmentTrans::sPost()
   adjustmentPost.exec();
   if (adjustmentPost.first())
   {
-    int result = adjustmentPost.value("result").toInt();
-    if (result < 0)
+    // Post distribution detail now that we have an invhist_id
+    if (_controlledItem)
     {
-      //rollback.exec();
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
-                           storedProcErrorLookup("invAdjustment", result),
-                           __FILE__, __LINE__);
-    }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
-                                  adjustmentPost, __FILE__, __LINE__))
-    {
-        return;
-    }
+      int invhistId = adjustmentPost.value("result").toInt();
+      if (DEBUG)
+      qDebug() << QString("AdjustmentTrans::sPost " 
+              "postDistDetail SELECT postDistDetail(%1, %2, %3, %4)").arg(_itemlocSeries).arg(invhistId).arg(_lsControlled).arg(_locControlled);
 
-    //adjustmentPost.exec("COMMIT;");
+      XSqlQuery postDistDetail;
+      postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries, :invhistId, :ls, :loc) AS result;");
+      postDistDetail.bindValue(":itemlocSeries", _itemlocSeries);
+      postDistDetail.bindValue(":invhistId", invhistId);
+      postDistDetail.bindValue(":ls", _lsControlled);
+      postDistDetail.bindValue(":loc", _locControlled);
+      postDistDetail.exec();
+      if (postDistDetail.first())
+      {
+        if (postDistDetail.value("result").toInt() <= 0)
+        {
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Distribution Detail"),
+                             postDistDetail, __FILE__, __LINE__);
+          return;
+        }  
+      }
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Distribution Detail Posting Failed"),
+                                postDistDetail, __FILE__, __LINE__))
+        return;
+    }    
+
+    // Continue to cleanup
     if (_captive)
       close();
     else
@@ -271,13 +290,9 @@ void adjustmentTrans::sPost()
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
                                 adjustmentPost, __FILE__, __LINE__))
-  {
-      //rollback.exec();
-      return;
-  }
+    return;
   else
   {
-    //rollback.exec();
     // TODO - call function to delete distribution records
     ErrorReporter::error(QtCriticalMsg, this, tr("Post Transaction Cancelled"),
                          tr("<p>No transaction was done because Item %1 "
@@ -294,7 +309,8 @@ void adjustmentTrans::sPopulateQOH()
   {
     populateAdjustment.prepare("SELECT itemsite_id, itemsite_freeze, itemsite_qtyonhand, "
                "  itemsite_costmethod, itemsite_value, "
-               "  (itemsite_loccntrl = true) OR (itemsite_controlmethod IN ('L', 'S') ) AS cntrld "
+               "  itemsite_loccntrl, "
+               "  (itemsite_controlmethod IN ('L', 'S') ) AS lscntrl "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id));" );
@@ -308,7 +324,9 @@ void adjustmentTrans::sPopulateQOH()
       _itemsiteId = populateAdjustment.value("itemsite_id").toInt();
       _cachedValue = populateAdjustment.value("itemsite_value").toDouble();
       _cachedQOH = populateAdjustment.value("itemsite_qtyonhand").toDouble();
-      _controlledItem = populateAdjustment.value("cntrld").toBool();
+      _locControlled = populateAdjustment.value("itemsite_loccntrl").toDouble();
+      _lsControlled = populateAdjustment.value("lscntrl").toDouble();
+      _controlledItem = _locControlled || _lsControlled;
       if(_cachedQOH == 0.0)
         _costManual->setChecked(true);
       _beforeQty->setDouble(populateAdjustment.value("itemsite_qtyonhand").toDouble());

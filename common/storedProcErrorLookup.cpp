@@ -874,6 +874,8 @@ const struct {
   { "insertIntoGLSeries", -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot add to a G/L Series because the "
 				 "Accounting Period is closed."), 0, "" },
 
+  { "invAdjustment",  -1, "",  -1, "invAdjustment" },
+
   { "issueAllBalanceToShipping",  -1, "",	 -1, "issueToShipping" },
   { "issueAllBalanceToShipping", -10, "",	-10, "issueToShipping" },
   { "issueAllBalanceToShipping", -12, "",	-12, "issueToShipping" },
