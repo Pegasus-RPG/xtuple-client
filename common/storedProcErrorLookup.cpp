@@ -777,6 +777,12 @@ const struct {
   { "disablePackage", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not find a package with the internal id % "
                              "to enable or disable."),                  0, "" },
 
+  { "distributeVoucherFreight", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "No Items have been distributed to the Voucher."
+                                    "Please distribute items before attempting to distribute freight."),     0, "" },
+  { "distributeVoucherFreight", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An error occurred distributing freight to the Voucher."
+                                    "Please contact your administrator to resolve this issue."),     0, "" },
+
+
   { "distributeVoucherLine", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Distribution would result in zero "
                                     "quantity and amount."
                                     "Please distribute manually."),     0, "" },
