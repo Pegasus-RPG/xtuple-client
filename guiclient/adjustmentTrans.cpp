@@ -21,7 +21,7 @@
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 
-#define DEBUG false
+#define DEBUG true
 
 adjustmentTrans::adjustmentTrans(QWidget* parent, const char * name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -197,29 +197,42 @@ void adjustmentTrans::sPost()
     return;
 
   // Handle everything possible with distribution detail before inventory transaction
-  if (_controlledItem)
-  {
+  //if (_controlledItem)
+  //{
     // Create the 'parent' itemlocdist record
-    XSqlQuery newSeries;
-    newSeries.prepare("SELECT createitemlocdistseries(:itemsite_id, :qty, 'AD', '') AS result;");
-    newSeries.bindValue(":itemsite_id", _itemsiteId);
-    newSeries.bindValue(":qty", qty);
-    newSeries.exec();
-    if (!newSeries.first())
+  XSqlQuery newSeries;
+  newSeries.prepare("SELECT createitemlocdistseries(:itemsite_id, :qty, 'AD', '') AS result;");
+  newSeries.bindValue(":itemsite_id", _itemsiteId);
+  newSeries.bindValue(":qty", qty);
+  newSeries.exec();
+  if (newSeries.first())
+  {
+    if (newSeries.value("result").toInt() <= 0)
     {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
-                                newSeries, __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error. "
+        "createitemlocdistseries(%, %, 'AD', '') Returned <= 0").arg(_itemsiteId).arg(qty),
+        newSeries, __FILE__, __LINE__);
+      // TODO - call clean up function
       return;
     }
+
     _itemlocSeries = newSeries.value("result").toInt();
-    
-    if (distributeInventory::SeriesAdjust(_itemlocSeries, this) == XDialog::Rejected)
+
+    if (distributeInventory::SeriesAdjust(_itemlocSeries, this, QString(), QDate(), QDate(), true)
+      == XDialog::Rejected)
     {
       QMessageBox::information(this, tr("Inventory Adjustment"),
                                tr("Transaction Canceled") );
       return;
     } 
   }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
+                            newSeries, __FILE__, __LINE__))
+  {
+    // TODO - call clean up function
+    return;
+  }
+
 
   // Create inventory transaction
   adjustmentPost.prepare( "SELECT invAdjustment(itemsite_id, :qty, :docNumber, :comments, :date, "
@@ -243,34 +256,36 @@ void adjustmentTrans::sPost()
   if (adjustmentPost.first())
   {
     // Post distribution detail now that we have an invhist_id
-    if (_controlledItem)
+    int invhistId = adjustmentPost.value("result").toInt();
+    if (DEBUG)
+      qDebug() << tr("AdjustmentTrans::sPost postDistDetail SELECT postDistDetail(%1, %2, %3, %4)")
+      .arg(_itemlocSeries).arg(invhistId).arg(_lsControlled).arg(_locControlled);
+      
+    XSqlQuery postDistDetail;
+    postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries, :invhistId, :ls, :loc) AS result;");
+    postDistDetail.bindValue(":itemlocSeries", _itemlocSeries);
+    postDistDetail.bindValue(":invhistId", invhistId);
+    postDistDetail.bindValue(":ls", _lsControlled);
+    postDistDetail.bindValue(":loc", _locControlled);
+    postDistDetail.exec();
+    if (postDistDetail.first())
     {
-      int invhistId = adjustmentPost.value("result").toInt();
-      if (DEBUG)
-      qDebug() << QString("AdjustmentTrans::sPost " 
-              "postDistDetail SELECT postDistDetail(%1, %2, %3, %4)").arg(_itemlocSeries).arg(invhistId).arg(_lsControlled).arg(_locControlled);
-
-      XSqlQuery postDistDetail;
-      postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries, :invhistId, :ls, :loc) AS result;");
-      postDistDetail.bindValue(":itemlocSeries", _itemlocSeries);
-      postDistDetail.bindValue(":invhistId", invhistId);
-      postDistDetail.bindValue(":ls", _lsControlled);
-      postDistDetail.bindValue(":loc", _locControlled);
-      postDistDetail.exec();
-      if (postDistDetail.first())
+      if (postDistDetail.value("result").toInt() <= 0 && _controlledItem)
       {
-        if (postDistDetail.value("result").toInt() <= 0)
-        {
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Distribution Detail"),
-                             postDistDetail, __FILE__, __LINE__);
-          return;
-        }  
-      }
-      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Distribution Detail Posting Failed"),
-                                postDistDetail, __FILE__, __LINE__))
+        ErrorReporter::error(QtCriticalMsg, this, tr("Posting Distribution Detail for Controlled Item"
+          "Returned <= 0"),
+          postDistDetail, __FILE__, __LINE__);
+        // TODO - call clean up function
         return;
-    }    
-
+      }
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Distribution Detail Posting Failed"),
+                              postDistDetail, __FILE__, __LINE__))
+    {
+      // TODO - call clean up function
+      return;
+    }  
+     
     // Continue to cleanup
     if (_captive)
       close();

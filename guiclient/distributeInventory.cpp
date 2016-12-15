@@ -26,7 +26,7 @@
 
 #define cIncludeLotSerial   0x01
 #define cNoIncludeLotSerial 0x02
-#define DEBUG false
+#define DEBUG true
 
 distributeInventory::distributeInventory(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -98,12 +98,21 @@ void distributeInventory::languageChange()
 {
   retranslateUi(this);
 }
-int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, const QString & pPresetLotnum, const QDate & pPresetLotexp, const QDate & pPresetLotwarr)
+int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, 
+  const QString & pPresetLotnum, const QDate & pPresetLotexp, const QDate & pPresetLotwarr,
+  bool pPreDistributed)
 {
   int result;
+  bool cntrld = false;
+  bool lsCntrld = false;
+  bool locCntrld = false;
   QList<int>  ildsList; // Item Loc Dist Series 
   QList<int>  ildList; // Item Loc Dist List
 
+  if (DEBUG)
+    qDebug() << tr("DistributeInventory::SeriesAdjust pItemlocSeries: %1, pPreDistributed: %2")
+    .arg(pItemlocSeries).arg(pPreDistributed);
+  
   if (pItemlocSeries != 0)
   {
     XSqlQuery itemloc;
@@ -125,7 +134,8 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
                      "            WHEN (invhist_transtype NOT IN ('RM','RP','RR','RX','IM')"
                      "                  AND itemsite_location_dist) THEN true"
                      "            ELSE false"
-                     "       END AS auto_dist "
+                     "       END AS auto_dist, "
+                     "       (itemsite_loccntrl OR  (itemsite_controlmethod IN ('L', 'S'))) AS cntrld "
                      "FROM itemlocdist JOIN itemsite ON (itemlocdist_itemsite_id=itemsite_id) "
                      "                 LEFT OUTER JOIN invhist ON (itemlocdist_invhist_id=invhist_id) "
                      "WHERE (itemlocdist_series=:itemlocdist_series) "
@@ -134,9 +144,19 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
     itemloc.exec();
     while (itemloc.next())
     {
-      // Requires ot/serial
+      cntrld = itemloc.value("cntrld").toBool();
+      lsCntrld = ((itemloc.value("itemsite_controlmethod").toString() == "L") || 
+        (itemloc.value("itemsite_controlmethod").toString() == "S"));
+      locCntrld = itemloc.value("itemsite_loccntrl").toBool();
+      
+      if (DEBUG)
+        qDebug() << tr("DistributeInventory::SeriesAdjust cntrld: %1, lsCntrld: %2, locCntrld: %3")
+        .arg(cntrld).arg(lsCntrld).arg(locCntrld);
+
+      // Requires lot/serial
       if (itemloc.value("itemlocdist_reqlotserial").toBool())
       {
+        qDebug() << "here 2";
         int itemlocSeries = -1;
         XSqlQuery query;
 
@@ -146,6 +166,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
         // to ask the user for that information.
         if(itemloc.value("itemsite_controlmethod").toString() == "L" && !pPresetLotnum.isEmpty())
         {
+          qDebug() << "here 3";
           query.exec("SELECT nextval('itemloc_series_seq') AS _itemloc_series;");
           if(query.first())
           {
@@ -213,7 +234,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
 
         // Open Assign Lot Serial dialog, populating with auto ls info if required. 
         if(itemlocSeries == -1)
-        { 
+        {
           ParameterList params;
           params.append("itemlocdist_id", itemloc.value("itemlocdist_id").toInt());
           
@@ -312,7 +333,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
                                       query, __FILE__, __LINE__))
           return XDialog::Rejected;
       }
-      else // NOT a lot/serial controlled item
+      else // NOT a lot/serial controlled item (or a neg. qty, requiring "distribution from")
       {
         ParameterList params;
         params.append("itemlocdist_id", itemloc.value("itemlocdist_id").toInt());
@@ -360,6 +381,8 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
       post.exec();
       if (post.first())
       {
+        if (DEBUG)
+          qDebug() << "ildsList.first(), aka UPDATE itemlocdist succeeded";
         if (post.count() != 1)
         {
           ErrorReporter::error(QtCriticalMsg, 0, tr("Updating Itemlocdist Parent Record Should Return One Row"),
@@ -374,7 +397,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
     
     for (int i = 0; i < ildList.size(); ++i) { // Process location distributions
       if (DEBUG)
-        qDebug() << "DistributeInventory::seriesAdjust ildsList.at(i): " << ildsList.at(i);
+        qDebug() << "DistributeInventory::seriesAdjust ildList.at(i): " << ildList.at(i);
 
       post.prepare( "UPDATE itemlocdist SET itemlocdist_child_series = ( "
                     " SELECT itemlocdist_series FROM itemlocdist "
@@ -388,6 +411,9 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
       {
         if (post.count() <= 0)
         {
+          if (DEBUG)
+            qDebug() << "ildsList UPDATE itemlocdist post.count() <= 0";
+
           ErrorReporter::error(QtCriticalMsg, 0, tr("Updating Itemlocdist Parent Record Should Return >= 1"),
                          post, __FILE__, __LINE__);
           return XDialog::Rejected;
@@ -397,7 +423,35 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
                                     post, __FILE__, __LINE__))
         return XDialog::Rejected;
     }
-  }
+    if (!pPreDistributed)
+    { 
+      if (DEBUG)
+        qDebug() << tr("!pPreDistributed, proceed to postdistdetail(%1, NULL, %2, %3)")
+        .arg(pItemlocSeries).arg(lsCntrld).arg(locCntrld);
+      
+      // Attempt to post distribution detail here.
+      XSqlQuery postDistDetail;
+      postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries, NULL, :ls, :loc) AS result;");
+      postDistDetail.bindValue(":itemlocSeries", pItemlocSeries);
+      postDistDetail.bindValue(":ls", lsCntrld);
+      postDistDetail.bindValue(":loc", locCntrld);
+      postDistDetail.exec();
+      if (postDistDetail.first())
+      {
+        if (postDistDetail.value("result").toInt() <= 0 && cntrld)
+        {
+          ErrorReporter::error(QtCriticalMsg, 0, tr("Error Posting Distribution Detail"),
+                             postDistDetail, __FILE__, __LINE__);
+          return XDialog::Rejected;
+        }  
+      }
+      else if (ErrorReporter::error(QtCriticalMsg, 0, tr("Distribution Detail Posting Failed"),
+                                postDistDetail, __FILE__, __LINE__))
+        return XDialog::Rejected;  
+    }
+    
+  } 
+  // if pItemlocSeries == 0 just return accepted
   return XDialog::Accepted;
 }
 
