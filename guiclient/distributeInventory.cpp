@@ -156,7 +156,6 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
       // Requires lot/serial
       if (itemloc.value("itemlocdist_reqlotserial").toBool())
       {
-        qDebug() << "here 2";
         int itemlocSeries = -1;
         XSqlQuery query;
 
@@ -166,7 +165,6 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
         // to ask the user for that information.
         if(itemloc.value("itemsite_controlmethod").toString() == "L" && !pPresetLotnum.isEmpty())
         {
-          qDebug() << "here 3";
           query.exec("SELECT nextval('itemloc_series_seq') AS _itemloc_series;");
           if(query.first())
           {
@@ -178,9 +176,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
                            "UPDATE itemlocdist "
                            "SET itemlocdist_source_type='O' "
                            "WHERE (itemlocdist_series=:itemlocdist_series);"
-
-                           "DELETE FROM itemlocdist "
-                           "WHERE (itemlocdist_id=:itemlocdist_id);" );
+                           );
             query.bindValue(":lotserial", pPresetLotnum);
             query.bindValue(":qty", itemloc.value("itemlocdist_qty"));
             query.bindValue(":itemlocdist_series", itemlocSeries);
@@ -218,9 +214,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
                              "UPDATE itemlocdist "
                              "SET itemlocdist_source_type='O' "
                              "WHERE (itemlocdist_series=:itemlocdist_series);"
-
-                             "DELETE FROM itemlocdist "
-                             "WHERE (itemlocdist_id=:itemlocdist_id);" );
+                             );
             fromlots.bindValue(":itemlocdist_series", itemlocSeries);
             fromlots.bindValue(":itemlocdist_id", itemloc.value("itemlocdist_id"));
             fromlots.exec();

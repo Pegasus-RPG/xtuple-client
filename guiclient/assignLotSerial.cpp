@@ -213,10 +213,7 @@ void assignLotSerial::sAssign()
 
   assignAssign.prepare( "UPDATE itemlocdist "
              "SET itemlocdist_source_type='O' "
-             "WHERE (itemlocdist_series=:itemlocdist_series);"
-
-             "DELETE FROM itemlocdist "
-             "WHERE (itemlocdist_id=:itemlocdist_id);" );
+             "WHERE (itemlocdist_series=:itemlocdist_series);");
   assignAssign.bindValue(":itemlocdist_series", _itemlocSeries);
   assignAssign.bindValue(":itemlocdist_id", _itemlocdistid);
   assignAssign.exec();
