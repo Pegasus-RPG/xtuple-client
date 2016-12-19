@@ -67,6 +67,15 @@ configurePD::configurePD(QWidget* parent, const char* name, bool /*modal*/, Qt::
       _revControl->setChecked(_metrics->boolean("RevControl"));
   }
   
+  _freightCostElementDefault->populate("SELECT costelem_id, costelem_type "
+                                "FROM costelem "
+                                "WHERE ( (costelem_active)"
+                                " AND (NOT costelem_sys)"
+                                " AND (costelem_po) ) "
+                                "ORDER BY costelem_type;");
+  if (_metrics->value("DefaultFreightCostElement") > 0)
+    _freightCostElementDefault->setId(_metrics->value("DefaultFreightCostElement").toInt());
+
   this->setWindowTitle("Products Configuration");
 
   //adjustSize();
@@ -159,6 +168,9 @@ bool configurePD::sSave()
   _metrics->set("AllowBOMItemDelete", _allowDelete->isChecked());
   _metrics->set("AutoItemSearch", _autoItemSearch->isChecked());
   _metrics->set("EnforceUniqueBarcodes", _uniqueBarcodes->isChecked());
+
+  if (_freightCostElementDefault->id() > 0)
+    _metrics->set("DefaultFreightCostElement", _freightCostElementDefault->id());
   
   if (_issueMethod->currentIndex() == 0)
     _metrics->set("DefaultWomatlIssueMethod", QString("S"));

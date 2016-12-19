@@ -100,6 +100,10 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
                                 " AND (NOT costelem_sys)"
                                 " AND (costelem_po) ) "
                                 "ORDER BY costelem_type;");
+
+  if (_metrics->value("DefaultFreightCostElement") > 0)
+    _freightCostElement->setId(_metrics->value("DefaultFreightCostElement").toInt());
+
   _frghtdistr = 0;
   _vendid = -1;
 
@@ -444,11 +448,12 @@ void voucher::sDistributions()
 void voucher::sDistributeLine()
 {
   saveDetail();
+  XSqlQuery distq;
+  distq.prepare("SELECT distributeVoucherLine(:vohead_id,:poitem_id,:curr_id) "
+                "AS result;");
+
   foreach (XTreeWidgetItem *item, _poitem->selectedItems())
   {
-    XSqlQuery distq;
-    distq.prepare("SELECT distributeVoucherLine(:vohead_id,:poitem_id,:curr_id) "
-              "AS result;");
     distq.bindValue(":vohead_id", _voheadid);
     distq.bindValue(":poitem_id",  item->id());
     distq.bindValue(":curr_id", _amountToDistribute->id());
@@ -456,6 +461,23 @@ void voucher::sDistributeLine()
     if (distq.first())
     {
       int result = distq.value("result").toInt();
+      if (result == -5 &&
+          QMessageBox::question(this, tr("Error Distributing"),
+            tr("Item has multiple cost elements. Do you wish to distribute "
+               "to the Material cost element only?"),
+                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+      {
+        return;
+      } else {
+         distq.prepare("SELECT distributeVoucherLine(:vohead_id,:poitem_id,:curr_id, true) "
+                       "AS result;");
+         distq.bindValue(":vohead_id", _voheadid);
+         distq.bindValue(":poitem_id", item->id());
+         distq.bindValue(":curr_id", _amountToDistribute->id());
+         distq.exec();
+         if (distq.first())
+            result = distq.value("result").toInt();
+      }
       if (result < 0)
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Distributing"),
                     storedProcErrorLookup("distributeVoucherLine", result),
@@ -527,6 +549,24 @@ void voucher::sDistributeAll()
     if (distq.first())
     {
       int result = distq.value("result").toInt();
+      if (result == -5 &&
+          QMessageBox::question(this, tr("Error Distributing"),
+            tr("Item has multiple cost elements. Do you wish to distribute "
+               "to the Material cost element only?"),
+                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+      {
+        return;
+      } else {
+         distq.prepare("SELECT distributeVoucherLine(:vohead_id,:poitem_id,:curr_id, true) "
+                       "AS result;");
+         distq.bindValue(":vohead_id", _voheadid);
+         distq.bindValue(":poitem_id", item->id());
+         distq.bindValue(":curr_id", _amountToDistribute->id());
+         distq.exec();
+         if (distq.first())
+            result = distq.value("result").toInt();
+
+      }
       if (result < 0)
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Distributing"),
                              storedProcErrorLookup("distributeVoucherLine", result),

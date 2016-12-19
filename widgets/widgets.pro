@@ -96,6 +96,7 @@ HEADERS += plugins/addressclusterplugin.h \
     plugins/vendorclusterplugin.h \
     plugins/vendorgroupplugin.h \
     plugins/vendorlineeditplugin.h \
+    plugins/voucherclusterplugin.h \
     plugins/warehousegroupplugin.h \
     plugins/wcomboboxplugin.h \
     plugins/woclusterplugin.h \
@@ -186,6 +187,7 @@ SOURCES += widgets.cpp \
     vendorcluster.cpp \
     vendorgroup.cpp \
     virtualCluster.cpp \
+    voucherCluster.cpp \
     warehouseCluster.cpp \
     warehousegroup.cpp \
     woCluster.cpp \
@@ -281,6 +283,7 @@ HEADERS += widgets.h \
     vendorcluster.h \
     vendorgroup.h \
     virtualCluster.h \
+    vouchercluster.h \
     warehouseCluster.h \
     warehousegroup.h \
     woCluster.h \
