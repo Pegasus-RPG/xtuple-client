@@ -172,6 +172,8 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
 void adjustmentTrans::sPost()
 {
   XSqlQuery adjustmentPost;
+  XSqlQuery cleanup;
+  cleanup.prepare("SELECT deleteitemlocdistseries(:itemlocSeries) AS result;");  
   int _itemlocSeries = 0;
   double qty = _qty->toDouble();
   double cost = _cost->toDouble();
@@ -217,19 +219,20 @@ void adjustmentTrans::sPost()
     }
 
     _itemlocSeries = newSeries.value("result").toInt();
+    cleanup.bindValue(":itemlocSeries", _itemlocSeries);
 
     if (distributeInventory::SeriesAdjust(_itemlocSeries, this, QString(), QDate(), QDate(), true)
       == XDialog::Rejected)
     {
       QMessageBox::information(this, tr("Inventory Adjustment"),
                                tr("Transaction Canceled") );
+      cleanup.exec();
       return;
     } 
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
                             newSeries, __FILE__, __LINE__))
   {
-    // TODO - call clean up function
     return;
   }
 
@@ -275,14 +278,15 @@ void adjustmentTrans::sPost()
         ErrorReporter::error(QtCriticalMsg, this, tr("Posting Distribution Detail for Controlled Item"
           "Returned <= 0"),
           postDistDetail, __FILE__, __LINE__);
-        // TODO - call clean up function
+        
+        cleanup.exec();
         return;
       }
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Distribution Detail Posting Failed"),
                               postDistDetail, __FILE__, __LINE__))
     {
-      // TODO - call clean up function
+      cleanup.exec();
       return;
     }  
      
@@ -305,7 +309,10 @@ void adjustmentTrans::sPost()
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
                                 adjustmentPost, __FILE__, __LINE__))
+  {
+    cleanup.exec();
     return;
+  }
   else
   {
     // TODO - call function to delete distribution records
@@ -314,6 +321,7 @@ void adjustmentTrans::sPost()
                             "was not found at Site %2.")
                          .arg(_item->itemNumber()).arg(_warehouse->currentText()),
                          __FILE__, __LINE__);
+    cleanup.exec();
   }
 }
 
