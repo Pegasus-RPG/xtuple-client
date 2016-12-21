@@ -54,6 +54,11 @@ const struct {
                             "it is already associated with an Opportunity.  You must "
                             "detach this Sales Order before you may attach it."),    0, "" },
 
+  { "calculateFreightDistribution", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "No Items have been distributed to the Voucher."
+                                    "Please distribute items before attempting to distribute freight."),     0, "" },
+  { "calculateFreightDistribution", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Voucher you are attempting to distribute freight "
+                                    "to has incorrect item totals for the desired distribution method. Please check that Voucher"),     0, "" },
+
   { "changeCMHeadTaxAuth", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Return was not found."),	0, "" },
   { "changeCMHeadTaxAuth", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Tax Authority was not found."),	0, "" },
 
@@ -776,12 +781,6 @@ const struct {
                              "Upgrade to PostgreSQL 8.2 or later."),    0, "" },
   { "disablePackage", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not find a package with the internal id % "
                              "to enable or disable."),                  0, "" },
-
-  { "distributeVoucherFreight", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "No Items have been distributed to the Voucher."
-                                    "Please distribute items before attempting to distribute freight."),     0, "" },
-  { "distributeVoucherFreight", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An error occurred distributing freight to the Voucher."
-                                    "Please contact your administrator to resolve this issue."),     0, "" },
-
 
   { "distributeVoucherLine", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Distribution would result in zero "
                                     "quantity and amount."

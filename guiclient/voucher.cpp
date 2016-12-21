@@ -57,7 +57,7 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_amountToDistribute,       SIGNAL(idChanged(int)),                            this,          SLOT(sFillList()));
   connect(_amountDistributed,        SIGNAL(valueChanged()),                            this,          SLOT(sPopulateBalanceDue()));
   connect(_freight,                  SIGNAL(valueChanged()),                            this,          SLOT(sPopulateDistributed()));
-  connect(_freightDistr,             SIGNAL(clicked()),                                 this,          SLOT(sFreightDistribution()));
+  connect(_freightDistr,             SIGNAL(toggled(bool)),                             this,          SLOT(sFreightDistribution()));
   connect(_distributeFreight,        SIGNAL(clicked()),                                 this,          SLOT(sDistributeFreight()));
 
   _terms->setType(XComboBox::APTerms);
@@ -187,11 +187,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
 //      _documents->setReadOnly(true);
       _charass->setReadOnly(true);
       _close->setText(tr("&Close"));
-      _freight->setEnabled(false);
-      _freightExpcat->setEnabled(false);
-      _freightDistr->setEnabled(false);
-      _freightStack->setEnabled(false);
-
+      _freightGroup->setEnabled(false);
 
       _save->hide();
 
@@ -216,7 +212,6 @@ enum SetResponse voucher::set(const ParameterList &pParams)
     enableWindowModifiedSetting();
   }
 
-  sFreightDistribution();
   return NoError;
 }
 
@@ -302,7 +297,7 @@ bool voucher::sSave()
              "    vohead_amount=:vohead_amount,"
              "    vohead_freight=:vohead_freight,"
              "    vohead_freight_expcat_id=:vohead_freight_expcat,"
-             "    vohead_freight_distributed=COALESCE(:frghtDistr, 0.00),"
+             "    vohead_freight_distributed=:frghtDistr,"
              "    vohead_1099=:vohead_1099, "
              "    vohead_curr_id=:vohead_curr_id, "
              "    vohead_notes=:vohead_notes "
@@ -323,7 +318,7 @@ bool voucher::sSave()
   updq.bindValue(":vohead_freight", _freight->localValue());
   updq.bindValue(":frghtDistr", _frghtdistr);
   if (_freightExpcat->isValid())
-    updq.bindValue(":vohead_freightexpcat", _freightExpcat->id());
+    updq.bindValue(":vohead_freight_expcat", _freightExpcat->id());
   updq.bindValue(":vohead_1099", QVariant(_flagFor1099->isChecked()));
   updq.bindValue(":vohead_curr_id", _amountToDistribute->id());
   updq.bindValue(":vohead_notes", _notes->toPlainText());
@@ -1131,7 +1126,7 @@ void voucher::sDistributeFreight()
   distr.exec();
   if (distr.first())
   {
-    if (distr.value("qtyreceived") > 0)
+    if (distr.value("qtyreceived").toInt() > 0)
     {
       if (!QMessageBox::question(this, tr("Incomplete Distribution"),
                               tr("The Purchase Order has not been "
@@ -1162,7 +1157,7 @@ void voucher::sDistributeFreight()
     int returnVal = distr.value("result").toInt();
     if (returnVal < 0)
     {
-      ErrorReporter::error(QtCriticalMsg, this, storedProcErrorLookup("distributeVoucherFreight", returnVal),
+      ErrorReporter::error(QtCriticalMsg, this, storedProcErrorLookup("calculateFreightDistribution", returnVal),
                          distr, __FILE__, __LINE__);
       return;
     }

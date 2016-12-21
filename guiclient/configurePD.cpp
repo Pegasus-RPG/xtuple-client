@@ -73,7 +73,7 @@ configurePD::configurePD(QWidget* parent, const char* name, bool /*modal*/, Qt::
                                 " AND (NOT costelem_sys)"
                                 " AND (costelem_po) ) "
                                 "ORDER BY costelem_type;");
-  if (_metrics->value("DefaultFreightCostElement") > 0)
+  if (_metrics->value("DefaultFreightCostElement").toInt() > 0)
     _freightCostElementDefault->setId(_metrics->value("DefaultFreightCostElement").toInt());
 
   this->setWindowTitle("Products Configuration");
