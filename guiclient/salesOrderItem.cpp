@@ -4199,7 +4199,11 @@ void salesOrderItem::populate()
   if (item.value("coitem_order_id").toInt() != -1)
     _supplyOrderId = item.value("coitem_order_id").toInt();
   if (_supplyOrderId != -1)
+  {
     _createSupplyOrder->setChecked(true);
+    if (_mode == cView)
+      sHandleSupplyOrder(); // Call directly since there is no signal/slot connection
+  }
 
   // _warehouse is populated with active records. append if this one is inactive
   if (ISORDER(_mode))
