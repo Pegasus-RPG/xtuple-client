@@ -94,7 +94,7 @@ enum SetResponse voucherMiscDistrib::set(const ParameterList &pParams)
       if (valid)
         _amount->setLocalValue(param.toDouble());
 
-      if (_metrics->value("DefaultFreightCostElement") > 0)
+      if (_metrics->value("DefaultFreightCostElement").toInt() > 0)
         _freightCostElement->setId(_metrics->value("DefaultFreightCostElement").toInt());
     }
     else if (param.toString() == "edit")
@@ -167,7 +167,7 @@ void voucherMiscDistrib::sSave()
                            tr("<p>You must select an Tax Code to post this "
                               "Miscellaneous Distribution to."))
          << GuiErrorCheck(_freightSelected->isChecked() && !_origVoucher->isValid(),
-                           _taxCode,
+                           _origVoucher,
                            tr("<p>You must define the original Voucher, item cost element, "
                               "and method to distribute this freight expense to."))
   ;
@@ -345,10 +345,10 @@ void voucherMiscDistrib::sPopulateVendorInfo(int pVendid)
 
 void voucherMiscDistrib::sHandleSelection()
 {
-  bool _onoff = _accountSelected->isChecked() || _expcatSelected->isChecked()
+  bool onoff = _accountSelected->isChecked() || _expcatSelected->isChecked()
               || _freightSelected->isChecked();
-  _taxTypeLit->setEnabled(_onoff);
-  _taxType->setEnabled(_onoff);
-  _discountable->setEnabled(_onoff);
-  _discountable->setChecked(_onoff);
+  _taxTypeLit->setEnabled(onoff);
+  _taxType->setEnabled(onoff);
+  _discountable->setEnabled(onoff);
+  _discountable->setChecked(onoff);
 }

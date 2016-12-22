@@ -283,7 +283,7 @@ HEADERS += widgets.h \
     vendorcluster.h \
     vendorgroup.h \
     virtualCluster.h \
-    vouchercluster.h \
+    voucherCluster.h \
     warehouseCluster.h \
     warehousegroup.h \
     woCluster.h \

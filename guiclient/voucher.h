@@ -44,7 +44,7 @@ public slots:
     virtual void sDeleteMiscDistribution();
     virtual void sFillList();
     virtual void sFillMiscList();
-    virtual void sFreightDistribution();
+    virtual void sFreightDistribution(bool);
     virtual void sPopulatePoInfo();
     virtual void sPopulateDistributed();
     virtual void sPopulateBalanceDue();

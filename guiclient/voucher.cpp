@@ -57,7 +57,7 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_amountToDistribute,       SIGNAL(idChanged(int)),                            this,          SLOT(sFillList()));
   connect(_amountDistributed,        SIGNAL(valueChanged()),                            this,          SLOT(sPopulateBalanceDue()));
   connect(_freight,                  SIGNAL(valueChanged()),                            this,          SLOT(sPopulateDistributed()));
-  connect(_freightDistr,             SIGNAL(toggled(bool)),                             this,          SLOT(sFreightDistribution()));
+  connect(_freightDistr,             SIGNAL(toggled(bool)),                             this,          SLOT(sFreightDistribution(bool)));
   connect(_distributeFreight,        SIGNAL(clicked()),                                 this,          SLOT(sDistributeFreight()));
 
   _terms->setType(XComboBox::APTerms);
@@ -463,7 +463,9 @@ void voucher::sDistributeLine()
                                   QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
       {
         return;
-      } else {
+      } 
+      else
+      {
          distq.prepare("SELECT distributeVoucherLine(:vohead_id,:poitem_id,:curr_id, true) "
                        "AS result;");
          distq.bindValue(":vohead_id", _voheadid);
@@ -776,9 +778,7 @@ void voucher::sPopulateBalanceDue()
   if (_freight->localValue() <= 0)
     _freightExpcat->setId(-1);
 
-  _freightExpcat->setEnabled(_freight->localValue() > 0 && _mode != cView);
-  _freightDistr->setEnabled(_freight->localValue() > 0 && _mode != cView);
-  _freightStack->setEnabled(_freight->localValue() > 0 && _mode != cView);
+  _freightGroup->setEnabled(_frghtdistr == 0 && _mode != cView);
 
 }
 
@@ -965,7 +965,7 @@ bool voucher::saveDetail()
                "    vohead_amount=:vohead_amount,"
                "    vohead_freight=:vohead_freight,"
                "    vohead_freight_expcat_id=:vohead_freightexpcat,"
-               "    vohead_freight_distributed=COALESCE(:frghtDistr, 0.00),"
+               "    vohead_freight_distributed=:frghtDistr,"
                "    vohead_1099=:vohead_1099, "
                "    vohead_curr_id=:vohead_curr_id, "
                "    vohead_notes=:vohead_notes "
@@ -1086,9 +1086,9 @@ void voucher::sDataChanged()
   setWindowModified(true);
 }
 
-void voucher::sFreightDistribution()
+void voucher::sFreightDistribution(bool distFreight)
 {
-  if (_freightDistr->isChecked())
+  if (distFreight)
     _freightStack->setCurrentIndex(1);
   else
     _freightStack->setCurrentIndex(0);
@@ -1099,10 +1099,10 @@ void voucher::sIsDistributed()
   _freight->setEnabled(false);
   _freightDistr->setEnabled(false);
   _freightDistr->setText(tr("Freight Distributed"));
-  _freightCostElementLit->setVisible(false);
-  _freightCostElement->setVisible(false);
-  _freightDistrMethod->setVisible(false);
-  _distributeFreight->setVisible(false);
+  _freightStack->setVisible(false);
+//  _freightCostElement->setVisible(false);
+//  _freightDistrMethod->setVisible(false);
+//  _distributeFreight->setVisible(false);
 }
 
 void voucher::sDistributeFreight()
@@ -1120,19 +1120,19 @@ void voucher::sDistributeFreight()
                 "  AND (recv_vohead_id IS NULL)"
                 "  AND (recv_order_type='PO')"
                 "  AND (recv_orderitem_id=poitem_id)) ) AS qtyreceived"
-                " FROM poitem JOIN pohead ON (pohead_id=poitem_pohead_id)"
-                " WHERE (poitem_pohead_id=:poitem_id);");
-  distr.bindValue(":poitem_id", _poNumber->id());
+                " FROM poitem"
+                " WHERE (poitem_pohead_id=:pohead_id);");
+  distr.bindValue(":pohead_id", _poNumber->id());
   distr.exec();
   if (distr.first())
   {
     if (distr.value("qtyreceived").toInt() > 0)
     {
-      if (!QMessageBox::question(this, tr("Incomplete Distribution"),
+      if (QMessageBox::question(this, tr("Incomplete Distribution"),
                               tr("The Purchase Order has not been "
                                  "completely distributed. "
                                  "Do you wish to continue?"),
-                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::No))
+                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
         return;
     }
   }
