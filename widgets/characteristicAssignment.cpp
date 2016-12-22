@@ -30,6 +30,8 @@
 #define CHARTEXT 0
 #define CHARLIST 1
 #define CHARDATE 2
+#define CHARNUMB 3
+#define CHARENCR 4
 
 class CharacteristicAssignmentPrivate
 {
@@ -67,6 +69,8 @@ class CharacteristicAssignmentPrivate
 
 QMap<QString, QString> CharacteristicAssignmentPrivate::targetTypeMap;
 
+GuiClientInterface* characteristicAssignment::_guiClientInterface = 0;
+
 characteristicAssignment::characteristicAssignment(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : QDialog(parent, fl)
 {
@@ -84,6 +88,7 @@ characteristicAssignment::characteristicAssignment(QWidget* parent, const char* 
   _listpriceLit->hide();
   _listprice->hide();
   _listprice->setValidator(_d->priceVal);
+  _numberValue->setValidator(_d->priceVal);
 
   adjustSize();
 }
@@ -200,7 +205,9 @@ void characteristicAssignment::sSave()
   {
     if ( ((_stackedWidget->currentIndex() == CHARTEXT) && (_value->text().trimmed() == "")) ||
          ((_stackedWidget->currentIndex() == CHARLIST) && (_listValue->currentText() == "")) ||
-         ((_stackedWidget->currentIndex() == CHARDATE) && (_dateValue->date().toString() == "")) )
+         ((_stackedWidget->currentIndex() == CHARDATE) && (_dateValue->date().toString() == "")) ||
+         ((_stackedWidget->currentIndex() == CHARNUMB) && (_numberValue->text().trimmed() == "")) ||
+         ((_stackedWidget->currentIndex() == CHARENCR) && (_encrValue->text().trimmed() == "")) )
       {
           QMessageBox::information( this, tr("No Value Entered"),
                                     tr("You must enter a value before saving this Characteristic.") );
@@ -228,6 +235,7 @@ void characteristicAssignment::sSave()
     characteristicSave.bindValue(":charass_target_id", _targetId);
     characteristicSave.bindValue(":charass_target_type", _d->targetType);
     characteristicSave.bindValue(":charass_char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), _d->idCol)));
+    characteristicSave.bindValue(":key", _guiClientInterface->encryptionKey()); 
     characteristicSave.exec();
     if (characteristicSave.first())
     {
@@ -253,7 +261,8 @@ void characteristicAssignment::sSave()
   }
   else if (_mode == cEdit)
     characteristicSave.prepare( "UPDATE charass "
-               "SET charass_char_id=:charass_char_id, charass_value=:charass_value, "
+               "SET charass_char_id=:charass_char_id, charass_value=(CASE WHEN :key IS NULL THEN :charass_value "
+               "                             ELSE encrypt(setbytea(:charass_value), setbytea(:key), 'bf') END), "
                "charass_price=:charass_price, charass_default=:charass_default "
                "WHERE (charass_id=:charass_id);" );
 
@@ -267,6 +276,14 @@ void characteristicAssignment::sSave()
     characteristicSave.bindValue(":charass_value", _listValue->currentText());
   else if (_stackedWidget->currentIndex() == CHARDATE)
     characteristicSave.bindValue(":charass_value", _dateValue->date());
+  else if (_stackedWidget->currentIndex() == CHARNUMB)
+    characteristicSave.bindValue(":charass_value", _numberValue->text());
+  else if (_stackedWidget->currentIndex() == CHARENCR)
+  {
+    characteristicSave.bindValue(":key", "xTupleblah");
+    characteristicSave.bindValue(":charass_value", _encrValue->text());
+  }
+
   characteristicSave.bindValue(":charass_price", _listprice->toDouble());
   characteristicSave.bindValue(":charass_default", QVariant(_default->isChecked()));
   characteristicSave.exec();
@@ -334,6 +351,10 @@ void characteristicAssignment::populate()
     }
     else if (chartype == CHARDATE)
       _dateValue->setDate(characteristicpopulate.value("charass_value").toDate());
+    else if (chartype == CHARNUMB)
+      _numberValue->setText(characteristicpopulate.value("charass_value").toString());
+    else if (chartype == CHARENCR)
+      _encrValue->setText(characteristicpopulate.value("charass_value").toString());
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Characteristic Assignment"),
                                 characteristicpopulate, __FILE__, __LINE__))

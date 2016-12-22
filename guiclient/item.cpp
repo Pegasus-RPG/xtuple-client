@@ -118,6 +118,7 @@ item::item(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _inventoryUOM->setType(XComboBox::UOMs);
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name" );
+  _charass->addColumn(tr("Group"),          _itemColumn, Qt::AlignLeft, true, "char_group" );
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value" );
   _charass->addColumn(tr("Default"),        _ynColumn*2,   Qt::AlignCenter, true, "charass_default" );
   _charass->addColumn(tr("List Price"),     _priceColumn,Qt::AlignRight, true, "charass_price" );
@@ -972,12 +973,11 @@ void item::sDelete()
 void item::sFillList()
 {
   XSqlQuery itemFillList;
-  itemFillList.prepare( "SELECT charass_id, char_name, "
-             " CASE WHEN char_type < 2 THEN "
-             "   charass_value "
-             " ELSE "
-             "   formatDate(charass_value::date) "
-             "END AS charass_value, "
+  itemFillList.prepare( "SELECT charass_id, char_name, char_group, "
+             "           CASE WHEN char_type = 2 THEN formatDate(charass_value::date)"
+             "                WHEN char_type = 4 THEN '******'"
+             "                ELSE charass_value"
+             "           END AS charass_value,"
              " charass_default, "
              " charass_price, 'salesprice' AS charass_price_xtnumericrole "
              "FROM charass, char "

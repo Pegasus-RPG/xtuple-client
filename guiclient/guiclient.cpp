@@ -369,6 +369,11 @@ class xTupleGuiClientInterface : public GuiClientInterface
   {
       return omfgThis->hunspell_ignore(word);
   }
+
+  QString encryptionKey()
+  {
+    return omfgThis->encryptionKey();
+  }
 };
 
 /** @class GUIClient
@@ -2609,6 +2614,11 @@ int GUIClient::hunspell_ignore(const QString word)
 {
     QByteArray encodedString = _spellCodec->fromUnicode(word);
     return _spellChecker->add(encodedString.data());
+}
+
+QString GUIClient::encryptionKey()
+{
+  return key();
 }
 
 

@@ -37,6 +37,7 @@ public slots:
     virtual void sFillList();
     virtual void sNew();
     virtual void sDelete();
+    virtual void sTypeChanged();
     virtual void sCharoptClicked(QModelIndex idx);
 
 protected slots:

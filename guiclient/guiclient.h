@@ -259,6 +259,8 @@ class GUIClient : public QMainWindow
     //add word to dict (word is valid until spell object is not destroyed)
     Q_INVOKABLE int hunspell_ignore(const QString word);
 
+    Q_INVOKABLE QString encryptionKey();
+
   public slots:
     void sReportError(const QString &);
     void sTick();

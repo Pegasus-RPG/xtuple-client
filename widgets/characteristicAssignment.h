@@ -14,6 +14,7 @@
 #include <parameter.h>
 
 #include "ui_characteristicAssignment.h"
+#include "guiclientinterface.h"
 
 class CharacteristicAssignmentPrivate;
 
@@ -24,6 +25,8 @@ class characteristicAssignment : public QDialog, public Ui::characteristicAssign
 public:
     characteristicAssignment(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WindowFlags fl = 0);
     ~characteristicAssignment();
+
+    static GuiClientInterface *_guiClientInterface;
 
 public slots:
     virtual int  set(const ParameterList &pParams);

@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>304</width>
-    <height>137</height>
+    <width>386</width>
+    <height>159</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -53,7 +53,16 @@ to be bound by its terms.</comment>
        </property>
        <widget class="QWidget" name="_textPage">
         <layout class="QGridLayout" name="gridLayout_2">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item row="0" column="0">
@@ -63,7 +72,16 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_listPage">
         <layout class="QGridLayout" name="gridLayout_3">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item row="0" column="0">
@@ -73,11 +91,34 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_datePage">
         <layout class="QGridLayout" name="gridLayout">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item row="0" column="0">
           <widget class="DLineEdit" name="_dateValue"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_numberPage">
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="0" column="0">
+          <widget class="XLineEdit" name="_numberValue"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_encrPage">
+        <layout class="QGridLayout" name="gridLayout_6">
+         <item row="0" column="0">
+          <widget class="XLineEdit" name="_encrValue"/>
          </item>
         </layout>
        </widget>
