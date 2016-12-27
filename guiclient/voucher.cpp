@@ -553,7 +553,9 @@ void voucher::sDistributeAll()
                                   QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
       {
         return;
-      } else {
+      } 
+      else
+      {
          distq.prepare("SELECT distributeVoucherLine(:vohead_id,:poitem_id,:curr_id, true) "
                        "AS result;");
          distq.bindValue(":vohead_id", _voheadid);

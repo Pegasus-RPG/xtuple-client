@@ -168,10 +168,10 @@ to be bound by its terms.</comment>
            <item row="0" column="0">
             <widget class="XLabel" name="_freightVoucher">
              <property name="toolTip">
-              <string>The original Voucher that determines which items to distribute freight/duty to</string>
+              <string>The originating Voucher that determines which items to distribute freight/duty to</string>
              </property>
              <property name="text">
-              <string>Item Voucher:</string>
+              <string>Original Voucher:</string>
              </property>
             </widget>
            </item>
