@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>386</width>
-    <height>159</height>
+    <width>304</width>
+    <height>137</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -53,16 +53,7 @@ to be bound by its terms.</comment>
        </property>
        <widget class="QWidget" name="_textPage">
         <layout class="QGridLayout" name="gridLayout_2">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>0</number>
          </property>
          <item row="0" column="0">
@@ -72,16 +63,7 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_listPage">
         <layout class="QGridLayout" name="gridLayout_3">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>0</number>
          </property>
          <item row="0" column="0">
@@ -91,16 +73,7 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_datePage">
         <layout class="QGridLayout" name="gridLayout">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>0</number>
          </property>
          <item row="0" column="0">

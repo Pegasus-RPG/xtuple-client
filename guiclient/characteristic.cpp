@@ -385,10 +385,9 @@ void characteristic::populate()
     _mask->setText(charq.value("char_mask").toString());
     _validator->setText(charq.value("char_validator").toString());
     _type->setCurrentIndex(charq.value("char_type").toInt());
-    _type->setEnabled(false);    
+    _type->setEnabled(false);
     _order->setValue(charq.value("char_order").toInt());
     _search->setChecked(charq.value("char_search").toBool());
-    _search->setEnabled(_type->currentIndex() != 4);
     _unique->setChecked(charq.value("char_unique").toBool());
   }
   else if (ErrorReporter::error(QtCriticalMsg, this,
