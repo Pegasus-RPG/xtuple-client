@@ -167,7 +167,6 @@ characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_charoptView, SIGNAL(clicked(QModelIndex)), this, SLOT(sCharoptClicked(QModelIndex)));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_type, SIGNAL(currentIndexChanged(int)), this, SLOT(sTypeChanged()));
 
   _validator->append(0, "[Y|N]");
   _validator->append(1, "\\S+");
@@ -485,13 +484,3 @@ void characteristic::sCharoptClicked(QModelIndex idx)
   _delete->setEnabled(idx.isValid());
 }
 
-void characteristic::sTypeChanged()
-{
-  if (_type->currentIndex() == 4)
-  {
-    _search->setChecked(false);
-    _search->setEnabled(false);
-  } else {
-    _search->setEnabled(true);  
-  }
-}

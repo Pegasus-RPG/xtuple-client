@@ -32,8 +32,6 @@ class GuiClientInterface
     virtual const QStringList hunspell_suggest(const QString word) = 0;
     virtual int hunspell_add(const QString word) = 0;
     virtual int hunspell_ignore(const QString word) = 0;
-
-    virtual QString encryptionKey() = 0;
 };
 
 #endif

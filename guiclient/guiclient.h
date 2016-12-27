@@ -228,7 +228,7 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE void tabifyDockWidget ( QDockWidget * first, QDockWidget * second );
     Q_INVOKABLE void setCentralWidget(QWidget * widget);
 
-	TimeoutHandler   *_timeoutHandler;
+    TimeoutHandler   *_timeoutHandler;
     ReportHandler    *_reportHandler;
 
     QMap<const QObject*,int> _customCommands;
@@ -258,8 +258,6 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE int hunspell_add(const QString word);
     //add word to dict (word is valid until spell object is not destroyed)
     Q_INVOKABLE int hunspell_ignore(const QString word);
-
-    Q_INVOKABLE QString encryptionKey();
 
   public slots:
     void sReportError(const QString &);

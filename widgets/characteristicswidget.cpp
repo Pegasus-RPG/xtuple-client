@@ -175,7 +175,6 @@ void CharacteristicsWidget::sFillList()
   XSqlQuery q;
   q.prepare( "SELECT charass_id, char_name, char_group, "
              "           CASE WHEN char_type = 2 THEN formatDate(charass_value::date)"
-             "                WHEN char_type = 4 THEN '******'"
              "                ELSE charass_value"
              "           END AS charass_value,"
              "       charass_default"

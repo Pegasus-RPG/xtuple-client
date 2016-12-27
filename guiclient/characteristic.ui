@@ -70,11 +70,6 @@ to be bound by its terms.</comment>
            <string>Number</string>
           </property>
          </item>
-         <item>
-          <property name="text">
-           <string>Encrypted</string>
-          </property>
-         </item>
         </widget>
        </item>
        <item>
