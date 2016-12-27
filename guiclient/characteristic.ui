@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>576</width>
-    <height>477</height>
+    <width>505</width>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -180,16 +180,7 @@ to be bound by its terms.</comment>
          </property>
          <widget class="QWidget" name="_textPage">
           <layout class="QGridLayout" name="gridLayout_3">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
+           <property name="margin">
             <number>0</number>
            </property>
            <item row="0" column="0">
@@ -291,16 +282,7 @@ to be bound by its terms.</comment>
          </widget>
          <widget class="QWidget" name="_listPage">
           <layout class="QGridLayout" name="gridLayout_4">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
+           <property name="margin">
             <number>0</number>
            </property>
            <item row="0" column="1">
@@ -360,20 +342,6 @@ to be bound by its terms.</comment>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
             <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>No Options</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="_encryptedPage">
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <widget class="QLabel" name="label_3">
              <property name="text">
               <string>No Options</string>
              </property>
