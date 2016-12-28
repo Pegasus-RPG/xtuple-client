@@ -29,7 +29,7 @@ relocateInventory::relocateInventory(QWidget* parent, const char* name, bool mod
 
   _captive = false;
 
-  _item->setType(ItemLineEdit::cLocationControlled);
+  _item->setType(ItemLineEdit::cLocationControlled | ItemLineEdit::cActive);
   _qty->setValidator(omfgThis->transQtyVal());
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
