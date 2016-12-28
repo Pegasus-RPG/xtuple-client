@@ -1149,6 +1149,14 @@ void itemSite::sHandleWOSupplied(bool pSupplied)
 
 void itemSite::sHandleControlMethod()
 {
+  if (_wasControlMethod != "N" && _controlMethod->code() == "N" && _qohCache > 0)
+  {
+     QMessageBox::warning(this, tr("Control Method"),
+        tr("<p>You cannot change the Control Method to None "
+           "when inventory exists at this Site."));
+     _controlMethod->setCode(_wasControlMethod);
+     return;
+  }
   if (_controlMethod->code() == "N" || _itemType == 'R' || _itemType == 'K')
   {
     _costNone->setChecked(true);
@@ -1428,6 +1436,7 @@ void itemSite::populate()
     _orderGroupFirst->setChecked(itemsite.value("itemsite_ordergroup_first").toBool());
     _mpsTimeFence->setValue(itemsite.value("itemsite_mps_timefence").toInt());
     _controlMethod->setCode(itemsite.value("itemsite_controlmethod").toString());
+    _wasControlMethod = itemsite.value("itemsite_controlmethod").toString();
 
     _wasLotSerial = ((itemsite.value("itemsite_controlmethod").toString() == "L") ||
         	     (itemsite.value("itemsite_controlmethod").toString() == "S") );
