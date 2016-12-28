@@ -130,7 +130,7 @@ void voucherMiscDistrib::populate()
       _expcatSelected->setChecked(true);
       _expcat->setId(vpopulateVoucher.value("vodist_expcat_id").toInt());
     }
-    if (vpopulateVoucher.value("vodist_freight_vohead_id").toInt() != -1)
+    if (vpopulateVoucher.value("vodist_costelem_id").toInt() != -1)
     {
       _freightSelected->setChecked(true);
       _origVoucher->setId(vpopulateVoucher.value("vodist_freight_vohead_id").toInt());

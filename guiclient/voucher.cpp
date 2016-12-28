@@ -619,7 +619,8 @@ void voucher::sEditMiscDistribution()
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
   {
-    sUpdateVoucherTax();
+    if (_miscDistrib->altId() != 4) // Don't auto update taxes to allow manual override
+      sUpdateVoucherTax();
     sFillMiscList();
     sPopulateDistributed();
   }
