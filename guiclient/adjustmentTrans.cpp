@@ -172,8 +172,7 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
 void adjustmentTrans::sPost()
 {
   XSqlQuery adjustmentPost;
-  XSqlQuery cleanup;
-  cleanup.prepare("SELECT deleteitemlocdistseries(:itemlocSeries) AS result;");  
+  XSqlQuery cleanup;  
   int _itemlocSeries = 0;
   double qty = _qty->toDouble();
   double cost = _cost->toDouble();
@@ -198,10 +197,8 @@ void adjustmentTrans::sPost()
   if(GuiErrorCheck::reportErrors(this,tr("Cannot Post Transaction"),errors))
     return;
 
-  // Handle everything possible with distribution detail before inventory transaction
-  //if (_controlledItem)
-  //{
-    // Create the 'parent' itemlocdist record
+  // Create itemlocdist record if required and retrieve new series, 
+  // call distributeInventory with series.
   XSqlQuery newSeries;
   newSeries.prepare("SELECT createitemlocdistseries(:itemsite_id, :qty, 'AD', '') AS result;");
   newSeries.bindValue(":itemsite_id", _itemsiteId);
@@ -214,11 +211,11 @@ void adjustmentTrans::sPost()
       ErrorReporter::error(QtCriticalMsg, this, tr("Error. "
         "createitemlocdistseries(%, %, 'AD', '') Returned <= 0").arg(_itemsiteId).arg(qty),
         newSeries, __FILE__, __LINE__);
-      // TODO - call clean up function
       return;
     }
 
     _itemlocSeries = newSeries.value("result").toInt();
+    cleanup.prepare("SELECT deleteitemlocdistseries(:itemlocSeries) AS result;");
     cleanup.bindValue(":itemlocSeries", _itemlocSeries);
 
     if (distributeInventory::SeriesAdjust(_itemlocSeries, this, QString(), QDate(), QDate(), true)
@@ -235,7 +232,6 @@ void adjustmentTrans::sPost()
   {
     return;
   }
-
 
   // Create inventory transaction
   adjustmentPost.prepare( "SELECT invAdjustment(itemsite_id, :qty, :docNumber, :comments, :date, "

@@ -303,6 +303,9 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
           query.exec();
 
           // Append id to list and process at the end
+          if (DEBUG)
+            qDebug() << tr("ildsList.append(%1)").arg(itemlocSeries);
+          
           ildsList.append(itemlocSeries);
         }
 
@@ -628,6 +631,7 @@ bool distributeInventory::sDefault()
           ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
                                  storedProcErrorLookup("distributetodefault", result),
                                  __FILE__, __LINE__);
+          
           return false;
         }
       }
