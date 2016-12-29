@@ -395,9 +395,9 @@ const struct {
                               "charged."),                              0, "" },
   { "deleteCharacteristic",
 			-99, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Characteristic cannot be deleted "
-			       "because it has been assigned to other documents."
+                               "because it has been assigned to other documents. "
 			       "You must remove these assignments before "
-			       "you may delete the selected Characteristic."),
+                               "you may delete the selected Characteristic."),
 			       					 0, "" },
 
   { "deleteCheck", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot delete this Payment because either it has not "
@@ -514,9 +514,11 @@ const struct {
   { "deleteItem",	-4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Item cannot be deleted as there are "
 			       "Breeder BOM records associated with it."), 	0, "" },
   { "deleteItem",	-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Item cannot be deleted as there are "
-			       "assignement records associated with it."), 	0, "" },
+                               "assignment records associated with it."), 	0, "" },
   { "deleteItem",	-6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Item cannot be deleted as there are "
 			       "Revision Control records associated with it."), 	0, "" },
+  { "deleteItem",	-7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Item cannot be deleted as it has "
+                               "been invoiced."), 	0, "" },
   { "deleteItemSite",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Item Site cannot be deleted as "
 			      "there is Inventory History posted against it. "
 			      "You may edit the Item Site and deactivate it."),	0, "" },
