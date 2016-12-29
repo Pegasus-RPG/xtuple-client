@@ -18,10 +18,10 @@
 #include <metasql.h>
 
 #include "copyItem.h"
-#include "item.h"
-#include "storedProcErrorLookup.h"
-#include "parameterwidget.h"
 #include "errorReporter.h"
+#include "item.h"
+#include "parameterwidget.h"
+#include "storedProcErrorLookup.h"
 
 items::items(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "items", fl)
@@ -137,11 +137,11 @@ void items::sView()
 
 void items::sDelete()
 {
+  XSqlQuery itemDelete;
   if (QMessageBox::information( this, tr("Delete Item"),
                                 tr( "Are you sure that you want to delete the Item?"),
                                 tr("&Delete"), tr("&Cancel"), 0, 0, 1 ) == 0  )
   {
-    XSqlQuery itemDelete;
     itemDelete.prepare("SELECT deleteItem(:item_id) AS returnVal;");
     itemDelete.bindValue(":item_id", list()->id());
     itemDelete.exec();
