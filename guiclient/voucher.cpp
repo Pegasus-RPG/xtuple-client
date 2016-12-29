@@ -1153,17 +1153,9 @@ void voucher::sDistributeFreight()
   else if (_freightDistWgt->isChecked())
     distr.bindValue(":dist_type", "W");
   distr.bindValue(":freight", _freight->localValue());
-
   distr.exec();
   if (distr.first())  
   {
-    int returnVal = distr.value("result").toInt();
-    if (returnVal < 0)
-    {
-      ErrorReporter::error(QtCriticalMsg, this, storedProcErrorLookup("calculateFreightDistribution", returnVal),
-                         distr, __FILE__, __LINE__);
-      return;
-    }
     _frghtdistr = _freight->localValue();
     sIsDistributed();
     sFillList();
