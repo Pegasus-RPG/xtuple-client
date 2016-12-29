@@ -1111,7 +1111,6 @@ const struct {
 			       "Systems Administrator to have this corrected "
 			       "before you may post this Return."),
 								 0, "" },
-
   { "postGLSeries", -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not post this G/L Series because the "
 				 "Accounting Period is closed."), 0, "" },
   { "postGLSeries", -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not post this G/L Series because the G/L "
@@ -1225,6 +1224,9 @@ const struct {
   { "postPoReturns", -1, "", -1, "postInvTrans" },
   { "postPoReturns", -3, "", -3, "insertGLTransaction" },
   { "postPoReturns", -4, "", -4, "insertGLTransaction" },
+
+  { "postValueIntoInvBalance", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An inventory balance record was not found "
+                               "for item %1.  This is typically caused by that item missing standard costs"), 0, "" },
 
   { "postVoucher",	-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Cost Category for one or more Item Sites "
 			       "for the Purchase Order covered by this Voucher "
