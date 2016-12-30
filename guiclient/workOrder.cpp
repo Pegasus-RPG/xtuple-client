@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -1019,26 +1019,12 @@ void workOrder::sDeleteWO()
     workDeleteWO.exec();
 
     if (workDeleteWO.first())
-    {
-      int result = workDeleteWO.value("returnVal").toInt();
-      if (result < 0)
-      {
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
-                               storedProcErrorLookup("deleteWo", result),
-                               __FILE__, __LINE__);
-        return;
-      }
       omfgThis->sWorkOrdersUpdated(-1, true);
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
+                         workDeleteWO, __FILE__, __LINE__))
+    {
+      return;
     }
-    else if (workDeleteWO.lastError().type() != QSqlError::NoError)
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
-                         workDeleteWO, __FILE__, __LINE__);
-
-  }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
-                                workDeleteWO, __FILE__, __LINE__))
-  {
-    return;
   }
   populate();
 }
@@ -1610,18 +1596,7 @@ void workOrder::sDeleteMatl()
       workDeleteMatl.prepare("SELECT deleteWo(:wo_id, true) AS result;");
       workDeleteMatl.bindValue(":wo_id", woid);
       workDeleteMatl.exec();
-      if (workDeleteMatl.first())
-      {
-        int result = workDeleteMatl.value("result").toInt();
-        if (result < 0)
-        {
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
-                                 storedProcErrorLookup("deleteWo", result),
-                                 __FILE__, __LINE__);
-          return;
-        }
-      }
-      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
                                     workDeleteMatl, __FILE__, __LINE__))
       {
         return;

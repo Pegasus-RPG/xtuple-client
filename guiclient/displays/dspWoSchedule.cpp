@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2010 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -305,22 +305,13 @@ void dspWoSchedule::sDeleteWO()
     dspDeleteWO.bindValue(":wo_id", list()->id());
     dspDeleteWO.exec();
 
-    if (dspDeleteWO.first())
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
+                         dspDeleteWO, __FILE__, __LINE__))
     {
-      int result = dspDeleteWO.value("returnVal").toInt();
-      if (result < 0)
-      {
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
-                               storedProcErrorLookup("deleteWo", result),
-                               __FILE__, __LINE__);
-        return;
-      }
+      return;
     }
-    else if (dspDeleteWO.lastError().type() != QSqlError::NoError)
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
-                         dspDeleteWO, __FILE__, __LINE__);
-
-    omfgThis->sWorkOrdersUpdated(-1, true);
+    else
+      omfgThis->sWorkOrdersUpdated(-1, true);
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
                                 dspDeleteWO, __FILE__, __LINE__))
