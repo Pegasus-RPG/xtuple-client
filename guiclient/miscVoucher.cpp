@@ -39,8 +39,6 @@ miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_new,                  SIGNAL(clicked()),                      this, SLOT(sNewMiscDistribution()));
   connect(_save,                 SIGNAL(clicked()),                      this, SLOT(sSave()));
   connect(_voucherNumber,        SIGNAL(editingFinished()),              this, SLOT(sHandleVoucherNumber()));
-  connect(_taxzone,              SIGNAL(newID(int)),                     this, SLOT(sDistributionDateUpdated()));
-  connect(_distributionDate,     SIGNAL(newDate(const QDate&)),          this, SLOT(sDistributionDateUpdated()));
 
   _terms->setType(XComboBox::APTerms);
 
@@ -139,7 +137,6 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
       _close->setText(tr("&Close"));
       _save->hide();
       _postVoucher->setVisible(false);
-
     }
   }
 
@@ -155,6 +152,9 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
     _charass->setId(_voheadid);
     populate();
   }
+
+  connect(_taxzone,              SIGNAL(newID(int)),                     this, SLOT(sDistributionDateUpdated()));
+  connect(_distributionDate,     SIGNAL(newDate(const QDate&)),          this, SLOT(sDistributionDateUpdated()));
 
   return NoError;
 }
@@ -462,7 +462,8 @@ void miscVoucher::sEditMiscDistribution()
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
   {
-    sUpdateVoucherTax();
+    if (_miscDistrib->altId() != 4) // Don't auto update taxes to allow manual override
+      sUpdateVoucherTax();
     sFillMiscList();
     sPopulateDistributed();
   }

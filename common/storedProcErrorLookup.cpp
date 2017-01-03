@@ -54,6 +54,12 @@ const struct {
                             "it is already associated with an Opportunity.  You must "
                             "detach this Sales Order before you may attach it."),    0, "" },
 
+  { "calculateFreightDistribution", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "No valid Items have been distributed to the Voucher."
+                                    " Items must be Purchased goods and be costed items.  Please check and distribute items before"
+                                    " attempting to distribute freight."),     0, "" },
+  { "calculateFreightDistribution", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Voucher you are attempting to distribute freight "
+                                    "to has incorrect item totals for the desired distribution method. Please check that Voucher"),     0, "" },
+
   { "changeCMHeadTaxAuth", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Return was not found."),	0, "" },
   { "changeCMHeadTaxAuth", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Tax Authority was not found."),	0, "" },
 
