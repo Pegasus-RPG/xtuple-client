@@ -1116,15 +1116,14 @@ void voucher::sDistributeFreight()
     return;
 
   // Check for partial PO distributions before proceeding
-  distr.prepare("SELECT SUM( (SELECT COALESCE(SUM(recv_qty), 0)"
-                " FROM recv "
-                " WHERE (recv_posted)"
-                "  AND (NOT recv_invoiced)"
-                "  AND (recv_vohead_id IS NULL)"
-                "  AND (recv_order_type='PO')"
-                "  AND (recv_orderitem_id=poitem_id)) ) AS qtyreceived"
-                " FROM poitem"
-                " WHERE (poitem_pohead_id=:pohead_id);");
+  distr.prepare("SELECT COALESCE(SUM(recv_qty),0) AS qtyreceived"
+                " FROM poitem "
+                " JOIN recv ON poitem_id=recv_orderitem_id"
+                " WHERE poitem_pohead_id=:pohead_id"
+                "  AND recv_posted"
+                "  AND NOT recv_invoiced"
+                "  AND recv_vohead_id IS NULL"
+                "  AND recv_order_type='PO';");
   distr.bindValue(":pohead_id", _poNumber->id());
   distr.exec();
   if (distr.first())
