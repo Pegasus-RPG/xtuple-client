@@ -71,13 +71,20 @@ void check::sPopulate()
 {
   XSqlQuery checkPopulate;
   MetaSQLQuery mql("SELECT checkhead.*,"
-                   "       checkrecip_number, checkrecip_name, checkrecip_type"
+                   "       checkrecip_number, checkrecip_name, "
+                   "       CASE checkrecip_type WHEN 'V' THEN <? value('vendor') ?>"
+                   "                            WHEN 'C' THEN <? value('customer') ?>"
+                   "                            WHEN 'T' THEN <? value('taxauth') ?>"
+                   "       END AS checkrecip_type"
                    "  FROM checkhead"
                    "  JOIN checkrecip ON (checkhead_recip_id=checkrecip_id"
                    "                 AND checkhead_recip_type=checkrecip_type)"
                    " WHERE (checkhead_id=<? value('checkid')?>);");
   ParameterList params;
   params.append("checkid", _checkid);
+  params.append("vendor", tr("Vendor"));
+  params.append("customer", tr("Customer"));
+  params.append("taxauth", tr("Tax Authority"));
   checkPopulate = mql.toQuery(params);
   if (checkPopulate.first())
   {
