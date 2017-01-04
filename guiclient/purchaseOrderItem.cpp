@@ -527,8 +527,13 @@ void purchaseOrderItem::populate()
     }
 
     purchasepopulate.prepare( "SELECT DISTINCT char_id, char_name,"
-                   "       COALESCE(b.charass_value, (SELECT c.charass_value FROM charass c WHERE ((c.charass_target_type='I') AND (c.charass_target_id=:item_id) AND (c.charass_default) AND (c.charass_char_id=char_id)) LIMIT 1)) AS charass_value"
-                   "   FROM (SELECT DISTINCT char_id, char_type, char_name, char_order "
+                   "       COALESCE(b.charass_value, (SELECT c.charass_value FROM charass c "
+                   "                                  WHERE ((c.charass_target_type='I') "
+                   "                                   AND (c.charass_target_id=:item_id) "
+                   "                                   AND (c.charass_default) "
+                   "                                   AND (c.charass_char_id=char_id)) "
+                   "                                  LIMIT 1)) AS charass_value"
+                   "   FROM (SELECT DISTINCT char_id, char_name "
                    "         FROM charass, char, charuse"
                    "         WHERE ((charass_char_id=char_id)"
                    "         AND (charuse_char_id=char_id AND charuse_target_type = 'PI') "
