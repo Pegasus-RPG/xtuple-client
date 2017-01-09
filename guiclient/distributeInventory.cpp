@@ -252,6 +252,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
           newdlg.set(params);
           itemlocSeries = newdlg.exec();
           if (itemlocSeries == XDialog::Rejected)
+            // TODO - add missing handling to cleanup/deletion of orphaned records
             return XDialog::Rejected;
         }
         
@@ -305,14 +306,14 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
           // Append id to list and process at the end
           if (DEBUG)
             qDebug() << tr("ildsList.append(%1)").arg(itemlocSeries);
-          
+
           ildsList.append(itemlocSeries);
         }
 
         // Set itemlocdist_child_series of parent itemlocdist record. Can this be removed since it's below?
         query.prepare("UPDATE itemlocdist SET itemlocdist_child_series = :itemlocSeries "
                       "WHERE itemlocdist_series = :pItemlocSeries "
-                      " AND :itemlocSeries IS NOT NULL "
+                      " AND :itemlocSeries > 0 "
                       "RETURNING itemlocdist_id;");
         query.bindValue(":itemlocSeries", itemlocSeries);
         query.bindValue(":pItemlocSeries",  pItemlocSeries);
@@ -337,7 +338,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
         params.append("trans_type", itemloc.value("trans_type").toString());
 
         if (itemloc.value("itemlocdist_distlotserial").toBool())
-          params.append("includeLotSerialDetail", true); // true arg required here?
+          params.append("includeLotSerialDetail");
 
         distributeInventory newdlg(pParent, "", true);
         newdlg.set(params);

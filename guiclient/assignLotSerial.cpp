@@ -215,7 +215,6 @@ void assignLotSerial::sAssign()
              "SET itemlocdist_source_type='O' "
              "WHERE (itemlocdist_series=:itemlocdist_series);");
   assignAssign.bindValue(":itemlocdist_series", _itemlocSeries);
-  assignAssign.bindValue(":itemlocdist_id", _itemlocdistid);
   assignAssign.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Setting Lot/Serial Number"),
                                 assignAssign, __FILE__, __LINE__))

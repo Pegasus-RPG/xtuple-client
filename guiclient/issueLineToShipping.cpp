@@ -22,8 +22,6 @@
 #include "storedProcErrorLookup.h"
 #include "errorReporter.h"
 
-#define DEBUG true
-
 issueLineToShipping::issueLineToShipping(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -306,8 +304,6 @@ void issueLineToShipping::sIssue()
   if (issue.first())
   {
     int result = issue.value("result").toInt();
-    if (DEBUG)
-      qDebug() << "IssueLineToShipping::sIssue result from issueToShipping: " << result;
     if (result < 0)
     {
       rollback.exec();

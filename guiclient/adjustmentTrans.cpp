@@ -173,7 +173,7 @@ void adjustmentTrans::sPost()
 {
   XSqlQuery adjustmentPost;
   XSqlQuery cleanup;  
-  int _itemlocSeries = 0;
+  int itemlocSeries = 0;
   double qty = _qty->toDouble();
   double cost = _cost->toDouble();
 
@@ -214,11 +214,11 @@ void adjustmentTrans::sPost()
       return;
     }
 
-    _itemlocSeries = newSeries.value("result").toInt();
-    cleanup.prepare("SELECT deleteitemlocdistseries(:itemlocSeries) AS result;");
-    cleanup.bindValue(":itemlocSeries", _itemlocSeries);
+    itemlocSeries = newSeries.value("result").toInt();
+    cleanup.prepare("SELECT deleteitemlocdistseries(:itemlocSeries);");
+    cleanup.bindValue(":itemlocSeries", itemlocSeries);
 
-    if (distributeInventory::SeriesAdjust(_itemlocSeries, this, QString(), QDate(), QDate(), true)
+    if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
       == XDialog::Rejected)
     {
       QMessageBox::information(this, tr("Inventory Adjustment"),
@@ -234,19 +234,14 @@ void adjustmentTrans::sPost()
   }
 
   // Create inventory transaction
-  adjustmentPost.prepare( "SELECT invAdjustment(itemsite_id, :qty, :docNumber, :comments, :date, "
-                          " :cost, NULL::INTEGER, :itemlocSeries) AS result "
-                          "FROM itemsite "
-                          "WHERE itemsite_item_id=:item_id "
-                          " AND itemsite_warehous_id=:warehous_id;");
+  adjustmentPost.prepare( "SELECT invAdjustment(:itemsite_id, :qty, :docNumber, :comments, :date, "
+                          " :cost, NULL::INTEGER, :itemlocSeries) AS result;");
   adjustmentPost.bindValue(":qty", qty);
-  adjustmentPost.bindValue(":docNumber", _documentNum->text());
+  adjustmentPost.bindValue(":docNumber",   _documentNum->text());
   adjustmentPost.bindValue(":comments",    _notes->toPlainText());
-  adjustmentPost.bindValue(":item_id", _item->id());
-  adjustmentPost.bindValue(":warehous_id", _warehouse->id());
+  adjustmentPost.bindValue(":itemsite_id", _itemsiteId);
   adjustmentPost.bindValue(":date",        _transDate->date());
-  if(_itemlocSeries != 0)
-    adjustmentPost.bindValue(":itemlocSeries", _itemlocSeries);
+  adjustmentPost.bindValue(":itemlocSeries", itemlocSeries);
   if(!_costAdjust->isChecked())
     adjustmentPost.bindValue(":cost", 0.0);
   else if(_costManual->isChecked())
@@ -258,11 +253,11 @@ void adjustmentTrans::sPost()
     int invhistId = adjustmentPost.value("result").toInt();
     if (DEBUG)
       qDebug() << tr("AdjustmentTrans::sPost postDistDetail SELECT postDistDetail(%1, %2, %3, %4)")
-      .arg(_itemlocSeries).arg(invhistId).arg(_lsControlled).arg(_locControlled);
+      .arg(itemlocSeries).arg(invhistId).arg(_lsControlled).arg(_locControlled);
       
     XSqlQuery postDistDetail;
     postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries, :invhistId, :ls, :loc) AS result;");
-    postDistDetail.bindValue(":itemlocSeries", _itemlocSeries);
+    postDistDetail.bindValue(":itemlocSeries", itemlocSeries);
     postDistDetail.bindValue(":invhistId", invhistId);
     postDistDetail.bindValue(":ls", _lsControlled);
     postDistDetail.bindValue(":loc", _locControlled);
@@ -282,6 +277,7 @@ void adjustmentTrans::sPost()
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Distribution Detail Posting Failed"),
                               postDistDetail, __FILE__, __LINE__))
     {
+      // TODO - add missing handling to cleanup
       cleanup.exec();
       return;
     }  
@@ -343,8 +339,8 @@ void adjustmentTrans::sPopulateQOH()
       _itemsiteId = populateAdjustment.value("itemsite_id").toInt();
       _cachedValue = populateAdjustment.value("itemsite_value").toDouble();
       _cachedQOH = populateAdjustment.value("itemsite_qtyonhand").toDouble();
-      _locControlled = populateAdjustment.value("itemsite_loccntrl").toDouble();
-      _lsControlled = populateAdjustment.value("lscntrl").toDouble();
+      _locControlled = populateAdjustment.value("itemsite_loccntrl").toBool();
+      _lsControlled = populateAdjustment.value("lscntrl").toBool();
       _controlledItem = _locControlled || _lsControlled;
       if(_cachedQOH == 0.0)
         _costManual->setChecked(true);
