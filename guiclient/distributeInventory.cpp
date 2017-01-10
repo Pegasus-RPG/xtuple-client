@@ -122,16 +122,16 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
                      "       itemsite_perishable, itemsite_warrpurc,"
                      "       COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id,"
                      "       COALESCE(itemlocdist_source_id,-1) AS itemlocdist_source_id,"
-                     "       CASE WHEN (invhist_transtype IN ('RM','RP','RR','RX')) THEN 'R'"
+                     "       CASE WHEN (COALESCE(invhist_transtype, '') IN ('RM','RP','RR','RX')) THEN 'R'"
                      "            WHEN (invhist_transtype = 'IM') THEN 'I'"
                      "            WHEN (invhist_transtype = 'SH' AND invhist_ordtype='SO') THEN 'I'"
                      "            ELSE 'O'"
                      "       END AS trans_type,"
-                     "       CASE WHEN (invhist_transtype IN ('RM','RP','RR','RX')"
+                     "       CASE WHEN (COALESCE(invhist_transtype, '') IN ('RM','RP','RR','RX')"
                      "                  AND itemsite_recvlocation_dist) THEN true"
                      "            WHEN (invhist_transtype = 'IM'"
                      "                  AND itemsite_issuelocation_dist) THEN true"
-                     "            WHEN (invhist_transtype NOT IN ('RM','RP','RR','RX','IM')"
+                     "            WHEN (COALESCE(invhist_transtype, '') NOT IN ('RM','RP','RR','RX','IM')"
                      "                  AND itemsite_location_dist) THEN true"
                      "            ELSE false"
                      "       END AS auto_dist, "
@@ -252,7 +252,6 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
           newdlg.set(params);
           itemlocSeries = newdlg.exec();
           if (itemlocSeries == XDialog::Rejected)
-            // TODO - add missing handling to cleanup/deletion of orphaned records
             return XDialog::Rejected;
         }
         
@@ -310,7 +309,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
           ildsList.append(itemlocSeries);
         }
 
-        // Set itemlocdist_child_series of parent itemlocdist record. Can this be removed since it's below?
+        // Set itemlocdist_child_series of parent itemlocdist record for unique parent pItemlocSeries.
         query.prepare("UPDATE itemlocdist SET itemlocdist_child_series = :itemlocSeries "
                       "WHERE itemlocdist_series = :pItemlocSeries "
                       " AND :itemlocSeries > 0 "
@@ -367,7 +366,8 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
     }
     
     XSqlQuery post;
-    for (int i = 0; i < ildsList.size(); ++i) { // Process Lot/Serial distributions
+    // Update parent itemlocdist_child_series with new Lot/Serial records' itemlocdist_series 
+    for (int i = 0; i < ildsList.size(); ++i) {
       if (DEBUG)
         qDebug() << "DistributeInventory::seriesAdjust ildsList.at(i): " << ildsList.at(i);
 
@@ -392,8 +392,9 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
                                     post, __FILE__, __LINE__))
         return XDialog::Rejected;
     }
-    
-    for (int i = 0; i < ildList.size(); ++i) { // Process location distributions
+
+    // Update parent itemlocdist_child_series with new location dist. records' itemlocdist_series
+    for (int i = 0; i < ildList.size(); ++i) {
       if (DEBUG)
         qDebug() << "DistributeInventory::seriesAdjust ildList.at(i): " << ildList.at(i);
 
@@ -421,13 +422,14 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
                                     post, __FILE__, __LINE__))
         return XDialog::Rejected;
     }
+    // pre-incident #28868 (the old way)
     if (!pPreDistributed)
     { 
       if (DEBUG)
         qDebug() << tr("!pPreDistributed, proceed to postdistdetail(%1, NULL, %2, %3)")
         .arg(pItemlocSeries).arg(lsCntrld).arg(locCntrld);
       
-      // Attempt to post distribution detail here.
+      // Post Distribution detail
       XSqlQuery postDistDetail;
       postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries, NULL, :ls, :loc) AS result;");
       postDistDetail.bindValue(":itemlocSeries", pItemlocSeries);

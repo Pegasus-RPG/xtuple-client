@@ -215,8 +215,9 @@ void adjustmentTrans::sPost()
     }
 
     itemlocSeries = newSeries.value("result").toInt();
-    cleanup.prepare("SELECT deleteitemlocdistseries(:itemlocSeries);");
+    cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, :invhistId, :failed);");
     cleanup.bindValue(":itemlocSeries", itemlocSeries);
+    cleanup.bindValue(":failed", true);
 
     if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
       == XDialog::Rejected)
@@ -269,7 +270,6 @@ void adjustmentTrans::sPost()
         ErrorReporter::error(QtCriticalMsg, this, tr("Posting Distribution Detail for Controlled Item"
           "Returned <= 0"),
           postDistDetail, __FILE__, __LINE__);
-        
         cleanup.exec();
         return;
       }
@@ -277,7 +277,6 @@ void adjustmentTrans::sPost()
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Distribution Detail Posting Failed"),
                               postDistDetail, __FILE__, __LINE__))
     {
-      // TODO - add missing handling to cleanup
       cleanup.exec();
       return;
     }  
@@ -307,13 +306,11 @@ void adjustmentTrans::sPost()
   }
   else
   {
-    // TODO - call function to delete distribution records
     ErrorReporter::error(QtCriticalMsg, this, tr("Post Transaction Cancelled"),
                          tr("<p>No transaction was done because Item %1 "
                             "was not found at Site %2.")
                          .arg(_item->itemNumber()).arg(_warehouse->currentText()),
                          __FILE__, __LINE__);
-    cleanup.exec();
   }
 }
 
