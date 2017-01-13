@@ -1752,6 +1752,7 @@ void item::sFillListItemSites()
   params.append("average", tr("Average"));
   params.append("na", tr("N/A"));
   params.append("never", tr("Never"));
+  params.append("showInactive");
 
   itemFillListItemSites  = mql.toQuery(params);
   _itemSite->populate(itemFillListItemSites);
