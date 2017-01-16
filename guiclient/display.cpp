@@ -283,7 +283,7 @@ void displayPrivate::setupCharacteristics(QStringList uses)
     column = QString("char%1").arg(chars.value("char_id").toString());
     name = chars.value("char_name").toString();
     _list->addColumn(name, -1, Qt::AlignLeft , false, column );
-    if (chartype == characteristic::Text)
+    if (chartype == characteristic::Text || chartype == characteristic::Number)
     {
       _charidstext.append(chars.value("char_id").toInt());
       _parameterWidget->append(name, column, ParameterWidget::Text);
