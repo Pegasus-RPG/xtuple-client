@@ -234,6 +234,10 @@ void adjustmentTrans::sPost()
     return;
   }
 
+  // Wrap the remaining work (invAdjustment and postDistDetail) in a transaction in case of errors
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+  adjustmentPost.exec("BEGIN;");
   // Create inventory transaction
   adjustmentPost.prepare( "SELECT invAdjustment(:itemsite_id, :qty, :docNumber, :comments, :date, "
                           " :cost, NULL::INTEGER, :itemlocSeries) AS result;");
@@ -267,20 +271,24 @@ void adjustmentTrans::sPost()
     {
       if (postDistDetail.value("result").toInt() <= 0 && _controlledItem)
       {
+        rollback.exec();
+        cleanup.exec();
         ErrorReporter::error(QtCriticalMsg, this, tr("Posting Distribution Detail for Controlled Item"
           "Returned <= 0"),
           postDistDetail, __FILE__, __LINE__);
-        cleanup.exec();
+
         return;
       }
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Distribution Detail Posting Failed"),
                               postDistDetail, __FILE__, __LINE__))
     {
+      rollback.exec();
       cleanup.exec();
       return;
     }  
      
+    adjustmentPost.exec("COMMIT;");
     // Continue to cleanup
     if (_captive)
       close();
