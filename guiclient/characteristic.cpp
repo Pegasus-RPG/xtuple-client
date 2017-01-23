@@ -380,7 +380,11 @@ void characteristic::populate()
   if (charq.first())
   {
     _name->setText(charq.value("char_name").toString());
+#if QT_VERSION >= 0x050000
     _charGroup->setCurrentText(charq.value("char_group").toString());
+#else
+    _charGroup->setCode(charq.value("char_group").toString());
+#endif
     _description->setText(charq.value("char_notes").toString());
     _mask->setText(charq.value("char_mask").toString());
     _validator->setText(charq.value("char_validator").toString());
