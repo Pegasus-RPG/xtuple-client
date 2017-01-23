@@ -349,7 +349,8 @@ void CRMAcctList::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
   case CRMAcctLineEdit::Vend:
     setWindowTitle(tr("Search For Vendor"));
     _queryParams->append("vendor");
-    _listTab->addColumn("Vend. Type", _itemColumn, Qt::AlignLeft, true, "type");
+    if (!(_listTab->column("type") > 0))
+      _listTab->addColumn("Vend. Type", _itemColumn, Qt::AlignLeft, true, "type");
     break;
 
   case CRMAcctLineEdit::CustAndProspect:
