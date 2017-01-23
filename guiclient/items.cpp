@@ -18,10 +18,10 @@
 #include <metasql.h>
 
 #include "copyItem.h"
-#include "item.h"
-#include "storedProcErrorLookup.h"
-#include "parameterwidget.h"
 #include "errorReporter.h"
+#include "item.h"
+#include "parameterwidget.h"
+#include "storedProcErrorLookup.h"
 
 items::items(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "items", fl)
@@ -137,32 +137,23 @@ void items::sView()
 
 void items::sDelete()
 {
+  XSqlQuery itemDelete;
   if (QMessageBox::information( this, tr("Delete Item"),
                                 tr( "Are you sure that you want to delete the Item?"),
                                 tr("&Delete"), tr("&Cancel"), 0, 0, 1 ) == 0  )
   {
-    XSqlQuery qry;
-    qry.prepare("SELECT deleteItem(:item_id) AS returnVal;");
-    qry.bindValue(":item_id", list()->id());
-    qry.exec();
-    if (qry.first())
-    {
-      int returnVal = qry.value("returnVal").toInt();
-      if (returnVal < 0)
-      {
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Item"),
-                               storedProcErrorLookup("deleteItem", returnVal),
-                               __FILE__, __LINE__);
-        return;
-      }
+    itemDelete.prepare("SELECT deleteItem(:item_id) AS returnVal;");
+    itemDelete.bindValue(":item_id", list()->id());
+    itemDelete.exec();
+    if (itemDelete.first())
       sFillList();
-    }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Item"),
-                                  qry, __FILE__, __LINE__))
+    else if (ErrorReporter::error(QtCriticalMsg, this,
+                                tr("Cannot Delete Item"),
+                                itemDelete, __FILE__, __LINE__))
     {
       return;
     }
-  }   
+  }
 }
 
 bool items::setParams(ParameterList &params)
