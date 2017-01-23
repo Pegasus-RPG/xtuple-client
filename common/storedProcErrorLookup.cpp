@@ -778,6 +778,10 @@ const struct {
              "Please close the associated Sales Order "
              "instead of trying to Delete it."),
                  0, "" },
+  { "deleteWo",		-4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Work Order cannot be deleted as it still has "
+             "WIP value against it.  Please reverse the material issue or close the W/O "
+             "instead of trying to Delete it."),
+                 0, "" },
 
   { "disablePackage", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This version of the PostgreSQL database server "
                              "does not support package enabling or disabling. "

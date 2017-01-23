@@ -3329,12 +3329,9 @@ void salesOrderItem::sHandleSupplyOrder()
           ordq.exec();
           if (ordq.first())
           {
-            int result = ordq.value("result").toInt();
-            if (result < 0)
+            if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                                        ordq, __FILE__, __LINE__))
             {
-              ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
-                                     storedProcErrorLookup("deleteWo", result),
-                                     __FILE__, __LINE__);
               _createSupplyOrder->setChecked(true);
               return;
             }
