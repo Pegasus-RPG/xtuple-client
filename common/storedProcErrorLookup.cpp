@@ -1250,6 +1250,13 @@ const struct {
 			       "Voucher."),
 								0, "" },
 
+  { "_raheadBeforeUpdateTrigger", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "You do not have privileges to change "
+                               "a Return Authorization."), 0, "" },
+  { "_raheadBeforeUpdateTrigger", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Returns may not be saved with disposition "
+                               " of Credit and Credit Method of None."), 0, "" },
+  { "_raheadBeforeUpdateTrigger", -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The authorization number may not be changed."),
+                                   0, "" },
+
   { "recallShipment",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This shipment cannot be recalled because it "
 			       "does not appear to have been shipped."),
 								0, "" },
@@ -1259,7 +1266,7 @@ const struct {
   { "recallShipment",	-3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This shipment cannot be recalled "
 			       "because it has already been received "
 			       "at its destination."),		0, "" },
-{ "recallShipment",	-4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This shipment cannot be recalled because it "
+  { "recallShipment",	-4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This shipment cannot be recalled because it "
                              "appears to have been invoiced and the invoice has been posted."),
                                                               0, "" },
   { "recallShipment",	-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This shipment cannot be recalled because it "
