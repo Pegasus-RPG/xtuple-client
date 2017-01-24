@@ -268,6 +268,9 @@ const struct {
 			       "an existing Tax Authority. Please choose a "
 			       "different number and save again."),	0, "" },
 
+  { "createItemlocdistSeries",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Resulting itemlocdist_series (%1) "
+        " Does Not Match the Series Passed (%2)"), 0, "" },
+
   { "createProspect",	 -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot create a Prospect because there is no "
 				"Account to tie it to."),
 								0, "" },

@@ -35,10 +35,6 @@ CLineEdit::CLineEdit(QWidget *pParent, const char *pName) :
   _editMode = false;
 
   setTitles(tr("Customer"), tr("Customers"));
-  setUiName("customer");
-  setEditPriv("MaintainCustomerMasters");
-  setViewPriv("ViewCustomerMasters");
-  setNewPriv("MaintainCustomerMasters");
 
   _query = " SELECT * FROM ( "
            "  SELECT cust_id AS id, "
@@ -91,6 +87,12 @@ CLineEdit::CLineEdit(QWidget *pParent, const char *pName) :
   _modeAct = new QAction(tr("Edit Number"), this);
   _modeAct->setToolTip(tr("Sets number for editing"));
   _modeAct->setCheckable(true);
+
+  setUiName("customer");
+  setEditPriv("MaintainCustomerMasters");
+  setViewPriv("ViewCustomerMasters");
+  setNewPriv("MaintainCustomerMasters");
+
   connect(_modeAct, SIGNAL(triggered(bool)), this, SLOT(setEditMode(bool)));
 }
 

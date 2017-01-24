@@ -73,6 +73,7 @@
 #include "plugins/vendorclusterplugin.h"
 #include "plugins/vendorgroupplugin.h"
 #include "plugins/vendorlineeditplugin.h"
+#include "plugins/voucherclusterplugin.h"
 #include "plugins/warehousegroupplugin.h"
 #include "plugins/wcomboboxplugin.h"
 #include "plugins/woclusterplugin.h"
@@ -155,6 +156,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new VendorClusterPlugin(this));
   m_plugins.append(new VendorGroupPlugin(this));
   m_plugins.append(new VendorLineEditPlugin(this));
+  m_plugins.append(new VoucherClusterPlugin(this));
   m_plugins.append(new WarehouseGroupPlugin(this));
   m_plugins.append(new WComboBoxPlugin(this));
   m_plugins.append(new WoClusterPlugin(this));

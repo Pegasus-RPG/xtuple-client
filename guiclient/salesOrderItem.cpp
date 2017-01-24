@@ -2149,10 +2149,15 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
               "    char_type, "
               "    char_name, "
               "    char_order "
-              "   FROM charass, char"
+              "   FROM charass, char, charuse"
               "   WHERE ((charass_char_id=char_id)"
+              "   AND (charuse_char_id=char_id AND charuse_target_type=:sotype)"
               "   AND (charass_target_type='I')"
-              "   AND (charass_target_id=:item_id) ) ) AS data"
+              "   AND (charass_target_id=:item_id) ) "
+              "   UNION SELECT char_id, char_type, char_name, char_order "
+              "   FROM charass, char "
+              "   WHERE ((charass_char_id=char_id) "
+              "   AND  (charass_target_type = :sotype AND charass_target_id=:coitem_id)) ) AS data"
               "  LEFT OUTER JOIN charass  si ON ((:coitem_id=si.charass_target_id)"
               "                              AND (:sotype=si.charass_target_type)"
               "                              AND (si.charass_char_id=char_id))"
@@ -3324,12 +3329,9 @@ void salesOrderItem::sHandleSupplyOrder()
           ordq.exec();
           if (ordq.first())
           {
-            int result = ordq.value("result").toInt();
-            if (result < 0)
+            if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
+                                        ordq, __FILE__, __LINE__))
             {
-              ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
-                                     storedProcErrorLookup("deleteWo", result),
-                                     __FILE__, __LINE__);
               _createSupplyOrder->setChecked(true);
               return;
             }
@@ -4199,7 +4201,11 @@ void salesOrderItem::populate()
   if (item.value("coitem_order_id").toInt() != -1)
     _supplyOrderId = item.value("coitem_order_id").toInt();
   if (_supplyOrderId != -1)
+  {
     _createSupplyOrder->setChecked(true);
+    if (_mode == cView)
+      sHandleSupplyOrder(); // Call directly since there is no signal/slot connection
+  }
 
   // _warehouse is populated with active records. append if this one is inactive
   if (ISORDER(_mode))
