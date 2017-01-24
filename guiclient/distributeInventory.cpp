@@ -413,32 +413,6 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
         return XDialog::Rejected;
       }
     }
-    else if (pPreDistributed)
-    {
-      // Post Distribution detail
-      if (DEBUG)
-        qDebug() << tr("!pPreDistributed, proceed to postdistdetail(%1, NULL, %2, %3)")
-        .arg(pItemlocSeries).arg(lsCntrld).arg(locCntrld);
-      
-      XSqlQuery postDistDetail;
-      postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries, NULL, :ls, :loc) AS result;");
-      postDistDetail.bindValue(":itemlocSeries", pItemlocSeries);
-      postDistDetail.bindValue(":ls", lsCntrld);
-      postDistDetail.bindValue(":loc", locCntrld);
-      postDistDetail.exec();
-      if (postDistDetail.first())
-      {
-        if (postDistDetail.value("result").toInt() <= 0 && cntrld)
-        {
-          ErrorReporter::error(QtCriticalMsg, 0, tr("Error Posting Distribution Detail"),
-                             postDistDetail, __FILE__, __LINE__);
-          return XDialog::Rejected;
-        }  
-      }
-      else if (ErrorReporter::error(QtCriticalMsg, 0, tr("Distribution Detail Posting Failed"),
-                                postDistDetail, __FILE__, __LINE__))
-        return XDialog::Rejected;
-    }
   } 
   // if pItemlocSeries == 0 just return accepted
   return XDialog::Accepted;
