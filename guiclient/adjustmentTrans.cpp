@@ -215,9 +215,8 @@ void adjustmentTrans::sPost()
     }
 
     itemlocSeries = newSeries.value("result").toInt();
-    cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, :invhistId, :failed);");
+    cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
     cleanup.bindValue(":itemlocSeries", itemlocSeries);
-    cleanup.bindValue(":failed", true);
 
     if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
       == XDialog::Rejected)
