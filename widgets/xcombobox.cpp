@@ -46,7 +46,16 @@ QByteArray *UNWRAPSLOT(const char *slotCharStar)
   return 0;
 }
 #else
-#define UNWRAPSLOT(slotCharStar) slotCharStar
+QByteArray *UNWRAPSLOT(const char *slotCharStar)
+{
+  static QRegExp stripper("^\\d+(.*)\\(.*\\)$");
+  QString theString(slotCharStar);
+  if (theString.contains(stripper))
+  {
+    return new QByteArray(stripper.cap(1).toUtf8());
+  }
+  return 0;
+}
 #endif
 
 QHash<XComboBox::XComboBoxTypes, XComboBoxDescrip*> XComboBoxPrivate::typeDescrip;
