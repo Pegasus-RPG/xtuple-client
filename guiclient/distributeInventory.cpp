@@ -103,7 +103,6 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
   bool pPreDistributed)
 {
   int result;
-  bool cntrld = false;
   bool lsCntrld = false;
   bool locCntrld = false;
   QList<int>  ildsList; // Item Loc Dist Series 
@@ -134,8 +133,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
                      "            WHEN (COALESCE(invhist_transtype, '') NOT IN ('RM','RP','RR','RX','IM')"
                      "                  AND itemsite_location_dist) THEN true"
                      "            ELSE false"
-                     "       END AS auto_dist, "
-                     "       (itemsite_loccntrl OR  (itemsite_controlmethod IN ('L', 'S'))) AS cntrld "
+                     "       END AS auto_dist "
                      "FROM itemlocdist JOIN itemsite ON (itemlocdist_itemsite_id=itemsite_id) "
                      "                 LEFT OUTER JOIN invhist ON (itemlocdist_invhist_id=invhist_id) "
                      "WHERE (itemlocdist_series=:itemlocdist_series) "
@@ -144,15 +142,10 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
     itemloc.exec();
     while (itemloc.next())
     {
-      cntrld = itemloc.value("cntrld").toBool();
       lsCntrld = ((itemloc.value("itemsite_controlmethod").toString() == "L") || 
         (itemloc.value("itemsite_controlmethod").toString() == "S"));
       locCntrld = itemloc.value("itemsite_loccntrl").toBool();
       
-      if (DEBUG)
-        qDebug() << tr("DistributeInventory::SeriesAdjust cntrld: %1, lsCntrld: %2, locCntrld: %3")
-        .arg(cntrld).arg(lsCntrld).arg(locCntrld);
-
       // Requires lot/serial
       if (itemloc.value("itemlocdist_reqlotserial").toBool())
       {
@@ -381,8 +374,6 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
                                       query, __FILE__, __LINE__))
           return XDialog::Rejected;
       }
-
-
     }
     
     // Post distribution detail pre-incident #28868 (the old way)
