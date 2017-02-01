@@ -26,7 +26,7 @@
 
 #define cIncludeLotSerial   0x01
 #define cNoIncludeLotSerial 0x02
-#define DEBUG true
+#define DEBUG false
 
 distributeInventory::distributeInventory(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -311,9 +311,9 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
 
         // Set itemlocdist_child_series of parent itemlocdist record
         query.prepare("UPDATE itemlocdist SET itemlocdist_child_series = :itemlocSeries "
-                      "WHERE itemlocdist_id = :itemlocdist_id;");
+                      "WHERE itemlocdist_series = :pItemlocSeries;"); //itemlocdist_id = :itemlocdist_id
         query.bindValue(":itemlocSeries", itemlocSeries);
-        query.bindValue(":itemlocdist_id", itemloc.value("itemlocdist_id"));
+        query.bindValue(":pItemlocSeries", pItemlocSeries);
         query.exec();
         if (query.first())
         {
@@ -360,61 +360,58 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
           else
             ildList.append(result);
         }
+
+        qDebug() << "distributeInventory NOT itemlocdist_reqlotserial";
+        // Set itemlocdist_child_series of parent itemlocdist record. In this case there is no child, set it to itself.
+        XSqlQuery query;
+        query.prepare("UPDATE itemlocdist SET itemlocdist_child_series = itemlocdist_series "
+                      "WHERE itemlocdist_series = :pItemlocSeries AND itemlocdist_qty < 0;"); //itemlocdist_id = :itemlocdist_id
+        query.bindValue(":pItemlocSeries", pItemlocSeries);
+        query.exec();
+        if (query.first())
+        {
+          if (query.numRowsAffected() != 1)
+          {
+            ErrorReporter::error(QtCriticalMsg, 0, tr("Updating Itemlocdist Parent Record Should Return One Row"),
+                           query, __FILE__, __LINE__);
+            return XDialog::Rejected;
+          }
+        }  
+        else if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Updating itemlocdist Lot/Serial Information"),
+                                      query, __FILE__, __LINE__))
+          return XDialog::Rejected;
       }
+
+
     }
     
-    // pre-incident #28868 (the old way)
+    // Post distribution detail pre-incident #28868 (the old way)
     if (!pPreDistributed) 
     {
-      XSqlQuery post;
-      // Update parent itemlocdist_child_series with new Lot/Serial records' itemlocdist_series 
-      for (int i = 0; i < ildsList.size(); ++i) {
-        if (DEBUG)
-            qDebug() << "DistributeInventory::seriesAdjust ildsList.at(i): " << ildsList.at(i);
-
-        post.prepare( "SELECT distributeItemlocSeries(:itemlocdist_series) AS result;");
-        post.bindValue(":itemlocdist_series", ildsList.at(i));
-        post.exec();
-        if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Retrieving Lot/Serial Information"),
-                                      post, __FILE__, __LINE__))
-        {
-          return XDialog::Rejected;
-        }
-      }
-
-      // Update parent itemlocdist_child_series with new location dist. records' itemlocdist_series
-      for (int i = 0; i < ildList.size(); ++i) {
-        if (DEBUG)
-          qDebug() << "DistributeInventory::seriesAdjust ildList.at(i): " << ildList.at(i);
-
-        post.prepare("SELECT distributeToLocations(:itemlocdist_id) AS result;");
-        post.bindValue(":itemlocdist_id", ildList.at(i));
-        post.exec();
-        if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Retrieving Lot/Serial Information"),
-                                      post, __FILE__, __LINE__))
-        {
-          return XDialog::Rejected;
-        }
-      }
-        
-      //Post inventory history for any remaining non-distributed transactions and trial balance
-      post.prepare("SELECT postItemlocseries(:itemlocseries) AS result;");
-      post.bindValue(":itemlocseries",  pItemlocSeries);
-      post.exec();
-      if (post.first())
+      XSqlQuery postDistDetail;
+      postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries, NULL::INTEGER, :ls, :loc) AS result;");
+      postDistDetail.bindValue(":itemlocSeries", pItemlocSeries);
+      postDistDetail.bindValue(":ls", lsCntrld);
+      postDistDetail.bindValue(":loc", locCntrld);
+      postDistDetail.exec();
+      if (postDistDetail.first())
       {
-        if (!post.value("result").toBool())
-              QMessageBox::warning( 0, tr("Inventory Distribution"), 
-          tr("There was an error posting the transaction.  Contact your administrator") );
+        if (postDistDetail.value("result").toInt() <= 0)
+        {
+          ErrorReporter::error(QtCriticalMsg, 0, tr("Posting Distribution Detail for Controlled Item"
+            "Returned <= 0"),
+            postDistDetail, __FILE__, __LINE__);
+          return XDialog::Rejected;
+        }
       }
-      else if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Retrieving Lot/Serial Information"),
-                                    post, __FILE__, __LINE__))
+      else if (ErrorReporter::error(QtCriticalMsg, 0, tr("Distribution Detail Posting Failed"),
+                                postDistDetail, __FILE__, __LINE__))
       {
         return XDialog::Rejected;
-      }
+      } 
     }
-  } 
-  // if pItemlocSeries == 0 just return accepted
+  }
+
   return XDialog::Accepted;
 }
 

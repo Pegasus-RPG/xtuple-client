@@ -21,7 +21,7 @@
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 
-#define DEBUG true
+#define DEBUG false
 
 adjustmentTrans::adjustmentTrans(QWidget* parent, const char * name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -194,50 +194,57 @@ void adjustmentTrans::sPost()
     <<GuiErrorCheck( _costMethod == "A" && _afterQty->toDouble() < 0, _qty,
       tr("<p>Average cost adjustments may not result in a negative quantity on hand."));
 
-  if(GuiErrorCheck::reportErrors(this,tr("Cannot Post Transaction"),errors))
+  if (GuiErrorCheck::reportErrors(this,tr("Cannot Post Transaction"),errors))
     return;
 
-  // Create itemlocdist record if required and retrieve new series, 
-  // call distributeInventory with series.
-  XSqlQuery newSeries;
-  newSeries.prepare("SELECT createitemlocdistseries(:itemsite_id, :qty, 'AD', '') AS result;");
-  newSeries.bindValue(":itemsite_id", _itemsiteId);
-  newSeries.bindValue(":qty", qty);
-  newSeries.exec();
-  if (newSeries.first())
+  // Get parent series id
+  XSqlQuery parentSeries;
+  parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
+  parentSeries.exec();
+  if (parentSeries.first())
+    itemlocSeries = parentSeries.value("result").toInt();
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Distribution Detail Posting Failed"),
+                            parentSeries, __FILE__, __LINE__))
+    return;
+  
+  if (DEBUG)
+    qDebug() << "adjustmentTrans::sPost itemlocSeries: " << itemlocSeries;
+
+  // Stage cleanup function to be called on error
+  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+  cleanup.bindValue(":itemlocSeries", itemlocSeries);
+
+  // If controlled item: create the parent itemlocdist record, call distributeInventory::seriesAdjust
+  if (_controlledItem)
   {
-    if (newSeries.value("result").toInt() <= 0)
+    XSqlQuery parentItemlocdist;
+    parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'AD', '', :itemlocSeries) AS result;");
+    parentItemlocdist.bindValue(":itemsite_id", _itemsiteId);
+    parentItemlocdist.bindValue(":qty", qty);
+    parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+    parentItemlocdist.exec();
+    if (parentItemlocdist.first())
     {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error. "
-        "createitemlocdistseries(%, %, 'AD', '') Returned <= 0").arg(_itemsiteId).arg(qty),
-        newSeries, __FILE__, __LINE__);
+      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
+        == XDialog::Rejected)
+      {
+        QMessageBox::information(this, tr("Inventory Adjustment"),
+                                 tr("Transaction Canceled") );
+        cleanup.exec();
+        return;
+      }
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
+                              parentItemlocdist, __FILE__, __LINE__))
+    {
       return;
     }
-
-    itemlocSeries = newSeries.value("result").toInt();
-    cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-    cleanup.bindValue(":itemlocSeries", itemlocSeries);
-
-    if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
-      == XDialog::Rejected)
-    {
-      QMessageBox::information(this, tr("Inventory Adjustment"),
-                               tr("Transaction Canceled") );
-      cleanup.exec();
-      return;
-    } 
-  }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-                            newSeries, __FILE__, __LINE__))
-  {
-    return;
   }
 
   // Wrap the remaining work (invAdjustment and postDistDetail) in a transaction in case of errors
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
   adjustmentPost.exec("BEGIN;");
-  // Create inventory transaction
   adjustmentPost.prepare( "SELECT invAdjustment(:itemsite_id, :qty, :docNumber, :comments, :date, "
                           " :cost, NULL::INTEGER, :itemlocSeries) AS result;");
   adjustmentPost.bindValue(":qty", qty);
@@ -259,6 +266,7 @@ void adjustmentTrans::sPost()
       qDebug() << tr("AdjustmentTrans::sPost postDistDetail SELECT postDistDetail(%1, %2, %3, %4)")
       .arg(itemlocSeries).arg(invhistId).arg(_lsControlled).arg(_locControlled);
       
+    // Call postdistdetail, regardless of item control settings
     XSqlQuery postDistDetail;
     postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries, :invhistId, :ls, :loc) AS result;");
     postDistDetail.bindValue(":itemlocSeries", itemlocSeries);
@@ -272,10 +280,6 @@ void adjustmentTrans::sPost()
       {
         rollback.exec();
         cleanup.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Posting Distribution Detail for Controlled Item"
-          "Returned <= 0"),
-          postDistDetail, __FILE__, __LINE__);
-
         return;
       }
     }
@@ -285,9 +289,9 @@ void adjustmentTrans::sPost()
       rollback.exec();
       cleanup.exec();
       return;
-    }  
-     
+    }      
     adjustmentPost.exec("COMMIT;");
+
     // Continue to cleanup
     if (_captive)
       close();
