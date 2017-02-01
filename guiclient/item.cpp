@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -118,6 +118,7 @@ item::item(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _inventoryUOM->setType(XComboBox::UOMs);
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name" );
+  _charass->addColumn(tr("Group"),          _itemColumn, Qt::AlignLeft, true, "char_group" );
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value" );
   _charass->addColumn(tr("Default"),        _ynColumn*2,   Qt::AlignCenter, true, "charass_default" );
   _charass->addColumn(tr("List Price"),     _priceColumn,Qt::AlignRight, true, "charass_price" );
@@ -972,12 +973,10 @@ void item::sDelete()
 void item::sFillList()
 {
   XSqlQuery itemFillList;
-  itemFillList.prepare( "SELECT charass_id, char_name, "
-             " CASE WHEN char_type < 2 THEN "
-             "   charass_value "
-             " ELSE "
-             "   formatDate(charass_value::date) "
-             "END AS charass_value, "
+  itemFillList.prepare( "SELECT charass_id, char_name, char_group, "
+             "           CASE WHEN char_type = 2 THEN formatDate(charass_value::date)"
+             "                ELSE charass_value"
+             "           END AS charass_value,"
              " charass_default, "
              " charass_price, 'salesprice' AS charass_price_xtnumericrole "
              "FROM charass, char "
