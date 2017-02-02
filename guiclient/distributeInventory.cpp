@@ -103,8 +103,6 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
   bool pPreDistributed)
 {
   int result;
-  bool lsCntrld = false;
-  bool locCntrld = false;
   QList<int>  ildsList; // Item Loc Dist Series 
   QList<int>  ildList; // Item Loc Dist List
 
@@ -142,10 +140,6 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
     itemloc.exec();
     while (itemloc.next())
     {
-      lsCntrld = ((itemloc.value("itemsite_controlmethod").toString() == "L") || 
-        (itemloc.value("itemsite_controlmethod").toString() == "S"));
-      locCntrld = itemloc.value("itemsite_loccntrl").toBool();
-      
       // Requires lot/serial
       if (itemloc.value("itemlocdist_reqlotserial").toBool())
       {
