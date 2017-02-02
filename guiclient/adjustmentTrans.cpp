@@ -228,9 +228,9 @@ void adjustmentTrans::sPost()
       if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
         == XDialog::Rejected)
       {
+        cleanup.exec();
         QMessageBox::information(this, tr("Inventory Adjustment"),
                                  tr("Transaction Canceled") );
-        cleanup.exec();
         return;
       }
     }
@@ -241,12 +241,10 @@ void adjustmentTrans::sPost()
     }
   }
 
-  // Wrap the remaining work (invAdjustment and postDistDetail) in a transaction in case of errors
-  XSqlQuery rollback;
-  rollback.prepare("ROLLBACK;");
-  adjustmentPost.exec("BEGIN;");
+  // Create and post inventory transaction: postItemlocSeries is passed to prevent postInvTrans
+  // from creating itemlocdist entries, and also to allow postInvTrans to call postDistDetail.
   adjustmentPost.prepare( "SELECT invAdjustment(:itemsite_id, :qty, :docNumber, :comments, :date, "
-                          " :cost, NULL::INTEGER, :itemlocSeries) AS result;");
+                          " :cost, NULL::INTEGER, :itemlocSeries::INTEGER) AS result;");
   adjustmentPost.bindValue(":qty", qty);
   adjustmentPost.bindValue(":docNumber",   _documentNum->text());
   adjustmentPost.bindValue(":comments",    _notes->toPlainText());
@@ -260,38 +258,6 @@ void adjustmentTrans::sPost()
   adjustmentPost.exec();
   if (adjustmentPost.first())
   {
-    // Post distribution detail now that we have an invhist_id
-    int invhistId = adjustmentPost.value("result").toInt();
-    if (DEBUG)
-      qDebug() << tr("AdjustmentTrans::sPost postDistDetail SELECT postDistDetail(%1, %2, %3, %4)")
-      .arg(itemlocSeries).arg(invhistId).arg(_lsControlled).arg(_locControlled);
-      
-    // Call postdistdetail, regardless of item control settings
-    XSqlQuery postDistDetail;
-    postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries, :invhistId, :ls, :loc) AS result;");
-    postDistDetail.bindValue(":itemlocSeries", itemlocSeries);
-    postDistDetail.bindValue(":invhistId", invhistId);
-    postDistDetail.bindValue(":ls", _lsControlled);
-    postDistDetail.bindValue(":loc", _locControlled);
-    postDistDetail.exec();
-    if (postDistDetail.first())
-    {
-      if (postDistDetail.value("result").toInt() <= 0 && _controlledItem)
-      {
-        rollback.exec();
-        cleanup.exec();
-        return;
-      }
-    }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Distribution Detail Posting Failed"),
-                              postDistDetail, __FILE__, __LINE__))
-    {
-      rollback.exec();
-      cleanup.exec();
-      return;
-    }      
-    adjustmentPost.exec("COMMIT;");
-
     // Continue to cleanup
     if (_captive)
       close();
@@ -312,12 +278,12 @@ void adjustmentTrans::sPost()
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
                                 adjustmentPost, __FILE__, __LINE__))
   {
-    rollback.exec();
     cleanup.exec();
     return;
   }
   else
   {
+    cleanup.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Post Transaction Cancelled"),
                          tr("<p>No transaction was done because Item %1 "
                             "was not found at Site %2.")
