@@ -50,6 +50,7 @@ CharacteristicsWidget::CharacteristicsWidget(QWidget* parent, const char* name, 
   connect(_charass, SIGNAL(itemSelected(int)), _editCharacteristic, SLOT(animateClick()));
 
   _charass->addColumn(tr("Characteristic"), _itemColumn,   Qt::AlignLeft,   true, "char_name" );
+  _charass->addColumn(tr("Group"),          -1,            Qt::AlignLeft,   true, "char_group" );
   _charass->addColumn(tr("Value"),          -1,            Qt::AlignLeft,   true, "charass_value" );
   _charass->addColumn(tr("Default"),        _ynColumn*2,   Qt::AlignCenter, true, "charass_default" );
 
@@ -172,9 +173,9 @@ void CharacteristicsWidget::sDelete()
 void CharacteristicsWidget::sFillList()
 {
   XSqlQuery q;
-  q.prepare( "SELECT charass_id, char_name,"
-             "       CASE WHEN char_type < 2 THEN charass_value"
-             "            ELSE formatDate(charass_value::date)"
+  q.prepare( "SELECT charass_id, char_name, char_group, "
+             "       CASE WHEN char_type = 2 THEN formatDate(charass_value::date)"
+             "            ELSE charass_value"
              "       END AS charass_value,"
              "       charass_default"
              "  FROM charass JOIN char ON charass_char_id = char_id"

@@ -228,7 +228,7 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE void tabifyDockWidget ( QDockWidget * first, QDockWidget * second );
     Q_INVOKABLE void setCentralWidget(QWidget * widget);
 
-	TimeoutHandler   *_timeoutHandler;
+    TimeoutHandler   *_timeoutHandler;
     ReportHandler    *_reportHandler;
 
     QMap<const QObject*,int> _customCommands;
