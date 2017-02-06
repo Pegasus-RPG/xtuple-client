@@ -218,7 +218,7 @@ void adjustmentTrans::sPost()
   if (_controlledItem)
   {
     XSqlQuery parentItemlocdist;
-    parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'AD', '', :itemlocSeries) AS result;");
+    parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'AD'::TEXT, ''::TEXT, :itemlocSeries) AS result;");
     parentItemlocdist.bindValue(":itemsite_id", _itemsiteId);
     parentItemlocdist.bindValue(":qty", qty);
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);

@@ -366,17 +366,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
       }
     }
 
-    // Flag records that require distributeToLocations() during posting
-    for (int i = 0; i < ildList.size(); ++i) {
-      XSqlQuery update;
-      update.prepare( "UPDATE itemlocdist "
-                      "SET itemlocdist_reqdisttolocations = true "
-                      "WHERE itemlocdist_id = :itemlocdist_id;");
-      update.bindValue(":itemlocdist_id", ildList.at(i));
-      update.exec();
-    }
-
-    // Post distribution detail here (pre-incident #28868)
+    // Post distribution detail here (pre-incident #28868)  
     if (!pPreDistributed)
     {
       XSqlQuery postDistDetail;
