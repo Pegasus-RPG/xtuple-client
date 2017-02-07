@@ -67,8 +67,6 @@ adjustmentTrans::adjustmentTrans(QWidget* parent, const char * name, Qt::WindowF
   _item->setFocus();
   _itemsiteId = 0;
   _controlledItem = false;
-  _lsControlled = false;
-  _locControlled = false;
 }
 
 adjustmentTrans::~adjustmentTrans()
@@ -314,9 +312,8 @@ void adjustmentTrans::sPopulateQOH()
       _itemsiteId = populateAdjustment.value("itemsite_id").toInt();
       _cachedValue = populateAdjustment.value("itemsite_value").toDouble();
       _cachedQOH = populateAdjustment.value("itemsite_qtyonhand").toDouble();
-      _locControlled = populateAdjustment.value("itemsite_loccntrl").toBool();
-      _lsControlled = populateAdjustment.value("lscntrl").toBool();
-      _controlledItem = _locControlled || _lsControlled;
+      _controlledItem = populateAdjustment.value("lscntrl").toBool() || 
+        populateAdjustment.value("itemsite_loccntrl").toBool();
       if(_cachedQOH == 0.0)
         _costManual->setChecked(true);
       _beforeQty->setDouble(populateAdjustment.value("itemsite_qtyonhand").toDouble());
