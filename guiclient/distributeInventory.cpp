@@ -373,17 +373,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
       postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries, NULL::INTEGER) AS result;");
       postDistDetail.bindValue(":itemlocSeries", pItemlocSeries);
       postDistDetail.exec();
-      if (postDistDetail.first())
-      {
-        if (postDistDetail.value("result").toInt() <= 0)
-        {
-          ErrorReporter::error(QtCriticalMsg, 0, tr("Posting Distribution Detail for Controlled Item"
-            "Returned <= 0"),
-            postDistDetail, __FILE__, __LINE__);
-          return XDialog::Rejected;
-        }
-      }
-      else if (ErrorReporter::error(QtCriticalMsg, 0, tr("Distribution Detail Posting Failed"),
+      if (!postDistDetail.first() || ErrorReporter::error(QtCriticalMsg, 0, tr("Distribution Detail Posting Failed"),
                                 postDistDetail, __FILE__, __LINE__))
       {
         return XDialog::Rejected;
