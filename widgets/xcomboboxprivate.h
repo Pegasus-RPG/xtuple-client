@@ -41,6 +41,10 @@ class XComboBoxDescrip : public QObject
     ParameterList             params;
     XSqlQuery                 query;
 
+  public slots:
+    virtual void sDbConnectionLost();
+    virtual void sListen();
+
   protected slots:
     virtual void sNotified(const QString &pNotification);
 };

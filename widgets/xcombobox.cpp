@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -89,22 +89,33 @@ XComboBoxDescrip::XComboBoxDescrip(XComboBox::XComboBoxTypes pType,
     params.append(pKey);
 
   query = MetaSQLQuery(queryStr).toQuery(params, QSqlDatabase(), false);
-  QSqlDatabase db = QSqlDatabase::database();
-  if (db.isOpen() && ! notification.isEmpty())
-  {
-    foreach (QString notice, notification.split(" ", QString::SkipEmptyParts))
-    {
-      if (! db.driver()->subscribedToNotifications().contains(notice)) {
-        db.driver()->subscribeToNotification(notice);
-        connect(db.driver(), SIGNAL(notification(const QString&)),
-                this,        SLOT(sNotified(const QString&)));
-      }
-    }
-  }
+  connect(XComboBox::_guiClientInterface, SIGNAL(dbConnectionLost()), this, SLOT(sDbConnectionLost()));
+  sListen();
 }
 
 XComboBoxDescrip::~XComboBoxDescrip()
 {
+}
+
+void XComboBoxDescrip::sDbConnectionLost()
+{
+  if (DEBUG) qDebug() << "XComboBoxDescrip::sDbConnectionLost()";
+  isDirty = true;
+}
+
+void XComboBoxDescrip::sListen()
+{
+  QSqlDatabase db = QSqlDatabase::database();
+  foreach (QString notice,
+           notification.split(" ", QString::SkipEmptyParts))
+  {
+    if (! db.driver()->subscribedToNotifications().contains(notice))
+    {
+      db.driver()->subscribeToNotification(notice);
+      connect(db.driver(), SIGNAL(notification(const QString&)),
+              this,        SLOT(sNotified(const QString&)));
+    }
+  }
 }
 
 void XComboBoxDescrip::sNotified(const QString &pNotification)
@@ -864,6 +875,7 @@ void XComboBoxPrivate::setType(XComboBox::XComboBoxTypes ptype)
   _descrip = typeDescrip.value(_type);
   if (_descrip && _descrip->isDirty)
   {
+    _descrip->sListen();
     _descrip->query.exec();
     _descrip->isDirty = _descrip->notification.isEmpty(); // empty => there's no notification to listen for
   }
@@ -1359,12 +1371,6 @@ void XComboBox::populate(XSqlQuery pQuery, int pSelected)
     } while (pQuery.next());
 
   setId(selected);
-
-  // TODO: why doesn't setId() handle the following as expected? {
-  updateMapperData();
-  emit newID(id());
-  emit valid(isValid());
-  // } end why
 }
 
 void XComboBox::populate(const QString & pSql, int pSelected)
