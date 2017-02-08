@@ -197,7 +197,7 @@ void ContactWidget::init()
     connect(_phone,	SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
     connect(_phone2,	SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
     connect(_fax,	SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
-    connect(_email,	SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
+    connect(_email,	SIGNAL(currentTextChanged(const QString&)), this, SIGNAL(changed()));
     connect(_webaddr,	SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
     connect(_address,	SIGNAL(changed()),                   this, SIGNAL(changed()));
     connect(this,       SIGNAL(changed()),                   this, SLOT(setChanged()));
