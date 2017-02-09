@@ -126,7 +126,7 @@ enum SetResponse scrapTrans::set(const ParameterList &pParams)
 
 void scrapTrans::sPost()
 {
-  XSqlQuery scrapPost;
+  int itemlocSeries;
   struct {
     bool        condition;
     QString     msg;
@@ -151,12 +151,52 @@ void scrapTrans::sPost()
     return;
   }
 
-  XSqlQuery rollback;
-  rollback.prepare("ROLLBACK;");
+  // Get parent series id
+  XSqlQuery parentSeries;
+  parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
+  parentSeries.exec();
+  if (parentSeries.first())
+    itemlocSeries = parentSeries.value("result").toInt();
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
+                            parentSeries, __FILE__, __LINE__))
+    return;
+  
+  // Stage cleanup function to be called on error
+  XSqlQuery cleanup;
+  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+  cleanup.bindValue(":itemlocSeries", itemlocSeries);
 
-  scrapPost.exec("BEGIN;");	// because of possible distribution cancelations
+  // If controlled item: create the parent itemlocdist record, call distributeInventory::seriesAdjust
+  if (_controlledItem)
+  {
+    XSqlQuery parentItemlocdist;
+    parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'SI'::TEXT, :docNumber, :itemlocSeries) AS result;");
+    parentItemlocdist.bindValue(":itemsite_id", _itemsiteId);
+    parentItemlocdist.bindValue(":qty", _qty->toDouble());
+    parentItemlocdist.bindValue(":docNumber", _documentNum->text());
+    parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+    parentItemlocdist.exec();
+    if (parentItemlocdist.first())
+    {
+      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
+        == XDialog::Rejected)
+      {
+        cleanup.exec();
+        QMessageBox::information(this, tr("Enter Receipt"),
+                               tr("Transaction Canceled") );
+        return;
+      }
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
+                              parentItemlocdist, __FILE__, __LINE__))
+    {
+      return;
+    }
+  }
+
+  XSqlQuery scrapPost;
   scrapPost.prepare( "SELECT invScrap(itemsite_id, :qty, :docNumber,"
-             "                :comments, :date) AS result "
+             "                :comments, :date, NULL, NULL, :itemlocSeries) AS result "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -166,35 +206,17 @@ void scrapTrans::sPost()
   scrapPost.bindValue(":item_id", _item->id());
   scrapPost.bindValue(":warehous_id", _warehouse->id());
   scrapPost.bindValue(":date",        _transDate->date());
+  scrapPost.bindValue(":itemlocSeries", itemlocSeries);
   scrapPost.exec();
   if (scrapPost.first())
   {
-    int result = scrapPost.value("result").toInt();
-    if (result < 0)
+    if (scrapPost.lastError().type() != QSqlError::NoError)
     {
-      rollback.exec();
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Scrap Transaction"),
-                               storedProcErrorLookup("invScrap", result),
-                               __FILE__, __LINE__);
-      return;
-    }
-    else if (scrapPost.lastError().type() != QSqlError::NoError)
-    {
-      rollback.exec();
+      cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Scrap Transaction"),
                            scrapPost, __FILE__, __LINE__);
       return;
     }
-
-    if (distributeInventory::SeriesAdjust(scrapPost.value("result").toInt(), this) == XDialog::Rejected)
-    {
-      rollback.exec();
-      QMessageBox::information(this, tr("Scrap Transaction"),
-                               tr("Transaction Canceled") );
-      return;
-    }
-
-    scrapPost.exec("COMMIT;");
 
     if (_captive)
       close();
@@ -214,14 +236,14 @@ void scrapTrans::sPost()
   }
   else if (scrapPost.lastError().type() != QSqlError::NoError)
   {
-    rollback.exec();
+    cleanup.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Scrap Transaction"),
                          scrapPost, __FILE__, __LINE__);
     return;
   }
   else
   {
-    rollback.exec();
+    cleanup.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
                          tr("%1: Transaction Not Completed Due to Item:[%2] "
                             "not found at Site:[%3].")
@@ -236,7 +258,8 @@ void scrapTrans::sPopulateQOH(int pWarehousid)
   XSqlQuery scrapPopulateQOH;
   if (_mode != cView)
   {
-    scrapPopulateQOH.prepare( "SELECT itemsite_qtyonhand "
+    scrapPopulateQOH.prepare( "SELECT itemsite_qtyonhand, itemsite_id, "
+               "  itemsite_loccntrl OR itemsite_controlmethod IN ('L', 'S') AS controlled "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -245,6 +268,8 @@ void scrapTrans::sPopulateQOH(int pWarehousid)
     scrapPopulateQOH.exec();
     if (scrapPopulateQOH.first())
     {
+      _itemsiteId = scrapPopulateQOH.value("itemsite_id").toInt();
+      _controlledItem = scrapPopulateQOH.value("controlled").toBool();
       _cachedQOH = scrapPopulateQOH.value("itemsite_qtyonhand").toDouble();
       _beforeQty->setDouble(scrapPopulateQOH.value("itemsite_qtyonhand").toDouble());
 
