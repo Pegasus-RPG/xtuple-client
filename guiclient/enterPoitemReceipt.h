@@ -47,6 +47,7 @@ private:
     QString	_ordertype;
     double	_receivable;
     int		_recvid;
+    int     _itemsiteId;
 
 };
 
