@@ -344,7 +344,6 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
             ildList.append(result);
         }
 
-        qDebug() << "distributeInventory NOT itemlocdist_reqlotserial";
         // Set itemlocdist_child_series of parent itemlocdist record. In this case there is no child, set it to itself.
         XSqlQuery query;
         query.prepare("UPDATE itemlocdist SET itemlocdist_child_series = itemlocdist_series "
