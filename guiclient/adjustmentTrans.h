@@ -42,8 +42,6 @@ private:
     double _cachedValue;
     bool _captive;
     bool _controlledItem;
-    bool _lsControlled;
-    bool _locControlled;
     QButtonGroup* _adjustmentTypeGroupInt;
     QString _costMethod;
 

@@ -201,7 +201,7 @@ void adjustmentTrans::sPost()
   parentSeries.exec();
   if (parentSeries.first())
     itemlocSeries = parentSeries.value("result").toInt();
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Distribution Detail Posting Failed"),
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
                             parentSeries, __FILE__, __LINE__))
     return;
   
