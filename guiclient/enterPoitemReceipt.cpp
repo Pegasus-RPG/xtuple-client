@@ -321,7 +321,13 @@ void enterPoitemReceipt::sReceive()
 
   XSqlQuery enterReceive;
   int itemlocSeries = 0;
+  bool controlledItem = false;
   QString storedProc;
+
+  // Stage cleanup function to be called on error
+  XSqlQuery cleanup;
+  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+
   if (_mode == cNew)
   {
     enterReceive.prepare("SELECT enterReceipt(:ordertype, :poitem_id, :qty, :freight, :notes, "
@@ -338,23 +344,20 @@ void enterPoitemReceipt::sReceive()
                          "  itemsite_loccntrl OR itemsite_controlmethod IN ('L', 'S') AS controlled "
                          "FROM itemsite "
                          "WHERE itemsite_id = :itemsiteId;");
+    parentSeries.bindValue(":itemsite_id", _itemsiteId);
     parentSeries.exec();
-    if (parentSeries.first())
+    if (parentSeries.first() && parentSeries.value("itemlocSeries").toInt() > 0)
     {
       itemlocSeries = parentSeries.value("itemlocSeries").toInt();
       controlledItem = parentSeries.value("controlled").toInt();
+      cleanup.bindValue(":itemlocSeries", itemlocSeries);
     }
-    else if (enterReceive.lastError().type() != QSqlError::NoError)
+    else
     {
       ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
                               parentSeries, __FILE__, __LINE__);
       return;
     }
-
-    // Stage cleanup function to be called on error
-    XSqlQuery cleanup;
-    cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-    cleanup.bindValue(":itemlocSeries", itemlocSeries);
 
     // If controlled item: create the parent itemlocdist record, call distributeInventory::seriesAdjust
     if (controlledItem)
@@ -363,9 +366,9 @@ void enterPoitemReceipt::sReceive()
       parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, :orderType, "
                                 " :orderNumber, :itemlocSeries);");
       parentItemlocdist.bindValue(":itemsite_id", _itemsiteId);
-      parentItemlocdist.bindValue(":qty", _qty->toDouble());
+      parentItemlocdist.bindValue(":qty", _toReceive->toDouble());
       parentItemlocdist.bindValue(":orderType", _ordertype);
-      parentItemlocdist.bindValue(":orderNumber", _orderNumber->toString());
+      parentItemlocdist.bindValue(":orderNumber", _orderNumber->text());
       parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
       parentItemlocdist.exec();
       if (parentItemlocdist.first())
@@ -417,10 +420,19 @@ void enterPoitemReceipt::sReceive()
   enterReceive.exec();
   if (enterReceive.first())
   {
+    // For cEdit (correctReceipt), make sure the returned series matches the series passed
+    if (_mode == cEdit && (itemlocSeries != enterReceive.value("itemlocSeries").toInt()))
+    {
+      cleanup.exec();
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving P/O Receipt Information"),
+                             storedProcErrorLookup(storedProc, enterReceive.value("itemlocSeries").toInt()),
+                             __FILE__, __LINE__);
+      return;
+    }
+
     itemlocSeries = enterReceive.value("itemlocSeries").toInt();
     if (itemlocSeries < 0)
     {
-      cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving P/O Receipt Information"),
                              storedProcErrorLookup(storedProc, itemlocSeries),
                              __FILE__, __LINE__);
@@ -429,7 +441,8 @@ void enterPoitemReceipt::sReceive()
   }
   else if (enterReceive.lastError().type() != QSqlError::NoError)
   {
-      cleanup.exec();
+      if (_mode == cEdit) // Only cEdit created itemlocdist records
+        cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving P/O Receipt Information"),
                            enterReceive, __FILE__, __LINE__);
       return;
