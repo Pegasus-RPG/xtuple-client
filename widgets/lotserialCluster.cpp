@@ -220,6 +220,22 @@ void LotserialLineEdit::sParse()
                                         numQ.lastError().databaseText());
                   return;
                 }
+
+                numQ.prepare("INSERT INTO itemloc "
+                             "(itemloc_itemsite_id, itemloc_location_id, itemloc_qty, "
+                             "itemloc_expiration, itemloc_ls_id) "
+                             "VALUES (-1, -1, 0.0, "
+                             "endOfTime(), :ls_id);");
+                numQ.bindValue(":ls_id", lsid);
+                numQ.exec();
+                if (numQ.lastError().type() != QSqlError::NoError)
+                {
+                  QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                                                .arg(__FILE__)
+                                                .arg(__LINE__),
+                                        numQ.lastError().databaseText());
+                  return;
+                }
                 setId(lsid);
               }
           }
