@@ -325,6 +325,7 @@ class GUIClient : public QMainWindow
     void tick();
 
     void messageNotify();
+    void dbConnectionLost();
 
     /** @name Data Update Signals
      
