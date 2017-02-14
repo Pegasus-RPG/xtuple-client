@@ -246,18 +246,26 @@ void enterPoReceipt::sPost()
   QDate expdate = omfgThis->startOfTime();
   QDate warrdate;
   bool gotlot = false;
+  int itemlocSeries;
 
-  enterPost.exec("BEGIN;");	// because of possible insertgltransaction failures
+  enterPost.exec("BEGIN;"); // because of possible insertgltransaction failures
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  QString items = "SELECT recv_id, itemsite_controlmethod, itemsite_perishable,itemsite_warrpurc, "
+  // Stage cleanup function to be called on error
+  XSqlQuery cleanup;
+  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+
+  // Recv items to cycle through
+  QString items = "SELECT recv_id, itemsite_id, itemsite_controlmethod, itemsite_loccntrl, itemsite_perishable, itemsite_warrpurc, "
                   "  (recv_order_type = 'RA' AND COALESCE(itemsite_costmethod,'') = 'J') AS issuerawo, "
                   "  (recv_order_type = 'PO' AND COALESCE(itemsite_costmethod,'') = 'J' AND poitem_order_type='W') AS issuejobwo, "
                   "  (recv_order_type = 'PO' AND COALESCE(itemsite_costmethod,'') = 'J' AND poitem_order_type='S') AS issuejobso, "
-                  "  COALESCE(pohead_dropship, false) AS dropship "
+                  "  COALESCE(pohead_dropship, false) AS dropship, recv_order_type, recv_order_number, "
+                  "  roundQty(item_fractional, (recv_qty * orderitem_qty_invuomratio)) AS qty "
                   " FROM orderitem, recv "
                   "  LEFT OUTER JOIN itemsite ON (recv_itemsite_id=itemsite_id) "
+                  "  LEFT OUTER JOIN item ON (itemsite_item_id=item_id) "
                   "  LEFT OUTER JOIN poitem ON ((recv_order_type='PO') "
                   "                         AND (recv_orderitem_id=poitem_id)) "
                   "  LEFT OUTER JOIN pohead ON (poitem_pohead_id=pohead_id) "
@@ -272,8 +280,12 @@ void enterPoReceipt::sPost()
   XSqlQuery qi = itemsm.toQuery(params);
   while(qi.next())
   {
+    bool controlledItem;
+
+
     if(_singleLot->isChecked() && !gotlot && qi.value("itemsite_controlmethod").toString() == "L")
     {
+      controlledItem = true;
       getLotInfo newdlg(this, "", true);
       newdlg.enableExpiration(qi.value("itemsite_perishable").toBool());
       newdlg.enableWarranty(qi.value("itemsite_warrpurc").toBool());
@@ -287,28 +299,72 @@ void enterPoReceipt::sPost()
       }
     }
 
+    // Get parent series id
+    XSqlQuery parentSeries;
+    parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS itemlocSeries;");
+    parentSeries.exec();
+    if (parentSeries.first() && parentSeries.value("itemlocSeries").toInt() > 0)
+    {
+      itemlocSeries = parentSeries.value("itemlocSeries").toInt();
+      cleanup.bindValue(":itemlocSeries", itemlocSeries);
+    }
+    else
+    {
+      ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
+                              parentSeries, __FILE__, __LINE__);
+      return;
+    }
+
+    controlledItem = controlledItem ? true : qi.value("itemsite_loccntrl").toBool();
+
+    // If controlled item: create the parent itemlocdist record, call distributeInventory::seriesAdjust
+    if (controlledItem)
+    {
+      XSqlQuery parentItemlocdist;
+      parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, :orderType, "
+                                " :orderNumber, :itemlocSeries);");
+      parentItemlocdist.bindValue(":itemsite_id", qi.value("itemsite_id").toInt());
+      parentItemlocdist.bindValue(":qty", qi.value("qty").toDouble());
+      parentItemlocdist.bindValue(":orderType", qi.value("recv_order_type").toString());
+      parentItemlocdist.bindValue(":orderNumber", qi.value("recv_order_number").toString());
+      parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+      parentItemlocdist.exec();
+      if (parentItemlocdist.first())
+      {
+        if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
+          == XDialog::Rejected)
+        {
+          cleanup.exec();
+          QMessageBox::information( this, tr("Enter Receipts"), tr("Posting Distribution Detail Failed") );
+          return;
+        }
+      }
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
+                                parentItemlocdist, __FILE__, __LINE__))
+      {
+        cleanup.exec();
+        return;
+      }
+    }
+
+    // Post the inventory transaction(s)
     XSqlQuery postLine;
-    postLine.prepare("SELECT postReceipt(recv_id, 0) AS result "
+    postLine.prepare("SELECT postReceipt(recv_id, :itemlocSeries, true) AS result "
                      "FROM recv "
                      "WHERE (recv_id=:recv_id);");
     postLine.bindValue(":recv_id", qi.value("recv_id").toInt());
+    postLine.bindValue(":itemlocSeries", itemlocSeries);
     postLine.exec();
     if (postLine.first())
     {
       int result = postLine.value("result").toInt();
-      if (result < 0 && result != -11) // ignore -11 as it just means there was no inventory
+      if ((result < 0 && result != -11) || (result != itemlocSeries)) // ignore -11 as it just means there was no inventory
       {
         rollback.exec();
+        cleanup.exec();
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Receipt Information"),
                                storedProcErrorLookup("postReceipt", result),
                                __FILE__, __LINE__);
-        return;
-      }
-  
-      if (distributeInventory::SeriesAdjust(result, this, lotnum, expdate, warrdate) == XDialog::Rejected)
-      {
-        QMessageBox::information( this, tr("Enter Receipts"), tr("Post Canceled") );
-        rollback.exec();
         return;
       }
 
@@ -328,6 +384,7 @@ void enterPoReceipt::sPost()
         if (issue.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();
+          cleanup.exec();
           ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Receipt Information"),
                                                 issue, __FILE__, __LINE__);
           return;
@@ -353,6 +410,7 @@ void enterPoReceipt::sPost()
           if (issue.value("result").toInt() < 0)
           {
             rollback.exec();
+            cleanup.exec();
             ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Receipt Information"),
                                      storedProcErrorLookup("issueWoMaterial", issue.value("result").toInt()),
                                      __FILE__, __LINE__);
@@ -367,6 +425,7 @@ void enterPoReceipt::sPost()
                                       issue, __FILE__, __LINE__))
         {
           rollback.exec();
+          cleanup.exec();
           return;
         }
       }
@@ -393,6 +452,8 @@ void enterPoReceipt::sPost()
         {
           if (issue.value("result").toInt() < 0)
           {
+            rollback.exec();
+            cleanup.exec();
             ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Receipt Information"),
                                    storedProcErrorLookup("issueToShipping", issue.value("result").toInt()),
                                    __FILE__, __LINE__);
@@ -404,6 +465,7 @@ void enterPoReceipt::sPost()
                      "a Sales Order that is on Hold.  The Sales Order must "
                      "be taken off Hold before the Receipt may be Posted.");
             rollback.exec();
+            cleanup.exec();
             QMessageBox::warning(this, tr("Cannot Ship Order"), msg);
             return;
           }
@@ -431,10 +493,11 @@ void enterPoReceipt::sPost()
             {
               if (ship.value("result").toInt() < 0)
               {
+                rollback.exec();
+                cleanup.exec();
                 ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Receipt Information"),
                                        storedProcErrorLookup("shipShipment", ship.value("result").toInt()),
                                        __FILE__, __LINE__);
-                rollback.exec();
                 return;
               }
               if (_metrics->boolean("BillDropShip"))
@@ -447,6 +510,7 @@ void enterPoReceipt::sPost()
                                               ship, __FILE__, __LINE__))
                 {
                   rollback.exec();
+                  cleanup.exec();
                   return;
                 }
               }
@@ -455,6 +519,7 @@ void enterPoReceipt::sPost()
                                           ship, __FILE__, __LINE__))
             {
               rollback.exec();
+              cleanup.exec();
               return;
             }
           }
@@ -463,6 +528,7 @@ void enterPoReceipt::sPost()
                                       issue, __FILE__, __LINE__))
         {
           rollback.exec();
+          cleanup.exec();
           return;
         }
       }
@@ -471,6 +537,7 @@ void enterPoReceipt::sPost()
                                   postLine, __FILE__, __LINE__))
     {
       rollback.exec();
+      cleanup.exec();
       return;
     }
   }
