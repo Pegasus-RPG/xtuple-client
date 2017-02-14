@@ -1274,6 +1274,7 @@ HEADERS = ../common/format.h                    \
           xmessagebox.h                 \
           xmessageboxmessagehandler.h   \
           xsltMap.h                     \
+          xtupleguiclientinterface.h    \
           xuiloader.h                   \
           xwidget.h                     \
           yourpayprocessor.h            \
@@ -1893,6 +1894,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           xmessagebox.cpp                       \
           xmessageboxmessagehandler.cpp         \
           xsltMap.cpp                           \
+          xtupleguiclientinterface.cpp          \
           xtHelp.cpp                            \
           xuiloader.cpp                         \
           xwidget.cpp                           \
