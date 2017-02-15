@@ -103,9 +103,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
   bool pPreDistributed)
 {
   int result;
-  QList<int>  ildsList; // Item Loc Dist Series 
-  QList<int>  ildList; // Item Loc Dist List
-
+  
   if (DEBUG)
     qDebug() << tr("DistributeInventory::SeriesAdjust pItemlocSeries: %1, pPreDistributed: %2")
     .arg(pItemlocSeries).arg(pPreDistributed);
@@ -268,25 +266,11 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
             newdlg.set(params);
             if (itemloc.value("auto_dist").toBool())
             {
-              if (newdlg.sDefaultAndPost())
-                ildList.append(query.value("itemlocdist_id").toInt());
-              else
-              {
-                result = newdlg.exec();
-                if (result == XDialog::Rejected)
-                  return XDialog::Rejected;
-                else
-                  ildList.append(result);
-              }
-            }
-            else
-            {
-              result = newdlg.exec();
-              if (result == XDialog::Rejected)
+              if (!newdlg.sDefaultAndPost() && newdlg.exec() == XDialog::Rejected)
                 return XDialog::Rejected;
-              else
-                ildList.append(result);
             }
+            else if (newdlg.exec() == XDialog::Rejected)
+              return XDialog::Rejected;
           }
         }
         else
@@ -300,8 +284,6 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
           // Append id to list and process at the end
           if (DEBUG)
             qDebug() << tr("ildsList.append(%1)").arg(itemlocSeries);
-
-          ildsList.append(itemlocSeries);
         }
 
         // Set itemlocdist_child_series of parent itemlocdist record
@@ -324,15 +306,10 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
         newdlg.set(params);
         if (itemloc.value("auto_dist").toBool())
         {
-          if (newdlg.sDefaultAndPost())
-            ildList.append(itemloc.value("itemlocdist_id").toInt());
-          else
+          if (!newdlg.sDefaultAndPost())
           {
-            result = newdlg.exec();
-            if (result == XDialog::Rejected)
+            if (newdlg.exec() == XDialog::Rejected)
               return XDialog::Rejected;
-            else
-              ildList.append(result);
           }
         }
         else
@@ -340,8 +317,6 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
           result = newdlg.exec();
           if (result == XDialog::Rejected)
             return XDialog::Rejected;
-          else
-            ildList.append(result);
         }
 
         // Set itemlocdist_child_series of parent itemlocdist record. In this case there is no child, set it to itself.

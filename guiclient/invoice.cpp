@@ -778,7 +778,7 @@ void invoice::postInvoice()
 {
   XSqlQuery unpostedPost;
   int journal = -1;
-  int itemlocSeries = 0;
+  int itemlocSeries;
   unpostedPost.exec("SELECT fetchJournalNumber('AR-IN') AS result;");
   if (unpostedPost.first())
   {
@@ -915,14 +915,15 @@ void invoice::postInvoice()
 
   // Post invoice
   XSqlQuery post;
-  post.prepare("SELECT postInvoice(:invchead_id, :journal) AS result;");
+  post.prepare("SELECT postInvoice(:invchead_id, :journal, :itemlocSeries, true) AS result;");
   post.bindValue(":invchead_id", _invcheadid);
   post.bindValue(":journal",     journal);
+  post.bindValue(":itemlocSeries",     itemlocSeries);
   post.exec();
   if (post.first())
   {
     int result = post.value("result").toInt();
-    if (result < 0)
+    if (result < 0 || result != itemlocSeries)
     {
       cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Invoice"),

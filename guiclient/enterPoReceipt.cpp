@@ -252,6 +252,7 @@ void enterPoReceipt::sPost()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
+  // XXX / TODO - We need to keep an array of all the itemlocSeries created, for cleanup
   // Stage cleanup function to be called on error
   XSqlQuery cleanup;
   cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
