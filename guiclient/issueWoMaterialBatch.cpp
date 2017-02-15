@@ -227,10 +227,10 @@ void issueWoMaterialBatch::sIssue()
       }
     }
   
-    // Post inventory
+    // Post inventory:womatl_id, :qty, :itemlocSeries, true, :date, true
     issue.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-    issue.prepare("SELECT issueWoMaterial(:womatl_id, :qty, :itemlocSeries, "
-                  " :date::TIMESTAMP WITH TIME ZONE, NULL::INTEGER, NULL::NUMERIC, TRUE) AS result;");
+    issue.prepare("SELECT issueWoMaterial(:womatl_id, :qty, :itemlocSeries, true, "
+                  " :date, TRUE) AS result;");
     issue.bindValue(":womatl_id", items.value("womatl_id").toInt());
     issue.bindValue(":qty", items.value("qty").toDouble());
     issue.bindValue(":itemlocSeries", itemlocSeries);
