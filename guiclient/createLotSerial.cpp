@@ -68,16 +68,18 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
   if (valid)
   {
     _itemlocdistid = param.toInt();
-
-    createet.prepare( "SELECT item_fractional, itemsite_controlmethod, itemsite_item_id,"
-               "       itemsite_id, itemsite_perishable, itemsite_warrpurc, "
-               "       COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id, "
-               "       invhist_ordtype, invhist_transtype, invhist_ordnumber "
-               "FROM itemlocdist, itemsite, item, invhist "
-               "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (itemlocdist_invhist_id=invhist_id) "
-               " AND (itemlocdist_id=:itemlocdist_id) );" );
+    createet.prepare( "SELECT item_fractional, itemsite_controlmethod, itemsite_item_id, "
+                      " itemsite_id, itemsite_perishable, itemsite_warrpurc, "
+                      " COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id, "
+                      " invhist_ordnumber, "
+                      " COALESCE(invhist_transtype, itemlocdist_order_type) AS transtype, "
+                      " COALESCE(invhist_ordtype, itemlocdist_order_type) AS ordtype "
+                      "FROM itemlocdist "
+                      " LEFT OUTER JOIN invhist ON itemlocdist_invhist_id = invhist_id, "
+                      " itemsite, item "
+                      "WHERE itemlocdist_itemsite_id=itemsite_id "
+                      " AND itemsite_item_id=item_id "
+                      " AND itemlocdist_id = :itemlocdist_id;");
     createet.bindValue(":itemlocdist_id", _itemlocdistid);
     createet.exec();
     if (createet.first())
@@ -94,7 +96,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
       _item->setItemsiteid(createet.value("itemsite_id").toInt());
       _itemsiteid = createet.value("itemsite_id").toInt();
       _expiration->setEnabled(createet.value("itemsite_perishable").toBool());
-      _warranty->setEnabled(createet.value("itemsite_warrpurc").toBool() && createet.value("invhist_ordtype").toString() == "PO");
+      _warranty->setEnabled(createet.value("itemsite_warrpurc").toBool() && createet.value("ordtype").toString() == "PO");
       _fractional = createet.value("item_fractional").toBool();
       
       //If there is preassigned trace info for an associated order, force user to select from list
@@ -109,7 +111,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
                         "                               FROM itemsite WHERE itemsite_id = :itemsite))) "
                         "AND (lsdetail_qtytoassign > 0) ) "
                         "GROUP BY 2,3");
-      preassign.bindValue(":transtype", createet.value("invhist_transtype").toString());
+      preassign.bindValue(":transtype", createet.value("transtype").toString());
       preassign.bindValue(":docnumber", createet.value("invhist_ordnumber").toString());
       preassign.bindValue(":itemsite", createet.value("itemsite_id").toInt());
       preassign.exec();
