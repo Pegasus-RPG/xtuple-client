@@ -151,21 +151,27 @@ void issueWoMaterialBatch::sIssue()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
+  // Stage distribution cleanup function to be called on error
+  XSqlQuery cleanup;
+  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+
   QString sqlitems =
-               ("SELECT womatl_id,"
-                "       CASE WHEN (womatl_qtyreq >= 0) THEN"
-                "         roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyreq - womatl_qtyiss))"
-                "       ELSE"
-                "         roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyiss * -1))"
-                "       END AS qty, item_number"
-                "  FROM womatl, itemsite, item"
-                " WHERE((womatl_itemsite_id=itemsite_id)"
-                "   AND (itemsite_item_id=item_id)"
-                "   AND (womatl_issuemethod IN ('S', 'M'))"
-                "  <? if exists(\"pickItemsOnly\") ?>"
-                "   AND (womatl_picklist) "
-                "  <? endif ?>"
-                "   AND (womatl_wo_id=<? value(\"wo_id\") ?>)); ");
+               ("SELECT womatl_id, "
+                " CASE WHEN (womatl_qtyreq >= 0) THEN "
+                "   roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyreq - womatl_qtyiss)) "
+                " ELSE "
+                "   roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyiss * -1)) "
+                " END AS qty, item_number, itemsite_id, formatWoNumber(womatl_wo_id) AS wo_number, "
+                " (itemsite_loccntrl AND itemsite_controlmethod != 'N') "
+                "   OR (itemsite_controlmethod IN ('L', 'S')) AS controlled "
+                "FROM womatl, itemsite, item "
+                "WHERE((womatl_itemsite_id=itemsite_id) "
+                " AND (itemsite_item_id=item_id) "
+                " AND (womatl_issuemethod IN ('S', 'M')) "
+                " <? if exists(\"pickItemsOnly\") ?> "
+                " AND (womatl_picklist) "
+                " <? endif ?> "
+                " AND (womatl_wo_id=<? value(\"wo_id\") ?>)); ");
   MetaSQLQuery mqlitems(sqlitems);
   XSqlQuery items = mqlitems.toQuery(params);
 
@@ -174,27 +180,72 @@ void issueWoMaterialBatch::sIssue()
   QList<QString> errors;
   while(items.next())
   {
+    int itemlocSeries;
+    // Get the parent series id
+    XSqlQuery parentSeries;
+    parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS itemlocSeries;");
+    parentSeries.exec();
+    if (parentSeries.first() && parentSeries.value("itemlocSeries").toInt() > 0)
+    {
+      itemlocSeries = parentSeries.value("itemlocSeries").toInt();
+      cleanup.bindValue(":itemlocSeries", itemlocSeries);
+    }
+    else
+    {
+      ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
+                              parentSeries, __FILE__, __LINE__);
+      return;
+    }
+
+    if (items.value("controlled").toBool())
+    {
+      // Create the parent itemlocdist record for each line item requiring distribution, call distributeInventory::seriesAdjust
+      XSqlQuery parentItemlocdist;
+      parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'IM', "
+                                " :orderNumber, :itemlocSeries);");
+      parentItemlocdist.bindValue(":itemsite_id", items.value("itemsite_id").toInt());
+      parentItemlocdist.bindValue(":qty", items.value("qty").toDouble());
+      parentItemlocdist.bindValue(":orderNumber", items.value("wo_number").toString());
+      parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+      parentItemlocdist.exec();
+      if (parentItemlocdist.first())
+      {
+        if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
+          == XDialog::Rejected)
+        {
+          cleanup.exec();
+          QMessageBox::information( this, tr("Material Issue"), tr("Error Distributing Inventory Detail (distributeInventory::SeriesAdjust)") );
+          return;
+        }
+      }
+      else
+      {
+        cleanup.exec();
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
+                                parentItemlocdist, __FILE__, __LINE__);
+        return;
+      }
+    }
+  
+    // Post inventory
     issue.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-    issue.prepare("SELECT issueWoMaterial(:womatl_id, :qty, 0, true, :date) AS result;");
+    issue.prepare("SELECT issueWoMaterial(:womatl_id, :qty, :itemlocSeries, "
+                  " :date::TIMESTAMP WITH TIME ZONE, NULL::INTEGER, NULL::NUMERIC, TRUE) AS result;");
     issue.bindValue(":womatl_id", items.value("womatl_id").toInt());
     issue.bindValue(":qty", items.value("qty").toDouble());
+    issue.bindValue(":itemlocSeries", itemlocSeries);
     issue.bindValue(":date",  _transDate->date());
     issue.exec();
   
     if (issue.first())
     {
-      if (issue.value("result").toInt() < 0)
+      if (issue.value("result").toInt() < 0 || issue.value("result").toInt() != itemlocSeries)
       {
         rollback.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Information; Work Order ID #%1")
+        cleanup.exec(); // TODO - cleanup for array of itemlocSeries 
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Work Order Material; Work Order ID #%1")
                              .arg(_wo->id()),
                              issue, __FILE__, __LINE__);
-        continue;
-      }
-      if (distributeInventory::SeriesAdjust(issue.value("result").toInt(), this) == XDialog::Rejected)
-      {
-        rollback.exec();
-        QMessageBox::information( this, tr("Material Issue"), tr("Transaction Canceled") );
         continue;
       }
 
@@ -217,6 +268,7 @@ void issueWoMaterialBatch::sIssue()
         if (lsdetail.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();
+          cleanup.exec();
           ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Material"),
                                lsdetail, __FILE__, __LINE__);
           continue;
@@ -229,6 +281,7 @@ void issueWoMaterialBatch::sIssue()
     else
     {
       rollback.exec();
+      cleanup.exec();
       failedItems.append(items.value("item_number").toString());
       errors.append(issue.lastError().text());
     }
