@@ -200,11 +200,9 @@ void scrapTrans::sPost()
   }
 
   XSqlQuery scrapPost;
-  scrapPost.prepare( "SELECT invScrap(itemsite_id, :qty, :docNumber,"
-             "                :comments, :date, NULL, NULL, :itemlocSeries) AS result "
-             "FROM itemsite "
-             "WHERE ( (itemsite_item_id=:item_id)"
-             " AND (itemsite_warehous_id=:warehous_id) );" );
+  scrapPost.prepare("SELECT invScrap(:itemsite_id, :qty, :docNumber, "
+                    " :comments, :date, NULL, NULL, :itemlocSeries, TRUE) AS result;");
+  scrapPost.bindValue(":itemsite_id", _itemsiteId);
   scrapPost.bindValue(":qty", _qty->toDouble());
   scrapPost.bindValue(":docNumber", _documentNum->text());
   scrapPost.bindValue(":comments", _notes->toPlainText());
@@ -215,7 +213,7 @@ void scrapTrans::sPost()
   scrapPost.exec();
   if (scrapPost.first())
   {
-    int result = returnItem.value("result").toInt();
+    int result = scrapPost.value("result").toInt();
     if (result < 0 || result != itemlocSeries)
     {
       cleanup.exec();

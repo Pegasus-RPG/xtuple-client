@@ -224,16 +224,12 @@ void materialReceiptTrans::sPost()
 
   // Proceed to posting inventory transaction
   XSqlQuery materialPost;
-  materialPost.prepare("SELECT invReceipt(itemsite_id, :qty, '', :docNumber,"
-             "                  :comments, :date, :cost, :itemlocSeries) AS result "
-             "FROM itemsite "
-             "WHERE ( (itemsite_item_id=:item_id)"
-             " AND (itemsite_warehous_id=:warehous_id) );" );
+  materialPost.prepare("SELECT invReceipt(:itemsiteId, :qty, '', :docNumber,"
+             "                  :comments, :date, :cost, :itemlocSeries, TRUE) AS result;");
+  materialPost.bindValue(":itemsiteId", _itemsiteId);
   materialPost.bindValue(":qty", _qty->toDouble());
   materialPost.bindValue(":docNumber", _documentNum->text());
   materialPost.bindValue(":comments", _notes->toPlainText());
-  materialPost.bindValue(":item_id", _item->id());
-  materialPost.bindValue(":warehous_id", _warehouse->id());
   materialPost.bindValue(":date",        _transDate->date());
   materialPost.bindValue(":itemlocSeries", itemlocSeries);
   if(!_costAdjust->isChecked())

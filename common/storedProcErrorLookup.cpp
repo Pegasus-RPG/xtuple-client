@@ -218,6 +218,8 @@ const struct {
                                        "originally posted."),	0, "" },
   { "correctReceipt",  -12, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The receipt has been split and may not be corrected. "
 				      "Correct Receipt."),	0, "" },
+  { "correctReceipt",  -13, QT_TRANSLATE_NOOP("storedProcErrorLookup", "ItemlocSeries is required when pPreDistributed. "
+              "Correct Receipt."),  0, "" },
   { "createAccountingPeriod",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Start Date falls within another "
 				      "Accounting Period."),	0, "" },
   { "createAccountingPeriod",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The End Date falls within another "

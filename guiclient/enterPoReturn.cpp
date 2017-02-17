@@ -178,8 +178,10 @@ void enterPoReturn::sPost()
   parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
   parentSeries.exec();
   if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
+  {
     itemlocSeries = parentSeries.value("result").toInt();
     cleanup.bindValue(":itemlocSeries", itemlocSeries);
+  }
   else
   {
     QMessageBox::information(this, tr("Enter Receipt"),

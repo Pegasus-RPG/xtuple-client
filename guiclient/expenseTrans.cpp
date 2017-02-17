@@ -195,25 +195,28 @@ void expenseTrans::sPost()
 
   // Proceed to post inventory transaction
   XSqlQuery expq;
-  expq.prepare("SELECT invExpense(itemsite_id, :qty, :expcatid, :docNumber, "
-               "  :comments, :date, :prj_id, :itemlocSeries) AS result "
-               "FROM itemsite "
-               "WHERE ((itemsite_item_id=:item_id) "
-               "  AND (itemsite_warehous_id=:warehous_id));" );
+  expq.prepare("SELECT invExpense(:itemsite_id, :qty, :expcatid, :docNumber, "
+               "  :comments, :date, :prj_id, :itemlocSeries, TRUE) AS result;");
+  expq.bindValue(":itemsite_id",         _itemsiteId);
   expq.bindValue(":qty",         _qty->toDouble());
   expq.bindValue(":expcatid",    _expcat->id());
   expq.bindValue(":docNumber",   _documentNum->text());
   expq.bindValue(":comments",    _notes->toPlainText());
-  expq.bindValue(":item_id",     _item->id());
-  expq.bindValue(":warehous_id", _warehouse->id());
   expq.bindValue(":date",        _transDate->date());
   expq.bindValue(":itemlocSeries", itemlocSeries);
   if (_prjid != -1)
     expq.bindValue(":prj_id", _prjid);
   expq.exec();
-
   if (expq.first())
   {
+    int result = expq.value("result").toInt();
+    if (result < 0 || result != itemlocSeries)
+    {
+      cleanup.exec();
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Inventory Expense transaction."),
+        expq, __FILE__, __LINE__);
+      return;
+    }
     if (_captive)
       close();
     else
