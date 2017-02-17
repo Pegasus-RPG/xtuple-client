@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -102,15 +102,14 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
       //If there is preassigned trace info for an associated order, force user to select from list
       //Pick latest lsdetail record as it can be duplicated when lot/serial returned/re-added to the shipment
       XSqlQuery preassign;
-      preassign.prepare("SELECT MAX(lsdetail_id) AS lsdetail_id,ls_number,ls_number "
-                        "FROM lsdetail JOIN ls ON (ls_id=lsdetail_ls_id) "
-                        "WHERE ( (lsdetail_source_number=:docnumber) "
-                        "AND (lsdetail_source_type=:transtype) "
-                        "AND (lsdetail_itemsite_id IN (SELECT itemsite_id FROM itemsite "
-                        "                              WHERE itemsite_item_id = (SELECT itemsite_item_id "
-                        "                               FROM itemsite WHERE itemsite_id = :itemsite))) "
-                        "AND (lsdetail_qtytoassign > 0) ) "
-                        "GROUP BY 2,3");
+      preassign.prepare("SELECT MAX(lsdetail_id) AS lsdetail_id, ls_number "
+                        "FROM lsdetail "
+                        " JOIN ls ON ls_id = lsdetail_ls_id "
+                        "WHERE lsdetail_source_number = :docnumber "
+                        " AND lsdetail_source_type = :transtype "
+                        " AND lsdetail_itemsite_id = :itemsite "
+                        " AND lsdetail_qtytoassign > 0 "
+                        "GROUP BY ls_number;");
       preassign.bindValue(":transtype", createet.value("transtype").toString());
       preassign.bindValue(":docnumber", createet.value("invhist_ordnumber").toString());
       preassign.bindValue(":itemsite", createet.value("itemsite_id").toInt());
@@ -364,32 +363,30 @@ void createLotSerial::sAssign()
 
   if (_serial)
   {
-    createAssign.prepare("SELECT COUNT(*) AS count FROM "
-                         "(SELECT itemloc_id AS count "
-                         "FROM itemsite JOIN itemloc ON (itemloc_itemsite_id=itemsite_id)"
-                         "              JOIN ls ON (ls_id=itemloc_ls_id) "
-                         "WHERE (itemsite_item_id=:item_id)"
-                         "  AND (UPPER(ls_number)=UPPER(:lotserial))"
+    createAssign.prepare("SELECT true "
+                         "FROM itemsite "
+                         "  JOIN itemloc ON itemloc_itemsite_id = itemsite_id "
+                         "  JOIN ls ON ls_id = itemloc_ls_id "
+                         "WHERE itemsite_id = :itemsite_id "
+                         "  AND UPPER(ls_number) = UPPER(:lotserial) "
                          "UNION "
-                         "SELECT itemlocdist_id "
-                         "FROM itemsite JOIN itemlocdist ON (itemlocdist_itemsite_id=itemsite_id)"
-                         "              JOIN ls ON (ls_id=itemlocdist_ls_id) "
-                         "WHERE (itemsite_item_id=:item_id)"
-                         "  AND (UPPER(ls_number)=UPPER(:lotserial))"
-                         "  AND (itemlocdist_source_type='D')) AS data;");
-    createAssign.bindValue(":item_id", _item->id());
+                         "SELECT true "
+                         "FROM itemsite "
+                         "  JOIN itemlocdist ON itemlocdist_itemsite_id = itemsite_id "
+                         "  JOIN ls ON ls_id = itemlocdist_ls_id "
+                         "WHERE itemsite_item_id = :item_id "
+                         "  AND UPPER(ls_number) = UPPER(:lotserial)"
+                         "  AND itemlocdist_source_type = 'D';");
+    createAssign.bindValue(":itemsite_id", _itemsiteid);
     createAssign.bindValue(":lotserial", _lotSerial->currentText());
     createAssign.exec();
     if (createAssign.first())
     {
-      if (createAssign.value("count").toInt() > 0)
-      {
-        QMessageBox::critical(this, tr("Duplicate Serial Number"),
-                              tr("This Serial Number has already been used "
-                                 "and cannot be reused."));
+      QMessageBox::critical(this, tr("Duplicate Serial Number"),
+                            tr("This Serial Number has already been used "
+                               "and cannot be reused."));
 
-        return;
-      }
+      return;
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Lot/Serial Information"),
                                   createAssign, __FILE__, __LINE__))

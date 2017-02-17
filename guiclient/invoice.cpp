@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -814,9 +814,7 @@ void invoice::postInvoice()
       tr("Invoice #%1 has a total value of 0.\n""Would you like to post it anyway?")
       .arg(_invoiceNumber->text()), QMessageBox::Yes, QMessageBox::No | QMessageBox::Default)
       == QMessageBox::No)
-    {
       return;
-    }
   }
   else if (sum.lastError().type() != QSqlError::NoError)
   {
@@ -851,11 +849,11 @@ void invoice::postInvoice()
 
   // Get the parent series id
   XSqlQuery parentSeries;
-  parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS itemlocSeries;");
+  parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
   parentSeries.exec();
-  if (parentSeries.first() && parentSeries.value("itemlocSeries").toInt() > 0)
+  if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
   {
-    itemlocSeries = parentSeries.value("itemlocSeries").toInt();
+    itemlocSeries = parentSeries.value("result").toInt();
     cleanup.bindValue(":itemlocSeries", itemlocSeries);
   }
   else
@@ -879,8 +877,7 @@ void invoice::postInvoice()
                 " JOIN item ON item_id = invcitem_item_id "
                 "WHERE invchead_id = :invchead_id "
                 " AND itemsite_costmethod != 'J' "
-                " AND (itemsite_loccntrl OR itemsite_controlmethod IN ('L', 'S')) "
-                " AND itemsite_controlmethod != 'N';");
+                " AND isControlledItemsite(itemsite_id);");
   items.bindValue(":invchead_id", _invcheadid);
   items.exec();
   while (items.next())
@@ -896,8 +893,8 @@ void invoice::postInvoice()
     parentItemlocdist.exec();
     if (parentItemlocdist.first())
     {
-      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
-        == XDialog::Rejected)
+      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+        QDate(), true) == XDialog::Rejected)
       {
         cleanup.exec();
         QMessageBox::information( this, tr("Post Invoices"), tr("Error Posting Invoice Item Distribution") );
@@ -908,7 +905,7 @@ void invoice::postInvoice()
     {
       cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-                              parentItemlocdist, __FILE__, __LINE__);
+        parentItemlocdist, __FILE__, __LINE__);
       return;
     }
   }
@@ -917,8 +914,8 @@ void invoice::postInvoice()
   XSqlQuery post;
   post.prepare("SELECT postInvoice(:invchead_id, :journal, :itemlocSeries, true) AS result;");
   post.bindValue(":invchead_id", _invcheadid);
-  post.bindValue(":journal",     journal);
-  post.bindValue(":itemlocSeries",     itemlocSeries);
+  post.bindValue(":journal", journal);
+  post.bindValue(":itemlocSeries", itemlocSeries);
   post.exec();
   if (post.first())
   {

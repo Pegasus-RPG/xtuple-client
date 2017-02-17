@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -248,22 +248,17 @@ void enterPoReceipt::sPost()
   bool gotlot = false;
   int itemlocSeries;
 
-  enterPost.exec("BEGIN;"); // because of possible insertgltransaction failures
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  // XXX / TODO - We need to keep an array of all the itemlocSeries created, for cleanup
-  // Stage cleanup function to be called on error
-  XSqlQuery cleanup;
-  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-
   // Recv items to cycle through
-  QString items = "SELECT recv_id, itemsite_id, itemsite_controlmethod, itemsite_loccntrl, itemsite_perishable, itemsite_warrpurc, "
+  QString items = "SELECT recv_id, itemsite_id, itemsite_controlmethod, itemsite_perishable, itemsite_warrpurc, "
                   "  (recv_order_type = 'RA' AND COALESCE(itemsite_costmethod,'') = 'J') AS issuerawo, "
                   "  (recv_order_type = 'PO' AND COALESCE(itemsite_costmethod,'') = 'J' AND poitem_order_type='W') AS issuejobwo, "
                   "  (recv_order_type = 'PO' AND COALESCE(itemsite_costmethod,'') = 'J' AND poitem_order_type='S') AS issuejobso, "
                   "  COALESCE(pohead_dropship, false) AS dropship, recv_order_type, recv_order_number, "
-                  "  roundQty(item_fractional, (recv_qty * orderitem_qty_invuomratio)) AS qty "
+                  "  roundQty(item_fractional, (recv_qty * orderitem_qty_invuomratio)) AS qty, "
+                  "  isControlledItemsite(itemsite_id) AS controlled "
                   " FROM orderitem, recv "
                   "  LEFT OUTER JOIN itemsite ON (recv_itemsite_id=itemsite_id) "
                   "  LEFT OUTER JOIN item ON (itemsite_item_id=item_id) "
@@ -280,13 +275,13 @@ void enterPoReceipt::sPost()
   MetaSQLQuery itemsm(items);
   XSqlQuery qi = itemsm.toQuery(params);
   while(qi.next())
-  {
-    bool controlledItem;
-
+  { 
+    // Stage cleanup function to be called on error
+    XSqlQuery cleanup;
+    cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
 
     if(_singleLot->isChecked() && !gotlot && qi.value("itemsite_controlmethod").toString() == "L")
     {
-      controlledItem = true;
       getLotInfo newdlg(this, "", true);
       newdlg.enableExpiration(qi.value("itemsite_perishable").toBool());
       newdlg.enableWarranty(qi.value("itemsite_warrpurc").toBool());
@@ -302,24 +297,22 @@ void enterPoReceipt::sPost()
 
     // Get parent series id
     XSqlQuery parentSeries;
-    parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS itemlocSeries;");
+    parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
     parentSeries.exec();
-    if (parentSeries.first() && parentSeries.value("itemlocSeries").toInt() > 0)
+    if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
     {
-      itemlocSeries = parentSeries.value("itemlocSeries").toInt();
+      itemlocSeries = parentSeries.value("result").toInt();
       cleanup.bindValue(":itemlocSeries", itemlocSeries);
     }
     else
     {
       ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
-                              parentSeries, __FILE__, __LINE__);
+        parentSeries, __FILE__, __LINE__);
       return;
     }
 
-    controlledItem = controlledItem ? true : qi.value("itemsite_loccntrl").toBool();
-
     // If controlled item: create the parent itemlocdist record, call distributeInventory::seriesAdjust
-    if (controlledItem)
+    if (qi.value("controlled").toBool())
     {
       XSqlQuery parentItemlocdist;
       parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, :orderType, "
@@ -332,21 +325,25 @@ void enterPoReceipt::sPost()
       parentItemlocdist.exec();
       if (parentItemlocdist.first())
       {
-        if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
-          == XDialog::Rejected)
+        if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+          QDate(), true) == XDialog::Rejected)
         {
           cleanup.exec();
           QMessageBox::information( this, tr("Enter Receipts"), tr("Posting Distribution Detail Failed") );
           return;
         }
       }
-      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-                                parentItemlocdist, __FILE__, __LINE__))
+      else
       {
         cleanup.exec();
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Record"),
+                             parentItemlocdist, __FILE__, __LINE__);
         return;
       }
     }
+
+    // Wrap the remaining sql function calls in a transaction in case of errors
+    enterPost.exec("BEGIN;");
 
     // Post the inventory transaction(s)
     XSqlQuery postLine;
@@ -541,11 +538,11 @@ void enterPoReceipt::sPost()
       cleanup.exec();
       return;
     }
+
+    enterPost.exec("COMMIT;");
   }
 
   _soheadid = -1;
-
-  enterPost.exec("COMMIT;");
 
   // TODO: update this to sReceiptsUpdated?
   omfgThis->sPurchaseOrderReceiptsUpdated();

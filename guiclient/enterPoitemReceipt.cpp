@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -321,7 +321,6 @@ void enterPoitemReceipt::sReceive()
 
   XSqlQuery enterReceive;
   int itemlocSeries = 0;
-  bool controlledItem = false;
   QString storedProc;
 
   // Stage cleanup function to be called on error
@@ -340,16 +339,13 @@ void enterPoitemReceipt::sReceive()
   {
     // Get parent series id
     XSqlQuery parentSeries;
-    parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS itemlocSeries, "
-                         "  itemsite_loccntrl OR itemsite_controlmethod IN ('L', 'S') AS controlled "
-                         "FROM itemsite "
-                         "WHERE itemsite_id = :itemsiteId;");
+    parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result, "
+                         "  isControlledItemsite(:itemsite_id) AS controlled;");
     parentSeries.bindValue(":itemsite_id", _itemsiteId);
     parentSeries.exec();
-    if (parentSeries.first() && parentSeries.value("itemlocSeries").toInt() > 0)
+    if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
     {
-      itemlocSeries = parentSeries.value("itemlocSeries").toInt();
-      controlledItem = parentSeries.value("controlled").toInt();
+      itemlocSeries = parentSeries.value("result").toInt();
       cleanup.bindValue(":itemlocSeries", itemlocSeries);
     }
     else
@@ -360,7 +356,7 @@ void enterPoitemReceipt::sReceive()
     }
 
     // If controlled item: create the parent itemlocdist record, call distributeInventory::seriesAdjust
-    if (controlledItem)
+    if (parentSeries.value("controlled").toBool())
     {
       XSqlQuery parentItemlocdist;
       parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, :orderType, "
@@ -373,8 +369,8 @@ void enterPoitemReceipt::sReceive()
       parentItemlocdist.exec();
       if (parentItemlocdist.first())
       {
-        if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
-          == XDialog::Rejected)
+        if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+          QDate(), true) == XDialog::Rejected)
         {
           cleanup.exec();
           XMessageBox::message( (isVisible() ? this : parentWidget()), QMessageBox::Warning, tr("Enter PO Receipt"),
@@ -383,10 +379,11 @@ void enterPoitemReceipt::sReceive()
           return;
         }
       }
-      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-                                parentItemlocdist, __FILE__, __LINE__))
+      else
       {
         cleanup.exec();
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),\
+          parentItemlocdist, __FILE__, __LINE__);
         return;
       }
     }
@@ -405,7 +402,7 @@ void enterPoitemReceipt::sReceive()
     
     // Proceed to post inventory transaction with detail
     enterReceive.prepare("SELECT correctReceipt(:recv_id, :qty, :freight, :itemlocSeries, "
-              ":curr_id, :effective, :purchcost, TRUE) AS itemlocSeries;");
+              ":curr_id, :effective, :purchcost, TRUE) AS result;");
     enterReceive.bindValue(":recv_id", _recvid);
     enterReceive.bindValue(":itemlocSeries", itemlocSeries);
     storedProc = "correctReceipt";
@@ -420,22 +417,13 @@ void enterPoitemReceipt::sReceive()
   enterReceive.exec();
   if (enterReceive.first())
   {
+    int result = enterReceive.value("result").toInt();
     // For cEdit (correctReceipt), make sure the returned series matches the series passed
-    if (_mode == cEdit && (itemlocSeries != enterReceive.value("itemlocSeries").toInt()))
+    if ((result < 0) || (_mode == cEdit && (itemlocSeries != result)))
     {
       cleanup.exec();
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving P/O Receipt Information"),
-                             storedProcErrorLookup(storedProc, enterReceive.value("itemlocSeries").toInt()),
-                             __FILE__, __LINE__);
-      return;
-    }
-
-    itemlocSeries = enterReceive.value("itemlocSeries").toInt();
-    if (itemlocSeries < 0)
-    {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving P/O Receipt Information"),
-                             storedProcErrorLookup(storedProc, itemlocSeries),
-                             __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving PO Receipt Information"),
+        enterReceive, __FILE__, __LINE__);
       return;
     }
   }

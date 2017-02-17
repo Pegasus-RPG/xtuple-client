@@ -266,11 +266,31 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
             newdlg.set(params);
             if (itemloc.value("auto_dist").toBool())
             {
-              if (!newdlg.sDefaultAndPost() && newdlg.exec() == XDialog::Rejected)
+              if (newdlg.sDefaultAndPost())
+              {
+                if (DEBUG)
+                  qDebug() << tr("Pre-22868 itemlocdist_id array for distributeToLocations(). "
+                                 "Auto Dist + Default Post: ildList.append(%1) - (itemlocdist_id from "
+                                 "itemloc query above)").arg(itemloc.value("itemlocdist_id").toInt());
+              }
+              else
+              {
+                result = newdlg.exec();
+                if (result == XDialog::Rejected)
+                  return XDialog::Rejected;
+              }
+            }
+            else
+            {
+              result = newdlg.exec();
+              if (result == XDialog::Rejected)
                 return XDialog::Rejected;
             }
-            else if (newdlg.exec() == XDialog::Rejected)
-              return XDialog::Rejected;
+
+            if (DEBUG && result > 0)
+              qDebug() << tr("Pre-22868 itemlocdist_id array for distributeToLocations(). "
+                             "Auto Dist: ildList.append(%1) - (itemlocdist_id from "
+                             "distributeInventory newdlg)").arg(result);
           }
         }
         else
@@ -283,7 +303,9 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
 
           // Append id to list and process at the end
           if (DEBUG)
-            qDebug() << tr("ildsList.append(%1)").arg(itemlocSeries);
+            qDebug() << tr("Pre-22868 itemloc_series array for distributeItemlocSeries(). "
+                           "Not Location Controlled: ildsList.append(%1) - (itemlocSeries)").
+                           arg(itemlocSeries);
         }
 
         // Set itemlocdist_child_series of parent itemlocdist record
@@ -306,9 +328,17 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
         newdlg.set(params);
         if (itemloc.value("auto_dist").toBool())
         {
-          if (!newdlg.sDefaultAndPost())
+          if (newdlg.sDefaultAndPost())
           {
-            if (newdlg.exec() == XDialog::Rejected)
+            if (DEBUG)
+              qDebug() << tr("Pre-22868 itemlocdist_id array for distributeToLocations(). "
+                             "Auto Dist + Default Post: ildList.append(%1) - (itemlocdist_id from "
+                             "itemloc query above)").arg(itemloc.value("itemlocdist_id").toInt());
+          }
+          else
+          {
+            result = newdlg.exec();
+            if (result == XDialog::Rejected)
               return XDialog::Rejected;
           }
         }
@@ -318,6 +348,11 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
           if (result == XDialog::Rejected)
             return XDialog::Rejected;
         }
+
+        if (DEBUG && result > 0)
+          qDebug() << tr("Pre-22868 itemlocdist_id array for distributeToLocations(). "
+                         "Auto Dist: ildList.append(%1) - (itemlocdist_id from "
+                         "distributeInventory newdlg)").arg(result);
 
         // Set itemlocdist_child_series of parent itemlocdist record. In this case there is no child, set it to itself.
         XSqlQuery query;

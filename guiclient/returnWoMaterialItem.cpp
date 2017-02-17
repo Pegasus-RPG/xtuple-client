@@ -102,20 +102,25 @@ void returnWoMaterialItem::sReturn()
     return;
   }
 
+  // Stage cleanup function to be called on error
+  XSqlQuery cleanup;
+  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+  
   // Get parent series id
   XSqlQuery parentSeries;
   parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
   parentSeries.exec();
-  if (parentSeries.first())
+  if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
+  {
     itemlocSeries = parentSeries.value("result").toInt();
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
-                            parentSeries, __FILE__, __LINE__))
+    cleanup.bindValue(":itemlocSeries", itemlocSeries);
+  }
+  else
+  {
+    ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
+      parentSeries, __FILE__, __LINE__);
     return;
-  
-  // Stage cleanup function to be called on error
-  XSqlQuery cleanup;
-  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-  cleanup.bindValue(":itemlocSeries", itemlocSeries);
+  }
 
   // If controlled item: create the parent itemlocdist record, call distributeInventory::seriesAdjust
   if (_controlledItem)
@@ -130,8 +135,8 @@ void returnWoMaterialItem::sReturn()
     parentItemlocdist.exec();
     if (parentItemlocdist.first())
     {
-      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
-        == XDialog::Rejected)
+      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+        QDate(), true) == XDialog::Rejected)
       {
         cleanup.exec();
         QMessageBox::information(this, tr("Enter Receipt"),
@@ -157,7 +162,7 @@ void returnWoMaterialItem::sReturn()
   if (returnItem.first())
   {
     int result = returnItem.value("result").toInt();
-    if (result < 0)
+    if (result < 0 || result != itemlocSeries)
     {
       cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
@@ -209,7 +214,7 @@ void returnWoMaterialItem::sSetQOH(int pWomatlid)
     XSqlQuery qoh;
     qoh.prepare( "SELECT itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, "
                  "  qtyAvailable(itemsite_id)) AS availableqoh, uom_name, itemsite_id, "
-                 "  itemsite_loccntrl OR itemsite_controlmethod IN ('L', 'S') AS controlled "
+                 "  isControlledItemsite(itemsite_id) AS controlled "
                  "FROM womatl, itemsite, uom "
                  "WHERE womatl_itemsite_id = itemsite_id "
                  "  AND womatl_uom_id = uom_id "

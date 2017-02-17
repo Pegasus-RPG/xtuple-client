@@ -151,20 +151,25 @@ void scrapTrans::sPost()
     return;
   }
 
+  // Stage cleanup function to be called on error
+  XSqlQuery cleanup;
+  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+  
   // Get parent series id
   XSqlQuery parentSeries;
   parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
   parentSeries.exec();
-  if (parentSeries.first())
+  if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
+  {
     itemlocSeries = parentSeries.value("result").toInt();
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
-                            parentSeries, __FILE__, __LINE__))
+    cleanup.bindValue(":itemlocSeries", itemlocSeries);
+  }
+  else
+  {
+    ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
+      parentSeries, __FILE__, __LINE__);
     return;
-  
-  // Stage cleanup function to be called on error
-  XSqlQuery cleanup;
-  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-  cleanup.bindValue(":itemlocSeries", itemlocSeries);
+  }
 
   // If controlled item: create the parent itemlocdist record, call distributeInventory::seriesAdjust
   if (_controlledItem)
@@ -178,8 +183,8 @@ void scrapTrans::sPost()
     parentItemlocdist.exec();
     if (parentItemlocdist.first())
     {
-      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
-        == XDialog::Rejected)
+      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+        QDate(), true) == XDialog::Rejected)
       {
         cleanup.exec();
         QMessageBox::information(this, tr("Enter Receipt"),
@@ -210,10 +215,11 @@ void scrapTrans::sPost()
   scrapPost.exec();
   if (scrapPost.first())
   {
-    if (scrapPost.lastError().type() != QSqlError::NoError)
+    int result = returnItem.value("result").toInt();
+    if (result < 0 || result != itemlocSeries)
     {
       cleanup.exec();
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Scrap Transaction"),
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
                            scrapPost, __FILE__, __LINE__);
       return;
     }
@@ -259,7 +265,7 @@ void scrapTrans::sPopulateQOH(int pWarehousid)
   if (_mode != cView)
   {
     scrapPopulateQOH.prepare( "SELECT itemsite_qtyonhand, itemsite_id, "
-               "  itemsite_loccntrl OR itemsite_controlmethod IN ('L', 'S') AS controlled "
+               "  isControlledItemsite(itemsite_id) AS controlled "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );

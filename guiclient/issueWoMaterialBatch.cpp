@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -151,19 +151,13 @@ void issueWoMaterialBatch::sIssue()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  // Stage distribution cleanup function to be called on error
-  XSqlQuery cleanup;
-  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-
   QString sqlitems =
-               ("SELECT womatl_id, "
+               ("SELECT womatl_id, item_number, itemsite_id, formatWoNumber(womatl_wo_id) AS wo_number, "
                 " CASE WHEN (womatl_qtyreq >= 0) THEN "
                 "   roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyreq - womatl_qtyiss)) "
                 " ELSE "
                 "   roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyiss * -1)) "
-                " END AS qty, item_number, itemsite_id, formatWoNumber(womatl_wo_id) AS wo_number, "
-                " (itemsite_loccntrl AND itemsite_controlmethod != 'N') "
-                "   OR (itemsite_controlmethod IN ('L', 'S')) AS controlled "
+                " END AS qty, isControlledItemsite(itemsite_id) AS controlled "
                 "FROM womatl, itemsite, item "
                 "WHERE((womatl_itemsite_id=itemsite_id) "
                 " AND (itemsite_item_id=item_id) "
@@ -180,20 +174,24 @@ void issueWoMaterialBatch::sIssue()
   QList<QString> errors;
   while(items.next())
   {
+    // Stage distribution cleanup function to be called on error
+    XSqlQuery cleanup;
+    cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
     int itemlocSeries;
+
     // Get the parent series id
     XSqlQuery parentSeries;
-    parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS itemlocSeries;");
+    parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
     parentSeries.exec();
-    if (parentSeries.first() && parentSeries.value("itemlocSeries").toInt() > 0)
+    if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
     {
-      itemlocSeries = parentSeries.value("itemlocSeries").toInt();
+      itemlocSeries = parentSeries.value("result").toInt();
       cleanup.bindValue(":itemlocSeries", itemlocSeries);
     }
     else
     {
       ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
-                              parentSeries, __FILE__, __LINE__);
+        parentSeries, __FILE__, __LINE__);
       return;
     }
 
@@ -210,8 +208,8 @@ void issueWoMaterialBatch::sIssue()
       parentItemlocdist.exec();
       if (parentItemlocdist.first())
       {
-        if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
-          == XDialog::Rejected)
+        if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+          QDate(), true) == XDialog::Rejected)
         {
           cleanup.exec();
           QMessageBox::information( this, tr("Material Issue"), tr("Error Distributing Inventory Detail (distributeInventory::SeriesAdjust)") );
@@ -222,12 +220,12 @@ void issueWoMaterialBatch::sIssue()
       {
         cleanup.exec();
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-                                parentItemlocdist, __FILE__, __LINE__);
+          parentItemlocdist, __FILE__, __LINE__);
         return;
       }
     }
   
-    // Post inventory:womatl_id, :qty, :itemlocSeries, true, :date, true
+    // Post inventory
     issue.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
     issue.prepare("SELECT issueWoMaterial(:womatl_id, :qty, :itemlocSeries, true, "
                   " :date, TRUE) AS result;");
@@ -236,13 +234,15 @@ void issueWoMaterialBatch::sIssue()
     issue.bindValue(":itemlocSeries", itemlocSeries);
     issue.bindValue(":date",  _transDate->date());
     issue.exec();
-  
     if (issue.first())
     {
-      if (issue.value("result").toInt() < 0 || issue.value("result").toInt() != itemlocSeries)
+      int result = issue.value("result").toInt();
+      if (result < 0 || result != itemlocSeries)
       {
         rollback.exec();
-        cleanup.exec(); // TODO - cleanup for array of itemlocSeries 
+        cleanup.exec();
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Invoice"),
+                          issue, __FILE__, __LINE__);
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Work Order Material; Work Order ID #%1")
                              .arg(_wo->id()),
                              issue, __FILE__, __LINE__);

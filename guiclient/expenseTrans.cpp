@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -143,20 +143,26 @@ void expenseTrans::sPost()
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Post Transaction"), errors))
     return;
 
-  // Get parent series id
-  XSqlQuery parentSeries;
-  parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
-  parentSeries.exec();
-  if (parentSeries.first())
-    itemlocSeries = parentSeries.value("result").toInt();
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
-                            parentSeries, __FILE__, __LINE__))
-    return;
-  
   // Stage cleanup function to be called on error
   XSqlQuery cleanup;
   cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
   cleanup.bindValue(":itemlocSeries", itemlocSeries);
+
+  // Get parent series id
+  XSqlQuery parentSeries;
+  parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
+  parentSeries.exec();
+  if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
+  {
+    itemlocSeries = parentSeries.value("result").toInt();
+    cleanup.bindValue(":itemlocSeries", itemlocSeries);
+  }
+  else
+  {
+    ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
+                            parentSeries, __FILE__, __LINE__);
+    return;
+  }
 
   // If controlled item: create the parent itemlocdist record, call distributeInventory::seriesAdjust
   if (_controlledItem)
@@ -170,29 +176,30 @@ void expenseTrans::sPost()
     parentItemlocdist.exec();
     if (parentItemlocdist.first())
     {
-      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
-        == XDialog::Rejected)
+      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+        QDate(), true) == XDialog::Rejected)
       {
         cleanup.exec();
-        QMessageBox::information(this, tr("Enter Receipt"),
-                               tr("Transaction Canceled") );
+        QMessageBox::information( this, tr("Expense Transaction"), tr("Posting Distribution Detail Failed") );
         return;
       }
     }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-                              parentItemlocdist, __FILE__, __LINE__))
+    else
     {
+      cleanup.exec();
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Record"),
+                           parentItemlocdist, __FILE__, __LINE__);
       return;
     }
   }
 
   // Proceed to post inventory transaction
   XSqlQuery expq;
-  expq.prepare("SELECT invExpense(itemsite_id, :qty, :expcatid, :docNumber,"
-               "                  :comments, :date, :prj_id, :itemlocSeries) AS result"
-               "  FROM itemsite"
-               " WHERE ((itemsite_item_id=:item_id)"
-               "    AND (itemsite_warehous_id=:warehous_id));" );
+  expq.prepare("SELECT invExpense(itemsite_id, :qty, :expcatid, :docNumber, "
+               "  :comments, :date, :prj_id, :itemlocSeries) AS result "
+               "FROM itemsite "
+               "WHERE ((itemsite_item_id=:item_id) "
+               "  AND (itemsite_warehous_id=:warehous_id));" );
   expq.bindValue(":qty",         _qty->toDouble());
   expq.bindValue(":expcatid",    _expcat->id());
   expq.bindValue(":docNumber",   _documentNum->text());
@@ -225,7 +232,7 @@ void expenseTrans::sPost()
   }
   else if (expq.lastError().type() != QSqlError::NoError)
   {
-    cleanup.exec();
+    cleanup.exec(); 
     ErrorReporter::error(QtCriticalMsg, this, tr("Could Not Post"),
                          expq, __FILE__, __LINE__);
     return;
@@ -246,7 +253,7 @@ void expenseTrans::sPopulateQOH(int pWarehousid)
   {
     XSqlQuery qohq;
     qohq.prepare( "SELECT itemsite_qtyonhand, "
-               "  itemsite_id, itemsite_loccntrl OR itemsite_controlmethod IN ('L', 'S') AS controlled "
+               "  itemsite_id, isControlledItemsite(itemsite_id) AS controlled "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );

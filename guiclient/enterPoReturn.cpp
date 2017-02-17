@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -168,6 +168,10 @@ void enterPoReturn::sPost()
   reject.bindValue(":pohead_id", _po->id());
   reject.exec();
 
+  // Stage cleanup function to be called on error
+  XSqlQuery cleanup;
+  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+
   // Set the parent series id
   int itemlocSeries;
   XSqlQuery parentSeries;
@@ -175,6 +179,7 @@ void enterPoReturn::sPost()
   parentSeries.exec();
   if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
     itemlocSeries = parentSeries.value("result").toInt();
+    cleanup.bindValue(":itemlocSeries", itemlocSeries);
   else
   {
     QMessageBox::information(this, tr("Enter Receipt"),
@@ -182,15 +187,7 @@ void enterPoReturn::sPost()
     return;
   }
   
-  XSqlQuery rollback;
-  rollback.prepare("ROLLBACK;");
-  // Stage cleanup function to be called on error
-  XSqlQuery cleanup;
-  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-  cleanup.bindValue(":itemlocSeries", itemlocSeries);
-  qDebug() << "itemlocSeries: ", itemlocSeries;
-
-    // Sql from postPoReturns here because itemlocdist 'parent' records need to be created here, post #22868
+  // Sql from postPoReturns here because itemlocdist 'parent' records need to be created here for each, post #22868
   XSqlQuery controlledItems;
   controlledItems.prepare("SELECT itemsite_id, SUM(poreject_qty) AS qty, pohead_number "
                           "FROM pohead JOIN poitem ON (poitem_pohead_id=pohead_id) "
@@ -198,36 +195,39 @@ void enterPoReturn::sPost()
                           " JOIN itemsite ON (poitem_itemsite_id=itemsite_id) "
                           " LEFT OUTER JOIN recv ON (recv_id=poreject_recv_id) "
                           "WHERE pohead_id = :poheadId "
-                          " AND (itemsite_loccntrl OR itemsite_controlmethod IN ('L', 'S')) "
+                          " AND isControlledItemsite(itemsite_id) "
                           "GROUP BY poreject_id, pohead_number, itemsite_id;");
   controlledItems.bindValue(":poheadId", _po->id());
   controlledItems.exec();
-  if (controlledItems.numRowsAffected() > 0)
+  while (controlledItems.next())
   {
-    while (controlledItems.next())
+    XSqlQuery parentItemlocdist;
+    parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'RP', "
+                              " :poheadNumber, :itemlocSeries) AS result;");
+    parentItemlocdist.bindValue(":itemsite_id", controlledItems.value("itemsite_id").toInt());
+    parentItemlocdist.bindValue(":qty", controlledItems.value("qty").toDouble());
+    parentItemlocdist.bindValue(":poheadNumber", controlledItems.value("pohead_number").toString());
+    parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+    parentItemlocdist.exec();
+    if (parentItemlocdist.first())
     {
-      XSqlQuery parentItemlocdist;
-      parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'RP', "
-                                " :poheadNumber, :itemlocSeries) AS result;");
-      parentItemlocdist.bindValue(":itemsite_id", controlledItems.value("itemsite_id").toInt());
-      parentItemlocdist.bindValue(":qty", controlledItems.value("qty").toDouble());
-      parentItemlocdist.bindValue(":poheadNumber", controlledItems.value("pohead_number").toString());
-      parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
-      parentItemlocdist.exec();
-      if (!parentItemlocdist.first() || ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-                                parentItemlocdist, __FILE__, __LINE__))
+      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+        QDate(), true) == XDialog::Rejected)
       {
+        cleanup.exec();
+        QMessageBox::information( this, tr("Enter Receipts"), tr("Posting Distribution Detail Failed") );
         return;
       }
     }
+    else
+    {
+      cleanup.exec();
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Record"),
+                           parentItemlocdist, __FILE__, __LINE__);
+      return;
+    }
   }
-  else
-  {
-    ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-                            controlledItems, __FILE__, __LINE__);
-    return;
-  }
-
+  
   // post the returns
   enterPost.prepare("SELECT postPoReturns(:pohead_id, false, :itemlocSeries, TRUE) AS result;");
   enterPost.bindValue(":pohead_id", _po->id());
@@ -237,10 +237,9 @@ void enterPoReturn::sPost()
   if (enterPost.first())
   {
     result = enterPost.value("result").toInt();
-    if (result < 0)
+    if (result < 0 || result != itemlocSeries)
     {
       cleanup.exec();
-      rollback.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Return"),
                              storedProcErrorLookup("postPoReturns", result),
                              __FILE__, __LINE__);
@@ -250,7 +249,6 @@ void enterPoReturn::sPost()
   else if (enterPost.lastError().type() != QSqlError::NoError)
   {
     cleanup.exec();
-    rollback.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Return"),
                          enterPost, __FILE__, __LINE__);
     return;

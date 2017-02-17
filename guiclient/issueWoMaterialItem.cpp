@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -150,11 +150,11 @@ void issueWoMaterialItem::sIssue()
 
   // Get the parent series id
   XSqlQuery parentSeries;
-  parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS itemlocSeries;");
+  parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
   parentSeries.exec();
-  if (parentSeries.first() && parentSeries.value("itemlocSeries").toInt() > 0)
+  if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
   {
-    itemlocSeries = parentSeries.value("itemlocSeries").toInt();
+    itemlocSeries = parentSeries.value("result").toInt();
     cleanup.bindValue(":itemlocSeries", itemlocSeries);
   }
   else
@@ -174,7 +174,7 @@ void issueWoMaterialItem::sIssue()
             "   AND (itemsite_item_id=item_id) "
             "   AND (itemsite_warehous_id=warehous_id) "
             "   AND (NOT ((item_type = 'R') OR (itemsite_controlmethod = 'N'))) "
-            "   AND ((itemsite_controlmethod IN ('L', 'S')) OR (itemsite_loccntrl)) "
+            "   AND isControlledItemsite(itemsite_id) "
             "   AND (womatl_id=:womatl_id)); ");
   issueIssue.bindValue(":womatl_id", _womatl->id());
   issueIssue.bindValue(":qty", _qtyToIssue->toDouble());
@@ -205,11 +205,12 @@ void issueWoMaterialItem::sIssue()
     parentItemlocdist.exec();
     if (parentItemlocdist.first())
     {
-      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
-        == XDialog::Rejected)
+      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+        QDate(), true) == XDialog::Rejected)
       {
         cleanup.exec();
-        QMessageBox::information( this, tr("Material Issue"), tr("Error Distributing Inventory Detail (distributeInventory::SeriesAdjust)") );
+        QMessageBox::information( this, tr("Material Issue"),
+          tr("Error Distributing Inventory Detail (distributeInventory::SeriesAdjust)") );
         return;
       }
     }
@@ -236,7 +237,7 @@ void issueWoMaterialItem::sIssue()
   if (issueIssue.first())
   {
     int result = issueIssue.value("result").toInt();
-    if (result < 0)
+    if (result < 0 || result != itemlocSeries)
     {
       rollback.exec();
       cleanup.exec();
