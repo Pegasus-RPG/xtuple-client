@@ -147,7 +147,7 @@ static QString currMQL("SELECT curr_id,"
                        "       currConcat(curr_abbr, curr_symbol), curr_abbr"
                        "  FROM curr_symbol"
                        " <? if exists('notBase') ?>WHERE NOT curr_base<? endif ?>"
-                       " ORDER BY curr_abbr;");
+                       " ORDER BY curr_base DESC, curr_abbr;");
 static QString prjMQL("SELECT prj_id, prj_number || '-' || prj_name, prj_number"
                       "  FROM prj"
                       " WHERE true"
