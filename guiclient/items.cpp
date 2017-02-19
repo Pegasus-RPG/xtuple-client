@@ -80,6 +80,7 @@ items::items(QWidget* parent, const char*, Qt::WindowFlags fl)
   list()->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   , true, "item_number" );
   list()->addColumn(tr("Active"),      _ynColumn,   Qt::AlignCenter , true, "item_active" );
   list()->addColumn(tr("Description"), -1,          Qt::AlignLeft   , true, "item_descrip" );
+  list()->addColumn(tr("Description 2"), -1,        Qt::AlignLeft   , false, "item_descrip2" );
   list()->addColumn(tr("Class Code"),  _dateColumn, Qt::AlignLeft , true, "classcode_code");
   list()->addColumn(tr("Type"),        _itemColumn, Qt::AlignLeft , true, "f_item_type");
   list()->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignLeft , true, "uom_name");
