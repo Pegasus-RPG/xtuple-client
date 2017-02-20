@@ -258,7 +258,7 @@ void enterPoReceipt::sPost()
                   "  (recv_order_type = 'PO' AND COALESCE(itemsite_costmethod,'') = 'J' AND poitem_order_type='S') AS issuejobso, "
                   "  COALESCE(pohead_dropship, false) AS dropship, recv_order_type, recv_order_number, "
                   "  roundQty(item_fractional, (recv_qty * orderitem_qty_invuomratio)) AS qty, "
-                  "  isControlledItemsite(itemsite_id) AS controlled "
+                  "  CASE WHEN itemsite_id IS NOT NULL THEN isControlledItemsite(itemsite_id) END AS controlled "
                   " FROM orderitem, recv "
                   "  LEFT OUTER JOIN itemsite ON (recv_itemsite_id=itemsite_id) "
                   "  LEFT OUTER JOIN item ON (itemsite_item_id=item_id) "
@@ -314,19 +314,60 @@ void enterPoReceipt::sPost()
     // If controlled item: create the parent itemlocdist record, call distributeInventory::seriesAdjust
     if (qi.value("controlled").toBool())
     {
+      int itemlocdistId;
       XSqlQuery parentItemlocdist;
       parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, :orderType, "
-                                " :orderNumber, :itemlocSeries);");
-      parentItemlocdist.bindValue(":itemsite_id", qi.value("itemsite_id").toInt());
-      parentItemlocdist.bindValue(":qty", qi.value("qty").toDouble());
+                                " :orderNumber, :itemlocSeries, NULL, :itemlocdistId) AS result;");
       parentItemlocdist.bindValue(":orderType", qi.value("recv_order_type").toString());
       parentItemlocdist.bindValue(":orderNumber", qi.value("recv_order_number").toString());
       parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+
+      // If Transfer Order, create parent itemlocdist for From (transit) itemsite 
+      if (qi.value("recv_order_type").toString() == "TO" && _metrics->boolean("MultiWhs"))
+      {
+        XSqlQuery tohead;
+        tohead.prepare("SELECT f.itemsite_id AS from_itemsite_id "
+                       "FROM toitem "
+                       "  JOIN tohead ON toitem_tohead_id = tohead_id "
+                       "  JOIN itemsite AS f ON toitem_item_id = f.itemsite_item_id " 
+                       "    AND f.itemsite_warehous_id = tohead_trns_warehous_id "
+                       "WHERE toitem_id = :recv_orderitem_id;");
+        tohead.bindValue(":recv_orderitem_id", qi.value("recv_orderitem_id").toInt());
+        tohead.exec();
+        if (tohead.first())
+        {
+          parentItemlocdist.bindValue(":itemsite_id", tohead.value("from_itemsite_id").toInt());
+          parentItemlocdist.bindValue(":qty", qi.value("qty").toDouble() * -1);
+          parentItemlocdist.exec();
+          if (parentItemlocdist.first() && parentItemlocdist.value("result").toInt() > 0)
+          {
+            itemlocdistId = parentItemlocdist.value("result").toInt();
+          }
+          else 
+          {
+            cleanup.exec();
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Record"),
+                                 parentItemlocdist, __FILE__, __LINE__);
+            return;
+          }
+        }
+        else
+        {
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving itemsite For Transfer Order"),
+                             tohead, __FILE__, __LINE__);
+          return; 
+        }
+      }
+
+      if (itemlocdistId > 0)
+        parentItemlocdist.bindValue(":itemlocdistId", itemlocdistId);
+      parentItemlocdist.bindValue(":itemsite_id", qi.value("itemsite_id").toInt());
+      parentItemlocdist.bindValue(":qty", qi.value("qty").toDouble());
       parentItemlocdist.exec();
       if (parentItemlocdist.first())
       {
-        if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
-          QDate(), true) == XDialog::Rejected)
+        if (distributeInventory::SeriesAdjust(itemlocSeries, this, lotnum, expdate, warrdate, true)
+          == XDialog::Rejected)
         {
           cleanup.exec();
           QMessageBox::information( this, tr("Enter Receipts"), tr("Posting Distribution Detail Failed") );

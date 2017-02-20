@@ -867,7 +867,7 @@ void invoice::postInvoice()
   XSqlQuery items;
   items.prepare("SELECT itemsite_id, "
                 " (invcitem_billed * invcitem_qty_invuomratio) AS qty, "
-                " invchead_number "
+                " invchead_invcnumber "
                 "FROM invchead " 
                 " JOIN invcitem ON invcitem_invchead_id = invchead_id "
                 "   AND invcitem_billed <> 0 " 
@@ -888,7 +888,7 @@ void invoice::postInvoice()
                               " :orderNumber, :itemlocSeries);");
     parentItemlocdist.bindValue(":itemsite_id", items.value("itemsite_id").toInt());
     parentItemlocdist.bindValue(":qty", items.value("qty").toDouble());
-    parentItemlocdist.bindValue(":orderNumber", items.value("invchead_number").toString());
+    parentItemlocdist.bindValue(":orderNumber", items.value("invchead_invcnumber").toString());
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
     parentItemlocdist.exec();
     if (parentItemlocdist.first())

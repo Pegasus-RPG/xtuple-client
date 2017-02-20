@@ -107,12 +107,12 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
                         " JOIN ls ON ls_id = lsdetail_ls_id "
                         "WHERE lsdetail_source_number = :docnumber "
                         " AND lsdetail_source_type = :transtype "
-                        " AND lsdetail_itemsite_id = :itemsite "
+                        " AND ls_item_id = :item_id "
                         " AND lsdetail_qtytoassign > 0 "
                         "GROUP BY ls_number;");
       preassign.bindValue(":transtype", createet.value("transtype").toString());
       preassign.bindValue(":docnumber", createet.value("invhist_ordnumber").toString());
-      preassign.bindValue(":itemsite", createet.value("itemsite_id").toInt());
+      preassign.bindValue(":item_id", _item->id());
       preassign.exec();
       if (preassign.first())
       {
@@ -367,7 +367,7 @@ void createLotSerial::sAssign()
                          "FROM itemsite "
                          "  JOIN itemloc ON itemloc_itemsite_id = itemsite_id "
                          "  JOIN ls ON ls_id = itemloc_ls_id "
-                         "WHERE itemsite_id = :itemsite_id "
+                         "WHERE itemsite_item_id = :item_id "
                          "  AND UPPER(ls_number) = UPPER(:lotserial) "
                          "UNION "
                          "SELECT true "
@@ -377,7 +377,7 @@ void createLotSerial::sAssign()
                          "WHERE itemsite_item_id = :item_id "
                          "  AND UPPER(ls_number) = UPPER(:lotserial)"
                          "  AND itemlocdist_source_type = 'D';");
-    createAssign.bindValue(":itemsite_id", _itemsiteid);
+    createAssign.bindValue(":item_id", _item->id());
     createAssign.bindValue(":lotserial", _lotSerial->currentText());
     createAssign.exec();
     if (createAssign.first())
