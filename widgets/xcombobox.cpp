@@ -88,8 +88,10 @@ XComboBoxDescrip::XComboBoxDescrip(XComboBox::XComboBoxTypes pType,
   else if (! pKey.isEmpty())
     params.append(pKey);
 
-  query = MetaSQLQuery(queryStr).toQuery(params, QSqlDatabase(), false);
-  connect(XComboBox::_guiClientInterface, SIGNAL(dbConnectionLost()), this, SLOT(sDbConnectionLost()));
+  if (QSqlDatabase::database().isOpen()) {
+    query = MetaSQLQuery(queryStr).toQuery(params, QSqlDatabase(), false);
+    connect(XComboBox::_guiClientInterface, SIGNAL(dbConnectionLost()), this, SLOT(sDbConnectionLost()));
+  }
   sListen();
 }
 
@@ -538,7 +540,7 @@ XComboBoxPrivate::XComboBoxPrivate(XComboBox *pParent)
                        "SELECT prftcntr_id, prftcntr_number, prftcntr_number"
                        "  FROM prftcntr"
                        " ORDER BY prftcntr_number;", "prftcntr",
-                     _x_metrics->boolean("GLFFProfitCenters")));
+                       _x_metrics && _x_metrics->boolean("GLFFProfitCenters")));
     typeDescrip.insert(XComboBox::ProjectCommentTypes,
                        new XComboBoxDescrip(XComboBox::ProjectCommentTypes,
                        "commentTypes", "MaintainCommentTypes",
@@ -669,7 +671,7 @@ XComboBoxPrivate::XComboBoxPrivate(XComboBox *pParent)
                        "SELECT subaccnt_id, subaccnt_number, subaccnt_number"
                        "  FROM subaccnt"
                        " ORDER BY subaccnt_number;", "subaccnt",
-                     _x_metrics->boolean("GLFFSubaccounts")));
+                       _x_metrics && _x_metrics->boolean("GLFFSubaccounts")));
     typeDescrip.insert(XComboBox::TaxAuths,
                        new XComboBoxDescrip(XComboBox::TaxAuths,
                        "taxAuthorities", "MaintainTaxAuthorities",
