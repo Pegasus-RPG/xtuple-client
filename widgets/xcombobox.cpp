@@ -88,10 +88,11 @@ XComboBoxDescrip::XComboBoxDescrip(XComboBox::XComboBoxTypes pType,
   else if (! pKey.isEmpty())
     params.append(pKey);
 
-  if (QSqlDatabase::database().isOpen()) {
+  if (QSqlDatabase::database().isOpen())
     query = MetaSQLQuery(queryStr).toQuery(params, QSqlDatabase(), false);
+  if (XComboBox::_guiClientInterface)
     connect(XComboBox::_guiClientInterface, SIGNAL(dbConnectionLost()), this, SLOT(sDbConnectionLost()));
-  }
+
   sListen();
 }
 
