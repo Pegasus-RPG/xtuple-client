@@ -184,15 +184,19 @@ void enterPoReturn::sPost()
   }
   else
   {
-    QMessageBox::information(this, tr("Enter Receipt"),
+    QMessageBox::information(this, tr("Enter PO Return"),
                                tr("Failed to Retrieve itemloc_series_seq") );
     return;
   }
+
+  bool containsControlledItem = false;
   
   // Sql from postPoReturns here because itemlocdist 'parent' records need to be created here for each, post #22868
   XSqlQuery controlledItems;
-  controlledItems.prepare("SELECT itemsite_id, SUM(poreject_qty) AS qty, pohead_number "
-                          "FROM pohead JOIN poitem ON (poitem_pohead_id=pohead_id) "
+  controlledItems.prepare("SELECT itemsite_id, pohead_number, "
+                          " SUM(poreject_qty) * poitem_invvenduomratio * -1 AS qty "
+                          "FROM pohead "
+                          " JOIN poitem ON (poitem_pohead_id=pohead_id) "
                           " JOIN poreject ON (poreject_poitem_id=poitem_id AND NOT poreject_posted) "
                           " JOIN itemsite ON (poitem_itemsite_id=itemsite_id) "
                           " LEFT OUTER JOIN recv ON (recv_id=poreject_recv_id) "
@@ -203,31 +207,30 @@ void enterPoReturn::sPost()
   controlledItems.exec();
   while (controlledItems.next())
   {
+    containsControlledItem = true;
     XSqlQuery parentItemlocdist;
-    parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'RP', "
+    parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'PO', "
                               " :poheadNumber, :itemlocSeries) AS result;");
     parentItemlocdist.bindValue(":itemsite_id", controlledItems.value("itemsite_id").toInt());
     parentItemlocdist.bindValue(":qty", controlledItems.value("qty").toDouble());
     parentItemlocdist.bindValue(":poheadNumber", controlledItems.value("pohead_number").toString());
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
     parentItemlocdist.exec();
-    if (parentItemlocdist.first())
-    {
-      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
-        QDate(), true) == XDialog::Rejected)
-      {
-        cleanup.exec();
-        QMessageBox::information( this, tr("Enter Receipts"), tr("Posting Distribution Detail Failed") );
-        return;
-      }
-    }
-    else
+    if (!parentItemlocdist.first() || ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Record"),
+                           parentItemlocdist, __FILE__, __LINE__))
     {
       cleanup.exec();
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Record"),
-                           parentItemlocdist, __FILE__, __LINE__);
       return;
-    }
+    }  
+  }
+
+  // Distribute detail if there is one or more controlled items 
+  if (containsControlledItem && distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+    QDate(), true) == XDialog::Rejected)
+  {
+    cleanup.exec();
+    QMessageBox::information( this, tr("Enter PO Return"), tr("Posting Distribution Detail Failed") );
+    return;
   }
   
   // post the returns
@@ -272,7 +275,6 @@ void enterPoReturn::sPost()
     }
   }
 
-  qDebug() << "enterPoReturn here 5";
   if (_captive)
     close();
   else

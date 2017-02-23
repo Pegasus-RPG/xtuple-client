@@ -258,7 +258,8 @@ void enterPoReceipt::sPost()
                   "  (recv_order_type = 'PO' AND COALESCE(itemsite_costmethod,'') = 'J' AND poitem_order_type='S') AS issuejobso, "
                   "  COALESCE(pohead_dropship, false) AS dropship, recv_order_type, recv_order_number, "
                   "  roundQty(item_fractional, (recv_qty * orderitem_qty_invuomratio)) AS qty, "
-                  "  CASE WHEN itemsite_id IS NOT NULL THEN isControlledItemsite(itemsite_id) END AS controlled "
+                  "  CASE WHEN itemsite_id IS NOT NULL THEN isControlledItemsite(itemsite_id) END AS controlled, "
+                  "  recv_orderitem_id, recv_qty "
                   " FROM orderitem, recv "
                   "  LEFT OUTER JOIN itemsite ON (recv_itemsite_id=itemsite_id) "
                   "  LEFT OUTER JOIN item ON (itemsite_item_id=item_id) "
@@ -311,58 +312,77 @@ void enterPoReceipt::sPost()
       return;
     }
 
-    // If controlled item: create the parent itemlocdist record, call distributeInventory::seriesAdjust
+    int itemlocdistId = -1;
+    XSqlQuery parentItemlocdist;    
+
+    // If Transfer Order, create parent itemlocdist for From (transit) itemsite 
+    if (qi.value("recv_order_type").toString() == "TO" && _metrics->boolean("MultiWhs"))
+    {
+      XSqlQuery tohead;
+      tohead.prepare("SELECT itemsite_id "
+                     "FROM toitem "
+                     "  JOIN tohead ON toitem_tohead_id = tohead_id "
+                     "  JOIN itemsite ON toitem_item_id = itemsite_item_id "
+                     "    AND itemsite_warehous_id = tohead_trns_warehous_id " // from wh
+                     "WHERE toitem_id = :toitem_id "
+                     "  AND warehous_transit=FALSE "
+                     "  AND isControlledItemsite(itemsite_id);");
+      tohead.bindValue(":toitem_id", qi.value("recv_orderitem_id").toInt());
+      tohead.exec();
+      if (tohead.first())
+      {
+        parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, '', '', "
+          ":itemlocSeries, NULL, :itemlocdistId) AS result;");
+        parentItemlocdist.bindValue(":itemsite_id", tohead.value("itemsite_id").toInt());
+        parentItemlocdist.bindValue(":qty", qi.value("recv_qty").toDouble());
+        parentItemlocdist.bindValue(":orderType", qi.value("recv_order_type").toString());
+        parentItemlocdist.bindValue(":orderNumber", qi.value("recv_order_number").toString());
+        parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+        parentItemlocdist.exec();
+        if (parentItemlocdist.first())
+        {
+          // If the "to" itemsite is not controlled, distribute here
+          if (!qi.value("controlled").toBool())
+          {
+            if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+              QDate(), true) == XDialog::Rejected)
+            {
+              cleanup.exec();
+              QMessageBox::information( this, tr("Enter Receipts"),
+                tr("Posting Distribution Detail Failed for 'From' itemsite") );
+              return;
+            }
+          }
+          else 
+            itemlocdistId = parentItemlocdist.value("result").toInt();
+        }
+        else 
+        {
+          cleanup.exec();
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Record for "
+            "'From' itemsite"), parentItemlocdist, __FILE__, __LINE__);
+          return;
+        }
+      }
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving 'From' itemsite"),
+        tohead, __FILE__, __LINE__))
+        return;
+    }
+    
     if (qi.value("controlled").toBool())
     {
-      int itemlocdistId;
-      XSqlQuery parentItemlocdist;
-      parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, :orderType, "
-                                " :orderNumber, :itemlocSeries, NULL, :itemlocdistId) AS result;");
+      parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderNumber, "
+        ":itemlocSeries, NULL, :itemlocdistId) AS result;");
+      parentItemlocdist.bindValue(":itemsite_id", qi.value("itemsite_id").toInt());
       parentItemlocdist.bindValue(":orderType", qi.value("recv_order_type").toString());
       parentItemlocdist.bindValue(":orderNumber", qi.value("recv_order_number").toString());
       parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
-
-      // If Transfer Order, create parent itemlocdist for From (transit) itemsite 
-      if (qi.value("recv_order_type").toString() == "TO" && _metrics->boolean("MultiWhs"))
-      {
-        XSqlQuery tohead;
-        tohead.prepare("SELECT f.itemsite_id AS from_itemsite_id "
-                       "FROM toitem "
-                       "  JOIN tohead ON toitem_tohead_id = tohead_id "
-                       "  JOIN itemsite AS f ON toitem_item_id = f.itemsite_item_id " 
-                       "    AND f.itemsite_warehous_id = tohead_trns_warehous_id "
-                       "WHERE toitem_id = :recv_orderitem_id;");
-        tohead.bindValue(":recv_orderitem_id", qi.value("recv_orderitem_id").toInt());
-        tohead.exec();
-        if (tohead.first())
-        {
-          parentItemlocdist.bindValue(":itemsite_id", tohead.value("from_itemsite_id").toInt());
-          parentItemlocdist.bindValue(":qty", qi.value("qty").toDouble() * -1);
-          parentItemlocdist.exec();
-          if (parentItemlocdist.first() && parentItemlocdist.value("result").toInt() > 0)
-          {
-            itemlocdistId = parentItemlocdist.value("result").toInt();
-          }
-          else 
-          {
-            cleanup.exec();
-            ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Record"),
-                                 parentItemlocdist, __FILE__, __LINE__);
-            return;
-          }
-        }
-        else
-        {
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving itemsite For Transfer Order"),
-                             tohead, __FILE__, __LINE__);
-          return; 
-        }
-      }
-
       if (itemlocdistId > 0)
         parentItemlocdist.bindValue(":itemlocdistId", itemlocdistId);
-      parentItemlocdist.bindValue(":itemsite_id", qi.value("itemsite_id").toInt());
-      parentItemlocdist.bindValue(":qty", qi.value("qty").toDouble());
+      if (qi.value("recv_order_type").toString() == "TO")
+        parentItemlocdist.bindValue(":qty", qi.value("recv_qty").toDouble());
+      else
+        parentItemlocdist.bindValue(":qty", qi.value("qty").toDouble());
       parentItemlocdist.exec();
       if (parentItemlocdist.first())
       {
