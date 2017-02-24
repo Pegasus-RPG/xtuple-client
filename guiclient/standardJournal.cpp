@@ -37,6 +37,9 @@ standardJournal::standardJournal(QWidget* parent, const char* name, bool modal, 
   _stdjrnlitem->addColumn(tr("Debit"),   _priceColumn, Qt::AlignRight,  true,  "debit" );
   _stdjrnlitem->addColumn(tr("Credit"),  _priceColumn, Qt::AlignRight,  true,  "credit" );
 
+  _credits->setPrecision(omfgThis->moneyVal());
+  _debits->setPrecision(omfgThis->moneyVal());
+
 }
 
 standardJournal::~standardJournal()
