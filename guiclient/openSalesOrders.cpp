@@ -37,6 +37,7 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char*, Qt::WindowFlags f
   setNewVisible(true);
   setQueryOnStartEnabled(true);
   setAutoUpdateEnabled(true);
+  setSearchVisible(true);
 
   _custid = -1;
   optionsWidget()->hide();
