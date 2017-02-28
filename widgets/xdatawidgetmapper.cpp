@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -9,6 +9,8 @@
  */
 
 #include "xdatawidgetmapper.h"
+
+#include <QtScript>
 
 XDataWidgetMapper::XDataWidgetMapper(QObject *parent) : 
   QDataWidgetMapper(parent)
@@ -76,9 +78,103 @@ void XDataWidgetMapper::removeDefault(QWidget *widget)
     }
 }
 
+// script api //////////////////////////////////////////////////////////////////
 
+QScriptValue constructXDataWidgetMapper(QScriptContext *context, QScriptEngine *engine)
+{
+  QObject *obj = qscriptvalue_cast<QObject*>(context->argument(0));
+  XDataWidgetMapper *mapper = new XDataWidgetMapper(obj);
+  return engine->toScriptValue(mapper);
+}
 
+void setupXDataWidgetMapper(QScriptEngine *engine)
+{
+  QScriptValue constructor = engine->newFunction(constructXDataWidgetMapper);
+  engine->globalObject().setProperty("XDataWidgetMapper", constructor,
+                                     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+}
 
+void XDataWidgetMapper::clearMapping()
+{
+  QDataWidgetMapper::clearMapping();
+}
 
+int XDataWidgetMapper::currentIndex() const
+{
+  return QDataWidgetMapper::currentIndex();
+}
 
+QAbstractItemDelegate *XDataWidgetMapper::itemDelegate() const
+{
+  return QDataWidgetMapper::itemDelegate();
+}
 
+QByteArray XDataWidgetMapper::mappedPropertyName(QWidget *widget) const
+{
+  return QDataWidgetMapper::mappedPropertyName(widget);
+}
+
+int XDataWidgetMapper::mappedSection(QWidget *widget) const
+{
+  return QDataWidgetMapper::mappedSection(widget);
+}
+
+QWidget *XDataWidgetMapper::mappedWidgetAt(int section) const
+{
+  return QDataWidgetMapper::mappedWidgetAt(section);
+}
+
+QAbstractItemModel *XDataWidgetMapper::model() const
+{
+  return QDataWidgetMapper::model();
+}
+
+int XDataWidgetMapper::orientation() const
+{
+  return QDataWidgetMapper::orientation();
+}
+
+void XDataWidgetMapper::removeMapping(QWidget *widget)
+{
+  QDataWidgetMapper::removeMapping(widget);
+}
+
+QModelIndex XDataWidgetMapper::rootIndex() const
+{
+  return QDataWidgetMapper::rootIndex();
+}
+
+void XDataWidgetMapper::setItemDelegate(QAbstractItemDelegate *delegate)
+{
+  QDataWidgetMapper::setItemDelegate(delegate);
+}
+
+void XDataWidgetMapper::setModel(QAbstractItemModel *model)
+{
+  QDataWidgetMapper::setModel(model);
+}
+
+void XDataWidgetMapper::setOrientation(Qt::Orientation orientation)
+{
+  QDataWidgetMapper::setOrientation(orientation);
+}
+
+void XDataWidgetMapper::setRootIndex(const QModelIndex &index)
+{
+  QDataWidgetMapper::setRootIndex(index);
+}
+
+void XDataWidgetMapper::setSubmitPolicy(QDataWidgetMapper::SubmitPolicy policy)
+{
+  QDataWidgetMapper::setSubmitPolicy(policy);
+}
+
+int XDataWidgetMapper::submitPolicy() const
+{
+  return QDataWidgetMapper::submitPolicy();
+}
+
+QString XDataWidgetMapper::toString() const
+{
+  return QString("[XDataWidgetMapper(%1)]").arg(objectName());
+}

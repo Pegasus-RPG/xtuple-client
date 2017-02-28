@@ -1,21 +1,22 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include <QDebug>
+#include <QDesktopServices>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QVBoxLayout>
 #include <QUrl>
-#include <QDesktopServices>
-#include <QDebug>
+#include <QVBoxLayout>
+#include <QtScript>
 
 #include <metasql.h>
 
@@ -230,7 +231,6 @@ void ContactWidget::init()
     setFocusProxy(_honorific);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setLabel("");
-    _limits = 0;
     silentSetId(-1);
     setOwnerVisible(false);
     _mode = Edit;
@@ -1452,4 +1452,18 @@ bool ContactWidget::eventFilter(QObject *obj, QEvent *event)
         break;
     }
     return QObject::eventFilter(obj, event);
+}
+
+// script api //////////////////////////////////////////////////////////////////
+
+void setupContactWidget(QScriptEngine *engine)
+{
+  QScriptValue            widget = engine->newObject();
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+
+  widget.setProperty("Edit",   QScriptValue(engine, ContactWidget::Edit),   ro);
+  widget.setProperty("View",   QScriptValue(engine, ContactWidget::View),   ro);
+  widget.setProperty("Select", QScriptValue(engine, ContactWidget::Select), ro);
+
+  engine->globalObject().setProperty("ContactWidget", widget, ro);
 }

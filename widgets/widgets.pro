@@ -203,6 +203,7 @@ SOURCES += widgets.cpp \
     xlistbox.cpp \
     xspinbox.cpp \
     xsqltablemodel.cpp \
+    xt.cpp             \
     xtableview.cpp \
     xtextedit.cpp \
     xtreeview.cpp \
@@ -300,6 +301,7 @@ HEADERS += widgets.h \
     xlistbox.h \
     xspinbox.h \
     xsqltablemodel.h \
+    xt.h             \
     xtableview.h \
     xtextedit.h \
     xtreeview.h \

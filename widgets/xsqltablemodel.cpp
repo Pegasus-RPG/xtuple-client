@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -10,9 +10,11 @@
 
 #include <QDate>
 #include <QSqlDriver>
+#include <QSqlError>
 #include <QSqlField>
 #include <QSqlIndex>
 #include <QSqlRelation>
+#include <QtScript>
 
 #include "format.h"
 #include "xsqlquery.h"
@@ -564,4 +566,316 @@ bool XSqlTableModel::save()
 
   trans.exec("COMMIT");
   return true;
+}
+
+int XSqlTableModel::nodeCount() const
+{
+  return _children.count();
+}
+
+void XSqlTableModel::appendChild(XSqlTableNode *child)
+{
+  _children.append(child);
+}
+
+void XSqlTableModel::removeChild(int index)
+{
+  _children.removeAt(index);
+}
+
+QList<XSqlTableNode *>XSqlTableModel::children()
+{
+  return _children;
+}
+
+XSqlTableNode *XSqlTableModel::child(int index)
+{
+  return _children.at(index);
+}
+
+void XSqlTableModel::set(ParameterList params)
+{
+  _params = params;
+}
+
+ParameterList XSqlTableModel::parameters()
+{
+  return _params;
+}
+
+// script api //////////////////////////////////////////////////////////////////
+
+QScriptValue constructXSqlTableModel(QScriptContext * context,
+                                    QScriptEngine  *engine)
+{
+  XSqlTableModel *obj = 0;
+  if (context->argumentCount() == 1)
+    obj = new XSqlTableModel(context->argument(1).toQObject());
+  else
+    obj = new XSqlTableModel();
+  return engine->toScriptValue(obj);
+}
+
+void setupXSqlTableModel(QScriptEngine *engine)
+{
+  QScriptValue constructor = engine->newFunction(constructXSqlTableModel);
+  engine->globalObject().setProperty("XSqlTableModel",  constructor,
+                                     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+}
+
+QModelIndex XSqlTableModel::buddy(const QModelIndex &index) const
+{
+  return QSqlTableModel::buddy(index);
+}
+
+bool XSqlTableModel::canFetchMore(const QModelIndex &parent) const
+{
+  return QSqlTableModel::canFetchMore(parent);
+}
+
+int XSqlTableModel::columnCount(const QModelIndex &parent) const
+{
+  return QSqlTableModel::columnCount(parent);
+}
+
+QSqlDatabase XSqlTableModel::database() const
+{
+  return QSqlTableModel::database();
+}
+
+bool XSqlTableModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+{
+  return QSqlTableModel::dropMimeData(data, action, row, column, parent);
+}
+
+QSqlTableModel::EditStrategy XSqlTableModel::editStrategy() const
+{
+  return QSqlTableModel::editStrategy();
+}
+
+void XSqlTableModel::fetchMore(const QModelIndex &parent)
+{
+  QSqlTableModel::fetchMore(parent);
+}
+
+int XSqlTableModel::fieldIndex(const QString &fieldName) const
+{
+  return QSqlTableModel::fieldIndex(fieldName);
+}
+
+QString XSqlTableModel::filter() const
+{
+  return QSqlTableModel::filter();
+}
+
+Qt::ItemFlags XSqlTableModel::flags(const QModelIndex &index) const
+{
+  return XSqlTableModel::flags(index);
+}
+
+bool XSqlTableModel::hasIndex(int row, int column, const QModelIndex &parent) const
+{
+  return XSqlTableModel::hasIndex(row, column, parent);
+}
+
+QVariant XSqlTableModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+  return QSqlTableModel::headerData(section, orientation, role);
+}
+
+QModelIndex XSqlTableModel::index(int row, int column, const QModelIndex &parent) const
+{
+  return QSqlTableModel::index(row, column, parent);
+}
+
+bool XSqlTableModel::insertColumn(int column, const QModelIndex &parent)
+{
+  return QSqlTableModel::insertColumn(column, parent);
+}
+
+bool XSqlTableModel::insertColumns(int column, int count, const QModelIndex &parent)
+{
+  return QSqlTableModel::insertColumns(column, count, parent);
+}
+
+bool XSqlTableModel::insertRecord(int row, const QSqlRecord &record)
+{
+  return QSqlTableModel::insertRecord(row, record);
+}
+
+bool XSqlTableModel::insertRow(int row, const QModelIndex &parent)
+{
+  return QSqlTableModel::insertRow(row, parent);
+}
+
+bool XSqlTableModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+  return QSqlTableModel::insertRows(row, count, parent);
+}
+
+bool XSqlTableModel::isDirty() const
+{
+  return QSqlTableModel::isDirty();
+}
+
+bool XSqlTableModel::isDirty(const QModelIndex &index) const
+{
+  return QSqlTableModel::isDirty(index);
+}
+
+QMap<int, QVariant> XSqlTableModel::itemData(const QModelIndex &index) const
+{
+  return QSqlTableModel::itemData(index);
+}
+
+QSqlError XSqlTableModel::lastError() const
+{
+  return QSqlTableModel::lastError();
+}
+
+QModelIndexList XSqlTableModel::match(const QModelIndex &start, int role, const QVariant &value, int hits, Qt::MatchFlags flags) const
+{
+  return QSqlTableModel::match(start, role, value, hits, flags);
+}
+
+QMimeData *XSqlTableModel::mimeData(const QModelIndexList &indexes) const
+{
+  return QSqlTableModel::mimeData(indexes);
+}
+
+QStringList XSqlTableModel::mimeTypes() const
+{
+  return QSqlTableModel::mimeTypes();
+}
+
+QSqlIndex XSqlTableModel::primaryKey() const
+{
+  return QSqlTableModel::primaryKey();
+}
+
+QSqlQuery XSqlTableModel::query() const
+{
+  return QSqlTableModel::query();
+}
+
+QSqlRecord XSqlTableModel::record() const
+{
+  return QSqlTableModel::record();
+}
+
+QSqlRecord XSqlTableModel::record(int row) const
+{
+  return QSqlTableModel::record(row);
+}
+
+QSqlRelation XSqlTableModel::relation(int column) const
+{
+  return QSqlRelationalTableModel::relation(column);
+}
+
+QSqlTableModel *XSqlTableModel::relationModel(int column) const
+{
+  return QSqlRelationalTableModel::relationModel(column);
+}
+
+bool XSqlTableModel::removeColumn(int column, const QModelIndex &parent)
+{
+  return QSqlTableModel::removeColumn(column, parent);
+}
+
+bool XSqlTableModel::removeColumns(int column, int count, const QModelIndex &parent)
+{
+  return QSqlTableModel::removeColumns(column, count, parent);
+}
+
+bool XSqlTableModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+  return QSqlTableModel::removeRows(row, count, parent);
+}
+
+void XSqlTableModel::revertRow(int row)
+{
+  QSqlTableModel::revertRow(row);
+}
+
+int XSqlTableModel::rowCount(const QModelIndex &parent) const
+{
+  return QSqlTableModel::rowCount(parent);
+}
+
+void XSqlTableModel::setEditStrategy(QSqlTableModel::EditStrategy strategy)
+{
+  QSqlTableModel::setEditStrategy(strategy);
+}
+
+void XSqlTableModel::setFilter(const QString &filter)
+{
+  QSqlTableModel::setFilter(filter);
+}
+
+bool XSqlTableModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role)
+{
+  return QSqlTableModel::setHeaderData(section, orientation, value, role);
+}
+
+bool XSqlTableModel::setItemData(const QModelIndex &index, const QMap<int, QVariant> &roles)
+{
+  return QSqlTableModel::setItemData(index, roles);
+}
+
+bool XSqlTableModel::setRecord(int row, const QSqlRecord &record)
+{
+  return QSqlTableModel::setRecord(row, record);
+}
+
+void XSqlTableModel::setRelation(int column, const QSqlRelation &relation)
+{
+  QSqlRelationalTableModel::setRelation(column, relation);
+}
+
+void XSqlTableModel::setSort(int column, Qt::SortOrder order)
+{
+  QSqlTableModel::setSort(column, order);
+}
+
+void XSqlTableModel::setTable(const QString &tableName, int keyColumns)
+{
+  setTable(tableName);
+  setKeys(keyColumns);
+}
+
+QModelIndex XSqlTableModel::sibling(int row, int column, const QModelIndex &index) const
+{
+  return QSqlTableModel::sibling(row, column, index);
+}
+
+void XSqlTableModel::sort(int column, Qt::SortOrder order)
+{
+  QSqlTableModel::sort(column, order);
+}
+
+QSize XSqlTableModel::span(const QModelIndex &index) const
+{
+  return QSqlTableModel::span(index);
+}
+
+Qt::DropActions XSqlTableModel::supportedDragActions() const
+{
+  return QSqlTableModel::supportedDragActions();
+}
+
+Qt::DropActions XSqlTableModel::supportedDropActions() const
+{
+  return QSqlTableModel::supportedDropActions();
+}
+
+QString XSqlTableModel::tableName() const
+{
+  return QSqlTableModel::tableName();
+}
+
+QString XSqlTableModel::toString() const
+{
+  return QString("[XSqlTableModel(table %1, query %2)]")
+                    .arg(tableName(), query().lastQuery().left(80));
 }
