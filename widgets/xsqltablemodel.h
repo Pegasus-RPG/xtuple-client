@@ -18,6 +18,7 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlRelationalTableModel>
+#include <QStringList>
 
 #include "widgets.h"
 

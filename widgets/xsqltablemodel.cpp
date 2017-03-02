@@ -715,7 +715,11 @@ bool XSqlTableModel::insertRows(int row, int count, const QModelIndex &parent)
 
 bool XSqlTableModel::isDirty() const
 {
+#if QT_VERSION >= 0x050000
   return QSqlTableModel::isDirty();
+#else
+  return true;
+#endif
 }
 
 bool XSqlTableModel::isDirty(const QModelIndex &index) const
