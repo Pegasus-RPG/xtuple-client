@@ -322,6 +322,10 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _itemsrc = -1;
   _taxzoneid   = -1;
   _initialMode = -1;
+  _itemsiteLastItemid = -1;
+  _itemsiteLastWarehousid = -1;
+  _itemsubsLastItemid = -1;
+  _itemsubsLastWarehousid = -1;
 
   sPriceGroup();
 
@@ -1088,7 +1092,7 @@ void salesOrderItem::sSave(bool pPartial)
                "  coitem_listprice, coitem_order_type, coitem_order_id,"
                "  coitem_custpn, coitem_memo, coitem_substitute_item_id,"
                "  coitem_prcost, coitem_taxtype_id, coitem_warranty,"
-               "  coitem_cos_accnt_id, coitem_rev_accnt_id) "
+               "  coitem_cos_accnt_id, coitem_rev_accnt_id, coitem_dropship) "
                "  SELECT :soitem_id, :soitem_sohead_id, :soitem_linenumber, itemsite_id,"
                "       'O', :soitem_scheddate, :soitem_promdate,"
                "       :soitem_qtyord, :qty_uom_id, :qty_invuomratio, 0, 0,"
@@ -1097,7 +1101,7 @@ void salesOrderItem::sSave(bool pPartial)
                "       :soitem_listprice, :soitem_order_type, :soitem_order_id,"
                "       :soitem_custpn, :soitem_memo, :soitem_substitute_item_id,"
                "       :soitem_prcost, :soitem_taxtype_id, :soitem_warranty, "
-               "       :soitem_cos_accnt_id, :soitem_rev_accnt_id "
+               "       :soitem_cos_accnt_id, :soitem_rev_accnt_id, :soitem_dropship "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -1130,15 +1134,28 @@ void salesOrderItem::sSave(bool pPartial)
     if (_altRevAccnt->isValid())
       salesSave.bindValue(":soitem_rev_accnt_id", _altRevAccnt->id());
     salesSave.bindValue(":soitem_warranty",QVariant(_warranty->isChecked()));
-// setting supply order info will cause trigger to create order
-//    salesSave.bindValue(":soitem_order_type", _supplyOrderType);
-//    salesSave.bindValue(":soitem_order_id", _supplyOrderId);
+    salesSave.bindValue(":soitem_order_type", _supplyOrderType);
+    salesSave.bindValue(":soitem_order_id", _supplyOrderId);
+    salesSave.bindValue(":soitem_dropship", _supplyDropShip->isChecked());
     salesSave.exec();
     if (salesSave.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Item Information"),
                            salesSave, __FILE__, __LINE__);
+      return;
+    }
+
+    salesSave.prepare("SELECT coitem_order_id "
+                      "FROM coitem "
+                      "WHERE coitem_id=:soitem_id;");
+    salesSave.bindValue(":soitem_id", _soitemid);
+    salesSave.exec();
+    if (salesSave.first())
+      _supplyOrderId = salesSave.value("coitem_order_id").toInt();
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Item Information"),
+                                  salesSave, __FILE__, __LINE__))
+    {
       return;
     }
   }
@@ -1169,7 +1186,8 @@ void salesOrderItem::sSave(bool pPartial)
                       "    coitem_cos_accnt_id=:soitem_cos_accnt_id, "
                       "    coitem_rev_accnt_id=:soitem_rev_accnt_id, "
                       "    coitem_warranty=:soitem_warranty, "
-                      "    coitem_custpn=:custpn "
+                      "    coitem_custpn=:custpn, "
+                      "    coitem_dropship=:soitem_dropship "
                       "WHERE (coitem_id=:soitem_id);" );
     salesSave.bindValue(":item_id", _item->id());
     salesSave.bindValue(":warehous_id", _warehouse->id());
@@ -1202,6 +1220,7 @@ void salesOrderItem::sSave(bool pPartial)
       salesSave.bindValue(":soitem_rev_accnt_id", _altRevAccnt->id());
     salesSave.bindValue(":soitem_warranty",QVariant(_warranty->isChecked()));
     salesSave.bindValue(":custpn", _customerPN->text());
+    salesSave.bindValue(":soitem_dropship", _supplyDropShip->isChecked());
 
     salesSave.exec();
     if (salesSave.lastError().type() != QSqlError::NoError)
@@ -1567,6 +1586,11 @@ void salesOrderItem::sPopulateItemsiteInfo()
 {
   if (_item->isValid() && _warehouse->isValid())
   {
+    if (_item->id() == _itemsiteLastItemid && _warehouse->id() == _itemsiteLastWarehousid)
+      return;
+    _itemsiteLastItemid = _item->id();
+    _itemsiteLastWarehousid = _warehouse->id();
+
     XSqlQuery itemsite;
     itemsite.prepare("SELECT itemsite_leadtime, itemsite_costmethod,"
                      "       itemsite_createsopo, itemsite_createsopr,"
@@ -2093,7 +2117,6 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       _taxtype->setId(salesPopulateItemInfo.value("taxtype_id").toInt());
 
       sFindSellingWarehouseItemsites(_item->id());
-      sPopulateItemsiteInfo();
 //      sCalculateDiscountPrcnt();
 
     }
@@ -2422,6 +2445,11 @@ void salesOrderItem::sPopulateItemSubs(int pItemid)
 {
   if (_item->isValid() && _warehouse->isValid())
   {
+    if (_item->id() == _itemsubsLastItemid && _warehouse->id() == _itemsubsLastWarehousid)
+      return;
+    _itemsubsLastItemid = _item->id();
+    _itemsubsLastWarehousid = _warehouse->id();
+
     XSqlQuery subq;
     MetaSQLQuery mql = mqlLoad("substituteAvailability", "detail");
     ParameterList params;
@@ -2616,7 +2644,7 @@ void salesOrderItem::sHandleSupplyOrder()
   XSqlQuery ordq;
   if (_createSupplyOrder->isChecked() && ISORDER(_mode))
   { // createSupplyOrder is checked
-    
+
     double valqty = 0.0;
     ordq.prepare( "SELECT validateOrderQty(itemsite_id, :qty, true) AS qty "
                   "FROM itemsite "
@@ -2624,7 +2652,7 @@ void salesOrderItem::sHandleSupplyOrder()
                   " AND (itemsite_warehous_id=:warehous_id));" );
     ordq.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
     ordq.bindValue(":item_id", _item->id());
-    ordq.bindValue(":warehous_id", (_item->itemType() == "M") ? _supplyWarehouse->id() : _warehouse->id());
+    ordq.bindValue(":warehous_id", _warehouse->id());
     ordq.exec();
     if (ordq.first())
       valqty = ordq.value("qty").toDouble();
@@ -2633,7 +2661,7 @@ void salesOrderItem::sHandleSupplyOrder()
     {
       return;
     }
-      
+
     if (_supplyOrderId == -1)
     { // supply order does not exist
       // first save the sales order item
@@ -2645,44 +2673,19 @@ void salesOrderItem::sHandleSupplyOrder()
       }
       
       // check _supplyOrderType to determine type of order
-      if (_supplyOrderType == "W")
+      if (_supplyOrderType == "W" && (_supplyOrderId > 0) && _item->isConfigured())
       {
-        ordq.prepare( "SELECT createWo(:orderNumber, itemsite_id, :qty, itemsite_leadtime, :dueDate,"
-                     ":comments, :parent_type, :parent_id ) AS result, itemsite_id "
-                     "FROM itemsite "
-                     "WHERE ( (itemsite_item_id=:item_id)"
-                     " AND (itemsite_warehous_id=:warehous_id) );" );
-        ordq.bindValue(":orderNumber", _orderNumber->text().toInt());
-        ordq.bindValue(":qty", valqty);
-        ordq.bindValue(":dueDate", _scheduledDate->date());
-        ordq.bindValue(":comments", _custName + "\n" + _notes->toPlainText());
-        ordq.bindValue(":item_id", _item->id());
-        ordq.bindValue(":warehous_id", _supplyWarehouse->id());
-        ordq.bindValue(":parent_type", QString("S"));
-        ordq.bindValue(":parent_id", _soitemid);
-        ordq.exec();
-        if (ordq.first())
-        {
-          int _woid = ordq.value("result").toInt();
-          if ((_woid > 0) && _item->isConfigured())
-          {
-            XSqlQuery implodeq;
-            implodeq.prepare( "SELECT implodeWo(:wo_id, true) AS result;" );
-            implodeq.bindValue(":wo_id", _woid);
-            implodeq.exec();
-          }
-        }
-        else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
-                                      ordq, __FILE__, __LINE__))
-        {
-          return;
-        }
+        XSqlQuery implodeq;
+        implodeq.prepare( "SELECT implodeWo(:wo_id, true) AS result;" );
+        implodeq.bindValue(":wo_id", _supplyOrderId);
+        implodeq.exec();
       }
-      else if (_supplyOrderType == "P")
+
+      if (_supplyOrderId == -1)
       {
         int   itemsrcid  = _itemsrc;
         int   poheadid   = -1;
-        
+
         if (itemsrcid==-1)
         {
           ordq.prepare("SELECT itemsrc_id FROM itemsrc "
@@ -2767,45 +2770,33 @@ void salesOrderItem::sHandleSupplyOrder()
           ordq.bindValue(":price", _supplyOverridePrice->localValue());
         ordq.bindValue(":pohead_id", poheadid);
         ordq.exec();
-      }
-      else if (_supplyOrderType == "R")
-      {
-        ordq.prepare("SELECT createPr(:orderNumber, 'S', :soitem_id) AS result;");
-        ordq.bindValue(":orderNumber", _orderNumber->text().toInt());
-        ordq.bindValue(":soitem_id", _soitemid);
-        ordq.exec();
-      }
-      
-      if (ordq.first())
-      {
-        _supplyOrderId = ordq.value("result").toInt();
-        if (_supplyOrderId < 0)
+        if (ordq.first())
+          _supplyOrderId = ordq.value("result").toInt();
+        else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating Purchase Order"),
+                                      ordq, __FILE__, __LINE__))
         {
-          QString procname;
-          if (_supplyOrderType == "W")
-            procname = "createWo";
-          else if (_supplyOrderType == "R")
-            procname = "createPr";
-          else if (_supplyOrderType == "P")
-            procname = "createPurchaseToSale";
-          else
-            procname = "unnamed stored procedure";
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Database Information"),
-                               storedProcErrorLookup(procname, _supplyOrderId),
-                               __FILE__, __LINE__);
           return;
         }
-        // save the sales order item again to capture the supply order id
-        sSave(true);
-        
+
+        ordq.prepare("UPDATE coitem "
+                     "SET coitem_order_id=:soitem_order_id "
+                     "WHERE coitem_id=:soitem_id;");
+        ordq.bindValue(":soitem_order_id", _supplyOrderId);
+        ordq.bindValue(":soitem_id", _soitemid);
+        ordq.exec();
+        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating Sales Order"),
+                                      ordq, __FILE__, __LINE__))
+        {
+          return;
+        }
+
         ordq.prepare("INSERT INTO charass"
                      "      (charass_target_type, charass_target_id,"
                      "       charass_char_id, charass_value) "
-                     "SELECT :ordertype, :orderid, charass_char_id, charass_value"
+                     "SELECT 'P', :orderid, charass_char_id, charass_value"
                      "  FROM charass"
                      " WHERE ((charass_target_type='SI')"
                      "   AND  (charass_target_id=:soitem_id));");
-        ordq.bindValue(":ordertype", _supplyOrderType);
         ordq.bindValue(":orderid", _supplyOrderId);
         ordq.bindValue(":soitem_id", _soitemid);
         ordq.exec();
@@ -2814,11 +2805,6 @@ void salesOrderItem::sHandleSupplyOrder()
         {
           return;
         }
-      }
-      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Sales Order Information"),
-                                    ordq, __FILE__, __LINE__))
-      {
-        return;
       }
     }  // end supply order does not exist
     else
@@ -4058,7 +4044,8 @@ void salesOrderItem::populate()
           "       coitem_taxtype_id,"
           "       coitem_cos_accnt_id, coitem_rev_accnt_id, "
           "       coitem_warranty, coitem_qtyreserved, locale_qty_scale, "
-          "       cohead_number AS ordnumber "
+          "       cohead_number AS ordnumber, "
+          "       coitem_dropship AS dropship "
           "FROM coitem, whsinfo, itemsite, item, uom, cohead, locale "
           "LEFT OUTER JOIN usr ON (usr_username = getEffectiveXtUser()) "
           "WHERE ( (coitem_itemsite_id=itemsite_id)"
@@ -4092,7 +4079,7 @@ void salesOrderItem::populate()
             "       quitem_promdate AS promdate,"
             "       -1 AS coitem_substitute_item_id, quitem_prcost AS coitem_prcost,"
             "       0.0 AS qtyatshipping, 0.0 AS kitatshipping,"
-            "       quitem_taxtype_id AS coitem_taxtype_id, quitem_dropship, quitem_itemsrc_id"
+            "       quitem_taxtype_id AS coitem_taxtype_id, quitem_dropship AS dropship, quitem_itemsrc_id"
             "       locale_qty_scale, quhead_number AS ordnumber "
             "  FROM item, uom, quhead, locale "
             "    LEFT OUTER JOIN usr ON (usr_username = getEffectiveXtUser()), quitem "
@@ -4167,10 +4154,11 @@ void salesOrderItem::populate()
 
     _customerPN->setText(item.value("coitem_custpn").toString());
 
+    if (!item.value("dropship").isNull())
+      _supplyDropShip->setChecked(item.value("dropship").toBool());
+
     if (ISQUOTE(_mode))
     {
-      if (!item.value("quitem_dropship").isNull())
-        _supplyDropShip->setChecked(item.value("quitem_dropship").toBool());
       if (!item.value("quitem_itemsrc_id").isNull())
         _itemsrc = item.value("quitem_itemsrc_id").toInt();
       else
