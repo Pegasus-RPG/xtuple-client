@@ -297,6 +297,7 @@ class XTUPLEWIDGETS_EXPORT ItemCluster : public VirtualCluster
     QString       _default;
 };
 
+Q_DECLARE_METATYPE(ItemLineEdit*)
 void setupItemLineEdit(QScriptEngine *engine);
 
 #endif
