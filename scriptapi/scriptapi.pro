@@ -152,7 +152,7 @@ HEADERS += setupscriptapi.h \
     webchanneltransport.h \
     xsqlqueryproto.h \
     xvariantsetup.h \
-    xwebsync.h
+    xwebsync.h                    \
     xwebsync_p.h \
 
 SOURCES += setupscriptapi.cpp \
