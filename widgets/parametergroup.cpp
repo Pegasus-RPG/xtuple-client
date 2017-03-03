@@ -220,12 +220,12 @@ void ParameterGroup::setType(enum ParameterGroupTypes pType)
     case User:
       _all->setText(QObject::tr("All User Accounts"));
       _items->setType(XComboBox::Users);
-	  break;
+      break;
 
     case ActiveUser:
       _all->setText(QObject::tr("All User Accounts"));
       _items->setType(XComboBox::ActiveUsers);
-	  break;
+      break;
 
     case OpportunitySource:
       _all->setText(QObject::tr("All Opportunity Sources"));
@@ -497,27 +497,50 @@ void ParameterGroup::setSelected(const QString &p)
 }
 
 // script api //////////////////////////////////////////////////////////////////
+QScriptValue ParameterGroupStatesToScriptValue(QScriptEngine *engine, ParameterGroup::ParameterGroupStates const &item)
+{
+  return QScriptValue(engine, (int)item);
+}
+
+void ParameterGroupStatesFromScriptValue(const QScriptValue &obj, ParameterGroup::ParameterGroupStates &item)
+{
+  item = (ParameterGroup::ParameterGroupStates)(obj.toInt32());
+}
+
+QScriptValue ParameterGroupTypesToScriptValue(QScriptEngine *engine, ParameterGroup::ParameterGroupTypes const &item)
+{
+  return QScriptValue(engine, (int)item);
+}
+
+void ParameterGroupTypesFromScriptValue(const QScriptValue &obj, ParameterGroup::ParameterGroupTypes &item)
+{
+  item = (ParameterGroup::ParameterGroupTypes)(obj.toInt32());
+}
 
 void setupParameterGroup(QScriptEngine *engine)
 {
   QScriptValue widget = engine->newObject();
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
-  widget.setProperty("AdhocGroup",     QScriptValue(engine, ParameterGroup::AdhocGroup),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("PlannerCode",    QScriptValue(engine, ParameterGroup::PlannerCode),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ProductCategory",QScriptValue(engine, ParameterGroup::ProductCategory),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ClassCode",      QScriptValue(engine, ParameterGroup::ClassCode),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ItemGroup",      QScriptValue(engine, ParameterGroup::ItemGroup),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("CostCategory",   QScriptValue(engine, ParameterGroup::CostCategory),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("CustomerType",   QScriptValue(engine, ParameterGroup::CustomerType),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("CustomerGroup",  QScriptValue(engine, ParameterGroup::CustomerGroup),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("CurrencyNotBase",QScriptValue(engine, ParameterGroup::CurrencyNotBase),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Currency",       QScriptValue(engine, ParameterGroup::Currency),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("WorkCenter",     QScriptValue(engine, ParameterGroup::WorkCenter),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("User",	       QScriptValue(engine, ParameterGroup::User),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  qScriptRegisterMetaType(engine, ParameterGroupStatesToScriptValue, ParameterGroupStatesFromScriptValue);
+  qScriptRegisterMetaType(engine, ParameterGroupTypesToScriptValue,  ParameterGroupTypesFromScriptValue);
 
-  widget.setProperty("All",	QScriptValue(engine, ParameterGroup::All),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Selected",QScriptValue(engine, ParameterGroup::Selected),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Pattern",	QScriptValue(engine, ParameterGroup::Pattern), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("AdhocGroup",      QScriptValue(engine, ParameterGroup::AdhocGroup),      ro);
+  widget.setProperty("PlannerCode",     QScriptValue(engine, ParameterGroup::PlannerCode),     ro);
+  widget.setProperty("ProductCategory", QScriptValue(engine, ParameterGroup::ProductCategory), ro);
+  widget.setProperty("ClassCode",       QScriptValue(engine, ParameterGroup::ClassCode),       ro);
+  widget.setProperty("ItemGroup",       QScriptValue(engine, ParameterGroup::ItemGroup),       ro);
+  widget.setProperty("CostCategory",    QScriptValue(engine, ParameterGroup::CostCategory),    ro);
+  widget.setProperty("CustomerType",    QScriptValue(engine, ParameterGroup::CustomerType),    ro);
+  widget.setProperty("CustomerGroup",   QScriptValue(engine, ParameterGroup::CustomerGroup),   ro);
+  widget.setProperty("CurrencyNotBase", QScriptValue(engine, ParameterGroup::CurrencyNotBase), ro);
+  widget.setProperty("Currency",        QScriptValue(engine, ParameterGroup::Currency),        ro);
+  widget.setProperty("WorkCenter",      QScriptValue(engine, ParameterGroup::WorkCenter),      ro);
+  widget.setProperty("User",            QScriptValue(engine, ParameterGroup::User),            ro);
 
-  engine->globalObject().setProperty("ParameterGroup", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("All",      QScriptValue(engine, ParameterGroup::All),      ro);
+  widget.setProperty("Selected", QScriptValue(engine, ParameterGroup::Selected), ro);
+  widget.setProperty("Pattern",  QScriptValue(engine, ParameterGroup::Pattern),  ro);
+
+  engine->globalObject().setProperty("ParameterGroup", widget, ro);
 }

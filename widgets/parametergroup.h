@@ -90,5 +90,7 @@ class XTUPLEWIDGETS_EXPORT ParameterGroup : public QGroupBox
 };
 
 void setupParameterGroup(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum ParameterGroup::ParameterGroupStates)
+Q_DECLARE_METATYPE(enum ParameterGroup::ParameterGroupTypes)
 
 #endif

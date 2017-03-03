@@ -1,40 +1,37 @@
 include( ../global.pri )
-TARGET = xtuplewidgets
+TARGET   = xtuplewidgets
 TEMPLATE = lib
-CONFIG += qt \
-          warn_on \
-          plugin
+CONFIG  += qt warn_on plugin
+QT      += sql script scripttools
 
 greaterThan(QT_MAJOR_VERSION, 4) {
-  QT += widgets printsupport sql script designer uitools designer
+  QT += widgets printsupport designer uitools
 } else {
   CONFIG += designer uitools
 }
 
-# INCLUDEPATH += $$QT_SOURCE_TREE/tools/designer/interfaces ../common .
-INCLUDEPATH += ../common \
-               . #current directory
+INCLUDEPATH += ../common ../scriptapi .
+DBFILE       = widgets.db
+LANGUAGE     = C++
+DEPENDPATH  += ../common ../scriptapi
 
-DBFILE = widgets.db
-LANGUAGE = C++
-DEPENDPATH += ../common
 dynamic { 
-    CONFIG += dll # this is technically redundant as plugin implies dll however it fixes a cross-compile problem
-    DESTDIR = $$[QT_INSTALL_PLUGINS]/designer
+    CONFIG      += dll # plugin implies dll but this fixes a cross-compile problem
+    DESTDIR      = $$[QT_INSTALL_PLUGINS]/designer
+    MOC_DIR      = tmp/dll
+    OBJECTS_DIR  = tmp/dll
+    UI_DIR       = tmp/dll
+    LIBS        += -lxtuplescriptapi -lxtuplecommon -lwrtembed -lrenderer -lMetaSQL -lopenrptcommon
+    DEFINES     += MAKEDLL
     QMAKE_LIBDIR = ../lib $$OPENRPT_LIBDIR $$QMAKE_LIBDIR
-    LIBS += -lxtuplecommon -lwrtembed -lrenderer -lMetaSQL -lopenrptcommon
-    DEFINES += MAKEDLL
-    MOC_DIR = tmp/dll
-    OBJECTS_DIR = tmp/dll
-    UI_DIR = tmp/dll
+} else {
+    CONFIG      += staticlib
+    DESTDIR      = ../lib
+    MOC_DIR      = tmp/lib
+    OBJECTS_DIR  = tmp/lib
+    UI_DIR       = tmp/lib
 }
-else {
-    DESTDIR = ../lib
-    CONFIG += staticlib
-    MOC_DIR = tmp/lib
-    OBJECTS_DIR = tmp/lib
-    UI_DIR = tmp/lib
-}
+
 HEADERS += plugins/addressclusterplugin.h \
     plugins/alarmsplugin.h \
     plugins/cmheadclusterplugin.h \
@@ -118,6 +115,7 @@ HEADERS += plugins/addressclusterplugin.h \
     plugins/xtableviewplugin.h \
 
 SOURCES += widgets.cpp \
+    scriptablewidget.cpp                \
     addressCluster.cpp \
     alarmMaint.cpp \
     alarms.cpp \
@@ -212,6 +210,7 @@ SOURCES += widgets.cpp \
     xurllabel.cpp \
 
 HEADERS += widgets.h \
+    scriptablewidget.h          \
     xtupleplugin.h \
     guiclientinterface.h \
     addresscluster.h \
@@ -334,5 +333,3 @@ FORMS += alarmMaint.ui \
     xdoccopysetter.ui
 
 RESOURCES += widgets.qrc
-
-QT += sql script
