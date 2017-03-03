@@ -27,9 +27,9 @@ materialReceiptTrans::materialReceiptTrans(QWidget* parent, const char* name, Qt
   setupUi(this);
 
   connect(_item,      SIGNAL(newId(int)), this, SLOT(sPopulateQty()));
-  connect(_post,       SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_post,      SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateQty()));
-  connect(_cost, SIGNAL(textChanged(const QString&)), this, SLOT(sCostUpdated()));
+  connect(_cost,      SIGNAL(textChanged(const QString&)), this, SLOT(sCostUpdated()));
 
   _captive = false;
 

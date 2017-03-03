@@ -113,7 +113,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
     XSqlQuery itemloc;
     itemloc.prepare( "SELECT itemlocdist_id, itemlocdist_reqlotserial," 
                      "       itemlocdist_distlotserial, itemlocdist_qty,"
-                     "       itemsite_loccntrl, itemsite_controlmethod,"
+                     "       itemsite_id, itemsite_loccntrl, itemsite_controlmethod,"
                      "       itemsite_perishable, itemsite_warrpurc,"
                      "       COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id,"
                      "       COALESCE(itemlocdist_source_id,-1) AS itemlocdist_source_id,"
@@ -379,11 +379,11 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
     if (!pPreDistributed)
     {
       XSqlQuery postDistDetail;
-      postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries, NULL::INTEGER) AS result;");
+      postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries) AS result;");
       postDistDetail.bindValue(":itemlocSeries", pItemlocSeries);
       postDistDetail.exec();
       if (!postDistDetail.first() || ErrorReporter::error(QtCriticalMsg, 0, tr("Distribution Detail Posting Failed"),
-                                postDistDetail, __FILE__, __LINE__))
+                                postDistDetail, __FILE__, __LINE__) || postDistDetail.value("result") <= 0)
       {
         return XDialog::Rejected;
       }

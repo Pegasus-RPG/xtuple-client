@@ -242,7 +242,7 @@ void adjustmentTrans::sPost()
   // Create and post inventory transaction: postItemlocSeries is passed to prevent postInvTrans
   // from creating itemlocdist entries, and also to allow postInvTrans to call postDistDetail.
   adjustmentPost.prepare( "SELECT invAdjustment(:itemsite_id, :qty, :docNumber, :comments, :date, "
-                          " :cost, NULL::INTEGER, :itemlocSeries::INTEGER) AS result;");
+                          " :cost, NULL::INTEGER, :itemlocSeries::INTEGER, true) AS result;");
   adjustmentPost.bindValue(":qty", qty);
   adjustmentPost.bindValue(":docNumber",   _documentNum->text());
   adjustmentPost.bindValue(":comments",    _notes->toPlainText());

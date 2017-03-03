@@ -126,8 +126,12 @@ void returnWoMaterialItem::sReturn()
   if (_controlledItem)
   {
     XSqlQuery parentItemlocdist;
-    parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'IM', "
-                              " formatWoNumber(:woId), :itemlocSeries) AS result;");
+    parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, "
+                              " itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, :qty), "
+                              " 'WO', formatWoNumber(:woId), :itemlocSeries) AS result "
+                              "FROM womatl "
+                              " JOIN itemsite ON womatl_itemsite_id = itemsite_id "
+                              "WHERE womatl_id = :womatl_id;");
     parentItemlocdist.bindValue(":itemsite_id", _itemsiteId);
     parentItemlocdist.bindValue(":qty", _qty->toDouble());
     parentItemlocdist.bindValue(":woId", _wo->id());
@@ -139,8 +143,8 @@ void returnWoMaterialItem::sReturn()
         QDate(), true) == XDialog::Rejected)
       {
         cleanup.exec();
-        QMessageBox::information(this, tr("Enter Receipt"),
-                               tr("Transaction Canceled") );
+        QMessageBox::information(this, tr("Material Return"), 
+          tr("Transaction Canceled") );
         return;
       }
     }
@@ -225,7 +229,6 @@ void returnWoMaterialItem::sSetQOH(int pWomatlid)
     {
       _itemsiteId = qoh.value("itemsite_id").toInt();
       _controlledItem = qoh.value("controlled").toBool();
-      _uom->setText(qoh.value("uom_name").toString());
       _uom->setText(qoh.value("uom_name").toString());
       _cachedQOH = qoh.value("availableqoh").toDouble();
       _beforeQty->setDouble(_cachedQOH);

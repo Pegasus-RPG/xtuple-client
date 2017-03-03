@@ -155,29 +155,28 @@ void postInvoices::sPost()
     return;
   }
 
+  int itemlocSeries;
+  // Stage distribution cleanup function to be called on error
+  XSqlQuery cleanup;
+  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+  
+  // Get the parent series id
+  XSqlQuery parentSeries;
+  parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS itemlocSeries;");
+  parentSeries.exec();
+  if (parentSeries.first() && parentSeries.value("itemlocSeries").toInt() > 0)
+  {
+    itemlocSeries = parentSeries.value("itemlocSeries").toInt();
+    cleanup.bindValue(":itemlocSeries", itemlocSeries);
+  }
+  else
+  {
+    ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
+                            parentSeries, __FILE__, __LINE__);
+    return;
+  }
   for (int i = 0; i < invoiceIds.size(); i++)
   {
-    int itemlocSeries;
-    // Stage distribution cleanup function to be called on error
-    XSqlQuery cleanup;
-    cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-    
-    // Get the parent series id
-    XSqlQuery parentSeries;
-    parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS itemlocSeries;");
-    parentSeries.exec();
-    if (parentSeries.first() && parentSeries.value("itemlocSeries").toInt() > 0)
-    {
-      itemlocSeries = parentSeries.value("itemlocSeries").toInt();
-      cleanup.bindValue(":itemlocSeries", itemlocSeries);
-    }
-    else
-    {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
-                              parentSeries, __FILE__, __LINE__);
-      return;
-    }
-
     // Handle the Inventory and G/L Transactions for any billed Inventory where invcitem_updateinv is true
     XSqlQuery items;
     items.prepare("SELECT itemsite_id, "
@@ -207,23 +206,21 @@ void postInvoices::sPost()
       parentItemlocdist.bindValue(":orderNumber", items.value("invchead_invcnumber").toString());
       parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
       parentItemlocdist.exec();
-      if (parentItemlocdist.first())
-      {
-        if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
-          == XDialog::Rejected)
-        {
-          cleanup.exec();
-          QMessageBox::information( this, tr("Post Invoices"), tr("Error Posting Invoice Item Distribution") );
-          return;
-        }
-      }
-      else
+      if (!parentItemlocdist.first())
       {
         cleanup.exec();
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
                                 parentItemlocdist, __FILE__, __LINE__);
         return;
       }
+    }
+
+    if (items.numRowsAffected() > 0 && distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
+      == XDialog::Rejected)
+    {
+      cleanup.exec();
+      QMessageBox::information( this, tr("Post Invoices"), tr("Error Posting Invoice Item Distribution") );
+      return;
     }
 
     // Post invoice

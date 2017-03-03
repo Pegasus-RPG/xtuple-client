@@ -157,7 +157,13 @@ void issueWoMaterialBatch::sIssue()
                 "   roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyreq - womatl_qtyiss)) "
                 " ELSE "
                 "   roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyiss * -1)) "
-                " END AS qty, isControlledItemsite(itemsite_id) AS controlled "
+                " END AS qty, "
+                " isControlledItemsite(itemsite_id) AS controlled, "
+                " roundQty(item_fractional, " // recreate _p.qty calculation from issueWoMaterial.sql
+                "   itemuomtouom(item_id, womatl_uom_id, NULL, roundQty(itemuomfractionalbyuom( "
+                "   item_id, womatl_uom_id), noNeg( "
+                "   CASE WHEN (womatl_qtyreq >= 0) THEN womatl_qtyreq - womatl_qtyiss "
+                "   ELSE womatl_qtyiss * -1 END)))) *-1 AS post_qty "
                 "FROM womatl, itemsite, item "
                 "WHERE((womatl_itemsite_id=itemsite_id) "
                 " AND (itemsite_item_id=item_id) "
@@ -199,10 +205,10 @@ void issueWoMaterialBatch::sIssue()
     {
       // Create the parent itemlocdist record for each line item requiring distribution, call distributeInventory::seriesAdjust
       XSqlQuery parentItemlocdist;
-      parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'IM', "
+      parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'WO', "
                                 " :orderNumber, :itemlocSeries);");
       parentItemlocdist.bindValue(":itemsite_id", items.value("itemsite_id").toInt());
-      parentItemlocdist.bindValue(":qty", items.value("qty").toDouble());
+      parentItemlocdist.bindValue(":qty", items.value("post_qty").toDouble());
       parentItemlocdist.bindValue(":orderNumber", items.value("wo_number").toString());
       parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
       parentItemlocdist.exec();
@@ -241,8 +247,6 @@ void issueWoMaterialBatch::sIssue()
       {
         rollback.exec();
         cleanup.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Invoice"),
-                          issue, __FILE__, __LINE__);
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Work Order Material; Work Order ID #%1")
                              .arg(_wo->id()),
                              issue, __FILE__, __LINE__);

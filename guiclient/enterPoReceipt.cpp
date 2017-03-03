@@ -258,7 +258,7 @@ void enterPoReceipt::sPost()
                   "  (recv_order_type = 'PO' AND COALESCE(itemsite_costmethod,'') = 'J' AND poitem_order_type='S') AS issuejobso, "
                   "  COALESCE(pohead_dropship, false) AS dropship, recv_order_type, recv_order_number, "
                   "  roundQty(item_fractional, (recv_qty * orderitem_qty_invuomratio)) AS qty, "
-                  "  CASE WHEN itemsite_id IS NOT NULL THEN isControlledItemsite(itemsite_id) END AS controlled, "
+                  "  CASE WHEN itemsite_id IS NOT NULL THEN isControlledItemsite(itemsite_id) ELSE FALSE END AS controlled, "
                   "  recv_orderitem_id, recv_qty "
                   " FROM orderitem, recv "
                   "  LEFT OUTER JOIN itemsite ON (recv_itemsite_id=itemsite_id) "
@@ -312,6 +312,7 @@ void enterPoReceipt::sPost()
       return;
     }
 
+    // itemlocdistId used for "to" wh side of transaction if Transfer Order & MultiWhs 
     int itemlocdistId = -1;
     XSqlQuery parentItemlocdist;    
 
@@ -334,18 +335,18 @@ void enterPoReceipt::sPost()
         parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, '', '', "
           ":itemlocSeries, NULL, :itemlocdistId) AS result;");
         parentItemlocdist.bindValue(":itemsite_id", tohead.value("itemsite_id").toInt());
-        parentItemlocdist.bindValue(":qty", qi.value("recv_qty").toDouble());
+        parentItemlocdist.bindValue(":qty", qi.value("recv_qty").toDouble() * -1);
         parentItemlocdist.bindValue(":orderType", qi.value("recv_order_type").toString());
         parentItemlocdist.bindValue(":orderNumber", qi.value("recv_order_number").toString());
         parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
         parentItemlocdist.exec();
         if (parentItemlocdist.first())
         {
-          // If the "to" itemsite is not controlled, distribute here
+          // If the "to" itemsite is not controlled, distribute the From side here
           if (!qi.value("controlled").toBool())
           {
-            if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
-              QDate(), true) == XDialog::Rejected)
+            if (distributeInventory::SeriesAdjust(itemlocSeries, this, lotnum, expdate, warrdate,
+              true) == XDialog::Rejected)
             {
               cleanup.exec();
               QMessageBox::information( this, tr("Enter Receipts"),
@@ -364,12 +365,15 @@ void enterPoReceipt::sPost()
           return;
         }
       }
-      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving 'From' itemsite"),
-        tohead, __FILE__, __LINE__))
+      else
+      {
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving 'From' itemsite"), tohead, __FILE__, __LINE__);
         return;
+      }
     }
     
-    if (qi.value("controlled").toBool())
+    if (qi.value("controlled").toBool() && 
+      (qi.value("recv_order_type").toString() != "TO" || _metrics->boolean("MultiWhs")))
     {
       parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderNumber, "
         ":itemlocSeries, NULL, :itemlocdistId) AS result;");

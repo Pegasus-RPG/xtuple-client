@@ -24,11 +24,11 @@ scrapTrans::scrapTrans(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-  connect(_post,                 SIGNAL(clicked()), this, SLOT(sPost()));
-  connect(_qty,SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateQty()));
-  connect(_warehouse,           SIGNAL(newID(int)), this, SLOT(sPopulateQOH(int)));
-
+  
+  connect(_post,      SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_qty,       SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateQty()));
+  connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateQOH(int)));
+  
   _captive = false;
 
   _item->setType(ItemLineEdit::cGeneralInventory | ItemLineEdit::cActive);
@@ -177,7 +177,7 @@ void scrapTrans::sPost()
     XSqlQuery parentItemlocdist;
     parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'SI'::TEXT, :docNumber, :itemlocSeries) AS result;");
     parentItemlocdist.bindValue(":itemsite_id", _itemsiteId);
-    parentItemlocdist.bindValue(":qty", _qty->toDouble());
+    parentItemlocdist.bindValue(":qty", _qty->toDouble() * -1);
     parentItemlocdist.bindValue(":docNumber", _documentNum->text());
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
     parentItemlocdist.exec();
@@ -187,8 +187,7 @@ void scrapTrans::sPost()
         QDate(), true) == XDialog::Rejected)
       {
         cleanup.exec();
-        QMessageBox::information(this, tr("Enter Receipt"),
-                               tr("Transaction Canceled") );
+        QMessageBox::information(this, tr("Scrap Transaction"), tr("Transaction Canceled") );
         return;
       }
     }
@@ -199,6 +198,7 @@ void scrapTrans::sPost()
     }
   }
 
+  // Post inventory transaction
   XSqlQuery scrapPost;
   scrapPost.prepare("SELECT invScrap(:itemsite_id, :qty, :docNumber, "
                     " :comments, :date, NULL, NULL, :itemlocSeries, TRUE) AS result;");
@@ -217,8 +217,8 @@ void scrapTrans::sPost()
     if (result < 0 || result != itemlocSeries)
     {
       cleanup.exec();
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
-                           scrapPost, __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Scrap Transaction"),
+        scrapPost, __FILE__, __LINE__);
       return;
     }
 
@@ -265,7 +265,7 @@ void scrapTrans::sPopulateQOH(int pWarehousid)
     scrapPopulateQOH.prepare( "SELECT itemsite_qtyonhand, itemsite_id, "
                "  isControlledItemsite(itemsite_id) AS controlled "
                "FROM itemsite "
-               "WHERE ( (itemsite_item_id=:item_id)"
+               "WHERE ( (itemsite_item_id=:item_id) "
                " AND (itemsite_warehous_id=:warehous_id) );" );
     scrapPopulateQOH.bindValue(":item_id", _item->id());
     scrapPopulateQOH.bindValue(":warehous_id", pWarehousid);

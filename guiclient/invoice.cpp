@@ -887,27 +887,26 @@ void invoice::postInvoice()
     parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'IN', "
                               " :orderNumber, :itemlocSeries);");
     parentItemlocdist.bindValue(":itemsite_id", items.value("itemsite_id").toInt());
-    parentItemlocdist.bindValue(":qty", items.value("qty").toDouble());
+    parentItemlocdist.bindValue(":qty", items.value("qty").toDouble() * -1);
     parentItemlocdist.bindValue(":orderNumber", items.value("invchead_invcnumber").toString());
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
     parentItemlocdist.exec();
-    if (parentItemlocdist.first())
-    {
-      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
-        QDate(), true) == XDialog::Rejected)
-      {
-        cleanup.exec();
-        QMessageBox::information( this, tr("Post Invoices"), tr("Error Posting Invoice Item Distribution") );
-        return;
-      }
-    }
-    else
+    if (!parentItemlocdist.first())
     {
       cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
         parentItemlocdist, __FILE__, __LINE__);
       return;
     }
+  }
+
+  // If the above query had results, call distributeInventory
+  if (items.numRowsAffected() > 0 && (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+        QDate(), true) == XDialog::Rejected))
+  {
+    cleanup.exec();
+    QMessageBox::information( this, tr("Post Invoices"), tr("Error Posting Invoice Item Distribution") );
+    return;
   }
 
   // Post invoice
@@ -929,8 +928,7 @@ void invoice::postInvoice()
       return;
     }
   }
-  // contains() string is hard-coded in stored procedure
-  else if (post.lastError().databaseText().contains("post to closed period"))
+  else if (post.lastError().type() != QSqlError::NoError)
   {
     cleanup.exec();
     return;

@@ -146,7 +146,6 @@ void expenseTrans::sPost()
   // Stage cleanup function to be called on error
   XSqlQuery cleanup;
   cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-  cleanup.bindValue(":itemlocSeries", itemlocSeries);
 
   // Get parent series id
   XSqlQuery parentSeries;
@@ -170,7 +169,7 @@ void expenseTrans::sPost()
     XSqlQuery parentItemlocdist;
     parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'EX'::TEXT, :docNumber, :itemlocSeries) AS result;");
     parentItemlocdist.bindValue(":itemsite_id", _itemsiteId);
-    parentItemlocdist.bindValue(":qty", _qty->toDouble());
+    parentItemlocdist.bindValue(":qty", _qty->toDouble() * -1);
     parentItemlocdist.bindValue(":docNumber", _documentNum->text());
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
     parentItemlocdist.exec();

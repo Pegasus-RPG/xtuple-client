@@ -48,6 +48,7 @@ private:
     double	_receivable;
     int		_recvid;
     int     _itemsiteId;
+    bool    _recvPosted;
 
 };
 

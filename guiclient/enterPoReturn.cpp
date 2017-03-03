@@ -202,7 +202,7 @@ void enterPoReturn::sPost()
                           " LEFT OUTER JOIN recv ON (recv_id=poreject_recv_id) "
                           "WHERE pohead_id = :poheadId "
                           " AND isControlledItemsite(itemsite_id) "
-                          "GROUP BY poreject_id, pohead_number, itemsite_id;");
+                          "GROUP BY poreject_id, pohead_number, itemsite_id, poitem_id, poitem_invvenduomratio;");
   controlledItems.bindValue(":poheadId", _po->id());
   controlledItems.exec();
   while (controlledItems.next())

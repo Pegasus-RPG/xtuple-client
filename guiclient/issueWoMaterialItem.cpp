@@ -168,7 +168,8 @@ void issueWoMaterialItem::sIssue()
             "       (COALESCE((SELECT SUM(itemloc_qty) "
             "                    FROM itemloc "
             "                   WHERE (itemloc_itemsite_id=itemsite_id)), 0.0) >= roundQty(item_fractional, itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, :qty))) AS isqtyavail, "
-            "       formatWoNumber(womatl_wo_id) AS wo_number "
+            "       formatWoNumber(womatl_wo_id) AS wo_number, "
+            "       roundQty(item_fractional, itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, :qty)) * -1 AS post_qty "
             "  FROM womatl, itemsite, item, whsinfo "
             " WHERE ((womatl_itemsite_id=itemsite_id) "
             "   AND (itemsite_item_id=item_id) "
@@ -196,10 +197,10 @@ void issueWoMaterialItem::sIssue()
 
     // Create the parent itemlocdist record for each line item requiring distribution, call distributeInventory::seriesAdjust
     XSqlQuery parentItemlocdist;
-    parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'IM', "
+    parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'WO', "
                               " :orderNumber, :itemlocSeries);");
     parentItemlocdist.bindValue(":itemsite_id", issueIssue.value("itemsite_id").toInt());
-    parentItemlocdist.bindValue(":qty", _qtyToIssue->toDouble());
+    parentItemlocdist.bindValue(":qty", issueIssue.value("post_qty").toInt());
     parentItemlocdist.bindValue(":orderNumber", issueIssue.value("wo_number").toString());
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
     parentItemlocdist.exec();
