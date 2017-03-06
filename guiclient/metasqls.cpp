@@ -113,6 +113,9 @@ void metasqls::sDelete()
 
 void metasqls::sEdit()
 {
+  if (_list->id() == -1)
+    return;
+
   MQLEdit *newdlg = new MQLEdit(0);
   newdlg->fileDatabaseOpen(_list->id());
   newdlg->setReadOnly(! userHasPriv(cEdit) && userHasPriv(cView));

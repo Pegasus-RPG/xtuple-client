@@ -24,6 +24,35 @@
 
 #include <openreports.h>
 
+bool incident::userHasPriv(const int pMode, const int pId)
+{
+  if (_privileges->check("MaintainAllIncidents"))
+    return true;
+  bool personalPriv = _privileges->check("MaintainPersonalIncidents");
+  if(pMode==cView)
+  {
+    if(_privileges->check("ViewAllIncidents"))
+      return true;
+    personalPriv = personalPriv || _privileges->check("ViewPersonalIncidents");
+  }
+
+  if(pMode==cNew)
+    return personalPriv;
+  else
+  {
+    XSqlQuery usernameCheck;
+    usernameCheck.prepare( "SELECT getEffectiveXtUser() IN (incdt_owner_username, incdt_assigned_username) AS canModify "
+                           "FROM incdt "
+                            "WHERE (incdt_id=:incdt_id);" );
+    usernameCheck.bindValue(":incdt_id", pId);
+    usernameCheck.exec();
+
+    if (usernameCheck.first())
+      return usernameCheck.value("canModify").toBool()&&personalPriv;
+    return false;
+  }
+}
+
 incident::incident(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {

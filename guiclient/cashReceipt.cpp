@@ -24,23 +24,6 @@
 #include "mqlutil.h"
 #include "storedProcErrorLookup.h"
 
-const struct {
-  const char * full;
-  QString abbr;
-  bool    cc;
-} _fundsTypes[] = {
-  { QT_TRANSLATE_NOOP("cashReceipt", "Check"),            "C", false },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Certified Check"),  "T", false },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Master Card"),      "M", true  },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Visa"),             "V", true  },
-  { QT_TRANSLATE_NOOP("cashReceipt", "American Express"), "A", true  },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Discover Card"),    "D", true  },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Other Credit Card"),"O", true  },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Cash"),             "K", false },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Wire Transfer"),    "W", false },
-  { QT_TRANSLATE_NOOP("cashReceipt", "Other"),            "R", false }
-};
-
 cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
@@ -124,7 +107,7 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _aropen->addColumn(tr("Customer"),  -1,              Qt::AlignLeft, true, "cust_number");
   _aropen->addColumn(tr("Customer Name"),  -1,         Qt::AlignLeft, true, "cust_name");
 
-  _cashrcptmisc->addColumn(tr("Account #"), _itemColumn,     Qt::AlignCenter, true, "account");
+  _cashrcptmisc->addColumn(tr("Account"), _itemColumn,     Qt::AlignCenter, true, "account");
   _cashrcptmisc->addColumn(tr("Notes"),     -1,              Qt::AlignLeft,  true, "firstline");
   _cashrcptmisc->addColumn(tr("Amount"),    _bigMoneyColumn, Qt::AlignRight, true, "cashrcptmisc_amount");
 
@@ -135,13 +118,13 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _cc->addColumn(tr("Name"),    _itemColumn, Qt::AlignLeft, true, "ccard_name");
   _cc->addColumn(tr("Expiration Date"),  -1, Qt::AlignLeft, true, "expiration");
 
-  for (unsigned int i = 0; i < sizeof(_fundsTypes) / sizeof(_fundsTypes[1]); i++)
+  // Only show credit card funds types if the user can process cc transactions.
+  if (_metrics->boolean("CCAccept") && _privileges->check("ProcessCreditCards"))
   {
-    // only show credit card funds types if the user can process cc transactions
-    if (! _fundsTypes[i].cc ||
-        (_fundsTypes[i].cc && _metrics->boolean("CCAccept") &&
-         _privileges->check("ProcessCreditCards")) )
-      _fundsType->append(i, tr(_fundsTypes[i].full), _fundsTypes[i].abbr);
+    _fundsType->populate("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype;");
+  } else
+  {
+    _fundsType->populate("SELECT fundstype_id, fundstype_name, fundstype_code FROM fundstype WHERE NOT fundstype_creditcard;");
   }
 
   if (!_metrics->boolean("CCAccept") || ! _privileges->check("ProcessCreditCards"))
@@ -166,7 +149,10 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
   }
   else
     _altExchRate->hide();
-  
+
+  if(!_metrics->boolean("UseProjects"))
+    _project->hide();
+
   _overapplied = false;
   _cashrcptid = -1;
   _posted = false;
@@ -371,7 +357,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-	  _transType = cEdit;
+      _transType = cEdit;
 
       param = pParams.value("cashrcpt_id", &valid);
       if (valid)
@@ -447,14 +433,23 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       _newCC->setEnabled(false);
       _editCC->setEnabled(false);
       _customerSelector->setEnabled(false);
+      _project->setEnabled(false);
       disconnect(_cashrcptmisc, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       disconnect(_cashrcptmisc, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
     }
 
-    // if this cash receipt was by credit card cash then prevent changes
-    _ccEdit = (_mode == cEdit) &&
-	      (_origFunds == "A" || _origFunds == "D" ||
-	       _origFunds == "M" || _origFunds == "V");
+    // If this cash receipt was by an external processor transaction then prevent changes.
+    XSqlQuery isExternalQry;
+    bool isExternal = false;
+    isExternalQry.prepare("SELECT isExternalFundsType(:fundstypecode) AS isexternal;");
+    isExternalQry.bindValue(":fundstypecode", _origFunds);
+    isExternalQry.exec();
+    if (isExternalQry.first())
+    {
+      isExternal = isExternalQry.value("isexternal").toBool();
+    }
+
+    _ccEdit = (_mode == cEdit) && (isExternal);
 
     if(_ccEdit)
     {
@@ -828,7 +823,7 @@ bool cashReceipt::save(bool partial)
                           tr("<p>This transaction is specified in %1 while the "
                              "Bank Account is specified in %2. Do you wish to "
                              "convert at the current Exchange Rate?"
-			     "<p>If not, click NO "
+                             "<p>If not, click NO "
                              "and change the Bank Account in the POST TO field.")
                           .arg(_received->currAbbr())
                           .arg(_bankaccnt_currAbbr),
@@ -840,11 +835,19 @@ bool cashReceipt::save(bool partial)
   }
   _received->setCurrencyDisabled(true);
 
-  if (!partial)
+  if (!partial && _metrics->boolean("CCAccept") && _privileges->check("ProcessCreditCards"))
   {
-    if (!_ccEdit &&
-        (_fundsType->code() == "A" || _fundsType->code() == "D" ||
-         _fundsType->code() == "M" || _fundsType->code() == "V"))
+    XSqlQuery isCreditCardQry;
+    bool isCreditCard = false;
+    isCreditCardQry.prepare("SELECT isCreditCardFundsType(:fundstypecode) AS iscreditcard;");
+    isCreditCardQry.bindValue(":fundstypecode", _fundsType->code());
+    isCreditCardQry.exec();
+    if (isCreditCardQry.first())
+    {
+      isCreditCard = isCreditCardQry.value("iscreditcard").toBool();
+    }
+
+    if (!_ccEdit && isCreditCard)
     {
       if (_cc->id() <= -1)
       {
@@ -866,24 +869,24 @@ bool cashReceipt::save(bool partial)
       _save->setEnabled(false);
       int ccpayid = -1;
       QString neworder = _docNumber->text().isEmpty() ?
-	  	      QString::number(_cashrcptid) : _docNumber->text();
+                           QString::number(_cashrcptid) : _docNumber->text();
       QString reforder = neworder; // 2 sep variables because they're passed by ref
       int returnVal = cardproc->charge(_cc->id(),
-				     _CCCVV->text(),
-				     _received->localValue(),
-				     0, false, 0, 0,
-				     _received->id(),
-				     neworder, reforder, ccpayid,
-				     QString("cashrcpt"), _cashrcptid);
+                                       _CCCVV->text(),
+                                       _received->localValue(),
+                                       0, false, 0, 0,
+                                       _received->id(),
+                                       neworder, reforder, ccpayid,
+                                       QString("cashrcpt"), _cashrcptid);
       if (returnVal < 0)
         QMessageBox::critical(this, tr("Credit Card Processing Error"),
-		  	    cardproc->errorMsg());
+                              cardproc->errorMsg());
       else if (returnVal > 0)
         QMessageBox::warning(this, tr("Credit Card Processing Warning"),
-			   cardproc->errorMsg());
+                             cardproc->errorMsg());
       else if (! cardproc->errorMsg().isEmpty())
         QMessageBox::information(this, tr("Credit Card Processing Note"),
-			   cardproc->errorMsg());
+                                 cardproc->errorMsg());
 
       _save->setEnabled(true);
       if (returnVal < 0)
@@ -901,13 +904,13 @@ bool cashReceipt::save(bool partial)
                     "  cashrcpt_fundstype, cashrcpt_bankaccnt_id, cashrcpt_curr_id, "
                     "  cashrcpt_usecustdeposit, cashrcpt_docnumber, cashrcpt_docdate, "
                     "  cashrcpt_notes, cashrcpt_salescat_id, cashrcpt_number, cashrcpt_applydate, "
-                    "  cashrcpt_discount, cashrcpt_alt_curr_rate ) "
+                    "  cashrcpt_discount, cashrcpt_alt_curr_rate, cashrcpt_prj_id ) "
                     "VALUES "
                     "( :cashrcpt_id, :cashrcpt_cust_id, :cashrcpt_custgrp_id, :cashrcpt_distdate, :cashrcpt_amount,"
                     "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :curr_id, "
                     "  :cashrcpt_usecustdeposit, :cashrcpt_docnumber, :cashrcpt_docdate, "
                     "  :cashrcpt_notes, :cashrcpt_salescat_id, :cashrcpt_number, :cashrcpt_applydate, "
-                    "  :cashrcpt_discount, ROUND(:cashrcpt_alt_curr_rate, 8) );";
+                    "  :cashrcpt_discount, ROUND(:cashrcpt_alt_curr_rate, 8), :cashrcpt_prj_id );";
   else
     sql= "UPDATE cashrcpt "
                     "SET cashrcpt_cust_id=:cashrcpt_cust_id,"
@@ -925,6 +928,7 @@ bool cashReceipt::save(bool partial)
                     "    cashrcpt_applydate=:cashrcpt_applydate,"
                     "    cashrcpt_discount=:cashrcpt_discount, "
                     "    cashrcpt_alt_curr_rate= ROUND(:cashrcpt_alt_curr_rate, 8), "
+                    "    cashrcpt_prj_id=:cashrcpt_prj_id, "
                     "    cashrcpt_curr_rate=null " // force a curr rate re-evaluation
                     "WHERE (cashrcpt_id=:cashrcpt_id);";
 
@@ -957,6 +961,8 @@ bool cashReceipt::save(bool partial)
     else
       cashave.bindValue(":cashrcpt_alt_curr_rate", _exchRate->toDouble());
   }
+  if(_project->isValid())
+    cashave.bindValue(":cashrcpt_prj_id", _project->id());
   cashave.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Cash Receipt"),
                                 cashave, __FILE__, __LINE__))
@@ -1065,11 +1071,13 @@ void cashReceipt::sFillMiscList()
 {
   XSqlQuery misc;
   misc.prepare("SELECT cashrcptmisc_id,"
-               "       formatGLAccount(cashrcptmisc_accnt_id) AS account,"
+               "       COALESCE(tax_code||' - '||tax_descrip, "
+               "          formatGLAccount(cashrcptmisc_accnt_id)) AS account,"
                "       firstLine(cashrcptmisc_notes) AS firstline, "
                "       cashrcptmisc_amount,"
                "       'curr' AS cashrcptmisc_amount_xtnumericrole "
                "FROM cashrcptmisc "
+               " LEFT OUTER JOIN tax ON (tax_id=cashrcptmisc_tax_id) "
                "WHERE (cashrcptmisc_cashrcpt_id=:cashrcpt_id);" );
   misc.bindValue(":cashrcpt_id", _cashrcptid);
   misc.exec();
@@ -1153,10 +1161,13 @@ void cashReceipt::populate()
 
     _origFunds = cashpopulate.value("cashrcpt_fundstype").toString();
     _fundsType->setCode(_origFunds);
+    _project->setId(cashpopulate.value("cashrcpt_prj_id").toInt());
 
     sFillApplyList();
     sFillMiscList();
     setCreditCard();
+
+    emit populated();
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Cash Receipt Information"),
                                 cashpopulate, __FILE__, __LINE__))
@@ -1206,8 +1217,15 @@ void cashReceipt::setCreditCard()
   if (! _metrics->boolean("CCAccept"))
     return;
 
-  if (! _fundsTypes[_fundsType->id()].cc)
-    return;
+  XSqlQuery isCreditCardQry;
+  isCreditCardQry.prepare("SELECT isCreditCardFundsType(:fundstypecode) AS iscreditcard;");
+  isCreditCardQry.bindValue(":fundstypecode", _fundsType->code());
+  isCreditCardQry.exec();
+  if (isCreditCardQry.first())
+  {
+    if (!isCreditCardQry.value("iscreditcard").toBool())
+      return;
+  }
 
   XSqlQuery bankq;
   bankq.prepare("SELECT COALESCE(ccbank_bankaccnt_id, -1) AS ccbank_bankaccnt_id"

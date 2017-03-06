@@ -29,17 +29,11 @@ allocateARCreditMemo::allocateARCreditMemo(QWidget* parent, const char* name, bo
   _aropen->addColumn(tr("Due Date"),           _dateColumn, Qt::AlignCenter, true,  "duedate");
   _aropen->addColumn(tr("Amount"),            _moneyColumn, Qt::AlignRight,  true,  "amount");
   _aropen->addColumn(tr("Paid"),              _moneyColumn, Qt::AlignRight,  true,  "paid");
-  _aropen->addColumn(tr("Balance"),           _moneyColumn, Qt::AlignRight,  true,  "balance");
+  _aropen->addColumn(tr("Balance"),           _moneyColumn, Qt::AlignRight,  !omfgThis->singleCurrency(),  "balance");
   _aropen->addColumn(tr("This Alloc."),       _moneyColumn, Qt::AlignRight,  true,  "allocated");
   _aropen->addColumn(tr("Total Alloc."),      _moneyColumn, Qt::AlignRight,  true,  "totalallocated");
 
   connect(omfgThis, SIGNAL(creditMemosUpdated()), this, SLOT(sPopulate()));
-
-  if (omfgThis->singleCurrency())
-  {
-    _aropen->hideColumn("currAbbr");
-    _aropen->hideColumn("balance");
-  }
 
   connect(_aropen,      SIGNAL(valid(bool)),    this,           SLOT(sHandleButton()));
   connect(_allocate,	SIGNAL(clicked()),	this,           SLOT(sAllocate()));

@@ -58,6 +58,9 @@ XMainWindowPrivate::~XMainWindowPrivate()
 XMainWindow::XMainWindow(QWidget * parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
 {
+  if(!parent || !parent->isModal())
+    setParent(omfgThis);
+
   _private = new XMainWindowPrivate(this);
 
   _private->_action = new QAction(this);
@@ -73,6 +76,8 @@ XMainWindow::XMainWindow(QWidget * parent, const char * name, Qt::WindowFlags fl
 {
   if(name)
     setObjectName(name);
+  if(!parent || !parent->isModal())
+    setParent(omfgThis);
 
   _private = new XMainWindowPrivate(this);
 
@@ -144,6 +149,7 @@ void XMainWindow::showEvent(QShowEvent *event)
     QString objName = objectName();
     QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
     QSize lsize = xtsettingsValue(objName + "/geometry/size").toSize();
+    QSize currsize = size();
 
     setAttribute(Qt::WA_DeleteOnClose);
     if(omfgThis->showTopLevel() || isModal())
@@ -160,6 +166,8 @@ void XMainWindow::showEvent(QShowEvent *event)
 	if (DEBUG) qDebug() << "move" << pos;
         move(pos);
       }
+      else if(currsize!=size())
+        move(QPoint(1, 1));
     }
     else
     {

@@ -33,6 +33,15 @@
 #include "xcombobox.h"
 #include "parameterwidget.h"
 
+bool customer::userHasPriv(const int pMode, const int pId)
+{
+  Q_UNUSED(pId);
+  bool priv = _privileges->check("MaintainCustomerMasters");
+  if(pMode==cView)
+    priv = priv || _privileges->check("ViewCustomerMasters");
+  return priv;
+}
+
 customer::customer(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
@@ -118,6 +127,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _cctrans->findChild<XTreeWidget*>("_preauth")->hideColumn("cust_number");
   _cctrans->findChild<XTreeWidget*>("_preauth")->hideColumn("cust_name");
 
+  connect(this, SIGNAL(newId(int)), this, SLOT(sIdChanged(int)));
   connect(_close, SIGNAL(clicked()), this, SLOT(sCancel()));
   connect(_crmacct, SIGNAL(clicked()), this, SLOT(sCrmAccount()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSaveClicked()));
@@ -136,6 +146,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
   connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
   connect(_editCC, SIGNAL(clicked()), this, SLOT(sEditCreditCard()));
+  connect(_deleteCC, SIGNAL(clicked()), this, SLOT(sDeleteCreditCard()));
   connect(_newCC, SIGNAL(clicked()), this, SLOT(sNewCreditCard()));
   connect(_deleteCharacteristic, SIGNAL(clicked()), this, SLOT(sDeleteCharacteristic()));
   connect(_editCharacteristic, SIGNAL(clicked()), this, SLOT(sEditCharacteristic()));
@@ -190,6 +201,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _taxreg->addColumn(tr("Registration #"), -1, Qt::AlignLeft, true, "taxreg_number");
 
   _shipto->addColumn(tr("Default"), _itemColumn, Qt::AlignLeft, true, "shipto_default");
+  _shipto->addColumn(tr("Active"),  _itemColumn, Qt::AlignLeft, true, "shipto_active");  
   _shipto->addColumn(tr("Number"),  _itemColumn, Qt::AlignLeft, true, "shipto_num");
   _shipto->addColumn(tr("Name"),            150, Qt::AlignLeft, true, "shipto_name");
   _shipto->addColumn(tr("Address"),         150, Qt::AlignLeft, true, "addr_line1");
@@ -297,6 +309,7 @@ enum SetResponse customer::set(const ParameterList &pParams)
       connect(_shipto, SIGNAL(valid(bool)), _deleteShipto, SLOT(setEnabled(bool)));
       connect(_shipto, SIGNAL(itemSelected(int)), _editShipto, SLOT(animateClick()));
       connect(_cc, SIGNAL(valid(bool)), _editCC, SLOT(setEnabled(bool)));
+      connect(_cc, SIGNAL(valid(bool)), _deleteCC, SLOT(setEnabled(bool)));
       connect(_cc, SIGNAL(itemSelected(int)), _editCC, SLOT(animateClick()));
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
@@ -314,6 +327,7 @@ enum SetResponse customer::set(const ParameterList &pParams)
       connect(_shipto, SIGNAL(valid(bool)), _deleteShipto, SLOT(setEnabled(bool)));
       connect(_shipto, SIGNAL(itemSelected(int)), _editShipto, SLOT(animateClick()));
       connect(_cc, SIGNAL(valid(bool)), _editCC, SLOT(setEnabled(bool)));
+      connect(_cc, SIGNAL(valid(bool)), _deleteCC, SLOT(setEnabled(bool)));
       connect(_cc, SIGNAL(itemSelected(int)), _editCC, SLOT(animateClick()));
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
@@ -400,6 +414,7 @@ void customer::setViewMode()
   _save->hide();
   _newCC->setEnabled(false);
   _editCC->setEnabled(false);
+  _deleteCC->setEnabled(false);
   _upCC->setEnabled(false);
   _downCC->setEnabled(false);
   _warnLate->setEnabled(false);
@@ -519,8 +534,24 @@ bool customer::sSave()
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Customer"), errors))
     return false;
 
+  int custtype_id = -1;
+  bool charProfile = false;
+
   if (_mode == cEdit)
-  {
+  { 
+    XSqlQuery customerType;
+
+    customerType.prepare("SELECT cust_custtype_id, custtype_char"
+                         "  FROM custinfo JOIN custtype ON (cust_custtype_id=custtype_id)"
+                         " WHERE cust_id=:cust_id;");
+    customerType.bindValue(":cust_id", _custid);
+    customerType.exec();
+    if (customerType.first())
+    {
+      custtype_id = customerType.value("cust_custtype_id").toInt();
+      charProfile = customerType.value("custtype_char").toBool();
+    }
+
     customerSave.prepare( "UPDATE custinfo SET "
                "       cust_number=:cust_number, cust_name=:cust_name,"
                "       cust_salesrep_id=:cust_salesrep_id,"
@@ -651,6 +682,30 @@ bool customer::sSave()
   }
 
   //Save characteristics
+  if (charProfile && _custtype->id() != custtype_id &&
+      QMessageBox::question(this, tr("Delete?"),
+                            tr("Do you want to DELETE all characteristics related to the old Customer Type?"),
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No) == QMessageBox::Yes)
+  {
+    XSqlQuery deleteChar;
+
+    deleteChar.prepare("DELETE FROM charass "
+                       "USING "
+                       " (SELECT DISTINCT b.charass_id AS id "
+                       "  FROM custtype "
+                       "  JOIN charass a ON (a.charass_target_type='CT') "
+                       "   AND (a.charass_target_id=custtype_id) "
+                       "  JOIN charass b ON (b.charass_target_type='C') "
+                       "   AND (b.charass_target_id=:cust_id) "
+                       "   AND (a.charass_char_id=b.charass_char_id) "
+                       "  WHERE (custtype_id=:custtype_id)) qry "
+                       "WHERE charass_id=qry.id;");
+    deleteChar.bindValue(":cust_id", _custid);
+    deleteChar.bindValue(":custtype_id", custtype_id);
+    deleteChar.exec();
+  }
+
   if (_widgetStack->currentIndex() == 1)
   {
     customerSave.prepare("SELECT updateCharAssignment('C', :target_id, :char_id, :char_value);");
@@ -725,7 +780,7 @@ void customer::sCheck()
   customerCheck.exec();
   if (customerCheck.first())
   {
-    if ((customerCheck.value("type").toInt() == 1) && (_notice))
+    if ((customerCheck.value("type").toInt() == 1) && (customerCheck.value("cust_id").toInt() != _custid) && (_notice))
     {
       if (QMessageBox::question(this, tr("Customer Exists"),
               tr("<p>This number is currently used by an existing Customer. "
@@ -1078,10 +1133,10 @@ void customer::sFillCharacteristicList()
     _widgetStack->setCurrentIndex(0);
     XSqlQuery r;
     r.prepare( "SELECT charass_id, char_name, "
-               " CASE WHEN char_type < 2 THEN "
-               "   charass_value "
-               " ELSE "
+               " CASE WHEN char_type = 2 THEN "
                "   formatDate(charass_value::date) "
+               " ELSE "
+               "   charass_value "
                "END AS charass_value "
                "FROM charass, char "
                "WHERE ( (charass_target_type='C')"
@@ -1111,7 +1166,7 @@ void customer::sPopulateShiptoMenu(QMenu *menuThis)
 void customer::sFillShiptoList()
 {
   XSqlQuery r;
-  r.prepare( "SELECT shipto_id, shipto_default,"
+  r.prepare( "SELECT shipto_id, shipto_default, shipto_active, "
              "       shipto_num, shipto_name, addr_line1,"
              "       (addr_city || ', ' || addr_state || '  ' || addr_postalcode) AS shipto_csz "
              "  FROM shiptoinfo LEFT OUTER JOIN addr ON shipto_addr_id=addr_id"
@@ -1217,6 +1272,20 @@ void customer::sPopulateCommission()
 void customer::populate()
 {
   XSqlQuery cust;
+  XSqlQuery salesRep;
+
+  salesRep.prepare("SELECT salesrep_id, (salesrep_number || '-' || salesrep_name), salesrep_number "
+                   "FROM salesrep "
+                   "WHERE (salesrep_active) "
+                   "UNION "
+                   "SELECT salesrep_id, (salesrep_number || '-' || salesrep_name), salesrep_number "
+                   "FROM salesrep "
+                   "WHERE (salesrep_id=(SELECT cust_salesrep_id FROM custinfo WHERE cust_id=:cust)) "
+                   "ORDER by salesrep_number;");
+  salesRep.bindValue(":cust", _custid);
+  salesRep.exec();
+  _salesrep->populate(salesRep);
+
   _notice = false;
   cust.prepare( "SELECT custinfo.*, "
                 "       cust_commprcnt, cust_discntprcnt,"
@@ -1353,27 +1422,23 @@ void customer::sPopulateSummary()
     _lastSaleDate->setDate(query.value("lastdate").toDate());
   }
 
-  // exclude some credit card charges so they don't cancel the actual sales figures
-  query.prepare( "SELECT COALESCE(SUM(round(cohist_qtyshipped * cohist_unitprice,2)), 0) AS lysales "
-                 "FROM cohist "
-                 "WHERE ( (cohist_invcdate BETWEEN (DATE_TRUNC('year', CURRENT_TIMESTAMP) - INTERVAL '1 year') AND"
-                 "                                 (DATE_TRUNC('year', CURRENT_TIMESTAMP) - INTERVAL '1 day'))"
-                 " AND (cohist_cohead_ccpay_id IS NULL)"
-                 " AND (cohist_cust_id=:cust_id) );" );
-  query.bindValue(":cust_id", _custid);
-  query.exec();
+  ParameterList params;
+  params.append("cust_id", _custid);
+  MetaSQLQuery lySales = mqlLoad("customer", "lastYearSales");
+  query = lySales.toQuery(params);
   if (query.first())
     _lastYearSales->setDouble(query.value("lysales").toDouble());
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Customer Sales History"),
+                                  query, __FILE__, __LINE__))
+      return;
 
-  query.prepare( "SELECT COALESCE(SUM(round(cohist_qtyshipped * cohist_unitprice,2)), 0) AS ytdsales "
-                 "FROM cohist "
-                 "WHERE ( (cohist_invcdate>=DATE_TRUNC('year', CURRENT_TIMESTAMP))"
-                 " AND (cohist_cohead_ccpay_id IS NULL)"
-                 " AND (cohist_cust_id=:cust_id) );" );
-  query.bindValue(":cust_id", _custid);
-  query.exec();
+  MetaSQLQuery ytdSales = mqlLoad("customer", "ytdSales");
+  query = ytdSales.toQuery(params);
   if (query.first())
     _ytdSales->setDouble(query.value("ytdsales").toDouble());
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Customer Sales History"),
+                                  query, __FILE__, __LINE__))
+      return;
 
   query.prepare( "SELECT COALESCE( SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
                  "                                   (coitem_price / coitem_price_invuomratio) ), 0 ) AS backlog "
@@ -1467,6 +1532,76 @@ void customer::sViewCreditCard()
   creditCard newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
+}
+
+void customer::sDeleteCreditCard()
+{
+  if (QMessageBox::question(this, tr("Delete Credit Card?"),
+                            tr("Are you sure that you want to delete this Credit Card?"),
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+    return;
+
+  XSqlQuery m;
+
+  m.prepare("SELECT date_part('month', expire) AS expire_month, "
+            "       date_part('year', expire) AS expire_year "
+            "FROM ( "
+            " SELECT CASE WHEN ccpay_transaction_datetime > "
+            "                  date_trunc('month', now()) THEN "
+            "                  now() "
+            "             ELSE "
+            "                  now() - '1 month'::INTERVAL "
+            "            END AS expire "
+            " FROM ccpay "
+            " WHERE ccpay_ccard_id=:ccard_id "
+            " ORDER BY ccpay_transaction_datetime DESC "
+            " LIMIT 1) qry;");
+  m.bindValue(":ccard_id", _cc->id());
+  m.exec();
+
+  if (m.first())
+  {
+    QString month = m.value("expire_month").toString();
+    QString year = m.value("expire_year").toString();
+
+    m.prepare("UPDATE ccard "
+              "SET ccard_active=FALSE, "
+              "    ccard_month_expired=encrypt(setbytea(lpad(:month, 2, '0')), setbytea(:key), 'bf'), "
+              "    ccard_year_expired=encrypt(setbytea(:year), setbytea(:key), 'bf') "
+              "WHERE ccard_id=:ccard_id;");
+    m.bindValue(":ccard_id", _cc->id());
+    m.bindValue(":month", month);
+    m.bindValue(":year", year);
+    m.bindValue(":key", omfgThis->_key);
+    m.exec();
+    if (m.lastError().type() != QSqlError::NoError)
+    {
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Credit Card"),
+                           m.lastError(), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (m.lastError().type() != QSqlError::NoError)
+  {
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Credit Card"),
+                         m.lastError(), __FILE__, __LINE__);
+    return;
+  }
+  else
+  {
+    m.prepare("DELETE FROM ccard WHERE ccard_id=:ccard_id;");
+    m.bindValue(":ccard_id", _cc->id());
+    m.exec();
+    if (m.lastError().type() != QSqlError::NoError)
+    {
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Credit Card"),
+                           m.lastError(), __FILE__, __LINE__);
+      return;
+    }
+  }
+
+  sFillCcardList();
 }
 
 void customer::sMoveUp()
@@ -1702,10 +1837,38 @@ void customer::setId(int p)
   if (_mode == cEdit && !_lock.acquire("custinfo", p, AppLock::Interactive))
     setViewMode();
 
-  _charfilled = false;
+  sClear();
   _custid=p;
   populate();
   emit newId(_custid);
+}
+
+void customer::sIdChanged(int id)
+{
+  _orders->parameterWidget()->setDefault(tr("Customer"), id, true);
+  _quotes->parameterWidget()->setDefault(tr("Customer"), id, true);
+  _returns->findChild<CustomerSelector*>("_customerSelector")->setCustId(id);
+  _aritems->findChild<CustomerSelector*>("_customerSelector")->setCustId(id);
+  _cashreceipts->findChild<CustomerSelector*>("_customerSelector")->setCustId(id);
+  _cctrans->findChild<CustomerSelector*>("_customerSelector")->setCustId(id);
+
+  XSqlQuery qry;
+  qry.prepare("SELECT crmacct_id "
+                    "FROM crmacct "
+                    "WHERE crmacct_cust_id=:cust_id;" );
+  qry.bindValue(":cust_id", id);
+  qry.exec();
+
+  if(qry.first())
+  {
+    _contacts->parameterWidget()->setDefault(tr("Account"), qry.value("crmacct_id").toInt(), true);
+    _todoList->parameterWidget()->setDefault(tr("Account"), qry.value("crmacct_id").toInt(), true);
+    _billCntct->setSearchAcct(qry.value("crmacct_id").toInt());
+    _corrCntct->setSearchAcct(qry.value("crmacct_id").toInt());
+  }
+  else if(qry.lastError().type() != QSqlError::NoError)
+    QMessageBox::warning(this, tr("Database Error"),
+                         qry.lastError().text());
 }
 
 void customer::sClear()
@@ -1764,7 +1927,12 @@ void customer::sClear()
     _blanketPos->setEnabled(cView != _mode && _usesPOs->isChecked());
     _blanketPos->setChecked(false);
     _currency->setId(CurrCluster::baseId());
-    _inGoodStanding->setChecked(true);
+    if (_metrics->value("SOCreditStatus") == "H")
+      _onCreditHold->setChecked(true);
+    else if (_metrics->value("SOCreditStatus") == "W")
+      _onCreditWarning->setChecked(true);
+    else
+      _inGoodStanding->setChecked(true);
 
     _shipto->clear();
     _custchar->removeRows(0, _custchar->rowCount());

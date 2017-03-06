@@ -99,6 +99,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _authNumber->setValidator(omfgThis->orderVal());
   _comments->setType(Comments::ReturnAuth);
 
+  _custType->setText("");
   _currency->setLabel(_currencyLit);
 
   _raitem->addColumn(tr("#"),             _seqColumn,   Qt::AlignCenter,true,  "f_linenumber");
@@ -401,10 +402,10 @@ bool returnAuthorization::sSave(bool partial)
   << GuiErrorCheck((!partial && disposition.isEmpty()), _disposition,
                    tr("<p>You must enter a Disposition."))
   << GuiErrorCheck((!partial && timing.isEmpty()), _timing,
-                   tr("<p>You must enter a Timing."))
+                   tr("<p>You must enter a Credit/Ship Timing."))
   << GuiErrorCheck((!partial && creditBy.isEmpty()), _creditBy,
                    tr("<p>You must enter a Credit Method."))
-  << GuiErrorCheck(_authNumber->text().isEmpty(), _authNumber,
+  << GuiErrorCheck(!partial && _authNumber->text().isEmpty(), _authNumber,
                    tr("You must enter a valid Authorization Number."))
   << GuiErrorCheck(!_authDate->isValid(), _authDate,
                    tr("You must enter a valid Authorization Date."))
@@ -519,7 +520,8 @@ bool returnAuthorization::sSave(bool partial)
   returnSave.bindValue(":rahead_calcfreight", _calcfreight);
   returnSave.bindValue(":rahead_warehous_id", _warehouse->id());
   returnSave.bindValue(":rahead_cohead_warehous_id", _shipWhs->id());
-  returnSave.bindValue(":rahead_shipzone_id", _shippingZone->id());
+  if (_shippingZone->id() != -1)
+    returnSave.bindValue(":rahead_shipzone_id", _shippingZone->id());
   returnSave.bindValue(":rahead_saletype_id", _saleType->id());
 
   returnSave.exec();
@@ -825,6 +827,7 @@ void returnAuthorization::sPopulateCustomerInfo()
     }
     else
     {
+      _custType->setText("");
       _origso->setCustId(-1);
       _salesRep->setCurrentIndex(-1);
       _taxzone->setId(-1);
@@ -1198,7 +1201,8 @@ void returnAuthorization::sFillList()
     _commission->setEnabled(true);
     _taxzone->setEnabled(true);
     _disposition->setEnabled(true);
-    _timing->setEnabled(true);
+// this overrides the setting of _timing in sDispositionChanged
+//    _timing->setEnabled(true);
     _cust->setEnabled(!_origso->isValid());
     _billToName->setEnabled(true);
     _billToAddr->setEnabled(true);

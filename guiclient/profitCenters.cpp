@@ -103,6 +103,7 @@ void profitCenters::sDelete()
   if (profitDelete.first())
   {
     int result = profitDelete.value("result").toInt();
+    if (result < 0)
     {
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Profit Center"),
                              storedProcErrorLookup("deleteProfitCenter", result),
@@ -112,9 +113,7 @@ void profitCenters::sDelete()
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Profit Center"),
                                 profitDelete, __FILE__, __LINE__))
-  {
     return;
-  }
 
   sFillList();
 }

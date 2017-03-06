@@ -494,6 +494,7 @@ void workOrderMaterials::sFillList()
   }
   else
   {
+    _womatl->clear();
     _pickNumber->clear();
     _pickQtyPer->clear();
     _nonPickNumber->clear();

@@ -343,8 +343,8 @@ void login2::sLogin()
 
   if (db.isOpen())
   {
-    QString earliest = "9.1.0",
-            latest   = "9.5.0";
+    QString earliest = "9.3.0",
+            latest   = "9.6.0";
     XSqlQuery checkVersion;   // include earliest in the range but exclude latest
     checkVersion.prepare("SELECT compareVersion(:earliest) <= 0"
                          "   AND compareVersion(:latest)   > 0 AS ok,"
@@ -419,15 +419,7 @@ void login2::sLogin()
                              "<p>This may be due to a problem with your user name, password, or server connection information. "
                              "<p>Below is more detail on the connection problem: "
                              "<p>%1" ).arg(db.lastError().text()));
-
-    if (!_captive)
-    {
-      _username->setText("");
-      _username->setFocus();
-    }
-    else
-      _password->setFocus();
-
+    _password->setFocus();
     _password->setText("");
     return;
   }

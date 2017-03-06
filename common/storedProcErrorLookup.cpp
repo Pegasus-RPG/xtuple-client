@@ -54,6 +54,12 @@ const struct {
                             "it is already associated with an Opportunity.  You must "
                             "detach this Sales Order before you may attach it."),    0, "" },
 
+  { "calculateFreightDistribution", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "No valid Items have been distributed to the Voucher."
+                                    " Items must be Purchased goods and be costed items.  Please check and distribute items before"
+                                    " attempting to distribute freight."),     0, "" },
+  { "calculateFreightDistribution", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Voucher you are attempting to distribute freight "
+                                    "to has incorrect item totals for the desired distribution method. Please check that Voucher"),     0, "" },
+
   { "changeCMHeadTaxAuth", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Return was not found."),	0, "" },
   { "changeCMHeadTaxAuth", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Tax Authority was not found."),	0, "" },
 
@@ -296,6 +302,12 @@ const struct {
   { "createWo",	-2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Work Order can not be exploded because items on "
 			       "the BOM exist without itemsites."),	0, "" }, 
 
+  { "CRMAccount",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The CRM Account is associated with a system user "
+                               " so the number cannot be changed."),		 0, "" },
+  { "CRMAccount",	-2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "User does not exist so this CRM Account Number is invalid."
+                                                                  ),		 0, "" },
+  { "CRMAccount",	-3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot change the Username"), 0, "" },
+
   { "deleteAccount",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Ledger Account cannot be deleted as it "
                              "is currently used in one or more Cost Categories."
                              "  You must reassign these Cost Category "
@@ -395,9 +407,9 @@ const struct {
                               "charged."),                              0, "" },
   { "deleteCharacteristic",
 			-99, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Characteristic cannot be deleted "
-			       "because it has been assigned to other documents."
+                               "because it has been assigned to other documents. "
 			       "You must remove these assignments before "
-			       "you may delete the selected Characteristic."),
+                               "you may delete the selected Characteristic."),
 			       					 0, "" },
 
   { "deleteCheck", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot delete this Payment because either it has not "
@@ -514,9 +526,11 @@ const struct {
   { "deleteItem",	-4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Item cannot be deleted as there are "
 			       "Breeder BOM records associated with it."), 	0, "" },
   { "deleteItem",	-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Item cannot be deleted as there are "
-			       "assignement records associated with it."), 	0, "" },
+                               "assignment records associated with it."), 	0, "" },
   { "deleteItem",	-6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Item cannot be deleted as there are "
 			       "Revision Control records associated with it."), 	0, "" },
+  { "deleteItem",	-7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Item cannot be deleted as it has "
+                               "been invoiced."), 	0, "" },
   { "deleteItemSite",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Item Site cannot be deleted as "
 			      "there is Inventory History posted against it. "
 			      "You may edit the Item Site and deactivate it."),	0, "" },
@@ -768,6 +782,10 @@ const struct {
 								 0, "" },
   { "deleteWo",		-3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Work Order cannot be deleted in the current status. "
              "Please close the associated Sales Order "
+             "instead of trying to Delete it."),
+                 0, "" },
+  { "deleteWo",		-4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Work Order cannot be deleted as it still has "
+             "WIP value against it.  Please reverse the material issue or close the W/O "
              "instead of trying to Delete it."),
                  0, "" },
 
@@ -1111,7 +1129,6 @@ const struct {
 			       "Systems Administrator to have this corrected "
 			       "before you may post this Return."),
 								 0, "" },
-
   { "postGLSeries", -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not post this G/L Series because the "
 				 "Accounting Period is closed."), 0, "" },
   { "postGLSeries", -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not post this G/L Series because the G/L "
@@ -1226,6 +1243,9 @@ const struct {
   { "postPoReturns", -3, "", -3, "insertGLTransaction" },
   { "postPoReturns", -4, "", -4, "insertGLTransaction" },
 
+  { "postValueIntoInvBalance", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An inventory balance record was not found "
+                               "for item %1.  This is typically caused by that item missing standard costs"), 0, "" },
+
   { "postVoucher",	-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Cost Category for one or more Item Sites "
 			       "for the Purchase Order covered by this Voucher "
 			       "is not configured with Purchase Price Variance "
@@ -1236,6 +1256,13 @@ const struct {
 			       "Voucher."),
 								0, "" },
 
+  { "_raheadBeforeUpdateTrigger", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "You do not have privileges to change "
+                               "a Return Authorization."), 0, "" },
+  { "_raheadBeforeUpdateTrigger", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Returns may not be saved with disposition "
+                               " of Credit and Credit Method of None."), 0, "" },
+  { "_raheadBeforeUpdateTrigger", -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The authorization number may not be changed."),
+                                   0, "" },
+
   { "recallShipment",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This shipment cannot be recalled because it "
 			       "does not appear to have been shipped."),
 								0, "" },
@@ -1245,7 +1272,7 @@ const struct {
   { "recallShipment",	-3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This shipment cannot be recalled "
 			       "because it has already been received "
 			       "at its destination."),		0, "" },
-{ "recallShipment",	-4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This shipment cannot be recalled because it "
+  { "recallShipment",	-4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This shipment cannot be recalled because it "
                              "appears to have been invoiced and the invoice has been posted."),
                                                               0, "" },
   { "recallShipment",	-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This shipment cannot be recalled because it "

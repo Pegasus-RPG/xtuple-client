@@ -55,9 +55,6 @@ viewCheckRun::viewCheckRun(QWidget* parent, const char* name, Qt::WindowFlags fl
   if (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled"))
     _check->addColumn(tr("EFT Batch"),        _orderColumn,     Qt::AlignLeft,  true, "checkhead_ach_batch" );
 
-  if (omfgThis->singleCurrency())
-      _check->hideColumn("curr_concat");
-
   connect(omfgThis, SIGNAL(checksUpdated(int, int, bool)), this, SLOT(sFillList(int)));
 
   sFillList(); 

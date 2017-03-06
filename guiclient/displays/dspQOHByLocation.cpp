@@ -107,7 +107,8 @@ void dspQOHByLocation::sPopulateLocations()
                          "            ELSE (warehous_code || '-' || formatLocationName(location_id))"
                          "       END AS locationname "
                          "FROM location, whsinfo "
-                         "WHERE (location_warehous_id=warehous_id) "
+                         "WHERE ((location_warehous_id=warehous_id) "
+                         " AND   (location_active) ) "
                          "ORDER BY locationname;" );
   else
   {
@@ -117,7 +118,8 @@ void dspQOHByLocation::sPopulateLocations()
                 "            ELSE formatLocationName(location_id)"
                 "       END AS locationname "
                 "FROM location "
-                "WHERE (location_warehous_id=:warehous_id) "
+                "WHERE ((location_warehous_id=:warehous_id) "
+                " AND   (location_active) ) "
                 "ORDER BY locationname;" );
     qq.bindValue(":warehous_id", _warehouse->id());
     qq.exec();
@@ -203,6 +205,9 @@ bool dspQOHByLocation::setParams(ParameterList &params)
   params.append("to", tr("T/O"));
 
   _warehouse->appendValue(params);
+
+  if (_metrics->boolean("MultiWhs"))
+    params.append("MultiWhs");
 
   if (_location->id() != -1)
     params.append("location_id", _location->id());

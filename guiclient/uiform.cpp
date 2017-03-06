@@ -412,7 +412,7 @@ void uiform::sScriptNew()
   scriptEditor *newdlg = new scriptEditor(this, "", Qt::Window);
   newdlg->set(params);
 
-  omfgThis->handleNewWindow(newdlg);
+  omfgThis->handleNewWindow(newdlg, Qt::ApplicationModal);
   connect(newdlg, SIGNAL(destroyed()), this, SLOT(sFillList()));
 }
 
@@ -425,7 +425,7 @@ void uiform::sScriptEdit()
   scriptEditor *newdlg = new scriptEditor(this, "", Qt::Window);
   newdlg->set(params);
 
-  omfgThis->handleNewWindow(newdlg);
+  omfgThis->handleNewWindow(newdlg, Qt::ApplicationModal);
   connect(newdlg, SIGNAL(destroyed()), this, SLOT(sFillList()));
 }
 

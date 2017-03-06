@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -633,11 +633,8 @@ void menuSales::sSales()
 
 void menuSales::sUpdatePrices()
 {
-  ParameterList params;
-  
-  updatePrices *newdlg = new updatePrices();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  updatePrices newdlg(parent, "updatePrices", true);
+  newdlg.exec();
 }
 
 void menuSales::sUpdateListPrices()
@@ -645,9 +642,9 @@ void menuSales::sUpdateListPrices()
   ParameterList params;
   params.append("listpricesched", true);
   
-  updatePrices *newdlg = new updatePrices();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  updatePrices newdlg(parent, "updatePrices", true);
+  newdlg.set(params);
+  newdlg.exec();
 }
 
 void menuSales::sDspPricesByItem()

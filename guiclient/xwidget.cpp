@@ -60,6 +60,8 @@ XWidget::XWidget(QWidget * parent, Qt::WindowFlags flags)
   {
     setWindowModality(Qt::ApplicationModal);
   }
+  if(!parent || !parent->isModal())
+    setParent(omfgThis);
 
   _private = new XWidgetPrivate(this);
 }
@@ -77,6 +79,8 @@ XWidget::XWidget(QWidget * parent, const char * name, Qt::WindowFlags flags)
 
   if(name)
     setObjectName(name);
+  if(!parent || !parent->isModal())
+    setParent(omfgThis);
 
   _private = new XWidgetPrivate(this);
 }
@@ -119,6 +123,7 @@ void XWidget::showEvent(QShowEvent *event)
       QString objName = objectName();
       QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
       QSize lsize = xtsettingsValue(objName + "/geometry/size").toSize();
+      QSize currsize = size();
 
       setAttribute(Qt::WA_DeleteOnClose);
       if(omfgThis->showTopLevel() || isModal())
@@ -129,6 +134,8 @@ void XWidget::showEvent(QShowEvent *event)
         QRect r(pos, size());
         if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
           move(pos);
+        else if(currsize!=size())
+          move(QPoint(1, 1));
       }
       else
       {
@@ -137,6 +144,7 @@ void XWidget::showEvent(QShowEvent *event)
 	// this verboseness works around what appear to be qt bugs
         QMdiSubWindow *subwin = new QMdiSubWindow();
         subwin->setParent(omfgThis->workspace());
+        omfgThis->workspace()->addSubWindow(subwin);
         subwin->setWidget(this);
 
         omfgThis->workspace()->setActiveSubWindow(subwin);

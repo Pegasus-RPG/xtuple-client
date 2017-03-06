@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -65,7 +65,10 @@ class ScanEvent
 #endif
 
 ReceiverItem::ReceiverItem()
-  : _null(true)
+  : _type(0),
+    _parent(0),
+    _target(0),
+    _null(true)
 {
 }
 
@@ -106,7 +109,7 @@ InputManagerPrivate::InputManagerPrivate(InputManager *parent)
     addToEventList("TOLI", cBCTransferOrderLineItem, 1, 1, 0, "Transfer Order Line %1-%2",      "SELECT tohead_id AS id, toitem_id AS altid, toitem_item_id AS seq FROM tohead JOIN toitem ON toitem_tohead_id=tohead_id WHERE tohead_number = :f1 AND toitem_linenumber = :f2;" );
     addToEventList("ISXX", cBCItemSite,              2, 1, 0, "Item %1, Site %2",               "SELECT itemsite_id AS id, itemsite_item_id AS altid FROM itemsite JOIN item ON itemsite_item_id=item_id JOIN whsinfo ON itemsite_warehous_id = warehous_id WHERE item_number = :f1 AND warehous_code = :f2;" );
     addToEventList("ITXX", cBCItem,                  2, 0, 0, "Item %1",                        "SELECT item_id AS id FROM item WHERE item_number = :f1;" );
-    addToEventList("ITUP", cBCUPCCode,               0, 0, 0, "UPC %1 for Item %2",             "SELECT item_id, item_number FROM item WHERE item_upccode = :f1);" );
+    addToEventList("ITUP", cBCUPCCode,               0, 0, 0, "UPC %1 for Item %2",             "SELECT item_id, item_number FROM item WHERE item_upccode = :f1 AND item_active);" );
 //  addToEventList("ITEA", cBCEANCode,               0, 0, 0 );
     addToEventList("CTXX", cBCCountTag,              2, 0, 0, "Count Tag %1",                   "SELECT invcnt_id AS id FROM invcnt WHERE invcnt_tagnumber = :f1;" );
     addToEventList("LOXX", cBCLocation,              1, 2, 0, "Site %1, Location %2",           "SELECT location_id AS id FROM location JOIN whsinfo ON location_warehous_id = warehous_id WHERE warehous_code = :f1 AND location_name = :f2;" );
@@ -153,6 +156,8 @@ void InputManager::notify(int pType, QObject *pParent, QObject *pTarget, const Q
  */
 QString InputManager::slotName(const QString &slotname)
 {
+  if (DEBUG)
+    qDebug("slotName(%s) entered", qPrintable(slotname));
   return QString("1") + slotname;
 }
 
@@ -316,7 +321,6 @@ bool InputManager::eventFilter(QObject *, QEvent *pEvent)
         if (_private->_cursor == (_private->_length1 + _private->_length2 + _private->_length3))
         {
           _private->_state = cIdle;
-
           // make sure we got a recognized scan event
           switch (_private->_event->type)
           {
@@ -338,7 +342,7 @@ bool InputManager::eventFilter(QObject *, QEvent *pEvent)
             case cBCLocationIssue:
             case cBCLocationContents:
               _private->dispatchScan(_private->_event->type);
-              break;
+              // FALLTHROUGH
 
             default:
               _private->_state = cIdle;
@@ -414,6 +418,11 @@ void InputManagerPrivate::dispatchScan(int type)
   ReceiverItem receiver = findReceiver(type);
   if (! receiver.isNull())
   {
+    if (DEBUG)
+      qDebug() << "dispatchScan() receiver:"     << receiver.type()
+               << receiver.parent()      << "->" << receiver.target()
+               << "[" << receiver.slot() << "]"  << receiver.isNull();
+
     QString number    = _buffer.left(_length1);
     QString subNumber = _buffer.mid(_length1, _length2);
     QString seqNumber = _buffer.right(_length3);
@@ -451,7 +460,6 @@ void InputManagerPrivate::dispatchScan(int type)
       message(tr("Scanned %1").arg(descrip), 1000);
 
       QString fieldName = queryFieldName(type, receiver.type());
-      QGenericArgument arg1     = Q_ARG(int, q.value(fieldName).toInt());
 
       if (fieldName.isEmpty())
       {
@@ -460,14 +468,17 @@ void InputManagerPrivate::dispatchScan(int type)
         return;
       }
 
+      int id = q.value(fieldName).toInt();
+      QGenericArgument idArg = Q_ARG(int, id);
       // convert "1methodName(args)(stuff)" to just "methodName"
       QString methodName = receiver.slot();
       methodName.replace(QRegExp("^1([a-z][a-z0-9_]*).*", Qt::CaseInsensitive), "\\1");
 
       if (DEBUG)
-        qDebug() << receiver.target() << methodName.toLatin1().data() << q.value(fieldName).toInt();
-      (void)QMetaObject::invokeMethod(receiver.target(), methodName.toLatin1().data(), arg1);
-      emit gotBarCode(type, q.value(fieldName).toInt());
+        qDebug() << receiver.target() << methodName.toLatin1().data() << id;
+      (void)QMetaObject::invokeMethod(receiver.target(),
+                                      methodName.toLatin1().data(), idArg);
+      emit gotBarCode(type, id);
     }
     else if (q.lastError().type() != QSqlError::NoError)
       message(tr("Error Scanning %1: %2").arg(descrip, q.lastError().text()), 1000);

@@ -23,7 +23,7 @@
 dspUserPrivileges::dspUserPrivileges(QWidget* parent, const char* name, Qt::WindowFlags fl)
   : display(parent, name, fl)
 {
-  setWindowTitle(tr("User Privileges"));
+  setWindowTitle(tr("User Privilege Audit"));
   setReportName("UserPrivileges");
   setMetaSQLOptions("permissions", "privileges");
   setParameterWidgetVisible(true);
@@ -35,8 +35,6 @@ dspUserPrivileges::dspUserPrivileges(QWidget* parent, const char* name, Qt::Wind
   parameterWidget()->append(tr("Username"), "username", ParameterWidget::User);
   parameterWidget()->appendComboBox(tr("Role"), "role", _grpSql);
   parameterWidget()->append(tr("Privilege"), "privilege", ParameterWidget::Text);
-
-  parameterWidget()->applyDefaultFilterSet();
 
   list()->addColumn(tr("Username"),    100,  Qt::AlignLeft, true,  "priv_username" );
   list()->addColumn(tr("Role"),        100,  Qt::AlignLeft, true,  "grp_name"      );

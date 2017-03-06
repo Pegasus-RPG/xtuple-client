@@ -48,7 +48,7 @@ dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::Window
   _check->addColumn(tr("Recipient"),   -1,              Qt::AlignLeft,   true,  "description"   );
   _check->addColumn(tr("Paymt. Date") , _dateColumn,    Qt::AlignCenter, true,  "checkdate" );
   _check->addColumn(tr("Amount"),      _moneyColumn,    Qt::AlignRight,  true,  "amount"  );
-  _check->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignRight,  true,  "currAbbr"  );
+  _check->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignRight,  !omfgThis->singleCurrency(),  "currAbbr"  );
   _check->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_amount"  );
   if (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled"))
     _check->addColumn(tr("EFT Batch"), _orderColumn,    Qt::AlignRight,  true,  "checkhead_ach_batch");
@@ -61,7 +61,6 @@ dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::Window
   _total->setPrecision(omfgThis->moneyVal());
   if (omfgThis->singleCurrency())
   {
-    _check->hideColumn("currAbbr");
     _totalCurr->hide();
   }
 }

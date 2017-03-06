@@ -28,11 +28,10 @@ class ReceiverItem
     inline int type()        { return _type;   };
     inline QObject *parent() { return _parent; };
     inline QObject *target() { return _target; };
-    inline char* slot()    { return _slot.toLatin1().data();   };
+    inline QString  slot()   { return _slot;   };
     inline bool isNull()     { return _null;   };
     bool operator==(const ReceiverItem &value) const;
 
-  private:
     int     _type;
     QObject *_parent;
     QObject *_target;

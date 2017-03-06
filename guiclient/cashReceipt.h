@@ -62,6 +62,9 @@ protected slots:
     virtual void languageChange();
     virtual void sSearchDocNumChanged();
 
+signals:
+    void populated();
+
 
 private:
     int     _mode;

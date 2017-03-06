@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -118,6 +118,7 @@ item::item(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _inventoryUOM->setType(XComboBox::UOMs);
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name" );
+  _charass->addColumn(tr("Group"),          _itemColumn, Qt::AlignLeft, true, "char_group" );
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value" );
   _charass->addColumn(tr("Default"),        _ynColumn*2,   Qt::AlignCenter, true, "charass_default" );
   _charass->addColumn(tr("List Price"),     _priceColumn,Qt::AlignRight, true, "charass_price" );
@@ -607,6 +608,23 @@ void item::sSave()
                               tr("You may not rename this Item to the entered Item Number as it is in use by another Item."));
     }
   }
+
+  if (_metrics->boolean("EnforceUniqueBarcodes"))
+  {
+    itemSave.prepare( "SELECT EXISTS(SELECT 1 FROM item "
+                      "WHERE ((item_active) "
+                      "AND (item_upccode = :item_upccode) "
+                      "AND (item_id <> :item_id))) AS result;");
+    itemSave.bindValue(":item_id", _itemid);
+    itemSave.bindValue(":item_upccode", _upcCode->text());
+    itemSave.exec();
+    if (itemSave.first() && itemSave.value("result").toBool())
+    {
+      errors << GuiErrorCheck(true, _upcCode,
+                              tr("You may not use this Item Bar Code (%1) as it is used by another Item.")
+                                .arg(_upcCode->text()));
+    }
+  }
   
   errors << GuiErrorCheck(_disallowPlanningType && QString(_itemTypes[_itemtype->currentIndex()]) == "L", _itemtype,
                           tr("This item is part of one or more Bills of Materials and cannot be a Planning Item."))
@@ -955,12 +973,10 @@ void item::sDelete()
 void item::sFillList()
 {
   XSqlQuery itemFillList;
-  itemFillList.prepare( "SELECT charass_id, char_name, "
-             " CASE WHEN char_type < 2 THEN "
-             "   charass_value "
-             " ELSE "
-             "   formatDate(charass_value::date) "
-             "END AS charass_value, "
+  itemFillList.prepare( "SELECT charass_id, char_name, char_group, "
+             "           CASE WHEN char_type = 2 THEN formatDate(charass_value::date)"
+             "                ELSE charass_value"
+             "           END AS charass_value,"
              " charass_default, "
              " charass_price, 'salesprice' AS charass_price_xtnumericrole "
              "FROM charass, char "
@@ -1728,12 +1744,14 @@ void item::sFillListItemSites()
   params.append("item_id", _itemid);
   params.append("regular", tr("Regular"));
   params.append("none", tr("None"));
-  params.append("lotNumber", tr("Lot #"));
-  params.append("serialNumber", tr("Serial #"));
+  params.append("lot", tr("Lot #"));
+  params.append("serial", tr("Serial #"));
   params.append("standard", tr("Standard"));
   params.append("job", tr("Job"));
   params.append("average", tr("Average"));
   params.append("na", tr("N/A"));
+  params.append("never", tr("Never"));
+  params.append("showInactive");
 
   itemFillListItemSites  = mql.toQuery(params);
   _itemSite->populate(itemFillListItemSites);

@@ -74,18 +74,12 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::Window
   }
   _itemsrcp->addColumn(tr("Qty Break"),                   _qtyColumn, Qt::AlignRight, true, "itemsrcp_qtybreak");
   _itemsrcp->addColumn(tr("Unit Price"),                          -1, Qt::AlignRight, true, "itemsrcp_price");
-  _itemsrcp->addColumn(tr("Currency"),               _currencyColumn, Qt::AlignLeft,  true, "item_curr");
+  _itemsrcp->addColumn(tr("Currency"),               _currencyColumn, Qt::AlignLeft, !omfgThis->singleCurrency(), "item_curr");
   _itemsrcp->addColumn(tr("Discount Percent"),                    -1, Qt::AlignRight, true, "itemsrcp_discntprcnt" );
   _itemsrcp->addColumn(tr("Discount Fixed Amt."),                 -1, Qt::AlignRight, true, "itemsrcp_fixedamtdiscount" );
-  _itemsrcp->addColumn(tr("Unit Price\n(%1)").arg(base),_moneyColumn, Qt::AlignRight, true, "price_base");
+  _itemsrcp->addColumn(tr("Unit Price\n(%1)").arg(base),_moneyColumn, Qt::AlignRight, !omfgThis->singleCurrency(), "price_base");
   _itemsrcp->addColumn(tr("Type"),                      _orderColumn, Qt::AlignLeft,  true, "type" );
   _itemsrcp->addColumn(tr("Method"),                    _orderColumn, Qt::AlignLeft,  true, "method" );
-
-  if (omfgThis->singleCurrency())
-  {
-    _itemsrcp->hideColumn("item_curr");
-    _itemsrcp->hideColumn("price_base");
-  }
 
   _invVendorUOMRatio->setValidator(omfgThis->ratioVal());
   _minOrderQty->setValidator(omfgThis->qtyVal());

@@ -556,7 +556,7 @@ to be bound by its terms.</comment>
                        <bool>true</bool>
                       </property>
                       <property name="type">
-                       <enum>XComboBox::SalesReps</enum>
+                       <enum>XComboBox::Adhoc</enum>
                       </property>
                      </widget>
                     </item>
@@ -1628,6 +1628,13 @@ to be bound by its terms.</comment>
               <widget class="QPushButton" name="_viewCC">
                <property name="text">
                 <string>View</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_deleteCC">
+               <property name="text">
+                <string>Delete</string>
                </property>
               </widget>
              </item>

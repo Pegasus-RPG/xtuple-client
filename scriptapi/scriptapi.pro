@@ -37,6 +37,7 @@ HEADERS += setupscriptapi.h \
     qapplicationproto.h \
     qboxlayoutproto.h \
     qbufferproto.h \
+    qbuttongroupproto.h \
     qbytearrayproto.h \
     qcoreapplicationproto.h \
     qcryptographichashproto.h \
@@ -87,6 +88,7 @@ HEADERS += setupscriptapi.h \
     qlayoutitemproto.h \
     qmainwindowproto.h \
     qmenuproto.h \
+    qmenubarproto.h \
     qmessageboxsetup.h \
     qnetworkaccessmanagerproto.h \
     qnetworkinterfaceproto.h \
@@ -101,9 +103,11 @@ HEADERS += setupscriptapi.h \
     qserialportinfoproto.h \
     qsizepolicyproto.h \
     qspaceritemproto.h \
+    qsqlproto.h \
     qsqldatabaseproto.h \
     qsqldriverproto.h \
     qsqlerrorproto.h \
+    qsqlqueryproto.h \
     qsqlrecordproto.h \
     qsslcertificateextensionproto.h \
     qsslcertificateproto.h \
@@ -188,6 +192,7 @@ SOURCES += setupscriptapi.cpp \
     qapplicationproto.cpp \
     qboxlayoutproto.cpp \
     qbufferproto.cpp \
+    qbuttongroupproto.cpp \
     qbytearrayproto.cpp \
     qcoreapplicationproto.cpp \
     qcryptographichashproto.cpp \
@@ -238,6 +243,7 @@ SOURCES += setupscriptapi.cpp \
     qlayoutproto.cpp \
     qmainwindowproto.cpp \
     qmenuproto.cpp \
+    qmenubarproto.cpp \
     qmessageboxsetup.cpp \
     qnetworkaccessmanagerproto.cpp \
     qnetworkinterfaceproto.cpp \
@@ -252,9 +258,11 @@ SOURCES += setupscriptapi.cpp \
     qserialportinfoproto.cpp \
     qsizepolicyproto.cpp \
     qspaceritemproto.cpp \
+    qsqlproto.cpp \
     qsqldatabaseproto.cpp \
     qsqldriverproto.cpp \
     qsqlerrorproto.cpp \
+    qsqlqueryproto.cpp \
     qsqlrecordproto.cpp \
     qsslcertificateextensionproto.cpp \
     qsslcertificateproto.cpp \

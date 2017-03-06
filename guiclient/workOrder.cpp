@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -14,6 +14,8 @@
 #include <QSqlError>
 #include <QValidator>
 #include <QVariant>
+
+#include <metasql.h>
 
 #include "changeWoQty.h"
 #include "closeWo.h"
@@ -28,6 +30,7 @@
 #include "implodeWo.h"
 #include "inputManager.h"
 #include "issueWoMaterialItem.h"
+#include "mqlutil.h"
 #include "postProduction.h"
 #include "printWoTraveler.h"
 #include "printWoTraveler.h"
@@ -232,11 +235,11 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
       _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured |
                          ItemLineEdit::cActive);
                          
-      connect(_priority, SIGNAL(editingFinished ()), this, SLOT(sReprioritizeParent()));
+      populate();
+      connect(_priority, SIGNAL(valueChanged(int)), this, SLOT(sReprioritizeParent()));
       connect(_qty, SIGNAL(editingFinished()), this, SLOT(sChangeParentQty()));
       connect(_startDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
       connect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
-      populate();
     }
     else if (param.toString() == "view")
     {
@@ -536,7 +539,7 @@ void workOrder::sCreate()
         disconnect(_qty, SIGNAL(editingFinished()), this, SLOT(sCreate()));
         disconnect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sCreate()));
 
-        connect(_priority, SIGNAL(editingFinished ()), this, SLOT(sReprioritizeParent()));
+        connect(_priority, SIGNAL(valueChanged(int)), this, SLOT(sReprioritizeParent()));
         connect(_qty, SIGNAL(editingFinished()), this, SLOT(sChangeParentQty()));
         connect(_startDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
         connect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
@@ -709,14 +712,24 @@ void workOrder::sPopulateItemChar( int pItemid )
   {
     workPopulateItemChar.prepare( "SELECT DISTINCT char_id, char_name,"
                "       COALESCE(b.charass_value, (SELECT c.charass_value FROM charass c WHERE ((c.charass_target_type='I') AND (c.charass_target_id=:item_id) AND (c.charass_default) AND (c.charass_char_id=char_id)) LIMIT 1)) AS charass_value"
-               "  FROM charass a, char "
-               "    LEFT OUTER JOIN charass b"
-               "      ON (b.charass_target_type='W'"
-               "      AND b.charass_target_id=:wo_id"
-               "      AND b.charass_char_id=char_id) "
-               " WHERE ( (a.charass_char_id=char_id)"
-               "   AND   (a.charass_target_type='I')"
-               "   AND   (a.charass_target_id=:item_id) ) "
+               "   FROM (SELECT DISTINCT char_id, char_type, char_name, char_order "
+               "         FROM charass, char, charuse"
+               "         WHERE ((charass_char_id=char_id)"
+               "         AND (charuse_char_id=char_id AND charuse_target_type = 'W') "
+               "         AND (charass_target_type='I') "
+               "         AND (charass_target_id=:item_id) ) "
+               "         UNION SELECT char_id, char_type, char_name, char_order"
+               "         FROM charass, char "
+               "         WHERE ((charass_char_id=char_id)"
+               "         AND  (charass_target_type = 'W' AND charass_target_id=:wo_id))   ) AS data "
+               "   LEFT OUTER JOIN charass b ON ((:wo_id=b.charass_target_id)"
+               "                                  AND ('W'=b.charass_target_type)"
+               "                                  AND (b.charass_char_id=char_id))"
+               "   LEFT OUTER JOIN item     i1 ON (i1.item_id=:item_id)"
+               "   LEFT OUTER JOIN charass  i2 ON ((i1.item_id=i2.charass_target_id)"
+               "                                   AND ('I'=i2.charass_target_type)"
+               "                                   AND (i2.charass_char_id=char_id)"
+               "                                   AND (i2.charass_default))"
                " ORDER BY char_name;" );
     workPopulateItemChar.bindValue(":item_id", pItemid);
     workPopulateItemChar.bindValue(":wo_id", _woid);
@@ -860,76 +873,14 @@ void workOrder::sHandleButtons()
 
 void workOrder::sFillList()
 {
-  XSqlQuery workFillList;
-   //The wodata_id_type column is used to indicate the source of the wodata_id
-   //there are three different tables used wo, womatl and womatlvar
-   //wodata_id_type = 1 = wo_id
-   //wodata_id_type = 2 = womatl_id
-   //wodata_id_type = 3 = womatlvar_id
-   QString sql(
-    "     SELECT wodata_id, "
-    "           wodata_id_type, "
-    "           CASE WHEN wodata_id_type = 1 THEN "
-    "                  wodata_number || '-' || wodata_subnumber "
-    "                WHEN wodata_id_type = 3 THEN "
-    "                  wodata_subnumber::text "
-    "           END AS wonumber, "
-    "           wodata_itemnumber, "
-    "           wodata_descrip, "
-    "           wodata_status, "
-    "           wodata_startdate, "
-    "           wodata_duedate, "
-    "           wodata_adhoc,    "
-    "           wodata_itemsite_id, "
-    "           wodata_qoh AS qoh, "
-    "           wodata_short AS short, "
-    "           wodata_qtyper AS qtyper, "
-    "           wodata_qtyiss AS qtyiss,    "
-    "           wodata_qtyrcv AS qtyrcv,  "
-    "           wodata_qtyordreq AS qtyordreq, "
-    "           wodata_qtyuom, "
-    "           wodata_scrap AS scrap, "
-    "           wodata_setup, "
-    "           wodata_run, "
-    "           wodata_notes, "
-    "           wodata_ref, "
-    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
-    "                WHEN (wodata_qoh = 0) THEN 'warning' "
-    "                WHEN (wodata_qoh < 0) THEN 'error' "
-    "           END AS qoh_qtforegroundrole, "
-    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
-    "                WHEN (wodata_qtyiss = 0) THEN 'warning' "
-    "           END AS qtyiss_qtforegroundrole, "
-    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
-    "                WHEN (wodata_short > 0) THEN 'error' "
-    "           END AS short_qtforegroundrole, "
-    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
-    "                WHEN (wodata_startdate <= current_date) THEN 'error' "
-    "           END AS wodata_startdate_qtforegroundrole,   "
-    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
-    "                WHEN (wodata_duedate <= current_date) THEN 'error' "
-    "           END AS wodata_duedate_qtforegroundrole,   "
-    "           CASE WHEN (wodata_status = 'C') THEN 'gray' "
-    "                WHEN (wodata_id_type = 3) THEN 'emphasis' "
-    "                WHEN (wodata_id_type = 1) THEN 'altemphasis' "
-    "           ELSE null END AS qtforegroundrole, "
-    "           'qty' AS qoh_xtnumericrole, "
-    "           'qtyper' AS qty_per_xtnumericrole, "
-    "           'qty' AS qtyiss_xtnumericrole, "
-    "           'qty' AS qtyrcv_xtnumericrole, "
-    "           'qty' AS qtyordreq_xtnumericrole, "
-    "           'qty' AS short_xtnumericrole, "
-    "           'qty' AS setup_xtnumericrole,"
-    "           'qty' AS run_xtnumericrole,"
-    "           'qty' AS scrap_xtnumericrole, "
-    "           wodata_level AS xtindentrole "
-    "    FROM indentedwo(:wo_id, :showops, :showmatl, :showindent) ");
-  workFillList.prepare(sql);
-  workFillList.bindValue(":wo_id", _woid);
-  workFillList.bindValue(":showops", QVariant(_showOperations->isVisible() && _showOperations->isChecked()));
-  workFillList.bindValue(":showmatl", QVariant(_showMaterials->isChecked()));
-  workFillList.bindValue(":showindent", QVariant(_indented->isChecked()));
-  workFillList.exec();
+  MetaSQLQuery mql = mqlLoad("workOrder", "detail");
+
+  ParameterList params;
+  params.append("wo_id", _woid);
+  params.append("showops", QVariant(_metrics->boolean("Routings") && _showOperations->isChecked()));
+  params.append("showmatl", QVariant(_showMaterials->isChecked()));
+  params.append("showindent", QVariant(_indented->isChecked()));
+  XSqlQuery workFillList = mql.toQuery(params);
   _woIndentedList->populate(workFillList, true);
   _woIndentedList->expandAll();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
@@ -1078,26 +1029,12 @@ void workOrder::sDeleteWO()
     workDeleteWO.exec();
 
     if (workDeleteWO.first())
-    {
-      int result = workDeleteWO.value("returnVal").toInt();
-      if (result < 0)
-      {
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
-                               storedProcErrorLookup("deleteWo", result),
-                               __FILE__, __LINE__);
-        return;
-      }
       omfgThis->sWorkOrdersUpdated(-1, true);
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
+                         workDeleteWO, __FILE__, __LINE__))
+    {
+      return;
     }
-    else if (workDeleteWO.lastError().type() != QSqlError::NoError)
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
-                         workDeleteWO, __FILE__, __LINE__);
-
-  }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
-                                workDeleteWO, __FILE__, __LINE__))
-  {
-    return;
   }
   populate();
 }
@@ -1669,18 +1606,7 @@ void workOrder::sDeleteMatl()
       workDeleteMatl.prepare("SELECT deleteWo(:wo_id, true) AS result;");
       workDeleteMatl.bindValue(":wo_id", woid);
       workDeleteMatl.exec();
-      if (workDeleteMatl.first())
-      {
-        int result = workDeleteMatl.value("result").toInt();
-        if (result < 0)
-        {
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
-                                 storedProcErrorLookup("deleteWo", result),
-                                 __FILE__, __LINE__);
-          return;
-        }
-      }
-      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order Information"),
                                     workDeleteMatl, __FILE__, __LINE__))
       {
         return;
@@ -2075,12 +2001,8 @@ void workOrder::populate()
     _oldQty = (wo.value("wo_qtyord").toDouble() * _sense);
     _qty->setDouble(wo.value("wo_qtyord").toDouble() * _sense);
     _qtyReceived->setDouble(wo.value("wo_qtyrcv").toDouble());
-    _startDate->blockSignals(true);
-    _dueDate->blockSignals(true);
     _startDate->setDate(wo.value("wo_startdate").toDate());
     _dueDate->setDate(wo.value("wo_duedate").toDate());
-    _startDate->blockSignals(false);
-    _dueDate->blockSignals(false);
     _productionNotes->setText(wo.value("wo_prodnotes").toString());
     _comments->setId(_woid);
     _documents->setId(_woid);
@@ -2153,10 +2075,5 @@ void workOrder::populate()
       close();
   }
 }
-
-
-
-
-
 
 

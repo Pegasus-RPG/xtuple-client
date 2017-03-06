@@ -371,6 +371,7 @@
 #include "itemUOM.h"
 #include "labelForm.h"
 #include "labelForms.h"
+#include "ledgerControl.h"
 #include "listRecurringInvoices.h"
 #include "locales.h"
 #include "location.h"

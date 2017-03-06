@@ -426,6 +426,29 @@ to be bound by its terms.</comment>
           </property>
          </widget>
         </item>
+        <item row="6" column="0">
+          <widget class="XLabel" name="_projectLit">
+            <property name="focusPolicy">
+              <enum>Qt::StrongFocus</enum>
+            </property>
+            <property name="text">
+              <string>Project #:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignTop</set>
+            </property>
+          </widget>
+        </item>
+        <item row="6" column="1">
+          <widget class="ProjectCluster" name="_project">
+            <property name="focusPolicy">
+              <enum>Qt::StrongFocus</enum>
+            </property>
+            <property name="label">
+              <string></string>
+            </property>
+          </widget>
+        </item>
        </layout>
       </widget>
      </item>
@@ -1045,6 +1068,11 @@ to be bound by its terms.</comment>
    <class>XTextEdit</class>
    <extends>QTextEdit</extends>
    <header>xtextedit.h</header>
+  </customwidget>
+  <customwidget>
+    <class>ProjectCluster</class>
+    <extends>QWidget</extends>
+    <header>projectcluster.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

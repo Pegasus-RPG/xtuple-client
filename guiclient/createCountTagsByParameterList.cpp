@@ -130,7 +130,8 @@ void createCountTagsByParameterList::sPopulateLocations()
              "            ELSE formatLocationName(location_id)"
              "       END AS locationname "
              "FROM location "
-             "WHERE (location_warehous_id=:warehous_id) "
+             "WHERE ((location_warehous_id=:warehous_id) "
+             " AND   (location_active) ) "
              "ORDER BY locationname;" );
   createPopulateLocations.bindValue(":warehous_id", _warehouse->id());
   createPopulateLocations.exec();

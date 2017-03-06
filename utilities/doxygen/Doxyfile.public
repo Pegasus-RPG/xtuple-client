@@ -38,7 +38,7 @@ PROJECT_NAME           = "xTuple ERP Programmer Reference"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 4.10.0
+PROJECT_NUMBER         = 4.11.0
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -2050,8 +2050,37 @@ SKIP_FUNCTION_MACROS   = YES
 # the path). If a tag file is not located in the directory in which doxygen is
 # run, you must also specify the path to the tagfile here.
 
-TAGFILES               = /Developer/Documentation/Qt/html/qt.tags=http://qt-project.org/doc/qt-4.8 \
-                         /usr/local/Trolltech/Qt-4.8.6/doc/html/qt.tags=http://qt-project.org/doc/qt-4.8
+TAGFILES               = \
+                         qtdocs/activeqt/activeqt.tags=http://doc.qt.io/qt-5/                       \
+                         qtdocs/qdoc/qdoc.tags=http://doc.qt.io/qt-5/                               \
+                         qtdocs/qt3dcollision/qt3dcollision.tags=http://doc.qt.io/qt-5/             \
+                         qtdocs/qt3dcore/qt3dcore.tags=http://doc.qt.io/qt-5/                       \
+                         qtdocs/qt3dlogic/qt3dlogic.tags=http://doc.qt.io/qt-5/                     \
+                         qtdocs/qt3drenderer/qt3drenderer.tags=http://doc.qt.io/qt-5/               \
+                         qtdocs/qtbluetooth/qtbluetooth.tags=http://doc.qt.io/qt-5/                 \
+                         qtdocs/qtconcurrent/qtconcurrent.tags=http://doc.qt.io/qt-5/               \
+                         qtdocs/qtcore/qtcore.tags=http://doc.qt.io/qt-5/                           \
+                         qtdocs/qtgraphicaleffects/qtgraphicaleffects.tags=http://doc.qt.io/qt-5/   \
+                         qtdocs/qtgui/qtgui.tags=http://doc.qt.io/qt-5/                             \
+                         qtdocs/qtlocation/qtlocation.tags=http://doc.qt.io/qt-5/                   \
+                         qtdocs/qtnetwork/qtnetwork.tags=http://doc.qt.io/qt-5/                     \
+                         qtdocs/qtnfc/qtnfc.tags=http://doc.qt.io/qt-5/                             \
+                         qtdocs/qtpositioning/qtpositioning.tags=http://doc.qt.io/qt-5/             \
+                         qtdocs/qtprintsupport/qtprintsupport.tags=http://doc.qt.io/qt-5/           \
+                         qtdocs/qtqml/qtqml.tags=http://doc.qt.io/qt-5/                             \
+                         qtdocs/qtquick/qtquick.tags=http://doc.qt.io/qt-5/                         \
+                         qtdocs/qtquickcontrols/qtquickcontrols.tags=http://doc.qt.io/qt-5/         \
+                         qtdocs/qtsensors/qtsensors.tags=http://doc.qt.io/qt-5/                     \
+                         qtdocs/qtsql/qtsql.tags=http://doc.qt.io/qt-5/                             \
+                         qtdocs/qtsvg/qtsvg.tags=http://doc.qt.io/qt-5/                             \
+                         qtdocs/qttestlib/qttestlib.tags=http://doc.qt.io/qt-5/                     \
+                         qtdocs/qtwebchannel/qtwebchannel.tags=http://doc.qt.io/qt-5/               \
+                         qtdocs/qtwebengine/qtwebengine.tags=http://doc.qt.io/qt-5/                 \
+                         qtdocs/qtwebenginewidgets/qtwebenginewidgets.tags=http://doc.qt.io/qt-5/   \
+                         qtdocs/qtwebsockets/qtwebsockets.tags=http://doc.qt.io/qt-5/               \
+                         qtdocs/qtwidgets/qtwidgets.tags=http://doc.qt.io/qt-5/                     \
+                         qtdocs/qtxml/qtxml.tags=http://doc.qt.io/qt-5/                             \
+                         qtdocs/qtxmlpatterns/qtxmlpatterns.tags=http://doc.qt.io/qt-5/
 
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create a
 # tag file that is based on the input files it reads. See section "Linking to

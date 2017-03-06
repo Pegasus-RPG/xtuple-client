@@ -30,6 +30,7 @@ win32-msvc* {
   PRE_TARGETDEPS += ../lib/xtuplecommon.$${XTLIBEXT}    \
                     ../lib/xtuplescriptapi.lib          \
                     ../lib/xtuplewidgets.lib            \
+                    $${OPENRPT_LIBDIR}/qzint.$${OPENRPTLIBEXT}    \
                     $${OPENRPT_LIBDIR}/MetaSQL.$${OPENRPTLIBEXT}  \
                     $${OPENRPT_LIBDIR}/renderer.$${OPENRPTLIBEXT} \
                     $${OPENRPT_LIBDIR}/wrtembed.$${OPENRPTLIBEXT} \
@@ -38,6 +39,7 @@ win32-msvc* {
   PRE_TARGETDEPS += ../lib/libxtuplecommon.$${XTLIBEXT} \
                     ../lib/libxtuplescriptapi.a         \
                     ../lib/libxtuplewidgets.a           \
+                    $${OPENRPT_LIBDIR}/libqzint.$${OPENRPTLIBEXT}    \
                     $${OPENRPT_LIBDIR}/libMetaSQL.$${OPENRPTLIBEXT}  \
                     $${OPENRPT_LIBDIR}/librenderer.$${OPENRPTLIBEXT} \
                     $${OPENRPT_LIBDIR}/libwrtembed.$${OPENRPTLIBEXT} \
@@ -46,7 +48,7 @@ win32-msvc* {
 
 QMAKE_LIBDIR = ../lib $${OPENRPT_LIBDIR} $$QMAKE_LIBDIR
 LIBS        += -lxtuplecommon -lxtuplewidgets -lwrtembed -lopenrptcommon
-LIBS        += -lrenderer -lxtuplescriptapi $${DMTXLIB} -lMetaSQL
+LIBS        += -lrenderer -lxtuplescriptapi -lqzint $${DMTXLIB} -lMetaSQL
 
 lessThan(QT_MAJOR_VERSION, 5) {
 #not the best way to handle this, but it should do
@@ -209,6 +211,7 @@ FORMS =   absoluteCalendarItem.ui               \
           createPlannedOrdersByPlannerCode.ui   \
           createRecurringInvoices.ui            \
           createRecurringItems.ui               \
+          createfiscalyear.ui                   \
           creditCard.ui                         \
           creditMemo.ui                         \
           creditMemoEditList.ui                 \
@@ -419,6 +422,7 @@ FORMS =   absoluteCalendarItem.ui               \
           printCheck.ui                         \
           printChecks.ui                        \
           printChecksReview.ui                  \
+          printChecksReviewEdit.ui              \
           printCreditMemo.ui                    \
           printCreditMemos.ui                   \
           printInvoice.ui                       \
@@ -595,6 +599,7 @@ FORMS =   absoluteCalendarItem.ui               \
           transformTrans.ui                     \
           translations.ui                       \
           uiform.ui                             \
+          uiformchooser.ui                      \
           uiforms.ui                            \
           unappliedAPCreditMemos.ui             \
           unappliedARCreditMemos.ui             \
@@ -648,7 +653,8 @@ FORMS =   absoluteCalendarItem.ui               \
           xdateinputdialog.ui                   \
           xsltMap.ui                            \
           zeroUncountedCountTagsByWarehouse.ui  \
-    printStatementsByCustomerGroup.ui
+          printStatementsByCustomerGroup.ui
+
 
 HEADERS = ../common/format.h                    \
           SaveSizePositionEventFilter.h         \
@@ -770,6 +776,7 @@ HEADERS = ../common/format.h                    \
           createPlannedOrdersByPlannerCode.h    \
           createRecurringInvoices.h             \
           createRecurringItems.h                \
+          createfiscalyear.h                    \
           creditCard.h                          \
           creditMemo.h                          \
           creditMemoEditList.h                  \
@@ -938,6 +945,7 @@ HEADERS = ../common/format.h                    \
           jsHighlighter.h               \
           labelForm.h                   \
           labelForms.h                  \
+          ledgerControl.h               \
           listRecurringInvoices.h       \
           locales.h                     \
           location.h                    \
@@ -1015,6 +1023,7 @@ HEADERS = ../common/format.h                    \
           printCheck.h                  \
           printChecks.h                 \
           printChecksReview.h           \
+          printChecksReviewEdit.h       \
           printCreditMemo.h             \
           printCreditMemos.h            \
           printInvoice.h                \
@@ -1200,6 +1209,7 @@ HEADERS = ../common/format.h                    \
           transformTrans.h              \
           translations.h                \
           uiform.h                      \
+          uiformchooser.h               \
           uiforms.h                     \
           unappliedAPCreditMemos.h      \
           unappliedARCreditMemos.h      \
@@ -1264,11 +1274,12 @@ HEADERS = ../common/format.h                    \
           xmessagebox.h                 \
           xmessageboxmessagehandler.h   \
           xsltMap.h                     \
+          xtupleguiclientinterface.h    \
           xuiloader.h                   \
           xwidget.h                     \
           yourpayprocessor.h            \
           zeroUncountedCountTagsByWarehouse.h \
-    printStatementsByCustomerGroup.h
+          printStatementsByCustomerGroup.h
 
 SOURCES = absoluteCalendarItem.cpp              \
           account1099.cpp                       \
@@ -1388,6 +1399,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           createPlannedOrdersByPlannerCode.cpp  \
           createRecurringInvoices.cpp           \
           createRecurringItems.cpp              \
+          createfiscalyear.cpp                  \
           creditCard.cpp                        \
           creditMemo.cpp                        \
           creditMemoEditList.cpp                \
@@ -1553,6 +1565,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           jsHighlighter.cpp             \
           labelForm.cpp                 \
           labelForms.cpp                \
+          ledgerControl.cpp             \
           listRecurringInvoices.cpp     \
           locales.cpp                   \
           location.cpp                  \
@@ -1631,6 +1644,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           printCheck.cpp                        \
           printChecks.cpp                       \
           printChecksReview.cpp                 \
+          printChecksReviewEdit.cpp             \
           printCreditMemo.cpp                   \
           printCreditMemos.cpp                  \
           printInvoice.cpp                      \
@@ -1816,6 +1830,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           transformTrans.cpp                    \
           translations.cpp                      \
           uiform.cpp                            \
+          uiformchooser.cpp                     \
           uiforms.cpp                           \
           unappliedAPCreditMemos.cpp            \
           unappliedARCreditMemos.cpp            \
@@ -1879,12 +1894,13 @@ SOURCES = absoluteCalendarItem.cpp              \
           xmessagebox.cpp                       \
           xmessageboxmessagehandler.cpp         \
           xsltMap.cpp                           \
+          xtupleguiclientinterface.cpp          \
           xtHelp.cpp                            \
           xuiloader.cpp                         \
           xwidget.cpp                           \
           yourpayprocessor.cpp                  \
           zeroUncountedCountTagsByWarehouse.cpp \
-    printStatementsByCustomerGroup.cpp
+          printStatementsByCustomerGroup.cpp
 
 include( displays/displays.pri )
 include( hunspell.pri )

@@ -46,8 +46,6 @@ class XTUPLEWIDGETS_EXPORT XCheckBox : public QCheckBox
     virtual void init();
 
   protected:
-    virtual void showEvent(QShowEvent *);
-
     XDataWidgetMapper *_mapper;
     
   private:

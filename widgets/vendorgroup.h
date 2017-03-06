@@ -52,6 +52,7 @@ class XTUPLEWIDGETS_EXPORT VendorGroup : public QWidget, public Ui::VendorGroup
     virtual void setVendId(int p);
     virtual void setVendTypeId(int p);
     virtual void setTypePattern(const QString &p);
+    virtual void setState(int p) { setState((VendorGroupState)p); }
     virtual void setState(enum VendorGroupState p);
 
   signals:

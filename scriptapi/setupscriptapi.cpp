@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -25,6 +25,7 @@
 #include "glclustersetup.h"
 #include "include.h"
 #include "itemlineeditsetup.h"
+#include "itemgroupcluster.h"
 #include "jsconsole.h"
 #include "metasqlhighlighterproto.h"
 #include "orderlineeditsetup.h"
@@ -39,6 +40,7 @@
 #include "qapplicationproto.h"
 #include "qboxlayoutproto.h"
 #include "qbufferproto.h"
+#include "qbuttongroupproto.h"
 #include "qbytearrayproto.h"
 #include "qcoreapplicationproto.h"
 #include "qcryptographichashproto.h"
@@ -89,6 +91,7 @@
 #include "qlayoutproto.h"
 #include "qmainwindowproto.h"
 #include "qmenuproto.h"
+#include "qmenubarproto.h"
 #include "qmessageboxsetup.h"
 #include "qnetworkaccessmanagerproto.h"
 #include "qnetworkinterfaceproto.h"
@@ -103,9 +106,11 @@
 #include "qserialportinfoproto.h"
 #include "qsizepolicyproto.h"
 #include "qspaceritemproto.h"
+#include "qsqlproto.h"
 #include "qsqldatabaseproto.h"
 #include "qsqldriverproto.h"
 #include "qsqlerrorproto.h"
+#include "qsqlqueryproto.h"
 #include "qsqlrecordproto.h"
 #include "qsslcertificateextensionproto.h"
 #include "qsslcertificateproto.h"
@@ -196,6 +201,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupGLCluster(engine);
   setupInclude(engine);
   setupItemLineEdit(engine);
+  setupItemGroupCluster(engine);
   setupJSConsole(engine);
   setupMetaSQLHighlighterProto(engine);
   setupOrderLineEdit(engine);
@@ -211,6 +217,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQApplicationProto(engine);
   setupQBoxLayoutProto(engine);
   setupQBufferProto(engine);
+  setupQButtonGroupProto(engine);
   setupQByteArrayProto(engine);
   setupQCoreApplicationProto(engine);
   setupQCryptographicHashProto(engine);
@@ -261,6 +268,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQLayoutProto(engine);
   setupQMainWindowProto(engine);
   setupQMenuProto(engine);
+  setupQMenuBarProto(engine);
   setupQMessageBox(engine);
   setupQNetworkAccessManagerProto(engine);
   setupQNetworkInterfaceProto(engine);
@@ -275,9 +283,11 @@ void setupScriptApi(QScriptEngine *engine)
   setupQSerialPortInfoProto(engine);
   setupQSizePolicy(engine);
   setupQSpacerItem(engine);
+  setupQSqlProto(engine);
   setupQSqlDatabaseProto(engine);
   setupQSqlDriverProto(engine);
   setupQSqlErrorProto(engine);
+  setupQSqlQueryProto(engine);
   setupQSqlRecordProto(engine);
   setupQSslCertificateExtensionProto(engine);
   setupQSslCertificateProto(engine);

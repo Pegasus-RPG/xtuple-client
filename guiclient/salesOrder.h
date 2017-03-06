@@ -34,6 +34,7 @@ class salesOrder : public XWidget, public Ui::salesOrder
     Q_INVOKABLE virtual int   id() { return _soheadid; }
     Q_INVOKABLE virtual int   modeType() const;
     Q_INVOKABLE virtual int   modeState() const;
+    Q_INVOKABLE virtual bool  creditLimitCheckIssue();
 
   public slots:
     virtual SetResponse set(const ParameterList &pParams );
@@ -144,6 +145,7 @@ class salesOrder : public XWidget, public Ui::salesOrder
     bool    _holdOverride;
     int     _soheadid;
     int     _lineMode;
+    int     _lineFirm;
     AppLock _lock;
     int     _mode;
     int     _numSelected;

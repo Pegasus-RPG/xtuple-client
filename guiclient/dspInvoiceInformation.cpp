@@ -46,11 +46,8 @@ dspInvoiceInformation::dspInvoiceInformation(QWidget* parent, const char* name, 
   _arapply->addColumn(tr("Doc./Ref. #"),              -1, Qt::AlignLeft,  true, "docnumber");
   _arapply->addColumn(tr("Apply Date"),      _dateColumn, Qt::AlignCenter,true, "arapply_postdate");
   _arapply->addColumn(tr("Amount"),         _moneyColumn, Qt::AlignRight, true, "arapply_applied");
-  _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,  true, "currabbr");
+  _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "currabbr");
   _arapply->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight, true, "baseapplied");
-
-  if (omfgThis->singleCurrency())
-      _arapply->hideColumn("currabbr");
 
   _invcheadid = -1;
 }

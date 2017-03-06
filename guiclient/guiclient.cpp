@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -73,6 +73,8 @@
 #include "splashconst.h"
 #include "scripttoolbox.h"
 #include "menubutton.h"
+#include "guiErrorCheck.h"
+#include "xtupleguiclientinterface.h"
 
 #include "setup.h"
 #include "setupscriptapi.h"
@@ -285,91 +287,6 @@ void Action::init(QWidget *pParent, const char *pName, const QString &pDisplayNa
   }
 }
 
-/** @class xTupleGuiClientInterface
-    @brief A concrete implementation of the GuiClientInterface allowing widgets
-           to request services from the main application.
-
-    The primary use of this class/interface is for individual widgets to open
-    application-level windows.
-  */
-class xTupleGuiClientInterface : public GuiClientInterface
-{
-  public:
-  QWidget* openWindow(const QString pname, ParameterList pparams, QWidget *parent = 0, Qt::WindowModality modality = Qt::NonModal, Qt::WindowFlags flags = 0)
-  {
-    ScriptToolbox toolbox(0);
-        QWidget* w = toolbox.openWindow(pname, parent, modality, flags);
-
-    if (w)
-    {
-      if (w->inherits("QDialog"))
-      {
-        XDialog* xdlg = (XDialog*)w;
-        xdlg->set(pparams);
-        w = (QWidget*)xdlg;
-        return w;
-      }
-      else if (w->inherits("XMainWindow"))
-      {
-        XMainWindow* xwind = (XMainWindow*)w;
-        xwind->set(pparams);
-        w = (QWidget*)xwind;
-        w->show();
-        return w;
-      }
-      else if (w->inherits("XWidget"))
-      {
-        XWidget* xwind = (XWidget*)w;
-        xwind->set(pparams);
-        w = (QWidget*)xwind;
-        w->show();
-        return w;
-      }
-    }
-    return 0;
-  }
-
-  QAction* findAction(const QString pname)
-  {
-   return omfgThis->findChild<QAction*>(pname);
-  }
-
-  void addDocumentWatch(QString path, int id)
-  {
-    omfgThis->addDocumentWatch(path, id);
-  }
-
-  void removeDocumentWatch(QString path)
-  {
-    omfgThis->removeDocumentWatch(path);
-  }
-
-  bool hunspell_ready()
-  {
-      return omfgThis->hunspell_ready();
-  }
-
-  int hunspell_check(const QString word)
-  {
-      return omfgThis->hunspell_check(word);
-  }
-
-  const QStringList hunspell_suggest(const QString word)
-  {
-      return omfgThis->hunspell_suggest(word);
-  }
-
-  int hunspell_add(const QString word)
-  {
-      return omfgThis->hunspell_add(word);
-  }
-
-  int hunspell_ignore(const QString word)
-  {
-      return omfgThis->hunspell_ignore(word);
-  }
-};
-
 /** @class GUIClient
 
     @brief The GUIClient is the main xTuple ERP desktop client window.
@@ -391,15 +308,17 @@ GUIClient *omfgThis;
     Do not call this more than once or bad things will happen.
   */
 GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
+  :
+    _databaseURL(pDatabaseURL),
+    _username(pUsername),
+    _menuBar(0),
+    _inputManager(0),
+    _shown(false),
+    _shuttingDown(false),
+    _menu(0)
 {
   XSqlQuery _GGUIClient;
-  _menuBar = 0;
-  _activeWindow = 0;
-  _shown = false;
-  _shuttingDown = false;
 
-  _databaseURL = pDatabaseURL;
-  _username = pUsername;
   __saveSizePositionEventFilter = new SaveSizePositionEventFilter(this);
 
   _splash->showMessage(tr("Initializing Internal Data"), SplashTextAlignment, SplashTextColor);
@@ -460,38 +379,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   setWindowTitle();
 
-  // load plugins before building the menus
-  // TODO? add a step later to add to the menus from the plugins?
-  QStringList checkForPlugins;
-  checkForPlugins << QApplication::applicationDirPath()
-                  << QString("/usr/lib/postbooks");
-  foreach (QString dirname, checkForPlugins)
-  {
-    QDir pluginsDir(dirname);
-    while (! pluginsDir.exists("plugins") && pluginsDir.cdUp())
-      ;
-    if (pluginsDir.cd("plugins"))
-    {
-      foreach (QString fileName, pluginsDir.entryList(QDir::Files))
-        new QPluginLoader(pluginsDir.absoluteFilePath(fileName), this);
-    }
-  }
-
-//  Populate the menu bar
-  XSqlQuery window;
-  window.prepare("SELECT usr_window "
-                 "  FROM usr "
-                 " WHERE (usr_username=getEffectiveXtUser());");
-  window.exec();
-  // keep synchronized with user.ui.h
-  _singleWindow = "";
-  if (window.first())
-    _singleWindow = window.value("usr_window").toString();
-  if (_singleWindow.isEmpty())
-    initMenuBar();
-  else
-    _showTopLevel = true; // if we are in single level mode we want to run toplevel always
-
   _splash->showMessage(tr("Loading the Background Image"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
 
@@ -530,7 +417,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   connect(_privileges, SIGNAL(loaded()), this, SLOT(initMenuBar()));
 
-  VirtualClusterLineEdit::_guiClientInterface = new xTupleGuiClientInterface();
+  VirtualClusterLineEdit::_guiClientInterface = new xTupleGuiClientInterface(this);
   Documents::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
   MenuButton::_guiClientInterface =  VirtualClusterLineEdit::_guiClientInterface;
   XTreeWidget::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
@@ -541,8 +428,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _splash->showMessage(tr("Completing Initialization"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
   _splash->finish(this);
-
-  connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(sFocusChanged(QWidget*,QWidget*))); // Need this?
 
   //Restore Window Size Saved on Close
   QRect availableGeometry = QApplication::desktop()->availableGeometry();
@@ -578,10 +463,11 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
                     availableGeometry.top()));
     move(pos);
   }
-  #ifdef Q_OS_MAC
-    _menu = new QMenu(this);
-    updateMacDockMenu(this);
-  #endif
+
+#ifdef Q_OS_MAC
+  _menu = new QMenu(this);
+  updateMacDockMenu(this);
+#endif
 
   setDocumentMode(true);
 
@@ -590,6 +476,38 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   connect(_fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(handleDocument(QString)));
 
   hunspell_initialize();
+
+  // load plugins before building the menus
+  // TODO? add a step later to add to the menus from the plugins?
+  QStringList checkForPlugins;
+  checkForPlugins << QApplication::applicationDirPath()
+                  << QString("/usr/lib/postbooks");
+  foreach (QString dirname, checkForPlugins)
+  {
+    QDir pluginsDir(dirname);
+    while (! pluginsDir.exists("plugins") && pluginsDir.cdUp())
+      ;
+    if (pluginsDir.cd("plugins"))
+    {
+      foreach (QString fileName, pluginsDir.entryList(QDir::Files))
+        new QPluginLoader(pluginsDir.absoluteFilePath(fileName), this);
+    }
+  }
+
+//  Populate the menu bar
+  XSqlQuery window;
+  window.prepare("SELECT usr_window "
+                 "  FROM usr "
+                 " WHERE (usr_username=getEffectiveXtUser());");
+  window.exec();
+  // keep synchronized with user.ui.h
+  _singleWindow = "";
+  if (window.first())
+    _singleWindow = window.value("usr_window").toString();
+  if (_singleWindow.isEmpty())
+    initMenuBar();
+  else
+    _showTopLevel = true; // if we are in single level mode we want to run toplevel always
 
 }
 
@@ -893,12 +811,17 @@ void GUIClient::showEvent(QShowEvent *event)
     // We only want the scripting to work on the NEO menu
     // START script code
       XSqlQuery sq;
-      sq.prepare("SELECT script_source, script_order"
-              "  FROM script"
-              " WHERE((script_name=:script_name)"
-              "   AND (script_enabled))"
-              " ORDER BY script_order;");
-      sq.bindValue(":script_name", "initMenu");
+      sq.prepare("SELECT script_source "
+                 "  FROM script "
+                 "JOIN (SELECT c.oid, n.nspname AS schema "
+                 "  FROM pg_class AS c "
+                 "  JOIN pg_namespace AS n ON c.relnamespace=n.oid) AS schema_table "
+                 "ON script.tableoid=schema_table.oid "
+                 "JOIN (SELECT regexp_split_to_table AS pkgname, row_number() over () AS seq "
+                 "  FROM regexp_split_to_table(buildsearchpath(), ',')) AS path "
+                 "ON pkgname = schema "
+                 " WHERE script_enabled AND script_name = 'initMenu' "
+                 "ORDER BY script_order, seq;");
       sq.exec();
       QScriptEngine * engine = 0;
       QScriptEngineDebugger * debugger = 0;
@@ -994,12 +917,7 @@ void GUIClient::sReportError(const QString &pError)
     */
 void GUIClient::sTick()
 {
-  //  Check the database. TODO: why do we ignore alarms and messages?
-  XSqlQuery tickle;
-  tickle.exec( "SELECT CURRENT_DATE AS dbdate,"
-               "       hasAlarms() AS alarms,"
-               "       hasMessages() AS messages,"
-               "       hasEvents() AS events;" );
+  XSqlQuery tickle("SELECT CURRENT_DATE AS dbdate, hasEvents() AS events;" );
   if (tickle.first())
   {
     _dbDate = tickle.value("dbdate").toDate();
@@ -1026,7 +944,7 @@ void GUIClient::sTick()
           connect(_eventButton, SIGNAL(clicked()), systemMenu, SLOT(sEventManager()));
         }
       }
-      else if ( (_eventButton) && (_eventButton->isVisible()) )
+      else if (_eventButton && _eventButton->isVisible())
         _eventButton->hide();
     }
 
@@ -1037,41 +955,32 @@ void GUIClient::sTick()
       __intervalCount = 0;
     }
   }
-  else
+  else if (! QSqlDatabase::database().isOpen())
   {
-    // Check to make sure we are not in the middle of an aborted transaction
-    // before we go doing something rash.
-    if (!QSqlDatabase::database().isOpen())
+    emit dbConnectionLost();
+    if (QMessageBox::question(this, tr("Database disconnected"),
+                              tr("It appears that you have been disconnected from the "
+                                 "database. Select Yes to try to reconnect or "
+                                 "No to terminate the application."),
+                                 QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+      qApp->quit();
+    else if (QSqlDatabase::database().open())
     {
-      if  (QMessageBox::question(this, tr("Database disconnected"),
-                                tr("It appears that you have been disconnected from the "
-                                   "database. Select Yes to try to reconnect or "
-                                   "No to terminate the application."),
-                                   QMessageBox::Yes,
-                                   QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-        qApp->quit();
-      else
+      XSqlQuery login("SELECT login(true) AS result;");
+      if (login.first())
       {
-        if (QSqlDatabase::database().open())
+        int result = login.value("result").toInt();
+        if (result < 0)
         {
-          QString loginqry ="SELECT login() AS result, CURRENT_USER AS user;";
-          XSqlQuery login( loginqry );
-          if (login.first())
-          {
-            int result = login.value("result").toInt();
-            if (result < 0)
-            {
-              QMessageBox::critical(this, tr("Error Relogging to the Database"),
-                                    storedProcErrorLookup("login", result));
-              return;
-            }
-          }
-          else if (login.lastError().type() != QSqlError::NoError)
-            QMessageBox::critical(this, tr("System Error"),
-                                  tr("A System Error occurred at %1::%2:\n%3")
-                                    .arg(__FILE__).arg(__LINE__)
-                                    .arg(login.lastError().databaseText()));
+          QMessageBox::critical(this, tr("Could not reconnect"),
+                                storedProcErrorLookup("login", result));
+          QSqlDatabase::database().close();
         }
+      }
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Could not reconnect"),
+                                    login, __FILE__, __LINE__))
+      {
+        QSqlDatabase::database().close();
       }
     }
   }
@@ -1603,14 +1512,6 @@ void GUIClient::sIdleTimeout()
     qApp->quit();
 }
 
-/** @deprecated systemError should be replaced with ErrorReporter::error */
-int systemError(QWidget *pParent, const QString &pMessage)
-{
-  ErrorReporter::error(QtCriticalMsg, pParent, QObject::tr("System Message"),
-                       pMessage);
-  return QMessageBox::Ok;
-}
-
 /** @deprecated systemError should be replaced with ErrorReporter::error
     @overload
  */
@@ -2110,6 +2011,7 @@ void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloa
   QString objName = w->objectName();
   QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
   QSize size = xtsettingsValue(objName + "/geometry/size").toSize();
+  QSize currsize = w->size();
 
   if(size.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool() && (metaObject()->className() != QString("xTupleDesigner")))
     w->resize(size);
@@ -2125,6 +2027,8 @@ void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloa
     QRect r(pos, w->size());
     if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
       w->move(pos);
+    else if(currsize!=w->size())
+      w->move(QPoint(1, 1));
     w->show();
   }
   else
@@ -2215,31 +2119,6 @@ void GUIClient::tabifyDockWidget ( QDockWidget * first, QDockWidget * second )
 void GUIClient::setCentralWidget(QWidget * widget)
 {
   QMainWindow::setCentralWidget(widget);
-}
-
-/** @brief A slot called when the user's focus has changed from one window
-           to another.
-
-    This slot should not be used except internally by GUIClient.
-  */
-void GUIClient::sFocusChanged(QWidget *old, QWidget *now)
-{
-  Q_UNUSED(old);
-  Q_UNUSED(now);
-  QWidget * thisActive = workspace()->activeSubWindow();
-  if(omfgThis->showTopLevel())
-    thisActive = qApp->activeWindow();
-  if(thisActive == this)
-    return;
-  if(thisActive && thisActive->inherits("QMessageBox"))
-    return;
-  _activeWindow = thisActive;
-}
-
-/** @brief Return the currently active window. */
-QWidget * GUIClient::myActiveWindow()
-{
-  return _activeWindow;
 }
 
 /** @brief Create a window from extension scripts to adjust inventory .
@@ -2431,6 +2310,7 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
 
   setupScriptApi(engine);
   setupSetupApi(engine);
+  setupGuiErrorCheck(engine);
 
   // TODO: Make all classes work this way instead of setup* as above?
   // TODO: This interface sets this instance as the global. we can do better.
@@ -2657,30 +2537,37 @@ void GUIClient::sEmitNotifyHeard(const QString &note)
     else if(note == "messagePosted")
         emit messageNotify();
 }
+
 #ifdef Q_OS_MAC
-    void GUIClient::updateMacDockMenu(QWidget *w)
+void GUIClient::updateMacDockMenu(QWidget *w)
+{
+  if (! w || ! _menu)
+    return;
+
+  QAction *action = new QAction(w);
+  action->setText(w->windowTitle());
+
+  _menu->addAction(action);
+
+  qt_mac_set_dock_menu(_menu);
+
+  connect(action, SIGNAL(triggered()), w, SLOT(hide()));
+  connect(action, SIGNAL(triggered()), w, SLOT(show()));
+}
+
+void GUIClient::removeFromMacDockMenu(QWidget *w)
+{
+  if (! w || ! _menu)
+    return;
+
+  foreach (QAction *action, _menu->actions())
+  {
+    if(action->text().compare(w->windowTitle()) == 0)
     {
-        QAction *action = new QAction(w);
-        action->setText(w->windowTitle());
-
-        _menu->addAction(action);
-
-        qt_mac_set_dock_menu(_menu);
-
-        connect(action, SIGNAL(triggered()), w, SLOT(hide()));
-        connect(action, SIGNAL(triggered()), w, SLOT(show()));
+      _menu->removeAction(action);
     }
+  }
 
-    void GUIClient::removeFromMacDockMenu(QWidget *w)
-    {
-        foreach (QAction *action, _menu->actions())
-        {
-            if(action->text().compare(w->windowTitle()) == 0)
-            {
-                _menu->removeAction(action);
-            }
-        }
-
-        qt_mac_set_dock_menu(_menu);
-    }
+  qt_mac_set_dock_menu(_menu);
+}
 #endif

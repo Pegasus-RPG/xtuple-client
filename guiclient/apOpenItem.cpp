@@ -48,12 +48,9 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::Window
   _apapply->addColumn( tr("Doc. #"),               -1, Qt::AlignLeft,  true, "docnumber");
   _apapply->addColumn( tr("Apply Date"),  _dateColumn, Qt::AlignCenter,true, "apapply_postdate");
   _apapply->addColumn( tr("Amount"),     _moneyColumn, Qt::AlignRight, true, "apapply_amount");
-  _apapply->addColumn( tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
+  _apapply->addColumn( tr("Currency"),_currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "currabbr");
 
   _printOnPost->setVisible(false);
-
-  if (omfgThis->singleCurrency())
-      _apapply->hideColumn("currabbr");
 
   _terms->setType(XComboBox::APTerms);
   _journalNumber->setEnabled(false);
@@ -132,10 +129,11 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
       _docNumber->setEnabled(false);
       _poNumber->setEnabled(false);
       _journalNumber->setEnabled(false);
-      _amount->setCurrencyEditable(false);
+      _amount->setEnabled(false);
       _terms->setEnabled(false);
       _notes->setReadOnly(false);
       _usePrepaid->setEnabled(false);
+      _taxzone->setEnabled(false);
       _accntId->setEnabled(false);
     }
     else if (param.toString() == "view")
@@ -156,6 +154,7 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
       _usePrepaid->setEnabled(false);
       _accntId->setEnabled(false);
       _status->setEnabled(false);
+      _taxzone->setEnabled(false);
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }
@@ -652,6 +651,9 @@ void apOpenItem::sTaxDetail()
 
 void apOpenItem::sDetermineTaxAmount()
 {
+  if (_mode != cNew)
+    return;
+
   XSqlQuery ap;
   if (_apopenid == -1)
   {

@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -117,8 +117,10 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WindowFlag
   _controlMethod->append(2, tr("Lot #"),    "L");
   _controlMethod->append(3, tr("Serial #"), "S");
 
-  //Default to Regular control  
+  //Default to Regular control
   _controlMethod->setCode("R");
+
+  _wasControlMethod = "";
 
   //If not lot serial control, remove options
   if (!_metrics->boolean("LotSerialControl"))
@@ -137,7 +139,7 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WindowFlag
   
   _costAvg->setVisible(_metrics->boolean("AllowAvgCostMethod"));
   _costStd->setVisible(_metrics->boolean("AllowStdCostMethod"));
-  _costStd->setVisible(_metrics->boolean("AllowJobCostMethod"));
+  _costJob->setVisible(_metrics->boolean("AllowJobCostMethod"));
   
   adjustSize();
   
@@ -358,8 +360,6 @@ bool itemSite::sSave()
          << GuiErrorCheck(_plannerCode->id() == -1, _plannerCode,
                           tr("<p>You must select a Planner Code for this "
                              "Item Site before you may save it."))
-         << GuiErrorCheck(_mode == cEdit && _costcat->id() != _costcatid && _qohCache != 0, _costcat,
-                          tr("This Item Site has a quantity on hand and Cost Category cannot be changed."))
          << GuiErrorCheck(!_active->isChecked() && _qohCache != 0, _active,
                           tr("This Item Site has a quantity on hand and must be marked as active."))
   ;
@@ -374,6 +374,7 @@ bool itemSite::sSave()
     locationid.prepare( "SELECT location_id "
                         "FROM location "
                         "WHERE ((location_warehous_id=:warehous_id)"
+                        " AND (location_active) "
                         " AND ( (NOT location_restrict) OR"
                         "       ( (location_restrict) AND"
                         "         (location_id IN ( SELECT locitem_location_id"
@@ -603,6 +604,20 @@ bool itemSite::sSave()
     { 
       errors << GuiErrorCheck(true, _suppliedFromSite,
                               tr("Cannot find Supplied From Item Site."));
+    }
+  }
+
+  if(_createPo->isChecked() && _metrics->boolean("RequireStdCostForPOItem"))
+  {
+    itemSave.prepare("SELECT stdCost(item_id) AS stdcost "
+                     "FROM item "
+                     "WHERE (item_id=:item_id);");
+    itemSave.bindValue(":item_id", _item->id());
+    itemSave.exec();
+    if (itemSave.first() && itemSave.value("stdcost").toDouble() == 0.0)
+    {
+        errors << GuiErrorCheck(true, _createPo,
+                                tr("The selected item has no Std. Costing Information. Cannot create Purchase Orders linked to Sales Orders."));
     }
   }
 
@@ -1136,6 +1151,14 @@ void itemSite::sHandleWOSupplied(bool pSupplied)
 
 void itemSite::sHandleControlMethod()
 {
+  if (_wasControlMethod != "N" && _controlMethod->code() == "N" && _qohCache > 0)
+  {
+     QMessageBox::warning(this, tr("Control Method"),
+        tr("<p>You cannot change the Control Method to None "
+           "when inventory exists at this Site."));
+     _controlMethod->setCode(_wasControlMethod);
+     return;
+  }
   if (_controlMethod->code() == "N" || _itemType == 'R' || _itemType == 'K')
   {
     _costNone->setChecked(true);
@@ -1144,6 +1167,8 @@ void itemSite::sHandleControlMethod()
     _costStd->setEnabled(false);
     _costJob->setEnabled(false);
   }
+  else if (_itemType == 'C' || _itemType == 'Y')
+    _costAvg->setEnabled(false);
   else
   {
     if(_costStd->isVisibleTo(this) && !_costAvg->isChecked() && !_costJob->isChecked())
@@ -1218,6 +1243,8 @@ void itemSite::sCacheItemType(char pItemType)
     _costStd->setEnabled(false);
     _costJob->setEnabled(false);
   }
+  else if (_itemType == 'C' || _itemType == 'Y')
+    _costAvg->setEnabled(false);
   else
   {
     if(_costStd->isVisibleTo(this) && !_costAvg->isChecked())
@@ -1346,12 +1373,14 @@ void itemSite::populateLocations()
     query.prepare( "SELECT location_id, formatLocationName(location_id) AS locationname "
                    "FROM location "
                    "WHERE ( (location_warehous_id=:warehous_id)"
-                   " AND (NOT location_restrict) ) "
+                   " AND (NOT location_restrict) "
+                   " AND (location_active) ) "
 		       
                    "UNION SELECT location_id, formatLocationName(location_id) AS locationname "
                    "FROM location, locitem "
                    "WHERE ( (location_warehous_id=:warehous_id)"
-                   " AND (location_restrict)"
+                   " AND (location_restrict) "
+                   " AND (location_active) "
                    " AND (locitem_location_id=location_id)"
                    " AND (locitem_item_id=:item_id) ) "
 		       
@@ -1409,6 +1438,7 @@ void itemSite::populate()
     _orderGroupFirst->setChecked(itemsite.value("itemsite_ordergroup_first").toBool());
     _mpsTimeFence->setValue(itemsite.value("itemsite_mps_timefence").toInt());
     _controlMethod->setCode(itemsite.value("itemsite_controlmethod").toString());
+    _wasControlMethod = itemsite.value("itemsite_controlmethod").toString();
 
     _wasLotSerial = ((itemsite.value("itemsite_controlmethod").toString() == "L") ||
         	     (itemsite.value("itemsite_controlmethod").toString() == "S") );
@@ -1620,7 +1650,8 @@ void itemSite::sFillRestricted()
             "       (locitem_id IS NOT NULL) AS allowed"
             "  FROM location LEFT OUTER JOIN locitem"
             "         ON (locitem_location_id=location_id AND locitem_item_id=:item_id)"
-            " WHERE ((location_restrict)"
+            " WHERE ((location_restrict) "
+            "   AND  (location_active) "
             "   AND  (location_warehous_id=:warehouse_id) ) "
             "ORDER BY location_name; ");
   itemFillRestricted.bindValue(":warehouse_id", _warehouse->id());

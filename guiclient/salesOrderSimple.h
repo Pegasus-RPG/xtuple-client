@@ -42,6 +42,8 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
     virtual void        sHandleOrderNumber();
     virtual void        sPopulateCustomerInfo( int pCustid );
     virtual void        sPopulateShiptoInfo();
+    virtual void        sPopulateWhsInfo();
+    virtual void        sPopulateTaxZone();
     virtual void        sPopulateItemInfo();
     virtual void        sHandleRequiredFields();
     virtual void        setItemExtraClause();
@@ -50,6 +52,7 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
     virtual void        sCalculateTotal();
     virtual void        prepare();
     virtual void        prepareLine();
+    virtual void        sClose();
     virtual void        closeEvent( QCloseEvent *pEvent );
     virtual void        sTaxDetail();
     virtual void        populateCCInfo();
@@ -81,6 +84,7 @@ class salesOrderSimple : public XWidget, public Ui::salesOrderSimple
   private:
     bool    deleteForCancel();
     bool    _saved;
+    bool    _closeThis;
     int     _orderNumberGen;
     double  _authCC;
     double  _amountOutstanding;

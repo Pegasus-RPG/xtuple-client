@@ -564,22 +564,6 @@ to be bound by its terms.</comment>
  <resources/>
  <connections>
   <connection>
-   <sender>_item</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_save</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>_close</sender>
    <signal>clicked()</signal>
    <receiver>woMaterialItem</receiver>

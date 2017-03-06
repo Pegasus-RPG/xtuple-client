@@ -27,6 +27,35 @@
 #include "printQuote.h"
 #include "printSoForm.h"
 
+bool opportunity::userHasPriv(const int pMode, const int pId)
+{
+  if (_privileges->check("MaintainAllOpportunities"))
+    return true;
+  bool personalPriv = _privileges->check("MaintainPersonalOpportunities");
+  if(pMode==cView)
+  {
+    if(_privileges->check("ViewAllOpportunities"))
+      return true;
+    personalPriv = personalPriv || _privileges->check("ViewPersonalOpportunities");
+  }
+
+  if(pMode==cNew)
+    return personalPriv;
+  else
+  {
+    XSqlQuery usernameCheck;
+    usernameCheck.prepare( "SELECT getEffectiveXtUser() IN (ophead_owner_username, ophead_username) AS canModify "
+                           "FROM ophead "
+                            "WHERE (ophead_id=:ophead_id);" );
+    usernameCheck.bindValue(":ophead_id", pId);
+    usernameCheck.exec();
+
+    if (usernameCheck.first())
+      return usernameCheck.value("canModify").toBool()&&personalPriv;
+    return false;
+  }
+}
+
 opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -785,7 +814,7 @@ void opportunity::sConvertQuote()
         params.append("mode", "edit");
         params.append("sohead_id", soheadid);
     
-        salesOrder *newdlg = new salesOrder();
+        salesOrder *newdlg = new salesOrder(this);
         newdlg->setWindowModality(Qt::WindowModal);
         newdlg->set(params);
         omfgThis->handleNewWindow(newdlg);
@@ -813,7 +842,7 @@ void opportunity::sNewQuote()
     params.append("cust_id", _prospectid);
   params.append("ophead_id", _opheadid);
 
-  salesOrder *newdlg = new salesOrder();
+  salesOrder *newdlg = new salesOrder(this);
   newdlg->setWindowModality(Qt::WindowModal);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
@@ -864,7 +893,7 @@ void opportunity::sEditQuote()
   params.append("mode", "editQuote");
   params.append("quhead_id", _salesList->id());
     
-  salesOrder *newdlg = new salesOrder();
+  salesOrder *newdlg = new salesOrder(this);
   newdlg->setWindowModality(Qt::WindowModal);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
@@ -877,7 +906,7 @@ void opportunity::sViewQuote()
   params.append("mode", "viewQuote");
   params.append("quhead_id", _salesList->id());
     
-  salesOrder *newdlg = new salesOrder();
+  salesOrder *newdlg = new salesOrder(this);
   newdlg->setWindowModality(Qt::WindowModal);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
@@ -934,7 +963,7 @@ void opportunity::sNewSalesOrder()
   params.append("cust_id", _custid);
   params.append("ophead_id", _opheadid);
 
-  salesOrder *newdlg = new salesOrder();
+  salesOrder *newdlg = new salesOrder(this);
   newdlg->setWindowModality(Qt::WindowModal);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
@@ -985,7 +1014,7 @@ void opportunity::sEditSalesOrder()
   params.append("mode", "edit");
   params.append("sohead_id", _salesList->id());
     
-  salesOrder *newdlg = new salesOrder();
+  salesOrder *newdlg = new salesOrder(this);
   newdlg->setWindowModality(Qt::WindowModal);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
@@ -998,7 +1027,7 @@ void opportunity::sViewSalesOrder()
   params.append("mode", "view");
   params.append("sohead_id", _salesList->id());
     
-  salesOrder *newdlg = new salesOrder();
+  salesOrder *newdlg = new salesOrder(this);
   newdlg->setWindowModality(Qt::WindowModal);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);

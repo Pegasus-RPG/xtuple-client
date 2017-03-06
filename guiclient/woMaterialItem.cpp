@@ -31,7 +31,8 @@ woMaterialItem::woMaterialItem(QWidget* parent, const char* name, bool modal, Qt
   connect(_qtyPer, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQtyRequired()));
   connect(_scrap, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQtyRequired()));
   connect(_uom, SIGNAL(newID(int)), this, SLOT(sUOMChanged()));
-  connect(_item, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
+  connect(_wo, SIGNAL(valid(bool)), this, SLOT(sEnableSave()));
+  connect(_item, SIGNAL(valid(bool)), this, SLOT(sEnableSave()));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sItemIdChanged()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
@@ -191,6 +192,11 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
   return NoError;
 }
 
+void woMaterialItem::sEnableSave()
+{
+  _save->setEnabled(_wo->isValid() && _item->isValid());
+}
+
 void woMaterialItem::sSave()
 {
   XSqlQuery woSave;
@@ -213,7 +219,8 @@ void woMaterialItem::sSave()
 
   if (_mode == cNew)
   {
-    woSave.prepare( "SELECT component.itemsite_id AS itemsiteid "
+    woSave.prepare( "SELECT component.itemsite_id AS itemsiteid, "
+                    "component.itemsite_costmethod AS costmethod "
                "FROM wo, itemsite AS parent, itemsite AS component "
                "WHERE ( (parent.itemsite_warehous_id=component.itemsite_warehous_id)"
                " AND (parent.itemsite_id=wo_itemsite_id)"
@@ -222,7 +229,20 @@ void woMaterialItem::sSave()
     woSave.bindValue(":item_id", _item->id());
     woSave.bindValue(":wo_id", _wo->id());
     woSave.exec();
-    if (!woSave.first())
+    if (woSave.first())
+    {
+      if (woSave.value("costmethod")=="J")
+      {
+        QMessageBox::warning( this, tr("Cannot Create W/O Material Requirement"),
+                            tr( "A W/O Material Requirement cannot be created for the selected\n"
+                                "Work Order/Item as the selected Item is Job Costed,\n"
+                                "and Work Order Component Items may not be Job Costed." ));
+        _item->setId(-1);
+        _item->setFocus();
+        return;
+      }
+    }
+    else
     {
       QMessageBox::warning( this, tr("Cannot Create W/O Material Requirement"),
                             tr( "A W/O Material Requirement cannot be created for the selected\n"
@@ -399,6 +419,14 @@ void woMaterialItem::sItemIdChanged()
       _scrap->setDouble(0.0);
     
     _pickList->setChecked(uom.value("item_picklist").toBool());
+  }
+  else
+  {
+    _qtyFxd->clear();
+    _qtyPer->clear();
+    _qtyRequired->clear();
+    _scrap->clear();
+    _pickList->setChecked(false);
   }
 }
 

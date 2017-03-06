@@ -43,6 +43,7 @@
 #include "plugins/invoicelineeditplugin.h"
 #include "plugins/incidentclusterplugin.h"
 #include "plugins/itemclusterplugin.h"
+#include "plugins/itemgroupclusterplugin.h"
 #include "plugins/itemlineeditplugin.h"
 #include "plugins/lotserialclusterplugin.h"
 #include "plugins/lotserialseqclusterplugin.h"
@@ -72,6 +73,7 @@
 #include "plugins/vendorclusterplugin.h"
 #include "plugins/vendorgroupplugin.h"
 #include "plugins/vendorlineeditplugin.h"
+#include "plugins/voucherclusterplugin.h"
 #include "plugins/warehousegroupplugin.h"
 #include "plugins/wcomboboxplugin.h"
 #include "plugins/woclusterplugin.h"
@@ -124,6 +126,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new InvoiceLineEditPlugin(this));
   m_plugins.append(new IncidentClusterPlugin(this));
   m_plugins.append(new ItemClusterPlugin(this));
+  m_plugins.append(new ItemGroupClusterPlugin(this));
   m_plugins.append(new ItemLineEditPlugin(this));
   m_plugins.append(new LotserialClusterPlugin(this));
   m_plugins.append(new LotserialseqClusterPlugin(this));
@@ -153,6 +156,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new VendorClusterPlugin(this));
   m_plugins.append(new VendorGroupPlugin(this));
   m_plugins.append(new VendorLineEditPlugin(this));
+  m_plugins.append(new VoucherClusterPlugin(this));
   m_plugins.append(new WarehouseGroupPlugin(this));
   m_plugins.append(new WComboBoxPlugin(this));
   m_plugins.append(new WoClusterPlugin(this));

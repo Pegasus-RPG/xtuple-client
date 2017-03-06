@@ -13,7 +13,7 @@
     <name>1099Form</name>
   </context>
   <context>
-    <name>1099 Info</name>
+    <name>1099Info</name>
     <message>
       <width>135</width>
       <source>Vendor Number/Tax Id</source>
@@ -6160,7 +6160,7 @@
     </message>
     <message>
       <width>175</width>
-      <source>Credit Memo</source>
+      <source>Sales Credit</source>
       <translation type="unfinished"/>
     </message>
     <message>
@@ -6223,7 +6223,7 @@
     <name>CreditMemoEditList</name>
     <message>
       <width>465</width>
-      <source>Credit Memo Edit List</source>
+      <source>Sales Credit Edit List</source>
       <translation type="unfinished"/>
     </message>
     <message>

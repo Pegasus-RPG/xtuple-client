@@ -43,17 +43,12 @@ applyAPCreditMemo::applyAPCreditMemo(QWidget* parent, const char* name, bool mod
   _apopen->addColumn(tr("Doc. Date"),   _dateColumn,     Qt::AlignCenter,true, "apopen_docdate");
   _apopen->addColumn(tr("Due Date"),    _dateColumn,     Qt::AlignCenter,true, "apopen_duedate");
   _apopen->addColumn(tr("Open"),        _moneyColumn,    Qt::AlignRight, true, "openamount");
-  _apopen->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,  true, "opencurrabbr");
+  _apopen->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "opencurrabbr");
   _apopen->addColumn(tr("Applied"),     _moneyColumn,    Qt::AlignRight, true, "apcreditapply_amount");
-  _apopen->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,  true, "appliedcurrabbr");
+  _apopen->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "appliedcurrabbr");
 
   if (_privileges->check("ApplyAPMemos"))
       connect(_apopen, SIGNAL(valid(bool)), _apply, SLOT(setEnabled(bool)));
-  if (omfgThis->singleCurrency())
-  {
-    _apopen->hideColumn("opencurrabbr");
-    _apopen->hideColumn("appliedcurrabbr");
-  }
 
   _vend->setReadOnly(true);
   sPriceGroup();

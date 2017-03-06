@@ -48,11 +48,8 @@ bankAdjustmentEditList::bankAdjustmentEditList(QWidget* parent, const char* name
   _adjustments->addColumn(tr("Dist. Date"),  _dateColumn, Qt::AlignCenter,true, "bankadj_date");
   _adjustments->addColumn(tr("Doc. Number"),          -1, Qt::AlignRight, true, "bankadj_docnumber");
   _adjustments->addColumn(tr("Amount"),  _bigMoneyColumn, Qt::AlignRight, true, "bankadj_amount");
-  _adjustments->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
+  _adjustments->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "currabbr");
 
-  if (omfgThis->singleCurrency())
-      _adjustments->hideColumn("currabbr");
-  
   if (_privileges->check("MaintainBankAdjustments"))
   {
     connect(_adjustments, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));

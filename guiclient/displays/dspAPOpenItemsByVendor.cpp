@@ -45,17 +45,12 @@ dspAPOpenItemsByVendor::dspAPOpenItemsByVendor(QWidget* parent, const char*, Qt:
   list()->addColumn(tr("Due Date"),     _dateColumn,     Qt::AlignCenter, true,  "apopen_duedate" );
   list()->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight,  true,  "apopen_amount"  );
   list()->addColumn(tr("Paid"),         _moneyColumn,    Qt::AlignRight,  true,  "paid"  );
-  list()->addColumn(tr("Balance"),      -1,              Qt::AlignRight,  true,  "balance"  );
-  list()->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
+  list()->addColumn(tr("Balance"),      -1,              Qt::AlignRight,  !omfgThis->singleCurrency(),  "balance"  );
+  list()->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,   !omfgThis->singleCurrency(),  "currAbbr"   );
   list()->addColumn(tr("Base Balance"), _moneyColumn,    Qt::AlignRight,  true,  "base_balance"  );
   list()->addColumn(tr("Status"),       _moneyColumn,    Qt::AlignCenter, false, "apopen_status"  );
 
-  if (omfgThis->singleCurrency())
-  {
-    list()->hideColumn(10);
-    list()->hideColumn(11);
-  }
-  else
+  if (!omfgThis->singleCurrency())
   {
     XSqlQuery qq;
     qq.prepare("SELECT currConcat(baseCurrId()) AS currConcat;");

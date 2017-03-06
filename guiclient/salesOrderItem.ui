@@ -2083,7 +2083,7 @@ to be bound by its terms.</comment>
                <enum>QFrame::NoFrame</enum>
               </property>
               <property name="currentIndex">
-               <number>2</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="_listPricePage">
                <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -2601,9 +2601,9 @@ to be bound by its terms.</comment>
   <tabstop>_customerPN</tabstop>
   <tabstop>_subItem</tabstop>
   <tabstop>_qtyOrdered</tabstop>
-  <tabstop>_netUnitPrice</tabstop>
   <tabstop>_discountFromListPrice</tabstop>
   <tabstop>_discountFromCust</tabstop>
+  <tabstop>_netUnitPrice</tabstop>
   <tabstop>_scheduledDate</tabstop>
   <tabstop>_promisedDate</tabstop>
   <tabstop>_warranty</tabstop>
@@ -3071,6 +3071,118 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>effectiveChanged(QDate)</signal>
+   <receiver>_listPrice</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>509</x>
+     <y>332</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>487</x>
+     <y>253</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>idChanged(int)</signal>
+   <receiver>_listPrice</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>509</x>
+     <y>332</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>487</x>
+     <y>253</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>effectiveChanged(QDate)</signal>
+   <receiver>_customerPrice</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>509</x>
+     <y>332</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>487</x>
+     <y>291</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>idChanged(int)</signal>
+   <receiver>_customerPrice</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>509</x>
+     <y>332</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>487</x>
+     <y>291</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>effectiveChanged(QDate)</signal>
+   <receiver>_supplyOverridePricePR</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>509</x>
+     <y>332</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>119</x>
+     <y>591</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>idChanged(int)</signal>
+   <receiver>_supplyOverridePricePR</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>509</x>
+     <y>332</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>119</x>
+     <y>591</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>idChanged(int)</signal>
+   <receiver>_tax</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>509</x>
+     <y>332</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>746</x>
+     <y>608</y>
     </hint>
    </hints>
   </connection>

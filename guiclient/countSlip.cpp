@@ -478,7 +478,8 @@ void countSlip::sPopulateItemSiteInfo()
                         "FROM location, itemsite "
                         "WHERE ( (validLocation(location_id, itemsite_id))"
                         " AND (itemsite_warehous_id=:warehous_id)"
-                        " AND (itemsite_item_id=:item_id) ) "
+                        " AND (itemsite_item_id=:item_id) "
+                        " AND (location_active) ) "
                         "ORDER BY locationname;" );
       location.bindValue(":warehous_id", _warehouse->id());
       location.bindValue(":item_id", _item->id());

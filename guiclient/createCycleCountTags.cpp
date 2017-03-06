@@ -159,6 +159,7 @@ void createCycleCountTags::sPopulateLocations()
              "       END AS locationname "
              "FROM location "
              "WHERE (location_warehous_id=:warehous_id) "
+             " AND (location_active) "  
              "ORDER BY locationname;" );
   createPopulateLocations.bindValue(":warehous_id", _warehouse->id());
   createPopulateLocations.exec();

@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -13,7 +13,6 @@
 
 #include <QAction>
 #include <QDate>
-#include <QList>
 #include <QMainWindow>
 #include <QTimer>
 
@@ -21,6 +20,10 @@
 
 #include "../common/format.h"
 #include "../hunspell/hunspell.hxx"
+
+#include <xtuplecommon.h>
+#include <version.h>
+#include <data.h>
 
 class QCheckBox;
 class QCloseEvent;
@@ -175,10 +178,15 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE void setCaption();
     Q_INVOKABLE void saveToolbarPositions();
 
-    Q_INVOKABLE inline QMdiArea *workspace()         { return _workspace;    }
+    Q_INVOKABLE inline QMdiArea *workspace()           { return _workspace;    }
     Q_INVOKABLE inline InputManager *inputManager()    { return _inputManager; }
     Q_INVOKABLE inline QString databaseURL()           { return _databaseURL;  }
     Q_INVOKABLE inline QString username()              { return _username;     }
+
+    // runtime versions
+    Q_INVOKABLE inline QString version()               { return _Version;         }
+    Q_INVOKABLE inline QString qtVersion()             { return QT_VERSION_STR;   }
+    Q_INVOKABLE inline QString openrptVersion()        { return OpenRPT::version; }
 
     Q_INVOKABLE inline const QDate startOfTime()       { return _startOfTime;  }
     Q_INVOKABLE inline const QDate endOfTime()         { return _endOfTime;    }
@@ -220,7 +228,7 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE void tabifyDockWidget ( QDockWidget * first, QDockWidget * second );
     Q_INVOKABLE void setCentralWidget(QWidget * widget);
 
-	TimeoutHandler   *_timeoutHandler;
+    TimeoutHandler   *_timeoutHandler;
     ReportHandler    *_reportHandler;
 
     QMap<const QObject*,int> _customCommands;
@@ -231,7 +239,6 @@ class GUIClient : public QMainWindow
     QString _singleWindow;
 
     Q_INVOKABLE        void  launchBrowser(QWidget*, const QString &);
-    Q_INVOKABLE     QWidget *myActiveWindow();
     Q_INVOKABLE inline bool  shuttingDown() { return _shuttingDown; }
 
     void loadScriptGlobals(QScriptEngine * engine);
@@ -310,8 +317,6 @@ class GUIClient : public QMainWindow
 
     void sIdleTimeout();
 
-    void sFocusChanged(QWidget* old, QWidget* now);
-
     void sClearErrorMessages();
     void sNewErrorMessage();
     void setWindowTitle();
@@ -320,6 +325,7 @@ class GUIClient : public QMainWindow
     void tick();
 
     void messageNotify();
+    void dbConnectionLost();
 
     /** @name Data Update Signals
      
@@ -412,7 +418,6 @@ class GUIClient : public QMainWindow
     bool         _showTopLevel;
     QWidgetList  _windowList;
     QMenuBar	*_menuBar;
-    QWidget     *_activeWindow;
 
     InputManager   *_inputManager;
 

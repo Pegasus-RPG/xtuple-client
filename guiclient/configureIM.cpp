@@ -58,6 +58,7 @@ configureIM::configureIM(QWidget* parent, const char* name, bool /*modal*/, Qt::
       _toNextNum->setText(configureconfigureIM.value("tonumber").toString());
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Next Transfer Order Number"),
                                   configureconfigureIM, __FILE__, __LINE__))
+      return;
     _enableToShipping->setChecked(_metrics->boolean("EnableTOShipping"));
     _transferOrderChangeLog->setChecked(_metrics->boolean("TransferOrderChangeLog"));
   }

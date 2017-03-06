@@ -172,7 +172,8 @@ void createItemSitesByClassCode::sSave()
     XSqlQuery locationid;
     locationid.prepare( "SELECT location_id "
                         "FROM location "
-                        "WHERE (location_warehous_id=:warehous_id)"
+                        "WHERE ((location_warehous_id=:warehous_id) "
+                        " AND (location_active) ) " 
                         "LIMIT 1;" );
     locationid.bindValue(":warehous_id", _warehouse->id());
     locationid.exec();
@@ -433,7 +434,8 @@ void createItemSitesByClassCode::populateLocations()
   createpopulateLocations.prepare( "SELECT location_id, formatLocationName(location_id) AS locationname "
              "FROM location "
              "WHERE ( (location_warehous_id=:warehous_id)"
-             " AND (NOT location_restrict) ) "
+             " AND (NOT location_restrict) "
+             " AND (location_active) ) "
              "ORDER BY locationname;" );
   createpopulateLocations.bindValue(":warehous_id", _warehouse->id());
   createpopulateLocations.exec();

@@ -68,8 +68,8 @@ class Sudoable : public QProcess {
       QString password;
       bool retry = false;
       do {
-        password = QInputDialog::getText(0, tr("Need Password to Install"),
-                                          tr("Password:"),
+        password = QInputDialog::getText(0, tr("Password Required"),
+                                          tr("Enter System Password:"),
                                           QLineEdit::Password, password, ok);
         start(password, "echo testing");
         if (! waitForFinished(1000))
@@ -99,7 +99,11 @@ class checkForUpdatesPrivate {
 #endif
 #ifdef Q_OS_LINUX
       _newExePath   = "../xTuple-" + _serverVersion + "-Linux/xtuple";
-      _downloadFile = "xTuple-"    + _serverVersion + "-Linux.tar.bz2";
+      #ifdef Q_PROCESSOR_X86_64
+        _downloadFile = "xTuple-"    + _serverVersion + "-Linux64.tar.bz2";
+      #else
+        _downloadFile = "xTuple-"    + _serverVersion + "-Linux.tar.bz2";
+      #endif
       _destdir = "..";
 #endif
     }

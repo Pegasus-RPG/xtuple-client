@@ -26,6 +26,7 @@
 
 #define cIncludeLotSerial   0x01
 #define cNoIncludeLotSerial 0x02
+#define DEBUG false
 
 distributeInventory::distributeInventory(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -84,7 +85,6 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
 
   _itemlocdistid = -1;
   _transtype = "O";
-  
   _locationDefaultLit->hide();
   _locations->hide();
 }
@@ -98,12 +98,18 @@ void distributeInventory::languageChange()
 {
   retranslateUi(this);
 }
-int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, const QString & pPresetLotnum, const QDate & pPresetLotexp, const QDate & pPresetLotwarr)
+int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, 
+  const QString & pPresetLotnum, const QDate & pPresetLotexp, const QDate & pPresetLotwarr,
+  bool pPreDistributed)
 {
   int result;
   QList<int>  ildsList; // Item Loc Dist Series 
   QList<int>  ildList; // Item Loc Dist List
 
+  if (DEBUG)
+    qDebug() << tr("DistributeInventory::SeriesAdjust pItemlocSeries: %1, pPreDistributed: %2")
+    .arg(pItemlocSeries).arg(pPreDistributed);
+  
   if (pItemlocSeries != 0)
   {
     XSqlQuery itemloc;
@@ -113,16 +119,16 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
                      "       itemsite_perishable, itemsite_warrpurc,"
                      "       COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id,"
                      "       COALESCE(itemlocdist_source_id,-1) AS itemlocdist_source_id,"
-                     "       CASE WHEN (invhist_transtype IN ('RM','RP','RR','RX')) THEN 'R'"
+                     "       CASE WHEN (COALESCE(invhist_transtype, '') IN ('RM','RP','RR','RX')) THEN 'R'"
                      "            WHEN (invhist_transtype = 'IM') THEN 'I'"
                      "            WHEN (invhist_transtype = 'SH' AND invhist_ordtype='SO') THEN 'I'"
                      "            ELSE 'O'"
                      "       END AS trans_type,"
-                     "       CASE WHEN (invhist_transtype IN ('RM','RP','RR','RX')"
+                     "       CASE WHEN (COALESCE(invhist_transtype, '') IN ('RM','RP','RR','RX')"
                      "                  AND itemsite_recvlocation_dist) THEN true"
                      "            WHEN (invhist_transtype = 'IM'"
                      "                  AND itemsite_issuelocation_dist) THEN true"
-                     "            WHEN (invhist_transtype NOT IN ('RM','RP','RR','RX','IM')"
+                     "            WHEN (COALESCE(invhist_transtype, '') NOT IN ('RM','RP','RR','RX','IM')"
                      "                  AND itemsite_location_dist) THEN true"
                      "            ELSE false"
                      "       END AS auto_dist "
@@ -134,10 +140,12 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
     itemloc.exec();
     while (itemloc.next())
     {
+      // Requires lot/serial
       if (itemloc.value("itemlocdist_reqlotserial").toBool())
       {
         int itemlocSeries = -1;
         XSqlQuery query;
+
         // Check to see if this is a lot controlled item and if we have
         // a predefined lot#/expdate to use. If so assign that information
         // with itemlocdist_qty and move on. otherwise do the normal dialog
@@ -150,72 +158,75 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
             itemlocSeries = query.value("_itemloc_series").toInt();
             query.prepare( "SELECT createlotserial(itemlocdist_itemsite_id,:lotserial,:itemlocdist_series,'I',NULL,itemlocdist_id,:qty,:expiration,:warranty) "
                            "FROM itemlocdist "
-                           "WHERE (itemlocdist_id=:itemlocdist_id);"
-                           
-                           "UPDATE itemlocdist "
-                           "SET itemlocdist_source_type='O' "
-                           "WHERE (itemlocdist_series=:itemlocdist_series);"
-
-                           "DELETE FROM itemlocdist "
-                           "WHERE (itemlocdist_id=:itemlocdist_id);" );
+                           "WHERE (itemlocdist_id=:itemlocdist_id);");
             query.bindValue(":lotserial", pPresetLotnum);
-            query.bindValue(":qty", itemloc.value("itemlocdist_qty"));
             query.bindValue(":itemlocdist_series", itemlocSeries);
             query.bindValue(":itemlocdist_id", itemloc.value("itemlocdist_id"));
-            if(itemloc.value("itemsite_perishable").toBool())
+            query.bindValue(":qty", itemloc.value("itemlocdist_qty"));
+            if (itemloc.value("itemsite_perishable").toBool())
               query.bindValue(":expiration", pPresetLotexp);
             else
               query.bindValue(":expiration", omfgThis->endOfTime());
-            if(itemloc.value("itemsite_warrpurc").toBool())
+            if (itemloc.value("itemsite_warrpurc").toBool())
               query.bindValue(":warranty", pPresetLotwarr);
+            
+            query.exec();
+            if (!query.first() || ErrorReporter::error(QtCriticalMsg, 0, tr("Error Retrieving Lot/Serial Information"),
+                                          query, __FILE__, __LINE__))
+            {
+              return XDialog::Rejected;
+            }
+
+            query.prepare( "UPDATE itemlocdist "
+                           "SET itemlocdist_source_type='O' "
+                           "WHERE (itemlocdist_series=:itemlocdist_series);");
+            query.bindValue(":itemlocdist_series", itemlocSeries);
             query.exec();
           }
         }
 
-        if(itemlocSeries == -1)
+        // Item did not have a preset lot number.
+        // Check to see if Lot/Serial distributions should be created using
+        // "from" side of transaction.  Transactions are related by itemlocdist_source_id.
+        // InterWarehouseTransfer uses this technique.
+        if(itemlocSeries == -1 && itemloc.value("itemlocdist_source_id").toInt() > -1)
         {
-          // Check to see if Lot/Serial distributions should be created using
-          // "from" side of transaction.  Transactions are related by itemlocdist_source_id.
-          // InterWarehouseTransfer uses this technique.
-          if (itemloc.value("itemlocdist_source_id").toInt() > -1)
+          XSqlQuery fromlots;
+          fromlots.exec("SELECT nextval('itemloc_series_seq') AS _itemloc_series;");
+          if(fromlots.first())
           {
-            XSqlQuery fromlots;
-            fromlots.exec("SELECT nextval('itemloc_series_seq') AS _itemloc_series;");
-            if(fromlots.first())
+            itemlocSeries = fromlots.value("_itemloc_series").toInt();
+            fromlots.prepare("SELECT  createlotserial(s.itemlocdist_itemsite_id, ls_number, "
+                             "        :itemlocdist_series, 'I', NULL, :itemlocdist_id, (d.itemlocdist_qty * -1.0), "
+                             "        itemloc_expiration, itemloc_warrpurc) "
+                             "FROM itemlocdist s JOIN itemlocdist o ON (o.itemlocdist_id=s.itemlocdist_source_id) "
+                             "                   JOIN itemlocdist d ON (d.itemlocdist_itemlocdist_id=o.itemlocdist_id) "
+                             "                   JOIN itemloc ON (itemloc_id=d.itemlocdist_source_id) "
+                             "                   JOIN ls ON (ls_id=itemloc_ls_id) "
+                             "WHERE (s.itemlocdist_id=:itemlocdist_id);");
+            fromlots.bindValue(":itemlocdist_id", itemloc.value("itemlocdist_id"));
+            fromlots.bindValue(":itemlocdist_series", itemlocSeries);
+            fromlots.exec();
+            if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Retrieving Lot/Serial Information"),
+                                          fromlots, __FILE__, __LINE__))
             {
-              itemlocSeries = fromlots.value("_itemloc_series").toInt();
-              fromlots.prepare("SELECT  createlotserial(s.itemlocdist_itemsite_id, ls_number, "
-                               "        :itemlocdist_series, 'I', NULL, :itemlocdist_id, (d.itemlocdist_qty * -1.0), "
-                               "        itemloc_expiration, itemloc_warrpurc) "
-                               "FROM itemlocdist s JOIN itemlocdist o ON (o.itemlocdist_id=s.itemlocdist_source_id) "
-                               "                   JOIN itemlocdist d ON (d.itemlocdist_itemlocdist_id=o.itemlocdist_id) "
-                               "                   JOIN itemloc ON (itemloc_id=d.itemlocdist_source_id) "
-                               "                   JOIN ls ON (ls_id=itemloc_ls_id) "
-                               "WHERE (s.itemlocdist_id=:itemlocdist_id);"
-
-                               "UPDATE itemlocdist "
-                               "SET itemlocdist_source_type='O' "
-                               "WHERE (itemlocdist_series=:itemlocdist_series);"
-
-                               "DELETE FROM itemlocdist "
-                               "WHERE (itemlocdist_id=:itemlocdist_id);" );
-              fromlots.bindValue(":itemlocdist_series", itemlocSeries);
-              fromlots.bindValue(":itemlocdist_id", itemloc.value("itemlocdist_id"));
-              fromlots.exec();
-              if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Retrieving Lot/Serial Information"),
-                                            fromlots, __FILE__, __LINE__))
-              {
-                return XDialog::Rejected;
-              }
+              return XDialog::Rejected;
             }
+
+            fromlots.prepare("UPDATE itemlocdist "
+                             "SET itemlocdist_source_type='O' "
+                             "WHERE (itemlocdist_series=:itemlocdist_series);");
+            fromlots.bindValue(":itemlocdist_series", itemlocSeries);
+            fromlots.exec();
           }
         }
 
+        // Open Assign Lot Serial dialog, populating with auto ls info if required. 
         if(itemlocSeries == -1)
-        { 
+        {
           ParameterList params;
           params.append("itemlocdist_id", itemloc.value("itemlocdist_id").toInt());
-
+          
           // Auto assign lot/serial if applicable
           if (itemloc.value("itemsite_lsseq_id").toInt() != -1 &&
               !itemloc.value("itemsite_perishable").toBool() &&
@@ -232,7 +243,6 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
               return XDialog::Rejected;
             }
           }
-
           assignLotSerial newdlg(pParent, "", true);
           newdlg.set(params);
           itemlocSeries = newdlg.exec();
@@ -240,6 +250,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
             return XDialog::Rejected;
         }
         
+        // Distribute location with Distribute Inventory dialog
         if (itemloc.value("itemsite_loccntrl").toBool())
         {
           query.prepare( "SELECT itemlocdist_id " 
@@ -281,16 +292,26 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
         else
         {
           query.prepare( "UPDATE itemlocdist "
-                         "SET itemlocdist_source_type='L', itemlocdist_source_id=-1 "
+                         "SET itemlocdist_source_type='L', itemlocdist_source_id = -1 "
                          "WHERE (itemlocdist_series=:itemlocdist_series); ");
           query.bindValue(":itemlocdist_series", itemlocSeries);
           query.exec();
 
           // Append id to list and process at the end
+          if (DEBUG)
+            qDebug() << tr("ildsList.append(%1)").arg(itemlocSeries);
+
           ildsList.append(itemlocSeries);
         }
+
+        // Set itemlocdist_child_series of parent itemlocdist record
+        query.prepare("UPDATE itemlocdist SET itemlocdist_child_series = :itemlocSeries "
+                      "WHERE itemlocdist_id = :itemlocdist_id;");
+        query.bindValue(":itemlocSeries", itemlocSeries);
+        query.bindValue(":itemlocdist_id", itemloc.value("itemlocdist_id").toInt());
+        query.exec();
       }
-      else
+      else // NOT a lot/serial controlled item (or a neg. qty, requiring "distribution from")
       {
         ParameterList params;
         params.append("itemlocdist_id", itemloc.value("itemlocdist_id").toInt());
@@ -322,52 +343,43 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
           else
             ildList.append(result);
         }
+
+        // Set itemlocdist_child_series of parent itemlocdist record. In this case there is no child, set it to itself.
+        XSqlQuery query;
+        query.prepare("UPDATE itemlocdist SET itemlocdist_child_series = itemlocdist_series "
+                      "WHERE itemlocdist_id = :itemlocdist_id AND itemlocdist_qty < 0;"); //itemlocdist_id = :itemlocdist_id
+        query.bindValue(":itemlocdist_id", itemloc.value("itemlocdist_id").toInt());
+        query.exec();
+        if (query.first())
+        {
+          if (query.numRowsAffected() != 1)
+          {
+            ErrorReporter::error(QtCriticalMsg, 0, tr("Updating Itemlocdist Parent Record Should Return One Row"),
+                           query, __FILE__, __LINE__);
+            return XDialog::Rejected;
+          }
+        }  
+        else if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Updating itemlocdist Lot/Serial Information"),
+                                      query, __FILE__, __LINE__))
+          return XDialog::Rejected;
       }
     }
 
-    XSqlQuery post;
-    
-    // Process Lot/Serial distributions
-    for (int i = 0; i < ildsList.size(); ++i) {
-      post.prepare( "SELECT distributeItemlocSeries(:itemlocdist_series) AS result;");
-      post.bindValue(":itemlocdist_series", ildsList.at(i));
-      post.exec();
-      if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Retrieving Lot/Serial Information"),
-                                    post, __FILE__, __LINE__))
+    // Post distribution detail here (pre-incident #28868)  
+    if (!pPreDistributed)
+    {
+      XSqlQuery postDistDetail;
+      postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries, NULL::INTEGER) AS result;");
+      postDistDetail.bindValue(":itemlocSeries", pItemlocSeries);
+      postDistDetail.exec();
+      if (!postDistDetail.first() || ErrorReporter::error(QtCriticalMsg, 0, tr("Distribution Detail Posting Failed"),
+                                postDistDetail, __FILE__, __LINE__))
       {
         return XDialog::Rejected;
       }
-    }
-    
-    // Process location distributions
-    for (int i = 0; i < ildList.size(); ++i) {
-      post.prepare("SELECT distributeToLocations(:itemlocdist_id) AS result;");
-      post.bindValue(":itemlocdist_id", ildList.at(i));
-      post.exec();
-      if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Retrieving Lot/Serial Information"),
-                                    post, __FILE__, __LINE__))
-      {
-        return XDialog::Rejected;
-      }
-    }
-    
-    //Post inventory history for any remaining non-distributed transactions and trial balance
-    post.prepare("SELECT postItemlocseries(:itemlocseries) AS result;");
-    post.bindValue(":itemlocseries",  pItemlocSeries);
-    post.exec();
-    if (post.first())
-    {
-      if (!post.value("result").toBool())
-            QMessageBox::warning( 0, tr("Inventory Distribution"), 
-        tr("There was an error posting the transaction.  Contact your administrator") );
-    }
-    else if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Retrieving Lot/Serial Information"),
-                                  post, __FILE__, __LINE__))
-    {
-      return XDialog::Rejected;
     }
   }
-  
+
   return XDialog::Accepted;
 }
 
@@ -428,7 +440,7 @@ void distributeInventory::populate()
     else
       _bcQty->clear();
   }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
+  else if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Retrieving Lot/Serial Information"),
                                 distributepopulate, __FILE__, __LINE__))
   {
     return;
@@ -550,6 +562,7 @@ bool distributeInventory::sDefault()
           ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
                                  storedProcErrorLookup("distributetodefault", result),
                                  __FILE__, __LINE__);
+          
           return false;
         }
       }
@@ -763,11 +776,13 @@ void distributeInventory::sPopulateDefaultSelector()
             loclist.prepare( " SELECT location_id, formatLocationName(location_id) AS locationname "
                            " FROM location "
                            " WHERE ( (location_warehous_id=:warehous_id)"
-                           "   AND (NOT location_restrict) ) "
+                           "   AND (NOT location_restrict) "
+                           "   AND (location_active) ) "
                            " UNION SELECT location_id, formatLocationName(location_id) AS locationname "
                            "  FROM location, locitem, itemsite"
                            "  WHERE ( (location_warehous_id=:warehous_id)"
                            "    AND (location_restrict)"
+                           "    AND (location_active)"
                            "    AND (locitem_location_id=location_id)"
                            "    AND (locitem_item_id=itemsite_item_id)"
                            "    AND (itemsite_id=:itemsite_id))"

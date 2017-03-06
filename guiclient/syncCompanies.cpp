@@ -131,10 +131,6 @@ void syncCompanies::sSync()
   if (DEBUG)
     qDebug("syncCompanies::sSync()");
 
-  QProgressDialog progress;
-  progress.setWindowModality(Qt::ApplicationModal);
-  progress.setAutoClose(false);
-
   XSqlQuery lbaseq;
   lbaseq.exec("SELECT * FROM curr_symbol WHERE curr_base;");
   if (lbaseq.first())
@@ -154,6 +150,7 @@ void syncCompanies::sSync()
   }
 
   int errorCount = 0;
+  bool canceled = false;
   QList<XTreeWidgetItem*> company = _company->selectedItems();
   for (int i = 0; i < company.size(); i++)
   {
@@ -223,16 +220,9 @@ void syncCompanies::sSync()
       qDebug() << "";
     }
 
-    if (progress.wasCanceled())
-      break;
-
     buildDatabaseURL(dbURL, protocol, host, db, port);
     if (DEBUG)
       qDebug("syncCompanies::sSync() dbURL before login2 = %s", qPrintable(dbURL));
-
-    progress.setLabelText(tr("Synchronizing Company %1 (%2)")
-                                       .arg(c->rawValue("company_number").toString())
-                                       .arg(dbURL));
 
     ParameterList params;
     params.append("databaseURL", dbURL);
@@ -257,6 +247,14 @@ void syncCompanies::sSync()
     }
 
     dbURL = newdlg._databaseURL;
+
+    QProgressDialog progress;
+    progress.setWindowModality(Qt::ApplicationModal);
+    progress.setAutoClose(false);
+    progress.setLabelText(tr("Synchronizing Company %1 (%2)")
+                                       .arg(c->rawValue("company_number").toString())
+                                       .arg(dbURL));
+
     if (DEBUG)
       qDebug("syncCompanies::sSync() dbURL after login2 = %s", qPrintable(dbURL));
     parseDatabaseURL(dbURL, protocol, host, db, port);
@@ -953,10 +951,12 @@ void syncCompanies::sSync()
       errorCount++;
       continue;
     }
+    progress.accept();
+    if (progress.wasCanceled())
+      canceled = true;
   } // for each selected company
 
-  progress.accept();
-  if (progress.wasCanceled())
+  if (canceled)
     QMessageBox::critical(this, tr("Synchronizing Canceled"),
                           tr("Synchronization Canceled."));
   else

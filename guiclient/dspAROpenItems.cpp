@@ -91,20 +91,14 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char*, Qt::WindowFlags fl)
   list()->addColumn(baseAmountTitle,    _moneyColumn, Qt::AlignRight,  false,  "base_amount");
   list()->addColumn(tr("Paid"),         _moneyColumn, Qt::AlignRight,  true,  "paid");
   list()->addColumn(basePaidTitle,      _moneyColumn, Qt::AlignRight,  false,  "base_paid");
-  list()->addColumn(tr("Balance"),      _moneyColumn, Qt::AlignRight,  true,  "balance");
-  list()->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,   true,  "currAbbr");
+  list()->addColumn(tr("Balance"),      _moneyColumn, Qt::AlignRight,  !omfgThis->singleCurrency(),  "balance");
+  list()->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,   !omfgThis->singleCurrency(),  "currAbbr");
   list()->addColumn(baseBalanceTitle,   _moneyColumn, Qt::AlignRight,  true,  "base_balance");
   list()->addColumn(tr("Credit Card"),            -1, Qt::AlignLeft,   false, "ccard_number");
   list()->addColumn(tr("Notes"),                  -1, Qt::AlignLeft,   false, "notes");
   
   connect(omfgThis, SIGNAL(creditMemosUpdated()), this, SLOT(sFillList()));
   connect(omfgThis, SIGNAL(invoicesUpdated(int, bool)), this, SLOT(sFillList()));
-
-  if (omfgThis->singleCurrency())
-  {
-    list()->hideColumn("currAbbr");
-    list()->hideColumn("balance");
-  }
 
   disconnect(newAction(), SIGNAL(triggered()), this, SLOT(sNew()));
   connect(newAction(), SIGNAL(triggered()), this, SLOT(sCreateInvoice()));

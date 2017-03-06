@@ -43,14 +43,13 @@ unappliedARCreditMemos::unappliedARCreditMemos(QWidget* parent, const char* name
   _aropen->addColumn( tr("Customer"), -1,              Qt::AlignLeft,   true,  "cust_name"   );
   _aropen->addColumn( tr("Amount"),   _moneyColumn,    Qt::AlignRight,  true,  "aropen_amount"  );
   _aropen->addColumn( tr("Applied"),  _moneyColumn,    Qt::AlignRight,  true,  "applied"  );
-  _aropen->addColumn( tr("Balance"),  _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
+  _aropen->addColumn( tr("Balance"),  _moneyColumn,    Qt::AlignRight,  !omfgThis->singleCurrency(),  "balance"  );
   _aropen->addColumn( tr("Currency"), _currencyColumn, Qt::AlignLeft,   true,  "currAbbr" );
-
-  if (omfgThis->singleCurrency())
-    _aropen->hideColumn(5);
 
   if (_privileges->check("ApplyARMemos"))
     connect(_aropen, SIGNAL(valid(bool)), _apply, SLOT(setEnabled(bool)));
+
+  connect(_customerGroup, SIGNAL(updated()), this, SLOT(sFillList()));
 
   sFillList();
 }
@@ -72,9 +71,18 @@ void unappliedARCreditMemos::languageChange()
   retranslateUi(this);
 }
 
+bool unappliedARCreditMemos::setParams(ParameterList &params)
+{
+  _customerGroup->appendValue(params);
+  return true;
+}
+
 void unappliedARCreditMemos::sPrint()
 {
   ParameterList params;
+  if (! setParams(params))
+    return;
+
   params.append("isReport", true);
 
   orReport report("UnappliedARCreditMemos", params);
@@ -83,7 +91,6 @@ void unappliedARCreditMemos::sPrint()
   else
     report.reportError(this);
 }
-
 
 void unappliedARCreditMemos::sNew()
 {
@@ -118,6 +125,8 @@ void unappliedARCreditMemos::sFillList()
   MetaSQLQuery mql = mqlLoad("arCreditMemos", "unapplied");
   
   ParameterList params;
+  if (! setParams(params))
+    return;
   
   XSqlQuery qry = mql.toQuery(params);
   _aropen->populate(qry);
