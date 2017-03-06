@@ -781,7 +781,7 @@ void cashReceipt::sSave()
 
   if (save(false))
   {
-    if (_postReceipt->isChecked())
+    if (_postReceipt->isChecked() && !_posted)
     {    
       if (!postReceipt())
         return;
@@ -1005,14 +1005,6 @@ bool cashReceipt::postReceipt()
 
   XSqlQuery tx;
   tx.exec("BEGIN;");
-  cashPost.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
-  if (cashPost.first())
-    journalNumber = cashPost.value("journalnumber").toInt();
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt Entry"),
-                                cashPost, __FILE__, __LINE__))
-  {
-    return false;
-  }
 
   XSqlQuery setDate;
   setDate.prepare("UPDATE cashrcpt SET cashrcpt_distdate=:distdate,"
@@ -1025,23 +1017,26 @@ bool cashReceipt::postReceipt()
     setDate.bindValue(":distdate",    newDate);
     setDate.bindValue(":cashrcpt_id", _cashrcptid);
     setDate.exec();
-    ErrorReporter::error(QtCriticalMsg, this, tr("Changing Dist. Date"),
-                         setDate, __FILE__, __LINE__);
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Changing Dist. Date"),
+                         setDate, __FILE__, __LINE__))
+    {
+      tx.exec("ROLLBACK");
+      return false;
+    }
   }
   
-  cashPost.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
+  cashPost.prepare("SELECT postCashReceipt(:cashrcpt_id, fetchJournalNumber('C/R')) AS result;");
   cashPost.bindValue(":cashrcpt_id", _cashrcptid);
-  cashPost.bindValue(":journalNumber", journalNumber);
   cashPost.exec();
   if (cashPost.first())
   {
     int result = cashPost.value("result").toInt();
     if (result < 0)
     {
+      tx.exec("ROLLBACK;");
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt Entry"),
                              storedProcErrorLookup("postCashReceipt", result),
                              __FILE__, __LINE__);
-      tx.exec("ROLLBACK;");
       return false;
     }
   }
