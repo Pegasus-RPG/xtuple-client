@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -48,6 +48,7 @@ dspARApplications::dspARApplications(QWidget* parent, const char*, Qt::WindowFla
   list()->addColumn(tr("Amount"),         _moneyColumn, Qt::AlignRight,  true,  "arapply_applied"  );
   list()->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
   list()->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_applied"  );
+  list()->addColumn(tr("Reversed"),          _ynColumn, Qt::AlignRight, false,  "arapply_reversed");
 
   list()->hideColumn(4);
   list()->hideColumn(7);
@@ -146,6 +147,25 @@ void dspARApplications::sViewInvoice()
   omfgThis->handleNewWindow(newdlg);
 }
 
+void dspARApplications::sReverseApplication()
+{
+  XSqlQuery reverseApp;
+
+  reverseApp.prepare("SELECT reversearapplication(:applyid)");
+  reverseApp.bindValue(":applyid", list()->id());
+  reverseApp.exec();
+  if (reverseApp.first())
+    QMessageBox::critical( this, tr("Reverse Application"),
+                           tr("A/R Application has been reversed.") );
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Reversing A/R Application"),
+                                reverseApp, __FILE__, __LINE__))
+  {
+    return;
+  }
+
+  sFillList();
+}
+
 void dspARApplications::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem*, int)
 {
   QAction *menuItem;
@@ -170,6 +190,13 @@ void dspARApplications::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem*, int)
     menuItem = pMenu->addAction(tr("View Apply-To Invoice..."), this, SLOT(sViewInvoice()));
     if (! _privileges->check("MaintainMiscInvoices") &&
 	! _privileges->check("ViewMiscInvoices"))
+      menuItem->setEnabled(false);
+  }
+
+  if (list()->currentItem()->text(13) == "No")
+  {
+    menuItem = pMenu->addAction(tr("Reverse Application"), this, SLOT(sReverseApplication()));
+    if (! _privileges->check("ReverseARApplication"))
       menuItem->setEnabled(false);
   }
 }
