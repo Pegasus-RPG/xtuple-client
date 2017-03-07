@@ -75,7 +75,6 @@ class XTUPLEWIDGETS_EXPORT XDataWidgetMapper : public QDataWidgetMapper
 
 };
 
-Q_DECLARE_METATYPE(XDataWidgetMapper*)
 void setupXDataWidgetMapper(QScriptEngine *engine);
 
 #endif

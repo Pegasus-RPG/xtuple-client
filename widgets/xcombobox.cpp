@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -1657,16 +1657,6 @@ void XComboBox::insertEditor(XComboBoxTypes type, QObject *obj,
 
 // scripting exposure /////////////////////////////////////////////////////////
 
-QScriptValue XComboBoxtoScriptValue(QScriptEngine *engine, XComboBox* const &item)
-{
-  return engine->newQObject(item);
-}
-
-void XComboBoxfromScriptValue(const QScriptValue &obj, XComboBox* &item)
-{
-  item = qobject_cast<XComboBox*>(obj.toQObject());
-}
-
 QScriptValue XComboBoxDefaultstoScriptValue(QScriptEngine *engine, XComboBox::Defaults const &item)
 {
   return QScriptValue(engine, (int)item);
@@ -1716,89 +1706,93 @@ QScriptValue constructXComboBox(QScriptContext *context,
     context->throwError(QScriptContext::UnknownError,
                         QString("Could not find an appropriate XComboBox constructor"));
 
+#if QT_VERSION >= 0x050000
   return engine->toScriptValue(cbox);
+#else
+  Q_UNUSED(engine); return QScriptValue();
+#endif
 }
 
 void setupXComboBox(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, XComboBoxtoScriptValue, XComboBoxfromScriptValue);
   //qScriptRegisterMetaType(engine, XComboBoxTypestoScriptValue, XComboBoxTypesfromScriptValue);
   qScriptRegisterMetaType(engine, XComboBoxDefaultstoScriptValue, XComboBoxDefaultsfromScriptValue);
 
   QScriptValue widget = engine->newFunction(constructXComboBox);
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
-  widget.setProperty("First",   QScriptValue(engine, XComboBox::First), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("None",    QScriptValue(engine, XComboBox::None),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("First",   QScriptValue(engine, XComboBox::First), ro);
+  widget.setProperty("None",    QScriptValue(engine, XComboBox::None),  ro);
 
-  widget.setProperty("Adhoc",                QScriptValue(engine, XComboBox::Adhoc),                QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("APBankAccounts",       QScriptValue(engine, XComboBox::APBankAccounts),       QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("APTerms",              QScriptValue(engine, XComboBox::APTerms),              QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ARBankAccounts",       QScriptValue(engine, XComboBox::ARBankAccounts),       QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ARTerms",              QScriptValue(engine, XComboBox::ARTerms),              QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("AccountingPeriods",    QScriptValue(engine, XComboBox::AccountingPeriods),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Agent",                QScriptValue(engine, XComboBox::Agent),                QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("AllCommentTypes",      QScriptValue(engine, XComboBox::AllCommentTypes),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("AllProjects",          QScriptValue(engine, XComboBox::AllProjects),          QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("CRMAccounts",          QScriptValue(engine, XComboBox::CRMAccounts),          QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ClassCodes",           QScriptValue(engine, XComboBox::ClassCodes),           QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Companies",            QScriptValue(engine, XComboBox::Companies),            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("CostCategories",       QScriptValue(engine, XComboBox::CostCategories),       QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Countries",            QScriptValue(engine, XComboBox::Countries),            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Currencies",           QScriptValue(engine, XComboBox::Currencies),           QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("CurrenciesNotBase",    QScriptValue(engine, XComboBox::CurrenciesNotBase),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("CustomerCommentTypes", QScriptValue(engine, XComboBox::CustomerCommentTypes), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("CustomerGroups",       QScriptValue(engine, XComboBox::CustomerGroups),       QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("CustomerTypes",        QScriptValue(engine, XComboBox::CustomerTypes),        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ExpenseCategories",    QScriptValue(engine, XComboBox::ExpenseCategories),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("FinancialLayouts",     QScriptValue(engine, XComboBox::FinancialLayouts),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("FiscalYears",          QScriptValue(engine, XComboBox::FiscalYears),          QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("FreightClasses",       QScriptValue(engine, XComboBox::FreightClasses),       QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Honorifics",           QScriptValue(engine, XComboBox::Honorifics),           QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("IncidentCategory",     QScriptValue(engine, XComboBox::IncidentCategory),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("IncidentPriority",     QScriptValue(engine, XComboBox::IncidentPriority),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("IncidentResolution",   QScriptValue(engine, XComboBox::IncidentResolution),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("IncidentSeverity",     QScriptValue(engine, XComboBox::IncidentSeverity),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ItemCommentTypes",     QScriptValue(engine, XComboBox::ItemCommentTypes),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ItemGroups",           QScriptValue(engine, XComboBox::ItemGroups),           QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Locales",              QScriptValue(engine, XComboBox::Locales),              QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("LocaleCountries",      QScriptValue(engine, XComboBox::LocaleCountries),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("LocaleLanguages",      QScriptValue(engine, XComboBox::LocaleLanguages),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("LotSerialCommentTypes",QScriptValue(engine, XComboBox::LotSerialCommentTypes),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("OpportunityStages",    QScriptValue(engine, XComboBox::OpportunityStages),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("OpportunitySources",   QScriptValue(engine, XComboBox::OpportunitySources),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("OpportunityTypes",     QScriptValue(engine, XComboBox::OpportunityTypes),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("PlannerCodes",         QScriptValue(engine, XComboBox::PlannerCodes),         QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("PoProjects",           QScriptValue(engine, XComboBox::PoProjects),           QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ProductCategories",    QScriptValue(engine, XComboBox::ProductCategories),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ProfitCenters",        QScriptValue(engine, XComboBox::ProfitCenters),        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ProjectCommentTypes",  QScriptValue(engine, XComboBox::ProjectCommentTypes),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ReasonCodes",          QScriptValue(engine, XComboBox::ReasonCodes),          QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("RegistrationTypes",    QScriptValue(engine, XComboBox::RegistrationTypes),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Reports",              QScriptValue(engine, XComboBox::Reports),              QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("SalesCategories",      QScriptValue(engine, XComboBox::SalesCategories),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("SalesCategoriesActive",QScriptValue(engine, XComboBox::SalesCategoriesActive),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("SalesReps",            QScriptValue(engine, XComboBox::SalesReps),            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("SalesRepsActive",      QScriptValue(engine, XComboBox::SalesRepsActive),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("SaleTypes",            QScriptValue(engine, XComboBox::SaleTypes),            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ShipVias",             QScriptValue(engine, XComboBox::ShipVias),             QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ShippingCharges",      QScriptValue(engine, XComboBox::ShippingCharges),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ShippingForms",        QScriptValue(engine, XComboBox::ShippingForms),        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ShippingZones",        QScriptValue(engine, XComboBox::ShippingZones),        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("SiteTypes",            QScriptValue(engine, XComboBox::SiteTypes),            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("SoProjects",           QScriptValue(engine, XComboBox::SoProjects),           QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Subaccounts",          QScriptValue(engine, XComboBox::Subaccounts),          QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("TaxAuths",             QScriptValue(engine, XComboBox::TaxAuths),             QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("TaxCodes",             QScriptValue(engine, XComboBox::TaxCodes),             QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("TaxTypes",             QScriptValue(engine, XComboBox::TaxTypes),             QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Terms",              QScriptValue(engine, XComboBox::Terms),                QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("UOMs",                 QScriptValue(engine, XComboBox::UOMs),                 QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Users",                QScriptValue(engine, XComboBox::Users),                QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("VendorCommentTypes",   QScriptValue(engine, XComboBox::VendorCommentTypes),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("VendorGroups",         QScriptValue(engine, XComboBox::VendorGroups),         QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("VendorTypes",          QScriptValue(engine, XComboBox::VendorTypes),          QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("WoProjects",           QScriptValue(engine, XComboBox::WoProjects),           QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("WorkCenters",          QScriptValue(engine, XComboBox::WorkCenters),          QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("WorkCentersActive",    QScriptValue(engine, XComboBox::WorkCentersActive),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Adhoc",                QScriptValue(engine, XComboBox::Adhoc),                ro);
+  widget.setProperty("APBankAccounts",       QScriptValue(engine, XComboBox::APBankAccounts),       ro);
+  widget.setProperty("APTerms",              QScriptValue(engine, XComboBox::APTerms),              ro);
+  widget.setProperty("ARBankAccounts",       QScriptValue(engine, XComboBox::ARBankAccounts),       ro);
+  widget.setProperty("ARTerms",              QScriptValue(engine, XComboBox::ARTerms),              ro);
+  widget.setProperty("AccountingPeriods",    QScriptValue(engine, XComboBox::AccountingPeriods),    ro);
+  widget.setProperty("Agent",                QScriptValue(engine, XComboBox::Agent),                ro);
+  widget.setProperty("AllCommentTypes",      QScriptValue(engine, XComboBox::AllCommentTypes),      ro);
+  widget.setProperty("AllProjects",          QScriptValue(engine, XComboBox::AllProjects),          ro);
+  widget.setProperty("CRMAccounts",          QScriptValue(engine, XComboBox::CRMAccounts),          ro);
+  widget.setProperty("ClassCodes",           QScriptValue(engine, XComboBox::ClassCodes),           ro);
+  widget.setProperty("Companies",            QScriptValue(engine, XComboBox::Companies),            ro);
+  widget.setProperty("CostCategories",       QScriptValue(engine, XComboBox::CostCategories),       ro);
+  widget.setProperty("Countries",            QScriptValue(engine, XComboBox::Countries),            ro);
+  widget.setProperty("Currencies",           QScriptValue(engine, XComboBox::Currencies),           ro);
+  widget.setProperty("CurrenciesNotBase",    QScriptValue(engine, XComboBox::CurrenciesNotBase),    ro);
+  widget.setProperty("CustomerCommentTypes", QScriptValue(engine, XComboBox::CustomerCommentTypes), ro);
+  widget.setProperty("CustomerGroups",       QScriptValue(engine, XComboBox::CustomerGroups),       ro);
+  widget.setProperty("CustomerTypes",        QScriptValue(engine, XComboBox::CustomerTypes),        ro);
+  widget.setProperty("ExpenseCategories",    QScriptValue(engine, XComboBox::ExpenseCategories),    ro);
+  widget.setProperty("FinancialLayouts",     QScriptValue(engine, XComboBox::FinancialLayouts),     ro);
+  widget.setProperty("FiscalYears",          QScriptValue(engine, XComboBox::FiscalYears),          ro);
+  widget.setProperty("FreightClasses",       QScriptValue(engine, XComboBox::FreightClasses),       ro);
+  widget.setProperty("Honorifics",           QScriptValue(engine, XComboBox::Honorifics),           ro);
+  widget.setProperty("IncidentCategory",     QScriptValue(engine, XComboBox::IncidentCategory),     ro);
+  widget.setProperty("IncidentPriority",     QScriptValue(engine, XComboBox::IncidentPriority),     ro);
+  widget.setProperty("IncidentResolution",   QScriptValue(engine, XComboBox::IncidentResolution),   ro);
+  widget.setProperty("IncidentSeverity",     QScriptValue(engine, XComboBox::IncidentSeverity),     ro);
+  widget.setProperty("ItemCommentTypes",     QScriptValue(engine, XComboBox::ItemCommentTypes),     ro);
+  widget.setProperty("ItemGroups",           QScriptValue(engine, XComboBox::ItemGroups),           ro);
+  widget.setProperty("Locales",              QScriptValue(engine, XComboBox::Locales),              ro);
+  widget.setProperty("LocaleCountries",      QScriptValue(engine, XComboBox::LocaleCountries),      ro);
+  widget.setProperty("LocaleLanguages",      QScriptValue(engine, XComboBox::LocaleLanguages),      ro);
+  widget.setProperty("LotSerialCommentTypes",QScriptValue(engine, XComboBox::LotSerialCommentTypes),ro);
+  widget.setProperty("OpportunityStages",    QScriptValue(engine, XComboBox::OpportunityStages),    ro);
+  widget.setProperty("OpportunitySources",   QScriptValue(engine, XComboBox::OpportunitySources),   ro);
+  widget.setProperty("OpportunityTypes",     QScriptValue(engine, XComboBox::OpportunityTypes),     ro);
+  widget.setProperty("PlannerCodes",         QScriptValue(engine, XComboBox::PlannerCodes),         ro);
+  widget.setProperty("PoProjects",           QScriptValue(engine, XComboBox::PoProjects),           ro);
+  widget.setProperty("ProductCategories",    QScriptValue(engine, XComboBox::ProductCategories),    ro);
+  widget.setProperty("ProfitCenters",        QScriptValue(engine, XComboBox::ProfitCenters),        ro);
+  widget.setProperty("ProjectCommentTypes",  QScriptValue(engine, XComboBox::ProjectCommentTypes),  ro);
+  widget.setProperty("ReasonCodes",          QScriptValue(engine, XComboBox::ReasonCodes),          ro);
+  widget.setProperty("RegistrationTypes",    QScriptValue(engine, XComboBox::RegistrationTypes),    ro);
+  widget.setProperty("Reports",              QScriptValue(engine, XComboBox::Reports),              ro);
+  widget.setProperty("SalesCategories",      QScriptValue(engine, XComboBox::SalesCategories),      ro);
+  widget.setProperty("SalesCategoriesActive",QScriptValue(engine, XComboBox::SalesCategoriesActive),ro);
+  widget.setProperty("SalesReps",            QScriptValue(engine, XComboBox::SalesReps),            ro);
+  widget.setProperty("SalesRepsActive",      QScriptValue(engine, XComboBox::SalesRepsActive),      ro);
+  widget.setProperty("SaleTypes",            QScriptValue(engine, XComboBox::SaleTypes),            ro);
+  widget.setProperty("ShipVias",             QScriptValue(engine, XComboBox::ShipVias),             ro);
+  widget.setProperty("ShippingCharges",      QScriptValue(engine, XComboBox::ShippingCharges),      ro);
+  widget.setProperty("ShippingForms",        QScriptValue(engine, XComboBox::ShippingForms),        ro);
+  widget.setProperty("ShippingZones",        QScriptValue(engine, XComboBox::ShippingZones),        ro);
+  widget.setProperty("SiteTypes",            QScriptValue(engine, XComboBox::SiteTypes),            ro);
+  widget.setProperty("SoProjects",           QScriptValue(engine, XComboBox::SoProjects),           ro);
+  widget.setProperty("Subaccounts",          QScriptValue(engine, XComboBox::Subaccounts),          ro);
+  widget.setProperty("TaxAuths",             QScriptValue(engine, XComboBox::TaxAuths),             ro);
+  widget.setProperty("TaxCodes",             QScriptValue(engine, XComboBox::TaxCodes),             ro);
+  widget.setProperty("TaxTypes",             QScriptValue(engine, XComboBox::TaxTypes),             ro);
+  widget.setProperty("Terms",                QScriptValue(engine, XComboBox::Terms),                ro);
+  widget.setProperty("UOMs",                 QScriptValue(engine, XComboBox::UOMs),                 ro);
+  widget.setProperty("Users",                QScriptValue(engine, XComboBox::Users),                ro);
+  widget.setProperty("VendorCommentTypes",   QScriptValue(engine, XComboBox::VendorCommentTypes),   ro);
+  widget.setProperty("VendorGroups",         QScriptValue(engine, XComboBox::VendorGroups),         ro);
+  widget.setProperty("VendorTypes",          QScriptValue(engine, XComboBox::VendorTypes),          ro);
+  widget.setProperty("WoProjects",           QScriptValue(engine, XComboBox::WoProjects),           ro);
+  widget.setProperty("WorkCenters",          QScriptValue(engine, XComboBox::WorkCenters),          ro);
+  widget.setProperty("WorkCentersActive",    QScriptValue(engine, XComboBox::WorkCentersActive),    ro);
 
-  engine->globalObject().setProperty("XComboBox", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  engine->globalObject().setProperty("XComboBox", widget, ro);
 }

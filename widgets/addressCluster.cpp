@@ -158,10 +158,10 @@ void AddressCluster::init()
     _mode = Edit;
 }
 
-AddressCluster::AddressCluster(QWidget* pParent, const char* pName) :
-    VirtualCluster(pParent, pName)
+AddressCluster::AddressCluster(QWidget* pParent, const char* pName)
+  : VirtualCluster(pParent, pName)
 {
-    init();
+  init();
 }
 
 void AddressCluster::populateStateComboBox()
@@ -944,20 +944,8 @@ void AddressCluster::setMode(Mode p)
 
 // script exposure /////////////////////////////////////////////////////////////
 
-QScriptValue AddressClustertoScriptValue(QScriptEngine *engine, AddressCluster* const &item)
-{
-  return engine->newQObject(item);
-}
-
-void AddressClusterfromScriptValue(const QScriptValue &obj, AddressCluster* &item)
-{
-  item = qobject_cast<AddressCluster*>(obj.toQObject());
-}
-
 void setupAddressCluster(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, AddressClustertoScriptValue, AddressClusterfromScriptValue);
-
   QScriptValue widget = engine->newObject();
 
   widget.setProperty("CHECK",     QScriptValue(engine, AddressCluster::CHECK),     QScriptValue::ReadOnly | QScriptValue::Undeletable);

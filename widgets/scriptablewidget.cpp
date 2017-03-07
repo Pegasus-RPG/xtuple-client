@@ -76,7 +76,7 @@ void ScriptableWidget::loadScript(const QStringList &list)
   XSqlQuery scriptq;
   scriptq.prepare("WITH jsonlist AS (SELECT *"
                   "                    FROM json_each_text(:jsonlist))"
-                  "SELECT script_source"
+                  "SELECT script_name, script_source"
                   "  FROM script"
                   "  JOIN jsonlist ON script_name = value"
                   " WHERE script_enabled"
@@ -86,7 +86,7 @@ void ScriptableWidget::loadScript(const QStringList &list)
   while (scriptq.next())
   {
     QScriptValue result = engine()->evaluate(scriptq.value("script_source").toString(),
-                                             _object->objectName());
+                                             scriptq.value("script_name").toString());
     if (engine()->hasUncaughtException())
     {
       qDebug() << "uncaught exception at line"

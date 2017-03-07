@@ -110,6 +110,5 @@ class XTUPLEWIDGETS_EXPORT PeriodListViewItem : public XTreeWidgetItem
     QDate _startDate;
     QDate _endDate;
 };
-Q_DECLARE_METATYPE(PeriodListViewItem*)
 
 #endif

@@ -186,7 +186,6 @@ class XTUPLEWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
     ParameterList _params;
 };
 
-Q_DECLARE_METATYPE(XSqlTableModel*)
 void setupXSqlTableModel(QScriptEngine *engine);
 
 #endif

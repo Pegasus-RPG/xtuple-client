@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -118,16 +118,6 @@ void XCheckBox::setDataWidgetMap(XDataWidgetMapper* m)
 
 // scripting exposure /////////////////////////////////////////////////////////
 
-QScriptValue XCheckBoxtoScriptValue(QScriptEngine *engine, XCheckBox* const &item)
-{
-  return engine->newQObject(item);
-}
-
-void XCheckBoxfromScriptValue(const QScriptValue &obj, XCheckBox* &item)
-{
-  item = qobject_cast<XCheckBox*>(obj.toQObject());
-}
-
 QScriptValue constructXCheckBox(QScriptContext *context,
                                 QScriptEngine  *engine)
 {
@@ -153,12 +143,15 @@ QScriptValue constructXCheckBox(QScriptContext *context,
     context->throwError(QScriptContext::UnknownError,
                         QString("Could not find an appropriate XCheckBox constructor"));
 
+#if QT_VERSION >= 0x050000
   return engine->toScriptValue(cbox);
+#else
+  Q_UNUSED(engine); return QScriptValue();
+#endif
 }
 
 void setupXCheckBox(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, XCheckBoxtoScriptValue, XCheckBoxfromScriptValue);
   QScriptValue widget = engine->newFunction(constructXCheckBox);
   engine->globalObject().setProperty("XCheckBox", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }

@@ -956,22 +956,22 @@ ItemCluster::ItemCluster(QWidget* pParent, const char* pName) :
 
 void ItemCluster::addNumberWidget(VirtualClusterLineEdit* pNumberWidget)
 {
-	VirtualClusterLineEdit *matchType = qobject_cast<VirtualClusterLineEdit *>(pNumberWidget);
+  VirtualClusterLineEdit *matchType = qobject_cast<VirtualClusterLineEdit *>(pNumberWidget);
 
-	if(matchType == 0)
-	  return;
-	  
-    _number = matchType;
-    
-    if (! _number)
-      return;
+  if(matchType == 0)
+    return;
 
-    _grid->addWidget(_number, 0, 1);
-    setFocusProxy(pNumberWidget);
+  _number = matchType;
 
-    connect(_number,	SIGNAL(newId(int)),	this,	 SIGNAL(newId(int)));
-    connect(_number,	SIGNAL(parsed()), 	this, 	 SLOT(sRefresh()));
-    connect(_number,	SIGNAL(valid(bool)),	this,	 SIGNAL(valid(bool)));
+  if (! _number)
+    return;
+
+  _grid->addWidget(_number, 0, 1);
+  setFocusProxy(pNumberWidget);
+
+  connect(_number,      SIGNAL(newId(int)),     this,    SIGNAL(newId(int)));
+  connect(_number,      SIGNAL(parsed()),       this,    SLOT(sRefresh()));
+  connect(_number,      SIGNAL(valid(bool)),    this,    SIGNAL(valid(bool)));
 }
 
 void ItemCluster::setDescriptionVisible(const bool p)
@@ -1388,52 +1388,40 @@ void itemSearch::sFillList()
 
 // script api //////////////////////////////////////////////////////////////////
 
-QScriptValue ItemLineEditToScriptValue(QScriptEngine *engine, ItemLineEdit* const &in)
-{
-  return engine->newQObject(in);
-}
-
-void ItemLineEditFromScriptValue(const QScriptValue &object, ItemLineEdit* &out)
-{
-  out = qobject_cast<ItemLineEdit*>(object.toQObject());
-}
-
-
 void setupItemLineEdit(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, ItemLineEditToScriptValue, ItemLineEditFromScriptValue);
-
   QScriptValue widget = engine->newObject();
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
-  widget.setProperty("cUndefined",	    QScriptValue(engine, ItemLineEdit::cUndefined),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cPurchased",	    QScriptValue(engine, ItemLineEdit::cPurchased),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cManufactured",	    QScriptValue(engine, ItemLineEdit::cManufactured),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cPhantom",	    QScriptValue(engine, ItemLineEdit::cPhantom),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cBreeder",	    QScriptValue(engine, ItemLineEdit::cBreeder),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cCoProduct",	    QScriptValue(engine, ItemLineEdit::cCoProduct),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cByProduct",	    QScriptValue(engine, ItemLineEdit::cByProduct),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cReference",	    QScriptValue(engine, ItemLineEdit::cReference),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cCosting",	    QScriptValue(engine, ItemLineEdit::cCosting),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cTooling",	    QScriptValue(engine, ItemLineEdit::cTooling),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cOutsideProcess",	    QScriptValue(engine, ItemLineEdit::cOutsideProcess),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cPlanning",	    QScriptValue(engine, ItemLineEdit::cPlanning),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cKit",	            QScriptValue(engine, ItemLineEdit::cKit),	             QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cAllItemTypes_Mask",  QScriptValue(engine, ItemLineEdit::cAllItemTypes_Mask),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cPlanningMRP",	    QScriptValue(engine, ItemLineEdit::cPlanningMRP),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cPlanningMPS",	    QScriptValue(engine, ItemLineEdit::cPlanningMPS),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cPlanningNone",	    QScriptValue(engine, ItemLineEdit::cPlanningNone),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cPlanningAny",	    QScriptValue(engine, ItemLineEdit::cPlanningAny),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cItemActive",	    QScriptValue(engine, ItemLineEdit::cItemActive),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cSold",	            QScriptValue(engine, ItemLineEdit::cSold),	             QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cLocationControlled", QScriptValue(engine, ItemLineEdit::cLocationControlled), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cLotSerialControlled",QScriptValue(engine, ItemLineEdit::cLotSerialControlled),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cDefaultLocation",    QScriptValue(engine, ItemLineEdit::cDefaultLocation),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cActive",	            QScriptValue(engine, ItemLineEdit::cActive),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cGeneralManufactured",QScriptValue(engine, ItemLineEdit::cGeneralManufactured),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cGeneralPurchased",   QScriptValue(engine, ItemLineEdit::cGeneralPurchased),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cGeneralComponents",  QScriptValue(engine, ItemLineEdit::cGeneralComponents),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cGeneralInventory",   QScriptValue(engine, ItemLineEdit::cGeneralInventory),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cKitComponents",	    QScriptValue(engine, ItemLineEdit::cKitComponents),	     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("cUndefined",          QScriptValue(engine, ItemLineEdit::cUndefined),          ro);
+  widget.setProperty("cPurchased",          QScriptValue(engine, ItemLineEdit::cPurchased),          ro);
+  widget.setProperty("cManufactured",       QScriptValue(engine, ItemLineEdit::cManufactured),       ro);
+  widget.setProperty("cPhantom",            QScriptValue(engine, ItemLineEdit::cPhantom),            ro);
+  widget.setProperty("cBreeder",            QScriptValue(engine, ItemLineEdit::cBreeder),            ro);
+  widget.setProperty("cCoProduct",          QScriptValue(engine, ItemLineEdit::cCoProduct),          ro);
+  widget.setProperty("cByProduct",          QScriptValue(engine, ItemLineEdit::cByProduct),          ro);
+  widget.setProperty("cReference",          QScriptValue(engine, ItemLineEdit::cReference),          ro);
+  widget.setProperty("cCosting",            QScriptValue(engine, ItemLineEdit::cCosting),            ro);
+  widget.setProperty("cTooling",            QScriptValue(engine, ItemLineEdit::cTooling),            ro);
+  widget.setProperty("cOutsideProcess",     QScriptValue(engine, ItemLineEdit::cOutsideProcess),     ro);
+  widget.setProperty("cPlanning",           QScriptValue(engine, ItemLineEdit::cPlanning),           ro);
+  widget.setProperty("cKit",                QScriptValue(engine, ItemLineEdit::cKit),                ro);
+  widget.setProperty("cAllItemTypes_Mask",  QScriptValue(engine, ItemLineEdit::cAllItemTypes_Mask),  ro);
+  widget.setProperty("cPlanningMRP",        QScriptValue(engine, ItemLineEdit::cPlanningMRP),        ro);
+  widget.setProperty("cPlanningMPS",        QScriptValue(engine, ItemLineEdit::cPlanningMPS),        ro);
+  widget.setProperty("cPlanningNone",       QScriptValue(engine, ItemLineEdit::cPlanningNone),       ro);
+  widget.setProperty("cPlanningAny",        QScriptValue(engine, ItemLineEdit::cPlanningAny),        ro);
+  widget.setProperty("cItemActive",         QScriptValue(engine, ItemLineEdit::cItemActive),         ro);
+  widget.setProperty("cSold",               QScriptValue(engine, ItemLineEdit::cSold),               ro);
+  widget.setProperty("cLocationControlled", QScriptValue(engine, ItemLineEdit::cLocationControlled), ro);
+  widget.setProperty("cLotSerialControlled",QScriptValue(engine, ItemLineEdit::cLotSerialControlled),ro);
+  widget.setProperty("cDefaultLocation",    QScriptValue(engine, ItemLineEdit::cDefaultLocation),    ro);
+  widget.setProperty("cActive",             QScriptValue(engine, ItemLineEdit::cActive),             ro);
+  widget.setProperty("cGeneralManufactured",QScriptValue(engine, ItemLineEdit::cGeneralManufactured),ro);
+  widget.setProperty("cGeneralPurchased",   QScriptValue(engine, ItemLineEdit::cGeneralPurchased),   ro);
+  widget.setProperty("cGeneralComponents",  QScriptValue(engine, ItemLineEdit::cGeneralComponents),  ro);
+  widget.setProperty("cGeneralInventory",   QScriptValue(engine, ItemLineEdit::cGeneralInventory),   ro);
+  widget.setProperty("cKitComponents",      QScriptValue(engine, ItemLineEdit::cKitComponents),      ro);
 
-  engine->globalObject().setProperty("ItemLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  engine->globalObject().setProperty("ItemLineEdit", widget, ro);
 }

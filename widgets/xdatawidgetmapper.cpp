@@ -84,7 +84,11 @@ QScriptValue constructXDataWidgetMapper(QScriptContext *context, QScriptEngine *
 {
   QObject *obj = qscriptvalue_cast<QObject*>(context->argument(0));
   XDataWidgetMapper *mapper = new XDataWidgetMapper(obj);
+#if QT_VERSION >= 0x050000
   return engine->toScriptValue(mapper);
+#else
+  Q_UNUSED(engine); return QScriptValue();
+#endif
 }
 
 void setupXDataWidgetMapper(QScriptEngine *engine)

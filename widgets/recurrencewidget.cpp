@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -442,6 +442,7 @@ QString RecurrenceWidget::style() const
     return "KeepOne";
   if (_all->isChecked())
     return "KeepAll";
+  return "Error";
 }
 
 RecurrenceWidget::RecurrencePeriod RecurrenceWidget::minPeriod() const
@@ -967,16 +968,6 @@ bool RecurrenceWidget::startTimeVisible() const
 
 // scripting exposure /////////////////////////////////////////////////////////
 
-QScriptValue RecurrenceWidgettoScriptValue(QScriptEngine *engine, RecurrenceWidget* const &item)
-{
-  return engine->newQObject(item);
-}
-
-void RecurrenceWidgetfromScriptValue(const QScriptValue &obj, RecurrenceWidget* &item)
-{
-  item = qobject_cast<RecurrenceWidget*>(obj.toQObject());
-}
-
 QScriptValue constructRecurrenceWidget(QScriptContext *context,
                                        QScriptEngine  *engine)
 {
@@ -984,30 +975,30 @@ QScriptValue constructRecurrenceWidget(QScriptContext *context,
   const char *objname = "_recurrenceWidget";
   if (context->argumentCount() > 1)
     objname = context->argument(1).toString().toLatin1().data();
+#if QT_VERSION >= 0x050000
   return engine->toScriptValue(new RecurrenceWidget(parent, objname));
+#else
+  Q_UNUSED(engine); return QScriptValue();
+#endif
 }
 
 void setupRecurrenceWidget(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags stdflags = QScriptValue::ReadOnly |
-                                         QScriptValue::Undeletable;
-
-  qScriptRegisterMetaType(engine, RecurrenceWidgettoScriptValue,
-                          RecurrenceWidgetfromScriptValue);
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue constructor = engine->newFunction(constructRecurrenceWidget);
-  engine->globalObject().setProperty("RecurrenceWidget", constructor, stdflags);
+  engine->globalObject().setProperty("RecurrenceWidget", constructor, ro);
 
-  constructor.setProperty("Never",   QScriptValue(engine, RecurrenceWidget::Never), stdflags);
-  constructor.setProperty("Minutely",QScriptValue(engine, RecurrenceWidget::Minutely), stdflags);
-  constructor.setProperty("Hourly",  QScriptValue(engine, RecurrenceWidget::Hourly), stdflags);
-  constructor.setProperty("Daily",   QScriptValue(engine, RecurrenceWidget::Daily), stdflags);
-  constructor.setProperty("Weekly",  QScriptValue(engine, RecurrenceWidget::Weekly), stdflags);
-  constructor.setProperty("Monthly", QScriptValue(engine, RecurrenceWidget::Monthly), stdflags);
-  constructor.setProperty("Yearly",  QScriptValue(engine, RecurrenceWidget::Yearly), stdflags);
-  constructor.setProperty("Custom",  QScriptValue(engine, RecurrenceWidget::Custom), stdflags);
+  constructor.setProperty("Never",   QScriptValue(engine, RecurrenceWidget::Never),    ro);
+  constructor.setProperty("Minutely",QScriptValue(engine, RecurrenceWidget::Minutely), ro);
+  constructor.setProperty("Hourly",  QScriptValue(engine, RecurrenceWidget::Hourly),   ro);
+  constructor.setProperty("Daily",   QScriptValue(engine, RecurrenceWidget::Daily),    ro);
+  constructor.setProperty("Weekly",  QScriptValue(engine, RecurrenceWidget::Weekly),   ro);
+  constructor.setProperty("Monthly", QScriptValue(engine, RecurrenceWidget::Monthly),  ro);
+  constructor.setProperty("Yearly",  QScriptValue(engine, RecurrenceWidget::Yearly),   ro);
+  constructor.setProperty("Custom",  QScriptValue(engine, RecurrenceWidget::Custom),   ro);
 
-  constructor.setProperty("NoPolicy",     QScriptValue(engine, RecurrenceWidget::NoPolicy), stdflags);
-  constructor.setProperty("IgnoreFuture", QScriptValue(engine, RecurrenceWidget::IgnoreFuture), stdflags);
-  constructor.setProperty("ChangeFuture", QScriptValue(engine, RecurrenceWidget::ChangeFuture), stdflags);
+  constructor.setProperty("NoPolicy",     QScriptValue(engine, RecurrenceWidget::NoPolicy),     ro);
+  constructor.setProperty("IgnoreFuture", QScriptValue(engine, RecurrenceWidget::IgnoreFuture), ro);
+  constructor.setProperty("ChangeFuture", QScriptValue(engine, RecurrenceWidget::ChangeFuture), ro);
 }

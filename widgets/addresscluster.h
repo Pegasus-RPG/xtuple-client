@@ -12,6 +12,7 @@
 #define addressCluster_h
 
 #include "widgets.h"
+#include "scriptablewidget.h"
 #include "virtualCluster.h"
 #include "xcheckbox.h"
 #include "xcombobox.h"
@@ -242,8 +243,6 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	QString  _fieldNameState;
 	QString  _fieldNameCountry;
 };
-
-Q_DECLARE_METATYPE(AddressCluster*)
 
 void setupAddressCluster(QScriptEngine *engine);
 

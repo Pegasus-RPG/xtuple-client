@@ -613,7 +613,11 @@ QScriptValue constructXSqlTableModel(QScriptContext * context,
     obj = new XSqlTableModel(context->argument(1).toQObject());
   else
     obj = new XSqlTableModel();
+#if QT_VERSION >= 0x050000
   return engine->toScriptValue(obj);
+#else
+  Q_UNUSED(engine); return QScriptValue();
+#endif
 }
 
 void setupXSqlTableModel(QScriptEngine *engine)
