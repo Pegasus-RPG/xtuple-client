@@ -1104,7 +1104,8 @@ void salesOrderItem::sSave(bool pPartial)
                "       :soitem_cos_accnt_id, :soitem_rev_accnt_id, :soitem_dropship "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
-               " AND (itemsite_warehous_id=:warehous_id) );" );
+               " AND (itemsite_warehous_id=:warehous_id) ) "
+               " RETURNING coitem_order_id;" );
     salesSave.bindValue(":soitem_id", _soitemid);
     salesSave.bindValue(":soitem_sohead_id", _soheadid);
     salesSave.bindValue(":soitem_linenumber", _lineNumber->text().toInt());
@@ -1146,18 +1147,7 @@ void salesOrderItem::sSave(bool pPartial)
       return;
     }
 
-    salesSave.prepare("SELECT coitem_order_id "
-                      "FROM coitem "
-                      "WHERE coitem_id=:soitem_id;");
-    salesSave.bindValue(":soitem_id", _soitemid);
-    salesSave.exec();
-    if (salesSave.first())
-      _supplyOrderId = salesSave.value("coitem_order_id").toInt();
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Item Information"),
-                                  salesSave, __FILE__, __LINE__))
-    {
-      return;
-    }
+    _supplyOrderId = salesSave.value("coitem_order_id").toInt();
   }
   else if ( (_mode == cEdit) || ((_mode == cNew) && _partialsaved) )
   {
@@ -2773,34 +2763,6 @@ void salesOrderItem::sHandleSupplyOrder()
         if (ordq.first())
           _supplyOrderId = ordq.value("result").toInt();
         else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating Purchase Order"),
-                                      ordq, __FILE__, __LINE__))
-        {
-          return;
-        }
-
-        ordq.prepare("UPDATE coitem "
-                     "SET coitem_order_id=:soitem_order_id "
-                     "WHERE coitem_id=:soitem_id;");
-        ordq.bindValue(":soitem_order_id", _supplyOrderId);
-        ordq.bindValue(":soitem_id", _soitemid);
-        ordq.exec();
-        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating Sales Order"),
-                                      ordq, __FILE__, __LINE__))
-        {
-          return;
-        }
-
-        ordq.prepare("INSERT INTO charass"
-                     "      (charass_target_type, charass_target_id,"
-                     "       charass_char_id, charass_value) "
-                     "SELECT 'P', :orderid, charass_char_id, charass_value"
-                     "  FROM charass"
-                     " WHERE ((charass_target_type='SI')"
-                     "   AND  (charass_target_id=:soitem_id));");
-        ordq.bindValue(":orderid", _supplyOrderId);
-        ordq.bindValue(":soitem_id", _soitemid);
-        ordq.exec();
-        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Sales Order Information"),
                                       ordq, __FILE__, __LINE__))
         {
           return;
