@@ -202,7 +202,7 @@ void postInvoices::sPost()
       parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'IN', "
                                 " :orderNumber, :itemlocSeries);");
       parentItemlocdist.bindValue(":itemsite_id", items.value("itemsite_id").toInt());
-      parentItemlocdist.bindValue(":qty", items.value("qty").toDouble());
+      parentItemlocdist.bindValue(":qty", items.value("qty").toDouble() * -1);
       parentItemlocdist.bindValue(":orderNumber", items.value("invchead_invcnumber").toString());
       parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
       parentItemlocdist.exec();

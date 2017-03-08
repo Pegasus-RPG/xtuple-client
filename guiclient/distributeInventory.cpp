@@ -103,6 +103,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
   bool pPreDistributed)
 {
   int result;
+  bool hasContolledItem = false;
   
   if (DEBUG)
     qDebug() << tr("DistributeInventory::SeriesAdjust pItemlocSeries: %1, pPreDistributed: %2")
@@ -362,7 +363,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
         query.exec();
         if (query.first())
         {
-          if (query.numRowsAffected() != 1)
+          if (query.size() != 1)
           {
             ErrorReporter::error(QtCriticalMsg, 0, tr("Updating Itemlocdist Parent Record Should Return One Row"),
                            query, __FILE__, __LINE__);
@@ -382,8 +383,14 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
       postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries) AS result;");
       postDistDetail.bindValue(":itemlocSeries", pItemlocSeries);
       postDistDetail.exec();
-      if (!postDistDetail.first() || ErrorReporter::error(QtCriticalMsg, 0, tr("Distribution Detail Posting Failed"),
-                                postDistDetail, __FILE__, __LINE__) || postDistDetail.value("result") <= 0)
+
+      // Return error for any of the following 3 cases
+      if (!postDistDetail.first() 
+        || ErrorReporter::error(QtCriticalMsg, 0, tr("Distribution Detail Posting Failed"),
+          postDistDetail, __FILE__, __LINE__) 
+        // Call postDistDetail, If results 0 and the itemlocSeries corresponds with a controlled item 
+        // (has itemlocdist record) then return error
+        || (postDistDetail.value("result") == 0 && itemloc.size() > 0))
       {
         return XDialog::Rejected;
       }

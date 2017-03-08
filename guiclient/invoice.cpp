@@ -901,7 +901,7 @@ void invoice::postInvoice()
   }
 
   // If the above query had results, call distributeInventory
-  if (items.numRowsAffected() > 0 && (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+  if (items.size() > 0 && (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
         QDate(), true) == XDialog::Rejected))
   {
     cleanup.exec();

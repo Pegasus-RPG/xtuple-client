@@ -222,8 +222,7 @@ const struct {
   { "correctReceipt",  -12, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The receipt has been split and may not be corrected. "
 				      "Correct Receipt."),	0, "" },
   { "correctReceipt",  -13, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."),  0, "" },
-  { "correctReceipt",  -14, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Production because of missing "
-              "Item Site or Cost Category."),  0, "" },
+  { "correctReceipt",  -14, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site or Cost Category."),  0, "" },
   { "correctReceipt",  -15, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
               "Expected Count of Distribution Detail Records Posted for Controlled Item."),  0, "" },
   { "correctReceipt",  -16, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not find a recv record to correct."),  0, "" },
@@ -895,12 +894,15 @@ const struct {
   { "freezeAccountingPeriod", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot freeze this Accounting Period "
 				     "because it is already frozen."), 0, "" },
 
-  { "insertGLTransaction",
-			-3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Nothing to do as the value to post to the "
-			       "G/L is 0."),			 0, "" },
-  { "insertGLTransaction",
-			-4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post a G/L transaction to a "
-			       "closed period."),		 0, "" },
+  { "insertGLTransaction", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "G/L Transaction can not be posted because "
+             "the debit and credit accounts reference two different companies."), 0, "" },
+  { "insertGLTransaction", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post a G/L transaction to a "
+             "nonexistent period."), 0, "" },
+  { "insertGLTransaction", -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Nothing to do as the value to post to the "
+			       "G/L is 0."), 0, "" },
+  { "insertGLTransaction", -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post to closed period."), 0, "" },
+  { "insertGLTransaction", -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+             "User does not have privilege to post to frozen period."), 0, "" },
 
   { "insertIntoGLSeries", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot add to a G/L Series because the "
 				 "Account is NULL or -1."),	0, "" },
@@ -910,8 +912,7 @@ const struct {
   { "invAdjustment",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."),  0, "" },
   { "invAdjustment",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Item is not eligible "
          "for Inventory Adjustments based on item type or itemsite cost method. "),  0, "" },
-  { "invAdjustment",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Production because of missing "
-         "Item Site or Cost Category."),  0, "" },
+  { "invAdjustment",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site or Cost Category."),  0, "" },
   { "invAdjustment",  -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
          "Expected Count of Distribution Detail Records Posted for Controlled Item."),  0, "" },
 
@@ -926,8 +927,7 @@ const struct {
 
   { "invScrap",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."),  0, "" },
   { "invScrap",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."),  0, "" },
-  { "invScrap",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Production because of missing "
-         "Item Site or Cost Category."),  0, "" },
+  { "invScrap",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site or Cost Category."),  0, "" },
   { "invScrap",  -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
          "Expected Count of Distribution Detail Records Posted for Controlled Item."),  0, "" },
 
@@ -973,8 +973,7 @@ const struct {
                                            "Average Cost items may not have a negative quantity on hand."),0, ""},
 
   { "issueWoMaterial", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."),0, ""},
-  { "issueWoMaterial", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Production because of missing "
-                           "Item Site or Cost Category."),0, ""},
+  { "issueWoMaterial", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site or Cost Category."),0, ""},
   { "issueWoMaterial", -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Expected Count of Distribution Detail Records Posted for Controlled Item."),0, ""},
   { "issueWoMaterial", -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Qty to Issue Must be Positive"),0, ""},
 
@@ -1207,41 +1206,35 @@ const struct {
   { "postInvoice",  -4, "", -4, "insertIntoGLSeries" },
   { "postInvoice",  -5, "", -5, "postGLSeries" },
   { "postInvoice", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because it has "
-                                          "already been posted."),		 0, "" },
+                                          "already been posted."), 0, "" },
   { "postInvoice", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because the Sales "
-                                          "Account was not found."),		 0, "" },
+                                          "Account was not found."), 0, "" },
   { "postInvoice", -12, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because there was an "
                                           "error processing Line Item taxes."), 0, "" },
   { "postInvoice", -13, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because there was an "
                                           "error processing Misc. Line Item taxes."), 0, "" },
   { "postInvoice", -14, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because the Freight "
-                                          "Account was not found."),		 0, "" },
+                                          "Account was not found."),	0, "" },
   { "postInvoice", -15, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because there was an "
                                           "error processing Freight taxes."),	 0, "" },
   { "postInvoice", -16, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because there was an "
                                           "error processing Tax Adjustments."), 0, "" },
   { "postInvoice", -17, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because the A/R "
-                                          "Account was not found."),		 0, "" },
+                                          "Account was not found."), 0, "" },
   { "postInvoice", -18, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
-             "Expected Count of Distribution Detail Records Posted for Controlled Item."),     0, "" },
+             "Expected Count of Distribution Detail Records Posted for Controlled Item."), 0, "" },
   
   { "postInvHist", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup",
-                                         "Post into Inventory Balance for invhist_id=%1 was unsuccessful" ),
-    0, "" },
+             "Post into Inventory Balance for invhist_id=%1 was unsuccessful" ), 0, "" },
   
   { "postInvTrans",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not post an inventory transaction because"
-			       " the Item Site has no Control Method or the "
-			       "Item has an Item Type of Reference."),
-								0, "" },
+			       " the Item Site has no Control Method or the Item has an Item Type of Reference."), 0, "" },
   { "postInvTrans",	-2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not post an inventory transaction because"
-			       " the transaction will cause an Average Costed "
-			       "Item to go negative which is not allowed."),
-								0, "" },
+			       " the transaction will cause an Average Costed Item to go negative which is not allowed."), 0, "" },
   { "postInvTrans",	-3, "",	 -3, "insertGLTransaction" },
   { "postInvTrans",	-4, "",	 -4, "insertGLTransaction" },
   { "postInvTrans",	-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not post this inventory transaction because"
-			       " the transaction will cause the Item Qty. on Hand to go negative which is not allowed."),
-								0, "" },
+			       " the transaction will cause the Item Qty. on Hand to go negative which is not allowed."), 0, "" },
 
   { "postPoReceipt",	-1, "",	 -1, "postReceipt" },
   { "postPoReceipt",	-2, "",	 -2, "postReceipt" },
@@ -1255,7 +1248,7 @@ const struct {
                              "status is not Exploded, Released, or InProcess."), 0, "" },
   { "postProduction", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Production because backflushing "
                              "component usage could not be completed due "
-                             "to missing Item Sites."),		 0, "" },
+                             "to missing Item Sites."),	0, "" },
   { "postProduction", -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Production because of missing "
                            "Item Site or Cost Category."), 0, "" },
 
@@ -1269,11 +1262,13 @@ const struct {
   { "postReceipt", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Receipt Line cannot be "
 			   "posted because it has a quantity of 0."),	0, "" },
   { "postReceipt", -12, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Purchase Order Receipt Line has no "
-			   "Standard Cost assigned to it."),		0, "" },
+			   "Standard Cost assigned to it."), 0, "" },
+  { "postReceipt", -13, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cant post receipt for this order type."), 0, "" },
+  { "postReceipt", -14, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site."), 0, "" },
   { "postReceipt", -16, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot not issue item to shipping. "
 			   "No Sales Order item found against this PO Item."), 0, "" },
   { "postReceipt", -17, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot not issue item to shipping. "
-			   "Inventory history not found."),		0, "" },
+			   "Inventory history not found."),	0, "" },
   { "postReceipt", -20, "", -1, "issueToShipping" },
   { "postReceipt", -21, "", -10, "issueToShipping" },
   { "postReceipt", -22, "", -12, "issueToShipping" },
@@ -1294,6 +1289,11 @@ const struct {
   { "postReceipt", -37, "", -99, "shipShipment" },
   { "postReceipt", -38, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
          "Expected Count of Distribution Detail Records Posted for Controlled Item."), 0, "" },
+  { "postReceipt", -39, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site or Cost Category."), 0, "" },
+  { "postReceipt", -40, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+         "Can not post receipt for qty <= 0. Please correct qty and try again."), 0, "" },
+  { "postReceipt", -41, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+         "Expected Count of Distribution Detail Records Posted for Controlled Item."), 0, "" },
 
   { "postPoReceipts",   -1, "",	 -1, "postPoReceipt" },
   { "postPoReceipts",   -3, "",	 -3, "postPoReceipt" },
@@ -1306,8 +1306,7 @@ const struct {
   { "postPoReturns", -4, "", -4, "insertGLTransaction" },
   { "postPoReturns", -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required"), 0, ""  },
   { "postPoReturns", -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required"), 0, ""  },
-  { "postPoReturns", -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Production because of missing "
-              "Item Site or Cost Category."),  0, "" },
+  { "postPoReturns", -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site or Cost Category."),  0, "" },
   { "postPoReturns", -7, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
               "Expected Count of Distribution Detail Records Posted for Controlled Item."),  0, "" },
 
@@ -1415,14 +1414,11 @@ const struct {
 
   { "returnWoMaterial", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."), 0, "" },
   { "returnWoMaterial", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "No transaction found for invhist_id"), 0, "" },
-  { "returnWoMaterial", -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Production because of missing "
-              "Item Site or Cost Category."), 0, "" },
+  { "returnWoMaterial", -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site or Cost Category."), 0, "" },
   { "returnWoMaterial", -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
          "Expected Count of Distribution Detail Records Posted for Controlled Item."), 0, "" },
   { "returnWoMaterial", -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."), 0, "" },
   { "returnWoMaterial", -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
-         "Unable to post this Production because of missing Item Site or Cost Category."), 0, "" },
-  { "returnWoMaterial", -7, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
          "Expected Count of Distribution Detail Records Posted for Controlled Item."), 0, "" },
 
   { "reverseCashReceipt", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Cash Receipt cannot be reversed as "

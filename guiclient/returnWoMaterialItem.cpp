@@ -135,6 +135,7 @@ void returnWoMaterialItem::sReturn()
     parentItemlocdist.bindValue(":itemsite_id", _itemsiteId);
     parentItemlocdist.bindValue(":qty", _qty->toDouble());
     parentItemlocdist.bindValue(":woId", _wo->id());
+    parentItemlocdist.bindValue(":womatl_id", _womatl->id());
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
     parentItemlocdist.exec();
     if (parentItemlocdist.first())
