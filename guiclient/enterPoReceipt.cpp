@@ -332,7 +332,7 @@ void enterPoReceipt::sPost()
       tohead.exec();
       if (tohead.first())
       {
-        parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, '', '', "
+        parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderNumber, "
           ":itemlocSeries, NULL, :itemlocdistId) AS result;");
         parentItemlocdist.bindValue(":itemsite_id", tohead.value("itemsite_id").toInt());
         parentItemlocdist.bindValue(":qty", qi.value("recv_qty").toDouble() * -1);
@@ -372,8 +372,10 @@ void enterPoReceipt::sPost()
       }
     }
     
+    // Controlled (if TO, this is the to itemsite) AND
+    // If Transfer Order, must be MultiWhs as well to match above if statement resulting in interWarehouseTransfer call
     if (qi.value("controlled").toBool() && 
-      (qi.value("recv_order_type").toString() != "TO" || _metrics->boolean("MultiWhs")))
+      (qi.value("recv_order_type").toString() == "TO" ? _metrics->boolean("MultiWhs") : true))
     {
       parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderNumber, "
         ":itemlocSeries, NULL, :itemlocdistId) AS result;");

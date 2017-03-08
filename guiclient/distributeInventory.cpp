@@ -221,7 +221,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
         }
 
         // Open Assign Lot Serial dialog, populating with auto ls info if required. 
-        if(itemlocSeries == -1)
+        if (itemlocSeries == -1)
         {
           ParameterList params;
           params.append("itemlocdist_id", itemloc.value("itemlocdist_id").toInt());
