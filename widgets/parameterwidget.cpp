@@ -1984,7 +1984,9 @@ QScriptValue constructParameterWidget(QScriptContext *context,
 
 void setupParameterWidget(QScriptEngine *engine)
 {
+#if QT_VERSION >= 0x050000
   qScriptRegisterMetaType(engine, ParameterWidgettoScriptValue, ParameterWidgetfromScriptValue);
+#endif
 
   QScriptValue widget = engine->newFunction(constructParameterWidget);
   QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;

@@ -971,14 +971,14 @@ bool RecurrenceWidget::startTimeVisible() const
 QScriptValue constructRecurrenceWidget(QScriptContext *context,
                                        QScriptEngine  *engine)
 {
+#if QT_VERSION >= 0x050000
   QWidget *parent = (qscriptvalue_cast<QWidget*>(context->argument(0)));
   const char *objname = "_recurrenceWidget";
   if (context->argumentCount() > 1)
     objname = context->argument(1).toString().toLatin1().data();
-#if QT_VERSION >= 0x050000
   return engine->toScriptValue(new RecurrenceWidget(parent, objname));
 #else
-  Q_UNUSED(engine); return QScriptValue();
+  Q_UNUSED(context); Q_UNUSED(engine); return QScriptValue();
 #endif
 }
 

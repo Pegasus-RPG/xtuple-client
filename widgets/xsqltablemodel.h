@@ -14,17 +14,16 @@
 #include <QHash>
 #include <QSize>
 #include <QSqlError>
-#include <QSqlIndex>
 #include <QSqlQuery>
-#include <QSqlRecord>
 #include <QSqlRelationalTableModel>
 #include <QStringList>
 
-#include "widgets.h"
+#include "parameter.h"
 
+class QScriptEngine;
 class XSqlTableModel;
 
-class XTUPLEWIDGETS_EXPORT XSqlTableNode : public QObject
+class XSqlTableNode : public QObject
 {
 public:
   XSqlTableNode(const QString tableName, ParameterList relations, XSqlTableNode *parent = 0);
@@ -58,16 +57,16 @@ private:
   XSqlTableNode *_parent;
 };
 
-class XTUPLEWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
+class XSqlTableModel : public QSqlRelationalTableModel
 {
     Q_OBJECT
 
-    public:
-      XSqlTableModel(QObject *parent = 0);
-      ~XSqlTableModel();
-    
+  public:
+    XSqlTableModel(QObject *parent = 0);
+    ~XSqlTableModel();
+
     enum itemDataRole { FormatRole = (Qt::UserRole + 1),
-                  EditorRole,  
+                  EditorRole,
                   MenuRole, /* Other roles for xtreewidget?
                   RawRole,
                   IdRole,
@@ -75,40 +74,19 @@ class XTUPLEWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
                   RunningInitRole,
                   TotalSetRole,
                   TotalInitRole,
-                  IndentRole */ 
+                  IndentRole */
     };
-    
-    enum FormatFlags { Money, Qty, Curr, Percent, Cost, QtyPer, 
+
+    enum FormatFlags { Money, Qty, Curr, Percent, Cost, QtyPer,
       SalesPrice, PurchPrice, UOMRatio, ExtPrice, Weight
     };
 
-    Q_INVOKABLE virtual QSqlDatabase  database() const;
-    Q_INVOKABLE virtual EditStrategy  editStrategy() const;
-    Q_INVOKABLE virtual int           fieldIndex(const QString &fieldName) const;
-    Q_INVOKABLE virtual QString       filter() const;
-    Q_INVOKABLE virtual bool          insertRecord(int row, const QSqlRecord &record);
-    Q_INVOKABLE virtual bool          isDirty(const QModelIndex &index) const;
-    Q_INVOKABLE virtual bool          isDirty() const;
-    Q_INVOKABLE virtual QSqlIndex     primaryKey() const;
-    Q_INVOKABLE virtual QSqlRecord    record() const;
-    Q_INVOKABLE virtual QSqlRecord    record(int row) const;
-    Q_INVOKABLE virtual void          revertRow(int row);
-    Q_INVOKABLE virtual void          setEditStrategy(EditStrategy strategy);
-    Q_INVOKABLE virtual void          setFilter(const QString &filter);
-    Q_INVOKABLE virtual bool          setRecord(int row, const QSqlRecord &values);
-    Q_INVOKABLE virtual void          setSort(int column, Qt::SortOrder order);
-    Q_INVOKABLE virtual void          setTable(const QString &tableName);
+    using QSqlRelationalTableModel::setTable;
     Q_INVOKABLE virtual void          setTable(const QString &tableName, int keyColumns);
-    Q_INVOKABLE virtual QString       tableName() const;
 
     Q_INVOKABLE virtual void          clear();
     Q_INVOKABLE virtual QVariant      data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    Q_INVOKABLE virtual QVariant      headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     Q_INVOKABLE virtual bool          insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
-    Q_INVOKABLE virtual bool          removeColumns(int column, int count, const QModelIndex &parent = QModelIndex());
-    Q_INVOKABLE virtual bool          removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
-    Q_INVOKABLE virtual int           rowCount(const QModelIndex &index = QModelIndex()) const;
-    Q_INVOKABLE virtual void          sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
 
     Q_INVOKABLE virtual QSqlError     lastError() const;
     Q_INVOKABLE virtual QSqlQuery     query() const;
@@ -119,7 +97,6 @@ class XTUPLEWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
     Q_INVOKABLE virtual bool          setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole);
 
     Q_INVOKABLE virtual bool            dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
-    Q_INVOKABLE virtual Qt::ItemFlags   flags(const QModelIndex &index)      const;
     Q_INVOKABLE virtual QModelIndex     index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     Q_INVOKABLE virtual QModelIndex     sibling(int row, int column, const QModelIndex &index) const;
 
@@ -176,7 +153,7 @@ class XTUPLEWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
     Q_INVOKABLE virtual void loadAll();
     Q_INVOKABLE virtual bool save();
     Q_INVOKABLE virtual QString toString() const;
-    
+
   private:
     QHash<QPair<QModelIndex, int>, QVariant> roles;
     QMultiHash<int, QPair<QVariant, int> > _columnRoles;

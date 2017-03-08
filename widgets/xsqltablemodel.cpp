@@ -133,10 +133,10 @@ bool XSqlTableNode::save()
 ////////////////////////////////////////
 
 
-XSqlTableModel::XSqlTableModel(QObject *parent) : 
+XSqlTableModel::XSqlTableModel(QObject *parent) :
   QSqlRelationalTableModel(parent)
 {
-  _locales << "money" << "qty" << "curr" << "percent" << "cost" << "qtyper" 
+  _locales << "money" << "qty" << "curr" << "percent" << "cost" << "qtyper"
     << "salesprice" << "purchprice" << "uomratio" << "extprice" << "weight";
 }
 
@@ -165,7 +165,7 @@ void XSqlTableModel::clear()
 void XSqlTableModel::applyColumnRole(int column, int role, QVariant value)
 {
   QSqlQuery qry = query();
-  
+
   // Apply to the model
   qry.first();
   for (int row=0; row < qry.size(); ++row) {
@@ -193,10 +193,10 @@ void XSqlTableModel::applyColumnRoles(int row)
 }
 
 void XSqlTableModel::setColumnRole(int column, int role, const QVariant value)
-{  
+{
   QPair<QVariant, int> values;
   bool found = false;
-  
+
   // Remove any previous value for this column/role pair
   QMultiHash<int, QPair<QVariant, int> >::iterator i = _columnRoles.find(column);
   while (i != _columnRoles.end() && i.key() == column && !found) {
@@ -209,19 +209,14 @@ void XSqlTableModel::setColumnRole(int column, int role, const QVariant value)
      }
      ++i;
   }
-  
+
   // Insert new
   values.first = value;
   values.second = role;
   _columnRoles.insert(column, values);
-  
+
   // Apply
   applyColumnRole(column, role, value);
-}
-
-void XSqlTableModel::setTable(const QString &tableName)
-{
-  QSqlRelationalTableModel::setTable(tableName);
 }
 
 void XSqlTableModel::setKeys(int keyColumns)
@@ -297,7 +292,7 @@ QString XSqlTableModel::selectStatement() const
             QString relTableAlias = QString::fromLatin1("%1_%2")
                                               .arg(rel.tableName()).arg(i);
             fList.append(relTableAlias + "." + rel.displayColumn());
-            
+
             // If there are duplicate field names they must be aliased
             if (fieldNames.value(rel.displayColumn()) > 1)
                 fList.append(QString::fromLatin1(" AS %1_%2")
@@ -341,7 +336,7 @@ QVariant XSqlTableModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
       return QVariant();
-        
+
     switch (role) {
     case Qt::DisplayRole: {
       QVariant value = QSqlRelationalTableModel::data(index, Qt::DisplayRole);
@@ -353,7 +348,7 @@ QVariant XSqlTableModel::data(const QModelIndex &index, int role) const
       else
         return value;
     } break;
-    case Qt::EditRole: { 
+    case Qt::EditRole: {
       return QSqlRelationalTableModel::data(index);
     } break;
     case Qt::TextAlignmentRole:
@@ -367,8 +362,8 @@ QVariant XSqlTableModel::data(const QModelIndex &index, int role) const
       if (roles.contains(key))
         return roles.value(key);
     }
-    
-    return QVariant(); 
+
+    return QVariant();
 }
 
 bool XSqlTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -380,7 +375,7 @@ bool XSqlTableModel::setData(const QModelIndex &index, const QVariant &value, in
   case Qt::EditRole: {
     if (data(index, FormatRole).isValid())
       QSqlRelationalTableModel::setData(index, formatValue(value, data(index, FormatRole)), role);
-    else 
+    else
       QSqlRelationalTableModel::setData(index, value, role);
   } break;
   case FormatRole: {
@@ -608,15 +603,15 @@ ParameterList XSqlTableModel::parameters()
 QScriptValue constructXSqlTableModel(QScriptContext * context,
                                     QScriptEngine  *engine)
 {
+#if QT_VERSION >= 0x050000
   XSqlTableModel *obj = 0;
   if (context->argumentCount() == 1)
     obj = new XSqlTableModel(context->argument(1).toQObject());
   else
     obj = new XSqlTableModel();
-#if QT_VERSION >= 0x050000
   return engine->toScriptValue(obj);
 #else
-  Q_UNUSED(engine); return QScriptValue();
+  Q_UNUSED(context); Q_UNUSED(engine); return QScriptValue();
 #endif
 }
 
@@ -642,19 +637,9 @@ int XSqlTableModel::columnCount(const QModelIndex &parent) const
   return QSqlTableModel::columnCount(parent);
 }
 
-QSqlDatabase XSqlTableModel::database() const
-{
-  return QSqlTableModel::database();
-}
-
 bool XSqlTableModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
 {
   return QSqlTableModel::dropMimeData(data, action, row, column, parent);
-}
-
-QSqlTableModel::EditStrategy XSqlTableModel::editStrategy() const
-{
-  return QSqlTableModel::editStrategy();
 }
 
 void XSqlTableModel::fetchMore(const QModelIndex &parent)
@@ -662,29 +647,9 @@ void XSqlTableModel::fetchMore(const QModelIndex &parent)
   QSqlTableModel::fetchMore(parent);
 }
 
-int XSqlTableModel::fieldIndex(const QString &fieldName) const
-{
-  return QSqlTableModel::fieldIndex(fieldName);
-}
-
-QString XSqlTableModel::filter() const
-{
-  return QSqlTableModel::filter();
-}
-
-Qt::ItemFlags XSqlTableModel::flags(const QModelIndex &index) const
-{
-  return XSqlTableModel::flags(index);
-}
-
 bool XSqlTableModel::hasIndex(int row, int column, const QModelIndex &parent) const
 {
   return XSqlTableModel::hasIndex(row, column, parent);
-}
-
-QVariant XSqlTableModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-  return QSqlTableModel::headerData(section, orientation, role);
 }
 
 QModelIndex XSqlTableModel::index(int row, int column, const QModelIndex &parent) const
@@ -702,11 +667,6 @@ bool XSqlTableModel::insertColumns(int column, int count, const QModelIndex &par
   return QSqlTableModel::insertColumns(column, count, parent);
 }
 
-bool XSqlTableModel::insertRecord(int row, const QSqlRecord &record)
-{
-  return QSqlTableModel::insertRecord(row, record);
-}
-
 bool XSqlTableModel::insertRow(int row, const QModelIndex &parent)
 {
   return QSqlTableModel::insertRow(row, parent);
@@ -715,20 +675,6 @@ bool XSqlTableModel::insertRow(int row, const QModelIndex &parent)
 bool XSqlTableModel::insertRows(int row, int count, const QModelIndex &parent)
 {
   return QSqlTableModel::insertRows(row, count, parent);
-}
-
-bool XSqlTableModel::isDirty() const
-{
-#if QT_VERSION >= 0x050000
-  return QSqlTableModel::isDirty();
-#else
-  return true;
-#endif
-}
-
-bool XSqlTableModel::isDirty(const QModelIndex &index) const
-{
-  return QSqlTableModel::isDirty(index);
 }
 
 QMap<int, QVariant> XSqlTableModel::itemData(const QModelIndex &index) const
@@ -756,24 +702,9 @@ QStringList XSqlTableModel::mimeTypes() const
   return QSqlTableModel::mimeTypes();
 }
 
-QSqlIndex XSqlTableModel::primaryKey() const
-{
-  return QSqlTableModel::primaryKey();
-}
-
 QSqlQuery XSqlTableModel::query() const
 {
   return QSqlTableModel::query();
-}
-
-QSqlRecord XSqlTableModel::record() const
-{
-  return QSqlTableModel::record();
-}
-
-QSqlRecord XSqlTableModel::record(int row) const
-{
-  return QSqlTableModel::record(row);
 }
 
 QSqlRelation XSqlTableModel::relation(int column) const
@@ -791,36 +722,6 @@ bool XSqlTableModel::removeColumn(int column, const QModelIndex &parent)
   return QSqlTableModel::removeColumn(column, parent);
 }
 
-bool XSqlTableModel::removeColumns(int column, int count, const QModelIndex &parent)
-{
-  return QSqlTableModel::removeColumns(column, count, parent);
-}
-
-bool XSqlTableModel::removeRows(int row, int count, const QModelIndex &parent)
-{
-  return QSqlTableModel::removeRows(row, count, parent);
-}
-
-void XSqlTableModel::revertRow(int row)
-{
-  QSqlTableModel::revertRow(row);
-}
-
-int XSqlTableModel::rowCount(const QModelIndex &parent) const
-{
-  return QSqlTableModel::rowCount(parent);
-}
-
-void XSqlTableModel::setEditStrategy(QSqlTableModel::EditStrategy strategy)
-{
-  QSqlTableModel::setEditStrategy(strategy);
-}
-
-void XSqlTableModel::setFilter(const QString &filter)
-{
-  QSqlTableModel::setFilter(filter);
-}
-
 bool XSqlTableModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role)
 {
   return QSqlTableModel::setHeaderData(section, orientation, value, role);
@@ -831,19 +732,9 @@ bool XSqlTableModel::setItemData(const QModelIndex &index, const QMap<int, QVari
   return QSqlTableModel::setItemData(index, roles);
 }
 
-bool XSqlTableModel::setRecord(int row, const QSqlRecord &record)
-{
-  return QSqlTableModel::setRecord(row, record);
-}
-
 void XSqlTableModel::setRelation(int column, const QSqlRelation &relation)
 {
   QSqlRelationalTableModel::setRelation(column, relation);
-}
-
-void XSqlTableModel::setSort(int column, Qt::SortOrder order)
-{
-  QSqlTableModel::setSort(column, order);
 }
 
 void XSqlTableModel::setTable(const QString &tableName, int keyColumns)
@@ -855,11 +746,6 @@ void XSqlTableModel::setTable(const QString &tableName, int keyColumns)
 QModelIndex XSqlTableModel::sibling(int row, int column, const QModelIndex &index) const
 {
   return QSqlTableModel::sibling(row, column, index);
-}
-
-void XSqlTableModel::sort(int column, Qt::SortOrder order)
-{
-  QSqlTableModel::sort(column, order);
 }
 
 QSize XSqlTableModel::span(const QModelIndex &index) const
@@ -875,11 +761,6 @@ Qt::DropActions XSqlTableModel::supportedDragActions() const
 Qt::DropActions XSqlTableModel::supportedDropActions() const
 {
   return QSqlTableModel::supportedDropActions();
-}
-
-QString XSqlTableModel::tableName() const
-{
-  return QSqlTableModel::tableName();
 }
 
 QString XSqlTableModel::toString() const

@@ -8,6 +8,8 @@
  * to be bound by its terms.
  */
 
+#include "setupscriptapi.h"
+
 #include "char.h"
 #include "engineevaluate.h"
 #include "exporthelper.h"
@@ -26,6 +28,7 @@
 #include "qbytearrayproto.h"
 #include "qcoreapplicationproto.h"
 #include "qcryptographichashproto.h"
+#include "qdatawidgetmapperproto.h"
 #include "qdialogbuttonboxproto.h"
 #include "qdialogsetup.h"
 #include "qdirproto.h"
@@ -94,6 +97,7 @@
 #include "qsqlproto.h"
 #include "qsqlqueryproto.h"
 #include "qsqlrecordproto.h"
+#include "qsqltablemodelproto.h"
 #include "qsslcertificateextensionproto.h"
 #include "qsslcertificateproto.h"
 #include "qsslcipherproto.h"
@@ -133,7 +137,6 @@
 #include "qwebsocketserverproto.h"
 #include "qwebviewproto.h"
 #include "qwidgetproto.h"
-#include "setupscriptapi.h"
 #include "webchanneltransport.h"
 #include "xsqlqueryproto.h"
 #include "xvariantsetup.h"
@@ -166,6 +169,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQByteArrayProto(engine);
   setupQCoreApplicationProto(engine);
   setupQCryptographicHashProto(engine);
+  setupQDataWidgetMapperProto(engine);
   setupQDialog(engine);
   setupQDialogButtonBoxProto(engine);
   setupQDirProto(engine);
@@ -234,6 +238,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQSqlProto(engine);
   setupQSqlQueryProto(engine);
   setupQSqlRecordProto(engine);
+  setupQSqlTableModelProto(engine);
   setupQSslCertificateExtensionProto(engine);
   setupQSslCertificateProto(engine);
   setupQSslCipherProto(engine);

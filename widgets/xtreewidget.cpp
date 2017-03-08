@@ -2133,7 +2133,9 @@ QScriptValue constructXTreeWidgetItem(QScriptContext *context,QScriptEngine  *en
 
 void setupXTreeWidgetItem(QScriptEngine *engine)
 {
+#if QT_VERSION >= 0x050000
   qScriptRegisterMetaType(engine, XTreeWidgetItemtoScriptValue,     XTreeWidgetItemfromScriptValue);
+#endif
 
   QScriptValue constructor = engine->newFunction(constructXTreeWidgetItem);
   engine->globalObject().setProperty("XTreeWidgetItem", constructor, QScriptValue::ReadOnly | QScriptValue::Undeletable);

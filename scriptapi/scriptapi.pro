@@ -42,6 +42,7 @@ HEADERS += setupscriptapi.h \
     qbytearrayproto.h \
     qcoreapplicationproto.h \
     qcryptographichashproto.h \
+    qdatawidgetmapperproto.h    \
     qdialogbuttonboxproto.h \
     qdialogsetup.h \
     qdirproto.h \
@@ -110,6 +111,7 @@ HEADERS += setupscriptapi.h \
     qsqlproto.h \
     qsqlqueryproto.h \
     qsqlrecordproto.h \
+    qsqltablemodelproto.h \
     qsslcertificateextensionproto.h \
     qsslcertificateproto.h \
     qsslcipherproto.h \
@@ -173,6 +175,7 @@ SOURCES += setupscriptapi.cpp \
     qbytearrayproto.cpp \
     qcoreapplicationproto.cpp \
     qcryptographichashproto.cpp \
+    qdatawidgetmapperproto.cpp  \
     qdialogbuttonboxproto.cpp \
     qdialogsetup.cpp \
     qdirproto.cpp \
@@ -241,6 +244,7 @@ SOURCES += setupscriptapi.cpp \
     qsqlproto.cpp \
     qsqlqueryproto.cpp \
     qsqlrecordproto.cpp \
+    qsqltablemodelproto.cpp           \
     qsslcertificateextensionproto.cpp \
     qsslcertificateproto.cpp \
     qsslcipherproto.cpp \

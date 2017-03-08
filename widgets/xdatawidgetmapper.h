@@ -12,8 +12,8 @@
 #define XDATAWIDGETMAPPER_H
 
 #include <QDataWidgetMapper>
+#include <QPersistentModelIndex>
 #include <QPointer>
-#include <QSqlTableModel>
 #include <QWidget>
 
 #include "widgets.h"
@@ -33,24 +33,7 @@ class XTUPLEWIDGETS_EXPORT XDataWidgetMapper : public QDataWidgetMapper
     Q_INVOKABLE virtual void       addMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName);
     Q_INVOKABLE virtual void       addMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName, const QByteArray &defaultName);
     Q_INVOKABLE virtual void       removeDefault(QWidget *widget);
-    Q_INVOKABLE virtual void       clearMapping();
-    Q_INVOKABLE virtual int        currentIndex() const;
 
-    Q_INVOKABLE virtual QAbstractItemDelegate *itemDelegate() const;
-    Q_INVOKABLE virtual QByteArray             mappedPropertyName(QWidget *widget) const;
-    Q_INVOKABLE virtual int                    mappedSection(QWidget *widget) const;
-    Q_INVOKABLE virtual QWidget               *mappedWidgetAt(int section) const;
-    Q_INVOKABLE virtual QAbstractItemModel    *model() const;
-    Q_INVOKABLE virtual int         orientation() const;
-    Q_INVOKABLE virtual void        removeMapping(QWidget *widget);
-    Q_INVOKABLE virtual QModelIndex rootIndex() const;
-    Q_INVOKABLE virtual void        setItemDelegate(QAbstractItemDelegate *delegate);
-    Q_INVOKABLE virtual void        setModel(QAbstractItemModel *model);
-    Q_INVOKABLE virtual void        setOrientation(Qt::Orientation orientation);
-    Q_INVOKABLE virtual void        setRootIndex(const QModelIndex &index);
-    Q_INVOKABLE virtual void        setSubmitPolicy(QDataWidgetMapper::SubmitPolicy policy);
-    Q_INVOKABLE virtual int         submitPolicy() const;
-    
   public slots:
     virtual void    clear();
     virtual QString toString() const;
