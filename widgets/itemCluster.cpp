@@ -937,11 +937,9 @@ ItemCluster::ItemCluster(QWidget* pParent, const char* pName) :
   ItemLineEdit* itemNumber = static_cast<ItemLineEdit* >(_number);
   connect(itemNumber, SIGNAL(aliasChanged(const QString &)), this, SIGNAL(aliasChanged(const QString &)));
   connect(itemNumber, SIGNAL(privateIdChanged(int)), this, SIGNAL(privateIdChanged(int)));
-  connect(itemNumber, SIGNAL(newId(int)), this, SIGNAL(newId(int)));
   connect(itemNumber, SIGNAL(uomChanged(const QString &)), this, SIGNAL(uomChanged(const QString &)));
   connect(itemNumber, SIGNAL(descrip1Changed(const QString &)), this, SIGNAL(descrip1Changed(const QString &)));
   connect(itemNumber, SIGNAL(descrip2Changed(const QString &)), this, SIGNAL(descrip2Changed(const QString &)));
-  connect(itemNumber, SIGNAL(valid(bool)), this, SIGNAL(valid(bool)));
   connect(itemNumber, SIGNAL(warehouseIdChanged(int)), this, SIGNAL(warehouseIdChanged(int)));
   connect(itemNumber, SIGNAL(typeChanged(const QString &)), this, SIGNAL(typeChanged(const QString &)));
   connect(itemNumber, SIGNAL(upcChanged(const QString &)), this, SIGNAL(upcChanged(const QString &)));
