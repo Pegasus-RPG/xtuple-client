@@ -325,6 +325,7 @@ void enterPoReceipt::sPost()
                      "  JOIN tohead ON toitem_tohead_id = tohead_id "
                      "  JOIN itemsite ON toitem_item_id = itemsite_item_id "
                      "    AND itemsite_warehous_id = tohead_trns_warehous_id " // from wh
+                     "  JOIN whsinfo ON itemsite_warehous_id = warehous_id "
                      "WHERE toitem_id = :toitem_id "
                      "  AND warehous_transit=FALSE "
                      "  AND isControlledItemsite(itemsite_id);");
@@ -365,11 +366,8 @@ void enterPoReceipt::sPost()
           return;
         }
       }
-      else
-      {
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving 'From' itemsite"), tohead, __FILE__, __LINE__);
+      else if (tohead.lastError().type() != QSqlError::NoError)
         return;
-      }
     }
     
     // Controlled (if TO, this is the to itemsite) AND

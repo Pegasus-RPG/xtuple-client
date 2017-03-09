@@ -363,7 +363,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
         query.exec();
         if (query.first())
         {
-          if (query.size() != 1)
+          if (query.numRowsAffected() != 1)
           {
             ErrorReporter::error(QtCriticalMsg, 0, tr("Updating Itemlocdist Parent Record Should Return One Row"),
                            query, __FILE__, __LINE__);
