@@ -72,12 +72,15 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
                       " itemsite_id, itemsite_perishable, itemsite_warrpurc, "
                       " COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id, "
                       " invhist_ordnumber, "
+                      " itemlocdist_order_id, "
                       // When #22868 is complete, the attempt to use invhist will be removed and replaced with something (hopefully not a case statement) 
                       // that can match the types that were inserted in creation of the original lsdetail records.
                       // Example of the lsdetail record creation that we're now looking for in this query: 
                       // https://github.com/xtuple/qt-client/blob/4_10_x/guiclient/issueWoMaterialItem.cpp#L211
-                      " COALESCE(invhist_transtype, CASE WHEN itemlocdist_order_type = 'WO' "
-                      "   THEN 'IM' ELSE itemlocdist_order_type END) AS transtype, "
+                      " COALESCE(invhist_transtype, CASE "
+                      "   WHEN itemlocdist_order_type = 'WO' THEN 'IM' "
+                      "   WHEN itemlocdist_order_type = 'TO' THEN 'TR' "
+                      "   ELSE itemlocdist_order_type END) AS transtype, "
                       " COALESCE(invhist_ordtype, itemlocdist_order_type) AS ordtype "
                       "FROM itemlocdist "
                       " LEFT OUTER JOIN invhist ON itemlocdist_invhist_id = invhist_id, "
@@ -110,13 +113,17 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
       preassign.prepare("SELECT MAX(lsdetail_id) AS lsdetail_id, ls_number "
                         "FROM lsdetail "
                         " JOIN ls ON ls_id = lsdetail_ls_id "
-                        "WHERE lsdetail_source_number = :docnumber "
+                        "WHERE "
+                        " CASE WHEN :invhist_ordnumber IS NOT NULL THEN lsdetail_source_number = :invhist_ordnumber "
+                        "   ELSE lsdetail_source_id = :sourceId END "
                         " AND lsdetail_source_type = :transtype "
                         " AND ls_item_id = :item_id "
                         " AND lsdetail_qtytoassign > 0 "
                         "GROUP BY ls_number;");
       preassign.bindValue(":transtype", createet.value("transtype").toString());
-      preassign.bindValue(":docnumber", createet.value("invhist_ordnumber").toString());
+      if (createet.value("invhist_ordnumber").toString().length())
+        preassign.bindValue(":invhist_ordnumber", createet.value("invhist_ordnumber").toString());
+      preassign.bindValue(":sourceId", createet.value("itemlocdist_order_id").toInt());
       preassign.bindValue(":item_id", _item->id());
       preassign.exec();
       if (preassign.first())
@@ -124,6 +131,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
         _lotSerial->setAllowNull(true);
         _lotSerial->populate(preassign);
         _preassigned = true;
+        _lotSerial->setEditable(false);
         connect(_lotSerial, SIGNAL(newID(int)), this, SLOT(sLotSerialSelected()));
       }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
@@ -298,8 +306,15 @@ void createLotSerial::sAssign()
   
   if (_lotSerial->currentText().isEmpty())
   {
-    QMessageBox::critical( this, tr("Enter Lot/Serial Number"),
-                           tr("<p>You must enter a Lot/Serial number."));
+    if (_lotSerial->isEditable()) 
+    {
+      QMessageBox::critical( this, tr("Enter Lot/Serial Number"),
+                           tr("<p>You must enter a Lot/Serial number."));  
+    }
+    else
+      QMessageBox::critical( this, tr("Select Preassigned Lot/Serial Number"),
+                           tr("<p>You must select a preassigned Lot/Serial number."));
+    
     _lotSerial->setFocus();
     return;
   }
@@ -328,7 +343,9 @@ void createLotSerial::sAssign()
                      tr("<p>The Item in question is not stored in "
                         "fractional quantities. You must enter a "
                         "whole value to assign to this Lot/Serial "
-                        "number."));
+                        "number."))
+        <<GuiErrorCheck(_qtyToAssign->toDouble() > _qtyRemaining->text().toDouble(), _qtyToAssign,
+                        tr("<p>The Qty to Assign must be less than or equal to the Qty Remaining."));
 
   if(GuiErrorCheck::reportErrors(this,tr("Cannot Assign Lot/Serial number"),errors))
       return;
@@ -411,7 +428,7 @@ void createLotSerial::sAssign()
     createAssign.exec();
     if (createAssign.first())
     {
-      if (!_serial)
+      if (!_serial && !_preassigned)
         if (QMessageBox::question(this, tr("Use Existing?"),
                                   tr("<p>A record with for lot number %1 for this item already exists.  "
                                      "Reference existing lot?").arg(createAssign.value("ls_number").toString().toUpper()),

@@ -198,10 +198,9 @@ void materialReceiptTrans::sPost()
   if (_controlledItem)
   {
     XSqlQuery parentItemlocdist;
-    parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'RX'::TEXT, :docNumber, :itemlocSeries) AS result;");
+    parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'RX'::TEXT, NULL, :itemlocSeries) AS result;");
     parentItemlocdist.bindValue(":itemsite_id", _itemsiteId);
     parentItemlocdist.bindValue(":qty", _qty->toDouble());
-    parentItemlocdist.bindValue(":docNumber", _documentNum->text());
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
     parentItemlocdist.exec();
     if (parentItemlocdist.first())

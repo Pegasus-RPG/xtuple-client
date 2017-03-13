@@ -333,12 +333,12 @@ void enterPoReceipt::sPost()
       tohead.exec();
       if (tohead.first())
       {
-        parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderNumber, "
+        parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, "
           ":itemlocSeries, NULL, :itemlocdistId) AS result;");
         parentItemlocdist.bindValue(":itemsite_id", tohead.value("itemsite_id").toInt());
         parentItemlocdist.bindValue(":qty", qi.value("recv_qty").toDouble() * -1);
         parentItemlocdist.bindValue(":orderType", qi.value("recv_order_type").toString());
-        parentItemlocdist.bindValue(":orderNumber", qi.value("recv_order_number").toString());
+        parentItemlocdist.bindValue(":orderitemId", qi.value("recv_orderitem_id").toInt());
         parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
         parentItemlocdist.exec();
         if (parentItemlocdist.first())
@@ -375,11 +375,11 @@ void enterPoReceipt::sPost()
     if (qi.value("controlled").toBool() && 
       (qi.value("recv_order_type").toString() == "TO" ? _metrics->boolean("MultiWhs") : true))
     {
-      parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderNumber, "
+      parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, "
         ":itemlocSeries, NULL, :itemlocdistId) AS result;");
       parentItemlocdist.bindValue(":itemsite_id", qi.value("itemsite_id").toInt());
       parentItemlocdist.bindValue(":orderType", qi.value("recv_order_type").toString());
-      parentItemlocdist.bindValue(":orderNumber", qi.value("recv_order_number").toString());
+      parentItemlocdist.bindValue(":orderitemId", qi.value("recv_orderitem_id").toInt());
       parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
       if (itemlocdistId > 0)
         parentItemlocdist.bindValue(":itemlocdistId", itemlocdistId);

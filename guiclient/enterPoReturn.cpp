@@ -193,7 +193,7 @@ void enterPoReturn::sPost()
   
   // Sql from postPoReturns here because itemlocdist 'parent' records need to be created here for each, post #22868
   XSqlQuery controlledItems;
-  controlledItems.prepare("SELECT itemsite_id, pohead_number, "
+  controlledItems.prepare("SELECT itemsite_id, pohead_number, poitem_id, "
                           " SUM(poreject_qty) * poitem_invvenduomratio * -1 AS qty "
                           "FROM pohead "
                           " JOIN poitem ON (poitem_pohead_id=pohead_id) "
@@ -210,10 +210,10 @@ void enterPoReturn::sPost()
     containsControlledItem = true;
     XSqlQuery parentItemlocdist;
     parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'PO', "
-                              " :poheadNumber, :itemlocSeries) AS result;");
+                              " :orderitemId, :itemlocSeries) AS result;");
     parentItemlocdist.bindValue(":itemsite_id", controlledItems.value("itemsite_id").toInt());
     parentItemlocdist.bindValue(":qty", controlledItems.value("qty").toDouble());
-    parentItemlocdist.bindValue(":poheadNumber", controlledItems.value("pohead_number").toString());
+    parentItemlocdist.bindValue(":orderitemId", controlledItems.value("poitem_id").toInt());
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
     parentItemlocdist.exec();
     if (!parentItemlocdist.first() || ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Record"),

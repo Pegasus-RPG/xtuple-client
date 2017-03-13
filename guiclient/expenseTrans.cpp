@@ -167,10 +167,9 @@ void expenseTrans::sPost()
   if (_controlledItem)
   {
     XSqlQuery parentItemlocdist;
-    parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'EX'::TEXT, :docNumber, :itemlocSeries) AS result;");
+    parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'EX'::TEXT, NULL, :itemlocSeries) AS result;");
     parentItemlocdist.bindValue(":itemsite_id", _itemsiteId);
     parentItemlocdist.bindValue(":qty", _qty->toDouble() * -1);
-    parentItemlocdist.bindValue(":docNumber", _documentNum->text());
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
     parentItemlocdist.exec();
     if (parentItemlocdist.first())

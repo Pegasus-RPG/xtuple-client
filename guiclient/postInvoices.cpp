@@ -179,7 +179,7 @@ void postInvoices::sPost()
   {
     // Handle the Inventory and G/L Transactions for any billed Inventory where invcitem_updateinv is true
     XSqlQuery items;
-    items.prepare("SELECT itemsite_id, "
+    items.prepare("SELECT itemsite_id, invcitem_id, "
                   " (invcitem_billed * invcitem_qty_invuomratio) AS qty, "
                   " invchead_invcnumber "
                   "FROM invchead " 
@@ -200,10 +200,10 @@ void postInvoices::sPost()
       // Create the parent itemlocdist record for each line item requiring distribution, call distributeInventory::seriesAdjust
       XSqlQuery parentItemlocdist;
       parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'IN', "
-                                " :orderNumber, :itemlocSeries);");
+                                " :orderitemId, :itemlocSeries);");
       parentItemlocdist.bindValue(":itemsite_id", items.value("itemsite_id").toInt());
       parentItemlocdist.bindValue(":qty", items.value("qty").toDouble() * -1);
-      parentItemlocdist.bindValue(":orderNumber", items.value("invchead_invcnumber").toString());
+      parentItemlocdist.bindValue(":orderitemId", items.value("invcitem_id").toInt());
       parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
       parentItemlocdist.exec();
       if (!parentItemlocdist.first())
