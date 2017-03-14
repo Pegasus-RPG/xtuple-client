@@ -234,8 +234,10 @@ void enterPoitemReceipt::populate()
     else if (_ordertype == "RA")
       _orderType->setText(tr("R/A"));
 
+    // Set class vars
     _itemsiteId = enterpopulate.value("itemsiteid").toInt();
-    _recvPosted = enterpopulate.value("recv_posted").toBool();
+    if (_mode == cEdit)
+      _recvPosted = enterpopulate.value("recv_posted").toBool();
 
     if (enterpopulate.value("inventoryitem").toBool())   
     {
