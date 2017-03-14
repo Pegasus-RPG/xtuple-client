@@ -1147,7 +1147,8 @@ void salesOrderItem::sSave(bool pPartial)
       return;
     }
 
-    _supplyOrderId = salesSave.value("coitem_order_id").toInt();
+    if (salesSave.first())
+      _supplyOrderId = salesSave.value("coitem_order_id").toInt();
   }
   else if ( (_mode == cEdit) || ((_mode == cNew) && _partialsaved) )
   {
