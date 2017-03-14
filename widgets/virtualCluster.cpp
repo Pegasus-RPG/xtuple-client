@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -20,7 +20,6 @@
 #include "xlineedit.h"
 #include "xcheckbox.h"
 #include "xsqlquery.h"
-#include "xsqltablemodel.h"
 #include "shortcuts.h"
 
 #include "virtualCluster.h"
@@ -56,7 +55,7 @@ void VirtualCluster::init()
     _grid->addItem(_hspcr, 0, _grid->columnCount() + 1);
     _orientation = Qt::Horizontal;
     setOrientation(Qt::Vertical);
-    
+
     _mapper = new XDataWidgetMapper(this);
 }
 
@@ -348,7 +347,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     _copyAct->setEnabled(false);
     connect(_copyAct, SIGNAL(triggered()), this, SLOT(sCopy()));
     addAction(_copyAct);
-  
+
     _newAct = new QAction(tr("New..."), this);
     _newAct->setShortcut(QKeySequence(tr("Ctrl+Shift+N")));
     _newAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -479,7 +478,7 @@ void VirtualClusterLineEdit::sUpdateMenu()
 
     if (!menu()->actions().contains(_copyAct))
       menu()->addAction(_copyAct);
-    
+
     if (!menu()->actions().contains(_newAct) &&
         !_newPriv.isEmpty())
       menu()->addAction(_newAct);
@@ -491,7 +490,7 @@ void VirtualClusterLineEdit::sUpdateMenu()
 
     if (menu()->actions().contains(_copyAct))
       menu()->removeAction(_copyAct);
-    
+
     if (menu()->actions().contains(_newAct))
       menu()->removeAction(_newAct);
   }
@@ -1285,11 +1284,11 @@ void VirtualSearch::sFillList()
         search += QString("%1~*'%2'").arg(_parent->_numColName).arg(_search->text());
     if (_parent->_hasName &&
         (_searchName->isChecked()))
-        search += (search.isEmpty() ?  QString("%1~*'%2'").arg(_parent->_nameColName).arg(_search->text()) :  
+        search += (search.isEmpty() ?  QString("%1~*'%2'").arg(_parent->_nameColName).arg(_search->text()) :
         " OR " +  QString("%1~'%2'").arg(_parent->_nameColName).arg(_search->text()));
     if (_parent->_hasDescription &&
         (_searchDescrip->isChecked()))
-        search += (search.isEmpty() ?  QString("%1~*'%2'").arg(_parent->_descripColName).arg(_search->text()) :  
+        search += (search.isEmpty() ?  QString("%1~*'%2'").arg(_parent->_descripColName).arg(_search->text()) :
         " OR " +  QString("%1~*'%2'").arg(_parent->_descripColName).arg(_search->text()));
     if (!search.isEmpty())
     {
@@ -1305,7 +1304,7 @@ void VirtualSearch::sFillList()
                     ((_parent->_hasActive && ! _parent->_showInactive) ? _parent->_activeClause : "") +
 		    QString(" ORDER BY ") +
 		    QString((_parent->_hasName) ? "name" : "number"));
-                    
+
     _listTab->populate(qry);
 }
 
@@ -1320,7 +1319,7 @@ VirtualInfo::VirtualInfo(QWidget* pParent, Qt::WindowFlags pFlags) :
     setObjectName("virtualInfo");
     setWindowTitle(_parent->_titleSingular);
     _id = _parent->_id;
-    
+
     _titleLit	= new QLabel(_parent->_titleSingular, this);
     _titleLit->setObjectName("_titleLit");
     _numberLit	= new QLabel(tr("Number:"), this);

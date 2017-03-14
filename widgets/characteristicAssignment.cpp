@@ -12,6 +12,7 @@
 
 #include <QMessageBox>
 #include <QSqlError>
+#include <QSqlQueryModel>
 #include <QSqlRecord>
 #include <QVariant>
 #include <QRegExpValidator>

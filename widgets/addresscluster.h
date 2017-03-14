@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -12,6 +12,7 @@
 #define addressCluster_h
 
 #include "widgets.h"
+#include "scriptablewidget.h"
 #include "virtualCluster.h"
 #include "xcheckbox.h"
 #include "xcombobox.h"
@@ -22,8 +23,9 @@
 #include <QPushButton>
 #include <QWidget>
 
-class QGridLayout;
 class AddressCluster;
+class QGridLayout;
+class QScriptEngine;
 
 class XTUPLEWIDGETS_EXPORT AddressList : public VirtualList
 {
@@ -241,5 +243,7 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	QString  _fieldNameState;
 	QString  _fieldNameCountry;
 };
+
+void setupAddressCluster(QScriptEngine *engine);
 
 #endif
