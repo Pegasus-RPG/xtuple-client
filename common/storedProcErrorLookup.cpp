@@ -920,10 +920,12 @@ const struct {
   { "invExpense",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."),  0, "" },
   { "invExpense",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
          "Expected Count of Distribution Detail Records Posted for Controlled Item."),  0, "" },
+  { "invExpense",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site or Cost Category."), 0, "" },
 
   { "invReceipt",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."),  0, "" },
   { "invReceipt",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
          "Expected Count of Distribution Detail Records Posted for Controlled Item."),  0, "" },
+  { "invReceipt",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site or Cost Category."), 0, "" },
 
   { "invScrap",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."),  0, "" },
   { "invScrap",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."),  0, "" },
@@ -1203,6 +1205,7 @@ const struct {
     0, "" },
   
   { "postInvoice",  -1, "", -1, "insertIntoGLSeries" },
+  { "postInvoice",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site or Cost Category."), 0, "" },
   { "postInvoice",  -4, "", -4, "insertIntoGLSeries" },
   { "postInvoice",  -5, "", -5, "postGLSeries" },
   { "postInvoice", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because it has "

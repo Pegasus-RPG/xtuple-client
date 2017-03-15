@@ -232,8 +232,13 @@ void enterPoReturn::sPost()
     QMessageBox::information( this, tr("Enter PO Return"), tr("Posting Distribution Detail Failed") );
     return;
   }
+
+  // TODO - remove this after postPoReturns has had the remaining negative error codes replaced with RAISE EXCEPTIONs
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
   
   // post the returns
+  enterPost.exec("BEGIN;");
   enterPost.prepare("SELECT postPoReturns(:pohead_id, false, :itemlocSeries, TRUE) AS result;");
   enterPost.bindValue(":pohead_id", _po->id());
   enterPost.bindValue(":itemlocSeries", itemlocSeries);
@@ -245,6 +250,7 @@ void enterPoReturn::sPost()
     if (result < 0 || result != itemlocSeries)
     {
       cleanup.exec();
+      rollback.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Return"),
                              storedProcErrorLookup("postPoReturns", result),
                              __FILE__, __LINE__);
@@ -254,10 +260,12 @@ void enterPoReturn::sPost()
   else if (enterPost.lastError().type() != QSqlError::NoError)
   {
     cleanup.exec();
+    rollback.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Return"),
                          enterPost, __FILE__, __LINE__);
     return;
   }
+  enterPost.exec("COMMIT;");
 
   // if we are creating the credit memo go ahead and loop the returns that
   // we have just posted and create the credit memos.
