@@ -1297,6 +1297,8 @@ const struct {
          "Can not post receipt for qty <= 0. Please correct qty and try again."), 0, "" },
   { "postReceipt", -41, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
          "Expected Count of Distribution Detail Records Posted for Controlled Item."), 0, "" },
+  { "postReceipt", -42, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+         "Could not insert G/L transaction: no cost category found for itemsite_id."), 0, "" },
 
   { "postPoReceipts",   -1, "",	 -1, "postPoReceipt" },
   { "postPoReceipts",   -3, "",	 -3, "postPoReceipt" },
