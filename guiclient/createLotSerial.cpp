@@ -80,6 +80,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
                       " COALESCE(invhist_transtype, CASE "
                       "   WHEN itemlocdist_order_type = 'WO' THEN 'IM' "
                       "   WHEN itemlocdist_order_type = 'TO' THEN 'TR' "
+                      "   WHEN itemlocdist_order_type = 'RA' THEN 'RR' "
                       "   ELSE itemlocdist_order_type END) AS transtype, "
                       " COALESCE(invhist_ordtype, itemlocdist_order_type) AS ordtype "
                       "FROM itemlocdist "

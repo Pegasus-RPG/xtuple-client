@@ -909,8 +909,13 @@ void invoice::postInvoice()
     return;
   }
 
+  // TODO - remove this after postInvoice has had the remaining negative error codes replaced with RAISE EXCEPTIONs
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
   // Post invoice
   XSqlQuery post;
+  post.exec("BEGIN;");
   post.prepare("SELECT postInvoice(:invchead_id, :journal, :itemlocSeries, true) AS result;");
   post.bindValue(":invchead_id", _invcheadid);
   post.bindValue(":journal", journal);
@@ -922,6 +927,7 @@ void invoice::postInvoice()
     if (result < 0 || result != itemlocSeries)
     {
       cleanup.exec();
+      rollback.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Invoice"),
                           storedProcErrorLookup("postInvoice", result),
                           __FILE__, __LINE__);
@@ -931,8 +937,10 @@ void invoice::postInvoice()
   else if (post.lastError().type() != QSqlError::NoError)
   {
     cleanup.exec();
+    rollback.exec();
     return;
   }
+  post.exec("COMMIT;");
 }
 
 void invoice::sNew()
