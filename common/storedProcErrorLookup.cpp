@@ -952,6 +952,9 @@ const struct {
   { "issueLineBalanceToShipping", -20, "",	-20, "issueToShipping" },
 
   { "issueToShipping",	-1, "",		 	 -1, "postInvTrans" },
+  { "issueToShipping",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."), 0, "" },
+  { "issueToShipping",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+             "Expected Count of Distribution Detail Records Posted for Controlled Item."), 0, "" },
   { "issueToShipping", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Next Shipment Number has not been set in "
 			       "the Configure S/R window. Set that value and "
 			       "try issuing to shipping again."), 0, "" },
@@ -1254,6 +1257,9 @@ const struct {
                              "to missing Item Sites."),	0, "" },
   { "postProduction", -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Production because of missing "
                            "Item Site or Cost Category."), 0, "" },
+  { "postProduction", -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."), 0, "" },
+  { "postProduction", -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+         "Expected Count of Distribution Detail Records Posted for Controlled Item."), 0, "" },
 
   { "postReceipt",  -1, "",	 -1, "postInvTrans" },
   { "postReceipt",  -2, "",	 -2, "postInvTrans" },
