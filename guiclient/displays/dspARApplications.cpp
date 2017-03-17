@@ -170,7 +170,7 @@ void dspARApplications::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem*, int)
 {
   QAction *menuItem;
 
-  if (list()->currentItem()->text(4) == "C")
+  if (list()->currentItem()->rawValue("arapply_source_doctype") == "C")
   {
     menuItem = pMenu->addAction(tr("View Source Credit Memo..."), this, SLOT(sViewCreditMemo()));
     if (! _privileges->check("MaintainARMemos") &&
@@ -178,14 +178,14 @@ void dspARApplications::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem*, int)
       menuItem->setEnabled(false);
   }
 
-  if (list()->currentItem()->text(7) == "D")
+  if (list()->currentItem()->rawValue("arapply_target_doctype") == "D")
   {
     menuItem = pMenu->addAction(tr("View Apply-To Debit Memo..."), this, SLOT(sViewDebitMemo()));
     if (! _privileges->check("MaintainARMemos") &&
 	! _privileges->check("ViewARMemos"))
       menuItem->setEnabled(false);
   }
-  else if (list()->currentItem()->text(7) == "I")
+  else if (list()->currentItem()->rawValue("arapply_target_doctype") == "I")
   {
     menuItem = pMenu->addAction(tr("View Apply-To Invoice..."), this, SLOT(sViewInvoice()));
     if (! _privileges->check("MaintainMiscInvoices") &&
@@ -193,7 +193,7 @@ void dspARApplications::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem*, int)
       menuItem->setEnabled(false);
   }
 
-  if (list()->currentItem()->text(13) == "No")
+  if (list()->currentItem()->rawValue("arapply_reversed") == "No")
   {
     menuItem = pMenu->addAction(tr("Reverse Application"), this, SLOT(sReverseApplication()));
     if (! _privileges->check("ReverseARApplication"))
