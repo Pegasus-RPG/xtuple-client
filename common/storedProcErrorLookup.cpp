@@ -1345,11 +1345,11 @@ const struct {
 			       "you may Return this Shipment."),
 								0, "" },
 
-  { "reverseapapplication", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The amount paid is greater than the applied amount."),
+  { "reverseapapplication", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The amount paid is less than the applied amount."),
                                 	0, "" },
   { "reverseapapplication", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This application has already been reversed."),
                                 	0, "" },
-  { "reversearapplication", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The amount paid is greater than the applied amount."),
+  { "reversearapplication", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The amount paid is less than the applied amount."),
                                 	0, "" },
   { "reversearapplication", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This application has already been reversed."),
                                 	0, "" },
