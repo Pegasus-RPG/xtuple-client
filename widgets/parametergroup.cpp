@@ -1,19 +1,19 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
-
-#include <QRadioButton>
-#include <QLineEdit>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QButtonGroup>
+#include <QHBoxLayout>
+#include <QLineEdit>
+#include <QRadioButton>
+#include <QVBoxLayout>
+#include <QtScript>
 
 #include <xsqlquery.h>
 #include <parameter.h>
@@ -220,12 +220,12 @@ void ParameterGroup::setType(enum ParameterGroupTypes pType)
     case User:
       _all->setText(QObject::tr("All User Accounts"));
       _items->setType(XComboBox::Users);
-	  break;
+      break;
 
     case ActiveUser:
       _all->setText(QObject::tr("All User Accounts"));
       _items->setType(XComboBox::ActiveUsers);
-	  break;
+      break;
 
     case OpportunitySource:
       _all->setText(QObject::tr("All Opportunity Sources"));
@@ -494,4 +494,53 @@ void ParameterGroup::setSelected(const QString &p)
 {
   _selected->setChecked(true);
   _items->setCode(p);
+}
+
+// script api //////////////////////////////////////////////////////////////////
+QScriptValue ParameterGroupStatesToScriptValue(QScriptEngine *engine, ParameterGroup::ParameterGroupStates const &item)
+{
+  return QScriptValue(engine, (int)item);
+}
+
+void ParameterGroupStatesFromScriptValue(const QScriptValue &obj, ParameterGroup::ParameterGroupStates &item)
+{
+  item = (ParameterGroup::ParameterGroupStates)(obj.toInt32());
+}
+
+QScriptValue ParameterGroupTypesToScriptValue(QScriptEngine *engine, ParameterGroup::ParameterGroupTypes const &item)
+{
+  return QScriptValue(engine, (int)item);
+}
+
+void ParameterGroupTypesFromScriptValue(const QScriptValue &obj, ParameterGroup::ParameterGroupTypes &item)
+{
+  item = (ParameterGroup::ParameterGroupTypes)(obj.toInt32());
+}
+
+void setupParameterGroup(QScriptEngine *engine)
+{
+  QScriptValue widget = engine->newObject();
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+
+  qScriptRegisterMetaType(engine, ParameterGroupStatesToScriptValue, ParameterGroupStatesFromScriptValue);
+  qScriptRegisterMetaType(engine, ParameterGroupTypesToScriptValue,  ParameterGroupTypesFromScriptValue);
+
+  widget.setProperty("AdhocGroup",      QScriptValue(engine, ParameterGroup::AdhocGroup),      ro);
+  widget.setProperty("PlannerCode",     QScriptValue(engine, ParameterGroup::PlannerCode),     ro);
+  widget.setProperty("ProductCategory", QScriptValue(engine, ParameterGroup::ProductCategory), ro);
+  widget.setProperty("ClassCode",       QScriptValue(engine, ParameterGroup::ClassCode),       ro);
+  widget.setProperty("ItemGroup",       QScriptValue(engine, ParameterGroup::ItemGroup),       ro);
+  widget.setProperty("CostCategory",    QScriptValue(engine, ParameterGroup::CostCategory),    ro);
+  widget.setProperty("CustomerType",    QScriptValue(engine, ParameterGroup::CustomerType),    ro);
+  widget.setProperty("CustomerGroup",   QScriptValue(engine, ParameterGroup::CustomerGroup),   ro);
+  widget.setProperty("CurrencyNotBase", QScriptValue(engine, ParameterGroup::CurrencyNotBase), ro);
+  widget.setProperty("Currency",        QScriptValue(engine, ParameterGroup::Currency),        ro);
+  widget.setProperty("WorkCenter",      QScriptValue(engine, ParameterGroup::WorkCenter),      ro);
+  widget.setProperty("User",            QScriptValue(engine, ParameterGroup::User),            ro);
+
+  widget.setProperty("All",      QScriptValue(engine, ParameterGroup::All),      ro);
+  widget.setProperty("Selected", QScriptValue(engine, ParameterGroup::Selected), ro);
+  widget.setProperty("Pattern",  QScriptValue(engine, ParameterGroup::Pattern),  ro);
+
+  engine->globalObject().setProperty("ParameterGroup", widget, ro);
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2013 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -27,9 +27,7 @@
 #include "shortcuts.h"
 
 #define DEBUG false
-//
-// XWidgetPrivate
-//
+
 class XWidgetPrivate : public ScriptablePrivate
 {
   friend class XWidget;
@@ -38,11 +36,11 @@ class XWidgetPrivate : public ScriptablePrivate
     XWidgetPrivate(XWidget *parent);
     virtual ~XWidgetPrivate();
 
-    XWidget * _parent;
     bool _shown;
 };
 
-XWidgetPrivate::XWidgetPrivate(XWidget *parent) : ScriptablePrivate(false, parent), _parent(parent)
+XWidgetPrivate::XWidgetPrivate(XWidget *parent)
+  : ScriptablePrivate(parent)
 {
   _shown = false;
 }
@@ -51,7 +49,7 @@ XWidgetPrivate::~XWidgetPrivate()
 {
 }
 
-XWidget::XWidget(QWidget * parent, Qt::WindowFlags flags)
+XWidget::XWidget(QWidget *parent, Qt::WindowFlags flags)
   : QWidget(parent,
             ((flags & (Qt::Dialog | Qt::Window)) && parent && parent->isModal()) ? (flags | Qt::Dialog)
                   : flags )

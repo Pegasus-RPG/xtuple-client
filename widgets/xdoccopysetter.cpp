@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -178,16 +178,6 @@ void XDocCopySetter::sEditWatermark()
 
 // scripting exposure /////////////////////////////////////////////////////////
 
-QScriptValue XDocCopySettertoScriptValue(QScriptEngine *engine, XDocCopySetter* const &item)
-{
-  return engine->newQObject(item);
-}
-
-void XDocCopySetterfromScriptValue(const QScriptValue &obj, XDocCopySetter* &item)
-{
-  item = qobject_cast<XDocCopySetter*>(obj.toQObject());
-}
-
 QScriptValue constructXDocCopySetter(QScriptContext *context,
                                        QScriptEngine  *engine)
 {
@@ -195,19 +185,19 @@ QScriptValue constructXDocCopySetter(QScriptContext *context,
   const char *objname = "_xDocCopySetter";
   if (context->argumentCount() > 1)
     objname = context->argument(1).toString().toLatin1().data();
+#if QT_VERSION >= 0x050000
   return engine->toScriptValue(new XDocCopySetter(parent, objname));
+#else
+  Q_UNUSED(engine); return QScriptValue();
+#endif
 }
 
 void setupXDocCopySetter(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags stdflags = QScriptValue::ReadOnly |
-                                         QScriptValue::Undeletable;
-
-  qScriptRegisterMetaType(engine, XDocCopySettertoScriptValue,
-                          XDocCopySetterfromScriptValue);
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue constructor = engine->newFunction(constructXDocCopySetter);
-  engine->globalObject().setProperty("XDocCopySetter", constructor, stdflags);
+  engine->globalObject().setProperty("XDocCopySetter", constructor, ro);
 
-  //constructor.setProperty("ChangeFuture", QScriptValue(engine, XDocCopySetter::ChangeFuture), stdflags);
+  //constructor.setProperty("ChangeFuture", QScriptValue(engine, XDocCopySetter::ChangeFuture), ro);
 }

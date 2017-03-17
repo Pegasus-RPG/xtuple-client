@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -9,10 +9,11 @@
  */
 
 #ifndef _projectCluster_h
-
 #define _projectCluster_h
 
 #include "crmcluster.h"
+
+class QScriptEngine;
 
 class XTUPLEWIDGETS_EXPORT ProjectLineEdit : public CrmClusterLineEdit
 {
@@ -82,5 +83,7 @@ class XTUPLEWIDGETS_EXPORT ProjectCluster : public VirtualCluster
       virtual void setType(enum ProjectLineEdit::ProjectType ptype);
 
 };
+
+void setupProjectLineEdit(QScriptEngine *engine);
 
 #endif
