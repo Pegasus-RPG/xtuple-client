@@ -334,7 +334,7 @@ void enterPoReceipt::sPost()
       if (tohead.first())
       {
         parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, "
-         ":itemlocSeries, NULL, :itemlocdistId) AS result;");
+         ":itemlocSeries, NULL, NULL, 'TW') AS result;");
         parentItemlocdist.bindValue(":itemsite_id", tohead.value("itemsite_id").toInt());
         parentItemlocdist.bindValue(":qty", qi.value("recv_qty").toDouble() * -1);
         parentItemlocdist.bindValue(":orderType", qi.value("recv_order_type").toString());
@@ -377,15 +377,22 @@ void enterPoReceipt::sPost()
     {
       XSqlQuery parentItemlocdist;
       parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, "
-        ":itemlocSeries) AS result;");
+        ":itemlocSeries, NULL, :itemlocdistId, :transType) AS result;");
       parentItemlocdist.bindValue(":itemsite_id", qi.value("itemsite_id").toInt());
       parentItemlocdist.bindValue(":orderType", qi.value("recv_order_type").toString());
       parentItemlocdist.bindValue(":orderitemId", qi.value("recv_orderitem_id").toInt());
       parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+      if (itemlocdistId > 0)
+        parentItemlocdist.bindValue(":itemlocdistId", itemlocdistId);
       if (qi.value("recv_order_type").toString() == "TO")
+      {
         parentItemlocdist.bindValue(":qty", qi.value("recv_qty").toDouble());
-      else
-        parentItemlocdist.bindValue(":qty", qi.value("qty").toDouble());
+        parentItemlocdist.bindValue(":transType", 'TR');
+      }
+      else if (qi.value("recv_order_type").toString() == "RA")
+        parentItemlocdist.bindValue(":transType", 'RR');
+      else if (qi.value("recv_order_type").toString() == "PO")
+        parentItemlocdist.bindValue(":transType", 'RP');
       parentItemlocdist.exec();
       if (parentItemlocdist.first())
       {

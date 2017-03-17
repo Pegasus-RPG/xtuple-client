@@ -192,7 +192,8 @@ void postInvoices::sPost()
                   "WHERE invchead_id = :invchead_id "
                   " AND itemsite_costmethod != 'J' "
                   " AND (itemsite_loccntrl OR itemsite_controlmethod IN ('L', 'S')) "
-                  " AND itemsite_controlmethod != 'N';");
+                  " AND itemsite_controlmethod != 'N' "
+                  "ORDER BY invcitem_id;");
     items.bindValue(":invchead_id", invoiceIds.at(i));
     items.exec();
     while (items.next())
@@ -200,7 +201,7 @@ void postInvoices::sPost()
       // Create the parent itemlocdist record for each line item requiring distribution, call distributeInventory::seriesAdjust
       XSqlQuery parentItemlocdist;
       parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'IN', "
-                                " :orderitemId, :itemlocSeries);");
+                                " :orderitemId, :itemlocSeries, NULL, NULL, 'SH');");
       parentItemlocdist.bindValue(":itemsite_id", items.value("itemsite_id").toInt());
       parentItemlocdist.bindValue(":qty", items.value("qty").toDouble() * -1);
       parentItemlocdist.bindValue(":orderitemId", items.value("invcitem_id").toInt());
@@ -215,7 +216,7 @@ void postInvoices::sPost()
       }
     }
 
-    if (items.numRowsAffected() > 0 && distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
+    if (items.size() > 0 && distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
       == XDialog::Rejected)
     {
       cleanup.exec();
@@ -240,8 +241,8 @@ void postInvoices::sPost()
       int result = post.value("result").toInt();
       if (result < 0 || result != itemlocSeries)
       {
-        cleanup.exec();
         rollback.exec();
+        cleanup.exec();
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Invoice"),
                             storedProcErrorLookup("postInvoice", result),
                             __FILE__, __LINE__);
@@ -251,8 +252,8 @@ void postInvoices::sPost()
     }
     else if (postPost.lastError().type() != QSqlError::NoError)
     {
-      cleanup.exec();
       rollback.exec();
+      cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Invoice Information"),
                            postPost, __FILE__, __LINE__);
       return;

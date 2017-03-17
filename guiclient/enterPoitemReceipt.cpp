@@ -366,7 +366,7 @@ void enterPoitemReceipt::sReceive()
     {
       XSqlQuery parentItemlocdist;
       parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, :orderType, "
-                                " :orderitemId, :itemlocSeries);");
+                                " :orderitemId, :itemlocSeries, NULL, NULL, 'RP');");
       parentItemlocdist.bindValue(":itemsite_id", _itemsiteId);
       parentItemlocdist.bindValue(":qty", 
         (_toReceive->toDouble() - _received->toDouble()) * _invVendorUOMRatio->toDouble());
