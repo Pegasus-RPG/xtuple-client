@@ -1539,7 +1539,6 @@ void salesOrderSimple::sAllocateCreditMemos()
 bool salesOrderSimple::sIssueLineBalance()
 {
   XSqlQuery issueSales;
-  bool job = false;
   for (int i = 0; i < _soitem->topLevelItemCount(); i++)
   {
     XTreeWidgetItem *soitem = (XTreeWidgetItem*)_soitem->topLevelItem(i);
@@ -1547,103 +1546,139 @@ bool salesOrderSimple::sIssueLineBalance()
     {
       // sufficientInventoryToShipItem assumes line balance if qty not passed
       issueSales.prepare("SELECT itemsite_id, item_number, warehous_code, itemsite_costmethod, "
-                  "       sufficientInventoryToShipItem('SO', coitem_id) AS isqtyavail "
-                  "  FROM coitem JOIN itemsite ON (itemsite_id=coitem_itemsite_id)"
-                  "              JOIN item ON (item_id=itemsite_item_id)"
-                  "              JOIN whsinfo ON (warehous_id=itemsite_warehous_id) "
-                  " WHERE (coitem_id=:soitem_id); ");
+                         "  sufficientInventoryToShipItem('SO', coitem_id) AS isqtyavail, "
+                         "  isControlledItemsite(itemsite_id) AS controlled, "
+                         "  calcIssueToShippingLineBalance('SO', coitem_id) AS balance, "
+                         "  coitem_qty_invuomratio "
+                         "FROM coitem JOIN itemsite ON (itemsite_id=coitem_itemsite_id) "
+                         "  JOIN item ON (item_id=itemsite_item_id) "
+                         "  JOIN whsinfo ON (warehous_id=itemsite_warehous_id) "
+                         "WHERE (coitem_id=:soitem_id);");
       issueSales.bindValue(":soitem_id", soitem->id());
       issueSales.exec();
-      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Sufficient Inventory Information"),
-                               issueSales, __FILE__, __LINE__))
+      if (!issueSales.first() || ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                    issueSales, __FILE__, __LINE__))
       {
         return false;
       }
-
-      while (issueSales.next())
+      // Validate business logic
+      if (_metrics->boolean("SSOSRequireInv") &&
+          issueSales.value("isqtyavail").toInt() < 0 &&
+          issueSales.value("itemsite_costmethod").toString() != "J")
       {
-        if (issueSales.value("itemsite_costmethod").toString() == "J")
-          job = true;
-
-        if (_metrics->boolean("SSOSRequireInv") &&
-            issueSales.value("isqtyavail").toInt() < 0 &&
-            issueSales.value("itemsite_costmethod").toString() != "J")
-        {
-          QMessageBox::critical(this, tr("Insufficient Inventory"),
-                                      tr("<p>There is not enough Inventory to issue the amount required"
-                                         " of Item %1 in Site %2.")
-                                .arg(issueSales.value("item_number").toString())
-                                .arg(issueSales.value("warehous_code").toString()) );
-          return false;
-        }
+        QMessageBox::critical(this, tr("Insufficient Inventory"),
+                                    tr("<p>There is not enough Inventory to issue the amount required"
+                                       " of Item %1 in Site %2.")
+                              .arg(issueSales.value("item_number").toString())
+                              .arg(issueSales.value("warehous_code").toString()) );
+        return false;
       }
-
-      issueSales.prepare("SELECT itemsite_id, itemsite_costmethod, item_number, warehous_code, "
-                "       sufficientInventoryToShipItem('SO', coitem_id) AS isqtyavail "
-                "  FROM coitem JOIN itemsite ON (itemsite_id=coitem_itemsite_id)"
-                "              JOIN item ON (item_id=itemsite_item_id)"
-                "              JOIN whsinfo ON (warehous_id=itemsite_warehous_id) "
-                " WHERE ((coitem_id=:soitem_id) "
-                "   AND (NOT ((item_type = 'R') OR (itemsite_controlmethod = 'N'))) "
-                "   AND ((itemsite_controlmethod IN ('L', 'S')) OR (itemsite_loccntrl)));");
-      issueSales.bindValue(":soitem_id", soitem->id());
-      issueSales.exec();
-      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Sufficient Inventory Information"),
-                               issueSales, __FILE__, __LINE__))
+      // Validate more business logic
+      if (issueSales.value("controlled").toBool() && 
+          issueSales.value("isqtyavail").toInt() < 0 && 
+          issueSales.value("itemsite_costmethod").toString() != "J")
       {
+        QMessageBox::critical(this, tr("Insufficient Inventory"),
+                                tr("<p>Item Number %1 in Site %2 is a Multiple Location or "
+                                   "Lot/Serial controlled Item which is short on Inventory. "
+                                   "This transaction cannot be completed as is. Please make "
+                                   "sure there is sufficient Quantity on Hand before proceeding.")
+                              .arg(issueSales.value("item_number").toString())
+                              .arg(issueSales.value("warehous_code").toString()));
         return false;
       }
 
-      while (issueSales.next())
-      {
-        if (issueSales.value("isqtyavail").toInt() < 0 && issueSales.value("itemsite_costmethod").toString() != "J")
-        {
-          QMessageBox::critical(this, tr("Insufficient Inventory"),
-                                  tr("<p>Item Number %1 in Site %2 is a Multiple Location or "
-                                     "Lot/Serial controlled Item which is short on Inventory. "
-                                     "This transaction cannot be completed as is. Please make "
-                                     "sure there is sufficient Quantity on Hand before proceeding.")
-                                .arg(issueSales.value("item_number").toString())
-                                .arg(issueSales.value("warehous_code").toString()));
-          return false;
-        }
-      }
+      bool job = (issueSales.value("itemsite_costmethod").toString() == "J");
+      bool controlled = issueSales.value("controlled").toBool();
+      int itemsiteId = issueSales.value("itemsite_id").toInt();
+      double balance = issueSales.value("balance").toDouble();
+      int invhistid = 0;
+      int itemlocSeries;
+      int itemlocdistId;
 
-      int       invhistid      = 0;
-      int       itemlocSeries  = 0;
       XSqlQuery rollback;
       rollback.prepare("ROLLBACK;");
 
-      issueSales.exec("BEGIN;"); // because of possible lot, serial, or location distribution cancelations
+      // Stage cleanup function to be called on error
+      XSqlQuery cleanup;
+      cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+
+      // Get parent series id
+      XSqlQuery parentItemlocdist;
+      XSqlQuery parentSeries;
+      parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
+      parentSeries.exec();
+      if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
+      {
+        itemlocSeries = parentSeries.value("result").toInt();
+        cleanup.bindValue(":itemlocSeries", itemlocSeries);
+      }
+      else
+      {
+        ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
+          parentSeries, __FILE__, __LINE__);
+        return false;
+      }
+      
       // If this is a lot/serial controlled job item, we need to post production first
       if (job)
       {
+
+        // Before postSoItemProduction, if controlled: create the itemlocdist record and call distributeInventory::SeriesAdjust
+        if (controlled)
+        {
+          parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, 'WO', :orderitemId, :itemlocSeries, NULL, NULL, 'RM') AS result;");
+          parentItemlocdist.bindValue(":itemsite_id", itemsiteId);
+          parentItemlocdist.bindValue(":qty", (balance * issueSales.value("coitem_qty_invuomratio").toDouble()) * -1);
+          parentItemlocdist.bindValue(":orderitemId", soitem->id());
+          parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+          parentItemlocdist.exec();
+          if (parentItemlocdist.first())
+          {
+            // Store the resulting itemlocdist_id for use when calling createItemlocdistParent below 
+            itemlocdistId = parentItemlocdist.value("result").toInt();
+
+            if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
+              == XDialog::Rejected)
+            {
+              rollback.exec();
+              cleanup.exec();
+              QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+              return false;
+            }
+          }
+          else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
+                                    parentItemlocdist, __FILE__, __LINE__))
+          {
+            return false;
+          }
+        }
+
         XSqlQuery prod;
-        prod.prepare("SELECT postSoItemProduction(:soitem_id, now()) AS result;");
+        prod.exec("BEGIN");
+        prod.prepare("SELECT postSoItemProduction(:soitem_id, :qty, now(), :itemlocSeries, TRUE) AS result;");
         prod.bindValue(":soitem_id", _soitem->id());
+        prod.bindValue(":qty", _soitem->id());
+        prod.bindValue(":itemlocSeries", itemlocSeries);
         prod.exec();
-        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production Information"),
-                                 prod, __FILE__, __LINE__))
+        if (prod.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                               prod, __FILE__, __LINE__);
           return false;
         }
         if (prod.first())
         {
-          itemlocSeries = prod.value("result").toInt();
+          int result = prod.value("result").toInt();
 
-          if (itemlocSeries < 0)
+          if (result < 0 || result != itemlocSeries)
           {
             rollback.exec();
-            ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production Information"),
-                                     storedProcErrorLookup("postProduction", itemlocSeries),
-                                     __FILE__, __LINE__);
-            return false;
-          }
-          else if (distributeInventory::SeriesAdjust(itemlocSeries, this) == XDialog::Rejected)
-          {
-            rollback.exec();
-            QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+            cleanup.exec();
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                   storedProcErrorLookup("postProduction", itemlocSeries),
+                                   __FILE__, __LINE__);
             return false;
           }
 
@@ -1654,10 +1689,12 @@ bool salesOrderSimple::sIssueLineBalance()
                        " AND (invhist_transtype = 'RM')); ");
           prod.bindValue(":itemlocseries", itemlocSeries);
           prod.exec();
-          if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Inventory History"),
-                                   prod, __FILE__, __LINE__))
+          if (prod.lastError().type() != QSqlError::NoError)
           {
             rollback.exec();
+            cleanup.exec();
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                 prod, __FILE__, __LINE__);
             return false;
           }
           if (prod.first())
@@ -1665,45 +1702,71 @@ bool salesOrderSimple::sIssueLineBalance()
           else
           {
             rollback.exec();
-            ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
-                                 tr("%1: Inventory History Not Found.")
-                                 .arg(windowTitle()),__FILE__,__LINE__);
+            cleanup.exec();
+            ErrorReporter::error(QtCriticalMsg, this, tr("Inventory History Not Found"),
+                                           prod, __FILE__, __LINE__);
             return false;
           }
         }
       }
 
-      issueSales.prepare("SELECT issueLineBalanceToShipping('SO', :soitem_id, now(), :itemlocseries, :invhist_id) AS result;");
-      ;
+      // Before issueToShipping, if controlled item: create the parent itemlocdist record, call distributeInventory::seriesAdjust
+      if (controlled)
+      {
+        parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, 'SO', :orderitemId, :itemlocSeries, :invhistId, :itemlocdistId, 'SH') AS result;");
+        parentItemlocdist.bindValue(":itemsite_id", itemsiteId);
+        parentItemlocdist.bindValue(":qty", (balance * issueSales.value("coitem_qty_invuomratio").toDouble()) * -1);
+        parentItemlocdist.bindValue(":orderitemId", soitem->id());
+        parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+        if (invhistid > 0)
+          parentItemlocdist.bindValue(":invhistId", invhistid);
+        if (itemlocdistId > 0)
+          parentItemlocdist.bindValue(":itemlocdistId", itemlocdistId);
+        parentItemlocdist.exec();
+        if (parentItemlocdist.first())
+        {
+          if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
+            == XDialog::Rejected)
+          {
+            rollback.exec();
+            cleanup.exec();
+            QMessageBox::information( this, tr("Issue to Shipping"), tr("Error Distributing Detail") );
+            return false;
+          }
+        }
+        else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
+                                  parentItemlocdist, __FILE__, __LINE__))
+        {
+          return false;
+        }
+      }
+
+      // Finally, Issue to Shipping
+      issueSales.prepare("BEGIN"); // TODO - remove after issueLineBalanceToShipping no longer returns negative error codes
+      issueSales.prepare("SELECT issueLineBalanceToShipping('SO', :soitem_id, now(), :itemlocseries, :invhist_id, TRUE) AS result;");
       issueSales.bindValue(":soitem_id", soitem->id());
+      issueSales.bindValue(":itemlocseries", itemlocSeries);
       if (invhistid)
         issueSales.bindValue(":invhist_id", invhistid);
-      if (itemlocSeries)
-        issueSales.bindValue(":itemlocseries", itemlocSeries);
       issueSales.exec();
-      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing to Shipping"),
-                               issueSales, __FILE__, __LINE__))
+      if (issueSales.lastError().type() != QSqlError::NoError)
       {
         rollback.exec();
+        cleanup.exec();
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                             issueSales, __FILE__, __LINE__);
         return false;
       }
       if (issueSales.first())
       {
         int result = issueSales.value("result").toInt();
-        if (result < 0)
+        if (result < 0 || result != itemlocSeries)
         {
           rollback.exec();
-           ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Line Balance To Shipping Line Item %1")
-                                   .arg(_soitem->topLevelItem(i)->text(0)),
-                                   storedProcErrorLookup("issueLineBalanceToShipping", result),
-                                   __FILE__, __LINE__);
-          return false;
-        }
-
-        if (distributeInventory::SeriesAdjust(issueSales.value("result").toInt(), this) == XDialog::Rejected)
-        {
-          rollback.exec();
-          QMessageBox::information( this, tr("Issue to Shipping"), tr("Transaction Canceled") );
+          cleanup.exec();
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                               storedProcErrorLookup("issueLineBalanceToShipping", result),
+                               __FILE__, __LINE__);
           return false;
         }
 
@@ -1712,10 +1775,9 @@ bool salesOrderSimple::sIssueLineBalance()
       else
       {
         rollback.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Line Balance To Shipping"
-                                  "\n Line Item %1")
-                                  .arg(_soitem->topLevelItem(i)->text(0)),
-                                  issueSales, __FILE__, __LINE__);
+        cleanup.exec();
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                             issueSales, __FILE__, __LINE__);
         return false;
       }
     }
