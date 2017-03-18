@@ -256,6 +256,64 @@ void unpostedPoReceipts::sPost()
           parentSeries, __FILE__, __LINE__);
         return;
       }
+
+      // itemlocdistId used for "to" wh side of transaction if Transfer Order & MultiWhs 
+      int itemlocdistId = -1;
+      XSqlQuery parentItemlocdist;    
+   
+      // If Transfer Order, create parent itemlocdist for From (transit) itemsite 
+      if (recvInfo.value("recv_order_type").toString() == "TO" && _metrics->boolean("MultiWhs"))
+      {
+        XSqlQuery tohead;
+        tohead.prepare("SELECT itemsite_id "
+                    "FROM toitem "
+                    "  JOIN tohead ON toitem_tohead_id = tohead_id "
+                    "  JOIN itemsite ON toitem_item_id = itemsite_item_id "
+                    "    AND itemsite_warehous_id = tohead_trns_warehous_id " // from wh
+                    "  JOIN whsinfo ON itemsite_warehous_id = warehous_id "
+                    "WHERE toitem_id = :toitem_id "
+                    "  AND warehous_transit=FALSE "
+                    "  AND isControlledItemsite(itemsite_id);");
+        tohead.bindValue(":toitem_id", recvInfo.value("recv_orderitem_id").toInt());
+        tohead.exec();
+        if (tohead.first())
+        {
+          parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, "
+           ":itemlocSeries, NULL, NULL, 'TW') AS result;");
+          parentItemlocdist.bindValue(":itemsite_id", tohead.value("itemsite_id").toInt());
+          parentItemlocdist.bindValue(":qty", recvInfo.value("recv_qty").toDouble() * -1);
+          parentItemlocdist.bindValue(":orderType", recvInfo.value("recv_order_type").toString());
+          parentItemlocdist.bindValue(":orderitemId", recvInfo.value("recv_orderitem_id").toInt());
+          parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+          parentItemlocdist.exec();
+          if (parentItemlocdist.first())
+          {
+            // If the "to" itemsite is not controlled, distribute the From side here
+            if (!recvInfo.value("controlled").toBool())
+            {
+              if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(),
+                true) == XDialog::Rejected)
+              {
+                cleanup.exec();
+                QMessageBox::information( this, tr("Enter Receipts"),
+                  tr("Posting Distribution Detail Failed for 'From' itemsite") );
+                return;
+              }
+            }
+            else 
+              itemlocdistId = parentItemlocdist.value("result").toInt();
+          }
+          else 
+          {
+           cleanup.exec();
+           ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Record for "
+             "'From' itemsite"), parentItemlocdist, __FILE__, __LINE__);
+           return;
+          }
+        }
+        else if (tohead.lastError().type() != QSqlError::NoError)
+          return;
+      }
       
       // Controlled (if 'TO', this is the to itemsite)
       if (recvInfo.value("controlled").toBool() && 
@@ -270,10 +328,23 @@ void unpostedPoReceipts::sPost()
         parentItemlocdist.bindValue(":orderType", recvInfo.value("recv_order_type").toString());
         parentItemlocdist.bindValue(":orderitemId", recvInfo.value("recv_orderitem_id").toInt());
         parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+        if (itemlocdistId > 0)
+          parentItemlocdist.bindValue(":itemlocdistId", itemlocdistId);
         if (recvInfo.value("recv_order_type").toString() == "TO")
+        {
           parentItemlocdist.bindValue(":qty", recvInfo.value("recv_qty").toDouble());
-        else
+          parentItemlocdist.bindValue(":transType", "TR");
+        }
+        else if (recvInfo.value("recv_order_type").toString() == "RA")
+        {
           parentItemlocdist.bindValue(":qty", recvInfo.value("qty").toDouble());
+          parentItemlocdist.bindValue(":transType", "RR");
+        }
+        else if (recvInfo.value("recv_order_type").toString() == "PO")
+        {
+          parentItemlocdist.bindValue(":qty", recvInfo.value("qty").toDouble());
+          parentItemlocdist.bindValue(":transType", "RP");
+        }
         parentItemlocdist.exec();
         if (parentItemlocdist.first())
         {

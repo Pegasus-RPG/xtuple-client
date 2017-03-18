@@ -271,10 +271,9 @@ void issueLineToShipping::sIssue()
     // Before postSoItemProduction, if controlled: create the itemlocdist record and call distributeInventory::SeriesAdjust
     if (_controlled)
     {
-      parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, :itemlocSeries) AS result;");
+      parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, 'WO', :orderitemId, :itemlocSeries, NULL, NULL, 'RM') AS result;");
       parentItemlocdist.bindValue(":itemsite_id", _itemsiteId);
       parentItemlocdist.bindValue(":qty", (_qtyToIssue->toDouble() * issueIssue.value("coitem_qty_invuomratio").toDouble()) * -1);
-      parentItemlocdist.bindValue(":orderType", _ordertype);
       parentItemlocdist.bindValue(":orderitemId", _itemid);
       parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
       parentItemlocdist.exec();
@@ -343,7 +342,7 @@ void issueLineToShipping::sIssue()
   // Before issueToShipping, if controlled item: create the parent itemlocdist record, call distributeInventory::seriesAdjust
   if (_controlled)
   {
-    parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, :itemlocSeries, :invhistId, :itemlocdistId) AS result;");
+    parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, :itemlocSeries, :invhistId, :itemlocdistId, 'SH') AS result;");
     parentItemlocdist.bindValue(":itemsite_id", _itemsiteId);
     if (_ordertype == "SO")
       parentItemlocdist.bindValue(":qty", (_qtyToIssue->toDouble() * issueIssue.value("coitem_qty_invuomratio").toDouble()) * -1);
@@ -364,7 +363,7 @@ void issueLineToShipping::sIssue()
       {
         rollback.exec();
         cleanup.exec();
-        QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+        QMessageBox::information( this, tr("Issue to Shipping"), tr("Error Distributing Detail") );
         return;
       }
     }
@@ -489,7 +488,7 @@ void issueLineToShipping::populate()
 		"WHERE ((toitem_tohead_id=tohead_id)"
 		"  AND  (toitem_status <> 'X')"
 		"  AND  (tohead_src_warehous_id=warehous_id)"
-    "  AND  (itemsite_item_id = toitem_item_id AND itemsite_warehous_id = warehous_id "
+    "  AND  (itemsite_item_id = toitem_item_id AND itemsite_warehous_id = warehous_id) "
 		"  AND  (toitem_id=<? value(\"toitem_id\") ?>) );"
 		"<? endif ?>";
 

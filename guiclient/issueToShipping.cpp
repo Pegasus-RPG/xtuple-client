@@ -521,7 +521,7 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
     // Before postSoItemProduction, if controlled: create the itemlocdist record and call distributeInventory::SeriesAdjust
     if (controlled)
     {
-      parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, :itemlocSeries) AS result;");
+      parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, :itemlocSeries, NULL, NULL, 'RM') AS result;");
       parentItemlocdist.bindValue(":itemsite_id", itemsiteId);
       parentItemlocdist.bindValue(":qty", balance * -1);
       parentItemlocdist.bindValue(":orderType", _order->type());
@@ -604,7 +604,7 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   // Before issueToShipping, if controlled item: create the parent itemlocdist record, call distributeInventory::seriesAdjust
   if (controlled)
   {
-    parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, :itemlocSeries, :invhistId, :itemlocdistId) AS result;");
+    parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, :itemlocSeries, :invhistId, :itemlocdistId, 'SH') AS result;");
     parentItemlocdist.bindValue(":itemsite_id", itemsiteId);
     parentItemlocdist.bindValue(":qty", balance * -1);
     parentItemlocdist.bindValue(":orderType", _order->type());
@@ -635,11 +635,11 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
 
   // Finally, issue to shipping, wrap the remaining sql (if Job costed, transaction already began). 
   issue.exec("BEGIN;"); // TODO - remove this after issueToShipping is no longer returning negative error codes.
-  issue.prepare("SELECT issueToShipping(:ordertype::text, :lineitem_id, :qty, :itemlocseries, :ts, :invhist_id, false, true) AS result;");
+  issue.prepare("SELECT issueToShipping(:ordertype::text, :lineitem_id, :qty, :itemlocSeries, :ts, :invhist_id, false, true) AS result;");
   issue.bindValue(":ordertype",   _order->type());
   issue.bindValue(":lineitem_id", id);
   issue.bindValue(":qty",         balance);
-  issue.bindValue(":itemlocseries", itemlocSeries);
+  issue.bindValue(":itemlocSeries", itemlocSeries);
   issue.bindValue(":ts",          _transDate->date());
   if (invhistid > 0)
     issue.bindValue(":invhist_id", invhistid);
