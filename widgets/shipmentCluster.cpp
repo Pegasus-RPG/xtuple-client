@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -11,6 +11,7 @@
 #include "shipmentcluster.h"
 
 #include <QMessageBox>
+#include <QtScript>
 
 ShipmentCluster::ShipmentCluster(QWidget* pParent, const char* pName) :
     VirtualCluster(pParent, pName)
@@ -242,4 +243,17 @@ ShipmentSearch::ShipmentSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
 
   _searchName->setText(tr("Search through Shipped Date"));
   _searchDescrip->setText(tr("Search through Tracking Number"));
+}
+
+// script api //////////////////////////////////////////////////////////////////
+
+void setupShipmentClusterLineEdit(QScriptEngine *engine)
+{
+  QScriptValue widget = engine->newObject();
+
+  widget.setProperty("All",          QScriptValue(engine, ShipmentClusterLineEdit::All),          QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("SalesOrder",   QScriptValue(engine, ShipmentClusterLineEdit::SalesOrder),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("TransferOrder",QScriptValue(engine, ShipmentClusterLineEdit::TransferOrder),QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  engine->globalObject().setProperty("ShipmentClusterLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }

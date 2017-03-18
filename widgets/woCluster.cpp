@@ -1,17 +1,17 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
-#include <QLabel>
-#include <QPushButton>
-#include <QLayout>
 #include <QHBoxLayout>
+#include <QLabel>
+#include <QLayout>
+#include <QPushButton>
 #include <QVBoxLayout>
 #include <QtScript>
 
@@ -26,19 +26,6 @@
 #include "wocluster.h"
 
 #include "../common/format.h"
-
-void setupWoCluster(QScriptEngine *engine)
-{
-  QScriptValue widget = engine->newObject();
-
-  widget.setProperty("Open", QScriptValue(engine, WoLineEdit::Open), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Exploded", QScriptValue(engine, WoLineEdit::Exploded), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Issued", QScriptValue(engine, WoLineEdit::Issued), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Released", QScriptValue(engine, WoLineEdit::Released), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Closed", QScriptValue(engine, WoLineEdit::Closed), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  engine->globalObject().setProperty("WoLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
-}
 
 WoLineEdit::WoLineEdit(QWidget *pParent, const char *pName) :
     VirtualClusterLineEdit(pParent, "wo", "wo_id", "formatWoNumber(wo_id)", "item_number", "(item_descrip1 || ' ' || item_descrip2) ", 0, pName)
@@ -1124,3 +1111,32 @@ void woSearch::sFillList()
   _listTab->populate(wo, _woid);
 }
 
+// script api //////////////////////////////////////////////////////////////////
+
+void setupWoCluster(QScriptEngine *engine)
+{
+  QScriptValue widget = engine->newObject();
+
+  widget.setProperty("Open", QScriptValue(engine, WoLineEdit::Open), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Exploded", QScriptValue(engine, WoLineEdit::Exploded), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Issued", QScriptValue(engine, WoLineEdit::Issued), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Released", QScriptValue(engine, WoLineEdit::Released), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Closed", QScriptValue(engine, WoLineEdit::Closed), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  engine->globalObject().setProperty("WoLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+}
+
+void setupWomatlCluster(QScriptEngine *engine)
+{
+  QScriptValue widget = engine->newObject();
+
+  widget.setProperty("WorkOrder",  QScriptValue(engine, WomatlCluster::WorkOrder),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("WoMaterial", QScriptValue(engine, WomatlCluster::WoMaterial), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Wooper",     QScriptValue(engine, WomatlCluster::Wooper),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  widget.setProperty("Pull",    QScriptValue(engine, WomatlCluster::Pull),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Push",    QScriptValue(engine, WomatlCluster::Push),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Mixed",   QScriptValue(engine, WomatlCluster::Mixed), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  engine->globalObject().setProperty("WomatlCluster", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+}

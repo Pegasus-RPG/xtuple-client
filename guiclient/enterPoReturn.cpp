@@ -202,7 +202,8 @@ void enterPoReturn::sPost()
                           " LEFT OUTER JOIN recv ON (recv_id=poreject_recv_id) "
                           "WHERE pohead_id = :poheadId "
                           " AND isControlledItemsite(itemsite_id) "
-                          "GROUP BY poreject_id, pohead_number, itemsite_id, poitem_id, poitem_invvenduomratio;");
+                          "GROUP BY poreject_id, pohead_number, itemsite_id, poitem_id, poitem_invvenduomratio "
+                          "ORDER BY poreject_id;");
   controlledItems.bindValue(":poheadId", _po->id());
   controlledItems.exec();
   while (controlledItems.next())
@@ -210,7 +211,7 @@ void enterPoReturn::sPost()
     containsControlledItem = true;
     XSqlQuery parentItemlocdist;
     parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'PO', "
-                              " :orderitemId, :itemlocSeries) AS result;");
+                              " :orderitemId, :itemlocSeries, NULL, NULL, 'RP') AS result;");
     parentItemlocdist.bindValue(":itemsite_id", controlledItems.value("itemsite_id").toInt());
     parentItemlocdist.bindValue(":qty", controlledItems.value("qty").toDouble());
     parentItemlocdist.bindValue(":orderitemId", controlledItems.value("poitem_id").toInt());
@@ -249,8 +250,8 @@ void enterPoReturn::sPost()
     result = enterPost.value("result").toInt();
     if (result < 0 || result != itemlocSeries)
     {
-      cleanup.exec();
       rollback.exec();
+      cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Return"),
                              storedProcErrorLookup("postPoReturns", result),
                              __FILE__, __LINE__);
@@ -259,8 +260,8 @@ void enterPoReturn::sPost()
   }
   else if (enterPost.lastError().type() != QSqlError::NoError)
   {
-    cleanup.exec();
     rollback.exec();
+    cleanup.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting P/O Return"),
                          enterPost, __FILE__, __LINE__);
     return;

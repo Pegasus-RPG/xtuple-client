@@ -877,7 +877,8 @@ void invoice::postInvoice()
                 " JOIN item ON item_id = invcitem_item_id "
                 "WHERE invchead_id = :invchead_id "
                 " AND itemsite_costmethod != 'J' "
-                " AND isControlledItemsite(itemsite_id);");
+                " AND isControlledItemsite(itemsite_id) "
+                "ORDER BY invcitem_id;");
   items.bindValue(":invchead_id", _invcheadid);
   items.exec();
   while (items.next())
@@ -885,7 +886,7 @@ void invoice::postInvoice()
     // Create the parent itemlocdist record for each line item requiring distribution, call distributeInventory::seriesAdjust
     XSqlQuery parentItemlocdist;
     parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'IN', "
-                              " :orderitemId, :itemlocSeries);");
+                              " :orderitemId, :itemlocSeries, NULL, NULL, 'SH');");
     parentItemlocdist.bindValue(":itemsite_id", items.value("itemsite_id").toInt());
     parentItemlocdist.bindValue(":qty", items.value("qty").toDouble() * -1);
     parentItemlocdist.bindValue(":orderitemId", items.value("invcitem_id").toInt());
@@ -926,8 +927,8 @@ void invoice::postInvoice()
     int result = post.value("result").toInt();
     if (result < 0 || result != itemlocSeries)
     {
-      cleanup.exec();
       rollback.exec();
+      cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Invoice"),
                           storedProcErrorLookup("postInvoice", result),
                           __FILE__, __LINE__);
@@ -936,8 +937,8 @@ void invoice::postInvoice()
   }
   else if (post.lastError().type() != QSqlError::NoError)
   {
-    cleanup.exec();
     rollback.exec();
+    cleanup.exec();
     return;
   }
   post.exec("COMMIT;");

@@ -77,11 +77,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
                       // that can match the types that were inserted in creation of the original lsdetail records.
                       // Example of the lsdetail record creation that we're now looking for in this query: 
                       // https://github.com/xtuple/qt-client/blob/4_10_x/guiclient/issueWoMaterialItem.cpp#L211
-                      " COALESCE(invhist_transtype, CASE "
-                      "   WHEN itemlocdist_order_type = 'WO' THEN 'IM' "
-                      "   WHEN itemlocdist_order_type = 'TO' THEN 'TR' "
-                      "   WHEN itemlocdist_order_type = 'RA' THEN 'RR' "
-                      "   ELSE itemlocdist_order_type END) AS transtype, "
+                      " COALESCE(invhist_transtype, itemlocdist_transtype) AS transtype, "
                       " COALESCE(invhist_ordtype, itemlocdist_order_type) AS ordtype "
                       "FROM itemlocdist "
                       " LEFT OUTER JOIN invhist ON itemlocdist_invhist_id = invhist_id, "

@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -117,16 +117,18 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
                      "       itemsite_perishable, itemsite_warrpurc,"
                      "       COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id,"
                      "       COALESCE(itemlocdist_source_id,-1) AS itemlocdist_source_id,"
-                     "       CASE WHEN (COALESCE(invhist_transtype, '') IN ('RM','RP','RR','RX')) THEN 'R'"
-                     "            WHEN (invhist_transtype = 'IM') THEN 'I'"
-                     "            WHEN (invhist_transtype = 'SH' AND invhist_ordtype='SO') THEN 'I'"
+                     // TODO - remove invhist altogether after #22868 is complete
+                     "       CASE WHEN (COALESCE(invhist_transtype, itemlocdist_transtype) IN ('RM','RP','RR','RX')) THEN 'R'"
+                     "            WHEN (COALESCE(invhist_transtype, itemlocdist_transtype) = 'IM') THEN 'I'"
+                     "            WHEN (COALESCE(invhist_transtype, itemlocdist_transtype) = 'SH' "
+                     "              AND COALESCE(invhist_ordtype, itemlocdist_order_type) ='SO') THEN 'I'"
                      "            ELSE 'O'"
                      "       END AS trans_type,"
-                     "       CASE WHEN (COALESCE(invhist_transtype, '') IN ('RM','RP','RR','RX')"
+                     "       CASE WHEN (COALESCE(invhist_transtype, itemlocdist_transtype) IN ('RM','RP','RR','RX')"
                      "                  AND itemsite_recvlocation_dist) THEN true"
-                     "            WHEN (invhist_transtype = 'IM'"
+                     "            WHEN (COALESCE(invhist_transtype, itemlocdist_transtype) = 'IM'"
                      "                  AND itemsite_issuelocation_dist) THEN true"
-                     "            WHEN (COALESCE(invhist_transtype, '') NOT IN ('RM','RP','RR','RX','IM')"
+                     "            WHEN (COALESCE(invhist_transtype, itemlocdist_transtype) NOT IN ('RM','RP','RR','RX','IM')"
                      "                  AND itemsite_location_dist) THEN true"
                      "            ELSE false"
                      "       END AS auto_dist "
@@ -382,20 +384,24 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
       postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries) AS result;");
       postDistDetail.bindValue(":itemlocSeries", pItemlocSeries);
       postDistDetail.exec();
-
-      // Return error for any of the following 3 cases
-      if (!postDistDetail.first() 
-        || ErrorReporter::error(QtCriticalMsg, 0, tr("Distribution Detail Posting Failed"),
-          postDistDetail, __FILE__, __LINE__) 
-        // Call postDistDetail, If results 0 and the itemlocSeries corresponds with a controlled item 
-        // (has itemlocdist record) then return error
-        || (postDistDetail.value("result") == 0 && itemloc.size() > 0))
+      if (postDistDetail.first())
       {
+        // If result = 0 (no dist. records were posted) and there are itemlocdist records throw error
+        if (postDistDetail.value("result").toInt() <= 0 && itemloc.size() > 0)
+        {
+          ErrorReporter::error(QtCriticalMsg, 0, tr("Posting distribution detail returned 0 results"),
+            postDistDetail, __FILE__, __LINE__);
+          return XDialog::Rejected;
+        }
+      }
+      else 
+      {
+        ErrorReporter::error(QtCriticalMsg, 0, tr("Distribution Detail Posting Failed"),
+          postDistDetail, __FILE__, __LINE__);
         return XDialog::Rejected;
       }
     }
   }
-
   return XDialog::Accepted;
 }
 

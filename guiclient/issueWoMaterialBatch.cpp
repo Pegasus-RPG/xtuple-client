@@ -206,7 +206,7 @@ void issueWoMaterialBatch::sIssue()
       // Create the parent itemlocdist record for each line item requiring distribution, call distributeInventory::seriesAdjust
       XSqlQuery parentItemlocdist;
       parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'WO', "
-                                " :orderitemId, :itemlocSeries);");
+                                " :orderitemId, :itemlocSeries, NULL, NULL, 'IM');");
       parentItemlocdist.bindValue(":itemsite_id", items.value("itemsite_id").toInt());
       parentItemlocdist.bindValue(":qty", items.value("post_qty").toDouble());
       parentItemlocdist.bindValue(":orderitemId", items.value("womatl_id").toInt());
