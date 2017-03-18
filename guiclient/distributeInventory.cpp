@@ -387,7 +387,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
       if (postDistDetail.first())
       {
         // If result = 0 (no dist. records were posted) and there are itemlocdist records throw error
-        if (postDistDetail.value("result") <= 0 && itemloc.size() > 0)
+        if (postDistDetail.value("result").toInt() <= 0 && itemloc.size() > 0)
         {
           ErrorReporter::error(QtCriticalMsg, 0, tr("Posting distribution detail returned 0 results"),
             postDistDetail, __FILE__, __LINE__);
