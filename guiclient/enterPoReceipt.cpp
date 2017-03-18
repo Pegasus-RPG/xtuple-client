@@ -387,12 +387,18 @@ void enterPoReceipt::sPost()
       if (qi.value("recv_order_type").toString() == "TO")
       {
         parentItemlocdist.bindValue(":qty", qi.value("recv_qty").toDouble());
-        parentItemlocdist.bindValue(":transType", 'TR');
+        parentItemlocdist.bindValue(":transType", "TR");
       }
       else if (qi.value("recv_order_type").toString() == "RA")
-        parentItemlocdist.bindValue(":transType", 'RR');
+      {
+        parentItemlocdist.bindValue(":qty", qi.value("qty").toDouble());
+        parentItemlocdist.bindValue(":transType", "RR");
+      }
       else if (qi.value("recv_order_type").toString() == "PO")
-        parentItemlocdist.bindValue(":transType", 'RP');
+      {
+        parentItemlocdist.bindValue(":qty", qi.value("qty").toDouble());
+        parentItemlocdist.bindValue(":transType", "RP");
+      }
       parentItemlocdist.exec();
       if (parentItemlocdist.first())
       {
