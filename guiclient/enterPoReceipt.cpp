@@ -366,11 +366,8 @@ void enterPoReceipt::sPost()
          return;
         }
       }
-      else
-      {
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving 'From' itemsite"), tohead, __FILE__, __LINE__);
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving 'From' itemsite"), tohead, __FILE__, __LINE__))
         return;
-      }
     }
     
     // Controlled (if TO, this is the to itemsite) AND
