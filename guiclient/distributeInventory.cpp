@@ -621,8 +621,10 @@ void distributeInventory::sFillList()
   distributeFillList.prepare( "SELECT itemsite_id, "
              "       COALESCE(itemsite_location_id,-1) AS itemsite_location_id,"
              "       formatlotserialnumber(itemlocdist_ls_id) AS lotserial,"
-             // TODO - this order column which populates the _order text field fails for everything except Sales Orders
-             "       (itemlocdist_order_type || ' ' || formatSoItemNumber(itemlocdist_order_id)) AS order,"
+             // TODO - this order column which populates the _order text field is null for everything except Sales Orders
+             "       CASE WHEN itemlocdist_order_type = 'SO' AND itemlocdist_order_id IS NOT NULL "
+             "            THEN (itemlocdist_order_type || ' ' || formatSoItemNumber(itemlocdist_order_id)) "
+             "            ELSE '' END AS order, "
              "       (itemsite_controlmethod IN ('L', 'S')) AS lscontrol,"
              "       parent.itemlocdist_qty AS qtytodistribute,"
              "       ( ( SELECT COALESCE(SUM(child.itemlocdist_qty), 0)"

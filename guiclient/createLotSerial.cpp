@@ -118,17 +118,13 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
       preassign.prepare("SELECT MAX(lsdetail_id) AS lsdetail_id, ls_number "
                         "FROM lsdetail "
                         " JOIN ls ON ls_id = lsdetail_ls_id "
-                        "WHERE "
-                        " CASE WHEN :ordnumber IS NOT NULL THEN lsdetail_source_number = :invhist_ordnumber "
-                        "   ELSE lsdetail_source_id = :sourceId END "
+                        "WHERE lsdetail_source_number = :ordnumber "
                         " AND lsdetail_source_type = :transtype "
                         " AND ls_item_id = :item_id "
                         " AND lsdetail_qtytoassign > 0 "
                         "GROUP BY ls_number;");
       preassign.bindValue(":transtype", createet.value("transtype").toString());
-      if (createet.value("invhist_ordnumber").toString().length())
-        preassign.bindValue(":invhist_ordnumber", createet.value("invhist_ordnumber").toString());
-      preassign.bindValue(":sourceId", createet.value("itemlocdist_order_id").toInt());
+      preassign.bindValue(":ordnumber", createet.value("ordnumber").toString());
       preassign.bindValue(":item_id", _item->id());
       preassign.exec();
       if (preassign.first())
