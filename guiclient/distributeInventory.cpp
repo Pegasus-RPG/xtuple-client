@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -103,9 +103,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
   bool pPreDistributed)
 {
   int result;
-  QList<int>  ildsList; // Item Loc Dist Series 
-  QList<int>  ildList; // Item Loc Dist List
-
+  
   if (DEBUG)
     qDebug() << tr("DistributeInventory::SeriesAdjust pItemlocSeries: %1, pPreDistributed: %2")
     .arg(pItemlocSeries).arg(pPreDistributed);
@@ -115,20 +113,22 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
     XSqlQuery itemloc;
     itemloc.prepare( "SELECT itemlocdist_id, itemlocdist_reqlotserial," 
                      "       itemlocdist_distlotserial, itemlocdist_qty,"
-                     "       itemsite_loccntrl, itemsite_controlmethod,"
+                     "       itemsite_id, itemsite_loccntrl, itemsite_controlmethod,"
                      "       itemsite_perishable, itemsite_warrpurc,"
                      "       COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id,"
                      "       COALESCE(itemlocdist_source_id,-1) AS itemlocdist_source_id,"
-                     "       CASE WHEN (COALESCE(invhist_transtype, '') IN ('RM','RP','RR','RX')) THEN 'R'"
-                     "            WHEN (invhist_transtype = 'IM') THEN 'I'"
-                     "            WHEN (invhist_transtype = 'SH' AND invhist_ordtype='SO') THEN 'I'"
+                     // TODO - remove invhist altogether after #22868 is complete
+                     "       CASE WHEN (COALESCE(invhist_transtype, itemlocdist_transtype) IN ('RM','RP','RR','RX')) THEN 'R'"
+                     "            WHEN (COALESCE(invhist_transtype, itemlocdist_transtype) = 'IM') THEN 'I'"
+                     "            WHEN (COALESCE(invhist_transtype, itemlocdist_transtype) = 'SH' "
+                     "              AND COALESCE(invhist_ordtype, itemlocdist_order_type) ='SO') THEN 'I'"
                      "            ELSE 'O'"
                      "       END AS trans_type,"
-                     "       CASE WHEN (COALESCE(invhist_transtype, '') IN ('RM','RP','RR','RX')"
+                     "       CASE WHEN (COALESCE(invhist_transtype, itemlocdist_transtype) IN ('RM','RP','RR','RX')"
                      "                  AND itemsite_recvlocation_dist) THEN true"
-                     "            WHEN (invhist_transtype = 'IM'"
+                     "            WHEN (COALESCE(invhist_transtype, itemlocdist_transtype) = 'IM'"
                      "                  AND itemsite_issuelocation_dist) THEN true"
-                     "            WHEN (COALESCE(invhist_transtype, '') NOT IN ('RM','RP','RR','RX','IM')"
+                     "            WHEN (COALESCE(invhist_transtype, itemlocdist_transtype) NOT IN ('RM','RP','RR','RX','IM')"
                      "                  AND itemsite_location_dist) THEN true"
                      "            ELSE false"
                      "       END AS auto_dist "
@@ -222,7 +222,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
         }
 
         // Open Assign Lot Serial dialog, populating with auto ls info if required. 
-        if(itemlocSeries == -1)
+        if (itemlocSeries == -1)
         {
           ParameterList params;
           params.append("itemlocdist_id", itemloc.value("itemlocdist_id").toInt());
@@ -269,14 +269,17 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
             if (itemloc.value("auto_dist").toBool())
             {
               if (newdlg.sDefaultAndPost())
-                ildList.append(query.value("itemlocdist_id").toInt());
+              {
+                if (DEBUG)
+                  qDebug() << tr("Pre-22868 itemlocdist_id array for distributeToLocations(). "
+                                 "Auto Dist + Default Post: ildList.append(%1) - (itemlocdist_id from "
+                                 "itemloc query above)").arg(itemloc.value("itemlocdist_id").toInt());
+              }
               else
               {
                 result = newdlg.exec();
                 if (result == XDialog::Rejected)
                   return XDialog::Rejected;
-                else
-                  ildList.append(result);
               }
             }
             else
@@ -284,9 +287,12 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
               result = newdlg.exec();
               if (result == XDialog::Rejected)
                 return XDialog::Rejected;
-              else
-                ildList.append(result);
             }
+
+            if (DEBUG && result > 0)
+              qDebug() << tr("Pre-22868 itemlocdist_id array for distributeToLocations(). "
+                             "Auto Dist: ildList.append(%1) - (itemlocdist_id from "
+                             "distributeInventory newdlg)").arg(result);
           }
         }
         else
@@ -299,9 +305,9 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
 
           // Append id to list and process at the end
           if (DEBUG)
-            qDebug() << tr("ildsList.append(%1)").arg(itemlocSeries);
-
-          ildsList.append(itemlocSeries);
+            qDebug() << tr("Pre-22868 itemloc_series array for distributeItemlocSeries(). "
+                           "Not Location Controlled: ildsList.append(%1) - (itemlocSeries)").
+                           arg(itemlocSeries);
         }
 
         // Set itemlocdist_child_series of parent itemlocdist record
@@ -325,14 +331,17 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
         if (itemloc.value("auto_dist").toBool())
         {
           if (newdlg.sDefaultAndPost())
-            ildList.append(itemloc.value("itemlocdist_id").toInt());
+          {
+            if (DEBUG)
+              qDebug() << tr("Pre-22868 itemlocdist_id array for distributeToLocations(). "
+                             "Auto Dist + Default Post: ildList.append(%1) - (itemlocdist_id from "
+                             "itemloc query above)").arg(itemloc.value("itemlocdist_id").toInt());
+          }
           else
           {
             result = newdlg.exec();
             if (result == XDialog::Rejected)
               return XDialog::Rejected;
-            else
-              ildList.append(result);
           }
         }
         else
@@ -340,9 +349,12 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
           result = newdlg.exec();
           if (result == XDialog::Rejected)
             return XDialog::Rejected;
-          else
-            ildList.append(result);
         }
+
+        if (DEBUG && result > 0)
+          qDebug() << tr("Pre-22868 itemlocdist_id array for distributeToLocations(). "
+                         "Auto Dist: ildList.append(%1) - (itemlocdist_id from "
+                         "distributeInventory newdlg)").arg(result);
 
         // Set itemlocdist_child_series of parent itemlocdist record. In this case there is no child, set it to itself.
         XSqlQuery query;
@@ -369,17 +381,27 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent,
     if (!pPreDistributed)
     {
       XSqlQuery postDistDetail;
-      postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries, NULL::INTEGER) AS result;");
+      postDistDetail.prepare("SELECT postdistdetail(:itemlocSeries) AS result;");
       postDistDetail.bindValue(":itemlocSeries", pItemlocSeries);
       postDistDetail.exec();
-      if (!postDistDetail.first() || ErrorReporter::error(QtCriticalMsg, 0, tr("Distribution Detail Posting Failed"),
-                                postDistDetail, __FILE__, __LINE__))
+      if (postDistDetail.first())
       {
+        // If result = 0 (no dist. records were posted) and there are itemlocdist records throw error
+        if (postDistDetail.value("result").toInt() <= 0 && itemloc.size() > 0)
+        {
+          ErrorReporter::error(QtCriticalMsg, 0, tr("Posting distribution detail returned 0 results"),
+            postDistDetail, __FILE__, __LINE__);
+          return XDialog::Rejected;
+        }
+      }
+      else 
+      {
+        ErrorReporter::error(QtCriticalMsg, 0, tr("Distribution Detail Posting Failed"),
+          postDistDetail, __FILE__, __LINE__);
         return XDialog::Rejected;
       }
     }
   }
-
   return XDialog::Accepted;
 }
 
@@ -599,7 +621,10 @@ void distributeInventory::sFillList()
   distributeFillList.prepare( "SELECT itemsite_id, "
              "       COALESCE(itemsite_location_id,-1) AS itemsite_location_id,"
              "       formatlotserialnumber(itemlocdist_ls_id) AS lotserial,"
-             "       (itemlocdist_order_type || ' ' || formatSoItemNumber(itemlocdist_order_id)) AS order,"
+             // TODO - this order column which populates the _order text field is null for everything except Sales Orders
+             "       CASE WHEN itemlocdist_order_type = 'SO' AND itemlocdist_order_id IS NOT NULL "
+             "            THEN (itemlocdist_order_type || ' ' || formatSoItemNumber(itemlocdist_order_id)) "
+             "            ELSE '' END AS order, "
              "       (itemsite_controlmethod IN ('L', 'S')) AS lscontrol,"
              "       parent.itemlocdist_qty AS qtytodistribute,"
              "       ( ( SELECT COALESCE(SUM(child.itemlocdist_qty), 0)"
