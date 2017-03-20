@@ -68,23 +68,31 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
   if (valid)
   {
     _itemlocdistid = param.toInt();
-    createet.prepare( "SELECT item_fractional, itemsite_controlmethod, itemsite_item_id, "
+    // When #22868 is complete, the attempt to use invhist will be removed and replaced with something (hopefully not a case statement) 
+    // that can match the types that were inserted in creation of the original lsdetail records.
+    // Example of the lsdetail record creation that we're now looking for in this query: 
+    // https://github.com/xtuple/qt-client/blob/4_10_x/guiclient/issueWoMaterialItem.cpp#L211
+                     
+    createet.prepare("SELECT item_fractional, itemsite_controlmethod, itemsite_item_id, "
                       " itemsite_id, itemsite_perishable, itemsite_warrpurc, "
                       " COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id, "
-                      " invhist_ordnumber, "
+                      " COALESCE(invhist_ordnumber, CASE "
+                      "   WHEN orderhead_id IS NULL AND itemlocdist_order_type = 'WO' THEN formatWoNumber(womatl_wo_id) "
+                      "   WHEN orderhead_id IS NOT NULL AND orderhead_type = 'SO' THEN formatSoNumber(orderitem_id) "
+                      "   WHEN orderhead_id IS NOT NULL AND orderhead_type = 'TO' THEN formatToNumber(orderitem_id) "
+                      "   WHEN orderhead_id IS NOT NULL AND orderhead_type = 'RA' THEN orderhead_number || '-' || orderitem_linenumber "
+                      "   ELSE '' END) AS ordnumber, "
                       " itemlocdist_order_id, "
-                      // When #22868 is complete, the attempt to use invhist will be removed and replaced with something (hopefully not a case statement) 
-                      // that can match the types that were inserted in creation of the original lsdetail records.
-                      // Example of the lsdetail record creation that we're now looking for in this query: 
-                      // https://github.com/xtuple/qt-client/blob/4_10_x/guiclient/issueWoMaterialItem.cpp#L211
                       " COALESCE(invhist_transtype, itemlocdist_transtype) AS transtype, "
                       " COALESCE(invhist_ordtype, itemlocdist_order_type) AS ordtype "
                       "FROM itemlocdist "
-                      " LEFT OUTER JOIN invhist ON itemlocdist_invhist_id = invhist_id, "
-                      " itemsite, item "
-                      "WHERE itemlocdist_itemsite_id=itemsite_id "
-                      " AND itemsite_item_id=item_id "
-                      " AND itemlocdist_id = :itemlocdist_id;");
+                      " JOIN itemsite ON itemlocdist_itemsite_id = itemsite_id "
+                      " JOIN item ON itemsite_item_id = item_id "
+                      " LEFT JOIN orderitem ON itemlocdist_order_id = orderitem_id AND itemlocdist_order_type = orderitem_orderhead_type  "
+                      " LEFT JOIN orderhead ON orderitem_orderhead_id = orderhead_id AND orderhead_type = itemlocdist_order_type "
+                      " LEFT JOIN womatl ON itemlocdist_order_id = womatl_id AND itemlocdist_order_type = 'WO' "
+                      " LEFT OUTER JOIN invhist ON itemlocdist_invhist_id = invhist_id "
+                      "WHERE itemlocdist_id = :itemlocdist_id;");
     createet.bindValue(":itemlocdist_id", _itemlocdistid);
     createet.exec();
     if (createet.first())
@@ -110,17 +118,13 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
       preassign.prepare("SELECT MAX(lsdetail_id) AS lsdetail_id, ls_number "
                         "FROM lsdetail "
                         " JOIN ls ON ls_id = lsdetail_ls_id "
-                        "WHERE "
-                        " CASE WHEN :invhist_ordnumber IS NOT NULL THEN lsdetail_source_number = :invhist_ordnumber "
-                        "   ELSE lsdetail_source_id = :sourceId END "
+                        "WHERE lsdetail_source_number = :ordnumber "
                         " AND lsdetail_source_type = :transtype "
                         " AND ls_item_id = :item_id "
                         " AND lsdetail_qtytoassign > 0 "
                         "GROUP BY ls_number;");
       preassign.bindValue(":transtype", createet.value("transtype").toString());
-      if (createet.value("invhist_ordnumber").toString().length())
-        preassign.bindValue(":invhist_ordnumber", createet.value("invhist_ordnumber").toString());
-      preassign.bindValue(":sourceId", createet.value("itemlocdist_order_id").toInt());
+      preassign.bindValue(":ordnumber", createet.value("ordnumber").toString());
       preassign.bindValue(":item_id", _item->id());
       preassign.exec();
       if (preassign.first())
