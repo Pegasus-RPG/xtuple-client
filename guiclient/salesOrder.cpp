@@ -4414,7 +4414,7 @@ void salesOrder::sIssueLineBalance()
         }
 
         XSqlQuery prod;
-        prod.exec("BEGIN"); // Because of possible issueLineBalanceToShipping errors
+        prod.exec("BEGIN;");
         prod.prepare("SELECT postSoItemProduction(:soitem_id, :qty, now(), :itemlocSeries, TRUE) AS result;");
         prod.bindValue(":soitem_id", _soitem->id());
         prod.bindValue(":qty", balance);
@@ -4474,7 +4474,7 @@ void salesOrder::sIssueLineBalance()
       {
         parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, 'SO', :orderitemId, :itemlocSeries, :invhistId, :itemlocdistId, 'SH') AS result;");
         parentItemlocdist.bindValue(":itemsite_id", itemsiteId);
-        parentItemlocdist.bindValue(":qty", (balance * issueSales.value("coitem_qty_invuomratio").toDouble()) * -1);
+        parentItemlocdist.bindValue(":qty", balance * -1);
         parentItemlocdist.bindValue(":orderitemId", soitem->id());
         parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
         if (invhistid > 0)
@@ -4501,7 +4501,7 @@ void salesOrder::sIssueLineBalance()
       }
 
       // Finally, Issue to Shipping
-      issueSales.prepare("BEGIN"); // TODO - remove after issueLineBalanceToShipping no longer returns negative error codes
+      issueSales.prepare("BEGIN;"); // TODO - remove after issueLineBalanceToShipping no longer returns negative error codes
       issueSales.prepare("SELECT issueLineBalanceToShipping('SO', :soitem_id, now(), :itemlocseries, :invhist_id, TRUE) AS result;");
       issueSales.bindValue(":soitem_id", soitem->id());
       issueSales.bindValue(":itemlocseries", itemlocSeries);

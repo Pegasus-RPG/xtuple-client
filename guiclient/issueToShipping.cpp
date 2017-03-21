@@ -731,7 +731,7 @@ void issueToShipping::sReturnStock()
     XSqlQuery rollback;
     rollback.prepare("ROLLBACK;");
 
-    issueReturnStock.exec("BEGIN");
+    issueReturnStock.exec("BEGIN;");
     issueReturnStock.prepare("SELECT returnItemShipments(:ordertype, :soitem_id, 0, :ts) AS result;");
     issueReturnStock.bindValue(":ordertype", _order->type());
     issueReturnStock.bindValue(":soitem_id", cursor->id());

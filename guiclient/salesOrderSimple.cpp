@@ -1655,7 +1655,7 @@ bool salesOrderSimple::sIssueLineBalance()
         }
 
         XSqlQuery prod;
-        prod.exec("BEGIN");
+        prod.exec("BEGIN;");
         prod.prepare("SELECT postSoItemProduction(:soitem_id, :qty, now(), :itemlocSeries, TRUE) AS result;");
         prod.bindValue(":soitem_id", _soitem->id());
         prod.bindValue(":qty", _soitem->id());
@@ -1742,7 +1742,7 @@ bool salesOrderSimple::sIssueLineBalance()
       }
 
       // Finally, Issue to Shipping
-      issueSales.prepare("BEGIN"); // TODO - remove after issueLineBalanceToShipping no longer returns negative error codes
+      issueSales.prepare("BEGIN;"); // TODO - remove after issueLineBalanceToShipping no longer returns negative error codes
       issueSales.prepare("SELECT issueLineBalanceToShipping('SO', :soitem_id, now(), :itemlocseries, :invhist_id, TRUE) AS result;");
       issueSales.bindValue(":soitem_id", soitem->id());
       issueSales.bindValue(":itemlocseries", itemlocSeries);
@@ -1820,9 +1820,8 @@ bool salesOrderSimple::sShipInvoice()
   // ship the shipment
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
-  // failed insertGLTransaction RETURNs -5 rather than RAISE EXCEPTION
+  // Required because shipShipment returns negative error codes 
   shipq.exec("BEGIN;");
-
   shipq.prepare( "SELECT shipShipment(:shiphead_id, CURRENT_DATE) AS result;");
   shipq.bindValue(":shiphead_id", shipheadid);
   shipq.exec();
