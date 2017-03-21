@@ -4305,8 +4305,7 @@ void salesOrder::sIssueLineBalance()
       issueSales.prepare("SELECT itemsite_id, item_number, warehous_code, itemsite_costmethod, "
                          "  sufficientInventoryToShipItem('SO', coitem_id) AS isqtyavail, "
                          "  isControlledItemsite(itemsite_id) AS controlled, "
-                         "  calcIssueToShippingLineBalance('SO', coitem_id) AS balance, "
-                         "  coitem_qty_invuomratio "
+                         "  calcIssueToShippingLineBalance('SO', coitem_id) AS balance "
                          "FROM coitem JOIN itemsite ON (itemsite_id=coitem_itemsite_id) "
                          "  JOIN item ON (item_id=itemsite_item_id) "
                          "  JOIN whsinfo ON (warehous_id=itemsite_warehous_id) "
@@ -4386,7 +4385,7 @@ void salesOrder::sIssueLineBalance()
         {
           parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, 'WO', :orderitemId, :itemlocSeries, NULL, NULL, 'RM') AS result;");
           parentItemlocdist.bindValue(":itemsite_id", itemsiteId);
-          parentItemlocdist.bindValue(":qty", (balance * issueSales.value("coitem_qty_invuomratio").toDouble()) * -1);
+          parentItemlocdist.bindValue(":qty", balance * -1);
           parentItemlocdist.bindValue(":orderitemId", soitem->id());
           parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
           parentItemlocdist.exec();
@@ -4400,7 +4399,10 @@ void salesOrder::sIssueLineBalance()
             {
               rollback.exec();
               cleanup.exec();
-              QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+              QMessageBox::information( this, tr("Issue Line Balance"), 
+                tr("Detail Distribution Failed for Job Item %1 at Warehouse %2")
+                .arg(issueSales.value("item_number").toString())
+                .arg(issueSales.value("warehous_code").toString()));
               return;
             }
           }
@@ -4412,10 +4414,10 @@ void salesOrder::sIssueLineBalance()
         }
 
         XSqlQuery prod;
-        prod.exec("BEGIN");
+        prod.exec("BEGIN"); // Because of possible issueLineBalanceToShipping errors
         prod.prepare("SELECT postSoItemProduction(:soitem_id, :qty, now(), :itemlocSeries, TRUE) AS result;");
         prod.bindValue(":soitem_id", _soitem->id());
-        prod.bindValue(":qty", _soitem->id());
+        prod.bindValue(":qty", balance);
         prod.bindValue(":itemlocSeries", itemlocSeries);
         prod.exec();
         if (prod.lastError().type() != QSqlError::NoError)
@@ -4503,7 +4505,7 @@ void salesOrder::sIssueLineBalance()
       issueSales.prepare("SELECT issueLineBalanceToShipping('SO', :soitem_id, now(), :itemlocseries, :invhist_id, TRUE) AS result;");
       issueSales.bindValue(":soitem_id", soitem->id());
       issueSales.bindValue(":itemlocseries", itemlocSeries);
-      if (invhistid)
+      if (invhistid > 0)
         issueSales.bindValue(":invhist_id", invhistid);
       issueSales.exec();
       if (issueSales.lastError().type() != QSqlError::NoError)

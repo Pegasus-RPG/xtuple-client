@@ -26,7 +26,7 @@
 #include "storedProcErrorLookup.h"
 #include "errorReporter.h"
 
-#define DEBUG true
+#define DEBUG false
 
 issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl),
@@ -505,7 +505,6 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
       qDebug() << "issueToShipping::sIssueLineBalance controlled: " << controlled;  
       qDebug() << "issueToShipping::sIssueLineBalance itemsiteId: " << itemsiteId;
     }
-    
   }
   else
   {
@@ -513,7 +512,6 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
       parentSeries, __FILE__, __LINE__);
     return false;
   }
-
 
   // If this is a lot/serial controlled job item, we need to post production first
   if (altId == 1)
@@ -604,7 +602,8 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   // Before issueToShipping, if controlled item: create the parent itemlocdist record, call distributeInventory::seriesAdjust
   if (controlled)
   {
-    parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, :itemlocSeries, :invhistId, :itemlocdistId, 'SH') AS result;");
+    parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, :itemlocSeries, "
+      ":invhistId, :itemlocdistId, 'SH') AS result;");
     parentItemlocdist.bindValue(":itemsite_id", itemsiteId);
     parentItemlocdist.bindValue(":qty", balance * -1);
     parentItemlocdist.bindValue(":orderType", _order->type());
@@ -635,7 +634,8 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
 
   // Finally, issue to shipping, wrap the remaining sql (if Job costed, transaction already began). 
   issue.exec("BEGIN;"); // TODO - remove this after issueToShipping is no longer returning negative error codes.
-  issue.prepare("SELECT issueToShipping(:ordertype::text, :lineitem_id, :qty, :itemlocSeries, :ts, :invhist_id, false, true) AS result;");
+  issue.prepare("SELECT issueToShipping(:ordertype::text, :lineitem_id, :qty, :itemlocSeries, :ts, "
+    ":invhist_id, false, true) AS result;");
   issue.bindValue(":ordertype",   _order->type());
   issue.bindValue(":lineitem_id", id);
   issue.bindValue(":qty",         balance);
@@ -664,14 +664,14 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   	{
         XSqlQuery lsdetail;
         lsdetail.prepare("INSERT INTO lsdetail "
-  	                   "            (lsdetail_itemsite_id, lsdetail_created, lsdetail_source_type, "
-  	  				   "             lsdetail_source_id, lsdetail_source_number, lsdetail_ls_id, lsdetail_qtytoassign, "
-                                             "             lsdetail_expiration, lsdetail_warrpurc ) "
-  					   "SELECT invhist_itemsite_id, NOW(), 'TR', "
-  					   "       :orderitemid, invhist_ordnumber, invdetail_ls_id, (invdetail_qty * -1.0), "
-                                             "       invdetail_expiration, invdetail_warrpurc "
-  					   "FROM invhist JOIN invdetail ON (invdetail_invhist_id=invhist_id) "
-  					   "WHERE (invhist_series=:itemlocseries);");
+  	                     " (lsdetail_itemsite_id, lsdetail_created, lsdetail_source_type, "
+  	  				           "  lsdetail_source_id, lsdetail_source_number, lsdetail_ls_id, lsdetail_qtytoassign, "
+                         "  lsdetail_expiration, lsdetail_warrpurc ) "
+  					             "SELECT invhist_itemsite_id, NOW(), 'TR', "
+  					             "   :orderitemid, invhist_ordnumber, invdetail_ls_id, (invdetail_qty * -1.0), "
+                         "   invdetail_expiration, invdetail_warrpurc "
+  					             "FROM invhist JOIN invdetail ON (invdetail_invhist_id=invhist_id) "
+  					             "WHERE invhist_series=:itemlocseries;");
         lsdetail.bindValue(":orderitemid", id);
         lsdetail.bindValue(":itemlocseries", result);
         lsdetail.exec();
@@ -690,6 +690,7 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   else if (issue.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
+    cleanup.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Item"),
                          issue, __FILE__, __LINE__);
     return false;
@@ -726,8 +727,6 @@ void issueToShipping::sReturnStock()
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
-
-    // TODO - remove this transaction lock. What scenario requires inventory distribution?
     
     XSqlQuery rollback;
     rollback.prepare("ROLLBACK;");

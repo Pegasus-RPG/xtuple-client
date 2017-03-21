@@ -32,7 +32,6 @@ issueLineToShipping::issueLineToShipping(QWidget* parent, const char* name, bool
 
   _itemsiteId = 0;
   _controlled = false;
-
   _requireInventory = false;
   _snooze = false;
   _transTS = QDateTime::currentDateTime();
@@ -347,7 +346,7 @@ void issueLineToShipping::sIssue()
     if (_ordertype == "SO")
       parentItemlocdist.bindValue(":qty", (_qtyToIssue->toDouble() * issueIssue.value("coitem_qty_invuomratio").toDouble()) * -1);
     else
-      parentItemlocdist.bindValue(":qty", _qtyToIssue->toDouble());
+      parentItemlocdist.bindValue(":qty", _qtyToIssue->toDouble() * -1);
     parentItemlocdist.bindValue(":orderType", _ordertype);
     parentItemlocdist.bindValue(":orderitemId", _itemid);
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
@@ -509,7 +508,6 @@ void issueLineToShipping::populate()
 
     _itemsiteId = itemq.value("itemsite_id").toInt();
     _controlled = itemq.value("controlled").toInt();
-    qDebug() << "_controlled: " << _controlled;
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
                                 itemq, __FILE__, __LINE__))
