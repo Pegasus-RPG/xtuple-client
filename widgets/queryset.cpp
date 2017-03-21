@@ -262,7 +262,10 @@ QScriptValue constructQuerySet(QScriptContext *context,
 
 void setupQuerySet(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newFunction(constructQuerySet);
-
-  engine->globalObject().setProperty("QuerySet", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("QuerySet");
+  if (! widget.isFunction()) {
+    widget = engine->newFunction(constructQuerySet);
+    engine->globalObject().setProperty("QuerySet", widget, ro);
+  }
 }

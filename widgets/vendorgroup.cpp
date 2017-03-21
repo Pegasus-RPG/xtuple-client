@@ -158,12 +158,15 @@ void VendorGroup::synchronize(VendorGroup *p)
 
 void setupVendorGroup(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("VendorGroup");
+  if (! widget.isObject()) {
+    widget = engine->newObject();
+    engine->globalObject().setProperty("VendorGroup", widget, ro);
+  }
 
-  widget.setProperty("All",          QScriptValue(engine, VendorGroup::All),         QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Selected",     QScriptValue(engine, VendorGroup::Selected),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("SelectedType", QScriptValue(engine, VendorGroup::SelectedType),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("TypePattern",  QScriptValue(engine, VendorGroup::TypePattern), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  engine->globalObject().setProperty("VendorGroup", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("All",          QScriptValue(engine, VendorGroup::All),          ro);
+  widget.setProperty("Selected",     QScriptValue(engine, VendorGroup::Selected),     ro);
+  widget.setProperty("SelectedType", QScriptValue(engine, VendorGroup::SelectedType), ro);
+  widget.setProperty("TypePattern",  QScriptValue(engine, VendorGroup::TypePattern),  ro);
 }

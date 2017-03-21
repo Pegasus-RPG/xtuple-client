@@ -195,9 +195,9 @@ QScriptValue constructXDocCopySetter(QScriptContext *context,
 void setupXDocCopySetter(QScriptEngine *engine)
 {
   QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-
-  QScriptValue constructor = engine->newFunction(constructXDocCopySetter);
-  engine->globalObject().setProperty("XDocCopySetter", constructor, ro);
-
-  //constructor.setProperty("ChangeFuture", QScriptValue(engine, XDocCopySetter::ChangeFuture), ro);
+  QScriptValue widget = engine->globalObject().property("XDocCopySetter");
+  if (! widget.isFunction()) {
+    widget = engine->newFunction(constructXDocCopySetter);
+    engine->globalObject().setProperty("XDocCopySetter", widget, ro);
+  }
 }

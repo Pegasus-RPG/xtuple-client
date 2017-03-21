@@ -796,8 +796,14 @@ void CRMAcctSubtypeFromScriptValue(const QScriptValue &obj, enum CRMAcctLineEdit
 
 void setupCRMAcctLineEdit(QScriptEngine *engine)
 {
-  QScriptValue            widget = engine->newObject();
+  qScriptRegisterMetaType(engine, CRMAcctSubtypeToScriptValue, CRMAcctSubtypeFromScriptValue);
+
   QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("CRMAcctLineEdit");
+  if (! widget.isObject()) {
+    widget = engine->newObject();
+    engine->globalObject().setProperty("CRMAcctLineEdit", widget, ro);
+  }
 
   widget.setProperty("Crmacct",         QScriptValue(engine, CRMAcctLineEdit::Crmacct),         ro);
   widget.setProperty("Competitor",      QScriptValue(engine, CRMAcctLineEdit::Competitor),      ro);
@@ -810,8 +816,4 @@ void setupCRMAcctLineEdit(QScriptEngine *engine)
   widget.setProperty("User",            QScriptValue(engine, CRMAcctLineEdit::User),            ro);
   widget.setProperty("Vend",            QScriptValue(engine, CRMAcctLineEdit::Vend),            ro);
   widget.setProperty("CustAndProspect", QScriptValue(engine, CRMAcctLineEdit::CustAndProspect), ro);
-
-  qScriptRegisterMetaType(engine, CRMAcctSubtypeToScriptValue, CRMAcctSubtypeFromScriptValue);
-
-  engine->globalObject().setProperty("CRMAcctLineEdit", widget, ro);
 }

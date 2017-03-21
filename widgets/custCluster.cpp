@@ -458,16 +458,19 @@ void CLineEditTypesFromScriptValue(const QScriptValue &obj, CLineEdit::CLineEdit
 
 void setupCLineEdit(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
-
-  widget.setProperty("AllCustomers",	           QScriptValue(engine, CLineEdit::AllCustomers),	        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ActiveCustomers",	           QScriptValue(engine, CLineEdit::ActiveCustomers), 	        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("AllProspects",	           QScriptValue(engine, CLineEdit::AllProspects),	        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ActiveProspects",	           QScriptValue(engine, CLineEdit::ActiveProspects),	        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("AllCustomersAndProspects",   QScriptValue(engine, CLineEdit::AllCustomersAndProspects),	QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ActiveCustomersAndProspects",QScriptValue(engine, CLineEdit::ActiveCustomersAndProspects),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  engine->globalObject().setProperty("CLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
   qScriptRegisterMetaType(engine, CLineEditTypesToScriptValue, CLineEditTypesFromScriptValue);
+
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("CLineEdit");
+  if (! widget.isObject()) {
+    widget = engine->newObject();
+    engine->globalObject().setProperty("CLineEdit", widget, ro);
+  }
+
+  widget.setProperty("AllCustomers",	           QScriptValue(engine, CLineEdit::AllCustomers),	        ro);
+  widget.setProperty("ActiveCustomers",	           QScriptValue(engine, CLineEdit::ActiveCustomers), 	        ro);
+  widget.setProperty("AllProspects",	           QScriptValue(engine, CLineEdit::AllProspects),	        ro);
+  widget.setProperty("ActiveProspects",	           QScriptValue(engine, CLineEdit::ActiveProspects),	        ro);
+  widget.setProperty("AllCustomersAndProspects",   QScriptValue(engine, CLineEdit::AllCustomersAndProspects),	ro);
+  widget.setProperty("ActiveCustomersAndProspects",QScriptValue(engine, CLineEdit::ActiveCustomersAndProspects),ro);
 }

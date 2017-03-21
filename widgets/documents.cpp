@@ -631,41 +631,44 @@ void Documents::handleItemSelected()
 
 void setupDocuments(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("Documents");
+  if (! widget.isObject()) {
+    widget = engine->newObject();
+    engine->globalObject().setProperty("Documents", widget, ro);
+  }
 
-  widget.setProperty("Uninitialized",	 QScriptValue(engine, Documents::Uninitialized),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Address",	         QScriptValue(engine, Documents::Address),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("BBOMHead",	 QScriptValue(engine, Documents::BBOMHead),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("BBOMItem",	 QScriptValue(engine, Documents::BBOMItem),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("BOMHead",	         QScriptValue(engine, Documents::BOMHead),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("BOMItem",	         QScriptValue(engine, Documents::BOMItem),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("BOOHead",	         QScriptValue(engine, Documents::BOOHead),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("BOOItem",	         QScriptValue(engine, Documents::BOOItem),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("CRMAccount",	 QScriptValue(engine, Documents::CRMAccount),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Contact",	         QScriptValue(engine, Documents::Contact),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Customer",	 QScriptValue(engine, Documents::Customer),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Employee",	 QScriptValue(engine, Documents::Employee),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Incident",	 QScriptValue(engine, Documents::Incident),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Item",	         QScriptValue(engine, Documents::Item),	            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ItemSite",	 QScriptValue(engine, Documents::ItemSite),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ItemSource",	 QScriptValue(engine, Documents::ItemSource),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Location",	 QScriptValue(engine, Documents::Location),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("LotSerial",	 QScriptValue(engine, Documents::LotSerial),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Opportunity",	 QScriptValue(engine, Documents::Opportunity),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Project",	         QScriptValue(engine, Documents::Project),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("PurchaseOrder",	 QScriptValue(engine, Documents::PurchaseOrder),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("PurchaseOrderItem",QScriptValue(engine, Documents::PurchaseOrderItem),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ReturnAuth",	 QScriptValue(engine, Documents::ReturnAuth),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ReturnAuthItem",	 QScriptValue(engine, Documents::ReturnAuthItem),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Quote",	         QScriptValue(engine, Documents::Quote),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("QuoteItem",	 QScriptValue(engine, Documents::QuoteItem),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("SalesOrder",	 QScriptValue(engine, Documents::SalesOrder),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("SalesOrderItem",	 QScriptValue(engine, Documents::SalesOrderItem),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("TransferOrder",	 QScriptValue(engine, Documents::TransferOrder),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("TransferOrderItem",QScriptValue(engine, Documents::TransferOrderItem),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Vendor",	         QScriptValue(engine, Documents::Vendor),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Warehouse",	 QScriptValue(engine, Documents::Warehouse),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("WorkOrder",	 QScriptValue(engine, Documents::WorkOrder),	    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  engine->globalObject().setProperty("Documents", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Uninitialized",	 QScriptValue(engine, Documents::Uninitialized),    ro);
+  widget.setProperty("Address",	         QScriptValue(engine, Documents::Address),	    ro);
+  widget.setProperty("BBOMHead",	 QScriptValue(engine, Documents::BBOMHead),	    ro);
+  widget.setProperty("BBOMItem",	 QScriptValue(engine, Documents::BBOMItem),	    ro);
+  widget.setProperty("BOMHead",	         QScriptValue(engine, Documents::BOMHead),	    ro);
+  widget.setProperty("BOMItem",	         QScriptValue(engine, Documents::BOMItem),	    ro);
+  widget.setProperty("BOOHead",	         QScriptValue(engine, Documents::BOOHead),	    ro);
+  widget.setProperty("BOOItem",	         QScriptValue(engine, Documents::BOOItem),	    ro);
+  widget.setProperty("CRMAccount",	 QScriptValue(engine, Documents::CRMAccount),	    ro);
+  widget.setProperty("Contact",	         QScriptValue(engine, Documents::Contact),	    ro);
+  widget.setProperty("Customer",	 QScriptValue(engine, Documents::Customer),	    ro);
+  widget.setProperty("Employee",	 QScriptValue(engine, Documents::Employee),	    ro);
+  widget.setProperty("Incident",	 QScriptValue(engine, Documents::Incident),	    ro);
+  widget.setProperty("Item",	         QScriptValue(engine, Documents::Item),	            ro);
+  widget.setProperty("ItemSite",	 QScriptValue(engine, Documents::ItemSite),	    ro);
+  widget.setProperty("ItemSource",	 QScriptValue(engine, Documents::ItemSource),	    ro);
+  widget.setProperty("Location",	 QScriptValue(engine, Documents::Location),	    ro);
+  widget.setProperty("LotSerial",	 QScriptValue(engine, Documents::LotSerial),	    ro);
+  widget.setProperty("Opportunity",	 QScriptValue(engine, Documents::Opportunity),      ro);
+  widget.setProperty("Project",	         QScriptValue(engine, Documents::Project),	    ro);
+  widget.setProperty("PurchaseOrder",	 QScriptValue(engine, Documents::PurchaseOrder),    ro);
+  widget.setProperty("PurchaseOrderItem",QScriptValue(engine, Documents::PurchaseOrderItem),ro);
+  widget.setProperty("ReturnAuth",	 QScriptValue(engine, Documents::ReturnAuth),	    ro);
+  widget.setProperty("ReturnAuthItem",	 QScriptValue(engine, Documents::ReturnAuthItem),   ro);
+  widget.setProperty("Quote",	         QScriptValue(engine, Documents::Quote),	    ro);
+  widget.setProperty("QuoteItem",	 QScriptValue(engine, Documents::QuoteItem),	    ro);
+  widget.setProperty("SalesOrder",	 QScriptValue(engine, Documents::SalesOrder),	    ro);
+  widget.setProperty("SalesOrderItem",	 QScriptValue(engine, Documents::SalesOrderItem),   ro);
+  widget.setProperty("TransferOrder",	 QScriptValue(engine, Documents::TransferOrder),    ro);
+  widget.setProperty("TransferOrderItem",QScriptValue(engine, Documents::TransferOrderItem),ro);
+  widget.setProperty("Vendor",	         QScriptValue(engine, Documents::Vendor),	    ro);
+  widget.setProperty("Warehouse",	 QScriptValue(engine, Documents::Warehouse),	    ro);
+  widget.setProperty("WorkOrder",	 QScriptValue(engine, Documents::WorkOrder),	    ro);
 }

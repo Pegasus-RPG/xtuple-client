@@ -2025,8 +2025,6 @@ double XTreeWidgetItem::totalForItem(const int pcol, const int pset) const
 
 // script exposure of xtreewidgetitem /////////////////////////////////////////
 
-// Qt 5 docs say we don't have to Q_DECLARE_METATYPE any QObject*
-// Why do we have to qScriptRegisterMetaType() these?
 QScriptValue XTreeWidgetItemtoScriptValue(QScriptEngine *engine, XTreeWidgetItem *const &item)
 {
   return engine->newQObject(item);
@@ -2137,42 +2135,48 @@ void setupXTreeWidgetItem(QScriptEngine *engine)
   qScriptRegisterMetaType(engine, XTreeWidgetItemtoScriptValue,     XTreeWidgetItemfromScriptValue);
 #endif
 
-  QScriptValue constructor = engine->newFunction(constructXTreeWidgetItem);
-  engine->globalObject().setProperty("XTreeWidgetItem", constructor, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("XTreeWidgetItem");
+  if (! widget.isFunction()) {
+    widget = engine->newFunction(constructXTreeWidgetItem);
+    engine->globalObject().setProperty("XTreeWidgetItem", widget, ro);
+  }
 }
 
 // xtreewidget ////////////////////////////////////////////////////////////////
 
 void setupXTreeWidget(QScriptEngine *engine)
 {
-  QScriptValue glob = engine->newObject();
   QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("XTreeWidget");
+  if (! widget.isObject()) {
+    widget = engine->newObject();
+    engine->globalObject().setProperty("XTreeWidget", widget, ro);
+  }
 
-  glob.setProperty("Replace", QScriptValue(engine, XTreeWidget::Replace), ro);
-  glob.setProperty("Append",  QScriptValue(engine, XTreeWidget::Append),  ro);
+  widget.setProperty("Replace", QScriptValue(engine, XTreeWidget::Replace), ro);
+  widget.setProperty("Append",  QScriptValue(engine, XTreeWidget::Append),  ro);
 
-  glob.setProperty("itemColumn",     QScriptValue(engine, _itemColumn),     ro);
-  glob.setProperty("whsColumn",      QScriptValue(engine, _whsColumn),      ro);
-  glob.setProperty("userColumn",     QScriptValue(engine, _userColumn),     ro);
-  glob.setProperty("dateColumn",     QScriptValue(engine, _dateColumn),     ro);
-  glob.setProperty("timeDateColumn", QScriptValue(engine, _timeDateColumn), ro);
-  glob.setProperty("timeColumn",     QScriptValue(engine, _timeColumn),     ro);
-  glob.setProperty("qtyColumn",      QScriptValue(engine, _qtyColumn),      ro);
-  glob.setProperty("priceColumn",    QScriptValue(engine, _priceColumn),    ro);
-  glob.setProperty("moneyColumn",    QScriptValue(engine, _moneyColumn),    ro);
-  glob.setProperty("bigMoneyColumn", QScriptValue(engine, _bigMoneyColumn), ro);
-  glob.setProperty("costColumn",     QScriptValue(engine, _costColumn),     ro);
-  glob.setProperty("prcntColumn",    QScriptValue(engine, _prcntColumn),    ro);
-  glob.setProperty("transColumn",    QScriptValue(engine, _transColumn),    ro);
-  glob.setProperty("uomColumn",      QScriptValue(engine, _uomColumn),      ro);
-  glob.setProperty("orderColumn",    QScriptValue(engine, _orderColumn),    ro);
-  glob.setProperty("statusColumn",   QScriptValue(engine, _statusColumn),   ro);
-  glob.setProperty("seqColumn",      QScriptValue(engine, _seqColumn),      ro);
-  glob.setProperty("ynColumn",       QScriptValue(engine, _ynColumn),       ro);
-  glob.setProperty("docTypeColumn",  QScriptValue(engine, _docTypeColumn),  ro);
-  glob.setProperty("currencyColumn", QScriptValue(engine, _currencyColumn), ro);
-
-  engine->globalObject().setProperty("XTreeWidget", glob, ro);
+  widget.setProperty("itemColumn",     QScriptValue(engine, _itemColumn),     ro);
+  widget.setProperty("whsColumn",      QScriptValue(engine, _whsColumn),      ro);
+  widget.setProperty("userColumn",     QScriptValue(engine, _userColumn),     ro);
+  widget.setProperty("dateColumn",     QScriptValue(engine, _dateColumn),     ro);
+  widget.setProperty("timeDateColumn", QScriptValue(engine, _timeDateColumn), ro);
+  widget.setProperty("timeColumn",     QScriptValue(engine, _timeColumn),     ro);
+  widget.setProperty("qtyColumn",      QScriptValue(engine, _qtyColumn),      ro);
+  widget.setProperty("priceColumn",    QScriptValue(engine, _priceColumn),    ro);
+  widget.setProperty("moneyColumn",    QScriptValue(engine, _moneyColumn),    ro);
+  widget.setProperty("bigMoneyColumn", QScriptValue(engine, _bigMoneyColumn), ro);
+  widget.setProperty("costColumn",     QScriptValue(engine, _costColumn),     ro);
+  widget.setProperty("prcntColumn",    QScriptValue(engine, _prcntColumn),    ro);
+  widget.setProperty("transColumn",    QScriptValue(engine, _transColumn),    ro);
+  widget.setProperty("uomColumn",      QScriptValue(engine, _uomColumn),      ro);
+  widget.setProperty("orderColumn",    QScriptValue(engine, _orderColumn),    ro);
+  widget.setProperty("statusColumn",   QScriptValue(engine, _statusColumn),   ro);
+  widget.setProperty("seqColumn",      QScriptValue(engine, _seqColumn),      ro);
+  widget.setProperty("ynColumn",       QScriptValue(engine, _ynColumn),       ro);
+  widget.setProperty("docTypeColumn",  QScriptValue(engine, _docTypeColumn),  ro);
+  widget.setProperty("currencyColumn", QScriptValue(engine, _currencyColumn), ro);
 }
 
 Q_DECLARE_METATYPE(XTreeWidget *)

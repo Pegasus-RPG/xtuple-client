@@ -249,14 +249,16 @@ QScriptValue constructUsernameLineEdit(QScriptContext *context,
 
 void setupUsernameLineEdit(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newFunction(constructUsernameLineEdit);
   QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("UsernameLineEdit");
+  if (! widget.isFunction()) {
+    widget = engine->newFunction(constructUsernameLineEdit);
+    engine->globalObject().setProperty("UsernameLineEdit", widget, ro);
+  }
 
   widget.setProperty("UsersAll",     QScriptValue(engine, UsernameLineEdit::UsersAll),      ro);
   widget.setProperty("UsersActive",  QScriptValue(engine, UsernameLineEdit::UsersActive),   ro);
   widget.setProperty("UsersInactive",QScriptValue(engine, UsernameLineEdit::UsersInactive), ro);
-
-  engine->globalObject().setProperty("UsernameLineEdit", widget,  ro);
 }
 
 QScriptValue constructUsernameCluster(QScriptContext *context,

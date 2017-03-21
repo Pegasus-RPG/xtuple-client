@@ -467,15 +467,18 @@ void Screen::unlock()
 
 void setupScreen(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("Screen");
+  if (! widget.isObject()) {
+    widget = engine->newObject();
+    engine->globalObject().setProperty("Screen", widget, ro);
+  }
 
-  widget.setProperty("New",  QScriptValue(engine, Screen::New),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Edit", QScriptValue(engine, Screen::Edit), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("View", QScriptValue(engine, Screen::View), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("New",  QScriptValue(engine, Screen::New),  ro);
+  widget.setProperty("Edit", QScriptValue(engine, Screen::Edit), ro);
+  widget.setProperty("View", QScriptValue(engine, Screen::View), ro);
 
-  widget.setProperty("NoChanges",QScriptValue(engine, Screen::NoChanges),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Save",     QScriptValue(engine, Screen::Save),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Cancel",   QScriptValue(engine, Screen::Cancel),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  engine->globalObject().setProperty("Screen", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("NoChanges",QScriptValue(engine, Screen::NoChanges), ro);
+  widget.setProperty("Save",     QScriptValue(engine, Screen::Save),      ro);
+  widget.setProperty("Cancel",   QScriptValue(engine, Screen::Cancel),    ro);
 }

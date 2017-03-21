@@ -207,16 +207,19 @@ void WComboBox::setId(int pId)
 
 void setupWComboBox(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("WComboBox");
+  if (! widget.isObject()) {
+    widget = engine->newObject();
+    engine->globalObject().setProperty("WComboBox", widget, ro);
+  }
 
-  widget.setProperty("All",               QScriptValue(engine, WComboBox::All),               QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("AllActive",         QScriptValue(engine, WComboBox::AllActive),         QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("NonTransit",        QScriptValue(engine, WComboBox::NonTransit),        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Shipping",          QScriptValue(engine, WComboBox::Shipping),          QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Sold",              QScriptValue(engine, WComboBox::Sold),              QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Supply",            QScriptValue(engine, WComboBox::Supply),            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Transit",           QScriptValue(engine, WComboBox::Transit),           QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("AllActiveInventory",QScriptValue(engine, WComboBox::AllActiveInventory),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  engine->globalObject().setProperty("WComboBox", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("All",               QScriptValue(engine, WComboBox::All),               ro);
+  widget.setProperty("AllActive",         QScriptValue(engine, WComboBox::AllActive),         ro);
+  widget.setProperty("NonTransit",        QScriptValue(engine, WComboBox::NonTransit),        ro);
+  widget.setProperty("Shipping",          QScriptValue(engine, WComboBox::Shipping),          ro);
+  widget.setProperty("Sold",              QScriptValue(engine, WComboBox::Sold),              ro);
+  widget.setProperty("Supply",            QScriptValue(engine, WComboBox::Supply),            ro);
+  widget.setProperty("Transit",           QScriptValue(engine, WComboBox::Transit),           ro);
+  widget.setProperty("AllActiveInventory",QScriptValue(engine, WComboBox::AllActiveInventory),ro);
 }

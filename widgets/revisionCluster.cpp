@@ -489,15 +489,19 @@ void RevisionLineEdit::sParse()
 
 void setupRevisionLineEdit(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
 
-  widget.setProperty("View",    QScriptValue(engine, RevisionLineEdit::View),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Use",     QScriptValue(engine, RevisionLineEdit::Use),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Maintain",QScriptValue(engine, RevisionLineEdit::Maintain),QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("RevisionLineEdit");
+  if (! widget.isObject()) {
+    widget = engine->newObject();
+    engine->globalObject().setProperty("RevisionLineEdit", widget, ro);
+  }
 
-  widget.setProperty("All", QScriptValue(engine, RevisionLineEdit::All), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("BOM", QScriptValue(engine, RevisionLineEdit::BOM), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("BOO", QScriptValue(engine, RevisionLineEdit::BOO), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("View",    QScriptValue(engine, RevisionLineEdit::View),     ro);
+  widget.setProperty("Use",     QScriptValue(engine, RevisionLineEdit::Use),      ro);
+  widget.setProperty("Maintain",QScriptValue(engine, RevisionLineEdit::Maintain), ro);
 
-  engine->globalObject().setProperty("RevisionLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("All", QScriptValue(engine, RevisionLineEdit::All), ro);
+  widget.setProperty("BOM", QScriptValue(engine, RevisionLineEdit::BOM), ro);
+  widget.setProperty("BOO", QScriptValue(engine, RevisionLineEdit::BOO), ro);
 }

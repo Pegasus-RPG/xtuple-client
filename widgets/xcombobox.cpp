@@ -1617,8 +1617,12 @@ void setupXComboBox(QScriptEngine *engine)
   //qScriptRegisterMetaType(engine, XComboBoxTypestoScriptValue, XComboBoxTypesfromScriptValue);
   qScriptRegisterMetaType(engine, XComboBoxDefaultstoScriptValue, XComboBoxDefaultsfromScriptValue);
 
-  QScriptValue widget = engine->newFunction(constructXComboBox);
   QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("XComboBox");
+  if (! widget.isFunction()) {
+    widget = engine->newFunction(constructXComboBox);
+    engine->globalObject().setProperty("XComboBox", widget, ro);
+  }
 
   widget.setProperty("First",   QScriptValue(engine, XComboBox::First), ro);
   widget.setProperty("None",    QScriptValue(engine, XComboBox::None),  ro);
@@ -1692,6 +1696,4 @@ void setupXComboBox(QScriptEngine *engine)
   widget.setProperty("WoProjects",           QScriptValue(engine, XComboBox::WoProjects),           ro);
   widget.setProperty("WorkCenters",          QScriptValue(engine, XComboBox::WorkCenters),          ro);
   widget.setProperty("WorkCentersActive",    QScriptValue(engine, XComboBox::WorkCentersActive),    ro);
-
-  engine->globalObject().setProperty("XComboBox", widget, ro);
 }

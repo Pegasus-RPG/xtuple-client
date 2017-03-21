@@ -95,9 +95,12 @@ QScriptValue constructEmpClusterLineEdit(QScriptContext *context,
 
 void setupEmpClusterLineEdit(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newFunction(constructEmpClusterLineEdit);
-
-  engine->globalObject().setProperty("EmpClusterLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("EmpClusterLineEdit");
+  if (! widget.isFunction()) {
+    widget = engine->newFunction(constructEmpClusterLineEdit);
+    engine->globalObject().setProperty("EmpClusterLineEdit", widget, ro);
+  }
 }
 
 QScriptValue constructEmpCluster(QScriptContext *context,

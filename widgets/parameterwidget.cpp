@@ -1988,8 +1988,12 @@ void setupParameterWidget(QScriptEngine *engine)
   qScriptRegisterMetaType(engine, ParameterWidgettoScriptValue, ParameterWidgetfromScriptValue);
 #endif
 
-  QScriptValue widget = engine->newFunction(constructParameterWidget);
   QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("ParameterWidget");
+  if (! widget.isFunction()) {
+    widget = engine->newFunction(constructParameterWidget);
+    engine->globalObject().setProperty("ParameterWidget", widget, ro);
+  }
 
   widget.setProperty("Crmacct",       QScriptValue(engine, ParameterWidget::Crmacct),       ro);
   widget.setProperty("Customer",      QScriptValue(engine, ParameterWidget::Customer),      ro);
@@ -2012,6 +2016,4 @@ void setupParameterWidget(QScriptEngine *engine)
   widget.setProperty("WorkOrder",     QScriptValue(engine, ParameterWidget::WorkOrder),     ro);
   widget.setProperty("PurchaseOrder", QScriptValue(engine, ParameterWidget::PurchaseOrder), ro);
   widget.setProperty("TransferOrder", QScriptValue(engine, ParameterWidget::TransferOrder), ro);
-
-  engine->globalObject().setProperty("ParameterWidget", widget, ro);
 }

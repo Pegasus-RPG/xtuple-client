@@ -152,6 +152,10 @@ QScriptValue constructXCheckBox(QScriptContext *context,
 
 void setupXCheckBox(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newFunction(constructXCheckBox);
-  engine->globalObject().setProperty("XCheckBox", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("XCheckBox");
+  if (! widget.isFunction()) {
+    widget = engine->newFunction(constructXCheckBox);
+    engine->globalObject().setProperty("XCheckBox", widget, ro);
+  }
 }

@@ -991,18 +991,21 @@ void OrderSearch::done(int p)
 
 void setupOrderLineEdit(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("OrderLineEdit");
+  if (! widget.isObject()) {
+    widget = engine->newObject();
+    engine->globalObject().setProperty("OrderLineEdit", widget, ro);
+  }
 
-  widget.setProperty("AnyStatus",QScriptValue(engine, OrderLineEdit::AnyStatus),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Unposted", QScriptValue(engine, OrderLineEdit::Unposted), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Open",	 QScriptValue(engine, OrderLineEdit::Open),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Closed",	 QScriptValue(engine, OrderLineEdit::Closed),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("AnyStatus",QScriptValue(engine, OrderLineEdit::AnyStatus),ro);
+  widget.setProperty("Unposted", QScriptValue(engine, OrderLineEdit::Unposted), ro);
+  widget.setProperty("Open",	 QScriptValue(engine, OrderLineEdit::Open),     ro);
+  widget.setProperty("Closed",	 QScriptValue(engine, OrderLineEdit::Closed),   ro);
 
-  widget.setProperty("AnyType",	QScriptValue(engine, OrderLineEdit::AnyType),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Purchase",QScriptValue(engine, OrderLineEdit::Purchase),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Return",	QScriptValue(engine, OrderLineEdit::Return),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Sales",	QScriptValue(engine, OrderLineEdit::Sales),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Transfer",QScriptValue(engine, OrderLineEdit::Transfer),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  engine->globalObject().setProperty("OrderLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("AnyType",	QScriptValue(engine, OrderLineEdit::AnyType),   ro);
+  widget.setProperty("Purchase",QScriptValue(engine, OrderLineEdit::Purchase),  ro);
+  widget.setProperty("Return",	QScriptValue(engine, OrderLineEdit::Return),    ro);
+  widget.setProperty("Sales",	QScriptValue(engine, OrderLineEdit::Sales),     ro);
+  widget.setProperty("Transfer",QScriptValue(engine, OrderLineEdit::Transfer),  ro);
 }

@@ -220,7 +220,10 @@ QScriptValue constructFileMoveSelector(QScriptContext *context,
 
 void setupFileMoveSelector(QScriptEngine *engine)
 {
-  QScriptValue constructor = engine->newFunction(constructFileMoveSelector);
-  engine->globalObject().setProperty("FileMoveSelector", constructor,
-                                     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("FileMoveSelector");
+  if (! widget.isFunction()) {
+    widget = engine->newFunction(constructFileMoveSelector);
+    engine->globalObject().setProperty("FileMoveSelector", widget, ro);
+  }
 }

@@ -249,11 +249,14 @@ ShipmentSearch::ShipmentSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
 
 void setupShipmentClusterLineEdit(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("ShipmentClusterLineEdit");
+  if (! widget.isObject()) {
+    widget = engine->newObject();
+    engine->globalObject().setProperty("ShipmentClusterLineEdit", widget, ro);
+  }
 
-  widget.setProperty("All",          QScriptValue(engine, ShipmentClusterLineEdit::All),          QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("SalesOrder",   QScriptValue(engine, ShipmentClusterLineEdit::SalesOrder),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("TransferOrder",QScriptValue(engine, ShipmentClusterLineEdit::TransferOrder),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  engine->globalObject().setProperty("ShipmentClusterLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("All",           QScriptValue(engine, ShipmentClusterLineEdit::All),           ro);
+  widget.setProperty("SalesOrder",    QScriptValue(engine, ShipmentClusterLineEdit::SalesOrder),    ro);
+  widget.setProperty("TransferOrder", QScriptValue(engine, ShipmentClusterLineEdit::TransferOrder), ro);
 }

@@ -519,11 +519,15 @@ void ParameterGroupTypesFromScriptValue(const QScriptValue &obj, ParameterGroup:
 
 void setupParameterGroup(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-
   qScriptRegisterMetaType(engine, ParameterGroupStatesToScriptValue, ParameterGroupStatesFromScriptValue);
   qScriptRegisterMetaType(engine, ParameterGroupTypesToScriptValue,  ParameterGroupTypesFromScriptValue);
+
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("ParameterGroup");
+  if (! widget.isObject()) {
+    widget = engine->newObject();
+    engine->globalObject().setProperty("ParameterGroup", widget, ro);
+  }
 
   widget.setProperty("AdhocGroup",      QScriptValue(engine, ParameterGroup::AdhocGroup),      ro);
   widget.setProperty("PlannerCode",     QScriptValue(engine, ParameterGroup::PlannerCode),     ro);
@@ -541,6 +545,4 @@ void setupParameterGroup(QScriptEngine *engine)
   widget.setProperty("All",      QScriptValue(engine, ParameterGroup::All),      ro);
   widget.setProperty("Selected", QScriptValue(engine, ParameterGroup::Selected), ro);
   widget.setProperty("Pattern",  QScriptValue(engine, ParameterGroup::Pattern),  ro);
-
-  engine->globalObject().setProperty("ParameterGroup", widget, ro);
 }

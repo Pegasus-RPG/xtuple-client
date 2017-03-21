@@ -10,6 +10,7 @@
 
 #include <QHBoxLayout>
 #include <QMessageBox>
+#include <QtScript>
 
 #include <metasql.h>
 
@@ -642,18 +643,19 @@ void accountSearch::sFillList()
 
 // script api //////////////////////////////////////////////////////////////////
 
-#include <QtScript>
-
 void setupGLCluster(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("GLCluster");
+  if (! widget.isObject()) {
+    widget = engine->newObject();
+    engine->globalObject().setProperty("GLCluster", widget, ro);
+  }
 
-  widget.setProperty("cUndefined",QScriptValue(engine, GLCluster::cUndefined),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cAsset",	  QScriptValue(engine, GLCluster::cAsset),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cLiability",QScriptValue(engine, GLCluster::cLiability),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cExpense",  QScriptValue(engine, GLCluster::cExpense),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cRevenue",  QScriptValue(engine, GLCluster::cRevenue),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("cEquity",	  QScriptValue(engine, GLCluster::cEquity),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  engine->globalObject().setProperty("GLCluster", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("cUndefined",QScriptValue(engine, GLCluster::cUndefined),ro);
+  widget.setProperty("cAsset",	  QScriptValue(engine, GLCluster::cAsset),    ro);
+  widget.setProperty("cLiability",QScriptValue(engine, GLCluster::cLiability),ro);
+  widget.setProperty("cExpense",  QScriptValue(engine, GLCluster::cExpense),  ro);
+  widget.setProperty("cRevenue",  QScriptValue(engine, GLCluster::cRevenue),  ro);
+  widget.setProperty("cEquity",	  QScriptValue(engine, GLCluster::cEquity),   ro);
 }

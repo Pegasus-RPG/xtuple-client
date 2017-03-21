@@ -89,8 +89,12 @@ QScriptValue constructItemGroupClusterLineEdit(QScriptContext *context,
 
 void setupItemGroupClusterLineEdit(QScriptEngine *engine)
 {
-    QScriptValue widget = engine->newFunction(constructItemGroupClusterLineEdit);
-    engine->globalObject().setProperty("ItemGroupClusterLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("ItemGroupClusterLineEdit");
+  if (! widget.isFunction()) {
+    widget = engine->newFunction(constructItemGroupClusterLineEdit);
+    engine->globalObject().setProperty("ItemGroupClusterLineEdit", widget, ro);
+  }
 }
 
 QScriptValue constructItemGroupCluster(QScriptContext *context,

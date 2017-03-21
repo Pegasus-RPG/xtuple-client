@@ -990,13 +990,16 @@ void CurrDisplay::setDataWidgetMap(XDataWidgetMapper* m)
 
 void setupCurrDisplay(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("CurrDisplay");
+  if (! widget.isObject()) {
+    widget = engine->newObject();
+    engine->globalObject().setProperty("CurrDisplay", widget, ro);
+  }
 
-  widget.setProperty("Money",	  QScriptValue(engine, CurrDisplay::Money),	QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("SalesPrice",QScriptValue(engine, CurrDisplay::SalesPrice),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("PurchPrice",QScriptValue(engine, CurrDisplay::PurchPrice),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ExtPrice",  QScriptValue(engine, CurrDisplay::ExtPrice),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Cost",	  QScriptValue(engine, CurrDisplay::Cost),	QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  engine->globalObject().setProperty("CurrDisplay", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Money",	  QScriptValue(engine, CurrDisplay::Money),	ro);
+  widget.setProperty("SalesPrice",QScriptValue(engine, CurrDisplay::SalesPrice),ro);
+  widget.setProperty("PurchPrice",QScriptValue(engine, CurrDisplay::PurchPrice),ro);
+  widget.setProperty("ExtPrice",  QScriptValue(engine, CurrDisplay::ExtPrice),  ro);
+  widget.setProperty("Cost",	  QScriptValue(engine, CurrDisplay::Cost),	ro);
 }

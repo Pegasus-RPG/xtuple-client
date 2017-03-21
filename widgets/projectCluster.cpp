@@ -160,12 +160,15 @@ void ProjectLineEdit::sCopy()
 
 void setupProjectLineEdit(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("ProjectLineEdit");
+  if (! widget.isObject()) {
+    widget = engine->newObject();
+    engine->globalObject().setProperty("ProjectLineEdit", widget, ro);
+  }
 
-  widget.setProperty("Undefined",    QScriptValue(engine, ProjectLineEdit::Undefined),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("SalesOrder",   QScriptValue(engine, ProjectLineEdit::SalesOrder),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("WorkOrder",    QScriptValue(engine, ProjectLineEdit::WorkOrder),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("PurchaseOrder",QScriptValue(engine, ProjectLineEdit::PurchaseOrder),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  engine->globalObject().setProperty("ProjectLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Undefined",    QScriptValue(engine, ProjectLineEdit::Undefined),     ro);
+  widget.setProperty("SalesOrder",   QScriptValue(engine, ProjectLineEdit::SalesOrder),    ro);
+  widget.setProperty("WorkOrder",    QScriptValue(engine, ProjectLineEdit::WorkOrder),     ro);
+  widget.setProperty("PurchaseOrder",QScriptValue(engine, ProjectLineEdit::PurchaseOrder), ro);
 }
