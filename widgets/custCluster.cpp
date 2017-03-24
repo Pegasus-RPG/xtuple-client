@@ -458,19 +458,14 @@ void CLineEditTypesFromScriptValue(const QScriptValue &obj, CLineEdit::CLineEdit
 
 void setupCLineEdit(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, CLineEditTypesToScriptValue, CLineEditTypesFromScriptValue);
+  if (! engine->globalObject().property("CLineEdit").isObject())
+  {
+    qScriptRegisterMetaType(engine, CLineEditTypesToScriptValue, CLineEditTypesFromScriptValue);
 
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  QScriptValue widget = engine->globalObject().property("CLineEdit");
-  if (! widget.isObject()) {
-    widget = engine->newObject();
-    engine->globalObject().setProperty("CLineEdit", widget, ro);
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&CLineEdit::staticMetaObject, ctor);
+
+    engine->globalObject().setProperty("CLineEdit", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
   }
-
-  widget.setProperty("AllCustomers",	           QScriptValue(engine, CLineEdit::AllCustomers),	        ro);
-  widget.setProperty("ActiveCustomers",	           QScriptValue(engine, CLineEdit::ActiveCustomers), 	        ro);
-  widget.setProperty("AllProspects",	           QScriptValue(engine, CLineEdit::AllProspects),	        ro);
-  widget.setProperty("ActiveProspects",	           QScriptValue(engine, CLineEdit::ActiveProspects),	        ro);
-  widget.setProperty("AllCustomersAndProspects",   QScriptValue(engine, CLineEdit::AllCustomersAndProspects),	ro);
-  widget.setProperty("ActiveCustomersAndProspects",QScriptValue(engine, CLineEdit::ActiveCustomersAndProspects),ro);
 }

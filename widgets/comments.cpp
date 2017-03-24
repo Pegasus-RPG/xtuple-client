@@ -499,44 +499,12 @@ bool Comments::userCanEdit(int id)
 
 void setupComments(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  QScriptValue widget = engine->globalObject().property("Comments");
-  if (! widget.isObject()) {
-    widget = engine->newObject();
-    engine->globalObject().setProperty("Comments", widget, ro);
-  }
+  if (! engine->globalObject().property("Comments").isObject())
+  {
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&Comments::staticMetaObject, ctor);
 
-  widget.setProperty("Uninitialized",	 QScriptValue(engine, Comments::Uninitialized),    ro);
-  widget.setProperty("Address",	         QScriptValue(engine, Comments::Address),	   ro);
-  widget.setProperty("BBOMHead",	 QScriptValue(engine, Comments::BBOMHead),	   ro);
-  widget.setProperty("BBOMItem",	 QScriptValue(engine, Comments::BBOMItem),	   ro);
-  widget.setProperty("BOMHead",	         QScriptValue(engine, Comments::BOMHead),	   ro);
-  widget.setProperty("BOMItem",	         QScriptValue(engine, Comments::BOMItem),	   ro);
-  widget.setProperty("BOOHead",	         QScriptValue(engine, Comments::BOOHead),	   ro);
-  widget.setProperty("BOOItem",	         QScriptValue(engine, Comments::BOOItem),	   ro);
-  widget.setProperty("CRMAccount",	 QScriptValue(engine, Comments::CRMAccount),	   ro);
-  widget.setProperty("Contact",	         QScriptValue(engine, Comments::Contact),	   ro);
-  widget.setProperty("Customer",	 QScriptValue(engine, Comments::Customer),	   ro);
-  widget.setProperty("Employee",	 QScriptValue(engine, Comments::Employee),	   ro);
-  widget.setProperty("Incident",	 QScriptValue(engine, Comments::Incident),	   ro);
-  widget.setProperty("Item",	         QScriptValue(engine, Comments::Item),	           ro);
-  widget.setProperty("ItemSite",	 QScriptValue(engine, Comments::ItemSite),	   ro);
-  widget.setProperty("ItemSource",	 QScriptValue(engine, Comments::ItemSource),	   ro);
-  widget.setProperty("Location",	 QScriptValue(engine, Comments::Location),	   ro);
-  widget.setProperty("LotSerial",	 QScriptValue(engine, Comments::LotSerial),	   ro);
-  widget.setProperty("Opportunity",	 QScriptValue(engine, Comments::Opportunity),      ro);
-  widget.setProperty("Project",	         QScriptValue(engine, Comments::Project),	   ro);
-  widget.setProperty("PurchaseOrder",	 QScriptValue(engine, Comments::PurchaseOrder),    ro);
-  widget.setProperty("PurchaseOrderItem",QScriptValue(engine, Comments::PurchaseOrderItem),ro);
-  widget.setProperty("ReturnAuth",	 QScriptValue(engine, Comments::ReturnAuth),	   ro);
-  widget.setProperty("ReturnAuthItem",	 QScriptValue(engine, Comments::ReturnAuthItem),   ro);
-  widget.setProperty("Quote",	         QScriptValue(engine, Comments::Quote),	           ro);
-  widget.setProperty("QuoteItem",	 QScriptValue(engine, Comments::QuoteItem),	   ro);
-  widget.setProperty("SalesOrder",	 QScriptValue(engine, Comments::SalesOrder),	   ro);
-  widget.setProperty("SalesOrderItem",	 QScriptValue(engine, Comments::SalesOrderItem),   ro);
-  widget.setProperty("TransferOrder",	 QScriptValue(engine, Comments::TransferOrder),    ro);
-  widget.setProperty("TransferOrderItem",QScriptValue(engine, Comments::TransferOrderItem),ro);
-  widget.setProperty("Vendor",	         QScriptValue(engine, Comments::Vendor),	   ro);
-  widget.setProperty("Warehouse",	 QScriptValue(engine, Comments::Warehouse),	   ro);
-  widget.setProperty("WorkOrder",	 QScriptValue(engine, Comments::WorkOrder),	   ro);
+    engine->globalObject().setProperty("Comments", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

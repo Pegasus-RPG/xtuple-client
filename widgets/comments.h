@@ -138,5 +138,6 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
 };
 
 void setupComments(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum Comments::CommentSources)
 
 #endif

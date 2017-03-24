@@ -160,15 +160,12 @@ void ProjectLineEdit::sCopy()
 
 void setupProjectLineEdit(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  QScriptValue widget = engine->globalObject().property("ProjectLineEdit");
-  if (! widget.isObject()) {
-    widget = engine->newObject();
-    engine->globalObject().setProperty("ProjectLineEdit", widget, ro);
-  }
+  if (! engine->globalObject().property("ProjectLineEdit").isObject())
+  {
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&ProjectLineEdit::staticMetaObject, ctor);
 
-  widget.setProperty("Undefined",    QScriptValue(engine, ProjectLineEdit::Undefined),     ro);
-  widget.setProperty("SalesOrder",   QScriptValue(engine, ProjectLineEdit::SalesOrder),    ro);
-  widget.setProperty("WorkOrder",    QScriptValue(engine, ProjectLineEdit::WorkOrder),     ro);
-  widget.setProperty("PurchaseOrder",QScriptValue(engine, ProjectLineEdit::PurchaseOrder), ro);
+    engine->globalObject().setProperty("ProjectLineEdit", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

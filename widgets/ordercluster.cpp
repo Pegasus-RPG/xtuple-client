@@ -991,6 +991,7 @@ void OrderSearch::done(int p)
 
 void setupOrderLineEdit(QScriptEngine *engine)
 {
+  // engine->newQMetaObject approach hides the enum properties; don't know why
   QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
   QScriptValue widget = engine->globalObject().property("OrderLineEdit");
   if (! widget.isObject()) {

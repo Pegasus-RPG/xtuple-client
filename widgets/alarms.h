@@ -102,5 +102,6 @@ class XTUPLEWIDGETS_EXPORT Alarms : public QWidget, public Ui::alarms
 };
 
 void setupAlarms(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum Alarms::AlarmSources)
 
 #endif

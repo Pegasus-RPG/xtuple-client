@@ -14,8 +14,6 @@
 #include "widgets.h"
 #include "ui_filemoveselector.h"
 
-void setupFileMoveSelector(QScriptEngine *engine);
-
 class FileMoveSelector : public QWidget, public Ui::FileMoveSelector
 {
     Q_OBJECT
@@ -45,5 +43,8 @@ class FileMoveSelector : public QWidget, public Ui::FileMoveSelector
   private:
 
 };
+
+void setupFileMoveSelector(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum FileMoveSelector::FileMoveOption)
 
 #endif

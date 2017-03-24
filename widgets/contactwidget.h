@@ -405,4 +405,5 @@ private:
 
 void setupContactWidget(QScriptEngine *engine);
 Q_DECLARE_METATYPE(enum ContactWidget::Mode)
+
 #endif

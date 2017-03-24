@@ -778,14 +778,12 @@ void DateCluster::setEndVisible(bool p)
 
 void setupXDateEdit(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  QScriptValue widget = engine->globalObject().property("XDateEdit");
-  if (! widget.isObject()) {
-    widget = engine->newObject();
-    engine->globalObject().setProperty("XDateEdit", widget, ro);
-  }
+  if (! engine->globalObject().property("XDateEdit").isObject())
+  {
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&XDateEdit::staticMetaObject, ctor);
 
-  widget.setProperty("Empty",   QScriptValue(engine, XDateEdit::Empty),   ro);
-  widget.setProperty("Current", QScriptValue(engine, XDateEdit::Current), ro);
-  widget.setProperty("None",    QScriptValue(engine, XDateEdit::None),    ro);
+    engine->globalObject().setProperty("XDateEdit", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

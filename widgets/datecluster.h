@@ -177,6 +177,7 @@ class XTUPLEWIDGETS_EXPORT DateCluster : public QWidget
 };
 
 void setupXDateEdit(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum XDateEdit::Defaults)
 
 #endif
 

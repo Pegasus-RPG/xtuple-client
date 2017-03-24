@@ -236,6 +236,7 @@ bool QuerySet::sSave(bool done)
 QScriptValue constructQuerySet(QScriptContext *context,
                                QScriptEngine  *engine)
 {
+#if QT_VERSION >= 0x050000
   QuerySet *obj = 0;
   if (context->argumentCount() == 1 &&
       (context->argument(0).toInt32() == 0 ||
@@ -253,19 +254,20 @@ QScriptValue constructQuerySet(QScriptContext *context,
                        (Qt::WindowFlags)(context->argument(1).toInt32()));
   }
 
-#if QT_VERSION >= 0x050000
   return engine->toScriptValue(obj);
 #else
-  Q_UNUSED(engine); return QScriptValue();
+  Q_UNUSED(context); Q_UNUSED(engine); return QScriptValue();
 #endif
 }
 
 void setupQuerySet(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  QScriptValue widget = engine->globalObject().property("QuerySet");
-  if (! widget.isFunction()) {
-    widget = engine->newFunction(constructQuerySet);
-    engine->globalObject().setProperty("QuerySet", widget, ro);
+  if (! engine->globalObject().property("QuerySet").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructQuerySet);
+    QScriptValue meta = engine->newQMetaObject(&QuerySet::staticMetaObject, ctor);
+
+    engine->globalObject().setProperty("QuerySet", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
   }
 }

@@ -46,6 +46,7 @@ class XTUPLEWIDGETS_EXPORT WComboBox : public XComboBox
 };
 
 void setupWComboBox(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum WComboBox::WComboBoxTypes)
 
 #endif
 

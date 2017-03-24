@@ -984,23 +984,12 @@ QScriptValue constructRecurrenceWidget(QScriptContext *context,
 
 void setupRecurrenceWidget(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  QScriptValue widget = engine->globalObject().property("RecurrenceWidget");
-  if (! widget.isFunction()) {
-    widget = engine->newFunction(constructRecurrenceWidget);
-    engine->globalObject().setProperty("RecurrenceWidget", widget, ro);
+  if (! engine->globalObject().property("RecurrenceWidget").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructRecurrenceWidget);
+    QScriptValue meta = engine->newQMetaObject(&RecurrenceWidget::staticMetaObject, ctor);
+
+    engine->globalObject().setProperty("RecurrenceWidget", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
   }
-
-  widget.setProperty("Never",   QScriptValue(engine, RecurrenceWidget::Never),    ro);
-  widget.setProperty("Minutely",QScriptValue(engine, RecurrenceWidget::Minutely), ro);
-  widget.setProperty("Hourly",  QScriptValue(engine, RecurrenceWidget::Hourly),   ro);
-  widget.setProperty("Daily",   QScriptValue(engine, RecurrenceWidget::Daily),    ro);
-  widget.setProperty("Weekly",  QScriptValue(engine, RecurrenceWidget::Weekly),   ro);
-  widget.setProperty("Monthly", QScriptValue(engine, RecurrenceWidget::Monthly),  ro);
-  widget.setProperty("Yearly",  QScriptValue(engine, RecurrenceWidget::Yearly),   ro);
-  widget.setProperty("Custom",  QScriptValue(engine, RecurrenceWidget::Custom),   ro);
-
-  widget.setProperty("NoPolicy",     QScriptValue(engine, RecurrenceWidget::NoPolicy),     ro);
-  widget.setProperty("IgnoreFuture", QScriptValue(engine, RecurrenceWidget::IgnoreFuture), ro);
-  widget.setProperty("ChangeFuture", QScriptValue(engine, RecurrenceWidget::ChangeFuture), ro);
 }

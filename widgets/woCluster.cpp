@@ -1128,18 +1128,12 @@ void setupWoCluster(QScriptEngine *engine)
 
 void setupWomatlCluster(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  QScriptValue widget = engine->globalObject().property("WomatlCluster");
-  if (! widget.isObject()) {
-    widget = engine->newObject();
-    engine->globalObject().setProperty("WomatlCluster", widget, ro);
+  if (! engine->globalObject().property("WomatlCluster").isObject())
+  {
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&WomatlCluster::staticMetaObject, ctor);
+
+    engine->globalObject().setProperty("WomatlCluster", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
   }
-
-  widget.setProperty("WorkOrder",  QScriptValue(engine, WomatlCluster::WorkOrder),  ro);
-  widget.setProperty("WoMaterial", QScriptValue(engine, WomatlCluster::WoMaterial), ro);
-  widget.setProperty("Wooper",     QScriptValue(engine, WomatlCluster::Wooper),     ro);
-
-  widget.setProperty("Pull",    QScriptValue(engine, WomatlCluster::Pull),  ro);
-  widget.setProperty("Push",    QScriptValue(engine, WomatlCluster::Push),  ro);
-  widget.setProperty("Mixed",   QScriptValue(engine, WomatlCluster::Mixed), ro);
 }

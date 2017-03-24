@@ -1458,14 +1458,12 @@ bool ContactWidget::eventFilter(QObject *obj, QEvent *event)
 
 void setupContactWidget(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  QScriptValue widget = engine->globalObject().property("ContactWidget");
-  if (! widget.isObject()) {
-    widget = engine->newObject();
-    engine->globalObject().setProperty("ContactWidget", widget, ro);
-  }
+  if (! engine->globalObject().property("ContactWidget").isObject())
+  {
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&ContactWidget::staticMetaObject, ctor);
 
-  widget.setProperty("Edit",   QScriptValue(engine, ContactWidget::Edit),   ro);
-  widget.setProperty("View",   QScriptValue(engine, ContactWidget::View),   ro);
-  widget.setProperty("Select", QScriptValue(engine, ContactWidget::Select), ro);
+    engine->globalObject().setProperty("ContactWidget", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

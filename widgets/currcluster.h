@@ -226,5 +226,6 @@ class XTUPLEWIDGETS_EXPORT CurrCluster : public CurrDisplay
 };
 
 void setupCurrDisplay(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum CurrDisplay::CurrDisplayFormats)
 
 #endif

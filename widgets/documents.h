@@ -122,5 +122,6 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
 };
 
 void setupDocuments(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum Documents::DocumentSources)
 
 #endif

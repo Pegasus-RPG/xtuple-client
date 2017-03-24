@@ -80,7 +80,10 @@ class XTUPLEWIDGETS_EXPORT AddressSearch : public VirtualSearch
 class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 {
     Q_OBJECT
+
     Q_ENUMS   (Mode)
+    Q_ENUMS   (SaveFlags)
+
     Q_PROPERTY(bool     activeVisible 	      READ activeVisible            WRITE setActiveVisible)
     Q_PROPERTY(QString  fieldNameAddressChange READ fieldNameAddrChange     WRITE setFieldNameAddrChange)
     Q_PROPERTY(QString  fieldNameNumber        READ fieldNameNumber         WRITE setFieldNameNumber)
@@ -245,5 +248,7 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 };
 
 void setupAddressCluster(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum AddressCluster::Mode)
+Q_DECLARE_METATYPE(enum AddressCluster::SaveFlags)
 
 #endif

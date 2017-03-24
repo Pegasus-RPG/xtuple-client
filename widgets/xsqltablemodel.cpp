@@ -617,11 +617,13 @@ QScriptValue constructXSqlTableModel(QScriptContext * context,
 
 void setupXSqlTableModel(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  QScriptValue widget = engine->globalObject().property("XSqlTableModel");
-  if (! widget.isFunction()) {
-    widget = engine->newFunction(constructXSqlTableModel);
-    engine->globalObject().setProperty("XSqlTableModel", widget, ro);
+  if (! engine->globalObject().property("XSqlTableModel").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructXSqlTableModel);
+    QScriptValue meta = engine->newQMetaObject(&XSqlTableModel::staticMetaObject, ctor);
+
+    engine->globalObject().setProperty("XSqlTableModel", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
   }
 }
 

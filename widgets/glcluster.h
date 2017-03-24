@@ -103,6 +103,7 @@ class XTUPLEWIDGETS_EXPORT GLClusterLineEdit : public VirtualClusterLineEdit
 class XTUPLEWIDGETS_EXPORT GLCluster : public VirtualCluster
 {
   Q_OBJECT
+  Q_ENUMS(Type)
     
   public:
     GLCluster(QWidget*, const char* = 0);
@@ -147,6 +148,7 @@ class XTUPLEWIDGETS_EXPORT GLCluster : public VirtualCluster
 };
 
 void setupGLCluster(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum GLCluster::Type)
 
 #endif
 

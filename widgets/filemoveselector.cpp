@@ -195,6 +195,7 @@ bool FileMoveSelector::setSuffix(QString psuffix)
 QScriptValue constructFileMoveSelector(QScriptContext *context,
                                        QScriptEngine  *engine)
 {
+#if QT_VERSION >= 0x050000
   FileMoveSelector *obj = 0;
 
   if (context->argumentCount() == 0)
@@ -211,19 +212,20 @@ QScriptValue constructFileMoveSelector(QScriptContext *context,
      context->throwError(QScriptContext::UnknownError,
                          "Could not find an appropriate FileMoveSelector constructor");
 
-#if QT_VERSION >= 0x050000
   return engine->toScriptValue(obj);
 #else
-  Q_UNUSED(engine); return QScriptValue();
+  Q_UNUSED(context); Q_UNUSED(engine); return QScriptValue();
 #endif
 }
 
 void setupFileMoveSelector(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  QScriptValue widget = engine->globalObject().property("FileMoveSelector");
-  if (! widget.isFunction()) {
-    widget = engine->newFunction(constructFileMoveSelector);
-    engine->globalObject().setProperty("FileMoveSelector", widget, ro);
+  if (! engine->globalObject().property("FileMoveSelector").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructFileMoveSelector);
+    QScriptValue meta = engine->newQMetaObject(&FileMoveSelector::staticMetaObject, ctor);
+
+    engine->globalObject().setProperty("FileMoveSelector", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
   }
 }

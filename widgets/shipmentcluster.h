@@ -83,5 +83,7 @@ class XTUPLEWIDGETS_EXPORT ShipmentCluster : public VirtualCluster
 };
 
 void setupShipmentClusterLineEdit(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum ShipmentClusterLineEdit::ShipmentStatus)
+Q_DECLARE_METATYPE(enum ShipmentClusterLineEdit::ShipmentType)
 
 #endif

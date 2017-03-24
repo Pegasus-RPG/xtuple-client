@@ -230,6 +230,8 @@ class XTUPLEWIDGETS_EXPORT WoCluster : public QWidget
 class XTUPLEWIDGETS_EXPORT WomatlCluster : public QWidget, public Ui::WomatlCluster
 {
   Q_OBJECT
+  Q_ENUMS(IssueTypes)
+  Q_ENUMS(SourceTypes)
   Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
 
   public:
@@ -296,6 +298,8 @@ class XTUPLEWIDGETS_EXPORT WomatlCluster : public QWidget, public Ui::WomatlClus
 };
 
 void setupWomatlCluster(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum WomatlCluster::IssueTypes)
+Q_DECLARE_METATYPE(enum WomatlCluster::SourceTypes)
 
 #endif
 

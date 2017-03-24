@@ -796,24 +796,14 @@ void CRMAcctSubtypeFromScriptValue(const QScriptValue &obj, enum CRMAcctLineEdit
 
 void setupCRMAcctLineEdit(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, CRMAcctSubtypeToScriptValue, CRMAcctSubtypeFromScriptValue);
+  if (! engine->globalObject().property("CRMAcctLineEdit").isObject())
+  {
+    qScriptRegisterMetaType(engine, CRMAcctSubtypeToScriptValue, CRMAcctSubtypeFromScriptValue);
 
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  QScriptValue widget = engine->globalObject().property("CRMAcctLineEdit");
-  if (! widget.isObject()) {
-    widget = engine->newObject();
-    engine->globalObject().setProperty("CRMAcctLineEdit", widget, ro);
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&CRMAcctLineEdit::staticMetaObject, ctor);
+
+    engine->globalObject().setProperty("CRMAcctLineEdit", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
   }
-
-  widget.setProperty("Crmacct",         QScriptValue(engine, CRMAcctLineEdit::Crmacct),         ro);
-  widget.setProperty("Competitor",      QScriptValue(engine, CRMAcctLineEdit::Competitor),      ro);
-  widget.setProperty("Cust",            QScriptValue(engine, CRMAcctLineEdit::Cust),            ro);
-  widget.setProperty("Employee",        QScriptValue(engine, CRMAcctLineEdit::Employee),        ro);
-  widget.setProperty("Partner",         QScriptValue(engine, CRMAcctLineEdit::Partner),         ro);
-  widget.setProperty("Prospect",        QScriptValue(engine, CRMAcctLineEdit::Prospect),        ro);
-  widget.setProperty("SalesRep",        QScriptValue(engine, CRMAcctLineEdit::SalesRep),        ro);
-  widget.setProperty("Taxauth",         QScriptValue(engine, CRMAcctLineEdit::Taxauth),         ro);
-  widget.setProperty("User",            QScriptValue(engine, CRMAcctLineEdit::User),            ro);
-  widget.setProperty("Vend",            QScriptValue(engine, CRMAcctLineEdit::Vend),            ro);
-  widget.setProperty("CustAndProspect", QScriptValue(engine, CRMAcctLineEdit::CustAndProspect), ro);
 }

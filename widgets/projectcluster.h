@@ -19,6 +19,7 @@ class XTUPLEWIDGETS_EXPORT ProjectLineEdit : public CrmClusterLineEdit
 {
     Q_OBJECT
 
+    Q_ENUMS(ProjectStatus)
     Q_ENUMS(ProjectType)
 
     Q_PROPERTY(ProjectType projectType READ type WRITE setType )
@@ -85,5 +86,7 @@ class XTUPLEWIDGETS_EXPORT ProjectCluster : public VirtualCluster
 };
 
 void setupProjectLineEdit(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum ProjectLineEdit::ProjectStatus)
+Q_DECLARE_METATYPE(enum ProjectLineEdit::ProjectType)
 
 #endif

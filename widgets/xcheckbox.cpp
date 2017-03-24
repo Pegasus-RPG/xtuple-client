@@ -121,6 +121,7 @@ void XCheckBox::setDataWidgetMap(XDataWidgetMapper* m)
 QScriptValue constructXCheckBox(QScriptContext *context,
                                 QScriptEngine  *engine)
 {
+#if QT_VERSION >= 0x050000
   XCheckBox *cbox = 0;
 
   if (context->argumentCount() == 0)
@@ -143,19 +144,20 @@ QScriptValue constructXCheckBox(QScriptContext *context,
     context->throwError(QScriptContext::UnknownError,
                         QString("Could not find an appropriate XCheckBox constructor"));
 
-#if QT_VERSION >= 0x050000
   return engine->toScriptValue(cbox);
 #else
-  Q_UNUSED(engine); return QScriptValue();
+  Q_UNUSED(context); Q_UNUSED(engine); return QScriptValue();
 #endif
 }
 
 void setupXCheckBox(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  QScriptValue widget = engine->globalObject().property("XCheckBox");
-  if (! widget.isFunction()) {
-    widget = engine->newFunction(constructXCheckBox);
-    engine->globalObject().setProperty("XCheckBox", widget, ro);
+  if (! engine->globalObject().property("XCheckBox").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructXCheckBox);
+    QScriptValue meta = engine->newQMetaObject(&XCheckBox::staticMetaObject, ctor);
+
+    engine->globalObject().setProperty("XCheckBox", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
   }
 }

@@ -25,8 +25,6 @@ class QScriptEngine;
 class XComboBoxPrivate;
 class XDataWidgetMapper;
 
-void setupXComboBox(QScriptEngine *engine);
-
 class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
 {
   Q_OBJECT
@@ -174,6 +172,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
 
 };
 
+void setupXComboBox(QScriptEngine *engine);
 Q_DECLARE_METATYPE(enum XComboBox::XComboBoxTypes)
 Q_DECLARE_METATYPE(enum XComboBox::Defaults)
 

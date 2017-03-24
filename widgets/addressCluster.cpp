@@ -946,14 +946,12 @@ void AddressCluster::setMode(Mode p)
 
 void setupAddressCluster(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  QScriptValue widget = engine->globalObject().property("AddressCluster");
-  if (! widget.isObject()) {
-    widget = engine->newObject();
-    engine->globalObject().setProperty("AddressCluster", widget, ro);
-  }
+  if (! engine->globalObject().property("AddressCluster").isObject())
+  {
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(addressClusterConstructor);
+    QScriptValue meta = engine->newQMetaObject(&AddressCluster::staticMetaObject, ctor);
 
-  widget.setProperty("CHECK",     QScriptValue(engine, AddressCluster::CHECK),     ro);
-  widget.setProperty("CHANGEONE", QScriptValue(engine, AddressCluster::CHANGEONE), ro);
-  widget.setProperty("CHANGEALL", QScriptValue(engine, AddressCluster::CHANGEALL), ro);
+    engine->globalObject().setProperty("AddressCluster", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

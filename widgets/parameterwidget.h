@@ -123,5 +123,6 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
 };
 
 void setupParameterWidget(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum ParameterWidget::ParameterWidgetTypes)
 
 #endif

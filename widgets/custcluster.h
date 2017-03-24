@@ -118,8 +118,7 @@ class XTUPLEWIDGETS_EXPORT CustCluster : public VirtualCluster
     void editingFinished();
 };
 
-Q_DECLARE_METATYPE(enum CLineEdit::CLineEditTypes)
-
 void setupCLineEdit(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum CLineEdit::CLineEditTypes)
 
 #endif

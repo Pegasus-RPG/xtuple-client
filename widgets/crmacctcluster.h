@@ -26,6 +26,7 @@ class XTUPLEWIDGETS_EXPORT CRMAcctInfoAction
 class XTUPLEWIDGETS_EXPORT CRMAcctLineEdit : public CrmClusterLineEdit
 {
     Q_OBJECT
+    Q_ENUMS(CRMAcctSubtype)
 
     public:
 	CRMAcctLineEdit(QWidget*, const char* = 0);
@@ -120,7 +121,6 @@ class XTUPLEWIDGETS_EXPORT CRMAcctCluster : public VirtualCluster
 };
 
 void setupCRMAcctLineEdit(QScriptEngine *engine);
-
 Q_DECLARE_METATYPE(enum CRMAcctLineEdit::CRMAcctSubtype)
 
 #endif

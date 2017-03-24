@@ -297,46 +297,12 @@ void Alarms::refresh()
 
 void setupAlarms(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  QScriptValue widget = engine->globalObject().property("Alarms");
-  if (! widget.isObject()) {
-    widget = engine->newObject();
-    engine->globalObject().setProperty("Alarms", widget, ro);
+  if (! engine->globalObject().property("Alarms").isObject())
+  {
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&Alarms::staticMetaObject, ctor);
+
+    engine->globalObject().setProperty("Alarms", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
   }
-
-  widget.setProperty("Uninitialized",	 QScriptValue(engine, Alarms::Uninitialized),	 ro);
-  widget.setProperty("Address",	         QScriptValue(engine, Alarms::Address),	         ro);
-  widget.setProperty("BBOMHead",	 QScriptValue(engine, Alarms::BBOMHead),	 ro);
-  widget.setProperty("BBOMItem",	 QScriptValue(engine, Alarms::BBOMItem),	 ro);
-  widget.setProperty("BOMHead",	         QScriptValue(engine, Alarms::BOMHead),	         ro);
-  widget.setProperty("BOMItem",	         QScriptValue(engine, Alarms::BOMItem),	         ro);
-  widget.setProperty("BOOHead",	         QScriptValue(engine, Alarms::BOOHead),	         ro);
-  widget.setProperty("BOOItem",	         QScriptValue(engine, Alarms::BOOItem),	         ro);
-  widget.setProperty("CRMAccount",	 QScriptValue(engine, Alarms::CRMAccount),	 ro);
-  widget.setProperty("Contact",	         QScriptValue(engine, Alarms::Contact),	         ro);
-  widget.setProperty("Customer",	 QScriptValue(engine, Alarms::Customer),	 ro);
-  widget.setProperty("Employee",	 QScriptValue(engine, Alarms::Employee),	 ro);
-  widget.setProperty("Incident",	 QScriptValue(engine, Alarms::Incident),	 ro);
-  widget.setProperty("Item",	         QScriptValue(engine, Alarms::Item),	         ro);
-  widget.setProperty("ItemSite",	 QScriptValue(engine, Alarms::ItemSite),	 ro);
-  widget.setProperty("ItemSource",	 QScriptValue(engine, Alarms::ItemSource),	 ro);
-  widget.setProperty("Location",	 QScriptValue(engine, Alarms::Location),	 ro);
-  widget.setProperty("LotSerial",	 QScriptValue(engine, Alarms::LotSerial),	 ro);
-  widget.setProperty("Opportunity",	 QScriptValue(engine, Alarms::Opportunity),	 ro);
-  widget.setProperty("Project",	         QScriptValue(engine, Alarms::Project),	         ro);
-  widget.setProperty("PurchaseOrder",	 QScriptValue(engine, Alarms::PurchaseOrder),	 ro);
-  widget.setProperty("PurchaseOrderItem",QScriptValue(engine, Alarms::PurchaseOrderItem),ro);
-  widget.setProperty("ReturnAuth",	 QScriptValue(engine, Alarms::ReturnAuth),	 ro);
-  widget.setProperty("ReturnAuthItem",	 QScriptValue(engine, Alarms::ReturnAuthItem),   ro);
-  widget.setProperty("Quote",	         QScriptValue(engine, Alarms::Quote),	         ro);
-  widget.setProperty("QuoteItem",	 QScriptValue(engine, Alarms::QuoteItem),	 ro);
-  widget.setProperty("SalesOrder",	 QScriptValue(engine, Alarms::SalesOrder),	 ro);
-  widget.setProperty("SalesOrderItem",	 QScriptValue(engine, Alarms::SalesOrderItem),   ro);
-  widget.setProperty("TodoItem",	 QScriptValue(engine, Alarms::TodoItem),	 ro);
-  widget.setProperty("TransferOrder",	 QScriptValue(engine, Alarms::TransferOrder),	 ro);
-  widget.setProperty("TransferOrderItem",QScriptValue(engine, Alarms::TransferOrderItem),ro);
-  widget.setProperty("Vendor",	         QScriptValue(engine, Alarms::Vendor),	         ro);
-  widget.setProperty("Warehouse",	 QScriptValue(engine, Alarms::Warehouse),	 ro);
-  widget.setProperty("WorkOrder",	 QScriptValue(engine, Alarms::WorkOrder),	 ro);
 }
-

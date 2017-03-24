@@ -645,17 +645,12 @@ void accountSearch::sFillList()
 
 void setupGLCluster(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  QScriptValue widget = engine->globalObject().property("GLCluster");
-  if (! widget.isObject()) {
-    widget = engine->newObject();
-    engine->globalObject().setProperty("GLCluster", widget, ro);
-  }
+  if (! engine->globalObject().property("GLCluster").isObject())
+  {
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&GLCluster::staticMetaObject, ctor);
 
-  widget.setProperty("cUndefined",QScriptValue(engine, GLCluster::cUndefined),ro);
-  widget.setProperty("cAsset",	  QScriptValue(engine, GLCluster::cAsset),    ro);
-  widget.setProperty("cLiability",QScriptValue(engine, GLCluster::cLiability),ro);
-  widget.setProperty("cExpense",  QScriptValue(engine, GLCluster::cExpense),  ro);
-  widget.setProperty("cRevenue",  QScriptValue(engine, GLCluster::cRevenue),  ro);
-  widget.setProperty("cEquity",	  QScriptValue(engine, GLCluster::cEquity),   ro);
+    engine->globalObject().setProperty("GLCluster", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

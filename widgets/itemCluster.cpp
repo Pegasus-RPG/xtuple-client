@@ -1388,6 +1388,7 @@ void itemSearch::sFillList()
 
 void setupItemLineEdit(QScriptEngine *engine)
 {
+  // cannot use engine->newQMetaObject because cActive goes negative
   QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
   QScriptValue widget = engine->globalObject().property("ItemLineEdit");
   if (! widget.isObject()) {

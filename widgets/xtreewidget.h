@@ -59,9 +59,6 @@ class QScriptEngine;
 class XTreeWidget;
 class XTreeWidgetProgress;
 
-void  setupXTreeWidgetItem(QScriptEngine *engine);
-void  setupXTreeWidget(QScriptEngine *engine);
-
 class XTUPLEWIDGETS_EXPORT XTreeWidgetItem : public QObject, public QTreeWidgetItem
 {
   Q_OBJECT
@@ -364,5 +361,9 @@ class XTreeWidgetPopulateParams
     bool      _workingUseAlt;
     XTreeWidget::PopulateStyle _workingPopstyle;
 };
+
+void  setupXTreeWidgetItem(QScriptEngine *engine);
+void  setupXTreeWidget(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum XTreeWidget::PopulateStyle)
 
 #endif

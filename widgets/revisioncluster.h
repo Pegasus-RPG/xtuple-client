@@ -30,6 +30,7 @@ class XTUPLEWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
 
   Q_ENUMS(Modes)
   Q_ENUMS(RevisionTypes)
+  Q_ENUMS(Statuses)
 
   Q_PROPERTY(Modes     mode READ mode   WRITE setMode   )
   Q_PROPERTY(RevisionTypes   type READ type WRITE setType )
@@ -117,5 +118,8 @@ class XTUPLEWIDGETS_EXPORT RevisionCluster : public VirtualCluster
 };
 
 void setupRevisionLineEdit(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum RevisionLineEdit::Modes)
+Q_DECLARE_METATYPE(enum RevisionLineEdit::RevisionTypes)
+Q_DECLARE_METATYPE(enum RevisionLineEdit::Statuses)
 
 #endif

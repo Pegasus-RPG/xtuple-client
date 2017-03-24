@@ -16,8 +16,6 @@
 
 class QScriptEngine;
 
-void setupRecurrenceWidget(QScriptEngine *engine);
-
 class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
 {
   Q_OBJECT
@@ -113,5 +111,9 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
   private:
 
 };
+
+void setupRecurrenceWidget(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum RecurrenceWidget::RecurrencePeriod)
+Q_DECLARE_METATYPE(enum RecurrenceWidget::RecurrenceChangePolicy)
 
 #endif // RECURRENCEWIDGET_H

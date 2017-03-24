@@ -219,15 +219,12 @@ QScriptValue constructNumberGenComboBox(QScriptContext *context,
 
 void setupNumberGenComboBox(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
-  QScriptValue widget = engine->globalObject().property("NumberGenComboBox");
-  if (! widget.isFunction()) {
-    widget = engine->newFunction(constructNumberGenComboBox);
-    engine->globalObject().setProperty("NumberGenComboBox", widget, ro);
-  }
+  if (! engine->globalObject().property("NumberGenComboBox").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructNumberGenComboBox);
+    QScriptValue meta = engine->newQMetaObject(&NumberGenComboBox::staticMetaObject, ctor);
 
-  widget.setProperty("Manual",    CONST(NumberGenComboBox::Manual),    ro);
-  widget.setProperty("Automatic", CONST(NumberGenComboBox::Automatic), ro);
-  widget.setProperty("Override",  CONST(NumberGenComboBox::Override),  ro);
-  widget.setProperty("Shared",    CONST(NumberGenComboBox::Shared),    ro);
+    engine->globalObject().setProperty("NumberGenComboBox", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

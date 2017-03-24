@@ -68,5 +68,6 @@ class XTUPLEWIDGETS_EXPORT VendorGroup : public QWidget, public Ui::VendorGroup
 };
 
 void setupVendorGroup(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum VendorGroup::VendorGroupState)
 
 #endif

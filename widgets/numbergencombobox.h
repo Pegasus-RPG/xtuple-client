@@ -20,8 +20,6 @@
 class QScriptEngine;
 class QStandardItemModel;
 
-void setupNumberGenComboBox(QScriptEngine *engine);
-
 class XTUPLEWIDGETS_EXPORT NumberGenComboBox : public QComboBox
 {
   Q_OBJECT
@@ -78,6 +76,7 @@ class XTUPLEWIDGETS_EXPORT NumberGenComboBox : public QComboBox
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(NumberGenComboBox::GenMethods);
 
+void setupNumberGenComboBox(QScriptEngine *engine);
 Q_DECLARE_METATYPE(enum NumberGenComboBox::GenMethod)
 
 #endif

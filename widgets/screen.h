@@ -28,7 +28,6 @@ class XTUPLEWIDGETS_EXPORT Screen : public QWidget
 	Q_OBJECT
 		
 	Q_ENUMS(Modes)
-	Q_ENUMS(SearchTypes)
         Q_ENUMS(Disposition)
 	
 	Q_PROPERTY (QString		schemaName            READ schemaName		WRITE setSchemaName)
@@ -118,5 +117,7 @@ class XTUPLEWIDGETS_EXPORT Screen : public QWidget
 };
 
 void setupScreen(QScriptEngine *engine);
+Q_DECLARE_METATYPE(enum Screen::Modes)
+Q_DECLARE_METATYPE(enum Screen::Disposition)
 
 #endif // SCREEN_H
