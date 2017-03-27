@@ -175,7 +175,7 @@ void issueWoMaterialBatch::sIssue()
   MetaSQLQuery mqlitems(sqlitems);
   XSqlQuery items = mqlitems.toQuery(params);
 
-  int succeeded = 0;;
+  int succeeded = 0;
   QList<QString> failedItems;
   QList<QString> errors;
   while(items.next())
@@ -218,8 +218,28 @@ void issueWoMaterialBatch::sIssue()
           QDate(), true) == XDialog::Rejected)
         {
           cleanup.exec();
-          QMessageBox::information( this, tr("Material Issue"), tr("Error Distributing Inventory Detail (distributeInventory::SeriesAdjust)") );
-          return;
+          // If it's not the last item in the loop, ask the user to exit loop or continue
+          if (items.at() != (items.size() -1))
+          {
+            if (QMessageBox::question(this,  tr("Material Issue"),
+            tr("Posting distribution detail for item number %1 was cancelled but "
+              "there are more items to post. Continue posting the remaining receipts?")
+            .arg(items.value("item_number").toString()),
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+            {
+              failedItems.append(items.value("item_number").toString());
+              errors.append("Detail Distribution Cancelled");
+              continue;
+            }
+            else
+              return;
+          }
+          else 
+          {
+            failedItems.append(items.value("item_number").toString());
+            errors.append("Detail Distribution Cancelled");
+            continue;
+          }
         }
       }
       else
@@ -227,7 +247,9 @@ void issueWoMaterialBatch::sIssue()
         cleanup.exec();
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
           parentItemlocdist, __FILE__, __LINE__);
-        return;
+        failedItems.append(items.value("item_number").toString());
+        errors.append(parentItemlocdist.lastError().text());
+        continue;
       }
     }
   
@@ -250,6 +272,8 @@ void issueWoMaterialBatch::sIssue()
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Work Order Material; Work Order ID #%1")
                              .arg(_wo->id()),
                              issue, __FILE__, __LINE__);
+        failedItems.append(items.value("item_number").toString());
+        errors.append(issue.lastError().text());
         continue;
       }
 
@@ -275,6 +299,8 @@ void issueWoMaterialBatch::sIssue()
           cleanup.exec();
           ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Material"),
                                lsdetail, __FILE__, __LINE__);
+          failedItems.append(items.value("item_number").toString());
+          errors.append(lsdetail.lastError().text());
           continue;
         }
       }

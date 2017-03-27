@@ -196,13 +196,37 @@ void unpostedPoReceipts::sPost()
       return;
   }
 
+  XSqlQuery setDate;
+  setDate.prepare("UPDATE recv SET recv_gldistdate=:distdate "
+                 "WHERE recv_id=:recv_id;");
+
   QList<XTreeWidgetItem*>selected = _recv->selectedItems();
   QList<XTreeWidgetItem*>triedToClosed;
+
+  // Update dates if user the transaction date after clicking post
+  for (int i = 0; i < selected.size(); i++)
+  {
+    int id = ((XTreeWidgetItem*)(selected[i]))->id();
+    if (changeDate)
+    {
+      setDate.bindValue(":distdate",  newDate);
+      setDate.bindValue(":recv_id", id);
+      setDate.exec();
+      if (setDate.lastError().type() != QSqlError::NoError)
+      {
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Receipt Information"),
+                             setDate, __FILE__, __LINE__);
+      }
+    }
+  }
 
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
   bool tryagain = false;
+  int succeeded = 0;
+  QList<QString> failedItems;
+  QList<QString> errors;
   do {
     // Cycle through the selected items on the _recv list
     for (int i = 0; i < selected.size(); i++)
@@ -211,7 +235,8 @@ void unpostedPoReceipts::sPost()
       int itemlocSeries = -1;
 
       XSqlQuery recvInfo;
-      recvInfo.prepare("SELECT recv_id, itemsite_id, itemsite_controlmethod, itemsite_perishable, itemsite_warrpurc, "
+      recvInfo.prepare("SELECT COALESCE(item_number, recv_vend_item_number) AS item_number, "
+                      "  recv_id, itemsite_id, itemsite_controlmethod, itemsite_perishable, itemsite_warrpurc, "
                       "  (recv_order_type = 'RA' AND COALESCE(itemsite_costmethod,'') = 'J') AS issuewo, "
                       "  (recv_order_type = 'PO' AND COALESCE(itemsite_costmethod,'') = 'J' AND poitem_order_type='W') AS issuejobwo, "
                       "  (recv_order_type = 'PO' AND COALESCE(itemsite_costmethod,'') = 'J' AND poitem_order_type='S') AS issuejobso, "
@@ -254,7 +279,9 @@ void unpostedPoReceipts::sPost()
       {
         ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
           parentSeries, __FILE__, __LINE__);
-        return;
+        failedItems.append(recvInfo.value("item_number").toString());
+        errors.append(parentSeries.lastError().text());
+        continue;
       }
 
       // itemlocdistId used for "to" wh side of transaction if Transfer Order & MultiWhs 
@@ -288,6 +315,7 @@ void unpostedPoReceipts::sPost()
           parentItemlocdist.exec();
           if (parentItemlocdist.first())
           {
+            itemlocdistId = parentItemlocdist.value("result").toInt();
             // If the "to" itemsite is not controlled, distribute the From side here
             if (!recvInfo.value("controlled").toBool())
             {
@@ -295,24 +323,48 @@ void unpostedPoReceipts::sPost()
                 true) == XDialog::Rejected)
               {
                 cleanup.exec();
-                QMessageBox::information( this, tr("Enter Receipts"),
-                  tr("Posting Distribution Detail Failed for 'From' itemsite") );
-                return;
+                // If it's not the last item in the loop, ask the user to exit loop or continue
+                if (i != (selected.size() - 1))
+                {
+                  if (QMessageBox::question(this,  tr("Unposted Receipts"),
+                                tr("Posting distribution detail for item number %1 was cancelled but "
+                                  "there are more items to post. Continue posting the remaining receipts?"),
+                                QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+                  {
+                    failedItems.append(recvInfo.value("item_number").toString());
+                    errors.append("Detail Distribution Cancelled");
+                    continue;
+                  }
+                  else
+                    return;
+                }
+                else
+                {
+                  failedItems.append(recvInfo.value("item_number").toString());
+                  errors.append("Detail Distribution Cancelled");
+                  continue;
+                }
               }
             }
-            else 
-              itemlocdistId = parentItemlocdist.value("result").toInt();
           }
           else 
           {
-           cleanup.exec();
-           ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Record for "
-             "'From' itemsite"), parentItemlocdist, __FILE__, __LINE__);
-           return;
+            cleanup.exec();
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Record for "
+              "'From' itemsite"), parentItemlocdist, __FILE__, __LINE__);
+            failedItems.append(recvInfo.value("item_number").toString());
+            errors.append(parentItemlocdist.lastError().text());
+            continue;
           }
         }
         else if (tohead.lastError().type() != QSqlError::NoError)
-          return;
+        {
+          ErrorReporter::error(QtCriticalMsg, this, tr("Failed to retrieve transfer order item and itemsite for from warehouse."), 
+            tohead, __FILE__, __LINE__);
+          failedItems.append(recvInfo.value("item_number").toString());
+          errors.append(tohead.lastError().text());
+          continue;
+        }
       }
       
       // Controlled (if 'TO', this is the to itemsite)
@@ -320,10 +372,9 @@ void unpostedPoReceipts::sPost()
         // IF Transfer Order, must be MultiWhs as well
         (recvInfo.value("recv_order_type").toString() == "TO" ? _metrics->boolean("MultiWhs") : true))
       {
-        qDebug() << "unpostedPoReceipts controlled";
         XSqlQuery parentItemlocdist;
         parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, "
-          ":itemlocSeries) AS result;");
+          ":itemlocSeries, NULL, :itemlocdistId, :transType, :itemlocSeries) AS result;");
         parentItemlocdist.bindValue(":itemsite_id", recvInfo.value("itemsite_id").toInt());
         parentItemlocdist.bindValue(":orderType", recvInfo.value("recv_order_type").toString());
         parentItemlocdist.bindValue(":orderitemId", recvInfo.value("recv_orderitem_id").toInt());
@@ -352,8 +403,27 @@ void unpostedPoReceipts::sPost()
             == XDialog::Rejected)
           {
             cleanup.exec();
-            QMessageBox::information( this, tr("Unposted Receipts"), tr("Posting distribution detail failed") );
-            return;
+            // If it's not the last item in the loop, ask the user to exit loop or continue
+            if (i != (selected.size() - 1))
+            {
+              if (QMessageBox::question(this,  tr("Unposted Receipts"),
+                            tr("Posting distribution detail for item number %1 was cancelled but "
+                              "there are more items to post. Continue posting the remaining receipts?"),
+                            QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+              {
+                failedItems.append(recvInfo.value("item_number").toString());
+                errors.append("Detail Distribution Cancelled");
+                continue;
+              }
+              else
+                return;
+            }
+            else
+            {
+              failedItems.append(recvInfo.value("item_number").toString());
+              errors.append("Detail Distribution Cancelled");
+              continue;
+            }
           }
         }
         else
@@ -361,31 +431,14 @@ void unpostedPoReceipts::sPost()
           cleanup.exec();
           ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Record"),
                                parentItemlocdist, __FILE__, __LINE__);
-          return;
+          failedItems.append(recvInfo.value("item_number").toString());
+          errors.append(parentItemlocdist.lastError().text());
+          continue;
         }
       }
 
       // The remaining is all database, so wrap in a transaction
       unpostedPost.exec("BEGIN;");
-
-      // Update date if user changed it
-      if (changeDate)
-      {
-        XSqlQuery setDate;
-        setDate.prepare("UPDATE recv SET recv_gldistdate=:distdate "
-                        "FROM recv "
-                        "WHERE recv_id=:recv_id;");
-        setDate.bindValue(":distdate",  newDate);
-        setDate.bindValue(":recv_id", id);
-        setDate.exec();
-        if (setDate.lastError().type() != QSqlError::NoError)
-        {
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Receipt Information"),
-                               setDate, __FILE__, __LINE__);
-          rollback.exec();
-          return;
-        }
-      } 
 
       // Post inventory transactions starting with postReceipt
       XSqlQuery postLine;
@@ -398,11 +451,12 @@ void unpostedPoReceipts::sPost()
         int result = postLine.value("result").toInt();
         if (result < 0 || result != itemlocSeries)
         {
-            ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Receipt Information"),
-                                 storedProcErrorLookup("postReceipt", result),
-                                 __FILE__, __LINE__);
           rollback.exec();
           cleanup.exec();
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Receipt Information"),
+            storedProcErrorLookup("postReceipt", result), __FILE__, __LINE__);
+          failedItems.append(recvInfo.value("item_number").toString());
+          errors.append(postLine.lastError().text());
           continue;
         }
 
@@ -424,7 +478,9 @@ void unpostedPoReceipts::sPost()
           {
             rollback.exec();
             cleanup.exec();
-            return;
+            failedItems.append(recvInfo.value("item_number").toString());
+            errors.append(issuewo.lastError().text());
+            continue;
           }
         }
         // Issue drop ship orders to shipping
@@ -457,52 +513,15 @@ void unpostedPoReceipts::sPost()
               cleanup.exec();
               QMessageBox::warning(this, tr("Cannot Ship Order"), msg);
               sFillList();
-              return;
+              failedItems.append(recvInfo.value("item_number").toString());
+              errors.append(issue.lastError().text());
+              continue;
             }
 
-            // Ship any drop shipped orders not previously shipped
-            int coheadId = issue.value("coitem_cohead_id").toInt();
-            if (!_soheadid.contains(coheadId))
-            {
-              _soheadid.append(coheadId);
-
-              // simply moving execute here instead of later iterating, to keep within the transaction
-              XSqlQuery ship;
-              ship.prepare("SELECT shipShipment(shiphead_id) AS result, "
-                           "  shiphead_id "
-                           "FROM shiphead "
-                           "WHERE ( (shiphead_order_type='SO') "
-                           " AND (shiphead_order_id=:cohead_id) "
-                           " AND (NOT shiphead_shipped) );");
-              ship.bindValue(":cohead_id", coheadId);
-              ship.exec();
-              if (_metrics->boolean("BillDropShip") && ship.first())
-              {
-                int shipheadid = ship.value("shiphead_id").toInt();
-                ship.prepare("SELECT selectUninvoicedShipment(:shiphead_id);");
-                ship.bindValue(":shiphead_id", shipheadid);
-                ship.exec();
-                if (ship.lastError().type() != QSqlError::NoError)
-                {
-                  rollback.exec();
-                  cleanup.exec();
-                  ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Shipment Information"),
-                                       ship, __FILE__, __LINE__);
-                  return;
-                }
-              }
-              if (ship.lastError().type() != QSqlError::NoError)
-              {
-                rollback.exec();
-                cleanup.exec();
-                ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Shipment Information"),
-                                     ship, __FILE__, __LINE__);
-                return;
-              }
-            }
-          
+            if (!_soheadid.contains(issue.value("coitem_cohead_id").toInt()))
+              _soheadid.append(issue.value("coitem_cohead_id").toInt());
             issue.prepare("SELECT postItemLocSeries(:itemlocseries);");
-            issue.bindValue(":itemlocseries", itemlocSeries);
+            issue.bindValue(":itemlocseries", postLine.value("result").toInt());
             issue.exec();
           }
           if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Receipt Information"),
@@ -510,9 +529,11 @@ void unpostedPoReceipts::sPost()
           {
             rollback.exec();
             cleanup.exec();
-            return;
+            failedItems.append(recvInfo.value("item_number").toString());
+            errors.append(issue.lastError().text());
+            continue;
           }
-        }   
+        }
       }
       // contains() string is hard-coded in stored procedure
       else if (postLine.lastError().databaseText().contains("posted to closed period"))
@@ -531,9 +552,49 @@ void unpostedPoReceipts::sPost()
         cleanup.exec();
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Receipt Information"),
                              postLine, __FILE__, __LINE__);
+        failedItems.append(recvInfo.value("item_number").toString());
+        errors.append(postLine.lastError().text());
+        continue;
       }
+      succeeded++;
       unpostedPost.exec("COMMIT;"); 
     } // for each selected line
+
+    // Ship any drop shipped orders
+    while (_soheadid.count())
+    {
+      XSqlQuery ship;
+      ship.prepare("SELECT shipShipment(shiphead_id) AS result, "
+                   "  shiphead_id "
+                   "FROM shiphead "
+                   "WHERE ( (shiphead_order_type='SO') "
+                   " AND (shiphead_order_id=:cohead_id) "
+                   " AND (NOT shiphead_shipped) );");
+      ship.bindValue(":cohead_id", _soheadid.at(0));
+      ship.exec();
+      if (_metrics->boolean("BillDropShip") && ship.first())
+      {
+        int shipheadid = ship.value("shiphead_id").toInt();
+        ship.prepare("SELECT selectUninvoicedShipment(:shiphead_id);");
+        ship.bindValue(":shiphead_id", shipheadid);
+        ship.exec();
+        if (ship.lastError().type() != QSqlError::NoError)
+        {
+          rollback.exec();
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Shipment Information"),
+                               ship, __FILE__, __LINE__);
+          return;
+        }
+      }
+      if (ship.lastError().type() != QSqlError::NoError)
+      {
+        rollback.exec();
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Shipment Information"),
+                             ship, __FILE__, __LINE__);
+        return;
+      }
+      _soheadid.takeFirst();
+    }
 
     if (triedToClosed.size() > 0)
     {
@@ -544,6 +605,19 @@ void unpostedPoReceipts::sPost()
       triedToClosed.clear();
     }
   } while (tryagain);
+
+  if (errors.size() > 0)
+  {
+    QMessageBox dlg(QMessageBox::Critical, "Errors Posting Receipt", "", QMessageBox::Ok, this);
+    dlg.setText(tr("%1 Items succeeded.\n%2 Items failed.").arg(succeeded).arg(failedItems.size()));
+
+    QString details;
+    for (int i=0; i<failedItems.size(); i++)
+      details += tr("Item %1 failed with:\n%2\n").arg(failedItems[i]).arg(errors[i]);
+    dlg.setDetailedText(details);
+
+    dlg.exec();
+  }
 
   omfgThis->sPurchaseOrderReceiptsUpdated();
 }

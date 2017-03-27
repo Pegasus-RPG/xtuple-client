@@ -175,11 +175,16 @@ void postInvoices::sPost()
                             parentSeries, __FILE__, __LINE__);
     return;
   }
+
+  int succeeded = 0;
+  QList<int> failedInvoiceIds;
+  QList<QString> errors;
   for (int i = 0; i < invoiceIds.size(); i++)
   {
+    int invoiceId = invoiceIds.at(i);
     // Handle the Inventory and G/L Transactions for any billed Inventory where invcitem_updateinv is true
     XSqlQuery items;
-    items.prepare("SELECT itemsite_id, invcitem_id, "
+    items.prepare("SELECT item_number, itemsite_id, invcitem_id, "
                   " (invcitem_billed * invcitem_qty_invuomratio) AS qty, "
                   " invchead_invcnumber "
                   "FROM invchead " 
@@ -194,7 +199,7 @@ void postInvoices::sPost()
                   " AND (itemsite_loccntrl OR itemsite_controlmethod IN ('L', 'S')) "
                   " AND itemsite_controlmethod != 'N' "
                   "ORDER BY invcitem_id;");
-    items.bindValue(":invchead_id", invoiceIds.at(i));
+    items.bindValue(":invchead_id", invoiceId);
     items.exec();
     while (items.next())
     {
@@ -210,17 +215,18 @@ void postInvoices::sPost()
       if (!parentItemlocdist.first())
       {
         cleanup.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-                                parentItemlocdist, __FILE__, __LINE__);
-        return;
+        failedInvoiceIds.append(invoiceId);
+        errors.append("Error Creating itemlocdist Record");
+        continue;
       }
     }
-
+    // Distribute the items from above
     if (items.size() > 0 && distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
       == XDialog::Rejected)
     {
       cleanup.exec();
-      QMessageBox::information( this, tr("Post Invoices"), tr("Error Posting Invoice Item Distribution") );
+      failedInvoiceIds.append(invoiceId);
+      errors.append("Detail Distribution was Cancelled");
       return;
     }
 
@@ -243,10 +249,9 @@ void postInvoices::sPost()
       {
         rollback.exec();
         cleanup.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Invoice"),
-                            storedProcErrorLookup("postInvoice", result),
-                            __FILE__, __LINE__);
-        return;
+        failedInvoiceIds.append(invoiceId);
+        errors.append("Error Posting Invoice");
+        continue;
       }
       // TODO - pass into success array for error reporting
     }
@@ -254,12 +259,25 @@ void postInvoices::sPost()
     {
       rollback.exec();
       cleanup.exec();
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Invoice Information"),
-                           postPost, __FILE__, __LINE__);
-      return;
-      // TODO - pass into failure array for error reporting
+      failedInvoiceIds.append(invoiceId);
+      errors.append("Error Posting Invoice Information");
+      continue;
     }
+    succeeded++;
     post.exec("COMMIT;");
+  }
+
+  if (errors.size() > 0)
+  {
+    QMessageBox dlg(QMessageBox::Critical, "Errors Posting Invoice", "", QMessageBox::Ok, this);
+    dlg.setText(tr("%1 Invoices succeeded.\n%2 Invoices failed.").arg(succeeded).arg(failedInvoiceIds.size()));
+
+    QString details;
+    for (int i=0; i<failedInvoiceIds.size(); i++)
+      details += tr("Invoice ID %1 failed with:\n%2\n").arg(failedInvoiceIds[i]).arg(errors[i]);
+    dlg.setDetailedText(details);
+
+    dlg.exec();
   }
 
   if (_printJournal->isChecked())

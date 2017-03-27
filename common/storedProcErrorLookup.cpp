@@ -955,6 +955,7 @@ const struct {
   { "issueToShipping",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."), 0, "" },
   { "issueToShipping",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
              "Expected Count of Distribution Detail Records Posted for Controlled Item."), 0, "" },
+  { "issueToShipping",  -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Cost Category."),0, ""},
   { "issueToShipping", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Next Shipment Number has not been set in "
 			       "the Configure S/R window. Set that value and "
 			       "try issuing to shipping again."), 0, "" },
@@ -1241,6 +1242,12 @@ const struct {
   { "postInvTrans",	-4, "",	 -4, "insertGLTransaction" },
   { "postInvTrans",	-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not post this inventory transaction because"
 			       " the transaction will cause the Item Qty. on Hand to go negative which is not allowed."), 0, "" },
+  { "postInvTrans", -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This transaction will cause an item to go negative"
+             " and negative inventory is currently disallowed."), 0, "" },
+  { "postInvTrans", -7, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+             "Transaction series must be provided."), 0, "" },
+  { "postInvTrans", -8, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+             "Could not find the itemlocSeries for the pInvhistId provided."), 0, "" },
 
   { "postPoReceipt",	-1, "",	 -1, "postReceipt" },
   { "postPoReceipt",	-2, "",	 -2, "postReceipt" },

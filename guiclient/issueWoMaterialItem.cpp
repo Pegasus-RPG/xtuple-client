@@ -210,8 +210,7 @@ void issueWoMaterialItem::sIssue()
         QDate(), true) == XDialog::Rejected)
       {
         cleanup.exec();
-        QMessageBox::information( this, tr("Material Issue"),
-          tr("Error Distributing Inventory Detail (distributeInventory::SeriesAdjust)") );
+        QMessageBox::information( this, tr("Material Issue"), tr("Detail Distribution was Cancelled") );
         return;
       }
     }
