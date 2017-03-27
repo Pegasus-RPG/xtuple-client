@@ -1,24 +1,25 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
-#include <QMessageBox>
+#include "addresscluster.h"
+
 #include <QGridLayout>
+#include <QMessageBox>
 #include <QSqlError>
+#include <QtScript>
 
 #include <metasql.h>
+#include <xsqlquery.h>
 
-#include "xsqlquery.h"
-#include "xcheckbox.h"
-
-#include "addresscluster.h"
 #include "errorReporter.h"
+#include "xcheckbox.h"
 
 #define DEBUG false
 
@@ -157,10 +158,10 @@ void AddressCluster::init()
     _mode = Edit;
 }
 
-AddressCluster::AddressCluster(QWidget* pParent, const char* pName) :
-    VirtualCluster(pParent, pName)
+AddressCluster::AddressCluster(QWidget* pParent, const char* pName)
+  : VirtualCluster(pParent, pName)
 {
-    init();
+  init();
 }
 
 void AddressCluster::populateStateComboBox()
@@ -939,4 +940,17 @@ void AddressCluster::setMode(Mode p)
     widgets.at(i)->setEnabled(enabled);
   if (p == Select)
     _list->setEnabled(true);
+}
+
+// script exposure /////////////////////////////////////////////////////////////
+
+void setupAddressCluster(QScriptEngine *engine)
+{
+  QScriptValue widget = engine->newObject();
+
+  widget.setProperty("CHECK",     QScriptValue(engine, AddressCluster::CHECK),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("CHANGEONE", QScriptValue(engine, AddressCluster::CHANGEONE), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("CHANGEALL", QScriptValue(engine, AddressCluster::CHANGEALL), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  engine->globalObject().setProperty("AddressCluster", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }

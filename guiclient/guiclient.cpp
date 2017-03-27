@@ -76,6 +76,7 @@
 #include "guiErrorCheck.h"
 #include "xtupleguiclientinterface.h"
 
+#include "include.h"
 #include "setup.h"
 #include "setupscriptapi.h"
 
@@ -829,7 +830,7 @@ void GUIClient::showEvent(QShowEvent *event)
       while(sq.next())
       {
         found_one = true;
-        QString script = scriptHandleIncludes(sq.value("script_source").toString());
+        QString script = sq.value("script_source").toString();
         if(!engine)
         {
           engine = new QScriptEngine(this);
@@ -839,6 +840,7 @@ void GUIClient::showEvent(QShowEvent *event)
             debugger->attachTo(engine);
           }
           loadScriptGlobals(engine);
+          setupInclude(engine);
         }
 
         QScriptValue result = engine->evaluate(script, "initMenu");
@@ -2176,6 +2178,58 @@ QScriptValue distributeInventorySeriesAdjust(QScriptContext *context,
   return engine->toScriptValue(result);
 }
 
+/** @internal */
+QScriptValue SetResponsetoScriptValue(QScriptEngine *engine, const enum SetResponse &sr)
+{
+  return QScriptValue(engine, (int)sr);
+}
+
+/** @internal */
+void SetResponsefromScriptValue(const QScriptValue &obj, enum SetResponse &sr)
+{
+  sr = (enum SetResponse)obj.toInt32();
+}
+
+/** @internal */
+QScriptValue SaveFlagstoScriptValue(QScriptEngine *engine, const enum SaveFlags &en)
+{
+  return QScriptValue(engine, (int)en);
+}
+
+/** @internal */
+void SaveFlagsfromScriptValue(const QScriptValue &obj, enum SaveFlags &en)
+{
+  if (obj.isNumber())
+    en = (enum SaveFlags)obj.toInt32();
+  else if (obj.isString())
+  {
+    if (obj.toString() == "CHECK")
+      en = CHECK;
+    else if (obj.toString() == "CHANGEONE")
+      en = CHANGEONE;
+    else if (obj.toString() == "CHANGEALL")
+      en = CHANGEALL;
+    else
+      qWarning("string %s could not be converted to SaveFlags",
+               qPrintable(obj.toString()));
+  }
+  else
+    qWarning("object %s could not be converted to SaveFlags",
+             qPrintable(obj.toString()));
+}
+
+/** @internal */
+QScriptValue WindowSystemtoScriptValue(QScriptEngine *engine, const enum GUIClient::WindowSystem &en)
+{
+  return QScriptValue(engine, (int)en);
+}
+
+/** @internal */
+void WindowSystemfromScriptValue(const QScriptValue &obj, enum GUIClient::WindowSystem &en)
+{
+  en = (enum GUIClient::WindowSystem)obj.toInt32();
+}
+
 /** @brief Load JavaScript global variables into a QScriptEngine.
 
     This method loads global variables and objects such as the script
@@ -2192,10 +2246,9 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   engine->installTranslatorFunctions();
 #endif
 
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+
   qScriptRegisterMetaType(engine, SetResponsetoScriptValue, SetResponsefromScriptValue);
-  qScriptRegisterMetaType(engine, ParameterGroupTypestoScriptValue, ParameterGroupTypesfromScriptValue);
-  qScriptRegisterMetaType(engine, ParameterGroupStatestoScriptValue, ParameterGroupStatesfromScriptValue);
-  qScriptRegisterMetaType(engine, QtWindowModalitytoScriptValue, QtWindowModalityfromScriptValue);
   qScriptRegisterMetaType(engine, SaveFlagstoScriptValue, SaveFlagsfromScriptValue);
   qScriptRegisterMetaType(engine, WindowSystemtoScriptValue, WindowSystemfromScriptValue);
 
@@ -2205,35 +2258,21 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
 
   QScriptValue mainwindowval = engine->newQObject(this);
   engine->globalObject().setProperty("mainwindow", mainwindowval);
-  mainwindowval.setProperty("NoError",  QScriptValue(engine, NoError),
-                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("NoError_Cancel",  QScriptValue(engine, NoError_Cancel),
-                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("NoError_Run",  QScriptValue(engine, NoError_Run),
-                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("NoError_Print",  QScriptValue(engine, NoError_Print),
-                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("NoError_Submit",  QScriptValue(engine, NoError_Submit),
-                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("Error_NoSetup",  QScriptValue(engine, Error_NoSetup),
-                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("UndefinedError",  QScriptValue(engine, UndefinedError),
-                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("NoError",         QScriptValue(engine, NoError), ro);
+  mainwindowval.setProperty("NoError_Cancel",  QScriptValue(engine, NoError_Cancel), ro);
+  mainwindowval.setProperty("NoError_Run",     QScriptValue(engine, NoError_Run), ro);
+  mainwindowval.setProperty("NoError_Print",   QScriptValue(engine, NoError_Print), ro);
+  mainwindowval.setProperty("NoError_Submit",  QScriptValue(engine, NoError_Submit), ro);
+  mainwindowval.setProperty("Error_NoSetup",   QScriptValue(engine, Error_NoSetup), ro);
+  mainwindowval.setProperty("UndefinedError",  QScriptValue(engine, UndefinedError), ro);
 
-  mainwindowval.setProperty("X11",  QScriptValue(engine, X11),
-                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("WIN",  QScriptValue(engine, WIN),
-                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("MAC",  QScriptValue(engine, MAC),
-                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("QWS",  QScriptValue(engine, QWS),
-                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("WINCE",  QScriptValue(engine, WINCE),
-                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("S60",  QScriptValue(engine, S60),
-                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("Unknown",  QScriptValue(engine, Unknown),
-                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("X11",      QScriptValue(engine, X11), ro);
+  mainwindowval.setProperty("WIN",      QScriptValue(engine, WIN), ro);
+  mainwindowval.setProperty("MAC",      QScriptValue(engine, MAC), ro);
+  mainwindowval.setProperty("QWS",      QScriptValue(engine, QWS), ro);
+  mainwindowval.setProperty("WINCE",    QScriptValue(engine, WINCE), ro);
+  mainwindowval.setProperty("S60",      QScriptValue(engine, S60), ro);
+  mainwindowval.setProperty("Unknown",  QScriptValue(engine, Unknown), ro);
 
 
   QScriptValue metricsval = engine->newQObject(_metrics);
@@ -2259,56 +2298,34 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
 
   // TODO: when std edition is extracted, replace this with a script include()
   QScriptValue distribInvObj = engine->newFunction(distributeInventorySeriesAdjust);
-  distribInvObj.setProperty("SeriesAdjust", distribInvObj,
-                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  engine->globalObject().setProperty("DistributeInventory", distribInvObj);
-
-  mainwindowval.setProperty("UndefinedError",  QScriptValue(engine, UndefinedError),
-                            QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  distribInvObj.setProperty("SeriesAdjust", distribInvObj, ro);
+  engine->globalObject().setProperty("DistributeInventory", distribInvObj); 
+  mainwindowval.setProperty("UndefinedError",  QScriptValue(engine, UndefinedError), ro);
 
   // #defines from guiclient.h
-  mainwindowval.setProperty("cNew", QScriptValue(engine, cNew),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cEdit", QScriptValue(engine, cEdit),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cView", QScriptValue(engine, cView),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cCopy", QScriptValue(engine, cCopy),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cRelease", QScriptValue(engine, cRelease),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cPost", QScriptValue(engine, cPost),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cReplace", QScriptValue(engine, cReplace),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cPostedCounts", QScriptValue(engine, cPostedCounts),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cUnpostedCounts", QScriptValue(engine, cUnpostedCounts),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cAllCounts", QScriptValue(engine, cAllCounts),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cLocation", QScriptValue(engine, cLocation),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cItemloc", QScriptValue(engine, cItemloc),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cTransAll", QScriptValue(engine, cTransAll),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cTransReceipts", QScriptValue(engine, cTransReceipts),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cTransIssues", QScriptValue(engine, cTransIssues),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cTransShipments", QScriptValue(engine, cTransShipments),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cTransAdjCounts", QScriptValue(engine, cTransAdjCounts),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cTransTransfers", QScriptValue(engine, cTransTransfers),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cTransScraps", QScriptValue(engine, cTransScraps),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("cNoReportDefinition", QScriptValue(engine, cNoReportDefinition),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  mainwindowval.setProperty("cNew", QScriptValue(engine, cNew), ro);
+  mainwindowval.setProperty("cEdit", QScriptValue(engine, cEdit), ro);
+  mainwindowval.setProperty("cView", QScriptValue(engine, cView), ro);
+  mainwindowval.setProperty("cCopy", QScriptValue(engine, cCopy), ro);
+  mainwindowval.setProperty("cRelease", QScriptValue(engine, cRelease), ro);
+  mainwindowval.setProperty("cPost", QScriptValue(engine, cPost), ro);
+  mainwindowval.setProperty("cReplace", QScriptValue(engine, cReplace), ro);
+  mainwindowval.setProperty("cPostedCounts", QScriptValue(engine, cPostedCounts), ro);
+  mainwindowval.setProperty("cUnpostedCounts", QScriptValue(engine, cUnpostedCounts), ro);
+  mainwindowval.setProperty("cAllCounts", QScriptValue(engine, cAllCounts), ro);
+  mainwindowval.setProperty("cLocation", QScriptValue(engine, cLocation), ro);
+  mainwindowval.setProperty("cItemloc", QScriptValue(engine, cItemloc), ro);
+  mainwindowval.setProperty("cTransAll", QScriptValue(engine, cTransAll), ro);
+  mainwindowval.setProperty("cTransReceipts", QScriptValue(engine, cTransReceipts), ro);
+  mainwindowval.setProperty("cTransIssues", QScriptValue(engine, cTransIssues), ro);
+  mainwindowval.setProperty("cTransShipments", QScriptValue(engine, cTransShipments), ro);
+  mainwindowval.setProperty("cTransAdjCounts", QScriptValue(engine, cTransAdjCounts), ro);
+  mainwindowval.setProperty("cTransTransfers", QScriptValue(engine, cTransTransfers), ro);
+  mainwindowval.setProperty("cTransScraps", QScriptValue(engine, cTransScraps), ro);
+  mainwindowval.setProperty("cNoReportDefinition", QScriptValue(engine, cNoReportDefinition), ro);
 
   setupScriptApi(engine);
+  setupWidgetsScriptApi(engine);
   setupSetupApi(engine);
   setupGuiErrorCheck(engine);
 

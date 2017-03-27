@@ -82,6 +82,7 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char*, Qt::WindowFlags fl)
   list()->addColumn(tr("Recurring"),       _ynColumn, Qt::AlignCenter, false, "recurring");
   list()->addColumn(tr("Open"),            _ynColumn, Qt::AlignCenter, false, "open");
   list()->addColumn(tr("Doc. #"),       _orderColumn, Qt::AlignLeft,   true,  "docnumber");
+  list()->addColumn(tr("Cust. PO#"),    _orderColumn, Qt::AlignLeft,   false, "custpo");
   list()->addColumn(tr("Cust./Assign To"),_itemColumn, Qt::AlignLeft,  false, "cust_number");
   list()->addColumn(tr("Name/Desc."),             -1, Qt::AlignLeft,   true,  "cust_name");
   list()->addColumn(tr("Order/Incident"),_itemColumn, Qt::AlignRight,  false, "ordernumber");

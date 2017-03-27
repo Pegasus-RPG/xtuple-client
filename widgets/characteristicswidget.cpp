@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -192,19 +192,10 @@ void CharacteristicsWidget::sFillList()
 
 // scripting exposure /////////////////////////////////////////////////////////
 
-QScriptValue CharacteristicsWidgettoScriptValue(QScriptEngine *engine, CharacteristicsWidget* const &item)
-{
-  return engine->newQObject(item);
-}
-
-void CharacteristicsWidgetfromScriptValue(const QScriptValue &obj, CharacteristicsWidget* &item)
-{
-  item = qobject_cast<CharacteristicsWidget*>(obj.toQObject());
-}
-
 QScriptValue constructCharacteristicsWidget(QScriptContext *context,
                                             QScriptEngine  *engine)
 {
+#if QT_VERSION >= 0x050000
   QWidget *parent = (qscriptvalue_cast<QWidget*>(context->argument(0)));
   if (context->argumentCount() == 0)
     return engine->toScriptValue(new CharacteristicsWidget());
@@ -221,16 +212,15 @@ QScriptValue constructCharacteristicsWidget(QScriptContext *context,
                           context->argument(1).toString().toLatin1().data(),
                           context->argument(2).toString(),
                           context->argument(2).toInteger()));
+#else
+  Q_UNUSED(context); Q_UNUSED(engine); return QScriptValue();
+#endif
 }
 
 void setupCharacteristicsWidget(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags stdflags = QScriptValue::ReadOnly |
-                                         QScriptValue::Undeletable;
-
-  qScriptRegisterMetaType(engine, CharacteristicsWidgettoScriptValue,
-                          CharacteristicsWidgetfromScriptValue);
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue constructor = engine->newFunction(constructCharacteristicsWidget);
-  engine->globalObject().setProperty("CharacteristicsWidget", constructor, stdflags);
+  engine->globalObject().setProperty("CharacteristicsWidget", constructor, ro);
 }
