@@ -60,6 +60,10 @@ const struct {
   { "calculateFreightDistribution", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Voucher you are attempting to distribute freight "
                                     "to has incorrect item totals for the desired distribution method. Please check that Voucher"),     0, "" },
 
+  { "calcIssueToShippingLineBalance", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+                            "The order type is not valid for issue to shipping."),     0, "" },
+
+
   { "changeCMHeadTaxAuth", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Return was not found."),	0, "" },
   { "changeCMHeadTaxAuth", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Tax Authority was not found."),	0, "" },
 
