@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -10,6 +10,7 @@
 
 #include "salesOrderItem.h"
 
+#include <QDebug>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QValidator>
@@ -30,6 +31,8 @@
 #include "taxDetail.h"
 #include "woMaterialItem.h"
 #include "xdoublevalidator.h"
+
+#define DEBUG false
 
 #define cNewQuote   (0x20 | cNew)
 #define cEditQuote  (0x20 | cEdit)
@@ -931,11 +934,11 @@ void salesOrderItem::clear()
     disconnect(_supplyWoDelete,    SIGNAL(clicked()),                    this, SLOT(sDeleteWoMatl()));
     disconnect(_supplyRollupPrices,SIGNAL(toggled(bool)),                this, SLOT(sRollupPrices()));
     disconnect(_supplyOrderQty,    SIGNAL(editingFinished()),            this, SLOT(sHandleSupplyOrder()));
-    //  disconnect(_supplyOrderDueDate,SIGNAL(newDate(const QDate &)),       this, SLOT(sHandleSupplyOrder()));
     disconnect(_supplyOverridePrice,SIGNAL(editingFinished()),           this, SLOT(sHandleSupplyOrder()));
     disconnect(_supplyDropShip,    SIGNAL(toggled(bool)),                this, SLOT(sHandleSupplyOrder()));
   }
 
+  _soitemid = -1;
   _modified = false;
   _partialsaved = false;
   _supplyOrderType = "";
@@ -951,7 +954,6 @@ void salesOrderItem::clear()
   _priceUOM->clear();
   _netUnitPrice->clear();
   _extendedPrice->clear();
-//  _scheduledDate->clear();
   _promisedDate->clear();
   _unitCost->clear();
   _invCost->clear();
@@ -981,8 +983,6 @@ void salesOrderItem::clear()
   _subItem->setEnabled(false);
   _subItemList->setEnabled(false);
   _comments->setId(-1);
-//  _warehouse->clear();  // are these two _warehouse steps necessary?
-//  _warehouse->setType(WComboBox::Sold);
   _originalQtyOrd  = 0.0;
   _qtyOrderedCache   = 0.0;
   _priceUOMCache   = -1;
@@ -1002,38 +1002,45 @@ void salesOrderItem::sSaveClicked()
 
 void salesOrderItem::sSave(bool pPartial)
 {
+  if (DEBUG) qDebug() << "sSave(pPartial) entered with" << pPartial;
+  if (_soitemid < 0)
+    return;
+
   XSqlQuery salesSave;
   _save->setFocus();
 
   _error = true;
-  QList<GuiErrorCheck> errors;
-  errors << GuiErrorCheck(!_warehouse->isValid(), _warehouse,
-                          tr("<p>You must select a valid Site before saving this Sales Order Item."))
-         << GuiErrorCheck(!(_qtyOrdered->toDouble() > 0), _qtyOrdered,
-                          tr("<p>You must enter a valid Quantity Ordered before saving this Sales Order Item."))
-         << GuiErrorCheck((_qtyOrdered->toDouble() < _qtyatshipping), _qtyOrdered,
-                          tr("<p>You must enter a Quantity Ordered equal to or greater than the Quantity At Shipping."))
-         << GuiErrorCheck((_qtyOrdered->toDouble() != (double)qRound(_qtyOrdered->toDouble()) &&
-                           _qtyOrdered->validator()->inherits("QIntValidator")), _qtyOrdered,
-                          tr("This UOM for this Item does not allow fractional quantities. Please fix the quantity."))
-         << GuiErrorCheck(_netUnitPrice->isEmpty(), _netUnitPrice,
-                          tr("<p>You must enter a Price before saving this Sales Order Item."))
-         << GuiErrorCheck(_sub->isChecked() && !_subItem->isValid(), _subItem,
-                          tr("<p>You must enter a Substitute Item before saving this Sales Order Item."))
-         << GuiErrorCheck(!_scheduledDate->isValid(), _scheduledDate,
-                          tr("<p>You must enter a valid Schedule Date before saving this Sales Order Item."))
-         << GuiErrorCheck(_createSupplyOrder->isChecked() &&
-                          _item->itemType() == "M" &&
-                          _supplyWarehouse->id() == -1, _supplyWarehouse,
-                          tr("<p>Before an Order may be created, a valid Supplied at Site must be selected."))
-         << GuiErrorCheck(!_createSupplyOrder->isChecked() &&
-                          _costmethod == "J", _createSupplyOrder,
-                          tr("<p>You must create a supply order for this Job Costed Item before saving this Sales Order Item."))
-  ;
+  if (! pPartial)
+  {
+    QList<GuiErrorCheck> errors;
+    errors << GuiErrorCheck(!_warehouse->isValid(), _warehouse,
+                            tr("<p>You must select a valid Site before saving this Sales Order Item."))
+           << GuiErrorCheck(!(_qtyOrdered->toDouble() > 0), _qtyOrdered,
+                            tr("<p>You must enter a valid Quantity Ordered before saving this Sales Order Item."))
+           << GuiErrorCheck((_qtyOrdered->toDouble() < _qtyatshipping), _qtyOrdered,
+                            tr("<p>You must enter a Quantity Ordered equal to or greater than the Quantity At Shipping."))
+           << GuiErrorCheck((_qtyOrdered->toDouble() != (double)qRound(_qtyOrdered->toDouble()) &&
+                             _qtyOrdered->validator()->inherits("QIntValidator")), _qtyOrdered,
+                            tr("This UOM for this Item does not allow fractional quantities. Please fix the quantity."))
+           << GuiErrorCheck(_netUnitPrice->isEmpty(), _netUnitPrice,
+                            tr("<p>You must enter a Price before saving this Sales Order Item."))
+           << GuiErrorCheck(_sub->isChecked() && !_subItem->isValid(), _subItem,
+                            tr("<p>You must enter a Substitute Item before saving this Sales Order Item."))
+           << GuiErrorCheck(!_scheduledDate->isValid(), _scheduledDate,
+                            tr("<p>You must enter a valid Schedule Date before saving this Sales Order Item."))
+           << GuiErrorCheck(_createSupplyOrder->isChecked() &&
+                            _item->itemType() == "M" &&
+                            _supplyWarehouse->id() == -1, _supplyWarehouse,
+                            tr("<p>Before an Order may be created, a valid Supplied at Site must be selected."))
+           << GuiErrorCheck(!_createSupplyOrder->isChecked() &&
+                            _costmethod == "J", _createSupplyOrder,
+                            tr("<p>You must create a supply order for this Job Costed Item before saving this Sales Order Item."))
+    ;
 
-  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Sales Order Item"), errors))
-    return;
-  
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Sales Order Item"), errors))
+      return;
+  }
+
   // Make sure Qty Ordered/Qty UOM does not result in an invalid fractional Inv Qty
   if (!pPartial && !_invIsFractional)
   {
@@ -1384,7 +1391,6 @@ void salesOrderItem::sSave(bool pPartial)
   // Update supply order characteristics
   if ( (_mode != cView) && (_mode != cViewQuote) )
   {
-//    if (_supplyOrderId != -1 && !_item->isConfigured())
     if (_supplyOrderId != -1)
     {
       // Update Supply Order Characteristics
@@ -1479,9 +1485,6 @@ void salesOrderItem::sSave(bool pPartial)
           }
         }
       }
-      
-      // causes sDeterminePrice problem
-      //_qtyOrderedCache = _qtyOrdered->toDouble();
     }
 
     QString type = "SI";
@@ -1590,10 +1593,9 @@ void salesOrderItem::sPopulateItemsiteInfo()
                      "       itemCost(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
                      "                :curr_id, :effective, :asof, :warehous_id, :dropShip) AS unitcost,"
                      "       itemCost(itemsite_id) AS invunitcost, itemsite_costmethod "
-                     "FROM itemsite JOIN item ON (item_id=itemsite_item_id) "
-                     "WHERE ( (itemsite_warehous_id=:warehous_id)"
-                     "  AND   (itemsite_item_id=:item_id) );" );
-    // TODO: why JOIN item if we don't use any of its fields?
+                     "  FROM itemsite"
+                     " WHERE itemsite_warehous_id = :warehous_id"
+                     "   AND itemsite_item_id = :item_id;" );
     itemsite.bindValue(":cust_id", _custid);
     itemsite.bindValue(":shipto_id", _shiptoid);
     itemsite.bindValue(":qty", _qtyOrdered->toDouble());
@@ -1719,8 +1721,6 @@ void salesOrderItem::sListPrices()
        (_privileges->check("OverridePrice")) &&
        (!_metrics->boolean("DisableSalesOrderPriceOverride")) )
   {
-//    _netUnitPrice->setLocalValue(newdlg._selectedPrice * (_priceinvuomratio / _priceRatio));
-//    sCalculateDiscountPrcnt();
     double price = newdlg._selectedPrice;
     QString _priceMethod = newdlg._selectedMethod;
     QString _priceType = newdlg._selectedType;
@@ -1789,12 +1789,13 @@ void salesOrderItem::sRecalcPrice()
 
 void salesOrderItem::sDeterminePrice()
 {
-  XSqlQuery salesDeterminePrice;
+  if (DEBUG) qDebug() << "sDeterminePrice() entered";
   sDeterminePrice(false);
 }
 
 void salesOrderItem::sDeterminePrice(bool force)
 {
+  if (DEBUG) qDebug() << "sDeterminePrice(force) entered with" << force;
   XSqlQuery salesDeterminePrice;
   // Determine if we can or should update the price
   if ( _mode == cView ||
@@ -2108,7 +2109,6 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       _taxtype->setId(salesPopulateItemInfo.value("taxtype_id").toInt());
 
       sFindSellingWarehouseItemsites(_item->id());
-//      sCalculateDiscountPrcnt();
 
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
@@ -2244,11 +2244,13 @@ void salesOrderItem::sRecalcAvailability()
 
 void salesOrderItem::sDetermineAvailability()
 {
+  if (DEBUG) qDebug() << "sDetermineAvailability() entered";
   sDetermineAvailability(false);
 }
 
 void salesOrderItem::sDetermineAvailability( bool p )
 {
+  if (DEBUG) qDebug() << "sDetermineAvailability(p) entered with" << p;
   if (  (_item->id()==_availabilityLastItemid) &&
         (_warehouse->id()==_availabilityLastWarehousid) &&
         (_scheduledDate->date()==_availabilityLastSchedDate) &&
@@ -2409,19 +2411,24 @@ void salesOrderItem::sDetermineAvailability( bool p )
 
 void salesOrderItem::sPopulateItemSources(int pItemid)
 {
-  XSqlQuery priceq;
-  MetaSQLQuery mql = mqlLoad("itemSources", "prices");
-  ParameterList params;
-  params.append("item_id", pItemid);
-  params.append("nominal",tr("Nominal"));
-  params.append("discount",tr("Discount"));
-  params.append("price", tr("Price"));
-  params.append("fixed", tr("Fixed"));
-  params.append("percent", tr("Percent"));
-  params.append("mixed", tr("Mixed"));
+  if (pItemid < 0)
+    _itemsrcp->clear();
+  else
+  {
+    XSqlQuery priceq;
+    MetaSQLQuery mql = mqlLoad("itemSources", "prices");
+    ParameterList params;
+    params.append("item_id", pItemid);
+    params.append("nominal",tr("Nominal"));
+    params.append("discount",tr("Discount"));
+    params.append("price", tr("Price"));
+    params.append("fixed", tr("Fixed"));
+    params.append("percent", tr("Percent"));
+    params.append("mixed", tr("Mixed"));
 
-  priceq = mql.toQuery(params);
-  _itemsrcp->populate(priceq);
+    priceq = mql.toQuery(params);
+    _itemsrcp->populate(priceq);
+  }
 }
 
 void salesOrderItem::sPopulateItemSubs(int pItemid)
@@ -2501,7 +2508,12 @@ void salesOrderItem::sReserveStock()
 
 void salesOrderItem::sPopulateHistory()
 {
-  if (_historyCostsButton->isChecked())
+  if (_item->id() < 0)
+  {
+    _historyCosts->clear();
+    _historySales->clear();
+  }
+  else if (_historyCostsButton->isChecked())
   {
     XSqlQuery historyq;
     MetaSQLQuery historymql = mqlLoad("receivings", "detail");
@@ -2588,8 +2600,8 @@ void salesOrderItem::sCalculateExtendedPrice()
 
 void salesOrderItem::sCheckSupplyOrder()
 {
-//  QMessageBox::critical(this, tr("Debug"),
-//                        tr("sCheckSupplyOrder called."));
+  if (DEBUG) qDebug() << "entered sCheckSupplyOrder()";
+
   if ( (_item->isValid()) &&
       (_warehouse->isValid()) &&
       (_scheduledDate->isValid()) &&
@@ -2611,7 +2623,7 @@ void salesOrderItem::sHandleSupplyOrder()
   
   XSqlQuery ordq;
   if (_createSupplyOrder->isChecked() && ISORDER(_mode))
-  { // createSupplyOrder is checked
+  {
 
     double valqty = 0.0;
     ordq.prepare( "SELECT validateOrderQty(itemsite_id, :qty, true) AS qty "
@@ -2631,8 +2643,7 @@ void salesOrderItem::sHandleSupplyOrder()
     }
 
     if (_supplyOrderId == -1)
-    { // supply order does not exist
-      // first save the sales order item
+    {
       sSave(true);
       if (_modified)  // catch an error saving
       {
@@ -3233,7 +3244,6 @@ void salesOrderItem::sHandleSupplyOrder()
     
     }  // end supply order exists
     
-    // Populate Supply Order info
     sPopulateOrderInfo();
     
   } // end createSupplyOrder is checked
@@ -3398,6 +3408,10 @@ void salesOrderItem::sHandleSupplyOrder()
 
 void salesOrderItem::sPopulateOrderInfo()
 {
+  if (DEBUG)
+    qDebug() << "sPopulateOrderInfo() entered with supply order"
+             << _supplyOrderType << _supplyOrderId;
+
   if (ISQUOTE(_mode))
     return;
   
@@ -3415,11 +3429,6 @@ void salesOrderItem::sPopulateOrderInfo()
     return;
   }
   
-//  QMessageBox::critical(this, tr("Debug"),
-//                        tr("sPopulateOrderInfo called with _supplyOrderType = %1").arg(_supplyOrderType));
-//  QMessageBox::critical(this, tr("Debug"),
-//                        tr("sPopulateOrderInfo called with _supplyOrderId = %1").arg(_supplyOrderId));
-
   XSqlQuery ordq;
   
   // Populate Supply Order
@@ -3566,7 +3575,6 @@ void salesOrderItem::sPopulateOrderInfo()
       _supplyOrderDueDate->show();
       _supplyWarehouse->hide();
       
-//      _supplyOrderStack->setCurrentWidget(_purchaseRequestPage);
       _supplyOrderStack->setCurrentWidget(_purchaseOrderPage);
     }
     else
@@ -3599,7 +3607,6 @@ void salesOrderItem::sPopulateOrderInfo()
     connect(_supplyWoDelete,    SIGNAL(clicked()),                    this, SLOT(sDeleteWoMatl()));
     connect(_supplyRollupPrices,SIGNAL(toggled(bool)),                this, SLOT(sRollupPrices()));
     connect(_supplyOrderQty,    SIGNAL(editingFinished()),            this, SLOT(sHandleSupplyOrder()));
-    //  connect(_supplyOrderDueDate,SIGNAL(newDate(const QDate &)),       this, SLOT(sHandleSupplyOrder()));
     connect(_supplyOverridePrice,SIGNAL(editingFinished()),           this, SLOT(sHandleSupplyOrder()));
     connect(_supplyDropShip,    SIGNAL(toggled(bool)),                this, SLOT(sHandleSupplyOrder()));
     _supplyConnectionsCache = true;
@@ -3659,11 +3666,10 @@ void salesOrderItem::sFillWoIndentedList()
 {
   XSqlQuery workFillList;
   _woIndentedList->clear();
-  //The wodata_id_type column is used to indicate the source of the wodata_id
-  //there are three different tables used wo, womatl and womatlvar
-  //wodata_id_type = 1 = wo_id
-  //wodata_id_type = 2 = womatl_id
-  //wodata_id_type = 3 = womatlvar_id
+  //The wodata_id_type column indicates the source of the wodata_id
+  //wodata_id_type == 1 = wo_id
+  //wodata_id_type == 2 = womatl_id
+  //wodata_id_type == 3 = womatlvar_id
   QString sql(
               "     SELECT wodata_id, "
               "           wodata_id_type, "
@@ -3746,7 +3752,7 @@ void salesOrderItem::sPopulateWoMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
   QString  status(selected->text(3));
   QAction *menuItem;
   
-  //Check if row is a work order and id is vaild
+  //Check if row is a work order and id is valid
   if(_woIndentedList->altId() == 1 && _woIndentedList->id() > -1)
   {
     if (_mode != cView)
@@ -3797,11 +3803,8 @@ void salesOrderItem::sNewWoMatl()
   woMaterialItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
-//  int currentId = _woIndentedList->id();
-//  int currentAltId = _woIndentedList->altId();
   omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
   sFillWoIndentedList();
-//  _woIndentedList->setId(currentId,currentAltId);
   if (_supplyRollupPrices->isChecked())
     sRollupPrices();
 }
@@ -3818,11 +3821,8 @@ void salesOrderItem::sEditWoMatl()
     woMaterialItem newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
-//    int currentId = _woIndentedList->id();
-//    int currentAltId = _woIndentedList->altId();
     omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), true);
     sFillWoIndentedList();
-//    _woIndentedList->setId(currentId,currentAltId);
     if (_supplyRollupPrices->isChecked())
       sRollupPrices();
   }
@@ -4424,7 +4424,6 @@ void salesOrderItem::reject()
 
   if (!saved && (cNew == _mode || cNewQuote == _mode))
   {
-    // DELETE ANY COMMENTS
     QString errMsg;
     if (ISQUOTE(_mode)) {
       salesreject.prepare("SELECT deleteQuoteItem(:coitem_id);"
@@ -4902,7 +4901,6 @@ void salesOrderItem::sHandleScheduleDate()
   if ((!_scheduledDate->isValid() ||
       (_scheduledDate->date() == _scheduledDateCache)))
   {
-//    sDetermineAvailability();
     return;
   }
 
