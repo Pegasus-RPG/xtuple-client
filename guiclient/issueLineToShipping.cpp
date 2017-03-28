@@ -241,8 +241,8 @@ void issueLineToShipping::sIssue()
   
   int invhistid = 0;
   int itemlocSeries;
-  int postProdItemlocSeries;
-  int postProdItemlocdistId;
+  int postProdItemlocSeries = -1;
+  int postProdItemlocdistId = 0;
 
   XSqlQuery parentItemlocdist;
   XSqlQuery parentSeries;
@@ -289,7 +289,6 @@ void issueLineToShipping::sIssue()
         "      ELSE womatl_qtywipscrap END)) AS qtyToIssue " // consumed
         "FROM womatl, wo, itemsite, item "
         "WHERE womatl_issuemethod IN ('L', 'M') "
-        " AND womatl_wo_id=pWoid "
         " AND womatl_wo_id=wo_id "
         " AND womatl_itemsite_id=itemsite_id "
         " AND wo_ordid = :coitem_id "

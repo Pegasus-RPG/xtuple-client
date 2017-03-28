@@ -534,7 +534,6 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
         "      ELSE womatl_qtywipscrap END)) AS qtyToIssue " // consumed
         "FROM womatl, wo, itemsite, item "
         "WHERE womatl_issuemethod IN ('L', 'M') "
-        " AND womatl_wo_id=pWoid "
         " AND womatl_wo_id=wo_id "
         " AND womatl_itemsite_id=itemsite_id "
         " AND wo_ordid = :coitem_id "
@@ -563,13 +562,13 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
             QMessageBox::information( this, tr("Issue to Shipping"), 
               tr("Failed to Create an itemlocdist record for work order material item %1 to be backflushed")
               .arg(backflushItems.value("item_number").toString()) );
-            return;
+            return false;
           }
           else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
             parentItemlocdist, __FILE__, __LINE__))
           {
             postProdCleanup.exec();
-            return;
+            return false;
           }
         }
       } 
