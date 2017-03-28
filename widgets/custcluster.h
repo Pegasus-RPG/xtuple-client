@@ -36,8 +36,6 @@ class XTUPLEWIDGETS_EXPORT CLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT
 
-  Q_ENUMS(CLineEditTypes)
-
   Q_PROPERTY(CLineEditTypes type READ type WRITE setType )
 
   friend class CustInfo;
@@ -51,6 +49,7 @@ class XTUPLEWIDGETS_EXPORT CLineEdit : public VirtualClusterLineEdit
       AllProspects,		ActiveProspects,
       AllCustomersAndProspects,	ActiveCustomersAndProspects
     };
+    Q_ENUM(CLineEditTypes)
 
     inline CLineEditTypes	type()	    const { return _type;       }
 
@@ -119,6 +118,5 @@ class XTUPLEWIDGETS_EXPORT CustCluster : public VirtualCluster
 };
 
 void setupCLineEdit(QScriptEngine *engine);
-Q_DECLARE_METATYPE(enum CLineEdit::CLineEditTypes)
 
 #endif

@@ -798,7 +798,9 @@ void setupCRMAcctLineEdit(QScriptEngine *engine)
 {
   if (! engine->globalObject().property("CRMAcctLineEdit").isObject())
   {
+#if QT_VERSION >= 0x050500
     qScriptRegisterMetaType(engine, CRMAcctSubtypeToScriptValue, CRMAcctSubtypeFromScriptValue);
+#endif
 
     QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
     QScriptValue meta = engine->newQMetaObject(&CRMAcctLineEdit::staticMetaObject, ctor);

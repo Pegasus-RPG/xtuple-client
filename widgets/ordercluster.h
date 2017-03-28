@@ -35,6 +35,7 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
       AnyStatus = 0x00,
       Unposted  = 0x01, Open = 0x02, Closed = 0x04
     };
+    Q_ENUM(OrderStatus)
     Q_DECLARE_FLAGS(OrderStatuses, OrderStatus)
 
     enum OrderType
@@ -42,6 +43,7 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
       AnyType = 0x00,
       Purchase = 0x01, Return = 0x02, Sales = 0x04, Transfer = 0x08
     };
+    Q_ENUM(OrderType)
     Q_DECLARE_FLAGS(OrderTypes, OrderType)
 
     Q_INVOKABLE virtual OrderStatuses allowedStatuses()        const;

@@ -18,7 +18,6 @@ class QScriptEngine;
 class XTUPLEWIDGETS_EXPORT RaLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT
-  Q_ENUMS(RaStatus)
 
   public:
     RaLineEdit(QWidget*, const char* = 0);
@@ -27,6 +26,7 @@ class XTUPLEWIDGETS_EXPORT RaLineEdit : public VirtualClusterLineEdit
     {
       AnyStatus = 0x00, Open = 0x01, Closed = 0x02
     };
+    Q_ENUM(RaStatus)
     Q_DECLARE_FLAGS(RaStatuses, RaStatus)
 
     virtual RaStatuses	allowedStatuses()	const;
@@ -73,6 +73,5 @@ class XTUPLEWIDGETS_EXPORT RaList : public VirtualList
 };
 
 void setupRaLineEdit(QScriptEngine *engine);
-Q_DECLARE_METATYPE(enum RaLineEdit::RaStatus)
 
 #endif

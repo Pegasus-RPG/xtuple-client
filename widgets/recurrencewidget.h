@@ -20,9 +20,6 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
 {
   Q_OBJECT
 
-  Q_ENUMS(RecurrencePeriod)
-  Q_ENUMS(RecurrenceChangePolicy)
-
   Q_PROPERTY(bool maxVisible       READ maxVisible       WRITE setMaxVisible DESIGNABLE false)
   Q_PROPERTY(bool endTimeVisible   READ endTimeVisible   WRITE setEndTimeVisible)
   Q_PROPERTY(bool endDateVisible   READ endDateVisible   WRITE setEndDateVisible)
@@ -34,9 +31,11 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
     // Never must = XComboBox::id() when ! XComboBox::isValid()
     enum RecurrencePeriod
     { Never = -1, Minutely, Hourly, Daily, Weekly, Monthly, Yearly, Custom };
+    Q_ENUM(RecurrencePeriod)
 
     enum RecurrenceChangePolicy
     { NoPolicy = -1, IgnoreFuture, ChangeFuture };
+    Q_ENUM(RecurrenceChangePolicy)
                           
     RecurrenceWidget(QWidget* parent = 0, const char* name = 0);
     ~RecurrenceWidget();
@@ -113,7 +112,5 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
 };
 
 void setupRecurrenceWidget(QScriptEngine *engine);
-Q_DECLARE_METATYPE(enum RecurrenceWidget::RecurrencePeriod)
-Q_DECLARE_METATYPE(enum RecurrenceWidget::RecurrenceChangePolicy)
 
 #endif // RECURRENCEWIDGET_H

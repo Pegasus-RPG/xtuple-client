@@ -61,17 +61,14 @@ void setupQSqlTableModelProto(QScriptEngine *engine)
   qScriptRegisterMetaType(engine, EditStrategyToScriptValue,   EditStrategyFromScriptValue);
   qScriptRegisterMetaType(engine, QSqlTableModelToScriptValue, QSqlTableModelFromScriptValue);
 
-  QScriptValue proto = engine->newQObject(new QSqlTableModelProto(engine));
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  if (! engine->globalObject().property("QSqlTableModel").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructQSqlTableModel);
+    QScriptValue meta = engine->newQMetaObject(&QSqlTableModel::staticMetaObject, ctor);
 
-  engine->setDefaultPrototype(qMetaTypeId<QSqlTableModel*>(), proto);
-
-  QScriptValue ctor = engine->newFunction(constructQSqlTableModel, proto);
-  ctor.setProperty("OnFieldChange",  QScriptValue(engine, QSqlTableModel::OnFieldChange),  ro);
-  ctor.setProperty("OnRowChange",    QScriptValue(engine, QSqlTableModel::OnRowChange),	   ro);
-  ctor.setProperty("OnManualSubmit", QScriptValue(engine, QSqlTableModel::OnManualSubmit), ro);
-
-  engine->globalObject().setProperty("QSqlTableModel",  ctor);
+    engine->globalObject().setProperty("QSqlTableModel", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }
 
 QSqlTableModelProto::QSqlTableModelProto(QObject *parent)

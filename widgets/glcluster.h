@@ -103,7 +103,6 @@ class XTUPLEWIDGETS_EXPORT GLClusterLineEdit : public VirtualClusterLineEdit
 class XTUPLEWIDGETS_EXPORT GLCluster : public VirtualCluster
 {
   Q_OBJECT
-  Q_ENUMS(Type)
     
   public:
     GLCluster(QWidget*, const char* = 0);
@@ -117,6 +116,7 @@ class XTUPLEWIDGETS_EXPORT GLCluster : public VirtualCluster
       cRevenue    = 0x08,
       cEquity     = 0x10
     };
+    Q_ENUM(Type)
 
     Q_INVOKABLE unsigned int type()  const       { return static_cast<GLClusterLineEdit*>(_number)->type(); }
     Q_INVOKABLE void setType(unsigned int pType) { static_cast<GLClusterLineEdit*>(_number)->setType(pType); }
@@ -148,7 +148,6 @@ class XTUPLEWIDGETS_EXPORT GLCluster : public VirtualCluster
 };
 
 void setupGLCluster(QScriptEngine *engine);
-Q_DECLARE_METATYPE(enum GLCluster::Type)
 
 #endif
 

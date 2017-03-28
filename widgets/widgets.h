@@ -31,6 +31,10 @@
   #define XTUPLEWIDGETS_EXPORT
 #endif
 
+#ifndef Q_ENUM  /* introduced in Qt 5.5 */
+#define Q_ENUM(ENUMERATION) Q_ENUMS(ENUMERATION)
+#endif
+
 class Metrics;
 class Preferences;
 class Privileges;

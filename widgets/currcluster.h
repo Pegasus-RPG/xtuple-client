@@ -33,8 +33,6 @@ class XTUPLEWIDGETS_EXPORT CurrDisplay : public QWidget
 {
   Q_OBJECT
 
-  Q_ENUMS(CurrDisplayFormats)
-
   Q_PROPERTY(double  baseValue         READ baseValue         WRITE setBaseValue)
   Q_PROPERTY(double  defaultLocalValue READ defaultLocalValue WRITE setDefaultLocalValue)
   Q_PROPERTY(bool    enabled           READ isEnabled         WRITE setEnabled)
@@ -53,6 +51,7 @@ class XTUPLEWIDGETS_EXPORT CurrDisplay : public QWidget
         {
           Money, SalesPrice, PurchPrice, ExtPrice, Cost
         };
+        Q_ENUM(CurrDisplayFormats)
 
         double  defaultLocalValue()             const { return _default;            };
 	virtual bool		isZero()	const;
@@ -226,6 +225,5 @@ class XTUPLEWIDGETS_EXPORT CurrCluster : public CurrDisplay
 };
 
 void setupCurrDisplay(QScriptEngine *engine);
-Q_DECLARE_METATYPE(enum CurrDisplay::CurrDisplayFormats)
 
 #endif

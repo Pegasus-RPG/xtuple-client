@@ -21,8 +21,6 @@ class XTUPLEWIDGETS_EXPORT VendorGroup : public QWidget, public Ui::VendorGroup
 {
   Q_OBJECT
 
-  Q_ENUMS(VendorGroupState)
-
   Q_PROPERTY(enum VendorGroupState state READ state WRITE setState)
 
   public:
@@ -34,6 +32,7 @@ class XTUPLEWIDGETS_EXPORT VendorGroup : public QWidget, public Ui::VendorGroup
     {
       All, Selected, SelectedType, TypePattern
     };
+    Q_ENUM(VendorGroupState)
 
     Q_INVOKABLE virtual void           appendValue(ParameterList &);
     Q_INVOKABLE virtual void           bindValue(XSqlQuery &);
@@ -68,6 +67,5 @@ class XTUPLEWIDGETS_EXPORT VendorGroup : public QWidget, public Ui::VendorGroup
 };
 
 void setupVendorGroup(QScriptEngine *engine);
-Q_DECLARE_METATYPE(enum VendorGroup::VendorGroupState)
 
 #endif

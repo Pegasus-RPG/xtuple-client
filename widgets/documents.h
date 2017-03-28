@@ -53,8 +53,6 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
 {
   Q_OBJECT
 
-  Q_ENUMS(DocumentSources)
-
   Q_PROPERTY(int type READ type WRITE setType)
 
   friend class image;
@@ -83,6 +81,7 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
       Vendor,           Voucher,            Warehouse,
       WorkOrder,                            ProjectTask
     };
+    Q_ENUM(DocumentSources)
 
     static GuiClientInterface *_guiClientInterface;
     inline int  sourceid()             { return _sourceid; }
@@ -122,6 +121,5 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
 };
 
 void setupDocuments(QScriptEngine *engine);
-Q_DECLARE_METATYPE(enum Documents::DocumentSources)
 
 #endif

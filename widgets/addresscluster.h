@@ -81,9 +81,6 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 {
     Q_OBJECT
 
-    Q_ENUMS   (Mode)
-    Q_ENUMS   (SaveFlags)
-
     Q_PROPERTY(bool     activeVisible 	      READ activeVisible            WRITE setActiveVisible)
     Q_PROPERTY(QString  fieldNameAddressChange READ fieldNameAddrChange     WRITE setFieldNameAddrChange)
     Q_PROPERTY(QString  fieldNameNumber        READ fieldNameNumber         WRITE setFieldNameNumber)
@@ -103,7 +100,9 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 
     public:
 	enum SaveFlags { CHECK = 0, CHANGEONE = 1, CHANGEALL = 2 }; 
+        Q_ENUM(SaveFlags)
         enum Mode      { Edit, View, Select };
+        Q_ENUM(Mode)
 
 	AddressCluster(QWidget*, const char* = 0);
 	
@@ -248,7 +247,5 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
 };
 
 void setupAddressCluster(QScriptEngine *engine);
-Q_DECLARE_METATYPE(enum AddressCluster::Mode)
-Q_DECLARE_METATYPE(enum AddressCluster::SaveFlags)
 
 #endif

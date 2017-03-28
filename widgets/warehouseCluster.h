@@ -18,8 +18,6 @@ class XTUPLEWIDGETS_EXPORT WComboBox : public XComboBox
 {
   Q_OBJECT
 
-  Q_ENUMS(WComboBoxTypes)
-
   Q_PROPERTY(WComboBoxTypes type READ type WRITE setType )
 
   public:
@@ -32,6 +30,7 @@ class XTUPLEWIDGETS_EXPORT WComboBox : public XComboBox
       POSupply, WOSupply,
       Transit, AllActiveInventory
     };
+    Q_ENUM(WComboBoxTypes)
 
     WComboBoxTypes type();
     void setType(WComboBoxTypes);
@@ -46,7 +45,6 @@ class XTUPLEWIDGETS_EXPORT WComboBox : public XComboBox
 };
 
 void setupWComboBox(QScriptEngine *engine);
-Q_DECLARE_METATYPE(enum WComboBox::WComboBoxTypes)
 
 #endif
 

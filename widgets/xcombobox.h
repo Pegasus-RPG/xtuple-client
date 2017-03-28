@@ -29,9 +29,6 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
 {
   Q_OBJECT
 
-  Q_ENUMS(Defaults)
-  Q_ENUMS(XComboBoxTypes)
-
   Q_PROPERTY(bool           allowNull             READ allowNull            WRITE setAllowNull                            )
   Q_PROPERTY(QString        nullStr               READ nullStr              WRITE setNullStr                              )
   Q_PROPERTY(XComboBoxTypes type                  READ type                 WRITE setType                                 )
@@ -51,6 +48,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     virtual ~XComboBox();
 
     enum Defaults { First, None };
+    Q_ENUM(Defaults)
     enum XComboBoxTypes
       {
       AddressCommentTypes, Adhoc,
@@ -93,6 +91,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
       VendorTypes, WarehouseCommentTypes, WoProjects,
       WorkCenters, WorkCentersActive, WorkOrderCommentTypes
       };
+    Q_ENUM(XComboBoxTypes)
 
     static GuiClientInterface *_guiClientInterface;
 
@@ -173,8 +172,6 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
 };
 
 void setupXComboBox(QScriptEngine *engine);
-Q_DECLARE_METATYPE(enum XComboBox::XComboBoxTypes)
-Q_DECLARE_METATYPE(enum XComboBox::Defaults)
 
 #endif
 

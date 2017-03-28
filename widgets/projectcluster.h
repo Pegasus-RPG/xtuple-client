@@ -19,9 +19,6 @@ class XTUPLEWIDGETS_EXPORT ProjectLineEdit : public CrmClusterLineEdit
 {
     Q_OBJECT
 
-    Q_ENUMS(ProjectStatus)
-    Q_ENUMS(ProjectType)
-
     Q_PROPERTY(ProjectType projectType READ type WRITE setType )
     
     public:
@@ -32,12 +29,14 @@ class XTUPLEWIDGETS_EXPORT ProjectLineEdit : public CrmClusterLineEdit
         WorkOrder,
         PurchaseOrder,
       };
+      Q_ENUM(ProjectType)
 
       enum ProjectStatus
       {
         AnyStatus = 0x00,
         Concept  = 0x01, InProcess = 0x02, Complete = 0x04
       };
+      Q_ENUM(ProjectStatus)
       Q_DECLARE_FLAGS(ProjectStatuses, ProjectStatus)
        
       ProjectLineEdit(QWidget*, const char* = 0);
@@ -68,8 +67,6 @@ class XTUPLEWIDGETS_EXPORT ProjectCluster : public VirtualCluster
 {
     Q_OBJECT
 
-    Q_ENUMS(ProjectLineEdit::ProjectType)
-
     Q_PROPERTY(ProjectLineEdit::ProjectType projectType READ type WRITE setType )
     
     public:
@@ -86,7 +83,5 @@ class XTUPLEWIDGETS_EXPORT ProjectCluster : public VirtualCluster
 };
 
 void setupProjectLineEdit(QScriptEngine *engine);
-Q_DECLARE_METATYPE(enum ProjectLineEdit::ProjectStatus)
-Q_DECLARE_METATYPE(enum ProjectLineEdit::ProjectType)
 
 #endif

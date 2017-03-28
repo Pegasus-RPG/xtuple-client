@@ -1626,8 +1626,10 @@ void setupXComboBox(QScriptEngine *engine)
 {
   if (! engine->globalObject().property("XComboBox").isFunction())
   {
+#if QT_VERSION >= 0x050500
     qScriptRegisterMetaType(engine, XComboBoxTypesToScriptValue,    XComboBoxTypesFromScriptValue);
     qScriptRegisterMetaType(engine, XComboBoxDefaultsToScriptValue, XComboBoxDefaultsFromScriptValue);
+#endif
 
     QScriptValue ctor = engine->newFunction(constructXComboBox);
     QScriptValue meta = engine->newQMetaObject(&XComboBox::staticMetaObject, ctor);

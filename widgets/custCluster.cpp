@@ -460,7 +460,9 @@ void setupCLineEdit(QScriptEngine *engine)
 {
   if (! engine->globalObject().property("CLineEdit").isObject())
   {
+#if QT_VERSION >= 0x050500
     qScriptRegisterMetaType(engine, CLineEditTypesToScriptValue, CLineEditTypesFromScriptValue);
+#endif
 
     QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
     QScriptValue meta = engine->newQMetaObject(&CLineEdit::staticMetaObject, ctor);

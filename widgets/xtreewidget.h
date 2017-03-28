@@ -166,10 +166,10 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
   Q_PROPERTY( QString altDragString READ altDragString WRITE setAltDragString)
   Q_PROPERTY( bool populateLinear READ populateLinear WRITE setPopulateLinear)
 
-  Q_ENUMS(PopulateStyle)
-
   public :
     enum PopulateStyle { Replace, Append };
+    Q_ENUM(PopulateStyle)
+
     XTreeWidget(QWidget *);
     ~XTreeWidget();
 
@@ -364,6 +364,5 @@ class XTreeWidgetPopulateParams
 
 void  setupXTreeWidgetItem(QScriptEngine *engine);
 void  setupXTreeWidget(QScriptEngine *engine);
-Q_DECLARE_METATYPE(enum XTreeWidget::PopulateStyle)
 
 #endif

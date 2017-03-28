@@ -87,7 +87,6 @@ private:
 class XTUPLEWIDGETS_EXPORT ContactWidget : public VirtualCluster
 {
   Q_OBJECT
-  Q_ENUMS   (Mode);
   Q_PROPERTY(bool     accountVisible        READ accountVisible       	WRITE setAccountVisible);
   Q_PROPERTY(bool     ownerVisible          READ ownerVisible           WRITE setOwnerVisible);
   Q_PROPERTY(bool     ownerEnabled          READ ownerEnabled           WRITE setOwnerEnabled);
@@ -133,6 +132,7 @@ class XTUPLEWIDGETS_EXPORT ContactWidget : public VirtualCluster
 
 public:
   enum Mode          { Edit, View, Select };
+  Q_ENUM(Mode);
 
   ContactWidget(QWidget*, const char* = 0);
   Q_INVOKABLE inline virtual AddressCluster* addressWidget() { return _address; }
@@ -404,6 +404,5 @@ private:
 };
 
 void setupContactWidget(QScriptEngine *engine);
-Q_DECLARE_METATYPE(enum ContactWidget::Mode)
 
 #endif

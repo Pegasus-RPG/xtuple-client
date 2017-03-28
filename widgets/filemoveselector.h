@@ -17,10 +17,10 @@
 class FileMoveSelector : public QWidget, public Ui::FileMoveSelector
 {
     Q_OBJECT
-    Q_ENUMS(FileMoveOption)
 
   public:
     enum FileMoveOption { Nothing, Suffix, ChangeDir, Delete };
+    Q_ENUM(FileMoveOption)
 
     FileMoveSelector(QWidget* parent = 0, Qt::WindowFlags fl = 0);
     ~FileMoveSelector();
@@ -45,6 +45,5 @@ class FileMoveSelector : public QWidget, public Ui::FileMoveSelector
 };
 
 void setupFileMoveSelector(QScriptEngine *engine);
-Q_DECLARE_METATYPE(enum FileMoveSelector::FileMoveOption)
 
 #endif
