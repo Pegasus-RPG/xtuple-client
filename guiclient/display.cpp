@@ -416,7 +416,7 @@ void display::showEvent(QShowEvent * e)
   if (! _data->_filterChanged)
   {
     parameterWidget()->applyDefaultFilterSet();
-    connect(parameterWidget(), SIGNAL(filterChanged()), _data, SLOT(sFilterChanged()));
+    connect(parameterWidget(), SIGNAL(filterChanged()), _data, SLOT(sFilterChanged()), Qt::UniqueConnection);
   }
 
   if (_data->_queryOnStartEnabled &&
