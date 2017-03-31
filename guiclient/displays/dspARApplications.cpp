@@ -193,7 +193,7 @@ void dspARApplications::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem*, int)
       menuItem->setEnabled(false);
   }
 
-  if (list()->currentItem()->rawValue("arapply_reversed") == "No")
+  if (! list()->currentItem()->rawValue("arapply_reversed").toBool())
   {
     menuItem = pMenu->addAction(tr("Reverse Application"), this, SLOT(sReverseApplication()));
     if (! _privileges->check("ReverseARApplication"))
