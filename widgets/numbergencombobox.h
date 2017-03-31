@@ -20,14 +20,9 @@
 class QScriptEngine;
 class QStandardItemModel;
 
-void setupNumberGenComboBox(QScriptEngine *engine);
-
 class XTUPLEWIDGETS_EXPORT NumberGenComboBox : public QComboBox
 {
   Q_OBJECT
-
-  Q_ENUMS(GenMethod)
-  Q_FLAGS(GenMethods)
 
   Q_PROPERTY(GenMethods allowedMethods READ allowedMethods WRITE setAllowedMethods )
   Q_PROPERTY(QString    automaticText  READ automaticText  WRITE setAutomaticText  )
@@ -41,6 +36,8 @@ class XTUPLEWIDGETS_EXPORT NumberGenComboBox : public QComboBox
 
     enum GenMethod { Manual   = 0x01, Automatic = 0x02,
                      Override = 0x04, Shared    = 0x08 };
+    Q_ENUM(GenMethod)
+    Q_FLAGS(GenMethods)
     Q_DECLARE_FLAGS(GenMethods, GenMethod)
 
     Q_INVOKABLE void append(GenMethod method, QString text, QString code = QString());
@@ -78,7 +75,7 @@ class XTUPLEWIDGETS_EXPORT NumberGenComboBox : public QComboBox
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(NumberGenComboBox::GenMethods);
 
-Q_DECLARE_METATYPE(enum NumberGenComboBox::GenMethod)
+void setupNumberGenComboBox(QScriptEngine *engine);
 
 #endif
 

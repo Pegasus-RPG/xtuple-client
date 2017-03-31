@@ -76,8 +76,6 @@ class XTUPLEWIDGETS_EXPORT WoLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT
 
-  Q_ENUMS(WoStatus)
-
   Q_PROPERTY(int type READ type WRITE setType DESIGNABLE false)
 
 friend class WoCluster;
@@ -93,6 +91,7 @@ friend class WoCluster;
       Released  = 0x08,
       Closed    = 0x10
     };
+    Q_ENUM(WoStatus)
 
     Q_INVOKABLE inline int     currentWarehouse() const       { return _currentWarehouseid;  }
     Q_INVOKABLE inline QString method() const                 { return _method;              }
@@ -239,6 +238,7 @@ class XTUPLEWIDGETS_EXPORT WomatlCluster : public QWidget, public Ui::WomatlClus
       WoMaterial = 0x02,
       Wooper     = 0x04
     };
+    Q_ENUM(SourceTypes)
 
     enum IssueTypes
     {
@@ -246,6 +246,7 @@ class XTUPLEWIDGETS_EXPORT WomatlCluster : public QWidget, public Ui::WomatlClus
       Push  = 0x02,
       Mixed = 0x04
     };
+    Q_ENUM(IssueTypes)
 
     WomatlCluster(QWidget *, const char * = 0);
     WomatlCluster(WoCluster *, QWidget *, const char * = 0);

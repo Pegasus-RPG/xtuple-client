@@ -2131,12 +2131,17 @@ QScriptValue constructXTreeWidgetItem(QScriptContext *context,QScriptEngine  *en
 
 void setupXTreeWidgetItem(QScriptEngine *engine)
 {
+  if (! engine->globalObject().property("XTreeWidgetItem").isFunction())
+  {
 #if QT_VERSION >= 0x050000
-  qScriptRegisterMetaType(engine, XTreeWidgetItemtoScriptValue,     XTreeWidgetItemfromScriptValue);
+    qScriptRegisterMetaType(engine, XTreeWidgetItemtoScriptValue,     XTreeWidgetItemfromScriptValue);
 #endif
+    QScriptValue ctor = engine->newFunction(constructXTreeWidgetItem);
+    QScriptValue meta = engine->newQMetaObject(&XTreeWidgetItem::staticMetaObject, ctor);
 
-  QScriptValue constructor = engine->newFunction(constructXTreeWidgetItem);
-  engine->globalObject().setProperty("XTreeWidgetItem", constructor, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+    engine->globalObject().setProperty("XTreeWidgetItem", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }
 
 // xtreewidget ////////////////////////////////////////////////////////////////
@@ -2157,34 +2162,36 @@ void setupXTreeWidget(QScriptEngine *engine)
   qScriptRegisterMetaType(engine, XTreeWidgettoScriptValue, XTreeWidgetfromScriptValue);
 #endif
 
-  QScriptValue glob = engine->newObject();
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  if (! engine->globalObject().property("XTreeWidget").isObject())
+  {
+    QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&XTreeWidget::staticMetaObject, ctor);
 
-  glob.setProperty("Replace", QScriptValue(engine, XTreeWidget::Replace), ro);
-  glob.setProperty("Append",  QScriptValue(engine, XTreeWidget::Append),  ro);
+    engine->globalObject().setProperty("XTreeWidget", meta, ro);
 
-  glob.setProperty("itemColumn",     QScriptValue(engine, _itemColumn),     ro);
-  glob.setProperty("whsColumn",      QScriptValue(engine, _whsColumn),      ro);
-  glob.setProperty("userColumn",     QScriptValue(engine, _userColumn),     ro);
-  glob.setProperty("dateColumn",     QScriptValue(engine, _dateColumn),     ro);
-  glob.setProperty("timeDateColumn", QScriptValue(engine, _timeDateColumn), ro);
-  glob.setProperty("timeColumn",     QScriptValue(engine, _timeColumn),     ro);
-  glob.setProperty("qtyColumn",      QScriptValue(engine, _qtyColumn),      ro);
-  glob.setProperty("priceColumn",    QScriptValue(engine, _priceColumn),    ro);
-  glob.setProperty("moneyColumn",    QScriptValue(engine, _moneyColumn),    ro);
-  glob.setProperty("bigMoneyColumn", QScriptValue(engine, _bigMoneyColumn), ro);
-  glob.setProperty("costColumn",     QScriptValue(engine, _costColumn),     ro);
-  glob.setProperty("prcntColumn",    QScriptValue(engine, _prcntColumn),    ro);
-  glob.setProperty("transColumn",    QScriptValue(engine, _transColumn),    ro);
-  glob.setProperty("uomColumn",      QScriptValue(engine, _uomColumn),      ro);
-  glob.setProperty("orderColumn",    QScriptValue(engine, _orderColumn),    ro);
-  glob.setProperty("statusColumn",   QScriptValue(engine, _statusColumn),   ro);
-  glob.setProperty("seqColumn",      QScriptValue(engine, _seqColumn),      ro);
-  glob.setProperty("ynColumn",       QScriptValue(engine, _ynColumn),       ro);
-  glob.setProperty("docTypeColumn",  QScriptValue(engine, _docTypeColumn),  ro);
-  glob.setProperty("currencyColumn", QScriptValue(engine, _currencyColumn), ro);
-
-  engine->globalObject().setProperty("XTreeWidget", glob, ro);
+    // these aren't in an enum so need to be exposed explicitly
+    meta.setProperty("itemColumn",     QScriptValue(engine, _itemColumn),     ro);
+    meta.setProperty("whsColumn",      QScriptValue(engine, _whsColumn),      ro);
+    meta.setProperty("userColumn",     QScriptValue(engine, _userColumn),     ro);
+    meta.setProperty("dateColumn",     QScriptValue(engine, _dateColumn),     ro);
+    meta.setProperty("timeDateColumn", QScriptValue(engine, _timeDateColumn), ro);
+    meta.setProperty("timeColumn",     QScriptValue(engine, _timeColumn),     ro);
+    meta.setProperty("qtyColumn",      QScriptValue(engine, _qtyColumn),      ro);
+    meta.setProperty("priceColumn",    QScriptValue(engine, _priceColumn),    ro);
+    meta.setProperty("moneyColumn",    QScriptValue(engine, _moneyColumn),    ro);
+    meta.setProperty("bigMoneyColumn", QScriptValue(engine, _bigMoneyColumn), ro);
+    meta.setProperty("costColumn",     QScriptValue(engine, _costColumn),     ro);
+    meta.setProperty("prcntColumn",    QScriptValue(engine, _prcntColumn),    ro);
+    meta.setProperty("transColumn",    QScriptValue(engine, _transColumn),    ro);
+    meta.setProperty("uomColumn",      QScriptValue(engine, _uomColumn),      ro);
+    meta.setProperty("orderColumn",    QScriptValue(engine, _orderColumn),    ro);
+    meta.setProperty("statusColumn",   QScriptValue(engine, _statusColumn),   ro);
+    meta.setProperty("seqColumn",      QScriptValue(engine, _seqColumn),      ro);
+    meta.setProperty("ynColumn",       QScriptValue(engine, _ynColumn),       ro);
+    meta.setProperty("docTypeColumn",  QScriptValue(engine, _docTypeColumn),  ro);
+    meta.setProperty("currencyColumn", QScriptValue(engine, _currencyColumn), ro);
+  }
 }
 
 void XTreeWidget::sCopyRowToClipboard()

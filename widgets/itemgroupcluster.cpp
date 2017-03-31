@@ -89,13 +89,18 @@ QScriptValue constructItemGroupClusterLineEdit(QScriptContext *context,
 
 void setupItemGroupClusterLineEdit(QScriptEngine *engine)
 {
-    QScriptValue widget = engine->newFunction(constructItemGroupClusterLineEdit);
-    engine->globalObject().setProperty("ItemGroupClusterLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("ItemGroupClusterLineEdit");
+  if (! widget.isFunction()) {
+    widget = engine->newFunction(constructItemGroupClusterLineEdit);
+    engine->globalObject().setProperty("ItemGroupClusterLineEdit", widget, ro);
+  }
 }
 
 QScriptValue constructItemGroupCluster(QScriptContext *context,
                                        QScriptEngine  *engine)
 {
+#if QT_VERSION >= 0x050000
     ItemGroupCluster *obj = 0;
 
     if (context->argumentCount() == 1 &&
@@ -111,15 +116,20 @@ QScriptValue constructItemGroupCluster(QScriptContext *context,
       context->throwError(QScriptContext::UnknownError,
                           "could not find an appropriate ItemGroupCluster constructor");
 
-#if QT_VERSION >= 0x050000
   return engine->toScriptValue(obj);
 #else
-  Q_UNUSED(engine); return QScriptValue();
+  Q_UNUSED(context); Q_UNUSED(engine); return QScriptValue();
 #endif
 }
 
 void setupItemGroupCluster(QScriptEngine *engine)
 {
-    QScriptValue widget = engine->newFunction(constructItemGroupCluster);
-    engine->globalObject().setProperty("ItemGroupCluster", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  if (! engine->globalObject().property("ItemGroupCluster").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructItemGroupCluster);
+    QScriptValue meta = engine->newQMetaObject(&ItemGroupCluster::staticMetaObject, ctor);
+
+    engine->globalObject().setProperty("ItemGroupCluster", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

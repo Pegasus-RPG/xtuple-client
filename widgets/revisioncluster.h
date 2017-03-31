@@ -28,9 +28,6 @@ class XTUPLEWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
 
   friend class RevisionCluster;
 
-  Q_ENUMS(Modes)
-  Q_ENUMS(RevisionTypes)
-
   Q_PROPERTY(Modes     mode READ mode   WRITE setMode   )
   Q_PROPERTY(RevisionTypes   type READ type WRITE setType )
 
@@ -38,8 +35,11 @@ class XTUPLEWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
     RevisionLineEdit(QWidget *, const char * = 0);
 
     enum Modes { View, Use, Maintain };
+    Q_ENUM(Modes)
     enum RevisionTypes { All, BOM, BOO };
+    Q_ENUM(RevisionTypes)
     enum Statuses { Active, Substitute, Pending, Inactive };
+    Q_ENUM(Statuses)
     virtual Modes mode();
     virtual RevisionTypes type();
     virtual QString typeText();
@@ -85,11 +85,8 @@ class XTUPLEWIDGETS_EXPORT RevisionCluster : public VirtualCluster
 {
   Q_OBJECT
 
-  Q_ENUMS(RevisionLineEdit::Modes)
-  Q_ENUMS(RevisionLineEdit::RevisionTypes)
-
-  Q_PROPERTY(RevisionLineEdit::Modes     mode READ mode   WRITE setMode   )
-  Q_PROPERTY(RevisionLineEdit::RevisionTypes   type READ type WRITE setType )
+  Q_PROPERTY(RevisionLineEdit::Modes         mode READ mode WRITE setMode   )
+  Q_PROPERTY(RevisionLineEdit::RevisionTypes type READ type WRITE setType )
 
   public:
     RevisionCluster(QWidget *, const char * = 0);

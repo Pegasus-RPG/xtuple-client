@@ -219,8 +219,12 @@ QScriptValue constructCharacteristicsWidget(QScriptContext *context,
 
 void setupCharacteristicsWidget(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  if (! engine->globalObject().property("CharacteristicsWidget").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructCharacteristicsWidget);
+    QScriptValue meta = engine->newQMetaObject(&CharacteristicsWidget::staticMetaObject, ctor);
 
-  QScriptValue constructor = engine->newFunction(constructCharacteristicsWidget);
-  engine->globalObject().setProperty("CharacteristicsWidget", constructor, ro);
+    engine->globalObject().setProperty("CharacteristicsWidget", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

@@ -181,23 +181,25 @@ void XDocCopySetter::sEditWatermark()
 QScriptValue constructXDocCopySetter(QScriptContext *context,
                                        QScriptEngine  *engine)
 {
+#if QT_VERSION >= 0x050000
   QWidget *parent = (qscriptvalue_cast<QWidget*>(context->argument(0)));
   const char *objname = "_xDocCopySetter";
   if (context->argumentCount() > 1)
     objname = context->argument(1).toString().toLatin1().data();
-#if QT_VERSION >= 0x050000
   return engine->toScriptValue(new XDocCopySetter(parent, objname));
 #else
-  Q_UNUSED(engine); return QScriptValue();
+  Q_UNUSED(context); Q_UNUSED(engine); return QScriptValue();
 #endif
 }
 
 void setupXDocCopySetter(QScriptEngine *engine)
 {
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  if (! engine->globalObject().property("XDocCopySetter").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructXDocCopySetter);
+    QScriptValue meta = engine->newQMetaObject(&XDocCopySetter::staticMetaObject, ctor);
 
-  QScriptValue constructor = engine->newFunction(constructXDocCopySetter);
-  engine->globalObject().setProperty("XDocCopySetter", constructor, ro);
-
-  //constructor.setProperty("ChangeFuture", QScriptValue(engine, XDocCopySetter::ChangeFuture), ro);
+    engine->globalObject().setProperty("XDocCopySetter", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

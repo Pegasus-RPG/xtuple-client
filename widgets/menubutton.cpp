@@ -191,6 +191,12 @@ QScriptValue constructMenuButton(QScriptContext *context,
 
 void setupMenuButton(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newFunction(constructMenuButton);
-  engine->globalObject().setProperty("MenuButton", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  if (! engine->globalObject().property("MenuButton").isObject())
+  {
+    QScriptValue ctor = engine->newFunction(constructMenuButton);
+    QScriptValue meta = engine->newQMetaObject(&MenuButton::staticMetaObject, ctor);
+
+    engine->globalObject().setProperty("MenuButton", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

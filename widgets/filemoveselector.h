@@ -14,15 +14,13 @@
 #include "widgets.h"
 #include "ui_filemoveselector.h"
 
-void setupFileMoveSelector(QScriptEngine *engine);
-
 class FileMoveSelector : public QWidget, public Ui::FileMoveSelector
 {
     Q_OBJECT
-    Q_ENUMS(FileMoveOption)
 
   public:
     enum FileMoveOption { Nothing, Suffix, ChangeDir, Delete };
+    Q_ENUM(FileMoveOption)
 
     FileMoveSelector(QWidget* parent = 0, Qt::WindowFlags fl = 0);
     ~FileMoveSelector();
@@ -45,5 +43,7 @@ class FileMoveSelector : public QWidget, public Ui::FileMoveSelector
   private:
 
 };
+
+void setupFileMoveSelector(QScriptEngine *engine);
 
 #endif

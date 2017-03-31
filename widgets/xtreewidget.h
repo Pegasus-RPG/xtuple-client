@@ -59,9 +59,6 @@ class QScriptEngine;
 class XTreeWidget;
 class XTreeWidgetProgress;
 
-void  setupXTreeWidgetItem(QScriptEngine *engine);
-void  setupXTreeWidget(QScriptEngine *engine);
-
 class XTUPLEWIDGETS_EXPORT XTreeWidgetItem : public QObject, public QTreeWidgetItem
 {
   Q_OBJECT
@@ -169,10 +166,10 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
   Q_PROPERTY( QString altDragString READ altDragString WRITE setAltDragString)
   Q_PROPERTY( bool populateLinear READ populateLinear WRITE setPopulateLinear)
 
-  Q_ENUMS(PopulateStyle)
-
   public :
     enum PopulateStyle { Replace, Append };
+    Q_ENUM(PopulateStyle)
+
     XTreeWidget(QWidget *);
     ~XTreeWidget();
 
@@ -364,5 +361,8 @@ class XTreeWidgetPopulateParams
     bool      _workingUseAlt;
     XTreeWidget::PopulateStyle _workingPopstyle;
 };
+
+void  setupXTreeWidgetItem(QScriptEngine *engine);
+void  setupXTreeWidget(QScriptEngine *engine);
 
 #endif

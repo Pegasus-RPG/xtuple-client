@@ -1128,15 +1128,12 @@ void setupWoCluster(QScriptEngine *engine)
 
 void setupWomatlCluster(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
+  if (! engine->globalObject().property("WomatlCluster").isObject())
+  {
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&WomatlCluster::staticMetaObject, ctor);
 
-  widget.setProperty("WorkOrder",  QScriptValue(engine, WomatlCluster::WorkOrder),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("WoMaterial", QScriptValue(engine, WomatlCluster::WoMaterial), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Wooper",     QScriptValue(engine, WomatlCluster::Wooper),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  widget.setProperty("Pull",    QScriptValue(engine, WomatlCluster::Pull),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Push",    QScriptValue(engine, WomatlCluster::Push),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Mixed",   QScriptValue(engine, WomatlCluster::Mixed), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  engine->globalObject().setProperty("WomatlCluster", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+    engine->globalObject().setProperty("WomatlCluster", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

@@ -1984,34 +1984,16 @@ QScriptValue constructParameterWidget(QScriptContext *context,
 
 void setupParameterWidget(QScriptEngine *engine)
 {
+  if (! engine->globalObject().property("ParameterWidget").isFunction())
+  {
 #if QT_VERSION >= 0x050000
-  qScriptRegisterMetaType(engine, ParameterWidgettoScriptValue, ParameterWidgetfromScriptValue);
+    qScriptRegisterMetaType(engine, ParameterWidgettoScriptValue, ParameterWidgetfromScriptValue);
 #endif
 
-  QScriptValue widget = engine->newFunction(constructParameterWidget);
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+    QScriptValue ctor = engine->newFunction(constructParameterWidget);
+    QScriptValue meta = engine->newQMetaObject(&ParameterWidget::staticMetaObject, ctor);
 
-  widget.setProperty("Crmacct",       QScriptValue(engine, ParameterWidget::Crmacct),       ro);
-  widget.setProperty("Customer",      QScriptValue(engine, ParameterWidget::Customer),      ro);
-  widget.setProperty("Shipto",        QScriptValue(engine, ParameterWidget::Shipto),        ro);
-  widget.setProperty("Vendor",        QScriptValue(engine, ParameterWidget::Vendor),        ro);
-  widget.setProperty("User",          QScriptValue(engine, ParameterWidget::User),          ro);
-  widget.setProperty("Text",          QScriptValue(engine, ParameterWidget::Text),          ro);
-  widget.setProperty("Date",          QScriptValue(engine, ParameterWidget::Date),          ro);
-  widget.setProperty("XComBox",       QScriptValue(engine, ParameterWidget::XComBox),       ro);
-  widget.setProperty("Contact",       QScriptValue(engine, ParameterWidget::Contact),       ro);
-  widget.setProperty("GLAccount",     QScriptValue(engine, ParameterWidget::GLAccount),     ro);
-  widget.setProperty("Multiselect",   QScriptValue(engine, ParameterWidget::Multiselect),   ro);
-  widget.setProperty("Exists",        QScriptValue(engine, ParameterWidget::Exists),        ro);
-  widget.setProperty("CheckBox",      QScriptValue(engine, ParameterWidget::CheckBox),      ro);
-  widget.setProperty("Project",       QScriptValue(engine, ParameterWidget::Project),       ro);
-  widget.setProperty("Item",          QScriptValue(engine, ParameterWidget::Item),          ro);
-  widget.setProperty("Employee",      QScriptValue(engine, ParameterWidget::Employee),      ro);
-  widget.setProperty("Site",          QScriptValue(engine, ParameterWidget::Site),          ro);
-  widget.setProperty("SalesOrder",    QScriptValue(engine, ParameterWidget::SalesOrder),    ro);
-  widget.setProperty("WorkOrder",     QScriptValue(engine, ParameterWidget::WorkOrder),     ro);
-  widget.setProperty("PurchaseOrder", QScriptValue(engine, ParameterWidget::PurchaseOrder), ro);
-  widget.setProperty("TransferOrder", QScriptValue(engine, ParameterWidget::TransferOrder), ro);
-
-  engine->globalObject().setProperty("ParameterWidget", widget, ro);
+    engine->globalObject().setProperty("ParameterWidget", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

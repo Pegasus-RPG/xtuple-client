@@ -990,13 +990,12 @@ void CurrDisplay::setDataWidgetMap(XDataWidgetMapper* m)
 
 void setupCurrDisplay(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
+  if (! engine->globalObject().property("CurrDisplay").isObject())
+  {
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&CurrDisplay::staticMetaObject, ctor);
 
-  widget.setProperty("Money",	  QScriptValue(engine, CurrDisplay::Money),	QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("SalesPrice",QScriptValue(engine, CurrDisplay::SalesPrice),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("PurchPrice",QScriptValue(engine, CurrDisplay::PurchPrice),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("ExtPrice",  QScriptValue(engine, CurrDisplay::ExtPrice),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Cost",	  QScriptValue(engine, CurrDisplay::Cost),	QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  engine->globalObject().setProperty("CurrDisplay", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+    engine->globalObject().setProperty("CurrDisplay", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

@@ -26,11 +26,7 @@ class QScriptEngine;
 class XTUPLEWIDGETS_EXPORT Screen : public QWidget
 {
 	Q_OBJECT
-		
-	Q_ENUMS(Modes)
-	Q_ENUMS(SearchTypes)
-        Q_ENUMS(Disposition)
-	
+
 	Q_PROPERTY (QString		schemaName            READ schemaName		WRITE setSchemaName)
 	Q_PROPERTY (QString 		tableName             READ tableName 		WRITE setTableName)
         Q_PROPERTY (int                 primaryKeyColumns     READ primaryKeyColumns    WRITE setPrimaryKeyColumns)
@@ -43,7 +39,9 @@ class XTUPLEWIDGETS_EXPORT Screen : public QWidget
 		
                 bool throwScriptException(const QString &message);
 		enum Modes { New, Edit, View };
+                Q_ENUM(Modes)
                 enum Disposition { NoChanges, Save, Cancel };
+                Q_ENUM(Disposition)
 		Modes mode();
 
                 Q_INVOKABLE bool submit();

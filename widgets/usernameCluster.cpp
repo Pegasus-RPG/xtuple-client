@@ -249,19 +249,22 @@ QScriptValue constructUsernameLineEdit(QScriptContext *context,
 
 void setupUsernameLineEdit(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newFunction(constructUsernameLineEdit);
   QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("UsernameLineEdit");
+  if (! widget.isFunction()) {
+    widget = engine->newFunction(constructUsernameLineEdit);
+    engine->globalObject().setProperty("UsernameLineEdit", widget, ro);
+  }
 
   widget.setProperty("UsersAll",     QScriptValue(engine, UsernameLineEdit::UsersAll),      ro);
   widget.setProperty("UsersActive",  QScriptValue(engine, UsernameLineEdit::UsersActive),   ro);
   widget.setProperty("UsersInactive",QScriptValue(engine, UsernameLineEdit::UsersInactive), ro);
-
-  engine->globalObject().setProperty("UsernameLineEdit", widget,  ro);
 }
 
 QScriptValue constructUsernameCluster(QScriptContext *context,
                                        QScriptEngine  *engine)
 {
+#if QT_VERSION >= 0x050000
   UsernameCluster *obj = 0;
 
   if (context->argumentCount() == 1 &&
@@ -277,16 +280,20 @@ QScriptValue constructUsernameCluster(QScriptContext *context,
     context->throwError(QScriptContext::UnknownError,
                         "could not find an appropriate UsernameCluster constructor");
 
-#if QT_VERSION >= 0x050000
   return engine->toScriptValue(obj);
 #else
-  Q_UNUSED(engine); return QScriptValue();
+  Q_UNUSED(context); Q_UNUSED(engine); return QScriptValue();
 #endif
 }
 
 void setupUsernameCluster(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newFunction(constructUsernameCluster);
+  if (! engine->globalObject().property("UsernameCluster").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructUsernameCluster);
+    QScriptValue meta = engine->newQMetaObject(&UsernameCluster::staticMetaObject, ctor);
 
-  engine->globalObject().setProperty("UsernameCluster", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+    engine->globalObject().setProperty("UsernameCluster", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

@@ -1388,8 +1388,13 @@ void itemSearch::sFillList()
 
 void setupItemLineEdit(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
+  // cannot use engine->newQMetaObject because cActive goes negative
   QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue widget = engine->globalObject().property("ItemLineEdit");
+  if (! widget.isObject()) {
+    widget = engine->newObject();
+    engine->globalObject().setProperty("ItemLineEdit", widget, ro);
+  }
 
   widget.setProperty("cUndefined",          QScriptValue(engine, ItemLineEdit::cUndefined),          ro);
   widget.setProperty("cPurchased",          QScriptValue(engine, ItemLineEdit::cPurchased),          ro);
@@ -1420,6 +1425,4 @@ void setupItemLineEdit(QScriptEngine *engine)
   widget.setProperty("cGeneralComponents",  QScriptValue(engine, ItemLineEdit::cGeneralComponents),  ro);
   widget.setProperty("cGeneralInventory",   QScriptValue(engine, ItemLineEdit::cGeneralInventory),   ro);
   widget.setProperty("cKitComponents",      QScriptValue(engine, ItemLineEdit::cKitComponents),      ro);
-
-  engine->globalObject().setProperty("ItemLineEdit", widget, ro);
 }

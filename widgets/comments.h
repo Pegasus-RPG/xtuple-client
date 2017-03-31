@@ -52,8 +52,6 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
 {
   Q_OBJECT
 
-  Q_ENUMS(CommentSources)
-
   Q_PROPERTY(int type READ type WRITE setType)
   
   friend class comment;
@@ -86,6 +84,8 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
       TransferOrderItem, Vendor,
       Warehouse,         WorkOrder
     };
+    Q_ENUM(CommentSources)
+
 
     inline int sourceid()             { return _sourceid; }
     int         type() const;

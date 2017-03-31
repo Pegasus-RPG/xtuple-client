@@ -467,15 +467,12 @@ void Screen::unlock()
 
 void setupScreen(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
+  if (! engine->globalObject().property("Screen").isObject())
+  {
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&Screen::staticMetaObject, ctor);
 
-  widget.setProperty("New",  QScriptValue(engine, Screen::New),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Edit", QScriptValue(engine, Screen::Edit), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("View", QScriptValue(engine, Screen::View), QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  widget.setProperty("NoChanges",QScriptValue(engine, Screen::NoChanges),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Save",     QScriptValue(engine, Screen::Save),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Cancel",   QScriptValue(engine, Screen::Cancel),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  engine->globalObject().setProperty("Screen", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+    engine->globalObject().setProperty("Screen", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

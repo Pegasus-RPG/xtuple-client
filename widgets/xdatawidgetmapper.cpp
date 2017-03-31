@@ -95,9 +95,14 @@ QScriptValue constructXDataWidgetMapper(QScriptContext *context, QScriptEngine *
 
 void setupXDataWidgetMapper(QScriptEngine *engine)
 {
-  QScriptValue constructor = engine->newFunction(constructXDataWidgetMapper);
-  engine->globalObject().setProperty("XDataWidgetMapper", constructor,
-                                     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  if (! engine->globalObject().property("XDataWidgetMapper").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructXDataWidgetMapper);
+    QScriptValue meta = engine->newQMetaObject(&XDataWidgetMapper::staticMetaObject, ctor);
+
+    engine->globalObject().setProperty("XDataWidgetMapper", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }
 
 QString XDataWidgetMapper::toString() const

@@ -33,6 +33,7 @@ class XTUPLEWIDGETS_EXPORT CRMAcctLineEdit : public CrmClusterLineEdit
         enum CRMAcctSubtype { Crmacct, Competitor, Cust,     Employee,
                               Partner, Prospect,   SalesRep, Taxauth,
                               User,    Vend,       CustAndProspect };
+        Q_ENUM(CRMAcctSubtype)
 
 	virtual void		setSubtype(const CRMAcctSubtype);
 	virtual CRMAcctSubtype	subtype()	const;
@@ -120,7 +121,5 @@ class XTUPLEWIDGETS_EXPORT CRMAcctCluster : public VirtualCluster
 };
 
 void setupCRMAcctLineEdit(QScriptEngine *engine);
-
-Q_DECLARE_METATYPE(enum CRMAcctLineEdit::CRMAcctSubtype)
 
 #endif

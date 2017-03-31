@@ -167,11 +167,12 @@ RaList::RaList(QWidget *pParent, Qt::WindowFlags pFlags) :
 
 void setupRaLineEdit(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
+  if (! engine->globalObject().property("RaLineEdit").isObject())
+  {
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&RaLineEdit::staticMetaObject, ctor);
 
-  widget.setProperty("AnyStatus",QScriptValue(engine, RaLineEdit::AnyStatus),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Open",     QScriptValue(engine, RaLineEdit::Open),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Closed",   QScriptValue(engine, RaLineEdit::Closed),   QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  engine->globalObject().setProperty("RaLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+    engine->globalObject().setProperty("RaLineEdit", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

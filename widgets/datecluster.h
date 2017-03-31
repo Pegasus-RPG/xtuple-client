@@ -28,7 +28,6 @@ class XSqlQuery;
 class XDateEdit : public XLineEdit
 {
   Q_OBJECT
-  Q_ENUMS   (Defaults)
   Q_PROPERTY(QDate    date            READ date        WRITE setDate)
   Q_PROPERTY(Defaults defaultDate     READ defaultDate WRITE setDefaultDate)
   Q_PROPERTY(QDate    currentDefault  READ currentDefault)
@@ -39,6 +38,7 @@ class XDateEdit : public XLineEdit
     virtual ~XDateEdit();
     
     enum Defaults     { Empty, Current, None };
+    Q_ENUM(Defaults)
 
     virtual bool      isNull();
     virtual bool      isValid();

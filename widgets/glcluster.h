@@ -116,6 +116,7 @@ class XTUPLEWIDGETS_EXPORT GLCluster : public VirtualCluster
       cRevenue    = 0x08,
       cEquity     = 0x10
     };
+    Q_ENUM(Type)
 
     Q_INVOKABLE unsigned int type()  const       { return static_cast<GLClusterLineEdit*>(_number)->type(); }
     Q_INVOKABLE void setType(unsigned int pType) { static_cast<GLClusterLineEdit*>(_number)->setType(pType); }

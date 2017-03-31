@@ -140,19 +140,14 @@ void setupQDataWidgetMapperProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QDataWidgetMappertoScriptValue, QDataWidgetMapperfromScriptValue);
 
-  QScriptValue proto = engine->newQObject(new QDataWidgetMapperProto(engine));
-  QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  if (! engine->globalObject().property("QDataWidgetMapper").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructQDataWidgetMapper);
+    QScriptValue meta = engine->newQMetaObject(&QDataWidgetMapper::staticMetaObject, ctor);
 
-#if QT_VERSION >= 0x050000
-  engine->setDefaultPrototype(qMetaTypeId<QDataWidgetMapper*>(), proto);
-#endif
-
-  QScriptValue ctor = engine->newFunction(constructQDataWidgetMapper,
-                                                 proto);
-  engine->globalObject().setProperty("AutoSubmit",   QScriptValue(engine, QDataWidgetMapper::AutoSubmit),   ro);
-  engine->globalObject().setProperty("ManualSubmit", QScriptValue(engine, QDataWidgetMapper::ManualSubmit), ro);
-
-  engine->globalObject().setProperty("QDataWidgetMapper",  ctor, ro);
+    engine->globalObject().setProperty("QDataWidgetMapper", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }
 
 QString QDataWidgetMapperProto::toString() const

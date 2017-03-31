@@ -24,8 +24,6 @@ class XTUPLEWIDGETS_EXPORT Alarms : public QWidget, public Ui::alarms
 {
   Q_OBJECT
 
-  Q_ENUMS(AlarmSources)
-
   Q_PROPERTY(AlarmSources type READ type WRITE setType)
 
   friend class alarm;
@@ -50,6 +48,8 @@ class XTUPLEWIDGETS_EXPORT Alarms : public QWidget, public Ui::alarms
       TransferOrder,	TransferOrderItem,  Vendor,
       Warehouse,	WorkOrder
     };
+    Q_ENUM(AlarmSources)
+
 
     inline int  sourceid()          { return _sourceid; }
     inline enum AlarmSources type() { return _source;   }

@@ -207,16 +207,12 @@ void WComboBox::setId(int pId)
 
 void setupWComboBox(QScriptEngine *engine)
 {
-  QScriptValue widget = engine->newObject();
+  if (! engine->globalObject().property("WComboBox").isObject())
+  {
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&WComboBox::staticMetaObject, ctor);
 
-  widget.setProperty("All",               QScriptValue(engine, WComboBox::All),               QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("AllActive",         QScriptValue(engine, WComboBox::AllActive),         QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("NonTransit",        QScriptValue(engine, WComboBox::NonTransit),        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Shipping",          QScriptValue(engine, WComboBox::Shipping),          QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Sold",              QScriptValue(engine, WComboBox::Sold),              QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Supply",            QScriptValue(engine, WComboBox::Supply),            QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Transit",           QScriptValue(engine, WComboBox::Transit),           QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("AllActiveInventory",QScriptValue(engine, WComboBox::AllActiveInventory),QScriptValue::ReadOnly | QScriptValue::Undeletable);
-
-  engine->globalObject().setProperty("WComboBox", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+    engine->globalObject().setProperty("WComboBox", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

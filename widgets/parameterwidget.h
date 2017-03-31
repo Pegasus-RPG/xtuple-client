@@ -29,8 +29,6 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
 {
   Q_OBJECT
 
-  Q_ENUMS(ParameterWidgetTypes)
-   
   public:
     enum ParameterWidgetTypes
     {
@@ -39,6 +37,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
       Customer, Site, Vendor, Item, Employee, Shipto,
       SalesOrder, WorkOrder, PurchaseOrder, TransferOrder
     };
+    Q_ENUM(ParameterWidgetTypes)
 
     ParameterWidget(QWidget *pParent, const char * = 0);
     ~ParameterWidget();

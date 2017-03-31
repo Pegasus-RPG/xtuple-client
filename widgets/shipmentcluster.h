@@ -33,18 +33,17 @@ class XTUPLEWIDGETS_EXPORT ShipmentClusterLineEdit : public VirtualClusterLineEd
 {
     Q_OBJECT
 
-    Q_ENUMS(ShipmentType)
-    Q_ENUMS(ShipmentStatus)
-
     Q_PROPERTY(ShipmentType type READ type WRITE setType )
     Q_PROPERTY(ShipmentStatus status READ status WRITE setStatus )
 
     public:
       // TODO: make these flags instead of a simple enum?
         enum ShipmentType { All, SalesOrder, TransferOrder };
+        Q_ENUM(ShipmentType)
         ShipmentClusterLineEdit(QWidget*, const char* = 0);
         virtual ShipmentType type();
         enum ShipmentStatus { AllStatus, Shipped, Unshipped };
+        Q_ENUM(ShipmentStatus)
         virtual ShipmentStatus status();
 
     public slots:

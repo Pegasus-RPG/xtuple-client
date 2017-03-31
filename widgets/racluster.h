@@ -26,6 +26,7 @@ class XTUPLEWIDGETS_EXPORT RaLineEdit : public VirtualClusterLineEdit
     {
       AnyStatus = 0x00, Open = 0x01, Closed = 0x02
     };
+    Q_ENUM(RaStatus)
     Q_DECLARE_FLAGS(RaStatuses, RaStatus)
 
     virtual RaStatuses	allowedStatuses()	const;
