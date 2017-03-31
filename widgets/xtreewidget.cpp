@@ -2146,8 +2146,22 @@ void setupXTreeWidgetItem(QScriptEngine *engine)
 
 // xtreewidget ////////////////////////////////////////////////////////////////
 
+QScriptValue XTreeWidgettoScriptValue(QScriptEngine *engine, XTreeWidget *const &item)
+{
+  return engine->newQObject(item);
+}
+
+void XTreeWidgetfromScriptValue(const QScriptValue &obj, XTreeWidget * &item)
+{
+  item = qobject_cast<XTreeWidget *>(obj.toQObject());
+}
+
 void setupXTreeWidget(QScriptEngine *engine)
 {
+#if QT_VERSION >= 0x050000
+  qScriptRegisterMetaType(engine, XTreeWidgettoScriptValue, XTreeWidgetfromScriptValue);
+#endif
+
   if (! engine->globalObject().property("XTreeWidget").isObject())
   {
     QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
@@ -2179,8 +2193,6 @@ void setupXTreeWidget(QScriptEngine *engine)
     meta.setProperty("currencyColumn", QScriptValue(engine, _currencyColumn), ro);
   }
 }
-
-Q_DECLARE_METATYPE(XTreeWidget *)
 
 void XTreeWidget::sCopyRowToClipboard()
 {
