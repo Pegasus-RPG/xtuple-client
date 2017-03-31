@@ -215,7 +215,7 @@ void dspAPApplications::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem*, int)
                          _privileges->check("ViewVouchers"));
   }
 
-  if (list()->currentItem()->rawValue("apapply_reversed") == "No")
+  if (! list()->currentItem()->rawValue("apapply_reversed").toBool())
   {
     menuItem = pMenu->addAction(tr("Reverse Application"), this, SLOT(sReverseApplication()));
     if (! _privileges->check("ReverseAPApplication"))
