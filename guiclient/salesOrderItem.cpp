@@ -2696,10 +2696,10 @@ void salesOrderItem::sHandleSupplyOrder()
                      "  FROM itemsrc"
                      "  JOIN vendinfo ON itemsrc_vend_id = vend_id"
                      "  LEFT OUTER JOIN pohead ON vend_id = pohead_vend_id"
-                     " WHERE itemsrc_id      = :itemsrc_id"
-                     "   AND pohead_status   = 'U'"
-                     "   AND pohead_dropship = :drop_ship"
-                     "   AND (NOT pohead_dropship OR (pohead_cohead_id = :sohead_id));");
+                     "                        AND pohead_status   = 'U'"
+                     "                        AND pohead_dropship = :drop_ship"
+                     "                        AND (NOT pohead_dropship OR (pohead_cohead_id = :sohead_id))"
+                     " WHERE itemsrc_id = :itemsrc_id;");
 
         ordq.bindValue(":itemsrc_id", itemsrcid);
         ordq.bindValue(":drop_ship", _supplyDropShip->isChecked());
