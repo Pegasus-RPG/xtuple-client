@@ -2618,13 +2618,12 @@ void salesOrderItem::sCheckSupplyOrder()
 
 void salesOrderItem::sHandleSupplyOrder()
 {
-  if (ISQUOTE(_mode))
+  if (ISQUOTE(_mode) || ! _item->isValid())
     return;
   
   XSqlQuery ordq;
   if (_createSupplyOrder->isChecked() && ISORDER(_mode))
   {
-
     double valqty = 0.0;
     ordq.prepare( "SELECT validateOrderQty(itemsite_id, :qty, true) AS qty "
                   "FROM itemsite "
@@ -2642,7 +2641,9 @@ void salesOrderItem::sHandleSupplyOrder()
       return;
     }
 
-    if (_supplyOrderId == -1)
+    if (_supplyOrderId == -1 && _qtyOrdered->toDouble() == 0)
+      return;   // nothing to undo, nothing to create yet
+    else if (_supplyOrderId == -1)
     {
       sSave(true);
       if (_modified)  // catch an error saving
@@ -2691,51 +2692,42 @@ void salesOrderItem::sHandleSupplyOrder()
           }
         }
         
-        ordq.prepare( "SELECT itemsrc_vend_id, vend_name  "
-                      "FROM itemsrc LEFT OUTER JOIN vendinfo ON (vend_id = itemsrc_vend_id) "
-                      "WHERE (itemsrc_id=:itemsrc_id);" );
+        ordq.prepare("SELECT itemsrc_vend_id, vend_name, pohead_id"
+                     "  FROM itemsrc"
+                     "  JOIN vendinfo ON itemsrc_vend_id = vend_id"
+                     "  LEFT OUTER JOIN pohead ON vend_id = pohead_vend_id"
+                     "                        AND pohead_status   = 'U'"
+                     "                        AND pohead_dropship = :drop_ship"
+                     "                        AND (NOT pohead_dropship OR (pohead_cohead_id = :sohead_id))"
+                     " WHERE itemsrc_id = :itemsrc_id;");
+
         ordq.bindValue(":itemsrc_id", itemsrcid);
+        ordq.bindValue(":drop_ship", _supplyDropShip->isChecked());
+        ordq.bindValue(":sohead_id", _soheadid);
         ordq.exec();
         if (!ordq.first())
         {
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Source Information"),
                                ordq, __FILE__, __LINE__);
           return;
         }
-        else
+        if (! ordq.value("pohead_id").isNull() &&
+            QMessageBox::question(this, tr("Purchase Order Exists"),
+                                  tr("An Unreleased Purchase Order already exists for this Vendor.\n"
+                                     "Click Yes to use an existing Purchase Order\n"
+                                     "otherwise a new one will be created."),
+                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
         {
-          int vendid = ordq.value("itemsrc_vend_id").toInt();
-          QString vendname = ordq.value("vend_name").toString();
-          ordq.prepare( "SELECT pohead_id "
-                        "FROM pohead "
-                        "WHERE (pohead_vend_id = :vend_id)"
-                        "  AND (pohead_status = 'U')"
-                        "  AND (pohead_dropship = :drop_ship) "
-                        "  AND (NOT pohead_dropship OR (pohead_cohead_id = :sohead_id));" );
-          ordq.bindValue(":drop_ship", _supplyDropShip->isChecked());
-          ordq.bindValue(":vend_id", vendid);
-          ordq.bindValue(":sohead_id", _soheadid);
-          ordq.exec();
-          if (ordq.first())
-          {
-            if(QMessageBox::question( this, tr("Purchase Order Exists"),
-                                     tr("An Unreleased Purchase Order already exists for this Vendor.\n"
-                                        "Click Yes to use an existing Purchase Order\n"
-                                        "otherwise a new one will be created."),
-                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
-            {
-              ParameterList openPurchaseOrderParams;
-              openPurchaseOrderParams.append("vend_id", vendid);
-              openPurchaseOrderParams.append("vend_name", vendname);
-              openPurchaseOrderParams.append("drop_ship", _supplyDropShip->isChecked());
-              openPurchaseOrderParams.append("sohead_id", _soheadid);
-              openPurchaseOrder newdlg(omfgThis, "", true);
-              newdlg.set(openPurchaseOrderParams);
-              poheadid = newdlg.exec();
-              if (poheadid == XDialog::Rejected)
-                return;
-            }
-          }
+          ParameterList openPurchaseOrderParams;
+          openPurchaseOrderParams.append("vend_id",    ordq.value("itemsrc_vend_id"));
+          openPurchaseOrderParams.append("vend_name",  ordq.value("vend_name"));
+          openPurchaseOrderParams.append("drop_ship", _supplyDropShip->isChecked());
+          openPurchaseOrderParams.append("sohead_id", _soheadid);
+          openPurchaseOrder newdlg(omfgThis, "", true);
+          newdlg.set(openPurchaseOrderParams);
+          poheadid = newdlg.exec();
+          if (poheadid == XDialog::Rejected)
+            return;
         }
 
         ordq.prepare("SELECT createPurchaseToSale(:soitem_id, :itemsrc_id, :drop_ship,"
