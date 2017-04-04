@@ -451,161 +451,58 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
       return false;
   }
 
+  XSqlQuery issueDetail;
+  issueDetail.prepare("SELECT calcIssueToShippingLineBalance(:orderType, :orderitemId) AS balance, "
+                       "  isControlledItemsite(orderitem_itemsite_id) AS controlled, "
+                       "  orderitem_itemsite_id AS itemsite_id, wo_id, "
+                       "  CASE WHEN wo_id IS NOT NULL THEN "
+                       "    roundQty(item_fractional, calcIssueToShippingLineBalance(:orderType, :orderitemId)) "
+                       "  ELSE NULL END AS postprodqty "
+                       "FROM orderitem "
+                       "  LEFT OUTER JOIN wo ON orderitem_id = wo_ordid "
+                       "    AND wo_ordtype = 'S' AND orderitem_orderhead_type = 'SO' "
+                       "  LEFT OUTER JOIN itemsite AS woitemsite ON woitemsite.itemsite_id = wo_itemsite_id "
+                       "  LEFT OUTER JOIN item AS woitem ON woitem.item_id = woitemsite.itemsite_item_id "
+                       "WHERE orderitem_orderhead_type = :orderType "
+                       " AND orderitem_id = :orderitemId;");
+  issueDetail.bindValue(":orderType", _order->type());
+  issueDetail.bindValue(":orderitemId", id);
+  issueDetail.exec();
+  if (issueDetail.first())
+  {
+    if (issueDetail.size() > 1)
+    {
+      ErrorReporter::error(QtCriticalMsg, this, tr("Retrieving from orderitem table returned more than one row."),
+        issueDetail, __FILE__, __LINE__);
+      return false;
+    }
+
+    
+  }
+  else
+  {
+    ErrorReporter::error(QtCriticalMsg, this, tr("Could not find this orderitem_id in the orderitem table."),
+      issueDetail, __FILE__, __LINE__);
+    return false;
+  }
+
   int invhistid = 0;
   int itemlocSeries;
-  int postProdItemlocSeries;
-  int postProdItemlocdistId;
-  int itemsiteId;
-  double balance;
-  bool controlled;
+  int itemsiteId = issueDetail.value("itemsite_id").toInt();;
+  double balance = issueDetail.value("balance").toDouble();
+  bool controlled = issueDetail.value("controlled").toBool();;
+  bool hasControlledBackflushItems = false;
 
   XSqlQuery issue;
-  XSqlQuery parentSeries;
   XSqlQuery cleanup;
-  XSqlQuery postProdCleanup;
   XSqlQuery parentItemlocdist;
+  XSqlQuery womatlItemlocdist;
+  XSqlQuery parentSeries;
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
   // Stage cleanup function to be called on error
   cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-  postProdCleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-
-  XSqlQuery itemsite;
-  itemsite.prepare("SELECT calcIssueToShippingLineBalance(:orderType, :orderitemId) AS balance, "
-                       "  isControlledItemsite(orderitem_itemsite_id) AS controlled, "
-                       "  orderitem_itemsite_id AS itemsite_id "
-                       "FROM orderitem "
-                       "WHERE orderitem_orderhead_type = :orderType "
-                       " AND orderitem_id = :orderitemId;");
-  itemsite.bindValue(":orderType", _order->type());
-  itemsite.bindValue(":orderitemId", id);
-  itemsite.exec();
-  if (itemsite.first())
-  {
-    if (itemsite.size() > 1)
-    {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Retrieving from orderitem table returned more than one row."),
-        itemsite, __FILE__, __LINE__);
-      return false;
-    }
-
-    balance = itemsite.value("balance").toDouble();
-    controlled = itemsite.value("controlled").toBool();
-    itemsiteId = itemsite.value("itemsite_id").toInt();
-  }
-  else
-  {
-    ErrorReporter::error(QtCriticalMsg, this, tr("Could not find this orderitem_id in the orderitem table."),
-      itemsite, __FILE__, __LINE__);
-    return false;
-  }
-
-  // If this is a lot/serial controlled job item, we need to post production first
-  if (altId == 1)
-  {
-    // Series for postSoItemProduction
-    parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
-    parentSeries.exec();
-    if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
-    {
-      postProdItemlocSeries = parentSeries.value("result").toInt();
-      postProdCleanup.bindValue(":itemlocSeries", postProdItemlocSeries);
-    }
-    else
-    {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
-        parentSeries, __FILE__, __LINE__);
-      return false;
-    }
-
-    // Before postSoItemProduction, if controlled: create the itemlocdist record and call distributeInventory::SeriesAdjust
-    if (controlled)
-    {
-      // Handle creation of itemlocdist records for each eligible backflush item (sql below from postProduction backflush handling)
-      XSqlQuery backflushItems;
-      backflushItems.prepare(
-        "SELECT item_number, itemsite_id, womatl_id, "
-        // issueMaterial qty = noNeg(expected - consumed)
-        " noNeg(womatl_qtyfxd + ((roundQty(item_fractional, :qty) + wo_qtyrcv) * womatl_qtyper)) * (1 + womatl_scrap) - " //expected 
-        "   (womatl_qtyiss + "
-        "     (CASE WHEN (womatl_qtywipscrap >  ((womatl_qtyfxd + (roundQty(item_fractional, :qty) + wo_qtyrcv) * womatl_qtyper) * womatl_scrap)) "
-        "           THEN (womatl_qtyfxd + (roundQty(item_fractional, :qty) + wo_qtyrcv) * womatl_qtyper) * womatl_scrap "
-        "      ELSE womatl_qtywipscrap END)) AS qtyToIssue " // consumed
-        "FROM womatl, wo, itemsite, item "
-        "WHERE womatl_issuemethod IN ('L', 'M') "
-        " AND womatl_wo_id=wo_id "
-        " AND womatl_itemsite_id=itemsite_id "
-        " AND wo_ordid = :coitem_id "
-        " AND wo_ordtype = 'S' "
-        " AND itemsite_item_id=item_id;");
-      backflushItems.bindValue(":qty", itemsite.value("balance").toDouble());
-      backflushItems.bindValue(":coitem_id", id);
-      while (backflushItems.next())
-      {
-        if (backflushItems.value("qtyToIssue").toDouble() > 0)
-        {
-          parentItemlocdist.prepare("SELECT createItemlocdistParent(itemsite_id, roundQty(item_fractional, :qty), 'WO', :orderitem_id, "
-                                " :itemlocSeries, NULL, NULL, 'IM') AS result "
-                                "FROM itemsite "
-                                " JOIN item ON itemsite_item_id = item_id "
-                                "WHERE itemsite_id = :itemsite_id;");
-          parentItemlocdist.bindValue(":itemsite_id", backflushItems.value("itemsite_id").toInt());
-          parentItemlocdist.bindValue(":qty", backflushItems.value("qtyToIssue").toDouble());
-          // TODO - replace this with wo_id so that createLotSerial can reproduce the (now null) invhist_ordnumber 
-          parentItemlocdist.bindValue(":orderitem_id", id);
-          parentItemlocdist.bindValue(":itemlocSeries", postProdItemlocSeries);
-          parentItemlocdist.exec();
-          if (!parentItemlocdist.first())
-          {
-            postProdCleanup.exec();
-            QMessageBox::information( this, tr("Issue to Shipping"), 
-              tr("Failed to Create an itemlocdist record for work order material item %1 to be backflushed")
-              .arg(backflushItems.value("item_number").toString()) );
-            return false;
-          }
-          else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-            parentItemlocdist, __FILE__, __LINE__))
-          {
-            postProdCleanup.exec();
-            return false;
-          }
-        }
-      } 
-
-      // Create the post production itemlocdist parent
-      parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, rounqQty(item_fractional, :qty), "
-                                " :orderType, :orderitemId, :itemlocSeries, NULL, NULL, 'RM') AS result "
-                                "FROM itemsite "
-                                " JOIN item ON itemsite_item_id = item_id "
-                                "WHERE itemsite_id = :itemsite_id;");
-      parentItemlocdist.bindValue(":itemsite_id", itemsiteId);
-      parentItemlocdist.bindValue(":qty", balance);
-      parentItemlocdist.bindValue(":orderType", _order->type());
-      // TODO - replace this with wo_id so that createLotSerial can reproduce the (now null) invhist_ordnumber 
-      parentItemlocdist.bindValue(":orderitemId", id);
-      parentItemlocdist.bindValue(":itemlocSeries", postProdItemlocSeries);
-      parentItemlocdist.exec();
-      if (parentItemlocdist.first())
-      {
-        postProdItemlocdistId = parentItemlocdist.value("result").toInt();
-
-        if (distributeInventory::SeriesAdjust(postProdItemlocSeries, this, QString(), QDate(), QDate(), true)
-          == XDialog::Rejected)
-        {
-          postProdCleanup.exec();
-          QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
-          return false;
-        }
-      }
-      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-                                parentItemlocdist, __FILE__, __LINE__))
-      {
-        postProdCleanup.exec();
-        return false;
-      }
-    }
-  }
 
   // Series for issueToShipping
   parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
@@ -617,46 +514,114 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   }
   else
   {
-    if (postProdItemlocSeries > 0)
-      postProdCleanup.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
       parentSeries, __FILE__, __LINE__);
     return false;
   }
 
-  // Before issueToShipping, if controlled item: create the parent itemlocdist record, call distributeInventory::seriesAdjust
-  if (controlled)
+  // Stage this here so that, if job item, some of the params can be overriden with WO relavant values.
+  parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, "
+    ":itemlocSeries, NULL, NULL, :transType) AS result;");
+  parentItemlocdist.bindValue(":itemsite_id", itemsiteId);
+  parentItemlocdist.bindValue(":qty", balance * -1);
+  parentItemlocdist.bindValue(":orderitemId", id);
+  parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+  parentItemlocdist.bindValue(":orderType", _order->type());
+  parentItemlocdist.bindValue(":transType", "SH");
+  
+  // If this is a lot/serial controlled job item, we need to post production first
+  if (altId == 1)
   {
-    parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, :itemlocSeries, "
-      "NULL, :postProdItemlocdistId, 'SH', :postProdItemlocSeries) AS result;");
-    parentItemlocdist.bindValue(":itemsite_id", itemsiteId);
-    parentItemlocdist.bindValue(":qty", balance * -1);
-    parentItemlocdist.bindValue(":orderType", _order->type());
-    parentItemlocdist.bindValue(":orderitemId", id);
-    parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
-    if (postProdItemlocdistId > 0)
-      parentItemlocdist.bindValue(":postProdItemlocdistId", postProdItemlocdistId);
-    if (postProdItemlocSeries > 0)
-      parentItemlocdist.bindValue(":postProdItemlocSeries", postProdItemlocSeries);
-    parentItemlocdist.exec();
-    if (parentItemlocdist.first())
+    // Handle creation of itemlocdist records for each eligible backflush item (sql below from postProduction backflush handling)
+    XSqlQuery backflushItems;
+    backflushItems.prepare(
+      "SELECT item_number, itemsite_id, itemsite_item_id, womatl_id, "
+      // issueMaterial qty = noNeg(expected - consumed)
+      " noNeg(womatl_qtyfxd + ((roundQty(item_fractional, :qty) + wo_qtyrcv) * womatl_qtyper)) * (1 + womatl_scrap) - " //expected 
+      "   (womatl_qtyiss + "
+      "     (CASE WHEN (womatl_qtywipscrap >  ((womatl_qtyfxd + (roundQty(item_fractional, :qty) + wo_qtyrcv) * womatl_qtyper) * womatl_scrap)) "
+      "           THEN (womatl_qtyfxd + (roundQty(item_fractional, :qty) + wo_qtyrcv) * womatl_qtyper) * womatl_scrap "
+      "      ELSE womatl_qtywipscrap END)) AS qtyToIssue " // consumed
+      "FROM womatl, wo, itemsite, item "
+      "WHERE womatl_issuemethod IN ('L', 'M') "
+      " AND womatl_wo_id=wo_id "
+      " AND womatl_itemsite_id=itemsite_id "
+      " AND wo_ordid = :coitem_id "
+      " AND wo_ordtype = 'S' "
+      " AND itemsite_item_id=item_id "
+      " AND isControlledItemsite(itemsite_id);");
+    backflushItems.bindValue(":qty", issueDetail.value("postprodqty").toDouble());
+    backflushItems.bindValue(":coitem_id", id);
+    backflushItems.exec();
+    while (backflushItems.next())
     {
-      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
-        == XDialog::Rejected)
+      if (backflushItems.value("qtyToIssue").toDouble() > 0)
+      {
+        hasControlledBackflushItems = true;
+        womatlItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, itemuomtouom(:item_id, womatl_uom_id, NULL, :qty) * -1, 'WO', womatl_wo_id, "
+                                  " :itemlocSeries, NULL, NULL, 'IM') AS result "
+                                  "FROM womatl "
+                                  "WHERE womatl_id = :womatl_id;");
+        womatlItemlocdist.bindValue(":itemsite_id", backflushItems.value("itemsite_id").toInt());
+        womatlItemlocdist.bindValue(":item_id", backflushItems.value("itemsite_item_id").toInt());
+        womatlItemlocdist.bindValue(":womatl_id", backflushItems.value("womatl_id").toInt());
+        womatlItemlocdist.bindValue(":qty", backflushItems.value("qtyToIssue").toDouble());
+        womatlItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+        womatlItemlocdist.exec();
+        if (!womatlItemlocdist.first())
+        {
+          cleanup.exec();
+          QMessageBox::information( this, tr("Issue Line to Shipping"), 
+            tr("Failed to Create an itemlocdist record for work order backflushed material item %1.")
+            .arg(backflushItems.value("item_number").toString()) );
+          return false;
+        }
+        else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
+          womatlItemlocdist, __FILE__, __LINE__))
+        {
+          cleanup.exec();
+          return false;
+        }
+      }
+    }
+
+    // If it's a controlled job item, set the relavant params
+    if (controlled)
+    {
+      parentItemlocdist.bindValue(":orderitemId", issueDetail.value("wo_id").toInt());
+      parentItemlocdist.bindValue(":orderType", "WO");
+      parentItemlocdist.bindValue(":transType", "RM");
+      parentItemlocdist.bindValue(":qty", balance);
+    } 
+  }
+
+  // Create the itemlocdist record if controlled item and distribute detail if controlled or controlled backflush items
+  if (controlled || hasControlledBackflushItems)
+  {
+    // If controlled item, execute the sql to create the parent itemlocdist record 
+    // (for WO post prod item if job, else for issue to shipping transaction).
+    if (controlled)
+    {
+      parentItemlocdist.exec();
+      if (!parentItemlocdist.first())
       {
         cleanup.exec();
-        if (postProdItemlocSeries > 0)
-          postProdCleanup.exec();
-        QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+        QMessageBox::information( this, tr("Issue to Shipping"), tr("Error creating itemlocdist records for controlled item") );
+        return false;
+      }
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
+                                parentItemlocdist, __FILE__, __LINE__))
+      {
+        cleanup.exec();
         return false;
       }
     }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-                              parentItemlocdist, __FILE__, __LINE__))
+
+    if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+      QDate(), true) == XDialog::Rejected)
     {
       cleanup.exec();
-      if (postProdItemlocSeries > 0)
-        postProdCleanup.exec();
+      QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
       return false;
     }
   }
@@ -668,54 +633,53 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   if (altId == 1)
   {
     XSqlQuery prod;
-    prod.prepare("SELECT postSoItemProduction(:soitem_id, :qty, :ts, :itemlocSeries, TRUE) AS result;");
+    prod.prepare("SELECT postSoItemProduction(:soitem_id, :qty, now(), :itemlocSeries, TRUE) AS result;");
     prod.bindValue(":soitem_id", id);
     prod.bindValue(":qty", balance);
-    prod.bindValue(":ts", _transDate->date());
-    prod.bindValue(":itemlocSeries", postProdItemlocSeries);
+    prod.bindValue(":itemlocSeries", itemlocSeries);
     prod.exec();
     if (prod.first())
     {
       int result = prod.value("result").toInt();
 
-      if (result < 0 || result != postProdItemlocSeries)
+      if (result < 0 || result != itemlocSeries)
       {
         rollback.exec();
         cleanup.exec();
-        postProdCleanup.exec();
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production"),
-                               storedProcErrorLookup("postProduction", postProdItemlocSeries),
+                               storedProcErrorLookup("postProduction", itemlocSeries),
                                __FILE__, __LINE__);
         return false;
       }
-        
-      // Need to get the inventory history id so we can auto reverse the distribution when issuing
-      prod.prepare("SELECT invhist_id "
-                   "FROM invhist "
-                   "WHERE ((invhist_series = :itemlocseries) "
-                   " AND (invhist_transtype = 'RM')); ");
-      prod.bindValue(":itemlocseries" , postProdItemlocSeries);
-      prod.exec();
-      if (prod.first())
-        invhistid = prod.value("invhist_id").toInt();
-      else
+
+      // If controlled item, get the inventory history from post production trans. 
+      // so we can create itemlocdist records for issue to shipping transaction and auto-distribute to them in postInvTrans.
+      if (controlled)
       {
-        rollback.exec();
-        cleanup.exec();
-        postProdCleanup.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
-                             tr("Inventory history not found")
-                             .arg(windowTitle()),__FILE__,__LINE__);
-        return false;
+        prod.prepare("SELECT invhist_id "
+                     "FROM invhist "
+                     "WHERE ((invhist_series = :itemlocseries) "
+                     " AND (invhist_transtype = 'RM')); ");
+        prod.bindValue(":itemlocseries" , itemlocSeries);
+        prod.exec();
+        if (prod.first())
+          invhistid = prod.value("invhist_id").toInt();
+        else
+        {
+          rollback.exec();
+          cleanup.exec();
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                               tr("Inventory history not found")
+                               .arg(windowTitle()),__FILE__,__LINE__);
+          return false;
+        }
       }
     }
-    else if (prod.lastError().type() != QSqlError::NoError)
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production for Job Item"),
+      prod, __FILE__,__LINE__))
     {
       rollback.exec();
       cleanup.exec();
-      postProdCleanup.exec();
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production"),
-                           prod, __FILE__, __LINE__);
       return false;
     }
   }
@@ -739,8 +703,6 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
     {
       rollback.exec();
       cleanup.exec();
-      if (postProdItemlocSeries > 0)
-        postProdCleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Item"),
                              storedProcErrorLookup("issueToShipping", result),
                              __FILE__, __LINE__);
@@ -762,14 +724,12 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   					             "FROM invhist JOIN invdetail ON (invdetail_invhist_id=invhist_id) "
   					             "WHERE invhist_series=:itemlocseries;");
         lsdetail.bindValue(":orderitemid", id);
-        lsdetail.bindValue(":itemlocseries", result);
+        lsdetail.bindValue(":itemlocseries", itemlocSeries);
         lsdetail.exec();
         if (lsdetail.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();
           cleanup.exec();
-          if (postProdItemlocSeries > 0)
-            postProdCleanup.exec();
           ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Item"),
                                lsdetail, __FILE__, __LINE__);
           return false;
@@ -782,8 +742,6 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   {
     rollback.exec();
     cleanup.exec();
-    if (postProdItemlocSeries > 0)
-      postProdCleanup.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Item"),
                          issue, __FILE__, __LINE__);
     return false;

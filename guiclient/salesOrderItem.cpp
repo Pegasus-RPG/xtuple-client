@@ -689,7 +689,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
     _unitCost->setEnabled(!viewMode);
     _markupFromUnitCost->setEnabled(!viewMode);
     _scheduledDate->setEnabled(!viewMode);
-    _createSupplyOrder->setEnabled(!viewMode);
+    //_createSupplyOrder->setEnabled(!viewMode);
     _notes->setEnabled(!viewMode);
     _comments->setReadOnly(viewMode);
     _taxtype->setEnabled(!viewMode);
@@ -1674,7 +1674,7 @@ void salesOrderItem::sPopulateItemsiteInfo()
       }
       else
       {
-        _createSupplyOrder->setEnabled(false);
+        //_createSupplyOrder->setEnabled(false);
         _supplyOrderType = "";
         _createSupplyOrder->setTitle(tr("Create Supply Order"));
       }
@@ -3466,7 +3466,7 @@ void salesOrderItem::sPopulateOrderInfo()
       _supplyOrderStatus->setText(ordq.value("wo_status").toString());
       
       if (ordq.value("orderlocked").toBool())
-        _createSupplyOrder->setEnabled(false);
+        //_createSupplyOrder->setEnabled(false);
       
       if (_item->isConfigured() && (ordq.value("wo_status").toString() != "O"))
         _itemcharView->setEnabled(false);
@@ -3598,7 +3598,7 @@ void salesOrderItem::sPopulateOrderInfo()
   }
   
   if (_costmethod == "J")
-    _createSupplyOrder->setEnabled(false);
+    //_createSupplyOrder->setEnabled(false);
   
   _supplyOrderQtyCache = _supplyOrderQty->toDouble();
   _supplyOrderDueDateCache = _supplyOrderDueDate->date();

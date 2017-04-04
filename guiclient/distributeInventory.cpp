@@ -621,7 +621,6 @@ void distributeInventory::sFillList()
   distributeFillList.prepare( "SELECT itemsite_id, "
              "       COALESCE(itemsite_location_id,-1) AS itemsite_location_id,"
              "       formatlotserialnumber(itemlocdist_ls_id) AS lotserial,"
-             // TODO - include WO, and any other order types that have an order number
              "       CASE WHEN itemlocdist_order_type IS NOT NULL AND itemlocdist_order_id IS NOT NULL "
              "            THEN (itemlocdist_order_type || ' ' || formatOrderLineItemNumber(itemlocdist_order_type, itemlocdist_order_id)) "
              "            ELSE '' END AS order, "

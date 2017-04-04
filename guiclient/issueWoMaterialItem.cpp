@@ -164,7 +164,7 @@ void issueWoMaterialItem::sIssue()
     return;
   }
   
-  issueIssue.prepare("SELECT itemsite_id, item_number, warehous_code, "
+  issueIssue.prepare("SELECT womatl_wo_id, itemsite_id, item_number, warehous_code, "
             "       (COALESCE((SELECT SUM(itemloc_qty) "
             "                    FROM itemloc "
             "                   WHERE (itemloc_itemsite_id=itemsite_id)), 0.0) >= roundQty(item_fractional, itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, :qty))) AS isqtyavail, "
@@ -176,7 +176,8 @@ void issueWoMaterialItem::sIssue()
             "   AND (itemsite_warehous_id=warehous_id) "
             "   AND (NOT ((item_type = 'R') OR (itemsite_controlmethod = 'N'))) "
             "   AND isControlledItemsite(itemsite_id) "
-            "   AND (womatl_id=:womatl_id)); ");
+            "   AND (womatl_id=:womatl_id)) "
+            " ORDER BY womatl_id; ");
   issueIssue.bindValue(":womatl_id", _womatl->id());
   issueIssue.bindValue(":qty", _qtyToIssue->toDouble());
   issueIssue.exec();
@@ -200,8 +201,8 @@ void issueWoMaterialItem::sIssue()
     parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'WO', "
                               " :orderitemId, :itemlocSeries, NULL, NULL, 'IM');");
     parentItemlocdist.bindValue(":itemsite_id", issueIssue.value("itemsite_id").toInt());
-    parentItemlocdist.bindValue(":qty", issueIssue.value("post_qty").toInt());
-    parentItemlocdist.bindValue(":orderitemId", _womatl->id());
+    parentItemlocdist.bindValue(":qty", issueIssue.value("post_qty").toDouble());
+    parentItemlocdist.bindValue(":orderitemId", issueIssue.value("womatl_wo_id").toInt());
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
     parentItemlocdist.exec();
     if (parentItemlocdist.first())

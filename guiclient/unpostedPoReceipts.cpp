@@ -203,7 +203,7 @@ void unpostedPoReceipts::sPost()
   QList<XTreeWidgetItem*>selected = _recv->selectedItems();
   QList<XTreeWidgetItem*>triedToClosed;
 
-  // Update dates if user the transaction date after clicking post
+  // Update dates if user changed the transaction date after clicking post
   for (int i = 0; i < selected.size(); i++)
   {
     int id = ((XTreeWidgetItem*)(selected[i]))->id();
@@ -259,7 +259,33 @@ void unpostedPoReceipts::sPost()
       if (!recvInfo.first())
       {
         QMessageBox::information( this, tr("Unposted Receipts"), tr("Failed to retrieve recv and orderitem info.") );
-        return;
+        continue;
+      }
+
+      // Check if the date is in a closed period
+      XSqlQuery closedPeriod;
+      closedPeriod.prepare("SELECT period_closed "
+                           "FROM recv "
+                           "  JOIN period ON COALESCE(recv_gldistdate, recv_date) BETWEEN period_start AND period_end "
+                           "WHERE recv_id=:recv_id;");
+      closedPeriod.bindValue(":recv_id", id);
+      closedPeriod.exec();
+      if (closedPeriod.first())
+      {
+        if (closedPeriod.value("period_closed").toBool())
+        {
+          if (!_privileges->check("ChangePORecvPostDate"))
+          {
+            if (changeDate)
+            {
+              triedToClosed = selected;
+              break;
+            }
+            else
+              triedToClosed.append(selected[i]);
+          }
+          continue;
+        }
       }
 
       // Stage cleanup function to be called on error
@@ -336,7 +362,10 @@ void unpostedPoReceipts::sPost()
                     continue;
                   }
                   else
-                    return;
+                  {
+                    tryagain = false;
+                    continue;
+                  }
                 }
                 else
                 {
@@ -374,7 +403,7 @@ void unpostedPoReceipts::sPost()
       {
         XSqlQuery parentItemlocdist;
         parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, "
-          ":itemlocSeries, NULL, :itemlocdistId, :transType, :itemlocSeries) AS result;");
+          ":itemlocSeries, NULL, :itemlocdistId, :transType) AS result;");
         parentItemlocdist.bindValue(":itemsite_id", recvInfo.value("itemsite_id").toInt());
         parentItemlocdist.bindValue(":orderType", recvInfo.value("recv_order_type").toString());
         parentItemlocdist.bindValue(":orderitemId", recvInfo.value("recv_orderitem_id").toInt());
@@ -511,15 +540,16 @@ void unpostedPoReceipts::sPost()
                   .arg(issue.value("pohead_number").toString());
               rollback.exec();
               cleanup.exec();
-              QMessageBox::warning(this, tr("Cannot Ship Order"), msg);
               sFillList();
               failedItems.append(recvInfo.value("item_number").toString());
-              errors.append(issue.lastError().text());
+              errors.append(msg);
+              // Remove from drop ship list so that it's not shipped
+              _soheadid.removeAll(issue.value("coitem_cohead_id").toString());
               continue;
             }
 
-            if (!_soheadid.contains(issue.value("coitem_cohead_id").toInt()))
-              _soheadid.append(issue.value("coitem_cohead_id").toInt());
+            if (!_soheadid.contains(issue.value("coitem_cohead_id").toString()))
+              _soheadid.append(issue.value("coitem_cohead_id").toString());
             issue.prepare("SELECT postItemLocSeries(:itemlocseries);");
             issue.bindValue(":itemlocseries", postLine.value("result").toInt());
             issue.exec();
@@ -535,17 +565,6 @@ void unpostedPoReceipts::sPost()
           }
         }
       }
-      // contains() string is hard-coded in stored procedure
-      else if (postLine.lastError().databaseText().contains("posted to closed period"))
-      {
-        if (changeDate)
-        {
-          triedToClosed = selected;
-          break;
-        }
-        else
-          triedToClosed.append(selected[i]);
-      }
       else if (postLine.lastError().type() != QSqlError::NoError)
       {
         rollback.exec();
@@ -560,6 +579,9 @@ void unpostedPoReceipts::sPost()
       unpostedPost.exec("COMMIT;"); 
     } // for each selected line
 
+    // There shouldn't be duplicates but just in case
+    _soheadid.removeDuplicates();
+
     // Ship any drop shipped orders
     while (_soheadid.count())
     {
@@ -568,7 +590,7 @@ void unpostedPoReceipts::sPost()
                    "  shiphead_id "
                    "FROM shiphead "
                    "WHERE ( (shiphead_order_type='SO') "
-                   " AND (shiphead_order_id=:cohead_id) "
+                   " AND (shiphead_order_id=:cohead_id::integer) "
                    " AND (NOT shiphead_shipped) );");
       ship.bindValue(":cohead_id", _soheadid.at(0));
       ship.exec();
@@ -596,6 +618,19 @@ void unpostedPoReceipts::sPost()
       _soheadid.takeFirst();
     }
 
+    if (errors.size() > 0)
+    {
+      QMessageBox dlg(QMessageBox::Critical, "Errors Posting Receipt", "", QMessageBox::Ok, this);
+      dlg.setText(tr("%1 Items succeeded.\n%2 Items failed.").arg(succeeded).arg(failedItems.size()));
+
+      QString details;
+      for (int i=0; i<failedItems.size(); i++)
+        details += tr("Item %1 failed with:\n%2\n").arg(failedItems[i]).arg(errors[i]);
+      dlg.setDetailedText(details);
+
+      dlg.exec();
+    }
+
     if (triedToClosed.size() > 0)
     {
       failedPostList newdlg(this, "", true);
@@ -605,19 +640,6 @@ void unpostedPoReceipts::sPost()
       triedToClosed.clear();
     }
   } while (tryagain);
-
-  if (errors.size() > 0)
-  {
-    QMessageBox dlg(QMessageBox::Critical, "Errors Posting Receipt", "", QMessageBox::Ok, this);
-    dlg.setText(tr("%1 Items succeeded.\n%2 Items failed.").arg(succeeded).arg(failedItems.size()));
-
-    QString details;
-    for (int i=0; i<failedItems.size(); i++)
-      details += tr("Item %1 failed with:\n%2\n").arg(failedItems[i]).arg(errors[i]);
-    dlg.setDetailedText(details);
-
-    dlg.exec();
-  }
 
   omfgThis->sPurchaseOrderReceiptsUpdated();
 }

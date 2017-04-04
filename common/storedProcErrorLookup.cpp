@@ -1079,6 +1079,10 @@ const struct {
                        "Systems Administrator to have this corrected before "
                        "you may post these Billing Approvals."),       0, "" },
 
+  { "createItemlocdistParent", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Itemsite Must be Lot/Serial or Location Controlled."), 0, "" },
+  { "createItemlocdistParent", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Series is required."), 0, "" },
+  { "createItemlocdistParent", -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Failed to Create Parent Itemlocdist Record."), 0, "" },
+
   { "postCashReceipt", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Cash Receipt cannot be posted as "
 			      "the amount distributed is greater than the "
 			      "amount received. You must correct this before "
@@ -1316,6 +1320,11 @@ const struct {
          "Expected Count of Distribution Detail Records Posted for Controlled Item."), 0, "" },
   { "postReceipt", -42, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
          "Could not insert G/L transaction: no cost category found for itemsite_id."), 0, "" },
+
+  { "postSoItemProduction", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+         "pItemlocSeries is Required when pPreDistributed."), 0, "" },
+  { "postSoItemProduction", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+         "The postSoLineBalanceProduction function may only be used with Job costed item sites."), 0, "" },
 
   { "postPoReceipts",   -1, "",	 -1, "postPoReceipt" },
   { "postPoReceipts",   -3, "",	 -3, "postPoReceipt" },

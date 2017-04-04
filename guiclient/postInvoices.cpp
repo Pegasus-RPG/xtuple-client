@@ -176,11 +176,17 @@ void postInvoices::sPost()
     return;
   }
 
+  bool trynext = true;
   int succeeded = 0;
-  QList<int> failedInvoiceIds;
+  QList<QString> failedInvoiceNumbers;
   QList<QString> errors;
   for (int i = 0; i < invoiceIds.size(); i++)
   {
+    // Previous error and user did not want to continue posting remaining invoices. Do nothing for the rest of the loop.
+    if (!trynext)
+      continue;
+
+    QString invoiceNumber;
     int invoiceId = invoiceIds.at(i);
     // Handle the Inventory and G/L Transactions for any billed Inventory where invcitem_updateinv is true
     XSqlQuery items;
@@ -203,6 +209,7 @@ void postInvoices::sPost()
     items.exec();
     while (items.next())
     {
+      invoiceNumber = items.value("invchead_invcnumber").toString();
       // Create the parent itemlocdist record for each line item requiring distribution, call distributeInventory::seriesAdjust
       XSqlQuery parentItemlocdist;
       parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty, 'IN', "
@@ -215,9 +222,9 @@ void postInvoices::sPost()
       if (!parentItemlocdist.first())
       {
         cleanup.exec();
-        failedInvoiceIds.append(invoiceId);
-        errors.append("Error Creating itemlocdist Record");
-        continue;
+        failedInvoiceNumbers.append(invoiceNumber);
+        errors.append(tr("Error Creating itemlocdist Record for item %1").arg(items.value("item_number").toString()));
+        break;
       }
     }
     // Distribute the items from above
@@ -225,9 +232,21 @@ void postInvoices::sPost()
       == XDialog::Rejected)
     {
       cleanup.exec();
-      failedInvoiceIds.append(invoiceId);
-      errors.append("Detail Distribution was Cancelled");
-      return;
+      if (QMessageBox::question(this,  tr("Post Invoices"),
+        tr("Posting distribution detail for invoice number %1 was cancelled but "
+           "there other invoices to Post. Continue posting the remaining invoices?")
+        .arg(items.value("item_number").toString()), 
+        QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+      {
+        failedInvoiceNumbers.append(invoiceNumber);
+        errors.append(tr("Detail Distribution Cancelled"));
+        continue;
+      }
+      else
+      {
+        trynext = false;
+        continue;
+      }
     }
 
     // TODO - remove this after postInvoice has had the remaining negative error codes replaced with RAISE EXCEPTIONs
@@ -249,8 +268,11 @@ void postInvoices::sPost()
       {
         rollback.exec();
         cleanup.exec();
-        failedInvoiceIds.append(invoiceId);
-        errors.append("Error Posting Invoice");
+        failedInvoiceNumbers.append(invoiceNumber);
+        if (result < 0)
+          errors.append(tr("Error Posting Invoice. %1").arg(storedProcErrorLookup("postInvoice", result)));
+        if (result > 0)
+          errors.append(tr("Error Posting Invoice. Expected: %1, returned: %2").arg(itemlocSeries).arg(result));
         continue;
       }
       // TODO - pass into success array for error reporting
@@ -259,8 +281,8 @@ void postInvoices::sPost()
     {
       rollback.exec();
       cleanup.exec();
-      failedInvoiceIds.append(invoiceId);
-      errors.append("Error Posting Invoice Information");
+      failedInvoiceNumbers.append(invoiceNumber);
+      errors.append(postPost.lastError().text());
       continue;
     }
     succeeded++;
@@ -270,11 +292,11 @@ void postInvoices::sPost()
   if (errors.size() > 0)
   {
     QMessageBox dlg(QMessageBox::Critical, "Errors Posting Invoice", "", QMessageBox::Ok, this);
-    dlg.setText(tr("%1 Invoices succeeded.\n%2 Invoices failed.").arg(succeeded).arg(failedInvoiceIds.size()));
+    dlg.setText(tr("%1 Invoices succeeded.\n%2 Invoices failed.").arg(succeeded).arg(failedInvoiceNumbers.size()));
 
     QString details;
-    for (int i=0; i<failedInvoiceIds.size(); i++)
-      details += tr("Invoice ID %1 failed with:\n%2\n").arg(failedInvoiceIds[i]).arg(errors[i]);
+    for (int i=0; i<failedInvoiceNumbers.size(); i++)
+      details += tr("Invoice number %1 failed with:\n%2\n").arg(failedInvoiceNumbers[i]).arg(errors[i]);
     dlg.setDetailedText(details);
 
     dlg.exec();
