@@ -102,6 +102,11 @@ enum SetResponse XMainWindow::set(const ParameterList &pParams)
   return NoError;
 }
 
+void XMainWindow::sDbConnectionLost()
+{
+  _private->sDbConnectionLost();
+}
+
 enum SetResponse XMainWindow::postSet()
 {
   return _private->callSet(_lastSetParams);

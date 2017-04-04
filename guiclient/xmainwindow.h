@@ -38,6 +38,7 @@ class XMainWindow : public QMainWindow
 
   public slots:
     virtual enum SetResponse set(const ParameterList &);
+    virtual void             sDbConnectionLost();
 
   protected:
     virtual void closeEvent(QCloseEvent *);

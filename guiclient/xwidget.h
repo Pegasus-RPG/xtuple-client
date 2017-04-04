@@ -31,6 +31,7 @@ class XWidget : public QWidget
 
   public slots:
     virtual enum SetResponse set(const ParameterList &);
+    virtual void sDbConnectionLost();
 
   protected:
     void closeEvent(QCloseEvent * event);
@@ -45,7 +46,6 @@ class XWidget : public QWidget
     XWidgetPrivate *_private;
 
     ParameterList _lastSetParams;
-    void loadScriptEngine();
 };
 
 #endif // __XWIDGET_H__

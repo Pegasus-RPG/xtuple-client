@@ -32,6 +32,7 @@ class XDialog : public QDialog
     virtual enum SetResponse set(const ParameterList &);
     virtual void setRememberPos(bool);
     virtual void setRememberSize(bool);
+    virtual void sDbConnectionLost();
     int exec();
 
   protected:

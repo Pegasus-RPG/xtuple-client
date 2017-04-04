@@ -98,9 +98,9 @@ void XDialog::closeEvent(QCloseEvent * event)
     QDialog::closeEvent(event);
   }
   
-  #ifdef Q_OS_MAC
-    omfgThis->removeFromMacDockMenu(this);
-  #endif
+#ifdef Q_OS_MAC
+  omfgThis->removeFromMacDockMenu(this);
+#endif
 }
 
 void XDialog::showEvent(QShowEvent *event)
@@ -178,6 +178,11 @@ enum SetResponse XDialog::set(const ParameterList & pParams)
   return NoError;
 }
 
+void XDialog::sDbConnectionLost()
+{
+  _private->sDbConnectionLost();
+}
+
 enum SetResponse XDialog::postSet()
 {
   return _private->callSet(_lastSetParams);
@@ -190,10 +195,10 @@ ParameterList XDialog::get() const
 
 int XDialog::exec()
 {
-	#ifdef Q_OS_MAC
-		omfgThis->updateMacDockMenu(this);
-	#endif
+#ifdef Q_OS_MAC
+  omfgThis->updateMacDockMenu(this);
+#endif
 
-	return QDialog::exec();
+  return QDialog::exec();
 }
 

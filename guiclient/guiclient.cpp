@@ -418,7 +418,9 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   connect(_privileges, SIGNAL(loaded()), this, SLOT(initMenuBar()));
 
-  VirtualClusterLineEdit::_guiClientInterface = new xTupleGuiClientInterface(this);
+  ScriptableWidget::_guiClientInterface = new xTupleGuiClientInterface(this);
+  // the following can be removed when they all inherit from ScriptableWidget
+  VirtualClusterLineEdit::_guiClientInterface = ScriptableWidget::_guiClientInterface;
   Documents::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
   MenuButton::_guiClientInterface =  VirtualClusterLineEdit::_guiClientInterface;
   XTreeWidget::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;

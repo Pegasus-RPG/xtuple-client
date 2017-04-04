@@ -185,6 +185,11 @@ enum SetResponse XWidget::set( const ParameterList & pParams )
   return NoError;
 }
 
+void XWidget::sDbConnectionLost()
+{
+  _private->sDbConnectionLost();
+}
+
 enum SetResponse XWidget::postSet()
 {
   return _private->callSet(_lastSetParams);

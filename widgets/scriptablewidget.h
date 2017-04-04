@@ -18,11 +18,15 @@
 class QScriptEngine;
 class QScriptEngineDebugger;
 
+class GuiClientInterface;
+
 class ScriptableWidget
 {
   public:
     ScriptableWidget(QObject *object);
     virtual ~ScriptableWidget();
+
+    static GuiClientInterface *_guiClientInterface;
 
     virtual QScriptEngine *engine();
     virtual void           loadScript(const QStringList &list);
@@ -34,6 +38,14 @@ class ScriptableWidget
     QScriptEngine         *_engine;
     QObject               *_object;
     bool                   _scriptLoaded;
+
+    static QString _tablesToWatch;
+    static QHash<int, QPair<QString, QString> > _cacheScriptsById;
+    static QHash<QString, QList<int> >          _cacheIdsByName;
+
+  protected slots:
+    virtual void sDbConnectionLost();
+    virtual void sNotified(const QString &pNotification);
 };
 
 #endif
