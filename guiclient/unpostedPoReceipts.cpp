@@ -544,12 +544,12 @@ void unpostedPoReceipts::sPost()
               failedItems.append(recvInfo.value("item_number").toString());
               errors.append(msg);
               // Remove from drop ship list so that it's not shipped
-              _soheadid.removeAll(issue.value("coitem_cohead_id").toString());
+              _soheadid.removeAll(issue.value("coitem_cohead_id").toInt());
               continue;
             }
 
-            if (!_soheadid.contains(issue.value("coitem_cohead_id").toString()))
-              _soheadid.append(issue.value("coitem_cohead_id").toString());
+            if (!_soheadid.contains(issue.value("coitem_cohead_id").toInt()))
+              _soheadid.append(issue.value("coitem_cohead_id").toInt());
             issue.prepare("SELECT postItemLocSeries(:itemlocseries);");
             issue.bindValue(":itemlocseries", postLine.value("result").toInt());
             issue.exec();
@@ -579,9 +579,6 @@ void unpostedPoReceipts::sPost()
       unpostedPost.exec("COMMIT;"); 
     } // for each selected line
 
-    // There shouldn't be duplicates but just in case
-    _soheadid.removeDuplicates();
-
     // Ship any drop shipped orders
     while (_soheadid.count())
     {
@@ -590,7 +587,7 @@ void unpostedPoReceipts::sPost()
                    "  shiphead_id "
                    "FROM shiphead "
                    "WHERE ( (shiphead_order_type='SO') "
-                   " AND (shiphead_order_id=:cohead_id::integer) "
+                   " AND (shiphead_order_id=:cohead_id) "
                    " AND (NOT shiphead_shipped) );");
       ship.bindValue(":cohead_id", _soheadid.at(0));
       ship.exec();

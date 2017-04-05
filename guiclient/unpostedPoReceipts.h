@@ -41,7 +41,7 @@ protected slots:
     virtual void languageChange();
 
 private:
-    QList<QString> _soheadid;
+    QList<int> _soheadid;
 
 };
 
