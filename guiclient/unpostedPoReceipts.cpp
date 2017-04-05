@@ -180,45 +180,6 @@ void unpostedPoReceipts::sViewOrderItem()
 void unpostedPoReceipts::sPost()
 {
   XSqlQuery unpostedPost;
-  bool changeDate = false;
-  QDate newDate = QDate::currentDate();
-
-  if (_privileges->check("ChangePORecvPostDate"))
-  {
-    getGLDistDate newdlg(this, "", true);
-    newdlg.sSetDefaultLit(tr("Receipt Date"));
-    if (newdlg.exec() == XDialog::Accepted)
-    {
-      newDate = newdlg.date();
-      changeDate = (newDate.isValid());
-    }
-    else
-      return;
-  }
-
-  XSqlQuery setDate;
-  setDate.prepare("UPDATE recv SET recv_gldistdate=:distdate "
-                 "WHERE recv_id=:recv_id;");
-
-  QList<XTreeWidgetItem*>selected = _recv->selectedItems();
-  QList<XTreeWidgetItem*>triedToClosed;
-
-  // Update dates if user changed the transaction date after clicking post
-  for (int i = 0; i < selected.size(); i++)
-  {
-    int id = ((XTreeWidgetItem*)(selected[i]))->id();
-    if (changeDate)
-    {
-      setDate.bindValue(":distdate",  newDate);
-      setDate.bindValue(":recv_id", id);
-      setDate.exec();
-      if (setDate.lastError().type() != QSqlError::NoError)
-      {
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Receipt Information"),
-                             setDate, __FILE__, __LINE__);
-      }
-    }
-  }
 
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
@@ -228,6 +189,45 @@ void unpostedPoReceipts::sPost()
   QList<QString> failedItems;
   QList<QString> errors;
   do {
+    bool changeDate = false;
+    QDate newDate = QDate::currentDate();
+
+    if (_privileges->check("ChangePORecvPostDate"))
+    {
+      getGLDistDate newdlg(this, "", true);
+      newdlg.sSetDefaultLit(tr("Receipt Date"));
+      if (newdlg.exec() == XDialog::Accepted)
+      {
+        newDate = newdlg.date();
+        changeDate = (newDate.isValid());
+      }
+      else
+        return;
+    }
+
+    XSqlQuery setDate;
+    setDate.prepare("UPDATE recv SET recv_gldistdate=:distdate "
+                   "WHERE recv_id=:recv_id;");
+
+    QList<XTreeWidgetItem*>selected = _recv->selectedItems();
+    QList<XTreeWidgetItem*>triedToClosed;
+
+    // Update dates if user changed the transaction date after clicking post
+    for (int i = 0; i < selected.size(); i++)
+    {
+      int id = ((XTreeWidgetItem*)(selected[i]))->id();
+      if (changeDate)
+      {
+        setDate.bindValue(":distdate",  newDate);
+        setDate.bindValue(":recv_id", id);
+        setDate.exec();
+        if (setDate.lastError().type() != QSqlError::NoError)
+        {
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Receipt Information"),
+                               setDate, __FILE__, __LINE__);
+        }
+      }
+    }
     // Cycle through the selected items on the _recv list
     for (int i = 0; i < selected.size(); i++)
     {
@@ -258,7 +258,9 @@ void unpostedPoReceipts::sPost()
       recvInfo.exec();
       if (!recvInfo.first())
       {
-        QMessageBox::information( this, tr("Unposted Receipts"), tr("Failed to retrieve recv and orderitem info.") );
+        failedItems.append("NULL");
+        errors.append(tr("Failed to retrieve recv and orderitem info. %1")
+          .arg(recvInfo.lastError().text()));
         continue;
       }
 
@@ -270,24 +272,21 @@ void unpostedPoReceipts::sPost()
                            "WHERE recv_id=:recv_id;");
       closedPeriod.bindValue(":recv_id", id);
       closedPeriod.exec();
-      if (closedPeriod.first())
+      if (!closedPeriod.first() || closedPeriod.value("period_closed").toBool())
       {
-        if (closedPeriod.value("period_closed").toBool())
+        if (!_privileges->check("ChangePORecvPostDate"))
         {
-          if (!_privileges->check("ChangePORecvPostDate"))
+          if (changeDate)
           {
-            if (changeDate)
-            {
-              triedToClosed = selected;
-              break;
-            }
-            else
-              triedToClosed.append(selected[i]);
+            triedToClosed = selected;
+            break;
           }
-          continue;
+          else
+            triedToClosed.append(selected[i]);
         }
+        continue;  
       }
-
+      
       // Stage cleanup function to be called on error
       XSqlQuery cleanup;
       cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
@@ -303,10 +302,9 @@ void unpostedPoReceipts::sPost()
       }
       else
       {
-        ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
-          parentSeries, __FILE__, __LINE__);
         failedItems.append(recvInfo.value("item_number").toString());
-        errors.append(parentSeries.lastError().text());
+        errors.append(tr("Failed to Retrieve the Next itemloc_series_seq. %1")
+          .arg(parentSeries.lastError().text()));
         continue;
       }
 
@@ -379,19 +377,17 @@ void unpostedPoReceipts::sPost()
           else 
           {
             cleanup.exec();
-            ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Record for "
-              "'From' itemsite"), parentItemlocdist, __FILE__, __LINE__);
             failedItems.append(recvInfo.value("item_number").toString());
-            errors.append(parentItemlocdist.lastError().text());
+            errors.append(tr("Error Creating itemlocdist record for 'From' itemsite. %1")
+              .arg(parentItemlocdist.lastError().text()));
             continue;
           }
         }
         else if (tohead.lastError().type() != QSqlError::NoError)
         {
-          ErrorReporter::error(QtCriticalMsg, this, tr("Failed to retrieve transfer order item and itemsite for from warehouse."), 
-            tohead, __FILE__, __LINE__);
           failedItems.append(recvInfo.value("item_number").toString());
-          errors.append(tohead.lastError().text());
+          errors.append(tr("Failed to retrieve transfer order item and itemsite for from warehouse. %1")
+            .arg(tohead.lastError().text()));
           continue;
         }
       }
@@ -458,10 +454,9 @@ void unpostedPoReceipts::sPost()
         else
         {
           cleanup.exec();
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Record"),
-                               parentItemlocdist, __FILE__, __LINE__);
           failedItems.append(recvInfo.value("item_number").toString());
-          errors.append(parentItemlocdist.lastError().text());
+          errors.append(tr("Error creating itemlocdist record. %1")
+            .arg(parentItemlocdist.lastError().text()));
           continue;
         }
       }
@@ -482,10 +477,9 @@ void unpostedPoReceipts::sPost()
         {
           rollback.exec();
           cleanup.exec();
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Receipt Information"),
-            storedProcErrorLookup("postReceipt", result), __FILE__, __LINE__);
           failedItems.append(recvInfo.value("item_number").toString());
-          errors.append(postLine.lastError().text());
+          errors.append(tr("Error Posting Receipt Information. %1")
+            .arg(storedProcErrorLookup("postReceipt", result)));
           continue;
         }
 
@@ -569,10 +563,8 @@ void unpostedPoReceipts::sPost()
       {
         rollback.exec();
         cleanup.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Receipt Information"),
-                             postLine, __FILE__, __LINE__);
         failedItems.append(recvInfo.value("item_number").toString());
-        errors.append(postLine.lastError().text());
+        errors.append(tr("Error posting receipt information. %1").arg(postLine.lastError().text()));
         continue;
       }
       succeeded++;
