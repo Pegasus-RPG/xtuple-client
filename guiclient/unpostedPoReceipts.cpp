@@ -186,6 +186,7 @@ void unpostedPoReceipts::sPost()
 
   bool tryagain = false;
   int succeeded = 0;
+  QList<int> failedReceipts;
   QList<QString> failedItems;
   QList<QString> errors;
   do {
@@ -258,6 +259,7 @@ void unpostedPoReceipts::sPost()
       recvInfo.exec();
       if (!recvInfo.first())
       {
+        failedReceipts.append(id);
         failedItems.append("NULL");
         errors.append(tr("Failed to retrieve recv and orderitem info. %1")
           .arg(recvInfo.lastError().text()));
@@ -274,7 +276,7 @@ void unpostedPoReceipts::sPost()
       closedPeriod.exec();
       if (!closedPeriod.first() || closedPeriod.value("period_closed").toBool())
       {
-        if (!_privileges->check("ChangePORecvPostDate"))
+        if (_privileges->check("ChangePORecvPostDate"))
         {
           if (changeDate)
           {
@@ -302,6 +304,7 @@ void unpostedPoReceipts::sPost()
       }
       else
       {
+        failedReceipts.append(id);
         failedItems.append(recvInfo.value("item_number").toString());
         errors.append(tr("Failed to Retrieve the Next itemloc_series_seq. %1")
           .arg(parentSeries.lastError().text()));
@@ -355,6 +358,7 @@ void unpostedPoReceipts::sPost()
                                   "there are more items to post. Continue posting the remaining receipts?"),
                                 QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
                   {
+                    failedReceipts.append(id);
                     failedItems.append(recvInfo.value("item_number").toString());
                     errors.append("Detail Distribution Cancelled");
                     continue;
@@ -367,6 +371,7 @@ void unpostedPoReceipts::sPost()
                 }
                 else
                 {
+                  failedReceipts.append(id);
                   failedItems.append(recvInfo.value("item_number").toString());
                   errors.append("Detail Distribution Cancelled");
                   continue;
@@ -377,6 +382,7 @@ void unpostedPoReceipts::sPost()
           else 
           {
             cleanup.exec();
+            failedReceipts.append(id);
             failedItems.append(recvInfo.value("item_number").toString());
             errors.append(tr("Error Creating itemlocdist record for 'From' itemsite. %1")
               .arg(parentItemlocdist.lastError().text()));
@@ -385,6 +391,7 @@ void unpostedPoReceipts::sPost()
         }
         else if (tohead.lastError().type() != QSqlError::NoError)
         {
+          failedReceipts.append(id);
           failedItems.append(recvInfo.value("item_number").toString());
           errors.append(tr("Failed to retrieve transfer order item and itemsite for from warehouse. %1")
             .arg(tohead.lastError().text()));
@@ -436,6 +443,7 @@ void unpostedPoReceipts::sPost()
                               "there are more items to post. Continue posting the remaining receipts?"),
                             QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
               {
+                failedReceipts.append(id);
                 failedItems.append(recvInfo.value("item_number").toString());
                 errors.append("Detail Distribution Cancelled");
                 continue;
@@ -445,6 +453,7 @@ void unpostedPoReceipts::sPost()
             }
             else
             {
+              failedReceipts.append(id);
               failedItems.append(recvInfo.value("item_number").toString());
               errors.append("Detail Distribution Cancelled");
               continue;
@@ -454,6 +463,7 @@ void unpostedPoReceipts::sPost()
         else
         {
           cleanup.exec();
+          failedReceipts.append(id);
           failedItems.append(recvInfo.value("item_number").toString());
           errors.append(tr("Error creating itemlocdist record. %1")
             .arg(parentItemlocdist.lastError().text()));
@@ -477,6 +487,7 @@ void unpostedPoReceipts::sPost()
         {
           rollback.exec();
           cleanup.exec();
+          failedReceipts.append(id);
           failedItems.append(recvInfo.value("item_number").toString());
           errors.append(tr("Error Posting Receipt Information. %1")
             .arg(storedProcErrorLookup("postReceipt", result)));
@@ -501,6 +512,7 @@ void unpostedPoReceipts::sPost()
           {
             rollback.exec();
             cleanup.exec();
+            failedReceipts.append(id);
             failedItems.append(recvInfo.value("item_number").toString());
             errors.append(issuewo.lastError().text());
             continue;
@@ -535,10 +547,9 @@ void unpostedPoReceipts::sPost()
               rollback.exec();
               cleanup.exec();
               sFillList();
+              failedReceipts.append(id);
               failedItems.append(recvInfo.value("item_number").toString());
               errors.append(msg);
-              // Remove from drop ship list so that it's not shipped
-              _soheadid.removeAll(issue.value("coitem_cohead_id").toInt());
               continue;
             }
 
@@ -553,6 +564,7 @@ void unpostedPoReceipts::sPost()
           {
             rollback.exec();
             cleanup.exec();
+            failedReceipts.append(id);
             failedItems.append(recvInfo.value("item_number").toString());
             errors.append(issue.lastError().text());
             continue;
@@ -563,6 +575,7 @@ void unpostedPoReceipts::sPost()
       {
         rollback.exec();
         cleanup.exec();
+        failedReceipts.append(id);
         failedItems.append(recvInfo.value("item_number").toString());
         errors.append(tr("Error posting receipt information. %1").arg(postLine.lastError().text()));
         continue;
@@ -570,6 +583,25 @@ void unpostedPoReceipts::sPost()
       succeeded++;
       unpostedPost.exec("COMMIT;"); 
     } // for each selected line
+
+    // Remove sales orders from _soheadid list that had a line item fail so that we don't ship that sales order
+    for (int i = 0; i < failedReceipts.count(); i++)
+    {
+      XSqlQuery failedLineItems;
+      failedLineItems.prepare("SELECT cohead_id "
+                              "FROM recv "
+                              " JOIN poitem ON poitem_id=recv_orderitem_id "
+                              " JOIN pohead ON poitem_pohead_id=pohead_id) "
+                              " JOIN coitem ON coitem_id=poitem_order_id AND poitem_order_type='S' "
+                              " JOIN cohead ON coitem_cohead_id=cohead_id "
+                              "WHERE recv_id = :recv_id ");
+      failedLineItems.bindValue(":recv_id", failedReceipts.at(i));
+      failedLineItems.exec();
+      if (failedLineItems.first())
+      {
+        _soheadid.removeAll(failedLineItems.value("cohead_id").toInt());
+      }
+    }
 
     // Ship any drop shipped orders
     while (_soheadid.count())

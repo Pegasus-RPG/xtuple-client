@@ -454,6 +454,7 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   XSqlQuery issueDetail;
   issueDetail.prepare("SELECT calcIssueToShippingLineBalance(:orderType, :orderitemId) AS balance, "
                        "  isControlledItemsite(orderitem_itemsite_id) AS controlled, "
+                       "  isControlledItemsite(woitemsite.itemsite_id) AS woItemControlled, "
                        "  orderitem_itemsite_id AS itemsite_id, wo_id, "
                        "  CASE WHEN wo_id IS NOT NULL THEN "
                        "    roundQty(item_fractional, calcIssueToShippingLineBalance(:orderType, :orderitemId)) "
@@ -535,7 +536,7 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
     // Handle creation of itemlocdist records for each eligible backflush item (sql below from postProduction backflush handling)
     XSqlQuery backflushItems;
     backflushItems.prepare(
-      "SELECT item_number, itemsite_id, itemsite_item_id, womatl_id, "
+      "SELECT item_number, item_fractional, itemsite_id, itemsite_item_id, womatl_id, "
       // issueMaterial qty = noNeg(expected - consumed)
       " noNeg(womatl_qtyfxd + ((roundQty(item_fractional, :qty) + wo_qtyrcv) * womatl_qtyper)) * (1 + womatl_scrap) - " //expected 
       "   (womatl_qtyiss + "
@@ -558,12 +559,13 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
       if (backflushItems.value("qtyToIssue").toDouble() > 0)
       {
         hasControlledBackflushItems = true;
-        womatlItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, itemuomtouom(:item_id, womatl_uom_id, NULL, :qty) * -1, 'WO', womatl_wo_id, "
+        womatlItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, roundQty(:item_fractional, itemuomtouom(:item_id, womatl_uom_id, NULL, :qty)) * -1, 'WO', womatl_wo_id, "
                                   " :itemlocSeries, NULL, NULL, 'IM') AS result "
                                   "FROM womatl "
                                   "WHERE womatl_id = :womatl_id;");
         womatlItemlocdist.bindValue(":itemsite_id", backflushItems.value("itemsite_id").toInt());
         womatlItemlocdist.bindValue(":item_id", backflushItems.value("itemsite_item_id").toInt());
+        womatlItemlocdist.bindValue(":item_fractional", backflushItems.value("item_fractional").toBool());
         womatlItemlocdist.bindValue(":womatl_id", backflushItems.value("womatl_id").toInt());
         womatlItemlocdist.bindValue(":qty", backflushItems.value("qtyToIssue").toDouble());
         womatlItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
@@ -586,7 +588,7 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
     }
 
     // If it's a controlled job item, set the relavant params
-    if (controlled)
+    if (issueDetail.value("woItemControlled").toBool())
     {
       parentItemlocdist.bindValue(":orderitemId", issueDetail.value("wo_id").toInt());
       parentItemlocdist.bindValue(":orderType", "WO");

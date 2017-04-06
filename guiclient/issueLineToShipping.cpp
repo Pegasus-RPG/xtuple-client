@@ -207,19 +207,19 @@ void issueLineToShipping::sIssue()
                 "    roundQty(woitem.item_fractional, (<? value(\"qty\") ?> * coitem_qty_invuomratio)) "
                 "  ELSE NULL END AS postprodqty, "
                 "  (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) <"
-                "           (COALESCE(SUM(shipitem_qty), 0) + <? value(\"qty\") ?>)) AS overship, wo_id "
+                "           (COALESCE(SUM(shipitem_qty), 0) + <? value(\"qty\") ?>)) AS overship, wo_id, "
+                "  isControlledItemsite(woitemsite.itemsite_id) AS woItemControlled "
                 "  FROM coitem LEFT OUTER JOIN"
                 "        ( shipitem JOIN shiphead"
                 "          ON ( (shipitem_shiphead_id=shiphead_id) AND (NOT shiphead_shipped) )"
                 "        ) ON  (shipitem_orderitem_id=coitem_id)"
-                "  JOIN itemsite ON (coitem_itemsite_id=itemsite_id) "
-                "  JOIN item ON itemsite_item_id = item_id "
+                "  JOIN itemsite ON coitem_itemsite_id=itemsite_id "
                 "  LEFT OUTER JOIN wo ON coitem_id = wo_ordid AND wo_ordtype = 'S' "
                 "  LEFT OUTER JOIN itemsite AS woitemsite ON wo_itemsite_id = woitemsite.itemsite_id "
                 "  LEFT OUTER JOIN item AS woitem ON woitem.item_id = woitemsite.itemsite_item_id "
                 " WHERE (coitem_id=<? value(\"soitem_id\") ?>)"
                 " GROUP BY coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned, coitem_qty_invuomratio, woitem.item_fractional, "
-                "   itemsite.itemsite_costmethod, wo_id;"
+                "   itemsite.itemsite_costmethod, wo_id, woitemsite.itemsite_id;"
                 "<? elseif exists(\"toitem_id\") ?>"
                 "SELECT false AS postprod, "
                 "  <? value(\"qty\") ?> AS issuelineqty, "
@@ -297,7 +297,7 @@ void issueLineToShipping::sIssue()
     // Create an itemlocdist record for each.
     XSqlQuery backflushItems;
     backflushItems.prepare(
-      "SELECT item_number, itemsite_id, itemsite_item_id, womatl_id, womatl_wo_id, "
+      "SELECT item_number, item_fractional, itemsite_id, itemsite_item_id, womatl_id, womatl_wo_id, "
       // issueMaterial qty = noNeg(expected - consumed)
       " noNeg(((womatl_qtyfxd + ((:qty + wo_qtyrcv) * womatl_qtyper)) * (1 + womatl_scrap)) - "
       "   (womatl_qtyiss + "
@@ -321,12 +321,13 @@ void issueLineToShipping::sIssue()
       if (backflushItems.value("qtyToIssue").toDouble() > 0)
       {
         hasControlledBackflushItems = true;
-        womatlItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, itemuomtouom(:item_id, womatl_uom_id, NULL, :qty) * -1, 'WO', womatl_wo_id, "
+        womatlItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, roundQty(:item_fractional, itemuomtouom(:item_id, womatl_uom_id, NULL, :qty)) * -1, 'WO', womatl_wo_id, "
                                   " :itemlocSeries, NULL, NULL, 'IM') AS result "
                                   "FROM womatl "
                                   "WHERE womatl_id = :womatl_id;");
         womatlItemlocdist.bindValue(":itemsite_id", backflushItems.value("itemsite_id").toInt());
         womatlItemlocdist.bindValue(":item_id", backflushItems.value("itemsite_item_id").toInt());
+        womatlItemlocdist.bindValue(":item_fractional", backflushItems.value("item_fractional").toBool());
         womatlItemlocdist.bindValue(":womatl_id", backflushItems.value("womatl_id").toInt());
         womatlItemlocdist.bindValue(":qty", backflushItems.value("qtyToIssue").toDouble());
         womatlItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
@@ -349,7 +350,7 @@ void issueLineToShipping::sIssue()
     }
 
     // If it's a controlled job item, set the relavant params
-    if (_controlled)
+    if (issueIssue.value("woItemControlled").toBool())
     {
       parentItemlocdist.bindValue(":orderitemId", issueIssue.value("wo_id").toInt());
       parentItemlocdist.bindValue(":orderType", "WO");
