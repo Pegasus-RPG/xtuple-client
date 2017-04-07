@@ -1111,8 +1111,7 @@ void salesOrderItem::sSave(bool pPartial)
                "       :soitem_cos_accnt_id, :soitem_rev_accnt_id, :soitem_dropship "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
-               " AND (itemsite_warehous_id=:warehous_id) ) "
-               " RETURNING coitem_order_id;" );
+               " AND (itemsite_warehous_id=:warehous_id) );" );
     salesSave.bindValue(":soitem_id", _soitemid);
     salesSave.bindValue(":soitem_sohead_id", _soheadid);
     salesSave.bindValue(":soitem_linenumber", _lineNumber->text().toInt());
@@ -1154,8 +1153,18 @@ void salesOrderItem::sSave(bool pPartial)
       return;
     }
 
+    salesSave.prepare("SELECT coitem_order_id "
+                      "FROM coitem "
+                      "WHERE coitem_id=:soitem_id;");
+    salesSave.bindValue(":soitem_id", _soitemid);
+    salesSave.exec();
     if (salesSave.first())
       _supplyOrderId = salesSave.value("coitem_order_id").toInt();
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Item Information"),
+                                  salesSave, __FILE__, __LINE__))
+    {
+      return;
+    }
   }
   else if ( (_mode == cEdit) || ((_mode == cNew) && _partialsaved) )
   {
