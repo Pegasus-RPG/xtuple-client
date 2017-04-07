@@ -255,7 +255,7 @@ void issueWoMaterialBatch::sIssue()
       {
         cleanup.exec();
         failedItems.append(items.value("item_number").toString());
-        errors.append(tr("Error Creating itemlocdist Records")
+        errors.append(tr("Error Creating itemlocdist Records. %1")
           .arg(parentItemlocdist.lastError().text()));
         continue;
       }

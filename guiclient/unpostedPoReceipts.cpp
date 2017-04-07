@@ -276,6 +276,7 @@ void unpostedPoReceipts::sPost()
       closedPeriod.exec();
       if (!closedPeriod.first() || closedPeriod.value("period_closed").toBool())
       {
+        failedReceipts.append(id);
         if (_privileges->check("ChangePORecvPostDate"))
         {
           if (changeDate)

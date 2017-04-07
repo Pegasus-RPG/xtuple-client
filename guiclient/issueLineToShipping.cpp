@@ -208,7 +208,7 @@ void issueLineToShipping::sIssue()
                 "  ELSE NULL END AS postprodqty, "
                 "  (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) <"
                 "           (COALESCE(SUM(shipitem_qty), 0) + <? value(\"qty\") ?>)) AS overship, wo_id, "
-                "  isControlledItemsite(woitemsite.itemsite_id) AS woItemControlled "
+                "  isControlledItemsite(wo_itemsite_id) AS woItemControlled, wo_itemsite_id "
                 "  FROM coitem LEFT OUTER JOIN"
                 "        ( shipitem JOIN shiphead"
                 "          ON ( (shipitem_shiphead_id=shiphead_id) AND (NOT shiphead_shipped) )"
@@ -219,7 +219,7 @@ void issueLineToShipping::sIssue()
                 "  LEFT OUTER JOIN item AS woitem ON woitem.item_id = woitemsite.itemsite_item_id "
                 " WHERE (coitem_id=<? value(\"soitem_id\") ?>)"
                 " GROUP BY coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned, coitem_qty_invuomratio, woitem.item_fractional, "
-                "   itemsite.itemsite_costmethod, wo_id, woitemsite.itemsite_id;"
+                "   itemsite.itemsite_costmethod, wo_id, wo_itemsite_id;"
                 "<? elseif exists(\"toitem_id\") ?>"
                 "SELECT false AS postprod, "
                 "  <? value(\"qty\") ?> AS issuelineqty, "
@@ -352,19 +352,20 @@ void issueLineToShipping::sIssue()
     // If it's a controlled job item, set the relavant params
     if (issueIssue.value("woItemControlled").toBool())
     {
+      parentItemlocdist.bindValue(":itemsite_id", issueIssue.value("wo_itemsite_id").toInt());
       parentItemlocdist.bindValue(":orderitemId", issueIssue.value("wo_id").toInt());
       parentItemlocdist.bindValue(":orderType", "WO");
       parentItemlocdist.bindValue(":transType", "RM");
-      parentItemlocdist.bindValue(":qty", issueIssue.value("issuelineqty").toDouble());
+      parentItemlocdist.bindValue(":qty", issueIssue.value("postprodqty").toDouble());
     }
   } // job item
 
   // Create the itemlocdist record if controlled item and distribute detail if controlled or controlled backflush items
-  if (_controlled || hasControlledBackflushItems)
+  if (_controlled || issueIssue.value("woItemControlled").toBool() || hasControlledBackflushItems)
   {
     // If controlled item, execute the sql to create the parent itemlocdist record 
     // (for WO post prod item if job, else for issue to shipping transaction).
-    if (_controlled)
+    if (_controlled || issueIssue.value("woItemControlled").toBool())
     {
       parentItemlocdist.exec();
       if (!parentItemlocdist.first())
@@ -414,14 +415,14 @@ void issueLineToShipping::sIssue()
         rollback.exec();
         cleanup.exec();
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production"),
-                               storedProcErrorLookup("postProduction", itemlocSeries),
+                               storedProcErrorLookup("postProduction", result),
                                __FILE__, __LINE__);
         return;
       }
 
       // If controlled item, get the inventory history from post production trans. 
       // so we can create itemlocdist records for issue to shipping transaction and auto-distribute to them in postInvTrans.
-      if (_controlled)
+      if (issueIssue.value("woItemControlled").toBool())
       {
         prod.prepare("SELECT invhist_id "
                      "FROM invhist "
@@ -442,11 +443,12 @@ void issueLineToShipping::sIssue()
         }
       }
     }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production for Job Item"),
-      prod, __FILE__,__LINE__))
+    else
     {
       rollback.exec();
       cleanup.exec();
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production for Job Item"),
+        prod, __FILE__,__LINE__);
       return;
     }
   }

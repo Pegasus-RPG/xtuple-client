@@ -1275,6 +1275,7 @@ const struct {
   { "postProduction", -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."), 0, "" },
   { "postProduction", -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
          "Expected Count of Distribution Detail Records Posted for Controlled Item."), 0, "" },
+  { "postProduction", -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing cost category."), 0, "" },
 
   { "postReceipt",  -1, "",	 -1, "postInvTrans" },
   { "postReceipt",  -2, "",	 -2, "postInvTrans" },

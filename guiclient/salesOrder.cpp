@@ -4455,19 +4455,20 @@ void salesOrder::sIssueLineBalance()
         // If it's a controlled job item, set the relavant params
         if (issueSales.value("woItemControlled").toBool())
         {
+          parentItemlocdist.bindValue(":itemsite_id", issueSales.value("wo_itemsite_id").toInt());
           parentItemlocdist.bindValue(":orderitemId", issueSales.value("wo_id").toInt());
           parentItemlocdist.bindValue(":orderType", "WO");
           parentItemlocdist.bindValue(":transType", "RM");
-          parentItemlocdist.bindValue(":qty", balance);
+          parentItemlocdist.bindValue(":qty", issueSales.value("postprodqty").toDouble());
         } 
       }
 
       // Create the itemlocdist record if controlled item and distribute detail if controlled or controlled backflush items
-      if (controlled || hasControlledBackflushItems)
+      if (controlled || issueSales.value("woItemControlled").toBool() || hasControlledBackflushItems)
       {
         // If controlled item, execute the sql to create the parent itemlocdist record 
         // (for WO post prod item if job, else for issue to shipping transaction).
-        if (controlled)
+        if (controlled || issueSales.value("woItemControlled").toBool())
         {
           parentItemlocdist.exec();
           if (!parentItemlocdist.first())
@@ -4514,14 +4515,14 @@ void salesOrder::sIssueLineBalance()
             rollback.exec();
             cleanup.exec();
             ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production"),
-                                   storedProcErrorLookup("postProduction", itemlocSeries),
+                                   storedProcErrorLookup("postProduction", result),
                                    __FILE__, __LINE__);
             return;
           }
 
           // If controlled item, get the inventory history from post production trans. 
           // so we can create itemlocdist records for issue to shipping transaction and auto-distribute to them in postInvTrans.
-          if (controlled)
+          if (issueSales.value("woItemControlled").toBool())
           {
             prod.prepare("SELECT invhist_id "
                          "FROM invhist "
@@ -4542,11 +4543,12 @@ void salesOrder::sIssueLineBalance()
             }
           }
         }
-        else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production for Job Item"),
-          prod, __FILE__,__LINE__))
+        else
         {
           rollback.exec();
           cleanup.exec();
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production for Job Item"),
+            prod, __FILE__,__LINE__);
           return;
         }
       }

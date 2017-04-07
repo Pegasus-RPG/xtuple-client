@@ -224,7 +224,7 @@ void postInvoices::sPost()
         cleanup.exec();
         failedInvoiceNumbers.append(invoiceNumber);
         errors.append(tr("Error Creating itemlocdist Record for item %1").arg(items.value("item_number").toString()));
-        break;
+        continue;
       }
     }
     // Distribute the items from above
