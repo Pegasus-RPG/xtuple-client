@@ -21,38 +21,23 @@
 #include "guiclientinterface.h"
 #include "include.h"
 #include "qtsetup.h"
+#include "scriptcache.h"
 #include "widgets.h"
 #include "xsqlquery.h"
 
 #define DEBUG true
 
-// _object lets us work with the widget we want to script without deriving
-// ScriptableWidget from QObject, which would cause multiple inheritance headaches
+GuiClientInterface *ScriptableWidget::_guiClientInterface = 0;
+ScriptCache        *ScriptableWidget::_cache              = 0;
 
-QString ScriptableWidget::_tablesToWatch("pkghead script pkgscript");
-GuiClientInterface                  *ScriptableWidget::_guiClientInterface = 0;
-QHash<int, QPair<QString, QString> > ScriptableWidget::_cacheScriptsById;
-QHash<QString, QList<int> >          ScriptableWidget::_cacheIdsByName;
-
-ScriptableWidget::ScriptableWidget(QObject* object)
+ScriptableWidget::ScriptableWidget(QWidget *self)
   : _debugger(0),
     _engine(0),
-    _object(object),
     _scriptLoaded(false)
 {
-  QSqlDatabase db = QSqlDatabase::database();
-  foreach (QString tableName, _tablesToWatch.split(" "))
-  {
-    if (! db.driver()->subscribedToNotifications().contains(tableName))
-    {
-      db.driver()->subscribeToNotification(tableName);
-      QObject::connect(db.driver(), SIGNAL(notification(const QString&)),
-                       _object,     SLOT(sNotified(const QString&)));
-    }
-  }
-  if (ScriptableWidget::_guiClientInterface)
-    QObject::connect(ScriptableWidget::_guiClientInterface, SIGNAL(dbConnectionLost()),
-                     _object, SLOT(sDbConnectionLost()), Qt::UniqueConnection);
+  _self = (self ? self : dynamic_cast<QWidget *>(this));
+  if (! _cache)
+    _cache = new ScriptCache(_guiClientInterface);
 }
 
 ScriptableWidget::~ScriptableWidget()
@@ -61,18 +46,19 @@ ScriptableWidget::~ScriptableWidget()
 
 QScriptEngine *ScriptableWidget::engine()
 {
-  if (!_engine)
+  QWidget *w = _self;
+  if (w && ! _engine)
   {
-    _engine = new QScriptEngine(_object);
+    _engine = new QScriptEngine(w);
     if (_x_preferences && _x_preferences->boolean("EnableScriptDebug"))
     {
-      _debugger = new QScriptEngineDebugger(_object);
+      _debugger = new QScriptEngineDebugger(w);
       _debugger->attachTo(_engine);
     }
 
     setupQt(_engine);
     setupInclude(_engine);
-    QScriptValue mywidget = _engine->newQObject(_object);
+    QScriptValue mywidget = _engine->newQObject(w);
     _engine->globalObject().setProperty("mywidget",  mywidget);
   }
 
@@ -81,18 +67,13 @@ QScriptEngine *ScriptableWidget::engine()
 
 void ScriptableWidget::loadScript(const QStringList &list)
 {
-  if (! engine())
-  {
-    qDebug() << "could not initialize engine" << list;
-    return;
-  }
   qDebug() << "Looking for scripts" << list;
   QString widgetName = list.last();
 
   // assume a coherent cache has the whole list if it has the last
-  if (! _cacheIdsByName.contains(widgetName))
+  if (! _cache->_idsByName.contains(widgetName))
   {
-    _cacheIdsByName.insert(widgetName, QList<int>());
+    _cache->_idsByName.insert(widgetName, QList<int>());
 
     // make one query to get all relevant scripts, using a JSON object
     // to enforce load order: key = order, value = name
@@ -114,17 +95,26 @@ void ScriptableWidget::loadScript(const QStringList &list)
     q.exec();
     while (q.next())
     {
-      _cacheScriptsById.insert(q.value("script_id").toInt(),
+      _cache->_scriptsById.insert(q.value("script_id").toInt(),
                                qMakePair(q.value("script_name").toString(),
                                          q.value("script_source").toString()));
-      _cacheIdsByName[widgetName].append(q.value("script_id").toInt());
+      _cache->_idsByName[widgetName].append(q.value("script_id").toInt());
     }
-    if (DEBUG) qDebug() << _cacheIdsByName[widgetName];
+    if (DEBUG) qDebug() << _cache->_idsByName[widgetName];
   }
 
-  foreach(int id, _cacheIdsByName[widgetName])
+  if (_cache->_idsByName[widgetName].isEmpty())
+    return;
+
+  if (! engine())
   {
-    QPair<QString, QString> script = _cacheScriptsById.value(id);
+    qDebug() << "could not initialize engine" << list;
+    return;
+  }
+
+  foreach(int id, _cache->_idsByName[widgetName])
+  {
+    QPair<QString, QString> script = _cache->_scriptsById.value(id);
     if (DEBUG) qDebug() << "evaluating" << id << script.first;
     QScriptValue result = engine()->evaluate(script.second, script.first);
     if (engine()->hasUncaughtException())
@@ -143,22 +133,23 @@ void ScriptableWidget::loadScript(const QString& oName)
 
 void ScriptableWidget::loadScriptEngine()
 {
-  if (_scriptLoaded || !_object)
+  QWidget *w = _self;
+  if (_scriptLoaded || ! w)
     return;
   _scriptLoaded = true;
 
   QStringList scriptList;
 
   // load scripts by class heirarchy name
-  const QMetaObject *m = _object->metaObject();
-  while(m)
+  const QMetaObject *m = w->metaObject();
+  while (m)
   {
     scriptList.prepend(m->className());
     m = m->superClass();
   }
 
   // load scripts by object name
-  QStringList parts = _object->objectName().split(" ");
+  QStringList parts = w->objectName().split(" ");
   QStringList search_parts;
   QString oName;
   while(!parts.isEmpty())
@@ -170,17 +161,4 @@ void ScriptableWidget::loadScriptEngine()
 
   scriptList.removeDuplicates();
   loadScript(scriptList);
-}
-
-void ScriptableWidget::sDbConnectionLost()
-{
-  sNotified("");
-}
-
-void ScriptableWidget::sNotified(const QString &pNotification)
-{
-  if (DEBUG) qDebug() << "sNotified() entered" << pNotification;
-  Q_UNUSED(pNotification);
-  _cacheScriptsById.clear();
-  _cacheIdsByName.clear();
 }

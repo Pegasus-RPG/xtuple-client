@@ -20,49 +20,39 @@
 #include "xcheckbox.h"
 #include "xtsettings.h"
 #include "guiclient.h"
-#include "scriptablePrivate.h"
 #include "shortcuts.h"
 
-class XDialogPrivate : public ScriptablePrivate
+class XDialogPrivate
 {
   friend class XDialog;
 
   public:
     XDialogPrivate(XDialog*);
     ~XDialogPrivate();
-
-    bool _shown;
-    QAction *_rememberPos;
-    QAction *_rememberSize;
-    ParameterList lastSetParams;
 };
 
 XDialogPrivate::XDialogPrivate(XDialog *parent)
-  : ScriptablePrivate(parent)
 {
-  _shown = false;
-  _rememberPos = 0;
-  _rememberSize = 0;
+  Q_UNUSED(parent);
 }
 
 XDialogPrivate::~XDialogPrivate()
 {
-  if(_rememberPos)
-    delete _rememberPos;
-  if(_rememberSize)
-    delete _rememberSize;
 }
 
 XDialog::XDialog(QWidget * parent, Qt::WindowFlags flags)
-  : QDialog(parent, flags)
+  : QDialog(parent, flags),
+    ScriptablePrivate(parent, this),
+    _private(0)
 {
   connect(this, SIGNAL(destroyed(QObject*)), omfgThis, SLOT(windowDestroyed(QObject*)));
   connect(this, SIGNAL(finished(int)), this, SLOT(saveSize()));
-  _private = new XDialogPrivate(this);
 }
 
 XDialog::XDialog(QWidget * parent, const char * name, bool modal, Qt::WindowFlags flags)
-  : QDialog(parent, flags)
+  : QDialog(parent, flags),
+    ScriptablePrivate(parent, this),
+    _private(0)
 {
   if(name)
     setObjectName(name);
@@ -71,8 +61,6 @@ XDialog::XDialog(QWidget * parent, const char * name, bool modal, Qt::WindowFlag
 
   connect(this, SIGNAL(destroyed(QObject*)), omfgThis, SLOT(windowDestroyed(QObject*)));
   connect(this, SIGNAL(finished(int)), this, SLOT(saveSize()));
-
-  _private = new XDialogPrivate(this);
 }
 
 XDialog::~XDialog()
@@ -90,7 +78,7 @@ void XDialog::saveSize()
 void XDialog::closeEvent(QCloseEvent * event)
 {
   event->accept(); // we have no reason not to accept and let the script change it if needed
-  _private->callCloseEvent(event);
+  callCloseEvent(event);
 
   if(event->isAccepted())
   {
@@ -105,9 +93,9 @@ void XDialog::closeEvent(QCloseEvent * event)
 
 void XDialog::showEvent(QShowEvent *event)
 {
-  if(!_private->_shown)
+  if(!_shown)
   {
-    _private->_shown = true;
+    _shown = true;
 
     QRect availableGeometry = QApplication::desktop()->availableGeometry();
 
@@ -127,20 +115,20 @@ void XDialog::showEvent(QShowEvent *event)
     else if(currsize!=size())
       move(QPoint(1, 1));
 
-    _private->_rememberPos = new QAction(tr("Remember Position"), this);
-    _private->_rememberPos->setCheckable(true);
-    _private->_rememberPos->setChecked(xtsettingsValue(objectName() + "/geometry/rememberPos", true).toBool());
-    connect(_private->_rememberPos, SIGNAL(triggered(bool)), this, SLOT(setRememberPos(bool)));
-    _private->_rememberSize = new QAction(tr("Remember Size"), this);
-    _private->_rememberSize->setCheckable(true);
-    _private->_rememberSize->setChecked(xtsettingsValue(objectName() + "/geometry/rememberSize", true).toBool());
-    connect(_private->_rememberSize, SIGNAL(triggered(bool)), this, SLOT(setRememberSize(bool)));
+    _rememberPos = new QAction(tr("Remember Position"), this);
+    _rememberPos->setCheckable(true);
+    _rememberPos->setChecked(xtsettingsValue(objectName() + "/geometry/rememberPos", true).toBool());
+    connect(_rememberPos, SIGNAL(triggered(bool)), this, SLOT(setRememberPos(bool)));
+    _rememberSize = new QAction(tr("Remember Size"), this);
+    _rememberSize->setCheckable(true);
+    _rememberSize->setChecked(xtsettingsValue(objectName() + "/geometry/rememberSize", true).toBool());
+    connect(_rememberSize, SIGNAL(triggered(bool)), this, SLOT(setRememberSize(bool)));
 
-    addAction(_private->_rememberPos);
-    addAction(_private->_rememberSize);
+    addAction(_rememberPos);
+    addAction(_rememberSize);
     setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    _private->loadScriptEngine();
+    loadScriptEngine();
 
     QList<XCheckBox*> allxcb = findChildren<XCheckBox*>();
     for (int i = 0; i < allxcb.size(); ++i)
@@ -149,43 +137,35 @@ void XDialog::showEvent(QShowEvent *event)
     shortcuts::setStandardKeys(this);
   }
 
-  _private->callShowEvent(event);
+  callShowEvent(event);
   QDialog::showEvent(event);
 }
 
 void XDialog::setRememberPos(bool b)
 {
   xtsettingsSetValue(objectName() + "/geometry/rememberPos", b);
-  if(_private && _private->_rememberPos)
-    _private->_rememberPos->setChecked(b);
+  if(_rememberPos)
+    _rememberPos->setChecked(b);
 }
 
 void XDialog::setRememberSize(bool b)
 {
   xtsettingsSetValue(objectName() + "/geometry/rememberSize", b);
-  if(_private && _private->_rememberSize)
-    _private->_rememberSize->setChecked(b);
+  if(_rememberSize)
+    _rememberSize->setChecked(b);
 }
 
 enum SetResponse XDialog::set(const ParameterList & pParams)
 {
   _lastSetParams = pParams;
-
-  _private->loadScriptEngine();
-
+  loadScriptEngine();
   QTimer::singleShot(0, this, SLOT(postSet()));
-
   return NoError;
-}
-
-void XDialog::sDbConnectionLost()
-{
-  _private->sDbConnectionLost();
 }
 
 enum SetResponse XDialog::postSet()
 {
-  return _private->callSet(_lastSetParams);
+  return callSet(_lastSetParams);
 }
 
 ParameterList XDialog::get() const

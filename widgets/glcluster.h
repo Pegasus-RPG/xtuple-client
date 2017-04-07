@@ -16,6 +16,9 @@
 #include "projectcluster.h"
 #include <QComboBox>
 
+class QHBoxLayout;
+class XCheckBox;
+
 class XTUPLEWIDGETS_EXPORT accountList : public VirtualList
 {
     Q_OBJECT

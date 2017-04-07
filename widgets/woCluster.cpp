@@ -8,24 +8,25 @@
  * to be bound by its terms.
  */
 
+#include "wocluster.h"
+
+#include <QCompleter>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QLayout>
-#include <QPushButton>
+#include <QMessageBox>
+#include <QSqlQueryModel>
 #include <QVBoxLayout>
 #include <QtScript>
 
 #include <parameter.h>
 #include <xsqlquery.h>
-#include <QMessageBox>
 
+#include "format.h"
 #include "warehousegroup.h"
+#include "xcheckbox.h"
 #include "xcombobox.h"
 #include "xlineedit.h"
-
-#include "wocluster.h"
-
-#include "../common/format.h"
+#include "xtreewidget.h"
 
 WoLineEdit::WoLineEdit(QWidget *pParent, const char *pName) :
     VirtualClusterLineEdit(pParent, "wo", "wo_id", "formatWoNumber(wo_id)", "item_number", "(item_descrip1 || ' ' || item_descrip2) ", 0, pName)

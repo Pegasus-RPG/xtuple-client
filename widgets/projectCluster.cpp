@@ -10,6 +10,7 @@
 
 #include "projectcluster.h"
 
+#include <QLabel>
 #include <QtScript>
 
 #include "projectCopy.h"

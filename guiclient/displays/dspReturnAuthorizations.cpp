@@ -17,6 +17,7 @@
 
 #include "parameterwidget.h"
 #include "returnAuthorization.h"
+#include "xtreewidget.h"
 
 dspReturnAuthorizations::dspReturnAuthorizations(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspReturnAuthorizations", fl)
@@ -57,7 +58,6 @@ enum SetResponse dspReturnAuthorizations::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
   QVariant param;
-  bool     valid;
 
   return NoError;
 }

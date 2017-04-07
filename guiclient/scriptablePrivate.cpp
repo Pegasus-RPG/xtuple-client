@@ -10,7 +10,6 @@
 
 #include "scriptablePrivate.h"
 
-#include <QDebug>
 #include <QWidget>
 #include <QScriptEngine>
 #include <QScriptEngineDebugger>
@@ -20,14 +19,24 @@
 #include "qeventproto.h"
 #include "parameterlistsetup.h"
 
-ScriptablePrivate::ScriptablePrivate(QWidget* parent)
-  : ScriptableWidget(parent)
+ScriptablePrivate::ScriptablePrivate(QWidget *parent, QWidget *self)
+  : ScriptableWidget(self),
+    _showMe(0),
+    _rememberPos(0),
+    _rememberSize(0),
+    _shown(false)
 {
   ScriptToolbox::setLastWindow(parent);
 }
 
 ScriptablePrivate::~ScriptablePrivate()
 {
+  if(_showMe)
+    delete _showMe;
+  if(_rememberPos)
+    delete _rememberPos;
+  if(_rememberSize)
+    delete _rememberSize;
 }
 
 QScriptEngine *ScriptablePrivate::engine()
@@ -39,10 +48,11 @@ QScriptEngine *ScriptablePrivate::engine()
   // mywindow is required for backwards compatibility.
   // scriptablewidget creates mywidget.
   engine->globalObject().setProperty("mywindow", mywidget);
+
   // mydialog is required for backwards compatibility.
-  // we had initially had problems scripting on [qx]dialogs when we first
-  // started scripting. i don't know if these remain. gjm
-  if (_object->inherits("QDialog"))
+  // we had problems when we first started scripting [qx]dialogs.
+  // i don't know if these remain. gjm
+  if (dynamic_cast<QDialog*>(this))
   {
     engine->globalObject().setProperty("mydialog", mywidget);
   }

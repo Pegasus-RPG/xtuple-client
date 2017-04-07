@@ -1001,8 +1001,6 @@ bool cashReceipt::postReceipt()
       return false;
   }
   
-  int journalNumber = -1;
-
   XSqlQuery tx;
   tx.exec("BEGIN;");
 

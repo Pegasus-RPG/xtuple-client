@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -14,11 +14,12 @@
 
 #include <parameter.h>
 #include <guiclient.h>
+#include "scriptablePrivate.h"
 
 class QScriptEngine;
 class XWidgetPrivate;
 
-class XWidget : public QWidget
+class XWidget : public QWidget, protected ScriptablePrivate
 {
   Q_OBJECT
 
@@ -26,17 +27,14 @@ class XWidget : public QWidget
     XWidget(QWidget * parent = 0, Qt::WindowFlags flags = 0);
     XWidget(QWidget * parent, const char * name, Qt::WindowFlags flags = 0);
     ~XWidget();
-
     Q_INVOKABLE virtual ParameterList get() const;
 
   public slots:
     virtual enum SetResponse set(const ParameterList &);
-    virtual void sDbConnectionLost();
 
   protected:
     void closeEvent(QCloseEvent * event);
     void showEvent(QShowEvent * event);
-    QScriptEngine *engine();
 
   protected slots:
     virtual enum SetResponse postSet();
@@ -44,8 +42,6 @@ class XWidget : public QWidget
   private:
     friend class XWidgetPrivate;
     XWidgetPrivate *_private;
-
-    ParameterList _lastSetParams;
 };
 
 #endif // __XWIDGET_H__

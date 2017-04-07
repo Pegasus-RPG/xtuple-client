@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -14,12 +14,12 @@
 
 #include <parameter.h>
 
-#include "guiclient.h"
+#include "scriptablePrivate.h"
 
 class QScriptEngine;
 class XMainWindowPrivate;
 
-class XMainWindow : public QMainWindow
+class XMainWindow : public QMainWindow, protected ScriptablePrivate
 {
   Q_OBJECT
 
@@ -38,7 +38,6 @@ class XMainWindow : public QMainWindow
 
   public slots:
     virtual enum SetResponse set(const ParameterList &);
-    virtual void             sDbConnectionLost();
 
   protected:
     virtual void closeEvent(QCloseEvent *);
@@ -54,9 +53,6 @@ class XMainWindow : public QMainWindow
     friend class ScriptToolbox;
     XMainWindowPrivate *_private;
     friend QScriptEngine *engine(XMainWindow*);
-
-    ParameterList _lastSetParams;
-    void loadScriptEngine();
 
     bool _forceFloat;
 

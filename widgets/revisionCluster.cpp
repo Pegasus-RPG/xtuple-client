@@ -10,6 +10,7 @@
 
 #include "revisioncluster.h"
 
+#include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QtScript>

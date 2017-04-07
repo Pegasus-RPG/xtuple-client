@@ -8,13 +8,17 @@
  * to be bound by its terms.
  */
 
+#include <QGridLayout>
+#include <QLabel>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QtScript>
 
-#include "ordercluster.h"
 #include "errorReporter.h"
+#include "ordercluster.h"
 #include "xsqlquery.h"
+#include "xcheckbox.h"
+#include "xtreewidget.h"
 
 #define DEBUG false
 

@@ -9,15 +9,24 @@
  */
 
 #include <QApplication>
+#include <QCompleter>
+#include <QGridLayout>
+#include <QLabel>
+#include <QMenu>
 #include <QMessageBox>
 #include <QSqlRecord>
 #include <QStandardItemEditorCreator>
+#include <QTreeView>
+#include <QVBoxLayout>
 #include <QtScript>
 
 #include <xsqlquery.h>
 
+#include "guiclientinterface.h"
 #include "itemcluster.h"
 #include "itemAliasList.h"
+#include "xcheckbox.h"
+#include "xtreewidget.h"
 #include "xsqltablemodel.h"
 
 #define DEBUG false

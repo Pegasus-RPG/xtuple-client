@@ -12,7 +12,6 @@
 #define addressCluster_h
 
 #include "widgets.h"
-#include "scriptablewidget.h"
 #include "virtualCluster.h"
 #include "xcheckbox.h"
 #include "xcombobox.h"

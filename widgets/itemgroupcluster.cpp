@@ -10,6 +10,12 @@
 
 #include "itemgroupcluster.h"
 
+#include <QLabel>
+#include <QtScript>
+
+#include "xcheckbox.h"
+#include "xtreewidget.h"
+
 ItemGroupCluster::ItemGroupCluster(QWidget* pParent, const char* pName) :
     VirtualCluster(pParent, pName)
 {

@@ -10,9 +10,11 @@
 
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSqlError>
+#include <QSqlQueryModel>
 #include <QVBoxLayout>
 #include <QtScript>
 
