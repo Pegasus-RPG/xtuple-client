@@ -473,8 +473,8 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   {
     if (issueDetail.size() > 1)
     {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Retrieving from orderitem table returned more than one row."),
-        issueDetail, __FILE__, __LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Gathering Order Item Info."),
+        tr("Retrieving from orderitem table returned more than one row."), __FILE__, __LINE__);
       return false;
     }
 
@@ -482,8 +482,8 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   }
   else
   {
-    ErrorReporter::error(QtCriticalMsg, this, tr("Could not find this orderitem_id in the orderitem table."),
-      issueDetail, __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Could not find orderitem info."),
+      issueDetail.lastError().text(), __FILE__, __LINE__);
     return false;
   }
 
@@ -493,6 +493,7 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   double balance = issueDetail.value("balance").toDouble();
   bool controlled = issueDetail.value("controlled").toBool();;
   bool hasControlledBackflushItems = false;
+  bool jobItem = (altId == 1 && balance > 0);
 
   XSqlQuery issue;
   XSqlQuery cleanup;
@@ -531,18 +532,18 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   parentItemlocdist.bindValue(":transType", "SH");
   
   // If this is a lot/serial controlled job item, we need to post production first
-  if (altId == 1)
+  if (jobItem)
   {
     // Handle creation of itemlocdist records for each eligible backflush item (sql below from postProduction backflush handling)
     XSqlQuery backflushItems;
     backflushItems.prepare(
-      "SELECT item_number, item_fractional, itemsite_id, itemsite_item_id, womatl_id, "
+      "SELECT item_number, item_fractional, itemsite_id, itemsite_item_id, womatl_id, womatl_wo_id, "
       // issueMaterial qty = noNeg(expected - consumed)
-      " noNeg(womatl_qtyfxd + ((roundQty(item_fractional, :qty) + wo_qtyrcv) * womatl_qtyper)) * (1 + womatl_scrap) - " //expected 
+      " noNeg(((womatl_qtyfxd + ((:qty + wo_qtyrcv) * womatl_qtyper)) * (1 + womatl_scrap)) - "
       "   (womatl_qtyiss + "
-      "     (CASE WHEN (womatl_qtywipscrap >  ((womatl_qtyfxd + (roundQty(item_fractional, :qty) + wo_qtyrcv) * womatl_qtyper) * womatl_scrap)) "
-      "           THEN (womatl_qtyfxd + (roundQty(item_fractional, :qty) + wo_qtyrcv) * womatl_qtyper) * womatl_scrap "
-      "      ELSE womatl_qtywipscrap END)) AS qtyToIssue " // consumed
+      "   CASE WHEN (womatl_qtywipscrap >  ((womatl_qtyfxd + (:qty + wo_qtyrcv) * womatl_qtyper) * womatl_scrap)) "
+      "        THEN (womatl_qtyfxd + (:qty + wo_qtyrcv) * womatl_qtyper) * womatl_scrap "
+      "        ELSE womatl_qtywipscrap END)) AS qtyToIssue "
       "FROM womatl, wo, itemsite, item "
       "WHERE womatl_issuemethod IN ('L', 'M') "
       " AND womatl_wo_id=wo_id "
@@ -550,7 +551,8 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
       " AND wo_ordid = :coitem_id "
       " AND wo_ordtype = 'S' "
       " AND itemsite_item_id=item_id "
-      " AND isControlledItemsite(itemsite_id);");
+      " AND isControlledItemsite(itemsite_id) "
+      "ORDER BY womatl_id;");
     backflushItems.bindValue(":qty", issueDetail.value("postprodqty").toDouble());
     backflushItems.bindValue(":coitem_id", id);
     backflushItems.exec();
@@ -599,11 +601,11 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   }
 
   // Create the itemlocdist record if controlled item and distribute detail if controlled or controlled backflush items
-  if (controlled || issueDetail.value("woItemControlled").toBool() || hasControlledBackflushItems)
+  if (controlled || (issueDetail.value("woItemControlled").toBool() && jobItem) || hasControlledBackflushItems)
   {
     // If controlled item, execute the sql to create the parent itemlocdist record 
     // (for WO post prod item if job, else for issue to shipping transaction).
-    if (controlled || issueDetail.value("woItemControlled").toBool())
+    if (controlled || (issueDetail.value("woItemControlled").toBool() && jobItem))
     {
       parentItemlocdist.exec();
       if (!parentItemlocdist.first())
@@ -633,12 +635,12 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   issue.exec("BEGIN;");
 
   // If Job item, postSoItemProduction
-  if (altId == 1)
+  if (jobItem)
   {
     XSqlQuery prod;
-    prod.prepare("SELECT postSoItemProduction(:soitem_id, :qty, now(), :itemlocSeries, TRUE) AS result;");
+    prod.prepare("SELECT postSoItemProduction(:soitem_id, :ts, :itemlocSeries, TRUE) AS result;");
     prod.bindValue(":soitem_id", id);
-    prod.bindValue(":qty", balance);
+    prod.bindValue(":ts", _transDate->date());
     prod.bindValue(":itemlocSeries", itemlocSeries);
     prod.exec();
     if (prod.first())
@@ -689,13 +691,13 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   }
 
   // Issue to Shipping
-  issue.prepare("SELECT issueToShipping(:ordertype::text, :lineitem_id, :qty, :itemlocSeries, :ts, "
+  issue.prepare("SELECT issueToShipping(:ordertype::text, :soitem_id, :qty, :itemlocSeries, :ts, "
     ":invhist_id, false, true) AS result;");
-  issue.bindValue(":ordertype",   _order->type());
-  issue.bindValue(":lineitem_id", id);
-  issue.bindValue(":qty",         balance);
+  issue.bindValue(":ordertype", _order->type());
+  issue.bindValue(":soitem_id", id);
+  issue.bindValue(":qty", balance);
   issue.bindValue(":itemlocSeries", itemlocSeries);
-  issue.bindValue(":ts",          _transDate->date());
+  issue.bindValue(":ts", _transDate->date());
   if (invhistid > 0)
     issue.bindValue(":invhist_id", invhistid);
   issue.exec();

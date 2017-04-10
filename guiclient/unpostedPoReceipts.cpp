@@ -508,14 +508,13 @@ void unpostedPoReceipts::sPost()
           issuewo.bindValue(":itemlocseries", itemlocSeries);
           issuewo.bindValue(":id", id);
           issuewo.exec();
-          if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Receipt Information"),
-                                        issuewo, __FILE__, __LINE__))
+          if (issuewo.lastError().type() != QSqlError::NoError)
           {
             rollback.exec();
             cleanup.exec();
             failedReceipts.append(id);
             failedItems.append(recvInfo.value("item_number").toString());
-            errors.append(issuewo.lastError().text());
+            errors.append(tr("Error posting receipt information. %1").arg(issuewo.lastError().text()));
             continue;
           }
         }
@@ -560,14 +559,13 @@ void unpostedPoReceipts::sPost()
             issue.bindValue(":itemlocseries", postLine.value("result").toInt());
             issue.exec();
           }
-          if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Receipt Information"),
-                                        issue, __FILE__, __LINE__))
+          if (issue.lastError().type() != QSqlError::NoError)
           {
             rollback.exec();
             cleanup.exec();
             failedReceipts.append(id);
             failedItems.append(recvInfo.value("item_number").toString());
-            errors.append(issue.lastError().text());
+            errors.append(tr("Error posting receipt information. %1").arg(issue.lastError().text()));
             continue;
           }
         }

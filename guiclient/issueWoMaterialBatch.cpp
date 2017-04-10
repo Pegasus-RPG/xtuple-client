@@ -240,6 +240,8 @@ void issueWoMaterialBatch::sIssue()
             else
             {
               trynext = false;
+              failedItems.append(items.value("item_number").toString());
+              errors.append("Detail Distribution Cancelled");
               return;
             }
           }

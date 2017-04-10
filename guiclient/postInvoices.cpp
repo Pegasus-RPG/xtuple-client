@@ -245,6 +245,8 @@ void postInvoices::sPost()
       else
       {
         trynext = false;
+        failedInvoiceNumbers.append(invoiceNumber);
+        errors.append(tr("Detail Distribution Cancelled"));
         continue;
       }
     }
@@ -275,7 +277,6 @@ void postInvoices::sPost()
           errors.append(tr("Error Posting Invoice. Expected: %1, returned: %2").arg(itemlocSeries).arg(result));
         continue;
       }
-      // TODO - pass into success array for error reporting
     }
     else if (postPost.lastError().type() != QSqlError::NoError)
     {

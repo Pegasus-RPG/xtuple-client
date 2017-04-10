@@ -251,6 +251,9 @@ void issueLineToShipping::sIssue()
   int invhistid = 0;
   int itemlocSeries;
   bool hasControlledBackflushItems = false;
+  bool jobItem = (_ordertype == "SO" && 
+    issueIssue.value("itemsite_costmethod").toString() == "J" && 
+    _qtyToIssue->toDouble() > 0);
 
   XSqlQuery parentItemlocdist;
   XSqlQuery womatlItemlocdist;
@@ -289,9 +292,7 @@ void issueLineToShipping::sIssue()
   parentItemlocdist.bindValue(":transType", "SH");
 
   // If this is a lot/serial controlled job item, we need to post production first
-  if (_ordertype == "SO" && 
-    issueIssue.value("itemsite_costmethod").toString() == "J" && 
-    _qtyToIssue->toDouble() > 0)
+  if (jobItem)
   {
     // Controlled backflush items that require issueMaterial through postSoItemProduction (postProduction).
     // Create an itemlocdist record for each.
@@ -361,11 +362,11 @@ void issueLineToShipping::sIssue()
   } // job item
 
   // Create the itemlocdist record if controlled item and distribute detail if controlled or controlled backflush items
-  if (_controlled || issueIssue.value("woItemControlled").toBool() || hasControlledBackflushItems)
+  if (_controlled || (issueIssue.value("woItemControlled").toBool() && jobItem) || hasControlledBackflushItems)
   {
     // If controlled item, execute the sql to create the parent itemlocdist record 
     // (for WO post prod item if job, else for issue to shipping transaction).
-    if (_controlled || issueIssue.value("woItemControlled").toBool())
+    if (_controlled || (issueIssue.value("woItemControlled").toBool() && jobItem))
     {
       parentItemlocdist.exec();
       if (!parentItemlocdist.first())
@@ -395,9 +396,7 @@ void issueLineToShipping::sIssue()
   issue.exec("BEGIN;");
 
   // postSoItemProduction
-  if (_ordertype == "SO" && 
-    issueIssue.value("itemsite_costmethod").toString() == "J" && 
-    _qtyToIssue->toDouble() > 0)
+  if (jobItem)
   {
     XSqlQuery prod;
     prod.prepare("SELECT postSoItemProduction(:soitem_id, :qty, :ts, :itemlocSeries, TRUE) AS result;");
