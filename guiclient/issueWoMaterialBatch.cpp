@@ -152,7 +152,7 @@ void issueWoMaterialBatch::sIssue()
   rollback.prepare("ROLLBACK;");
 
   QString sqlitems =
-               ("SELECT womatl_id, item_number, itemsite_id, formatWoNumber(womatl_wo_id) AS wo_number, "
+               ("SELECT womatl_id, womatl_wo_id, item_number, itemsite_id, formatWoNumber(womatl_wo_id) AS wo_number, "
                 " CASE WHEN (womatl_qtyreq >= 0) THEN "
                 "   roundQty(itemuomfractionalbyuom(item_id, womatl_uom_id), noNeg(womatl_qtyreq - womatl_qtyiss)) "
                 " ELSE "
@@ -171,15 +171,21 @@ void issueWoMaterialBatch::sIssue()
                 " <? if exists(\"pickItemsOnly\") ?> "
                 " AND (womatl_picklist) "
                 " <? endif ?> "
-                " AND (womatl_wo_id=<? value(\"wo_id\") ?>)); ");
+                " AND (womatl_wo_id=<? value(\"wo_id\") ?>)) "
+                "ORDER BY womatl_id; ");
   MetaSQLQuery mqlitems(sqlitems);
   XSqlQuery items = mqlitems.toQuery(params);
 
-  int succeeded = 0;;
+  bool trynext = true;
+  int succeeded = 0;
   QList<QString> failedItems;
   QList<QString> errors;
   while(items.next())
   {
+    // Previous error and user did not want to continue posting remaining invoices. Do nothing for the rest of the loop.
+    if (!trynext)
+      continue;
+    
     // Stage distribution cleanup function to be called on error
     XSqlQuery cleanup;
     cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
@@ -196,9 +202,9 @@ void issueWoMaterialBatch::sIssue()
     }
     else
     {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
-        parentSeries, __FILE__, __LINE__);
-      return;
+      failedItems.append(items.value("item_number").toString());
+      errors.append("Failed to Retrieve the Next itemloc_series_seq");
+      continue;
     }
 
     if (items.value("controlled").toBool())
@@ -209,7 +215,7 @@ void issueWoMaterialBatch::sIssue()
                                 " :orderitemId, :itemlocSeries, NULL, NULL, 'IM');");
       parentItemlocdist.bindValue(":itemsite_id", items.value("itemsite_id").toInt());
       parentItemlocdist.bindValue(":qty", items.value("post_qty").toDouble());
-      parentItemlocdist.bindValue(":orderitemId", items.value("womatl_id").toInt());
+      parentItemlocdist.bindValue(":orderitemId", items.value("womatl_wo_id").toInt());
       parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
       parentItemlocdist.exec();
       if (parentItemlocdist.first())
@@ -218,16 +224,42 @@ void issueWoMaterialBatch::sIssue()
           QDate(), true) == XDialog::Rejected)
         {
           cleanup.exec();
-          QMessageBox::information( this, tr("Material Issue"), tr("Error Distributing Inventory Detail (distributeInventory::SeriesAdjust)") );
-          return;
+          // If it's not the last item in the loop, ask the user to exit loop or continue
+          if (items.at() != (items.size() -1))
+          {
+            if (QMessageBox::question(this,  tr("Material Issue"),
+            tr("Posting distribution detail for item number %1 was cancelled but "
+              "there are more items to issue. Continue issuing the remaining materials?")
+            .arg(items.value("item_number").toString()),
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+            {
+              failedItems.append(items.value("item_number").toString());
+              errors.append("Detail Distribution Cancelled");
+              continue;
+            }
+            else
+            {
+              trynext = false;
+              failedItems.append(items.value("item_number").toString());
+              errors.append("Detail Distribution Cancelled");
+              break;
+            }
+          }
+          else 
+          {
+            failedItems.append(items.value("item_number").toString());
+            errors.append("Detail Distribution Cancelled");
+            continue;
+          }
         }
       }
       else
       {
         cleanup.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-          parentItemlocdist, __FILE__, __LINE__);
-        return;
+        failedItems.append(items.value("item_number").toString());
+        errors.append(tr("Error Creating itemlocdist Records. %1")
+          .arg(parentItemlocdist.lastError().text()));
+        continue;
       }
     }
   
@@ -247,9 +279,9 @@ void issueWoMaterialBatch::sIssue()
       {
         rollback.exec();
         cleanup.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Work Order Material; Work Order ID #%1")
-                             .arg(_wo->id()),
-                             issue, __FILE__, __LINE__);
+        failedItems.append(items.value("item_number").toString());
+        errors.append(tr("Error Issuing Work Order Material; Work Order ID #%1. Database error: %2")
+                             .arg(_wo->id()).arg(issue.lastError().text()));
         continue;
       }
 
@@ -273,8 +305,8 @@ void issueWoMaterialBatch::sIssue()
         {
           rollback.exec();
           cleanup.exec();
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Material"),
-                               lsdetail, __FILE__, __LINE__);
+          failedItems.append(items.value("item_number").toString());
+          errors.append(tr("Error Issuing Material. %1").arg(lsdetail.lastError().text()));
           continue;
         }
       }
