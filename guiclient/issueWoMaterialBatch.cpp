@@ -202,9 +202,9 @@ void issueWoMaterialBatch::sIssue()
     }
     else
     {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
-        parentSeries, __FILE__, __LINE__);
-      return;
+      failedItems.append(items.value("item_number").toString());
+      errors.append("Failed to Retrieve the Next itemloc_series_seq");
+      continue;
     }
 
     if (items.value("controlled").toBool())
@@ -242,7 +242,7 @@ void issueWoMaterialBatch::sIssue()
               trynext = false;
               failedItems.append(items.value("item_number").toString());
               errors.append("Detail Distribution Cancelled");
-              return;
+              break;
             }
           }
           else 

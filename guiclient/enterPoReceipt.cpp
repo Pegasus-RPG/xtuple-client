@@ -452,7 +452,7 @@ void enterPoReceipt::sPost()
               continue;
             }
             else
-              return;
+              break;
           }
           else 
           {

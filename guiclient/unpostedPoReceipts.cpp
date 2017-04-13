@@ -226,6 +226,7 @@ void unpostedPoReceipts::sPost()
         {
           ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Receipt Information"),
                                setDate, __FILE__, __LINE__);
+          return;
         }
       }
     }
@@ -450,7 +451,7 @@ void unpostedPoReceipts::sPost()
                 continue;
               }
               else
-                return;
+                break;
             }
             else
             {

@@ -322,7 +322,8 @@ void issueLineToShipping::sIssue()
       if (backflushItems.value("qtyToIssue").toDouble() > 0)
       {
         hasControlledBackflushItems = true;
-        womatlItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, roundQty(:item_fractional, itemuomtouom(:item_id, womatl_uom_id, NULL, :qty)) * -1, 'WO', womatl_wo_id, "
+        womatlItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, roundQty(:item_fractional, "
+                                  " itemuomtouom(:item_id, womatl_uom_id, NULL, :qty)) * -1, 'WO', womatl_wo_id, "
                                   " :itemlocSeries, NULL, NULL, 'IM') AS result "
                                   "FROM womatl "
                                   "WHERE womatl_id = :womatl_id;");
@@ -476,8 +477,6 @@ void issueLineToShipping::sIssue()
     }
     else
     {
-      // TODO - move the below into issueToShipping function?
-
       // If Transfer Order then insert special pre-assign records for the lot/serial#
       // so they are available when the Transfer Order is received
       if (_ordertype == "TO")
