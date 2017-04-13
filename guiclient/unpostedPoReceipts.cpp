@@ -357,7 +357,8 @@ void unpostedPoReceipts::sPost()
                 {
                   if (QMessageBox::question(this,  tr("Unposted Receipts"),
                                 tr("Posting distribution detail for item number %1 was cancelled but "
-                                  "there are more items to post. Continue posting the remaining receipts?"),
+                                  "there are more items to post. Continue posting the remaining receipts?")
+                                .arg(recvInfo.value("item_number").toString()),
                                 QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
                   {
                     failedReceipts.append(id);
@@ -367,8 +368,10 @@ void unpostedPoReceipts::sPost()
                   }
                   else
                   {
-                    tryagain = false;
-                    continue;
+                    failedReceipts.append(id);
+                    failedItems.append(recvInfo.value("item_number").toString());
+                    errors.append("Detail Distribution Cancelled");
+                    break;
                   }
                 }
                 else
@@ -442,7 +445,8 @@ void unpostedPoReceipts::sPost()
             {
               if (QMessageBox::question(this,  tr("Unposted Receipts"),
                             tr("Posting distribution detail for item number %1 was cancelled but "
-                              "there are more items to post. Continue posting the remaining receipts?"),
+                              "there are more items to post. Continue posting the remaining receipts?")
+                            .arg(recvInfo.value("item_number").toString()),
                             QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
               {
                 failedReceipts.append(id);
@@ -451,7 +455,12 @@ void unpostedPoReceipts::sPost()
                 continue;
               }
               else
+              {
+                failedReceipts.append(id);
+                failedItems.append(recvInfo.value("item_number").toString());
+                errors.append("Detail Distribution Cancelled");
                 break;
+              }
             }
             else
             {
@@ -591,10 +600,11 @@ void unpostedPoReceipts::sPost()
       failedLineItems.prepare("SELECT cohead_id "
                               "FROM recv "
                               " JOIN poitem ON poitem_id=recv_orderitem_id "
-                              " JOIN pohead ON poitem_pohead_id=pohead_id) "
+                              " JOIN pohead ON poitem_pohead_id=pohead_id "
                               " JOIN coitem ON coitem_id=poitem_order_id AND poitem_order_type='S' "
                               " JOIN cohead ON coitem_cohead_id=cohead_id "
-                              "WHERE recv_id = :recv_id ");
+                              "WHERE recv_id = :recv_id "
+                              " AND recv_order_type = 'PO';");
       failedLineItems.bindValue(":recv_id", failedReceipts.at(i));
       failedLineItems.exec();
       if (failedLineItems.first())
@@ -623,7 +633,6 @@ void unpostedPoReceipts::sPost()
         ship.exec();
         if (ship.lastError().type() != QSqlError::NoError)
         {
-          rollback.exec();
           ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Shipment Information"),
                                ship, __FILE__, __LINE__);
           break;
@@ -631,7 +640,6 @@ void unpostedPoReceipts::sPost()
       }
       if (ship.lastError().type() != QSqlError::NoError)
       {
-        rollback.exec();
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Shipment Information"),
                              ship, __FILE__, __LINE__);
         break;
