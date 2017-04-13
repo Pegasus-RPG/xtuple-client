@@ -182,6 +182,7 @@ void postInvoices::sPost()
   QList<QString> errors;
   for (int i = 0; i < invoiceIds.size(); i++)
   {
+    bool invoiceLineFailed = false;
     // Previous error and user did not want to continue posting remaining invoices. Do nothing for the rest of the loop.
     if (!trynext)
       continue;
@@ -224,9 +225,14 @@ void postInvoices::sPost()
         cleanup.exec();
         failedInvoiceNumbers.append(invoiceNumber);
         errors.append(tr("Error Creating itemlocdist Record for item %1").arg(items.value("item_number").toString()));
-        continue;
+        invoiceLineFailed = true;
+        break;
       }
     }
+
+    if (invoiceLineFailed)
+      continue;
+
     // Distribute the items from above
     if (items.size() > 0 && distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
       == XDialog::Rejected)
@@ -235,7 +241,7 @@ void postInvoices::sPost()
       if (QMessageBox::question(this,  tr("Post Invoices"),
         tr("Posting distribution detail for invoice number %1 was cancelled but "
            "there other invoices to Post. Continue posting the remaining invoices?")
-        .arg(items.value("item_number").toString()), 
+        .arg(invoiceNumber), 
         QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
       {
         failedInvoiceNumbers.append(invoiceNumber);
