@@ -625,7 +625,7 @@ void unpostedPoReceipts::sPost()
           rollback.exec();
           ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Shipment Information"),
                                ship, __FILE__, __LINE__);
-          return;
+          break;
         }
       }
       if (ship.lastError().type() != QSqlError::NoError)
@@ -633,7 +633,7 @@ void unpostedPoReceipts::sPost()
         rollback.exec();
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Shipment Information"),
                              ship, __FILE__, __LINE__);
-        return;
+        break;
       }
       _soheadid.takeFirst();
     }
