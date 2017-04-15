@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -11,38 +11,27 @@
 #ifndef __SCRIPTABLEPRIVATE_H__
 #define __SCRIPTABLEPRIVATE_H__
 
-class QWidget;
-class QScriptEngine;
-class QScriptEngineDebugger;
 class QEvent;
+class QScriptEngine;
+class QWidget;
 
 #include <QString>
 
 #include "guiclient.h"
 #include "parameter.h"
+#include "scriptablewidget.h"
 
-class ScriptablePrivate
+class ScriptablePrivate : public ScriptableWidget
 {
   public:
-    ScriptablePrivate(bool, QWidget*);
+    ScriptablePrivate(QWidget* parent);
     virtual ~ScriptablePrivate();
 
-    QScriptEngine *engine();
-    void loadScript(const QString&);
-    void loadScriptEngine();
+    virtual QScriptEngine   *engine();
+    virtual enum SetResponse callSet(const ParameterList &);
+    virtual void             callShowEvent(QEvent*);
+    virtual void             callCloseEvent(QEvent*);
 
-    enum SetResponse callSet(const ParameterList &);
-    void callShowEvent(QEvent*);
-    void callCloseEvent(QEvent*);
-
-    QScriptEngine * _engine;
-    QScriptEngineDebugger * _debugger;
-
-    bool _scriptLoaded;
-    bool _dialog;
-
-  private:
-    QWidget *_parent;
 };
 
 #endif

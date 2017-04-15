@@ -1,12 +1,14 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
+
+#include <QtScript>
 
 #include <metasql.h>
 
@@ -349,7 +351,8 @@ void CRMAcctList::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
   case CRMAcctLineEdit::Vend:
     setWindowTitle(tr("Search For Vendor"));
     _queryParams->append("vendor");
-    _listTab->addColumn("Vend. Type", _itemColumn, Qt::AlignLeft, true, "type");
+    if (!(_listTab->column("type") > 0))
+      _listTab->addColumn("Vend. Type", _itemColumn, Qt::AlignLeft, true, "type");
     break;
 
   case CRMAcctLineEdit::CustAndProspect:
@@ -777,4 +780,32 @@ void CRMAcctSearch::sFillList()
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Database Error"),
                            fillq, __FILE__, __LINE__))
     return;
+}
+
+// script exposure /////////////////////////////////////////////////////////////
+
+QScriptValue CRMAcctSubtypeToScriptValue(QScriptEngine *engine, const enum CRMAcctLineEdit::CRMAcctSubtype &val)
+{
+  return QScriptValue(engine, (int)val);
+}
+
+void CRMAcctSubtypeFromScriptValue(const QScriptValue &obj, enum CRMAcctLineEdit::CRMAcctSubtype &val)
+{
+  val = (enum CRMAcctLineEdit::CRMAcctSubtype)obj.toInt32();
+}
+
+void setupCRMAcctLineEdit(QScriptEngine *engine)
+{
+  if (! engine->globalObject().property("CRMAcctLineEdit").isObject())
+  {
+#if QT_VERSION >= 0x050500
+    qScriptRegisterMetaType(engine, CRMAcctSubtypeToScriptValue, CRMAcctSubtypeFromScriptValue);
+#endif
+
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&CRMAcctLineEdit::staticMetaObject, ctor);
+
+    engine->globalObject().setProperty("CRMAcctLineEdit", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

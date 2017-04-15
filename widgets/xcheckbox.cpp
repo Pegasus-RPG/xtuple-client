@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -118,19 +118,10 @@ void XCheckBox::setDataWidgetMap(XDataWidgetMapper* m)
 
 // scripting exposure /////////////////////////////////////////////////////////
 
-QScriptValue XCheckBoxtoScriptValue(QScriptEngine *engine, XCheckBox* const &item)
-{
-  return engine->newQObject(item);
-}
-
-void XCheckBoxfromScriptValue(const QScriptValue &obj, XCheckBox* &item)
-{
-  item = qobject_cast<XCheckBox*>(obj.toQObject());
-}
-
 QScriptValue constructXCheckBox(QScriptContext *context,
                                 QScriptEngine  *engine)
 {
+#if QT_VERSION >= 0x050000
   XCheckBox *cbox = 0;
 
   if (context->argumentCount() == 0)
@@ -154,11 +145,19 @@ QScriptValue constructXCheckBox(QScriptContext *context,
                         QString("Could not find an appropriate XCheckBox constructor"));
 
   return engine->toScriptValue(cbox);
+#else
+  Q_UNUSED(context); Q_UNUSED(engine); return QScriptValue();
+#endif
 }
 
 void setupXCheckBox(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, XCheckBoxtoScriptValue, XCheckBoxfromScriptValue);
-  QScriptValue widget = engine->newFunction(constructXCheckBox);
-  engine->globalObject().setProperty("XCheckBox", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  if (! engine->globalObject().property("XCheckBox").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructXCheckBox);
+    QScriptValue meta = engine->newQMetaObject(&XCheckBox::staticMetaObject, ctor);
+
+    engine->globalObject().setProperty("XCheckBox", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

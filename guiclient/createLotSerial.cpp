@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -68,16 +68,22 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
   if (valid)
   {
     _itemlocdistid = param.toInt();
-
-    createet.prepare( "SELECT item_fractional, itemsite_controlmethod, itemsite_item_id,"
-               "       itemsite_id, itemsite_perishable, itemsite_warrpurc, "
-               "       COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id, "
-               "       invhist_ordtype, invhist_transtype, invhist_ordnumber "
-               "FROM itemlocdist, itemsite, item, invhist "
-               "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (itemlocdist_invhist_id=invhist_id) "
-               " AND (itemlocdist_id=:itemlocdist_id) );" );
+    // When #22868 is complete, the attempt to use invhist will be removed and replaced with something (hopefully not a case statement) 
+    // that can match the types that were inserted in creation of the original lsdetail records.
+    // Example of the lsdetail record creation that we're now looking for in this query: 
+    // https://github.com/xtuple/qt-client/blob/4_10_x/guiclient/issueWoMaterialItem.cpp#L211
+                     
+    createet.prepare("SELECT item_fractional, itemsite_controlmethod, itemsite_item_id, "
+                      " itemsite_id, itemsite_perishable, itemsite_warrpurc, "
+                      " COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id, "
+                      " COALESCE(invhist_ordnumber, formatOrderLineItemNumber(itemlocdist_order_type, itemlocdist_order_id)) AS ordnumber, "
+                      " COALESCE(invhist_transtype, itemlocdist_transtype) AS transtype, "
+                      " COALESCE(invhist_ordtype, itemlocdist_order_type) AS ordtype "
+                      "FROM itemlocdist "
+                      " JOIN itemsite ON itemlocdist_itemsite_id = itemsite_id "
+                      " JOIN item ON itemsite_item_id = item_id "
+                      " LEFT OUTER JOIN invhist ON itemlocdist_invhist_id = invhist_id "
+                      "WHERE itemlocdist_id = :itemlocdist_id;");
     createet.bindValue(":itemlocdist_id", _itemlocdistid);
     createet.exec();
     if (createet.first())
@@ -94,30 +100,30 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
       _item->setItemsiteid(createet.value("itemsite_id").toInt());
       _itemsiteid = createet.value("itemsite_id").toInt();
       _expiration->setEnabled(createet.value("itemsite_perishable").toBool());
-      _warranty->setEnabled(createet.value("itemsite_warrpurc").toBool() && createet.value("invhist_ordtype").toString() == "PO");
+      _warranty->setEnabled(createet.value("itemsite_warrpurc").toBool() && createet.value("ordtype").toString() == "PO");
       _fractional = createet.value("item_fractional").toBool();
       
       //If there is preassigned trace info for an associated order, force user to select from list
       //Pick latest lsdetail record as it can be duplicated when lot/serial returned/re-added to the shipment
       XSqlQuery preassign;
-      preassign.prepare("SELECT MAX(lsdetail_id) AS lsdetail_id,ls_number,ls_number "
-                        "FROM lsdetail JOIN ls ON (ls_id=lsdetail_ls_id) "
-                        "WHERE ( (lsdetail_source_number=:docnumber) "
-                        "AND (lsdetail_source_type=:transtype) "
-                        "AND (lsdetail_itemsite_id IN (SELECT itemsite_id FROM itemsite "
-                        "                              WHERE itemsite_item_id = (SELECT itemsite_item_id "
-                        "                               FROM itemsite WHERE itemsite_id = :itemsite))) "
-                        "AND (lsdetail_qtytoassign > 0) ) "
-                        "GROUP BY 2,3");
-      preassign.bindValue(":transtype", createet.value("invhist_transtype").toString());
-      preassign.bindValue(":docnumber", createet.value("invhist_ordnumber").toString());
-      preassign.bindValue(":itemsite", createet.value("itemsite_id").toInt());
+      preassign.prepare("SELECT MAX(lsdetail_id) AS lsdetail_id, ls_number "
+                        "FROM lsdetail "
+                        " JOIN ls ON ls_id = lsdetail_ls_id "
+                        "WHERE lsdetail_source_number = :ordnumber "
+                        " AND lsdetail_source_type = :transtype "
+                        " AND ls_item_id = :item_id "
+                        " AND lsdetail_qtytoassign > 0 "
+                        "GROUP BY ls_number;");
+      preassign.bindValue(":transtype", createet.value("transtype").toString());
+      preassign.bindValue(":ordnumber", createet.value("ordnumber").toString());
+      preassign.bindValue(":item_id", _item->id());
       preassign.exec();
       if (preassign.first())
       {
         _lotSerial->setAllowNull(true);
         _lotSerial->populate(preassign);
         _preassigned = true;
+        _lotSerial->setEditable(false);
         connect(_lotSerial, SIGNAL(newID(int)), this, SLOT(sLotSerialSelected()));
       }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Lot/Serial Information"),
@@ -292,8 +298,15 @@ void createLotSerial::sAssign()
   
   if (_lotSerial->currentText().isEmpty())
   {
-    QMessageBox::critical( this, tr("Enter Lot/Serial Number"),
-                           tr("<p>You must enter a Lot/Serial number."));
+    if (_lotSerial->isEditable()) 
+    {
+      QMessageBox::critical( this, tr("Enter Lot/Serial Number"),
+                           tr("<p>You must enter a Lot/Serial number."));  
+    }
+    else
+      QMessageBox::critical( this, tr("Select Preassigned Lot/Serial Number"),
+                           tr("<p>You must select a preassigned Lot/Serial number."));
+    
     _lotSerial->setFocus();
     return;
   }
@@ -322,7 +335,9 @@ void createLotSerial::sAssign()
                      tr("<p>The Item in question is not stored in "
                         "fractional quantities. You must enter a "
                         "whole value to assign to this Lot/Serial "
-                        "number."));
+                        "number."))
+        <<GuiErrorCheck(_qtyToAssign->toDouble() > _qtyRemaining->text().toDouble(), _qtyToAssign,
+                        tr("<p>The Qty to Assign must be less than or equal to the Qty Remaining."));
 
   if(GuiErrorCheck::reportErrors(this,tr("Cannot Assign Lot/Serial number"),errors))
       return;
@@ -362,32 +377,30 @@ void createLotSerial::sAssign()
 
   if (_serial)
   {
-    createAssign.prepare("SELECT COUNT(*) AS count FROM "
-                         "(SELECT itemloc_id AS count "
-                         "FROM itemsite JOIN itemloc ON (itemloc_itemsite_id=itemsite_id)"
-                         "              JOIN ls ON (ls_id=itemloc_ls_id) "
-                         "WHERE (itemsite_item_id=:item_id)"
-                         "  AND (UPPER(ls_number)=UPPER(:lotserial))"
+    createAssign.prepare("SELECT true "
+                         "FROM itemsite "
+                         "  JOIN itemloc ON itemloc_itemsite_id = itemsite_id "
+                         "  JOIN ls ON ls_id = itemloc_ls_id "
+                         "WHERE itemsite_item_id = :item_id "
+                         "  AND UPPER(ls_number) = UPPER(:lotserial) "
                          "UNION "
-                         "SELECT itemlocdist_id "
-                         "FROM itemsite JOIN itemlocdist ON (itemlocdist_itemsite_id=itemsite_id)"
-                         "              JOIN ls ON (ls_id=itemlocdist_ls_id) "
-                         "WHERE (itemsite_item_id=:item_id)"
-                         "  AND (UPPER(ls_number)=UPPER(:lotserial))"
-                         "  AND (itemlocdist_source_type='D')) AS data;");
+                         "SELECT true "
+                         "FROM itemsite "
+                         "  JOIN itemlocdist ON itemlocdist_itemsite_id = itemsite_id "
+                         "  JOIN ls ON ls_id = itemlocdist_ls_id "
+                         "WHERE itemsite_item_id = :item_id "
+                         "  AND UPPER(ls_number) = UPPER(:lotserial)"
+                         "  AND itemlocdist_source_type = 'D';");
     createAssign.bindValue(":item_id", _item->id());
     createAssign.bindValue(":lotserial", _lotSerial->currentText());
     createAssign.exec();
     if (createAssign.first())
     {
-      if (createAssign.value("count").toInt() > 0)
-      {
-        QMessageBox::critical(this, tr("Duplicate Serial Number"),
-                              tr("This Serial Number has already been used "
-                                 "and cannot be reused."));
+      QMessageBox::critical(this, tr("Duplicate Serial Number"),
+                            tr("This Serial Number has already been used "
+                               "and cannot be reused."));
 
-        return;
-      }
+      return;
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Lot/Serial Information"),
                                   createAssign, __FILE__, __LINE__))
@@ -407,7 +420,7 @@ void createLotSerial::sAssign()
     createAssign.exec();
     if (createAssign.first())
     {
-      if (!_serial)
+      if (!_serial && !_preassigned)
         if (QMessageBox::question(this, tr("Use Existing?"),
                                   tr("<p>A record with for lot number %1 for this item already exists.  "
                                      "Reference existing lot?").arg(createAssign.value("ls_number").toString().toUpper()),

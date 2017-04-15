@@ -1133,10 +1133,10 @@ void customer::sFillCharacteristicList()
     _widgetStack->setCurrentIndex(0);
     XSqlQuery r;
     r.prepare( "SELECT charass_id, char_name, "
-               " CASE WHEN char_type < 2 THEN "
-               "   charass_value "
-               " ELSE "
+               " CASE WHEN char_type = 2 THEN "
                "   formatDate(charass_value::date) "
+               " ELSE "
+               "   charass_value "
                "END AS charass_value "
                "FROM charass, char "
                "WHERE ( (charass_target_type='C')"

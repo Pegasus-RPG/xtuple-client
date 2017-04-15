@@ -42,6 +42,8 @@ private:
     bool _captive;
     double _cachedQOH;
     int _prjid;
+    int _itemsiteId;
+    bool _controlledItem;
 
 };
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -14,6 +14,7 @@
 #include <QPushButton>
 #include <QSqlError>
 #include <QVBoxLayout>
+#include <QtScript>
 
 #include <metasql.h>
 #include <parameter.h>
@@ -440,4 +441,33 @@ void CustCluster::sHandleEditMode(bool p)
     connect(number, SIGNAL(editingFinished()), this, SIGNAL(editingFinished()));
   else
     disconnect(number, SIGNAL(editingFinished()), this, SIGNAL(editingFinished()));
+}
+
+// script api //////////////////////////////////////////////////////////////////
+
+QScriptValue CLineEditTypesToScriptValue(QScriptEngine *engine,
+                                         const CLineEdit::CLineEditTypes &type)
+{
+  return QScriptValue(engine, (int)type);
+}
+
+void CLineEditTypesFromScriptValue(const QScriptValue &obj, CLineEdit::CLineEditTypes &type)
+{
+  type = (CLineEdit::CLineEditTypes)obj.toInt32();
+}
+
+void setupCLineEdit(QScriptEngine *engine)
+{
+  if (! engine->globalObject().property("CLineEdit").isObject())
+  {
+#if QT_VERSION >= 0x050500
+    qScriptRegisterMetaType(engine, CLineEditTypesToScriptValue, CLineEditTypesFromScriptValue);
+#endif
+
+    QScriptValue ctor = engine->newObject(); //engine->newFunction(scriptconstructor);
+    QScriptValue meta = engine->newQMetaObject(&CLineEdit::staticMetaObject, ctor);
+
+    engine->globalObject().setProperty("CLineEdit", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -202,4 +202,48 @@ void initializePlugin(Preferences *pPreferences, Metrics *pMetrics, Privileges *
   _x_workspace = pWorkspace;
   _x_privileges = pPrivileges;
   _x_username = pUsername;
+}
+
+void setupWidgetsScriptApi(QScriptEngine *engine)
+{
+
+  setupAddressCluster(engine);
+  setupAlarms(engine);
+  setupCLineEdit(engine);
+  setupCRMAcctLineEdit(engine);
+  setupComments(engine);
+  setupContactWidget(engine);
+  setupCurrDisplay(engine);
+  setupDocuments(engine);
+  setupEmpCluster(engine);
+  setupEmpClusterLineEdit(engine);
+  setupFileMoveSelector(engine);
+  setupGLCluster(engine);
+  setupItemLineEdit(engine);
+  setupOrderLineEdit(engine);
+  setupParameterGroup(engine);
+  setupParameterWidget(engine);
+  setupProjectLineEdit(engine);
+  setupQuerySet(engine);
+  setupRaLineEdit(engine);
+  setupRecurrenceWidget(engine);
+  setupRevisionLineEdit(engine);
+  setupScreen(engine);
+  setupShipmentClusterLineEdit(engine);
+  setupUsernameCluster(engine);
+  setupUsernameLineEdit(engine);
+  setupVendorGroup(engine);
+  setupWComboBox(engine);
+  setupWoCluster(engine);
+  setupWomatlCluster(engine);
+  setupXCheckBox(engine);
+  setupXComboBox(engine);
+  setupXDataWidgetMapper(engine);
+  setupXDateEdit(engine);
+  setupXDocCopySetter(engine);
+  setupXSqlTableModel(engine);
+  setupXTreeWidget(engine);
+  setupXTreeWidgetItem(engine);
+  setupXt(engine);
+
 }

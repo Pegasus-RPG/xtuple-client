@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -21,8 +21,6 @@ class XTUPLEWIDGETS_EXPORT VendorGroup : public QWidget, public Ui::VendorGroup
 {
   Q_OBJECT
 
-  Q_ENUMS(VendorGroupState)
-
   Q_PROPERTY(enum VendorGroupState state READ state WRITE setState)
 
   public:
@@ -34,6 +32,7 @@ class XTUPLEWIDGETS_EXPORT VendorGroup : public QWidget, public Ui::VendorGroup
     {
       All, Selected, SelectedType, TypePattern
     };
+    Q_ENUM(VendorGroupState)
 
     Q_INVOKABLE virtual void           appendValue(ParameterList &);
     Q_INVOKABLE virtual void           bindValue(XSqlQuery &);
@@ -66,5 +65,7 @@ class XTUPLEWIDGETS_EXPORT VendorGroup : public QWidget, public Ui::VendorGroup
     virtual void languageChange();
     virtual void sTypePatternFinished();
 };
+
+void setupVendorGroup(QScriptEngine *engine);
 
 #endif

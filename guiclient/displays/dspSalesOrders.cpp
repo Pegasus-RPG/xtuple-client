@@ -33,6 +33,7 @@ dspSalesOrders::dspSalesOrders(QWidget* parent, const char*, Qt::WindowFlags fl)
     setNewVisible(true);
   setQueryOnStartEnabled(false);
   setAutoUpdateEnabled(true);
+  setSearchVisible(true);
 
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
@@ -92,7 +93,8 @@ void dspSalesOrders::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem*, int)
 
 bool dspSalesOrders::setParams(ParameterList & params)
 {
-  parameterWidget()->appendValue(params);
+  if (!display::setParams(params))
+    return false;
   params.append("noLines", tr("No Lines"));
   params.append("closed", tr("Closed"));
   params.append("open", tr("Open"));

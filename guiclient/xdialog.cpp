@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -23,9 +23,6 @@
 #include "scriptablePrivate.h"
 #include "shortcuts.h"
 
-//
-// XDialogPrivate
-//
 class XDialogPrivate : public ScriptablePrivate
 {
   friend class XDialog;
@@ -34,7 +31,6 @@ class XDialogPrivate : public ScriptablePrivate
     XDialogPrivate(XDialog*);
     ~XDialogPrivate();
 
-    XDialog * _parent;
     bool _shown;
     QAction *_rememberPos;
     QAction *_rememberSize;
@@ -42,7 +38,7 @@ class XDialogPrivate : public ScriptablePrivate
 };
 
 XDialogPrivate::XDialogPrivate(XDialog *parent)
-  : ScriptablePrivate(true, parent), _parent(parent)
+  : ScriptablePrivate(parent)
 {
   _shown = false;
   _rememberPos = 0;
@@ -154,7 +150,6 @@ void XDialog::showEvent(QShowEvent *event)
   }
 
   _private->callShowEvent(event);
-
   QDialog::showEvent(event);
 }
 

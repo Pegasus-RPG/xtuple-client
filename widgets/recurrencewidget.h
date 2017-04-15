@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -16,14 +16,9 @@
 
 class QScriptEngine;
 
-void setupRecurrenceWidget(QScriptEngine *engine);
-
 class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
 {
   Q_OBJECT
-
-  Q_ENUMS(RecurrencePeriod)
-  Q_ENUMS(RecurrenceChangePolicy)
 
   Q_PROPERTY(bool maxVisible       READ maxVisible       WRITE setMaxVisible DESIGNABLE false)
   Q_PROPERTY(bool endTimeVisible   READ endTimeVisible   WRITE setEndTimeVisible)
@@ -36,9 +31,11 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
     // Never must = XComboBox::id() when ! XComboBox::isValid()
     enum RecurrencePeriod
     { Never = -1, Minutely, Hourly, Daily, Weekly, Monthly, Yearly, Custom };
+    Q_ENUM(RecurrencePeriod)
 
     enum RecurrenceChangePolicy
     { NoPolicy = -1, IgnoreFuture, ChangeFuture };
+    Q_ENUM(RecurrenceChangePolicy)
                           
     RecurrenceWidget(QWidget* parent = 0, const char* name = 0);
     ~RecurrenceWidget();
@@ -114,6 +111,6 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
 
 };
 
-Q_DECLARE_METATYPE(RecurrenceWidget*)
+void setupRecurrenceWidget(QScriptEngine *engine);
 
 #endif // RECURRENCEWIDGET_H

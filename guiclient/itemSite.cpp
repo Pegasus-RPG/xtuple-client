@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -117,8 +117,10 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WindowFlag
   _controlMethod->append(2, tr("Lot #"),    "L");
   _controlMethod->append(3, tr("Serial #"), "S");
 
-  //Default to Regular control  
+  //Default to Regular control
   _controlMethod->setCode("R");
+
+  _wasControlMethod = "";
 
   //If not lot serial control, remove options
   if (!_metrics->boolean("LotSerialControl"))
@@ -1149,6 +1151,14 @@ void itemSite::sHandleWOSupplied(bool pSupplied)
 
 void itemSite::sHandleControlMethod()
 {
+  if (_wasControlMethod != "N" && _controlMethod->code() == "N" && _qohCache > 0)
+  {
+     QMessageBox::warning(this, tr("Control Method"),
+        tr("<p>You cannot change the Control Method to None "
+           "when inventory exists at this Site."));
+     _controlMethod->setCode(_wasControlMethod);
+     return;
+  }
   if (_controlMethod->code() == "N" || _itemType == 'R' || _itemType == 'K')
   {
     _costNone->setChecked(true);
@@ -1428,6 +1438,7 @@ void itemSite::populate()
     _orderGroupFirst->setChecked(itemsite.value("itemsite_ordergroup_first").toBool());
     _mpsTimeFence->setValue(itemsite.value("itemsite_mps_timefence").toInt());
     _controlMethod->setCode(itemsite.value("itemsite_controlmethod").toString());
+    _wasControlMethod = itemsite.value("itemsite_controlmethod").toString();
 
     _wasLotSerial = ((itemsite.value("itemsite_controlmethod").toString() == "L") ||
         	     (itemsite.value("itemsite_controlmethod").toString() == "S") );
