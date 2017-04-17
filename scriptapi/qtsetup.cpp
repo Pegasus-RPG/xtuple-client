@@ -1543,8 +1543,10 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("WindowShadeButtonHint",          QScriptValue(engine, Qt::WindowShadeButtonHint),        ro);
   widget.setProperty("WindowStaysOnTopHint",           QScriptValue(engine, Qt::WindowStaysOnTopHint),         ro);
   widget.setProperty("WindowStaysOnBottomHint",        QScriptValue(engine, Qt::WindowStaysOnBottomHint),      ro);
+#if QTVERSION < 0x050800
   widget.setProperty("WindowOkButtonHint",             QScriptValue(engine, Qt::WindowOkButtonHint),           ro);
   widget.setProperty("WindowCancelButtonHint",         QScriptValue(engine, Qt::WindowCancelButtonHint),       ro);
+#endif
   widget.setProperty("WindowType_Mask",                QScriptValue(engine, Qt::WindowType_Mask),              ro);
 
   engine->globalObject().setProperty("Qt", widget, ro);
