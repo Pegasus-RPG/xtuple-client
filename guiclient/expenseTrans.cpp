@@ -26,9 +26,10 @@ expenseTrans::expenseTrans(QWidget* parent, const char* name, Qt::WindowFlags fl
 {
   setupUi(this);
 
-  connect(_post,                 SIGNAL(clicked()), this, SLOT(sPost()));
-  connect(_qty,SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateQty()));
-  connect(_warehouse,           SIGNAL(newID(int)), this, SLOT(sPopulateQOH(int)));
+  connect(_post,          SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_qty,           SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateQty()));
+  connect(_warehouse,     SIGNAL(newID(int)), this, SLOT(sPopulateQOH()));
+  connect(_item,          SIGNAL(newId(int)), this, SLOT(sPopulateQOH()));
 
   _captive = false;
   _prjid = -1;
@@ -248,9 +249,9 @@ void expenseTrans::sPost()
   }
 }
 
-void expenseTrans::sPopulateQOH(int pWarehousid)
+void expenseTrans::sPopulateQOH()
 {
-  if (_mode != cView)
+  if (_mode != cView && _item->isValid() && _warehouse->isValid())
   {
     XSqlQuery qohq;
     qohq.prepare( "SELECT itemsite_qtyonhand, "
@@ -259,7 +260,7 @@ void expenseTrans::sPopulateQOH(int pWarehousid)
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
     qohq.bindValue(":item_id", _item->id());
-    qohq.bindValue(":warehous_id", pWarehousid);
+    qohq.bindValue(":warehous_id", _warehouse->id());
     qohq.exec();
     if (qohq.first())
     {
