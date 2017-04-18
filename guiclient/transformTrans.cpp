@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -26,11 +26,12 @@ transformTrans::transformTrans(QWidget* parent, const char* name, Qt::WindowFlag
   setupUi(this);
 
   connect(_item,       SIGNAL(newId(int)), this, SLOT(sPopulateQOH()));
-  connect(_post,        SIGNAL(clicked()), this, SLOT(sPost()));
-  connect(_qty, SIGNAL(editingFinished()), this, SLOT(sRecalculateAfter()));
+  connect(_item,       SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_post,       SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_qty,        SIGNAL(editingFinished()), this, SLOT(sRecalculateAfter()));
   connect(_source,     SIGNAL(newId(int)), this, SLOT(sPopulateQOH()));
-  connect(_source,    SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
-  connect(_target,     SIGNAL(newID(int)), this, SLOT(sPopulateTarget(int)));
+  connect(_source,     SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
+  connect(_target,     SIGNAL(newID(int)), this, SLOT(sPopulateTarget()));
   connect(_target,     SIGNAL(newID(int)), this, SLOT(sHandleButtons()));
   connect(_warehouse,  SIGNAL(newID(int)), this, SLOT(sFillList()));
   connect(_warehouse,  SIGNAL(newID(int)), this, SLOT(sPopulateQOH()));
@@ -285,10 +286,10 @@ void transformTrans::sPost()
   }
 }
 
-void transformTrans::sPopulateTarget(int /*pItemid*/)
+void transformTrans::sPopulateTarget()
 {
   XSqlQuery transformPopulateTarget;
-  if (!_item->isValid())
+  if (!_item->isValid() || !_target->isValid() || !_warehouse->isValid())
     return;
 	
   transformPopulateTarget.prepare( "SELECT item_descrip1, item_descrip2, itemsite_qtyonhand "
@@ -409,6 +410,8 @@ void transformTrans::sFillList()
   {
     return;
   }
+
+  sPopulateTarget();
 }
 
 void  transformTrans::sPopulateQOH()
