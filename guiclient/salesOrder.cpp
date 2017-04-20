@@ -4220,18 +4220,7 @@ void salesOrder::sReturnStock()
   {
     returnSales.bindValue(":soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
     returnSales.exec();
-    if (returnSales.first())
-    {
-      int result = returnSales.value("result").toInt();
-      if (result < 0)
-      {
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Return Item Information"),
-                               storedProcErrorLookup("returnItemShipments", result),
-                               __FILE__, __LINE__);
-        return;
-      }
-    }
-    else if (returnSales.lastError().type() != QSqlError::NoError)
+    if (returnSales.lastError().type() != QSqlError::NoError)
     {
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Return Item Information"),
                            returnSales, __FILE__, __LINE__);
