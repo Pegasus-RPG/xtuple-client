@@ -80,6 +80,8 @@
 #include "setup.h"
 #include "setupscriptapi.h"
 
+#define DEBUG false
+
 #if defined(Q_OS_WIN)
 #define NOCRYPT
 #include <windows.h>
@@ -276,7 +278,6 @@ void Action::init(QWidget *pParent, const char *pName, const QString &pDisplayNa
   }
 
   connect(this, SIGNAL(triggered()), pTarget, pActivateSlot);
-  //setEnabled(pEnabled);
   pAddTo->addAction(this);
 
   if(!pEnabled.isEmpty())
@@ -310,35 +311,37 @@ GUIClient *omfgThis;
   */
 GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   :
+    _eventButton(0),
+    _registerButton(0),
+    _errorButton(0),
     _databaseURL(pDatabaseURL),
     _username(pUsername),
     _menuBar(0),
-    _inputManager(0),
     _shown(false),
     _shuttingDown(false),
+    _spellCodec(0),
+    _spellChecker(0),
     _menu(0)
 {
-  XSqlQuery _GGUIClient;
+  XSqlQuery qry;
 
   __saveSizePositionEventFilter = new SaveSizePositionEventFilter(this);
 
   _splash->showMessage(tr("Initializing Internal Data"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
 
-  _showTopLevel = true;
-  if(_preferences->value("InterfaceWindowOption") == "Workspace")
-    _showTopLevel = false;
+  _showTopLevel = (_preferences->value("InterfaceWindowOption") != "Workspace");
 
-  _GGUIClient.exec("SELECT startOfTime() AS sot, endOfTime() AS eot;");
-  if (_GGUIClient.first())
+  qry.exec("SELECT startOfTime() AS sot, endOfTime() AS eot;");
+  if (qry.first())
   {
-    _startOfTime = _GGUIClient.value("sot").toDate();
-    _endOfTime = _GGUIClient.value("eot").toDate();
+    _startOfTime = qry.value("sot").toDate();
+    _endOfTime   = qry.value("eot").toDate();
   }
   else
     ErrorReporter::error(QtCriticalMsg, this, tr("Critical Error"),
                         tr("Please immediately log out and contact your "
-                           "Systems Administrator"),_GGUIClient, __FILE__, __LINE__);
+                           "Systems Administrator"), qry, __FILE__, __LINE__);
 
   /*  TODO: either separate validators for extprice, purchprice, and salesprice
             or replace every field that uses _moneyVal, _negMoneyVal, _priceVal, and _costVal
@@ -374,7 +377,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   _workspace->setContentsMargins(0, 0, 0, 0);
 
-//  Install the InputManager
   _inputManager = new InputManager();
   qApp->installEventFilter(_inputManager);
 
@@ -385,16 +387,16 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   if (_preferences->value("BackgroundImageid").toInt() > 0)
   {
-    _GGUIClient.prepare( "SELECT image_data "
-                "FROM image "
-                "WHERE (image_id=:image_id);" );
-    _GGUIClient.bindValue(":image_id", _preferences->value("BackgroundImageid").toInt());
-    _GGUIClient.exec();
-    if (_GGUIClient.first())
+    qry.prepare("SELECT image_data"
+                "  FROM image "
+                " WHERE (image_id=:image_id);");
+    qry.bindValue(":image_id", _preferences->value("BackgroundImageid").toInt());
+    qry.exec();
+    if (qry.first())
     {
       QImage background;
 
-      background.loadFromData(QUUDecode(_GGUIClient.value("image_data").toString()));
+      background.loadFromData(QUUDecode(qry.value("image_data").toString()));
       _workspace->setBackground(QBrush(QPixmap::fromImage(background)));
     }
   }
@@ -402,9 +404,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _splash->showMessage(tr("Initializing Internal Timers"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
 
-  _eventButton = NULL;
-  _registerButton = NULL;
-  _errorButton = NULL;
   __interval = _metrics->value("updateTickInterval").toInt();
   if(__interval < 1)
     __interval = 1;
@@ -495,7 +494,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
     }
   }
 
-//  Populate the menu bar
+  //  Populate the menu bar
   XSqlQuery window;
   window.prepare("SELECT usr_window "
                  "  FROM usr "
@@ -1618,34 +1617,33 @@ QString translationFile(QString localestr, const QString component)
 QString translationFile(QString localestr, const QString component, QString &version)
 {
   QStringList paths;
-#if QT_VERSION >= 0x050000
-  paths << QStandardPaths::standardLocations(QStandardPaths::DataLocation);
-#else
-  //qDebug() << QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-  paths << QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+#if QT_VERSION >= 0x050400
+  paths << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)
+        << QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation);
 #endif
-  paths << "/usr/lib/postbooks/dict";
-  paths << "dict";
-  paths << "";
-  paths << "../dict";
-  paths << QApplication::applicationDirPath() + "/dict";
-  paths << QApplication::applicationDirPath();
-  paths << QApplication::applicationDirPath() + "/../dict";
 #if defined Q_OS_MAC
-  paths << QApplication::applicationDirPath() + "/../../../dict";
-  paths << QApplication::applicationDirPath() + "/../../..";
+  paths << QApplication::applicationDirPath() + "/../Resources";
+#else
+  paths << QApplication::applicationDirPath()
+        << "/usr/lib/postbooks";
 #endif
+  (void)paths.removeDuplicates();
+  for (int i = paths.length(); i > 0; i--)
+    paths.insert(i, paths.at(i - 1) + "/dict");
 
   QTranslator translator;
-  for (QStringList::Iterator pit = paths.begin(); pit != paths.end(); pit++)
+  foreach (QString dir, paths)
   {
-    QString filename = *pit + "/" + component + "." + localestr;
-    if (translator.load(filename))
+    QString filename = component + "." + localestr;
+    if (DEBUG) qDebug() << "looking for translation" << dir << filename;
+    if (translator.load(filename, dir)) // this doesn't install the translation
     {
       if (! version.isNull())
         version = translator.translate(component.toLatin1().data(), "Version");
-
-      return filename;
+      if (DEBUG)
+        qDebug() << "loadable translation" << dir << filename
+                 << "test:" << translator.translate("GUIClient", "Custom");
+      return dir + "/" + filename;
     }
   }
 
@@ -1695,7 +1693,6 @@ void GUIClient::populateCustomMenu(QMenu * menu, const QString & module)
                                 this, SLOT(sCustomCommand()), customMenu, allowed);
 
     _customCommands.insert(action, qry.value("cmd_id").toInt());
-    //actions.append(action);
   }
 }
 
@@ -2393,53 +2390,77 @@ void GUIClient::handleDocument(QString path)
   addDocumentWatch(path, id);
 }
 
+/** @brief Initialize the spell-checking system.
+
+    Load the dictionary for the user's current language and
+    the user's personal additions.
+ */
 void GUIClient::hunspell_initialize()
 {
-    _spellReady = false;
-    QString langName = QLocale::languageToString(QLocale().language());
-    QString appPath("/usr/lib/postbooks");
-    if (! QFile::exists(appPath))
-      appPath = QApplication::applicationDirPath();
-    QString fullPathWithoutExt = appPath + "/" + langName;
-    QFile affFile(fullPathWithoutExt + tr(".aff"));
-    QFile dicFile(fullPathWithoutExt + tr(".dic"));
-    // If we don't have files for the first name lets try a more common naming convention
-    if(!(affFile.exists() && dicFile.exists()))
-    {
-      langName = QLocale().name().toLower(); // retruns lang_cntry format en_us for example
-      fullPathWithoutExt = appPath + "/" + langName;
-      affFile.setFileName(fullPathWithoutExt + tr(".aff"));
-      dicFile.setFileName(fullPathWithoutExt + tr(".dic"));
-    }
-    if(affFile.exists() && dicFile.exists())
-    {
-      _spellReady = true;
-    }
-    _spellChecker = new Hunspell(QString(fullPathWithoutExt+tr(".aff")).toLatin1(),
-                                 QString(fullPathWithoutExt+tr(".dic")).toLatin1());
+  // TODO: handle user changing languages
+  QString appPath, fullPathWithoutExt;
+  if (! _spellChecker)
+  {
+    QStringList filename;
+    filename << QLocale::languageToString(QLocale().language()) // eg English
+             << QLocale().name().toLower();                     // eg en_us
 
-    QString spell_encoding = QString(_spellChecker->get_dic_encoding());
-    _spellCodec = QTextCodec::codecForName(spell_encoding.toLocal8Bit());
-
-    QString homePath = QDir::homePath().toLatin1();
-    if(_spellReady)
+    QStringList dirname;
+#if defined Q_OS_MAC
+    dirname << QApplication::applicationDirPath() + "/../Resources/hunspell";
+#else
+    dirname << "/usr/lib/postbooks"
+            << QApplication::applicationDirPath()
+            << QApplication::applicationDirPath() + "/hunspell";
+#endif
+#if QT_VERSION >= 0x050400
+    dirname << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
+#endif
+    for (int didx = 0; didx < dirname.length() && appPath.isEmpty(); didx++)
     {
-        QFile file(homePath + tr("/xTuple/user.dic"));
-        if(file.exists(homePath + tr("/xTuple/user.dic")))
+      for (int fidx = 0; fidx < filename.length() && appPath.isEmpty(); fidx++)
+      {
+        fullPathWithoutExt = dirname[didx] + "/" + filename[fidx];
+        if (DEBUG) qDebug() << "looking for spelling dictionaries" << fullPathWithoutExt;
+
+        QFile affFile(fullPathWithoutExt + ".aff");
+        QFile dicFile(fullPathWithoutExt + ".dic");
+        if (affFile.exists() && dicFile.exists())
         {
-           //open user dictionary if exists
-           _spellChecker->add_dic(QString(homePath + tr("/xTuple/user.dic")).toLatin1());
+          appPath = dirname[didx];
         }
+      }
     }
+    if (appPath.isEmpty())
+    {
+      QMessageBox::warning(this, tr("Spelling Dictionary Files Missing"),
+                           tr("<p>Could not find spell checking files named"
+                              "<ul><li>%1</li></ul> in <ul><li>%2</li></ul>.</p>")
+                             .arg(filename.join("</li><li> "), dirname.join("</li><li>")));
+    } else {
+      if (DEBUG) qDebug() << "loading" << appPath;
+      _spellChecker = new Hunspell(fullPathWithoutExt.toLatin1() + ".aff",
+                                   fullPathWithoutExt.toLatin1() + ".dic");
+
+      QString spell_encoding = QString(_spellChecker->get_dic_encoding());
+      _spellCodec = QTextCodec::codecForName(spell_encoding.toLocal8Bit());
+
+      QFile file(QDir::homePath() + "/xTuple/user.dic");
+      if (file.exists())
+      {
+        if (DEBUG) qDebug() << "loading" << file.fileName();
+        _spellChecker->add_dic(file.fileName().toLatin1());
+      }
+    }
+  }
 }
 
 void GUIClient::hunspell_uninitialize()
 {
-    delete (Hunspell *)(_spellChecker);
     QString homePath = QDir::homePath().toLatin1();
     QFile file(homePath + tr("/xTuple/user.dic"));
 
-    if(_spellReady && !_spellAddWords.isEmpty())
+    if(_spellChecker && !_spellAddWords.isEmpty())
     {
       //if user directory missing create it
       QString homePath = QDir::homePath().toLatin1();
@@ -2478,18 +2499,20 @@ void GUIClient::hunspell_uninitialize()
          }
          file.close();
       }
+      delete (Hunspell *)(_spellChecker);
+      _spellChecker = 0;
     }
 }
 
 bool GUIClient::hunspell_ready()
 {
-       return _spellReady;
+  return (_spellChecker != 0);
 }
 
 int GUIClient::hunspell_check(const QString word)
 {
-      QByteArray encodedString = _spellCodec->fromUnicode(word);
-      return _spellChecker->spell(encodedString.data());
+  QByteArray encodedString = _spellCodec->fromUnicode(word);
+  return _spellChecker->spell(encodedString.data());
 }
 
 const QStringList GUIClient::hunspell_suggest(const QString word)

@@ -7,9 +7,9 @@ QT += xml sql script scripttools network
 QT += webkit xmlpatterns printsupport webkitwidgets
 
 isEqual(QT_MAJOR_VERSION, 5) {
-  QT     += help designer uitools quick websockets webchannel serialport
+  QT     += designer uitools quick websockets webchannel serialport
 } else {
-  CONFIG += help designer uitools
+  CONFIG += designer uitools
 }
 
 TEMPLATE = app
@@ -25,6 +25,8 @@ INCLUDEPATH += ../scriptapi \
                $(CSVIMP_HEADERS)/csvimpcommon $(CSVIMP_HEADERS)/plugin
 
 DEPENDPATH  += $${INCLUDEPATH}
+
+INSTALLS = certificates dictionaries translations
 
 win32-msvc* {
   PRE_TARGETDEPS += ../lib/xtuplecommon.$${XTLIBEXT}    \
@@ -309,7 +311,6 @@ FORMS =   absoluteCalendarItem.ui               \
           glTransactionDetail.ui        \
           group.ui                      \
           groups.ui                     \
-          helpDownload.ui               \
           honorific.ui                  \
           honorifics.ui                 \
           hotkey.ui                     \
@@ -646,7 +647,6 @@ FORMS =   absoluteCalendarItem.ui               \
           warehouse.ui                          \
           warehouseZone.ui                      \
           warehouses.ui                         \
-          welcomeStub.ui                        \
           woMaterialItem.ui                     \
           workOrder.ui                          \
           workOrderMaterials.ui                 \
@@ -888,9 +888,6 @@ HEADERS = ../common/format.h                    \
           groups.h                      \
           guiErrorCheck.h               \
           guiclient.h                   \
-          helpDownload.h                \
-          helpView.h                    \
-          helpViewBrowser.h             \
           honorific.h                   \
           honorifics.h                  \
           hotkey.h                      \
@@ -1260,11 +1257,9 @@ HEADERS = ../common/format.h                    \
           warehouse.h                   \
           warehouseZone.h               \
           warehouses.h                  \
-          welcomeStub.h                 \
           woMaterialItem.h              \
           workOrder.h                   \
           workOrderMaterials.h          \
-          xtHelp.h                      \
           xTupleDesigner.h              \
           xTupleDesignerActions.h       \
           xabstractconfigure.h          \
@@ -1509,9 +1504,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           groups.cpp                    \
           guiErrorCheck.cpp             \
           guiclient.cpp                 \
-          helpDownload.cpp              \
-          helpView.cpp                  \
-          helpViewBrowser.cpp           \
           honorific.cpp                 \
           honorifics.cpp                \
           hotkey.cpp                    \
@@ -1881,7 +1873,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           warehouse.cpp                         \
           warehouseZone.cpp                     \
           warehouses.cpp                        \
-          welcomeStub.cpp                       \
           woMaterialItem.cpp                    \
           workOrder.cpp                         \
           workOrderMaterials.cpp                \
@@ -1896,7 +1887,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           xmessageboxmessagehandler.cpp         \
           xsltMap.cpp                           \
           xtupleguiclientinterface.cpp          \
-          xtHelp.cpp                            \
           xuiloader.cpp                         \
           xwidget.cpp                           \
           yourpayprocessor.cpp                  \
@@ -1908,3 +1898,16 @@ include( hunspell.pri )
 
 RESOURCES += guiclient.qrc $${OPENRPT_IMAGE_DIR}/OpenRPTMetaSQL.qrc
 
+macx {
+  EXTRASDIR=${DESTDIR}/xtuple.app/Contents/Resources
+} else {
+  EXTRASDIR=${DESTDIR}
+}
+certificates.path = $${EXTRASDIR}/certificates
+dictionaries.path = $${EXTRASDIR}/hunspell
+translations.path = $${EXTRASDIR}/dict
+certificates.files = ../share/certificates/*
+dictionaries.files = ../hunspell/*.aff ../hunspell/*.dic
+translations.files = ../share/dict/*.qm
+
+translations.extra = cd ../share/dict ; lrelease xTuple*.ts
