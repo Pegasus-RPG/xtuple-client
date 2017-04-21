@@ -243,7 +243,8 @@ QString postProduction::updateWoAfterPost()
 QString postProduction::handleSeriesAdjustAfterPost(int itemlocSeries)
 {
   QString result = QString::null;
-  if (distributeInventory::SeriesAdjust(itemlocSeries, this) == XDialog::Rejected)
+  if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+      QDate(), true) == XDialog::Rejected)
     result = tr("Transaction Canceled");
 
   if (DEBUG)
@@ -315,7 +316,8 @@ QString postProduction::handleIssueToParentAfterPost(int itemlocSeries)
   // is auto issue then issue this receipt to the parent W/O
   issueq.prepare("SELECT issueWoMaterial(womatl_id,"
                  "       roundQty(item_fractional, itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, :qty)),"
-                 "       :itemlocseries, :date, :invhist_id::INTEGER ) AS result "
+                 "       :itemlocseries, :date, :invhist_id::INTEGER, "
+                 "       NULL, TRUE, FALSE ) AS result "
                  "FROM wo, womatl, itemsite, item "
                  "WHERE (wo_id=:wo_id)"
                  "  AND (womatl_id=wo_womatl_id)"
@@ -402,32 +404,198 @@ void postProduction::sPost()
     return;
   }
 
+  int itemsiteId = 0;
   int itemlocSeries = 0;
+  bool controlled = false;
+  bool hasControlledBackflushItems = false;
 
+  // Stage cleanup function to be called on error
+  XSqlQuery cleanup;
+  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+
+  // Series for issueToShipping
+  XSqlQuery parentSeries;
+  parentSeries.prepare("SELECT wo_itemsite_id, isControlledItemsite(wo_itemsite_id) AS controlled, "
+                       "  NEXTVAL('itemloc_series_seq') AS result "
+                       "FROM wo "
+                       "WHERE wo_id = :wo_id;");
+  parentSeries.bindValue(":wo_id", _wo->id());
+  parentSeries.exec();
+  if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
+  {
+    itemsiteId = parentSeries.value("wo_itemsite_id").toInt();
+    itemlocSeries = parentSeries.value("result").toInt();
+    controlled = parentSeries.value("controlled").toBool();
+    cleanup.bindValue(":itemlocSeries", itemlocSeries);
+  }
+  else
+  {
+    ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
+      parentSeries, __FILE__, __LINE__);
+    return;
+  }
+
+  // If backflush, createItemlocdistParent for each controlled material item
+  if (_backflush->isChecked())
+  {
+    // Handle creation of itemlocdist records for each eligible backflush item (sql below from postProduction backflush handling)
+    XSqlQuery backflushItems;
+    backflushItems.prepare(
+      "SELECT item_number, item_fractional, itemsite_id, itemsite_item_id, womatl_id, womatl_wo_id, womatl_uom_id, "
+      " CASE WHEN :qty > 0 THEN " //issueWoMaterial qty = noNeg(expected - consumed)
+      "   noNeg(((womatl_qtyfxd + ((:qty + wo_qtyrcv) * womatl_qtyper)) * (1 + womatl_scrap)) - "
+      "   (womatl_qtyiss + "
+      "   CASE WHEN (womatl_qtywipscrap >  ((womatl_qtyfxd + (:qty + wo_qtyrcv) * womatl_qtyper) * womatl_scrap)) "
+      "        THEN (womatl_qtyfxd + (:qty + wo_qtyrcv) * womatl_qtyper) * womatl_scrap "
+      "        ELSE womatl_qtywipscrap END)) "
+      " ELSE " // returnWoMaterial qty = expected * -1
+      "   ((womatl_qtyfxd + ((:qty + wo_qtyrcv) * womatl_qtyper)) * (1 + womatl_scrap)) * -1 " 
+      " END AS qty "
+      "FROM womatl, wo, itemsite, item "
+      "WHERE womatl_issuemethod IN ('L', 'M') "
+      " AND womatl_wo_id=wo_id "
+      " AND womatl_itemsite_id=itemsite_id "
+      " AND wo_id = :wo_id "
+      " AND itemsite_item_id=item_id "
+      " AND isControlledItemsite(itemsite_id) "
+      "ORDER BY womatl_id;");
+    backflushItems.bindValue(":wo_id", _wo->id());
+    if (_wo->method() == "A")
+      backflushItems.bindValue(":qty", _qty->toDouble());
+    else
+      backflushItems.bindValue(":qty", _qty->toDouble() * -1);
+    backflushItems.exec();
+    while (backflushItems.next())
+    {
+      XSqlQuery womatlItemlocdist;
+      // create the itemlocdist record for this controlled issueWoMaterial item
+      if (_wo->method() == "A")
+      {
+        // make sure the backflush item has relevant qty for issueWoMaterial
+        if (backflushItems.value("qty").toDouble() > 0)
+        {
+          hasControlledBackflushItems = true;
+          womatlItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, roundQty(:item_fractional, itemuomtouom(:item_id, :womatl_uom_id, NULL, :qty)) * -1, 'WO', :wo_id, "
+                                    " :itemlocSeries, NULL, NULL, 'IM') AS result;");
+          womatlItemlocdist.bindValue(":itemsite_id", backflushItems.value("itemsite_id").toInt());
+          womatlItemlocdist.bindValue(":item_id", backflushItems.value("itemsite_item_id").toInt());
+          womatlItemlocdist.bindValue(":item_fractional", backflushItems.value("item_fractional").toBool());
+          womatlItemlocdist.bindValue(":wo_id", _wo->id());
+          womatlItemlocdist.bindValue(":qty", backflushItems.value("qty").toDouble());
+          womatlItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+          womatlItemlocdist.exec();
+          if (!womatlItemlocdist.first())
+          {
+            cleanup.exec();
+            QMessageBox::information( this, tr("Issue Line to Shipping"), 
+              tr("Failed to Create an itemlocdist record for work order backflushed material item %1.")
+              .arg(backflushItems.value("item_number").toString()) );
+            return;
+          }
+          else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
+            womatlItemlocdist, __FILE__, __LINE__))
+          {
+            cleanup.exec();
+            return;
+          }
+        }
+        
+      }
+      // create the itemlocdist record for this controlled returnWoMaterial item
+      else if (_wo->method() == "D")
+      {
+        // make sure the backflush item has relevant qty for returnWoMaterial
+        if (backflushItems.value("womatl_qtyreq").toDouble() >= 0 ? 
+            backflushItems.value("womatl_qtyiss").toDouble() > backflushItems.value("qty").toDouble() : 
+            backflushItems.value("womatl_qtyiss").toDouble() < backflushItems.value("qty").toDouble())
+        {
+          hasControlledBackflushItems = true;
+          womatlItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, COALESCE(itemuomtouom(:item_id, womatl_uom_id, NULL, :qty), :qty) * -1, 'WO', womatl_wo_id, "
+                                    " :itemlocSeries, NULL, NULL, 'IM') AS result "
+                                    "FROM womatl "
+                                    "WHERE womatl_id = :womatl_id "
+                                    " AND CASE WHEN (womatl_qtyreq >= 0) "
+                                    "   THEN womatl_qtyiss > pQty "
+                                    "   ELSE womatl_qtyiss < pQty "
+                                    "   END;");
+          womatlItemlocdist.bindValue(":itemsite_id", backflushItems.value("itemsite_id").toInt());
+          womatlItemlocdist.bindValue(":item_id", backflushItems.value("itemsite_item_id").toInt());
+          womatlItemlocdist.bindValue(":womatl_id", backflushItems.value("womatl_id").toInt());
+          womatlItemlocdist.bindValue(":qty", backflushItems.value("qty").toDouble());
+          womatlItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+          womatlItemlocdist.exec();
+          if (!womatlItemlocdist.first())
+          {
+            cleanup.exec();
+            QMessageBox::information( this, tr("Issue Line to Shipping"), 
+              tr("Failed to Create an itemlocdist record for work order backflushed material item %1.")
+              .arg(backflushItems.value("item_number").toString()) );
+            return;
+          }
+          else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
+            womatlItemlocdist, __FILE__, __LINE__))
+          {
+            cleanup.exec();
+            return;
+          }
+        }
+      }
+    }
+  } // backflush handling
+
+  // If controlled item, createItemlocdistParent
+  if (controlled)
+  {
+    XSqlQuery parentItemlocdist;
+    parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, 'WO', :orderitemId, "
+      ":itemlocSeries, NULL, NULL, 'RM') AS result;");
+    parentItemlocdist.bindValue(":itemsite_id", itemsiteId);
+    if (_wo->method() == "A")
+      parentItemlocdist.bindValue(":qty", _qty->toDouble());
+    else
+      postPost.bindValue(":qty", _qty->toDouble() * -1);
+    parentItemlocdist.bindValue(":orderitemId", _wo->id());
+    parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+    parentItemlocdist.exec();
+  }
+
+  if ((controlled || hasControlledBackflushItems) && 
+      (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true) ==
+      XDialog::Rejected))
+  {
+    cleanup.exec();
+    QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+    return;
+  
+  }
+
+  // postProduction 
+  // TODO - remove transaction after postProduction, issueWoMaterial and returnWoMaterial no longer use negative return values
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
-
-  postPost.exec("BEGIN;");	// handle cancel of lot, serial, or loc distributions
-  postPost.prepare("SELECT postProduction(:wo_id, :qty, :backflushMaterials, 0, :date) AS result;");
+  postPost.exec("BEGIN;");
+  postPost.prepare("SELECT postProduction(:wo_id, :qty, :backflushMaterials, :itemlocSeries, :date, TRUE) AS result;");
   postPost.bindValue(":wo_id", _wo->id());
   if (_wo->method() == "A")
     postPost.bindValue(":qty", _qty->toDouble());
   else
     postPost.bindValue(":qty", _qty->toDouble() * -1);
   postPost.bindValue(":backflushMaterials", QVariant(_backflush->isChecked()));
+  postPost.bindValue(":itemlocSeries", itemlocSeries);
   postPost.bindValue(":date",  _transDate->date() == QDate::currentDate()
                                ? QDateTime::currentDateTime() : QDateTime(_transDate->date()));
 
   postPost.exec();
   if (postPost.first())
   {
-    itemlocSeries = postPost.value("result").toInt();
+    int result = postPost.value("result").toInt();
 
-    if (itemlocSeries < 0)
+    if (result < 0 || result != itemlocSeries)
     {
       rollback.exec();
+      cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production"),
-                             storedProcErrorLookup("postProduction", itemlocSeries),
+                             storedProcErrorLookup("postProduction", result),
                              __FILE__, __LINE__);
       return;
     }
@@ -436,6 +604,7 @@ void postProduction::sPost()
     if (! errmsg.isEmpty())
     {
       rollback.exec();
+      cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
                            tr("%1: %2")
                            .arg(windowTitle())
@@ -443,18 +612,11 @@ void postProduction::sPost()
       return;
     }
 
-    errmsg = handleSeriesAdjustAfterPost(itemlocSeries);
-    if (! errmsg.isEmpty())
-    {
-      rollback.exec();
-      QMessageBox::information(this, tr("Post Production"), errmsg);
-      return;
-    }
-
     errmsg = handleIssueToParentAfterPost(itemlocSeries);
     if (! errmsg.isEmpty())
     {
       rollback.exec();
+      cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
                            tr("%1: %2")
                            .arg(windowTitle())
@@ -466,6 +628,7 @@ void postProduction::sPost()
     if (! errmsg.isEmpty())
     {
       rollback.exec();
+      cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
                            tr("%1: %2")
                            .arg(windowTitle())
@@ -494,6 +657,7 @@ void postProduction::sPost()
   else if (postPost.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
+    cleanup.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production"),
                          postPost, __FILE__, __LINE__);
     return;
