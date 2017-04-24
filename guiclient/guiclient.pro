@@ -62,10 +62,10 @@ mac:!static:contains(QT_CONFIG, qt_framework) {
 }
 }
 
+OBJECTS_DIR = tmp/obj
 win32 {
   win32-msvc*:LIBS += -lshell32
   RC_FILE = rcguiclient.rc
-  OBJECTS_DIR = win_obj
   LIBS += -lz
 }
 win32-g++-4.6 {
@@ -73,14 +73,11 @@ win32-g++-4.6 {
 }
 
 unix: !macx {
- OBJECTS_DIR = unx_obj
  LIBS += -lz
 }
 
 macx {
   RC_FILE = images/icons.icns
-  #PRECOMPILED_HEADER = stable.h
-  OBJECTS_DIR = osx_obj
   QMAKE_INFO_PLIST = Info.plist
   LIBS += -lz -framework QtDesignerComponents
 }
@@ -1903,11 +1900,13 @@ macx {
 } else {
   EXTRASDIR=${DESTDIR}
 }
-certificates.path = $${EXTRASDIR}/certificates
-dictionaries.path = $${EXTRASDIR}/hunspell
-translations.path = $${EXTRASDIR}/dict
-certificates.files = ../share/certificates/*
-dictionaries.files = ../hunspell/*.aff ../hunspell/*.dic
-translations.files = ../share/dict/*.qm
 
-translations.extra = cd ../share/dict ; lrelease xTuple*.ts
+certificates.path = $${EXTRASDIR}/certificates
+certificates.files = ../share/certificates/*
+dictionaries.path = $${EXTRASDIR}/hunspell
+dictionaries.files = ../hunspell/*.aff ../hunspell/*.dic
+
+TRANSLATIONS = ../share/dict/*.ts
+translations.path = $${EXTRASDIR}/dict
+translations.files = $$replace(TRANSLATIONS, ts, qm)
+translations.extra = cd ../share/dict && $$dirname(QMAKE_QMAKE)/lrelease xTuple*.ts
