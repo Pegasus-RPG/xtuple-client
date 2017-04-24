@@ -240,19 +240,6 @@ QString postProduction::updateWoAfterPost()
   return result;
 }
 
-QString postProduction::handleSeriesAdjustAfterPost(int itemlocSeries)
-{
-  QString result = QString::null;
-  if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
-      QDate(), true) == XDialog::Rejected)
-    result = tr("Transaction Canceled");
-
-  if (DEBUG)
-    qDebug("postProduction::handleSeriesAdjustAfterPost() returning %s",
-           qPrintable(result));
-  return result;
-}
-
 QString postProduction::handleTransferAfterPost()
 {
   QString result = QString::null;
