@@ -1776,7 +1776,7 @@ void transferOrder::sReturnStock()
     {
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Return Item Information"),
                            transferReturnStock, __FILE__, __LINE__);
-      return;
+      continue;
     }
   }
 

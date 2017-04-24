@@ -205,6 +205,8 @@ void maintainShipping::sViewOrder()
   {
     return;
   }
+
+  sFillList();
 }
 
 void maintainShipping::sPrintShippingForm()

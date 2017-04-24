@@ -4224,7 +4224,7 @@ void salesOrder::sReturnStock()
     {
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Return Item Information"),
                            returnSales, __FILE__, __LINE__);
-      return;
+      continue;
     }
   }
 
