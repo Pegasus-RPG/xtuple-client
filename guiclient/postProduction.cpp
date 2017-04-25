@@ -322,14 +322,6 @@ QString postProduction::handleIssueToParentAfterPost(int itemlocSeries)
   {
     if (issueq.value("result").toInt() < 0)
       result = "issueWoMaterial failed";
-    else
-    {
-      issueq.prepare("SELECT postItemLocSeries(:itemlocseries);");
-      issueq.bindValue(":itemlocseries", itemlocSeries);
-      issueq.exec();
-      if (issueq.lastError().type() != QSqlError::NoError)
-        result = issueq.lastError().databaseText();
-    }
   }
   else if (issueq.lastError().type() != QSqlError::NoError)
     result = issueq.lastError().databaseText();
@@ -357,14 +349,6 @@ QString postProduction::handleIssueToParentAfterPost(int itemlocSeries)
   {
     if (issueq.value("result").toInt() < 0)
       result = "issueToShipping failed";
-    else
-    {
-      issueq.prepare("SELECT postItemLocSeries(:itemlocseries);");
-      issueq.bindValue(":itemlocseries", itemlocSeries);
-      issueq.exec();
-      if (issueq.lastError().type() != QSqlError::NoError)
-        result = issueq.lastError().databaseText();
-    }
   }
   else if (issueq.lastError().type() != QSqlError::NoError)
     result = issueq.lastError().databaseText();
