@@ -1432,6 +1432,8 @@ const struct {
 			       "you may Return this Shipment."),
 								0, "" },
 
+  { "returnShipmentTransaction", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Cost Category for itemsite"), 0, "" },
+  { "returnShipmentTransaction", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Cost Category for itemsite"), 0, "" },
   { "returnShipmentTransaction",
 			-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Either a Cost Category for the Items you are "
 			       "trying to Return is not configured with a "
@@ -1443,6 +1445,7 @@ const struct {
 			       "Administrator to have this corrected before "
 			       "you may Return this Shipment."),
 								0, "" },
+  { "returnShipmentTransaction", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Can not return shipment for this order type"), 0, "" },
 
   { "reverseapapplication", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The amount paid is less than the applied amount."),
                                 	0, "" },

@@ -1766,45 +1766,19 @@ void transferOrder::viewTransferOrder( int pId )
 void transferOrder::sReturnStock()
 {
   XSqlQuery transferReturnStock;
-  XSqlQuery rollback;
-  rollback.prepare("ROLLBACK;");
-
-  transferReturnStock.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   transferReturnStock.prepare("SELECT returnItemShipments('TO', :toitem_id, 0, CURRENT_TIMESTAMP) AS result;");
   QList<XTreeWidgetItem*> selected = _toitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     transferReturnStock.bindValue(":toitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
     transferReturnStock.exec();
-    if (transferReturnStock.first())
+  if (transferReturnStock.lastError().type() != QSqlError::NoError)
     {
-      int result = transferReturnStock.value("result").toInt();
-      if (result < 0)
-      {
-        rollback.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Return Item Information"),
-                               storedProcErrorLookup("returnItemShipments", result),
-                               __FILE__, __LINE__);
-        return;
-      }
-      if (distributeInventory::SeriesAdjust(transferReturnStock.value("result").toInt(), this) == XDialog::Rejected)
-      {
-        rollback.exec();
-        QMessageBox::information( this, tr("Return Stock"), tr("Transaction Canceled") );
-        return;
-      }
-
-    }
-    else if (transferReturnStock.lastError().type() != QSqlError::NoError)
-    {
-      rollback.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Return Item Information"),
                            transferReturnStock, __FILE__, __LINE__);
-      return;
+      continue;
     }
   }
-
-  transferReturnStock.exec("COMMIT;");
 
   sFillItemList();
 }
