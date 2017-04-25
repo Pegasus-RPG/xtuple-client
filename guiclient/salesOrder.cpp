@@ -4213,48 +4213,22 @@ bool salesOrder::okToProcessCC()
 
 void salesOrder::sReturnStock()
 {
-  XSqlQuery rollback;
-  rollback.prepare("ROLLBACK;");
-
   XSqlQuery returnSales;
-  returnSales.exec("BEGIN;"); // because of possible lot, serial, or location distribution cancelations
   returnSales.prepare("SELECT returnItemShipments(:soitem_id) AS result;");
   QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     returnSales.bindValue(":soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
     returnSales.exec();
-    if (returnSales.first())
+    if (returnSales.lastError().type() != QSqlError::NoError)
     {
-      int result = returnSales.value("result").toInt();
-      if (result < 0)
-      {
-        rollback.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Return Item Information"),
-                               storedProcErrorLookup("returnItemShipments", result),
-                               __FILE__, __LINE__);
-        return;
-      }
-      if (distributeInventory::SeriesAdjust(returnSales.value("result").toInt(), this) == XDialog::Rejected)
-      {
-        rollback.exec();
-        QMessageBox::information( this, tr("Return Stock"), tr("Transaction Canceled") );
-        return;
-      }
-
-    }
-    else if (returnSales.lastError().type() != QSqlError::NoError)
-    {
-      rollback.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Return Item Information"),
                            returnSales, __FILE__, __LINE__);
-      return;
+      continue;
     }
   }
 
-  returnSales.exec("COMMIT;");
-
-    sFillItemList();
+  sFillItemList();
 }
 
 void salesOrder::sIssueStock()
@@ -4557,7 +4531,7 @@ void salesOrder::sIssueLineBalance()
 
       // issueToShipping instead of issueLineBalanceToShipping because we have already calculated the balance
       issueSales.prepare("SELECT issueToShipping('SO', :soitem_id, :qty, :itemlocseries, now(), "
-                         ":invhist_id, TRUE) AS result;");
+                         ":invhist_id, FALSE, TRUE) AS result;");
       issueSales.bindValue(":soitem_id", soitem->id());
       issueSales.bindValue(":qty", balance);
       issueSales.bindValue(":itemlocseries", itemlocSeries);

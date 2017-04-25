@@ -786,40 +786,16 @@ void issueToShipping::sReturnStock()
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
     
-    XSqlQuery rollback;
-    rollback.prepare("ROLLBACK;");
-
-    issueReturnStock.exec("BEGIN;");
     issueReturnStock.prepare("SELECT returnItemShipments(:ordertype, :soitem_id, 0, :ts) AS result;");
     issueReturnStock.bindValue(":ordertype", _order->type());
     issueReturnStock.bindValue(":soitem_id", cursor->id());
     issueReturnStock.bindValue(":ts",        _transDate->date());
     issueReturnStock.exec();
-    if (issueReturnStock.first())
+    if (issueReturnStock.lastError().type() != QSqlError::NoError)
     {
-      int result = issueReturnStock.value("result").toInt();
-      if (result < 0)
-      {
-        rollback.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Returning Stock"),
-                               storedProcErrorLookup("returnItemShipments", result),
-                               __FILE__, __LINE__);
-          return;
-      }
-      else if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
-      {
-        rollback.exec();
-        QMessageBox::information( this, tr("Issue to Shipping"), tr("Return Canceled") );
-        return;
-      }      
-      issueReturnStock.exec("COMMIT;"); 
-    }
-    else if (issueReturnStock.lastError().type() != QSqlError::NoError)
-    {
-      rollback.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Returning Stock"),
                            issueReturnStock, __FILE__, __LINE__);
-      return;
+      continue;
     }
   }
 
