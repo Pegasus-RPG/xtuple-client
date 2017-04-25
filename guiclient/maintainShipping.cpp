@@ -183,6 +183,8 @@ void maintainShipping::sReturnAllOrderStock()
                          maintainReturnAllOrderStock, __FILE__, __LINE__);
     return;
   }
+
+  sFillList();
 }
 
 void maintainShipping::sViewOrder()
@@ -205,8 +207,6 @@ void maintainShipping::sViewOrder()
   {
     return;
   }
-
-  sFillList();
 }
 
 void maintainShipping::sPrintShippingForm()
@@ -244,6 +244,8 @@ void maintainShipping::sReturnAllLineStock()
                          maintainReturnAllLineStock, __FILE__, __LINE__);
     return;
   }
+
+  sFillList();
 }
 
 void maintainShipping::sViewLine()
@@ -271,40 +273,17 @@ void maintainShipping::sViewLine()
 void maintainShipping::sReturnAllStock()
 {
   XSqlQuery maintainReturnAllStock;
-  XSqlQuery rollback;
-  rollback.prepare("ROLLBACK;");
-
-  maintainReturnAllStock.exec("BEGIN");
   maintainReturnAllStock.prepare("SELECT returnShipmentTransaction(:ship_id) AS result;");
   maintainReturnAllStock.bindValue(":ship_id", _ship->altId());
   maintainReturnAllStock.exec();
-  if (maintainReturnAllStock.first())
+  if (maintainReturnAllStock.lastError().type() != QSqlError::NoError)
   {
-    int result = maintainReturnAllStock.value("result").toInt();
-    if (maintainReturnAllStock.value("result").toInt() < 0)
-    {
-      rollback.exec();
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Shipment Information"),
-                             storedProcErrorLookup("returnShipmentTransaction", result),
-                             __FILE__, __LINE__);
-      return;
-    }
-    else if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
-    {
-      rollback.exec();
-      QMessageBox::information( this, tr("Issue to Shipping"), tr("Return Canceled") );
-      return;
-    }    
-    maintainReturnAllStock.exec("COMMIT;"); 
-    sFillList();
-  }
-  else if (maintainReturnAllStock.lastError().type() != QSqlError::NoError)
-  {
-    rollback.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Shipment Information"),
                          maintainReturnAllStock, __FILE__, __LINE__);
     return;
   }
+
+  sFillList();
 }
 
 void maintainShipping::sFillList()
