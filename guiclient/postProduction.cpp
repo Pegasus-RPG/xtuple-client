@@ -518,10 +518,8 @@ void postProduction::sPost()
       {
         rollback.exec();
         cleanup.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
-                             tr("%1: %2")
-                             .arg(windowTitle())
-                             .arg(woq.lastError().databaseText()),__FILE__,__LINE__);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred while updating WO notes"),
+          woq, __FILE__,__LINE__);
         return;
       }
     }
@@ -667,10 +665,8 @@ void postProduction::sPost()
         {
           rollback.exec();
           cleanup.exec();
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
-                               tr("%1: %2")
-                               .arg(windowTitle())
-                               .arg(xferq.lastError().databaseText()),__FILE__,__LINE__);
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred during interWarehouseTransfer"),
+            xferq, __FILE__,__LINE__);
           return;
         }
       }
