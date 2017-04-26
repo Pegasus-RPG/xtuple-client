@@ -140,49 +140,131 @@ void correctProductionPosting::clear()
 
 void correctProductionPosting::sCorrect()
 {
-  XSqlQuery correctCorrect;
   if (! okToPost())
     return;
 
-  XSqlQuery rollback;
-  rollback.prepare("ROLLBACK;");
+  int itemlocSeries;
+  bool hasControlledMaterialItems;
 
-  correctCorrect.exec("BEGIN;");	// handle cancel of lot, serial, or loc distribution
-  correctCorrect.prepare("SELECT correctProduction(:wo_id, :qty, :backflushMaterials, 0, :date)"
-            "        AS result;");
+  // Stage distribution cleanup function to be called on error
+  XSqlQuery cleanup;
+  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+
+  // Get the parent series id
+  XSqlQuery postInfo;
+  postInfo.prepare("SELECT item_type, roundQty(item_fractional, :qty) AS parent_qty, wo_status, wo_itemsite_id, "
+                       "  NEXTVAL('itemloc_series_seq') AS series, "
+                       "  isControlledItemsite(wo_itemsite_id) AS controlled "
+                       "FROM wo "
+                       "  JOIN itemsite ON itemsite_id=wo_itemsite_id "                       
+                       "  JOIN item ON item_id=itemsite_item_id "
+                       "WHERE wo_id=:wo_id;");
+  postInfo.bindValue(":wo_id", _wo->id());
+  if (_wo->method() == "A")
+    postInfo.bindValue(":qty", _qty->toDouble());
+  else
+    postInfo.bindValue(":qty", _qty->toDouble() * -1);
+  postInfo.exec();
+  if (postInfo.first())
+  {
+    itemlocSeries = postInfo.value("series").toInt();
+    cleanup.bindValue(":itemlocSeries", itemlocSeries);
+  }
+  else
+  {
+    ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
+                            postInfo, __FILE__, __LINE__);
+    return;
+  }
+
+  // If controlled item, createItemlocdistParent
+  if (postInfo.value("controlled").toBool())
+  {
+    XSqlQuery parentItemlocdist;
+    parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty * -1, 'WO', "
+                              " :orderitem_id, :itemlocSeries, NULL, NULL, 'RM');");
+    parentItemlocdist.bindValue(":itemsite_id", postInfo.value("wo_itemsite_id").toInt());
+    parentItemlocdist.bindValue(":qty", postInfo.value("parent_qty").toDouble());
+    parentItemlocdist.bindValue(":orderitem_id", _wo->id());
+    parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+    parentItemlocdist.exec();
+    if (!parentItemlocdist.first())
+    {
+      cleanup.exec();
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
+                              parentItemlocdist, __FILE__, __LINE__);
+      return;
+    } 
+  }
+
+  // If backflush materials, createItemlocdistParent for each (for returnWoMaterial() call)
+  if (_backFlush->isChecked())
+  {
+    XSqlQuery backflushMaterials;
+    backflushMaterials.prepare("SELECT wo_qtyrcv, womatl_id, womatl_uom_id, itemsite_id, "
+                               "  roundQty(item_fractional, "
+                               "    (CASE WHEN wo_qtyrcv - :qty > 0 THEN 0 ELSE womatl_qtyfxd END + :qty * womatl_qtyper) * (1 + womatl_scrap)) AS qty "
+                               "FROM wo "
+                               "  JOIN womatl ON (womatl_wo_id=wo_id AND womatl_issuemethod='L') "
+                               "  JOIN itemsite ON (itemsite_id=womatl_itemsite_id) "
+                               "  JOIN item ON (item_id=itemsite_item_id) "
+                               "WHERE wo_id=:wo_id "
+                               "  AND isControlledItemsite(womatl_itemsite_id);");
+    backflushMaterials.bindValue(":wo_id", _wo->id());
+    backflushMaterials.bindValue(":qty", postInfo.value("parent_qty").toDouble());
+    backflushMaterials.exec();
+    while (backflushMaterials.next())
+    {
+      if (backflushMaterials.value("qty").toDouble() > 0)
+      {
+        hasControlledMaterialItems = true;
+        XSqlQuery parentItemlocdist;
+        parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, :qty * -1, 'WO', "
+                                  " :orderitem_id, :itemlocSeries, NULL, NULL, 'RM');");
+        parentItemlocdist.bindValue(":itemsite_id", backflushMaterials.value("itemsite_id").toInt());
+        parentItemlocdist.bindValue(":qty", backflushMaterials.value("qty").toDouble());
+        parentItemlocdist.bindValue(":orderitem_id", _wo->id());
+        parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+        parentItemlocdist.exec();
+        if (!parentItemlocdist.first())
+        {
+          cleanup.exec();
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
+                                  parentItemlocdist, __FILE__, __LINE__);
+          return;
+        }  
+      }
+    }
+  }
+
+  // Call distribute inventory if needed
+  if ((postInfo.value("controlled").toBool() || hasControlledMaterialItems) && 
+    (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true) == XDialog::Rejected))
+  {
+    cleanup.exec();
+    QMessageBox::information( this, tr("Correct Production Posting"), tr("Transaction Canceled") );
+    return;
+  }
+
+  XSqlQuery correctCorrect;
+  correctCorrect.prepare("SELECT correctProduction(:wo_id, :qty, :backflushMaterials, "
+                         ":itemlocSeries, :date, NULL, TRUE) AS result;");
   correctCorrect.bindValue(":wo_id", _wo->id());
   if (_wo->method() == "A")
     correctCorrect.bindValue(":qty", _qty->toDouble());
   else
     correctCorrect.bindValue(":qty", _qty->toDouble() * -1);
   correctCorrect.bindValue(":backflushMaterials",  QVariant(_backFlush->isChecked()));
+  correctCorrect.bindValue(":itemlocSeries", itemlocSeries);
   correctCorrect.bindValue(":date",  _transDate->date());
   correctCorrect.exec();
   if (correctCorrect.first())
   {
-    int result = correctCorrect.value("result").toInt();
-    if (result < 0)
-    {
-      rollback.exec();
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production Correction"),
-                           storedProcErrorLookup("correctProduction", result),
-                           __FILE__, __LINE__);
-      return;
-    }
-
-    if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
-    {
-      rollback.exec();
-      QMessageBox::information( this, tr("Correct Production Posting"), tr("Transaction Canceled") );
-      return;
-    }
-
-    correctCorrect.exec("COMMIT;");
     omfgThis->sWorkOrdersUpdated(_wo->id(), true);
   }
   else if (correctCorrect.lastError().type() != QSqlError::NoError)
   {
-    rollback.exec();
+    cleanup.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production Correction"),
                                     correctCorrect, __FILE__, __LINE__);
     return;

@@ -236,6 +236,17 @@ const struct {
   { "correctReceipt",  -19, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
               "Failed to create a GL transaction for the purchase price variance."),  0, "" },
 
+  { "correctProduction",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+              "Can not correct production, WO must be status In-Process."),  0, "" },
+  { "correctProduction",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+              "Correct production does not support Job costed items."),  0, "" },
+  { "correctProduction",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+              "ItemlocSeries is required when pPreDistributed."),  0, "" },
+  { "correctProduction",  -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+              "Missing cost category."),  0, "" },
+  { "correctProduction",  -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+              "Posting Distribution Detail Returned 0 Results."),  0, "" },
+
   { "createAccountingPeriod",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Start Date falls within another "
 				      "Accounting Period."),	0, "" },
   { "createAccountingPeriod",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The End Date falls within another "
