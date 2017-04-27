@@ -16,7 +16,10 @@
 #include "parameter.h"
 #include "virtualCluster.h"
 
+class QLabel;
+class QGridLayout;
 class QScriptEngine;
+class XTreeWidgetItem;
 
 class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
 {

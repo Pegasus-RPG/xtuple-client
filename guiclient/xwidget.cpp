@@ -23,26 +23,23 @@
 #include "xcheckbox.h"
 #include "xtsettings.h"
 #include "guiclient.h"
-#include "scriptablePrivate.h"
 #include "shortcuts.h"
 
 #define DEBUG false
 
-class XWidgetPrivate : public ScriptablePrivate
+// Obsolete now?
+class XWidgetPrivate
 {
   friend class XWidget;
 
   public:
     XWidgetPrivate(XWidget *parent);
     virtual ~XWidgetPrivate();
-
-    bool _shown;
 };
 
 XWidgetPrivate::XWidgetPrivate(XWidget *parent)
-  : ScriptablePrivate(parent)
 {
-  _shown = false;
+  Q_UNUSED(parent);
 }
 
 XWidgetPrivate::~XWidgetPrivate()
@@ -52,7 +49,9 @@ XWidgetPrivate::~XWidgetPrivate()
 XWidget::XWidget(QWidget *parent, Qt::WindowFlags flags)
   : QWidget(parent,
             ((flags & (Qt::Dialog | Qt::Window)) && parent && parent->isModal()) ? (flags | Qt::Dialog)
-                  : flags )
+                  : flags ),
+    ScriptablePrivate(parent, this),
+    _private(0)
 {
   if(parent && parent->isModal() && (flags & (Qt::Dialog | Qt::Window)))
   {
@@ -60,39 +59,36 @@ XWidget::XWidget(QWidget *parent, Qt::WindowFlags flags)
   }
   if(!parent || !parent->isModal())
     setParent(omfgThis);
-
-  _private = new XWidgetPrivate(this);
 }
 
 XWidget::XWidget(QWidget * parent, const char * name, Qt::WindowFlags flags)
   : QWidget(parent,
             ((flags & (Qt::Dialog | Qt::Window)) && parent && parent->isModal()) ? (flags | Qt::Dialog)
-                  : flags )
+                  : flags ),
+    ScriptablePrivate(parent, this),
+    _private(0)
 {
   if(parent && parent->isModal() && (flags & (Qt::Dialog | Qt::Window)))
   {
     setWindowModality(Qt::ApplicationModal);
-    //setWindowFlags(windowFlags() | Qt::Dialog);
   }
 
   if(name)
     setObjectName(name);
   if(!parent || !parent->isModal())
     setParent(omfgThis);
-
-  _private = new XWidgetPrivate(this);
 }
 
 XWidget::~XWidget()
 {
-  if(_private)
+  if (_private)
     delete _private;
 }
 
 void XWidget::closeEvent(QCloseEvent *event)
 {
   event->accept(); // we have no reason not to accept and let the script change it if needed
-  _private->callCloseEvent(event);
+  callCloseEvent(event);
 
   if(event->isAccepted())
   {
@@ -109,9 +105,9 @@ void XWidget::closeEvent(QCloseEvent *event)
 
 void XWidget::showEvent(QShowEvent *event)
 {
-  if(!_private->_shown)
+  if (! _shown)
   {
-    _private->_shown = true;
+    _shown = true;
     if (windowFlags() & (Qt::Window | Qt::Dialog))
     {
       QRect availableGeometry = QApplication::desktop()->availableGeometry();
@@ -161,7 +157,7 @@ void XWidget::showEvent(QShowEvent *event)
       }
     }
 
-    _private->loadScriptEngine();
+    loadScriptEngine();
 
     QList<XCheckBox*> allxcb = findChildren<XCheckBox*>();
     for (int i = 0; i < allxcb.size(); ++i)
@@ -170,34 +166,24 @@ void XWidget::showEvent(QShowEvent *event)
     shortcuts::setStandardKeys(this);
   }
 
-  _private->callShowEvent(event);
+  callShowEvent(event);
   QWidget::showEvent(event);
 }
 
-enum SetResponse XWidget::set( const ParameterList & pParams )
+enum SetResponse XWidget::set(const ParameterList & pParams)
 {
   _lastSetParams = pParams;
-
-  _private->loadScriptEngine();
-
+  loadScriptEngine();
   QTimer::singleShot(0, this, SLOT(postSet()));
-
   return NoError;
 }
 
 enum SetResponse XWidget::postSet()
 {
-  return _private->callSet(_lastSetParams);
+  return callSet(_lastSetParams);
 }
 
 ParameterList XWidget::get() const
 {
   return _lastSetParams;
 }
-
-QScriptEngine *XWidget::engine()
-{
-  _private->loadScriptEngine();
-  return _private->_engine;
-}
- 

@@ -15,21 +15,29 @@
 #include <QScriptEngine>
 #include <QScriptEngineDebugger>
 #include <QScriptValue>
+#include <QSqlDatabase>
+#include <QSqlDriver>
 
+#include "guiclientinterface.h"
 #include "include.h"
 #include "qtsetup.h"
+#include "scriptcache.h"
 #include "widgets.h"
 #include "xsqlquery.h"
 
-// _object lets us work with the widget we want to script without deriving
-// ScriptableWidget from QObject, which would cause multiple inheritance headaches
+#define DEBUG true
 
-ScriptableWidget::ScriptableWidget(QObject* object)
+GuiClientInterface *ScriptableWidget::_guiClientInterface = 0;
+ScriptCache        *ScriptableWidget::_cache              = 0;
+
+ScriptableWidget::ScriptableWidget(QWidget *self)
   : _debugger(0),
     _engine(0),
-    _object(object),
     _scriptLoaded(false)
 {
+  _self = (self ? self : dynamic_cast<QWidget *>(this));
+  if (! _cache)
+    _cache = new ScriptCache(_guiClientInterface);
 }
 
 ScriptableWidget::~ScriptableWidget()
@@ -38,18 +46,19 @@ ScriptableWidget::~ScriptableWidget()
 
 QScriptEngine *ScriptableWidget::engine()
 {
-  if (!_engine)
+  QWidget *w = _self;
+  if (w && ! _engine)
   {
-    _engine = new QScriptEngine(_object);
+    _engine = new QScriptEngine(w);
     if (_x_preferences && _x_preferences->boolean("EnableScriptDebug"))
     {
-      _debugger = new QScriptEngineDebugger(_object);
+      _debugger = new QScriptEngineDebugger(w);
       _debugger->attachTo(_engine);
     }
 
     setupQt(_engine);
     setupInclude(_engine);
-    QScriptValue mywidget = _engine->newQObject(_object);
+    QScriptValue mywidget = _engine->newQObject(w);
     _engine->globalObject().setProperty("mywidget",  mywidget);
   }
 
@@ -58,35 +67,56 @@ QScriptEngine *ScriptableWidget::engine()
 
 void ScriptableWidget::loadScript(const QStringList &list)
 {
+  qDebug() << "Looking for scripts" << list;
+  QString widgetName = list.last();
+
+  // assume a coherent cache has the whole list if it has the last
+  if (! _cache->_idsByName.contains(widgetName))
+  {
+    _cache->_idsByName.insert(widgetName, QList<int>());
+
+    // make one query to get all relevant scripts, using a JSON object
+    // to enforce load order: key = order, value = name
+    QStringList pair;
+    for (int i = 0; i < list.length(); i++)
+    {
+      pair.append(QString("\"%1\": \"%2\"").arg(i).arg(list.at(i)));
+    }
+
+    XSqlQuery q;
+    q.prepare("WITH jsonlist AS (SELECT *"
+              "                    FROM json_each_text(:jsonlist))"
+              "SELECT script_id, script_name, script_source"
+              "  FROM script"
+              "  JOIN jsonlist ON script_name = value"
+              " WHERE script_enabled"
+              " ORDER BY key, script_order;");
+    q.bindValue(":jsonlist", "{" + pair.join(", ") + "}");
+    q.exec();
+    while (q.next())
+    {
+      _cache->_scriptsById.insert(q.value("script_id").toInt(),
+                               qMakePair(q.value("script_name").toString(),
+                                         q.value("script_source").toString()));
+      _cache->_idsByName[widgetName].append(q.value("script_id").toInt());
+    }
+    if (DEBUG) qDebug() << _cache->_idsByName[widgetName];
+  }
+
+  if (_cache->_idsByName[widgetName].isEmpty())
+    return;
+
   if (! engine())
   {
     qDebug() << "could not initialize engine" << list;
     return;
   }
-  qDebug() << "Looking for scripts" << list;
 
-  // make one query to get all relevant scripts, using a JSON object
-  // to enforce load order: key = order, value = name
-  QStringList pair;
-  for (int i = 0; i < list.length(); i++)
+  foreach(int id, _cache->_idsByName[widgetName])
   {
-    pair.append(QString("\"%1\": \"%2\"").arg(i).arg(list.at(i)));
-  }
-
-  XSqlQuery scriptq;
-  scriptq.prepare("WITH jsonlist AS (SELECT *"
-                  "                    FROM json_each_text(:jsonlist))"
-                  "SELECT script_name, script_source"
-                  "  FROM script"
-                  "  JOIN jsonlist ON script_name = value"
-                  " WHERE script_enabled"
-                  " ORDER BY key, script_order;");
-  scriptq.bindValue(":jsonlist", "{" + pair.join(", ") + "}");
-  scriptq.exec();
-  while (scriptq.next())
-  {
-    QScriptValue result = engine()->evaluate(scriptq.value("script_source").toString(),
-                                             scriptq.value("script_name").toString());
+    QPair<QString, QString> script = _cache->_scriptsById.value(id);
+    if (DEBUG) qDebug() << "evaluating" << id << script.first;
+    QScriptValue result = engine()->evaluate(script.second, script.first);
     if (engine()->hasUncaughtException())
     {
       qDebug() << "uncaught exception at line"
@@ -103,22 +133,23 @@ void ScriptableWidget::loadScript(const QString& oName)
 
 void ScriptableWidget::loadScriptEngine()
 {
-  if (_scriptLoaded || !_object)
+  QWidget *w = _self;
+  if (_scriptLoaded || ! w)
     return;
   _scriptLoaded = true;
 
   QStringList scriptList;
 
   // load scripts by class heirarchy name
-  const QMetaObject *m = _object->metaObject();
-  while(m)
+  const QMetaObject *m = w->metaObject();
+  while (m)
   {
     scriptList.prepend(m->className());
     m = m->superClass();
   }
 
   // load scripts by object name
-  QStringList parts = _object->objectName().split(" ");
+  QStringList parts = w->objectName().split(" ");
   QStringList search_parts;
   QString oName;
   while(!parts.isEmpty())

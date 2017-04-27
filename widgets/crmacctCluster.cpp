@@ -8,6 +8,9 @@
  * to be bound by its terms.
  */
 
+#include <QDialogButtonBox>
+#include <QGridLayout>
+#include <QLabel>
 #include <QtScript>
 
 #include <metasql.h>
@@ -16,6 +19,7 @@
 #include "custcluster.h"
 #include "errorReporter.h"
 #include "xcombobox.h"
+#include "xtreewidget.h"
 
 /* _listAndSearchQueryString is, as you may have guessed, shared by the
    CRMAcctList and CRMAcctSearch classes. It's a big 'un and has a couple

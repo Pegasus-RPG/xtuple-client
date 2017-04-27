@@ -24,13 +24,26 @@ class QWidget;
 class ScriptablePrivate : public ScriptableWidget
 {
   public:
-    ScriptablePrivate(QWidget* parent);
+    ScriptablePrivate(QWidget* parent, QWidget *self = 0);
     virtual ~ScriptablePrivate();
 
     virtual QScriptEngine   *engine();
     virtual enum SetResponse callSet(const ParameterList &);
     virtual void             callShowEvent(QEvent*);
     virtual void             callCloseEvent(QEvent*);
+    virtual ParameterList    get() const = 0;
+
+    QAction      *_showMe;
+    ParameterList _lastSetParams;
+    QAction      *_rememberPos;
+    QAction      *_rememberSize;
+    bool          _shown;
+
+  //public slots:
+    virtual enum SetResponse set(const ParameterList &) = 0;
+
+  protected: //protected slots:
+    virtual enum SetResponse postSet() = 0;
 
 };
 
