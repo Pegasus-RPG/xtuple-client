@@ -103,28 +103,120 @@ void returnWoMaterialBatch::sReturn()
         rollback.prepare("ROLLBACK;");
   
         XSqlQuery items;
-        items.prepare("SELECT womatl_id,"
-                      "       CASE WHEN wo_qtyord >= 0 THEN"
-                      "         womatl_qtyiss"
-                      "       ELSE"
-                      "         ((womatl_qtyreq - womatl_qtyiss) * -1)"
-                      "       END AS qty"
-                      "  FROM wo, womatl, itemsite"
+        items.prepare("SELECT womatl_id, womatl_uom_id, womatl_qtyreq, womatl_qtyiss, "
+                      " CASE WHEN wo_qtyord >= 0 THEN womatl_qtyiss "
+                      "   ELSE ((womatl_qtyreq - womatl_qtyiss) * -1) "
+                      " END AS qty, "
+                      " itemsite_id, itemsite_item_id, item_number, "
+                      " isControlledItemsite(itemsite_id) AS controlled "
+                      "  FROM wo, womatl, itemsite, item"
                       " WHERE((wo_id=womatl_wo_id)"
                       "   AND (womatl_itemsite_id=itemsite_id)"
+                      "   AND (itemsite_item_id=item_id)"
                       "   AND ( (wo_qtyord < 0) OR (womatl_issuemethod IN ('S','M')) )"
-                      "   AND (womatl_wo_id=:wo_id))");
+                      "   AND (womatl_wo_id=:wo_id)) "
+                      "ORDER BY womatl_id;");
         items.bindValue(":wo_id", _wo->id());
         items.exec();
+
+        bool trynext = true;
+        int succeeded = 0;
+        QList<QString> failedItems;
+        QList<QString> errors;
         while(items.next())
         {
           if(items.value("qty").toDouble() == 0.0)
             continue;
 
+          int itemlocSeries;
+
+          // Stage distribution cleanup function to be called on error
+          XSqlQuery cleanup;
+          cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+
+          // Get the parent series id
+          XSqlQuery parentSeries;
+          parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
+          parentSeries.exec();
+          if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
+          {
+            itemlocSeries = parentSeries.value("result").toInt();
+            cleanup.bindValue(":itemlocSeries", itemlocSeries);
+          }
+          else
+          {
+            failedItems.append(items.value("item_number").toString());
+            errors.append("Failed to Retrieve the Next itemloc_series_seq");
+            continue;
+          }
+
+          // If controlled and backflush item has relevant qty for returnWoMaterial
+          if (items.value("controlled").toBool() && 
+             (items.value("womatl_qtyreq").toDouble() >= 0 ? 
+              items.value("womatl_qtyiss").toDouble() >= items.value("qty").toDouble() : 
+              items.value("womatl_qtyiss").toDouble() <= items.value("qty").toDouble()))
+          {
+            // Create the parent itemlocdist record for each line item requiring distribution and call distributeInventory::seriesAdjust
+            XSqlQuery parentItemlocdist;
+            parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, "
+                                      " COALESCE(itemuomtouom(:itemsite_item_id, NULL, :womatl_uom_id, :qty), :qty), "
+                                      "'WO', :orderitemId, :itemlocSeries, NULL, NULL, 'IM');");
+            parentItemlocdist.bindValue(":itemsite_id", items.value("itemsite_id").toInt());
+            parentItemlocdist.bindValue(":itemsite_item_id", items.value("itemsite_item_id").toInt());
+            parentItemlocdist.bindValue(":womatl_uom_id", items.value("womatl_uom_id").toInt());
+            parentItemlocdist.bindValue(":qty", items.value("qty").toDouble());
+            parentItemlocdist.bindValue(":orderitemId", _wo->id());
+            parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+            parentItemlocdist.exec();
+            if (parentItemlocdist.first())
+            {
+              if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+                QDate(), true) == XDialog::Rejected)
+              {
+                cleanup.exec();
+                // If it's not the last item in the loop, ask the user to exit loop or continue
+                if (items.at() != (items.size() -1))
+                {
+                  if (QMessageBox::question(this,  tr("Return WO Material"),
+                  tr("Posting distribution detail for item number %1 was cancelled but "
+                    "there are more items to issue. Continue issuing the remaining materials?")
+                  .arg(items.value("item_number").toString()),
+                  QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+                  {
+                    failedItems.append(items.value("item_number").toString());
+                    errors.append("Detail Distribution Cancelled");
+                    continue;
+                  }
+                  else
+                  {
+                    failedItems.append(items.value("item_number").toString());
+                    errors.append("Detail Distribution Cancelled");
+                    break;
+                  }
+                }
+                else 
+                {
+                  failedItems.append(items.value("item_number").toString());
+                  errors.append("Detail Distribution Cancelled");
+                  continue;
+                }
+              }
+            }
+            else
+            {
+              cleanup.exec();
+              failedItems.append(items.value("item_number").toString());
+              errors.append(tr("Error Creating itemlocdist Records. %1")
+                .arg(parentItemlocdist.lastError().text()));
+              continue;
+            }
+          }
+
           returnReturn.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-          returnReturn.prepare("SELECT returnWoMaterial(:womatl_id, :qty, 0, :date) AS result;");
+          returnReturn.prepare("SELECT returnWoMaterial(:womatl_id, :qty, :itemlocSeries, :date, FALSE, TRUE, TRUE) AS result;");
           returnReturn.bindValue(":womatl_id", items.value("womatl_id").toInt());
           returnReturn.bindValue(":qty", items.value("qty").toDouble());
+          returnReturn.bindValue(":itemlocSeries", itemlocSeries);
           returnReturn.bindValue(":date",  _transDate->date());
           returnReturn.exec();
           if (returnReturn.first())
@@ -132,15 +224,11 @@ void returnWoMaterialBatch::sReturn()
             if (returnReturn.value("result").toInt() < 0)
             {
               rollback.exec();
-              ErrorReporter::error(QtCriticalMsg, this, tr("Error Returning Work Order Material Batch, W/O ID #%1")
-                                   .arg(_wo->id()),returnReturn, __FILE__, __LINE__);
-              return;
-            }
-            if (distributeInventory::SeriesAdjust(returnReturn.value("result").toInt(), this) == XDialog::Rejected)
-            {
-              rollback.exec();
-              QMessageBox::information( this, tr("Material Return"), tr("Transaction Canceled") );
-              return;
+              cleanup.exec();
+              failedItems.append(items.value("item_number").toString());
+              errors.append(tr("Return WO Material failed. %1")
+                .arg(returnReturn.lastError().text()));
+              continue;
             }
           }
           else
@@ -150,7 +238,21 @@ void returnWoMaterialBatch::sReturn()
                                  .arg(_wo->id()),returnReturn, __FILE__, __LINE__);\
             return;
           }
+          succeeded++;
           returnReturn.exec("COMMIT;");
+        }
+
+        if (errors.size() > 0)
+        {
+          QMessageBox dlg(QMessageBox::Critical, "Errors Issuing Material", "", QMessageBox::Ok, this);
+          dlg.setText(tr("%1 Items succeeded.\n%2 Items failed.").arg(succeeded).arg(failedItems.size()));
+
+          QString details;
+          for (int i=0; i<failedItems.size(); i++)
+            details += tr("Item %1 failed with:\n%2\n").arg(failedItems[i]).arg(errors[i]);
+          dlg.setDetailedText(details);
+
+          dlg.exec();
         }
       }
     }
