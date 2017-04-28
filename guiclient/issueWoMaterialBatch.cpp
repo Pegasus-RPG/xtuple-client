@@ -176,16 +176,11 @@ void issueWoMaterialBatch::sIssue()
   MetaSQLQuery mqlitems(sqlitems);
   XSqlQuery items = mqlitems.toQuery(params);
 
-  bool trynext = true;
   int succeeded = 0;
   QList<QString> failedItems;
   QList<QString> errors;
   while(items.next())
-  {
-    // Previous error and user did not want to continue posting remaining invoices. Do nothing for the rest of the loop.
-    if (!trynext)
-      continue;
-    
+  { 
     // Stage distribution cleanup function to be called on error
     XSqlQuery cleanup;
     cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
@@ -239,7 +234,6 @@ void issueWoMaterialBatch::sIssue()
             }
             else
             {
-              trynext = false;
               failedItems.append(items.value("item_number").toString());
               errors.append("Detail Distribution Cancelled");
               break;

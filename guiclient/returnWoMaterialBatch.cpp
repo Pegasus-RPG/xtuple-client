@@ -99,9 +99,6 @@ void returnWoMaterialBatch::sReturn()
          returnReturn.value("wo_status").toString() == "R" ||
          returnReturn.value("wo_status").toString() == "I")
       {
-        XSqlQuery rollback;
-        rollback.prepare("ROLLBACK;");
-  
         XSqlQuery items;
         items.prepare("SELECT womatl_id, womatl_uom_id, womatl_qtyreq, womatl_qtyiss, "
                       " CASE WHEN wo_qtyord >= 0 THEN womatl_qtyiss "
@@ -212,7 +209,6 @@ void returnWoMaterialBatch::sReturn()
             }
           }
 
-          returnReturn.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
           returnReturn.prepare("SELECT returnWoMaterial(:womatl_id, :qty, :itemlocSeries, :date, FALSE, TRUE, TRUE) AS result;");
           returnReturn.bindValue(":womatl_id", items.value("womatl_id").toInt());
           returnReturn.bindValue(":qty", items.value("qty").toDouble());
@@ -223,7 +219,6 @@ void returnWoMaterialBatch::sReturn()
           {
             if (returnReturn.value("result").toInt() < 0)
             {
-              rollback.exec();
               cleanup.exec();
               failedItems.append(items.value("item_number").toString());
               errors.append(tr("Return WO Material failed. %1")
@@ -233,13 +228,11 @@ void returnWoMaterialBatch::sReturn()
           }
           else
           {
-            rollback.exec();
             ErrorReporter::error(QtCriticalMsg, this, tr("Error Returning Work Order Material Batch, W/O ID #%1")
                                  .arg(_wo->id()),returnReturn, __FILE__, __LINE__);\
             return;
           }
           succeeded++;
-          returnReturn.exec("COMMIT;");
         }
 
         if (errors.size() > 0)
