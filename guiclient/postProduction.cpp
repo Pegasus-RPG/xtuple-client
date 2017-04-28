@@ -21,7 +21,7 @@
 #include "storedProcErrorLookup.h"
 #include "errorReporter.h"
 
-#define DEBUG true
+#define DEBUG false
 
 postProduction::postProduction(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -519,9 +519,7 @@ QString postProduction::handleTransferAfterPost(int itemlocSeries)
                   "production Site. You must manually transfer the "
                   "production to the intended Site.");
     else if (itemlocSeries <= 0)
-    {
       result = tr("Failed to post an immediate transfer. Itemloc");
-    }
     else
     {
       XSqlQuery xferq;
