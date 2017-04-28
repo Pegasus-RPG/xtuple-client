@@ -229,6 +229,9 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _account->setType(GLCluster::cRevenue | GLCluster::cExpense |
                     GLCluster::cAsset | GLCluster::cLiability);
 
+  _defaultPoType->populate("SELECT potype_id, potype_code ||' - '||potype_descr, potype_code "
+                           " FROM potype WHERE potype_active ORDER BY potype_default DESC");
+
   _vendid      = -1;
   _crmacctid   = -1;
   _captive     = false;
@@ -267,6 +270,7 @@ SetResponse vendor::set(const ParameterList &pParams)
     {
       _mode = cNew;
       emit newMode(_mode);
+
       
       clear();
 
@@ -377,6 +381,7 @@ void vendor::setViewMode()
   _defaultTerms->setEnabled(false);
   _defaultShipVia->setEnabled(false);
   _defaultCurr->setEnabled(false);
+  _defaultPoType->setEnabled(false);
   _contact1->setEnabled(false);
   _contact2->setEnabled(false);
   _address->setEnabled(false);
@@ -536,6 +541,7 @@ bool vendor::sSave()
           "    vend_terms_id=<? value(\"vend_terms_id\") ?>,"
           "    vend_shipvia=<? value(\"vend_shipvia\") ?>,"
 	  "    vend_curr_id=<? value(\"vend_curr_id\") ?>,"
+	  "    vend_potype_id=<? value(\"vend_potype_id\") ?>,"
           "    vend_taxzone_id=<? value(\"vend_taxzone_id\") ?>,"
           "    vend_match=<? value(\"vend_match\") ?>,"
           "    vend_ach_enabled=<? value(\"vend_ach_enabled\") ?>,"
@@ -562,7 +568,7 @@ bool vendor::sSave()
           "  vend_po, vend_restrictpurch,"
           "  vend_1099, vend_qualified,"
           "  vend_comments, vend_pocomments,"
-          "  vend_fobsource, vend_fob,"
+          "  vend_fobsource, vend_fob, vend_potype_id,"
           "  vend_terms_id, vend_shipvia, vend_curr_id,"
           "  vend_taxzone_id, vend_match, vend_ach_enabled,"
           "  vend_ach_routingnumber, vend_ach_accntnumber,"
@@ -588,6 +594,7 @@ bool vendor::sSave()
           "  <? value(\"vend_pocomments\") ?>,"
           "  <? value(\"vend_fobsource\") ?>,"
           "  <? value(\"vend_fob\") ?>,"
+          "  <? value(\"vend_potype_id\") ?>,"
           "  <? value(\"vend_terms_id\") ?>,"
           "  <? value(\"vend_shipvia\") ?>,"
           "  <? value(\"vend_curr_id\") ?>, "
@@ -617,6 +624,7 @@ bool vendor::sSave()
   params.append("vend_vendtype_id", _vendtype->id());
   params.append("vend_terms_id", _defaultTerms->id());
   params.append("vend_curr_id", _defaultCurr->id());
+  params.append("vend_potype_id", _defaultPoType->id());
 
   params.append("vend_number",   _number->number().trimmed().toUpper());
   params.append("vend_accntnum", _accountNumber->text().trimmed());
@@ -982,6 +990,7 @@ bool vendor::sPopulate()
     _defaultTerms->setId(vendorPopulate.value("vend_terms_id").toInt());
     _defaultShipVia->setText(vendorPopulate.value("vend_shipvia").toString());
     _defaultCurr->setId(vendorPopulate.value("vend_curr_id").toInt());
+    _defaultPoType->setId(vendorPopulate.value("vend_potype_id").toInt());
     _poItems->setChecked(vendorPopulate.value("vend_po").toBool());
     _restrictToItemSource->setChecked(vendorPopulate.value("vend_restrictpurch").toBool());
     _receives1099->setChecked(vendorPopulate.value("vend_1099").toBool());
