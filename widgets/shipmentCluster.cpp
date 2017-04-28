@@ -13,6 +13,9 @@
 #include <QMessageBox>
 #include <QtScript>
 
+#include "xcheckbox.h"
+#include "xtreewidget.h"
+
 ShipmentCluster::ShipmentCluster(QWidget* pParent, const char* pName) :
     VirtualCluster(pParent, pName)
 {

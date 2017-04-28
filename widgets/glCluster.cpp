@@ -8,13 +8,18 @@
  * to be bound by its terms.
  */
 
+#include "glcluster.h"
+
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QMessageBox>
+#include <QSqlQueryModel>
 #include <QtScript>
 
 #include <metasql.h>
 
-#include "glcluster.h"
+#include "xcheckbox.h"
+#include "xtreewidget.h"
 
 static QString _listAndSearchQueryString(
   "SELECT accnt_id, accnt_number, accnt_descrip, accnt_comments, accnt_profit,"

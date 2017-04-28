@@ -20,13 +20,9 @@
 
 #include "virtualCluster.h"
 
-class ParameterList;
-
-class QPushButton;
+class QCheckBox;
 class QLabel;
-class QDragEnterEvent;
-class QDropEvent;
-class QMouseEvent;
+
 class ItemLineEditDelegate;
 class itemList;
 class itemSearch;
