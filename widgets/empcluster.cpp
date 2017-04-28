@@ -10,6 +10,12 @@
 
 #include "empcluster.h"
 
+#include <QLabel>
+#include <QtScript>
+
+#include "xcheckbox.h"
+#include "xtreewidget.h"
+
 EmpCluster::EmpCluster(QWidget* pParent, const char* pName) :
     VirtualCluster(pParent, pName)
 {

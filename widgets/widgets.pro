@@ -116,6 +116,7 @@ HEADERS += plugins/addressclusterplugin.h \
 
 SOURCES += widgets.cpp \
     scriptablewidget.cpp                \
+    scriptcache.cpp                     \
     addressCluster.cpp \
     alarmMaint.cpp \
     alarms.cpp \
@@ -211,6 +212,7 @@ SOURCES += widgets.cpp \
 
 HEADERS += widgets.h \
     scriptablewidget.h          \
+    scriptcache.h               \
     xtupleplugin.h \
     guiclientinterface.h \
     addresscluster.h \

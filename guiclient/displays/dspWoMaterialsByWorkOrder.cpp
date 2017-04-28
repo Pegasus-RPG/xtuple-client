@@ -17,6 +17,7 @@
 
 #include "inputManager.h"
 #include "woMaterialItem.h"
+#include "xtreewidget.h"
 
 dspWoMaterialsByWorkOrder::dspWoMaterialsByWorkOrder(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspWoMaterialsByWorkOrder", fl)

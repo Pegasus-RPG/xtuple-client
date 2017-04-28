@@ -62,6 +62,9 @@ postProduction::postProduction(QWidget* parent, const char* name, bool modal, Qt
   _nonPickItems->hide();
 
   _transferWarehouse->setEnabled(_immediateTransfer->isChecked());
+
+  _controlled = false;
+  _itemsiteId = 0;
 }
 
 postProduction::~postProduction()
@@ -181,28 +184,34 @@ bool postProduction::okToPost()
     _transDate->setFocus();
     return false;
   }
-/*
-  XSqlQuery type;
-  type.prepare( "SELECT itemsite_costmethod "
-                "FROM itemsite,wo "
-                "WHERE ((wo_id=:wo_id) "
-                "AND (wo_itemsite_id=itemsite_id)); ");
-  type.bindValue(":wo_id", _wo->id());
-  type.exec();
-  if (type.first() && type.value("itemsite_costmethod").toString() == "J")
+
+  XSqlQuery itemsite;
+  itemsite.prepare("SELECT wo_itemsite_id, itemsite_costmethod, "
+                   "  isControlledItemsite(wo_itemsite_id) AS controlled "
+                   "FROM wo "
+                   "  JOIN itemsite ON wo_itemsite_id = itemsite_id "
+                   "WHERE wo_id = :woId;");
+  itemsite.bindValue(":woId", _wo->id());
+  itemsite.exec();
+  if (itemsite.first())
   {
-    QMessageBox::critical( this, tr("Invalid Work Order"),
-                          tr("<p>Work Orders Item Sites with the Job cost method "
-                             "are posted when shipping the Sales Order they are "
-                             "associated with.") );
+    _itemsiteId = itemsite.value("wo_itemsite_id").toInt();
+    _controlled = itemsite.value("controlled").toBool();
+    if (_immediateTransfer->isChecked() && itemsite.value("itemsite_costmethod").toString() == "J")
+    {
+      QMessageBox::critical( this, tr("Can not Transfer"),
+                          tr("<p>Work Orders Item Sites with Job cost method "
+                             "can not be transferred to another warehouse. "
+                             "Uncheck the Immediate Transfer to Site box to continue.") );
+      return false;
+    }
+  }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production"),
+    itemsite, __FILE__, __LINE__))
+  {
     return false;
   }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Production),
-                                       type, __FILE__, __LINE__))
-  {
-    return false;
-  }
-*/
+
   if (_immediateTransfer->isChecked() &&
       _wo->currentWarehouse() == _transferWarehouse->id())
   {
@@ -218,27 +227,44 @@ bool postProduction::okToPost()
   return true;
 }
 
-void postProduction::sPost()
+QString postProduction::updateWoAfterPost()
 {
-  XSqlQuery postPost;
-  XSqlQuery parentItemlocdist;
-  if (! okToPost())
-    return;
-
-  // xtmfg calls postProduction::okToPost() but not ::sPost() && has a situation
-  // where qty 0 is OK, so don't move the _qty == 0 check to okToPost()
-  if (_qty->toDouble() == 0.0)
+  QString result = QString::null;
+  if (_productionNotes->toPlainText().trimmed().length())
   {
-    QMessageBox::critical(this, tr("Enter Quantity to Post"),
-                          tr("You must enter a quantity of production to Post.") );
-    _qty->setFocus();
-    return;
+    XSqlQuery woq;
+    woq.prepare( "UPDATE wo "
+       "SET wo_prodnotes=(wo_prodnotes || :productionNotes || '\n') "
+       "WHERE (wo_id=:wo_id);" );
+    woq.bindValue(":productionNotes", _productionNotes->toPlainText().trimmed());
+    woq.bindValue(":wo_id", _wo->id());
+    woq.exec();
+    if (woq.lastError().type() != QSqlError::NoError)
+      result = woq.lastError().databaseText();
   }
 
-  int itemsiteId = 0;
-  int itemlocSeries = 0;
-  int twItemlocSeries = 0;
-  bool controlled = false;
+  if (DEBUG)
+    qDebug("postProduction::updateWoAfterPost() returning %s",
+           qPrintable(result));
+  return result;
+}
+
+QString postProduction::handleSeriesAdjustAfterPost(int itemlocSeries)
+{
+  QString result = QString::null;
+  if (distributeInventory::SeriesAdjust(itemlocSeries, this) == XDialog::Rejected)
+    result = tr("Transaction Canceled");
+
+  if (DEBUG)
+    qDebug("postProduction::handleSeriesAdjustAfterPost() returning %s",
+           qPrintable(result));
+  return result;
+}
+
+int postProduction::handleSeriesAdjustBeforePost()
+{
+  XSqlQuery parentItemlocdist;
+  int itemlocSeries;
   bool hasControlledBackflushItems = false;
 
   // Stage cleanup function to be called on error
@@ -247,24 +273,18 @@ void postProduction::sPost()
 
   // Series for issueToShipping
   XSqlQuery parentSeries;
-  parentSeries.prepare("SELECT wo_itemsite_id, isControlledItemsite(wo_itemsite_id) AS controlled, "
-                       "  NEXTVAL('itemloc_series_seq') AS result "
-                       "FROM wo "
-                       "WHERE wo_id = :wo_id;");
-  parentSeries.bindValue(":wo_id", _wo->id());
+  parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
   parentSeries.exec();
   if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
   {
-    itemsiteId = parentSeries.value("wo_itemsite_id").toInt();
     itemlocSeries = parentSeries.value("result").toInt();
-    controlled = parentSeries.value("controlled").toBool();
     cleanup.bindValue(":itemlocSeries", itemlocSeries);
   }
   else
   {
     ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
       parentSeries, __FILE__, __LINE__);
-    return;
+    return -1;
   }
 
   // If backflush, createItemlocdistParent for each controlled material item
@@ -322,13 +342,13 @@ void postProduction::sPost()
             QMessageBox::information( this, tr("Issue Line to Shipping"), 
               tr("Failed to Create an itemlocdist record for work order backflushed material item %1.")
               .arg(backflushItems.value("item_number").toString()) );
-            return;
+            return -1;
           }
           else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
             womatlItemlocdist, __FILE__, __LINE__))
           {
             cleanup.exec();
-            return;
+            return -1;
           }
         }
         
@@ -345,11 +365,7 @@ void postProduction::sPost()
           womatlItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, COALESCE(itemuomtouom(:item_id, womatl_uom_id, NULL, :qty), :qty) * -1, 'WO', womatl_wo_id, "
                                     " :itemlocSeries, NULL, NULL, 'IM') AS result "
                                     "FROM womatl "
-                                    "WHERE womatl_id = :womatl_id "
-                                    " AND CASE WHEN (womatl_qtyreq >= 0) "
-                                    "   THEN womatl_qtyiss > pQty "
-                                    "   ELSE womatl_qtyiss < pQty "
-                                    "   END;");
+                                    "WHERE womatl_id = :womatl_id;");
           womatlItemlocdist.bindValue(":itemsite_id", backflushItems.value("itemsite_id").toInt());
           womatlItemlocdist.bindValue(":item_id", backflushItems.value("itemsite_item_id").toInt());
           womatlItemlocdist.bindValue(":womatl_id", backflushItems.value("womatl_id").toInt());
@@ -362,13 +378,13 @@ void postProduction::sPost()
             QMessageBox::information( this, tr("Issue Line to Shipping"), 
               tr("Failed to Create an itemlocdist record for work order backflushed material item %1.")
               .arg(backflushItems.value("item_number").toString()) );
-            return;
+            return -1;
           }
           else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
             womatlItemlocdist, __FILE__, __LINE__))
           {
             cleanup.exec();
-            return;
+            return -1;
           }
         }
       }
@@ -376,101 +392,291 @@ void postProduction::sPost()
   } // backflush handling
 
   // If controlled item, createItemlocdistParent
-  if (controlled)
+  if (_controlled)
   {
-    int itemlocdistId;
-    XSqlQuery twParentSeries;
-    twParentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
-    parentSeries.exec();
-    if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
-    {
-      twItemlocSeries = parentSeries.value("result").toInt();
-    }
-    else 
-    {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
-        parentSeries, __FILE__, __LINE__);
-      return;
-    }
-    
     // create the RM itemlocdist record
     parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, 'WO', :orderitemId, "
       ":itemlocSeries, NULL, NULL, 'RM') AS result;");
-    parentItemlocdist.bindValue(":itemsite_id", itemsiteId);
+    parentItemlocdist.bindValue(":itemsite_id", _itemsiteId);
     if (_wo->method() == "A")
       parentItemlocdist.bindValue(":qty", _qty->toDouble());
     else
-      postPost.bindValue(":qty", _qty->toDouble() * -1);
+      parentItemlocdist.bindValue(":qty", _qty->toDouble() * -1);
     parentItemlocdist.bindValue(":orderitemId", _wo->id());
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
     parentItemlocdist.exec();
-    if (parentItemlocdist.first())
-    {
-      // TODO - likely wont need to use this, remove
-      itemlocdistId = parentItemlocdist.value("result").toInt();
-    }
-    else 
+    if (parentItemlocdist.lastError().type() != QSqlError::NoError)
     {
       cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist record for post "
         "production controlled item"), parentItemlocdist, __FILE__, __LINE__);
-      return;
-    }
-
-    // If immediate transfer checked, createItemlocdistParents for interwarehousetransfer
-    if (_immediateTransfer->isChecked() && _wo->currentWarehouse() != _transferWarehouse->id())
-    {
-
-      XSqlQuery fromWhItemlocdist;
-      fromWhItemlocdist.prepare("SELECT createItemlocdistParent(:itemsiteId, :qty * -1, 'WO', :orderitemId, "
-                                "   :itemlocSeries, NULL, NULL, 'TW') AS result;");
-      fromWhItemlocdist.bindValue(":itemsiteId", itemsiteId);
-      fromWhItemlocdist.bindValue(":qty", _qty->toDouble());
-      fromWhItemlocdist.bindValue(":orderitemId", _wo->id());
-      fromWhItemlocdist.bindValue(":itemlocSeries", twItemlocSeries);
-      fromWhItemlocdist.exec();
-      if (fromWhItemlocdist.first())
-      {
-        parentItemlocdist.prepare("SELECT createItemlocdistParent(itemsite_id, :qty, 'WO', :orderitemId, "
-                                "   :itemlocSeries, NULL, :itemlocdistId, 'TW') AS result "
-                                "FROM itemsite "
-                                "WHERE itemsite_warehous_id = :warehouseId "
-                                " AND itemsite_item_id = "
-                                " (SELECT itemsite_item_id FROM itemsite WHERE itemsite_id = :itemsiteId);");
-        parentItemlocdist.bindValue(":qty", _qty->toDouble());
-        parentItemlocdist.bindValue(":orderitemId", _wo->id());
-        parentItemlocdist.bindValue(":itemlocSeries", twItemlocSeries);
-        parentItemlocdist.bindValue(":itemlocdistId", fromWhItemlocdist.value("result").toInt());
-        parentItemlocdist.bindValue(":warehouseId",  _transferWarehouse->id());
-        parentItemlocdist.bindValue(":itemsiteId", itemsiteId);
-        parentItemlocdist.exec();
-        if (parentItemlocdist.lastError().type() != QSqlError::NoError)
-        {
-          cleanup.exec();
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist record For TO Warehouse for interwarehousetransfer"),
-              parentItemlocdist, __FILE__, __LINE__);
-          return;
-        }
-      }
-      else
-      {
-        cleanup.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist record for FROM Warehouse for interwarehousetransfer "),
-          fromWhItemlocdist, __FILE__, __LINE__);
-        return;
-      }
+      return -1;
     }
   }
 
   // Distribute detail
-  if ((controlled || hasControlledBackflushItems) && 
-      ((distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true) ==
-      XDialog::Rejected) ||
-      (distributeInventory::SeriesAdjust(twItemlocSeries, this, QString(), QDate(), QDate(), true) ==
-      XDialog::Rejected)))
+  if ((_controlled || hasControlledBackflushItems) && 
+      (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true) ==
+      XDialog::Rejected))
   {
     cleanup.exec();
     QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+    return -1;
+  }
+
+  return itemlocSeries;
+}
+
+int postProduction::handleTransferSeriesAdjustBeforePost()
+{
+  int twItemlocSeries = 0;
+
+  if (!_immediateTransfer->isChecked())
+    return -1;
+
+  // Stage cleanup function to be called on error
+  XSqlQuery cleanup;
+  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+
+  XSqlQuery parentSeries;
+  parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
+  parentSeries.exec();
+  if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
+  {
+    twItemlocSeries = parentSeries.value("result").toInt();
+    cleanup.bindValue(":itemlocSeries", twItemlocSeries);
+  }
+  else 
+  {
+    ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
+      parentSeries, __FILE__, __LINE__);
+    return -1;
+  }
+
+  if (!_controlled)
+    return twItemlocSeries;
+
+  XSqlQuery fromWhItemlocdist;
+  fromWhItemlocdist.prepare("SELECT createItemlocdistParent(:itemsiteId, :qty * -1, 'W', :orderitemId, "
+                            "   :itemlocSeries, NULL, NULL, 'TW') AS result;");
+  fromWhItemlocdist.bindValue(":itemsiteId", _itemsiteId);
+  fromWhItemlocdist.bindValue(":qty", _qty->toDouble());
+  fromWhItemlocdist.bindValue(":orderitemId", _wo->id());
+  fromWhItemlocdist.bindValue(":itemlocSeries", twItemlocSeries);
+  fromWhItemlocdist.exec();
+  if (fromWhItemlocdist.first())
+  {
+    XSqlQuery toWhItemlocdist;
+    toWhItemlocdist.prepare("SELECT createItemlocdistParent(itemsite_id, :qty, 'W', :orderitemId, "
+                            "   :itemlocSeries, NULL, :itemlocdistId, 'TW') AS result "
+                            "FROM itemsite "
+                            "WHERE itemsite_warehous_id = :warehouseId "
+                            " AND itemsite_item_id = "
+                            " (SELECT itemsite_item_id FROM itemsite WHERE itemsite_id = :itemsiteId);");
+    toWhItemlocdist.bindValue(":qty", _qty->toDouble());
+    toWhItemlocdist.bindValue(":orderitemId", _wo->id());
+    toWhItemlocdist.bindValue(":itemlocSeries", twItemlocSeries);
+    toWhItemlocdist.bindValue(":itemlocdistId", fromWhItemlocdist.value("result").toInt());
+    toWhItemlocdist.bindValue(":warehouseId",  _transferWarehouse->id());
+    toWhItemlocdist.bindValue(":itemsiteId", _itemsiteId);
+    toWhItemlocdist.exec();
+    if (toWhItemlocdist.lastError().type() != QSqlError::NoError)
+    {
+      cleanup.exec();
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist record For TO Warehouse for interwarehousetransfer"),
+          toWhItemlocdist, __FILE__, __LINE__);
+      return -1;
+    }
+  }
+  else
+  {
+    cleanup.exec();
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist record for FROM Warehouse for interwarehousetransfer "),
+      fromWhItemlocdist, __FILE__, __LINE__);
+    return -1;
+  }
+
+    // Distribute detail
+  if (distributeInventory::SeriesAdjust(twItemlocSeries, this, QString(), QDate(), QDate(), true) ==
+      XDialog::Rejected)
+  {
+    cleanup.exec();
+    QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+    return -1;
+  }
+
+  return twItemlocSeries;
+}
+
+QString postProduction::handleTransferAfterPost(int itemlocSeries)
+{
+  QString result = QString::null;
+  if (_immediateTransfer->isChecked())
+  {
+    if (_wo->currentWarehouse() == _transferWarehouse->id())
+      result = tr("<p>Cannot post an immediate transfer for the newly posted "
+                  "production as the transfer Site is the same as the "
+                  "production Site. You must manually transfer the "
+                  "production to the intended Site.");
+    else if (itemlocSeries <= 0)
+      result = tr("Failed to post an immediate transfer. Itemloc");
+    else
+    {
+      XSqlQuery xferq;
+      xferq.prepare("SELECT interWarehouseTransfer(itemsite_item_id, "
+                    "    itemsite_warehous_id, :to_warehous_id, :qty,"
+                    "    'W', formatWoNumber(wo_id),"
+                    "    'Immediate Transfer from Production Posting', "
+                    "    :itemlocSeries, "
+                    "    now(), "
+                    "    TRUE, "
+                    "    TRUE) AS result "
+                    "  FROM wo, itemsite "
+                    " WHERE ( (wo_itemsite_id=itemsite_id)"
+                    "     AND (wo_id=:wo_id) );" );
+      xferq.bindValue(":wo_id", _wo->id());
+      xferq.bindValue(":to_warehous_id", _transferWarehouse->id());
+      xferq.bindValue(":qty", _qty->toDouble());
+      xferq.bindValue(":itemlocSeries", itemlocSeries);
+      xferq.exec();
+      if (xferq.lastError().type() != QSqlError::NoError)
+        result = xferq.lastError().databaseText();
+    }
+  }
+
+  if (DEBUG)
+    qDebug("postProduction::handleTransferAfterPost() returning %s",
+           qPrintable(result));
+  return result;
+}
+
+QString postProduction::handleIssueToParentAfterPost(int itemlocSeries)
+{
+  QString result = QString::null;
+  XSqlQuery issueq;
+  
+  // Find invhist_id.  May not be found if control method is 'None'
+  int invhistid = -1;
+  issueq.prepare("SELECT invhist_id "
+                 "FROM invhist "
+                 "WHERE (invhist_series=:itemlocseries)"
+                 "  AND (invhist_transtype='RM');");
+  issueq.bindValue(":itemlocseries", itemlocSeries);
+  issueq.exec();
+  if (issueq.first())
+  {
+    invhistid = issueq.value("invhist_id").toInt();
+  }
+  else if (issueq.lastError().type() != QSqlError::NoError)
+    result = issueq.lastError().databaseText();
+
+  // If this is a child W/O and the originating womatl
+  // is auto issue then issue this receipt to the parent W/O
+  issueq.prepare("SELECT issueWoMaterial(womatl_id,"
+                 "       roundQty(item_fractional, itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, :qty)),"
+                 "       :itemlocseries, :date, :invhist_id::INTEGER, NULL, TRUE, FALSE) AS result "
+                 "FROM wo, womatl, itemsite, item "
+                 "WHERE (wo_id=:wo_id)"
+                 "  AND (womatl_id=wo_womatl_id)"
+                 "  AND (womatl_issuewo)"
+                 "  AND (itemsite_id=womatl_itemsite_id)"
+                 "  AND (item_id=itemsite_item_id);");
+  issueq.bindValue(":itemlocseries", itemlocSeries);
+  issueq.bindValue(":wo_id", _wo->id());
+  issueq.bindValue(":qty", _qty->toDouble());
+  issueq.bindValue(":date",  _transDate->date());
+  if (invhistid > 0)
+    issueq.bindValue(":invhist_id", invhistid);
+  issueq.exec();
+  if (issueq.first())
+  {
+    if (issueq.value("result").toInt() < 0)
+      result = "issueWoMaterial failed";
+    else
+    {
+      issueq.prepare("SELECT postItemLocSeries(:itemlocseries);");
+      issueq.bindValue(":itemlocseries", itemlocSeries);
+      issueq.exec();
+      if (issueq.lastError().type() != QSqlError::NoError)
+        result = issueq.lastError().databaseText();
+    }
+  }
+  else if (issueq.lastError().type() != QSqlError::NoError)
+    result = issueq.lastError().databaseText();
+
+  // If this is a W/O for a Job Cost item and the parent is a S/O
+  // then issue this receipt to the S/O
+  issueq.prepare("SELECT issueToShipping('SO', coitem_id,"
+                 "       roundQty(item_fractional, itemuomtouom(itemsite_item_id, NULL, coitem_qty_uom_id, :qty)),"
+                 "       :itemlocseries, :date, :invhist_id, false, true) AS result "
+                 "FROM wo, itemsite, item, coitem "
+                 "WHERE (wo_id=:wo_id)"
+                 "  AND (wo_ordtype='S')"
+                 "  AND (itemsite_id=wo_itemsite_id)"
+                 "  AND (itemsite_costmethod='J')"
+                 "  AND (item_id=itemsite_item_id)"
+                 "  AND (coitem_id=wo_ordid);");
+  issueq.bindValue(":itemlocseries", itemlocSeries);
+  issueq.bindValue(":wo_id", _wo->id());
+  issueq.bindValue(":qty", _qty->toDouble());
+  issueq.bindValue(":date",  _transDate->date());
+  if (invhistid > 0)
+    issueq.bindValue(":invhist_id", invhistid);
+  issueq.exec();
+  if (issueq.first())
+  {
+    if (issueq.value("result").toInt() < 0)
+      result = "issueToShipping failed";
+    else
+    {
+      issueq.prepare("SELECT postItemLocSeries(:itemlocseries);");
+      issueq.bindValue(":itemlocseries", itemlocSeries);
+      issueq.exec();
+      if (issueq.lastError().type() != QSqlError::NoError)
+        result = issueq.lastError().databaseText();
+    }
+  }
+  else if (issueq.lastError().type() != QSqlError::NoError)
+    result = issueq.lastError().databaseText();
+
+  if (DEBUG)
+    qDebug("postProduction::handleIssueToParentAfterPost() returning %s",
+           qPrintable(result));
+  return result;
+}
+
+void postProduction::sPost()
+{
+  XSqlQuery postPost;
+  if (! okToPost())
+    return;
+
+  // xtmfg calls postProduction::okToPost() but not ::sPost() && has a situation
+  // where qty 0 is OK, so don't move the _qty == 0 check to okToPost()
+  if (_qty->toDouble() == 0.0)
+  {
+    QMessageBox::critical(this, tr("Enter Quantity to Post"),
+                          tr("You must enter a quantity of production to Post.") );
+    _qty->setFocus();
+    return;
+  }
+
+
+  int itemlocSeries = handleSeriesAdjustBeforePost();
+  int twItemlocSeries = _immediateTransfer->isChecked() ? handleTransferSeriesAdjustBeforePost() : 0;
+
+  // Stage cleanup function to be called on error
+  XSqlQuery cleanup;
+  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE), "
+                  " CASE WHEN :twItemlocSeries IS NOT NULL THEN deleteitemlocseries(:twItemlocSeries) END;");
+  cleanup.bindValue(":itemlocSeries", itemlocSeries);
+  if (twItemlocSeries > 0)
+    cleanup.bindValue(":twItemlocSeries", twItemlocSeries);
+
+  // If the series aren't set properly, cleanup and exit. The methods that set them already displayed the error messages.
+  if (itemlocSeries <= 0 || (_immediateTransfer->isChecked() && twItemlocSeries <= 0))
+  {
+    cleanup.exec();
     return;
   }
 
@@ -504,172 +710,40 @@ void postProduction::sPost()
       return;
     }
 
-    // updateWoAfterPost
-    if (_productionNotes->toPlainText().trimmed().length())
-    {
-      XSqlQuery woq;
-      woq.prepare( "UPDATE wo "
-         "SET wo_prodnotes=(wo_prodnotes || :productionNotes || '\n') "
-         "WHERE (wo_id=:wo_id);" );
-      woq.bindValue(":productionNotes", _productionNotes->toPlainText().trimmed());
-      woq.bindValue(":wo_id", _wo->id());
-      woq.exec();
-      if (woq.lastError().type() != QSqlError::NoError)
-      {
-        rollback.exec();
-        cleanup.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred while updating WO notes"),
-          woq, __FILE__,__LINE__);
-        return;
-      }
-    }
-  
-    // handleIssueToParentAfterPost
-    XSqlQuery issueq;
-  
-    // Find invhist_id.  May not be found if control method is 'None'
-    int invhistid = -1;
-    issueq.prepare("SELECT invhist_id "
-                   "FROM invhist "
-                   "WHERE (invhist_series=:itemlocseries)"
-                   "  AND (invhist_transtype='RM');");
-    issueq.bindValue(":itemlocseries", itemlocSeries);
-    issueq.exec();
-    if (issueq.first())
-    {
-      invhistid = issueq.value("invhist_id").toInt();
-    }
-    else if (issueq.lastError().type() != QSqlError::NoError)
+    QString errmsg = updateWoAfterPost();
+    if (! errmsg.isEmpty())
     {
       rollback.exec();
       cleanup.exec();
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error querying invhist table"),
-        issueq,__FILE__,__LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                           tr("%1: %2")
+                           .arg(windowTitle())
+                           .arg(errmsg),__FILE__,__LINE__);
       return;
     }
 
-    // If this is a child W/O and the originating womatl
-    // is auto issue then issue this receipt to the parent W/O
-    issueq.prepare("SELECT issueWoMaterial(womatl_id,"
-                   "       roundQty(item_fractional, itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, :qty)),"
-                   "       :itemlocseries, :date, :invhist_id::INTEGER, "
-                   "       NULL, TRUE, FALSE ) AS result "
-                   "FROM wo, womatl, itemsite, item "
-                   "WHERE (wo_id=:wo_id)"
-                   "  AND (womatl_id=wo_womatl_id)"
-                   "  AND (womatl_issuewo)"
-                   "  AND (itemsite_id=womatl_itemsite_id)"
-                   "  AND (item_id=itemsite_item_id);");  
-    issueq.bindValue(":itemlocseries", itemlocSeries);
-    issueq.bindValue(":wo_id", _wo->id());
-    issueq.bindValue(":qty", _qty->toDouble());
-    issueq.bindValue(":date",  _transDate->date());
-    if (invhistid > 0)
-      issueq.bindValue(":invhist_id", invhistid);
-    issueq.exec();
-    if (issueq.first())
-    {
-      if (issueq.value("result").toInt() < 0)
-      {
-        rollback.exec();
-        cleanup.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Issue WO Material failed"),
-          storedProcErrorLookup("issueWoMaterial", issueq.value("result").toInt()),__FILE__,__LINE__);
-        return;
-      }
-    }
-    else if (issueq.lastError().type() != QSqlError::NoError)
+    errmsg = handleIssueToParentAfterPost(itemlocSeries);
+    if (! errmsg.isEmpty())
     {
       rollback.exec();
       cleanup.exec();
-      ErrorReporter::error(QtCriticalMsg, this, tr("Issue WO Material failed"),
-        issueq, __FILE__,__LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                           tr("%1: %2")
+                           .arg(windowTitle())
+                           .arg(errmsg),__FILE__,__LINE__);
       return;
     }
 
-    // If this is a W/O for a Job Cost item and the parent is a S/O
-    // then issue this receipt to the S/O
-    issueq.prepare("SELECT issueToShipping('SO', coitem_id,"
-                   "       roundQty(item_fractional, itemuomtouom(itemsite_item_id, NULL, coitem_qty_uom_id, :qty)),"
-                   "       :itemlocseries, :date, :invhist_id) AS result "
-                   "FROM wo, itemsite, item, coitem "
-                   "WHERE (wo_id=:wo_id)"
-                   "  AND (wo_ordtype='S')"
-                   "  AND (itemsite_id=wo_itemsite_id)"
-                   "  AND (itemsite_costmethod='J')"
-                   "  AND (item_id=itemsite_item_id)"
-                   "  AND (coitem_id=wo_ordid);");
-    issueq.bindValue(":itemlocseries", itemlocSeries);
-    issueq.bindValue(":wo_id", _wo->id());
-    issueq.bindValue(":qty", _qty->toDouble());
-    issueq.bindValue(":date",  _transDate->date());
-    if (invhistid > 0)
-      issueq.bindValue(":invhist_id", invhistid);
-    issueq.exec();
-    if (issueq.first())
-    {
-      if (issueq.value("result").toInt() < 0)
-      {
-        rollback.exec();
-        cleanup.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Issue WO Material failed"),
-          storedProcErrorLookup("issueToShipping", issueq.value("result").toInt()),__FILE__,__LINE__);
-        return;
-      }
-    }
-    else if (issueq.lastError().type() != QSqlError::NoError)
+    errmsg = handleTransferAfterPost(twItemlocSeries);
+    if (! errmsg.isEmpty())
     {
       rollback.exec();
       cleanup.exec();
-      ErrorReporter::error(QtCriticalMsg, this, tr("Issue to Shipping failed"),
-        issueq, __FILE__,__LINE__);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
+                           tr("%1: %2")
+                           .arg(windowTitle())
+                           .arg(errmsg),__FILE__,__LINE__);
       return;
-    }
-    
-    // handleTransferAfterPost
-    if (_immediateTransfer->isChecked())
-    {
-      if (_wo->currentWarehouse() == _transferWarehouse->id())
-      {
-        rollback.exec();
-        cleanup.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
-                               tr("%1: %2")
-                               .arg(windowTitle())
-                               .arg(tr("<p>Cannot post an immediate transfer for the newly posted "
-                                      "production as the transfer Site is the same as the "
-                                      "production Site. You must manually transfer the "
-                                      "production to the intended Site.")), __FILE__,__LINE__);
-        return;
-      }
-      else
-      {
-        XSqlQuery xferq;
-        xferq.prepare("SELECT interWarehouseTransfer(itemsite_item_id, "
-                      "    itemsite_warehous_id, :to_warehous_id, :qty::numeric,"
-                      "    'W'::text, formatWoNumber(wo_id)::text,"
-                      "   'Immediate Transfer from Production Posting'::text, "
-                      "    :itemlocSeries, "
-                      "    now(), "
-                      "    TRUE, "
-                      "    TRUE) AS result"
-                      "  FROM wo, itemsite "
-                      " WHERE ( (wo_itemsite_id=itemsite_id)"
-                      "     AND (wo_id=:wo_id) );" );
-        xferq.bindValue(":wo_id", _wo->id());
-        xferq.bindValue(":to_warehous_id", _transferWarehouse->id());
-        xferq.bindValue(":qty", _qty->toDouble());
-        xferq.bindValue(":itemlocSeries", twItemlocSeries);
-        xferq.exec();
-        if (xferq.lastError().type() != QSqlError::NoError)
-        {
-          rollback.exec();
-          cleanup.exec();
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred during interWarehouseTransfer"),
-            xferq, __FILE__,__LINE__);
-          return;
-        }
-      }
     }
 
     postPost.exec("COMMIT;");

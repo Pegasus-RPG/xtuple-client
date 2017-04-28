@@ -8,6 +8,9 @@
  * to be bound by its terms.
  */
 
+#include "racluster.h"
+
+#include <QIntValidator>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QtScript>
@@ -15,9 +18,7 @@
 #include <metasql.h>
 
 #include "xsqlquery.h"
-
-
-#include "racluster.h"
+#include "xtreewidget.h"
 
 RaCluster::RaCluster(QWidget *pParent, const char *pName) :
   VirtualCluster(pParent, pName)

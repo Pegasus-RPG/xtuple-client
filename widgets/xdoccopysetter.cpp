@@ -178,8 +178,18 @@ void XDocCopySetter::sEditWatermark()
 
 // scripting exposure /////////////////////////////////////////////////////////
 
+void XDocCopySetterFromScriptValue(const QScriptValue &obj, XDocCopySetter* &item)
+{
+  item = qobject_cast<XDocCopySetter*>(obj.toQObject());
+}
+
+QScriptValue XDocCopySetterToScriptValue(QScriptEngine *engine, XDocCopySetter* const &item)
+{
+  return engine->newQObject(item);
+}
+
 QScriptValue constructXDocCopySetter(QScriptContext *context,
-                                       QScriptEngine  *engine)
+                                     QScriptEngine  *engine)
 {
 #if QT_VERSION >= 0x050000
   QWidget *parent = (qscriptvalue_cast<QWidget*>(context->argument(0)));
@@ -194,6 +204,9 @@ QScriptValue constructXDocCopySetter(QScriptContext *context,
 
 void setupXDocCopySetter(QScriptEngine *engine)
 {
+#if QT_VERSION >= 0x050500
+  qScriptRegisterMetaType(engine, XDocCopySetterToScriptValue, XDocCopySetterFromScriptValue);
+#endif
   if (! engine->globalObject().property("XDocCopySetter").isFunction())
   {
     QScriptValue ctor = engine->newFunction(constructXDocCopySetter);

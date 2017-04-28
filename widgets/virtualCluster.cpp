@@ -8,19 +8,28 @@
  * to be bound by its terms.
  */
 
+#include <QAction>
+#include <QCompleter>
 #include <QDebug>
+#include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QKeySequence>
+#include <QLabel>
+#include <QMenu>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QSqlError>
+#include <QSqlQueryModel>
 #include <QSqlRecord>
 #include <QVBoxLayout>
 
-#include "xlineedit.h"
-#include "xcheckbox.h"
-#include "xsqlquery.h"
+#include "guiclientinterface.h"
 #include "shortcuts.h"
+#include "xcheckbox.h"
+#include "xdatawidgetmapper.h"
+#include "xsqlquery.h"
+#include "xtreewidget.h"
 
 #include "virtualCluster.h"
 
@@ -28,39 +37,41 @@
 
 void VirtualCluster::init()
 {
-    _number = 0;
+  _number = 0;
 
-    setFocusPolicy(Qt::StrongFocus);
-    _label = new QLabel(this);
-    _label->setObjectName("_label");
-    _label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    _label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+  setFocusPolicy(Qt::StrongFocus);
+  _label = new QLabel(this);
+  _label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  _label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
-    _name = new QLabel(this);
-    _name->setObjectName("_name");
-    _name->setVisible(false);
+  _name = new QLabel(this);
+  _name->setVisible(false);
 
-    _description = new QLabel(this);
-    _description->setObjectName("_description");
-    _description->setVisible(false);
-    if(!(_x_metrics && _x_metrics->boolean("VirtualClusterDisableMultiLineDesc")))
-      _description->setWordWrap(true);
+  _description = new QLabel(this);
+  _description->setVisible(false);
+  if(!(_x_metrics && _x_metrics->boolean("VirtualClusterDisableMultiLineDesc")))
+    _description->setWordWrap(true);
 
-    _grid = new QGridLayout(this);
-    _grid->setMargin(0);
-    _grid->setSpacing(6);
-    if (!_label->text().isEmpty())
-      _grid->addWidget(_label,  0, 0);
-    _hspcr = new QSpacerItem(0, 0, QSizePolicy::Expanding);
-    _grid->addItem(_hspcr, 0, _grid->columnCount() + 1);
-    _orientation = Qt::Horizontal;
-    setOrientation(Qt::Vertical);
+  _label->setObjectName("_label");
+  _name->setObjectName("_name");
+  _description->setObjectName("_description");
 
-    _mapper = new XDataWidgetMapper(this);
+  _grid = new QGridLayout(this);
+  _grid->setMargin(0);
+  _grid->setSpacing(6);
+  if (!_label->text().isEmpty())
+    _grid->addWidget(_label,  0, 0);
+  _hspcr = new QSpacerItem(0, 0, QSizePolicy::Expanding);
+  _grid->addItem(_hspcr, 0, _grid->columnCount() + 1);
+  _orientation = Qt::Horizontal;
+  setOrientation(Qt::Vertical);
+
+  _mapper = new XDataWidgetMapper(this);
+  _mapper->setObjectName("_mapper");
 }
 
-VirtualCluster::VirtualCluster(QWidget* pParent, const char* pName) :
-    QWidget(pParent)
+VirtualCluster::VirtualCluster(QWidget* pParent, const char* pName)
+  : QWidget(pParent), ScriptableWidget(this)
 {
   setObjectName(pName ? pName : "VirtualCluster");
   init();
@@ -68,8 +79,8 @@ VirtualCluster::VirtualCluster(QWidget* pParent, const char* pName) :
 
 VirtualCluster::VirtualCluster(QWidget* pParent,
 			       VirtualClusterLineEdit* pNumberWidget,
-			       const char* pName) :
-    QWidget(pParent)
+			       const char* pName)
+  : QWidget(pParent), ScriptableWidget(this)
 {
   setObjectName(pName);
 
@@ -77,6 +88,29 @@ VirtualCluster::VirtualCluster(QWidget* pParent,
   if (pNumberWidget)
     addNumberWidget(pNumberWidget);
 }
+
+int     VirtualCluster::id()             const { return _number->id(); }
+QString VirtualCluster::label()          const { return _label->text(); }
+QString VirtualCluster::number()         const { return _number->text(); }
+QString VirtualCluster::description()    const { return _description->text(); }
+bool    VirtualCluster::isValid()        const { return _number->isValid(); }
+QString VirtualCluster::name()           const { return _name->text(); }
+bool    VirtualCluster::isStrict()       const { return _number->isStrict(); }
+bool    VirtualCluster::readOnly()       const { return _readOnly; }
+QString VirtualCluster::defaultNumber()  const { return _default; }
+QString VirtualCluster::fieldName()      const { return _fieldName; }
+QString VirtualCluster::extraClause()    const { return _number->extraClause(); }
+
+// most of the heavy lifting is done by VirtualClusterLineEdit _number
+void VirtualCluster::clearExtraClause()                 { _number->clearExtraClause(); }
+void VirtualCluster::setDefaultNumber(const QString& p) { _default=p;}
+void VirtualCluster::setDescription(const QString& p)   { _description->setText(p); }
+void VirtualCluster::setExtraClause(const QString& p, const QString&)  { _number->setExtraClause(p); }
+void VirtualCluster::setFieldName(QString p)            { _fieldName = p; }
+void VirtualCluster::setId(const int p, const QString&) { _number->setId(p); }
+void VirtualCluster::setName(int, const QString& p)     { _name->setText(p); }
+void VirtualCluster::setNumber(const int p)             { _number->setNumber(QString::number(p)); }
+void VirtualCluster::setNumber(QString p)               { _number->setNumber(p); }
 
 void VirtualCluster::clear()
 {
@@ -265,8 +299,8 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
 					       const char* pDescripColumn,
 					       const char* pExtra,
                                                const char* pName,
-                                               const char* pActiveColumn) :
-    XLineEdit(pParent, pName)
+                                               const char* pActiveColumn)
+  : XLineEdit(pParent, pName)
 {
     if (DEBUG)
       qDebug("VirtualClusterLineEdit(%p, %s, %s, %s, %s, %s, %s, %s, %s)",
@@ -303,13 +337,19 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
       if (!_x_metrics->boolean("DisableAutoComplete"))
       {
         QSqlQueryModel* hints = new QSqlQueryModel(this);
+        hints->setObjectName("hints");
+
         _completer = new QCompleter(hints,this);
+        _completer->setObjectName("_completer");
         _completer->setWidget(this);
+
         QTreeView* view = new QTreeView(this);
+        view->setObjectName("_view");
         view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         view->setHeaderHidden(true);
         view->setRootIsDecorated(false);
+
         _completer->setPopup(view);
         _completer->setCaseSensitivity(Qt::CaseInsensitive);
         _completer->setCompletionColumn(1);
@@ -325,6 +365,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     connect(_searchAct, SIGNAL(triggered()), this, SLOT(sSearch()));
 
     _infoAct = new QAction(tr("Info..."), this);
+    _infoAct->setObjectName("_infoAct");
     _infoAct->setShortcut(QKeySequence(tr("Ctrl+Shift+I")));
     _infoAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     _infoAct->setToolTip(tr("View record information"));
@@ -333,6 +374,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     addAction(_infoAct);
 
     _openAct = new QAction(tr("Open..."), this);
+    _openAct->setObjectName("_openAct");
     _openAct->setShortcut(QKeySequence(tr("Ctrl+Shift+O")));
     _openAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     _openAct->setToolTip(tr("Open record detail"));
@@ -341,6 +383,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     addAction(_openAct);
 
     _copyAct = new QAction(tr("Copy..."), this);
+    _copyAct->setObjectName("_copyAct");
     _copyAct->setShortcut(QKeySequence(tr("Ctrl+Shift+C")));
     _copyAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     _copyAct->setToolTip(tr("Copy record detail"));
@@ -349,6 +392,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     addAction(_copyAct);
 
     _newAct = new QAction(tr("New..."), this);
+    _newAct->setObjectName("_newAct");
     _newAct->setShortcut(QKeySequence(tr("Ctrl+Shift+N")));
     _newAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     _newAct->setToolTip(tr("Create new record"));
@@ -359,6 +403,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     connect(this, SIGNAL(valid(bool)), _infoAct, SLOT(setEnabled(bool)));
 
     _menuLabel = new QLabel(this);
+    _menuLabel->setObjectName("_menuLabel");
     // Menu set up
 
     _menu = 0;
@@ -375,6 +420,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
 
     // Set default menu with standard actions
     QMenu* menu = new QMenu;
+    menu->setObjectName("menu");
     menu->addAction(_listAct);
     menu->addAction(_searchAct);
     menu->addSeparator();
@@ -661,6 +707,7 @@ void VirtualClusterLineEdit::setTableAndColumnNames(const char* pTabName,
 
   _extraClause = "";
   _model = new QSqlQueryModel(this);
+  _model->setObjectName("_model");
 }
 
 void VirtualClusterLineEdit::setTitles(const QString& s, const QString& p)
@@ -690,6 +737,7 @@ void VirtualClusterLineEdit::clear()
     _id = -1;	// calling setId() or silentSetId() is recursive
     _valid = false;
     _model = new QSqlQueryModel(this);
+    _model->setObjectName("_model");
     if (oldvalid != _valid)
       emit valid(_valid);
     if (oldid != _id)
@@ -732,6 +780,7 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
   {
     XLineEdit::clear();
     _model = new QSqlQueryModel(this);
+    _model->setObjectName("_model");
   }
   else
   {
@@ -887,6 +936,14 @@ void VirtualCluster::sEllipses()
   _number->sEllipses();
 }
 
+void VirtualCluster::showEvent(QShowEvent *e)
+{
+  loadScriptEngine();
+  QWidget::showEvent(e);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void VirtualClusterLineEdit::sInfo()
 {
   VirtualInfo* newdlg = infoFactory();
@@ -955,12 +1012,12 @@ void VirtualClusterLineEdit::setStrict(const bool b)
 
 VirtualInfo* VirtualClusterLineEdit::infoFactory()
 {
-    return new VirtualInfo(this);
+  return new VirtualInfo(this);
 }
 
 VirtualList* VirtualClusterLineEdit::listFactory()
 {
-    return new VirtualList(this);
+  return new VirtualList(this);
 }
 
 VirtualSearch* VirtualClusterLineEdit::searchFactory()
@@ -975,10 +1032,8 @@ void VirtualList::init()
     setWindowModality(Qt::ApplicationModal);
     setAttribute(Qt::WA_DeleteOnClose);
     _search	= new QLineEdit(this);
-    _search->setObjectName("_search");
     _searchLit	= new QLabel(tr("S&earch for:"), this);
     _searchLit->setBuddy(_search);
-    _searchLit->setObjectName("_searchLit");
 #ifdef Q_OS_MAC
     _search->setMinimumHeight(22);
 #endif
@@ -988,14 +1043,17 @@ void VirtualList::init()
     _listTab	= new XTreeWidget(this);
     _titleLit	= new QLabel("", this);
     _titleLit->setBuddy(_listTab);
+
+    _search->setObjectName("_search");
+    _searchLit->setObjectName("_searchLit");
+    _buttonBox->setObjectName("_buttonBox");
+    _listTab->setObjectName("_listTab");
     _titleLit->setObjectName("_titleLit");
 
-    _listTab->setObjectName("_listTab");
     _listTab->setPopulateLinear(false);
 
     _searchLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     _select->setEnabled(false);
-    //_listTab->setMinimumHeight(250);
     _titleLit->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 
     _dialogLyt                = new QVBoxLayout(this);
@@ -1039,13 +1097,14 @@ void VirtualList::init()
     connect(_buttonBox,  SIGNAL(accepted()),         this,	 SLOT(sSelect()));
 }
 
-VirtualList::VirtualList() : QDialog()
+VirtualList::VirtualList()
+  : QDialog(), ScriptableWidget(this)
 {
   init();
 }
 
-VirtualList::VirtualList(QWidget* pParent, Qt::WindowFlags pFlags ) :
-    QDialog(pParent, pFlags)
+VirtualList::VirtualList(QWidget* pParent, Qt::WindowFlags pFlags )
+  : QDialog(pParent, pFlags), ScriptableWidget(this)
 {
     init();
 
@@ -1127,39 +1186,42 @@ void VirtualList::sFillList()
 void VirtualList::showEvent(QShowEvent* e)
 {
   sFillList();
+  loadScriptEngine();
   QDialog::showEvent(e);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
-    QDialog(pParent, pFlags)
+VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags)
+  : QDialog(pParent, pFlags), ScriptableWidget(this)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowModality(Qt::ApplicationModal);
     setObjectName("virtualSearch");
 
     _search = new QLineEdit(this);
-    _search->setObjectName("_search");
     _searchLit = new QLabel(tr("S&earch for:"), this);
     _searchLit->setBuddy(_search);
-    _searchLit->setObjectName("_searchLit");
 
     _searchNumber = new XCheckBox(tr("Search through Numbers"), this);
-    _searchNumber->setObjectName("_searchNumber");
     _searchName = new XCheckBox(tr("Search through Names"), this);
-    _searchName->setObjectName("_searchName");
     _searchDescrip = new XCheckBox(tr("Search through Descriptions"), this);
-    _searchDescrip->setObjectName("_searchDescrip");
     _buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
                                       Qt::Vertical, this);
     _select = _buttonBox->button(QDialogButtonBox::Ok);
     _listTab = new XTreeWidget(this);
     _titleLit = new QLabel("", this);
     _titleLit->setBuddy(_listTab);
+
+    _search->setObjectName("_search");
+    _searchLit->setObjectName("_searchLit");
+    _searchNumber->setObjectName("_searchNumber");
+    _searchName->setObjectName("_searchName");
+    _searchDescrip->setObjectName("_searchDescrip");
+    _buttonBox->setObjectName("_buttonBox");
+    _listTab->setObjectName("_listTab");
     _titleLit->setObjectName("_titleLit");
 
-    _listTab->setObjectName("_listTab");
     _listTab->setPopulateLinear(false);
 
     _searchLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
@@ -1308,10 +1370,16 @@ void VirtualSearch::sFillList()
     _listTab->populate(qry);
 }
 
+void VirtualSearch::showEvent(QShowEvent* e)
+{
+  loadScriptEngine();
+  QDialog::showEvent(e);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
-VirtualInfo::VirtualInfo(QWidget* pParent, Qt::WindowFlags pFlags) :
-    QDialog(pParent, pFlags)
+VirtualInfo::VirtualInfo(QWidget* pParent, Qt::WindowFlags pFlags)
+  : QDialog(pParent, pFlags), ScriptableWidget(this)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowModality(Qt::WindowModal);
@@ -1321,26 +1389,27 @@ VirtualInfo::VirtualInfo(QWidget* pParent, Qt::WindowFlags pFlags) :
     _id = _parent->_id;
 
     _titleLit	= new QLabel(_parent->_titleSingular, this);
-    _titleLit->setObjectName("_titleLit");
     _numberLit	= new QLabel(tr("Number:"), this);
-    _numberLit->setObjectName("_numberLit");
     _number	= new QLabel(this);
-    _number->setObjectName("_number");
     _nameLit	= new QLabel(tr("Name:"), this);
-    _nameLit->setObjectName("_nameLit");
     _name	= new QLabel(this);
-    _name->setObjectName("_name");
     _descripLit	= new QLabel(tr("Description:"), this);
-    _descripLit->setObjectName("_descripLit");
     _descrip	= new QLabel(this);
+    _close	= new QPushButton(tr("&Close"), this);
+
+    _titleLit->setObjectName("_titleLit");
+    _numberLit->setObjectName("_numberLit");
+    _number->setObjectName("_number");
+    _nameLit->setObjectName("_nameLit");
+    _name->setObjectName("_name");
+    _descripLit->setObjectName("_descripLit");
     _descrip->setObjectName("_descrip");
+    _close->setObjectName("_close");
 
     _titleLit->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     _numberLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     _nameLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 
-    _close	= new QPushButton(tr("&Close"), this);
-    _close->setObjectName("_close");
     _close->setDefault(true);
 
     QHBoxLayout* dialogLyt = new QHBoxLayout(this);
@@ -1406,5 +1475,11 @@ void VirtualInfo::sPopulate()
 					  .arg(__FILE__)
 					  .arg(__LINE__),
 				  qry.lastError().databaseText());
+}
+
+void VirtualInfo::showEvent(QShowEvent* e)
+{
+  loadScriptEngine();
+  QDialog::showEvent(e);
 }
 

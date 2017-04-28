@@ -25,7 +25,13 @@ public:
     ~postProduction();
 
     Q_INVOKABLE bool    captive() { return _captive; }
+    Q_INVOKABLE QString handleSeriesAdjustAfterPost(int itemlocSeries);
+    Q_INVOKABLE int     handleSeriesAdjustBeforePost();
+    Q_INVOKABLE int     handleTransferSeriesAdjustBeforePost();
+    Q_INVOKABLE QString handleTransferAfterPost(int itemlocSeries);
+    Q_INVOKABLE QString handleIssueToParentAfterPost(int itemlocSeries);
     Q_INVOKABLE bool    okToPost();
+    Q_INVOKABLE QString updateWoAfterPost();
     
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
@@ -41,6 +47,8 @@ protected slots:
 
 private:
     bool _captive;
+    bool _controlled;
+    int _itemsiteId;
 
 };
 

@@ -18,11 +18,16 @@
 class QScriptEngine;
 class QScriptEngineDebugger;
 
+class GuiClientInterface;
+class ScriptCache;
+
 class ScriptableWidget
 {
   public:
-    ScriptableWidget(QObject *object);
+    ScriptableWidget(QWidget *self = 0);
     virtual ~ScriptableWidget();
+
+    static GuiClientInterface *_guiClientInterface;
 
     virtual QScriptEngine *engine();
     virtual void           loadScript(const QStringList &list);
@@ -30,10 +35,11 @@ class ScriptableWidget
     virtual void           loadScriptEngine();
 
   protected:
+    static ScriptCache    *_cache;
     QScriptEngineDebugger *_debugger;
     QScriptEngine         *_engine;
-    QObject               *_object;
     bool                   _scriptLoaded;
+    QWidget               *_self;
 };
 
 #endif
