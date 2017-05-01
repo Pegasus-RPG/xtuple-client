@@ -316,6 +316,7 @@ int postProduction::handleSeriesAdjustBeforePost()
       " ELSE " // returnWoMaterial qty = expected * -1
       "   ((womatl_qtyfxd + ((roundQty(woitem.item_fractional, :qty) + wo_qtyrcv) * womatl_qtyper)) * (1 + womatl_scrap)) * -1 " 
       " END AS qty, "
+      "	roundQty(woitem.item_fractional, :qty) * womatl_qtyper AS return_qty, "
       "	womatl_id, womatl_wo_id, womatl_uom_id, womatl_qtyreq, womatl_qtyiss "
       "FROM womatl, wo "
 			"	JOIN itemsite AS woitemsite ON wo_itemsite_id=woitemsite.itemsite_id "
@@ -338,17 +339,17 @@ int postProduction::handleSeriesAdjustBeforePost()
     {
       XSqlQuery womatlItemlocdist;
       // create the itemlocdist record for this controlled issueWoMaterial item
-      if (_wo->method() == "A")
+      if (_wo->method() == "A" && _qty->toDouble() > 0)
       {
         // make sure the backflush item has relevant qty for issueWoMaterial
         if (backflushItems.value("qty").toDouble() > 0)
         {
           hasControlledBackflushItems = true;
-          womatlItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, roundQty(:item_fractional, itemuomtouom(:item_id, :womatl_uom_id, NULL, :qty)) * -1, 'WO', :wo_id, "
+          womatlItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, COALESCE(itemuomtouom(:item_id, :womatl_uom_id, NULL, :qty), :qty) * -1, 'WO', :wo_id, "
                                     " :itemlocSeries, NULL, NULL, 'IM') AS result;");
           womatlItemlocdist.bindValue(":itemsite_id", backflushItems.value("itemsite_id").toInt());
           womatlItemlocdist.bindValue(":item_id", backflushItems.value("itemsite_item_id").toInt());
-          womatlItemlocdist.bindValue(":item_id", backflushItems.value("womatl_uom_id").toInt());
+          womatlItemlocdist.bindValue(":womatl_uom_id", backflushItems.value("womatl_uom_id").toInt());
           womatlItemlocdist.bindValue(":item_fractional", backflushItems.value("item_fractional").toBool());
           womatlItemlocdist.bindValue(":wo_id", _wo->id());
           womatlItemlocdist.bindValue(":qty", backflushItems.value("qty").toDouble());
@@ -372,23 +373,24 @@ int postProduction::handleSeriesAdjustBeforePost()
         
       }
       // create the itemlocdist record for this controlled returnWoMaterial item
-      else if (_wo->method() == "D")
+      else if (_wo->method() == "D" || _qty->toDouble() < 0)
       {
         // make sure the backflush item has relevant qty for returnWoMaterial
         if (backflushItems.value("womatl_qtyreq").toDouble() >= 0 ? 
-            backflushItems.value("womatl_qtyiss").toDouble() >= backflushItems.value("qty").toDouble() : 
-            backflushItems.value("womatl_qtyiss").toDouble() <= backflushItems.value("qty").toDouble())
+            backflushItems.value("womatl_qtyiss").toDouble() >= backflushItems.value("return_qty").toDouble() : 
+            backflushItems.value("womatl_qtyiss").toDouble() <= backflushItems.value("return_qty").toDouble())
         {
           hasControlledBackflushItems = true;
-          womatlItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, COALESCE(itemuomtouom(:item_id, :womatl_uom_id, NULL, :qty), :qty), "
-          													"'WO', womatl_wo_id, :itemlocSeries, NULL, NULL, 'IM') AS result;");
+          womatlItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, COALESCE(itemuomtouom(:item_id, :womatl_uom_id, NULL, :qty), :qty) * -1, "
+          													"'WO', :wo_id, :itemlocSeries, NULL, NULL, 'IM') AS result;");
           womatlItemlocdist.bindValue(":itemsite_id", backflushItems.value("itemsite_id").toInt());
           womatlItemlocdist.bindValue(":item_id", backflushItems.value("itemsite_item_id").toInt());
           womatlItemlocdist.bindValue(":womatl_uom_id", backflushItems.value("womatl_uom_id").toInt());
-          womatlItemlocdist.bindValue(":qty", backflushItems.value("qty").toDouble());
+          womatlItemlocdist.bindValue(":qty", backflushItems.value("return_qty").toDouble());
+          womatlItemlocdist.bindValue(":wo_id", _wo->id());
           womatlItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
           womatlItemlocdist.exec();
-          if (!womatlItemlocdist.first())
+       		if (!womatlItemlocdist.first())
           {
             cleanup.exec();
             QMessageBox::information( this, tr("Issue Line to Shipping"), 
@@ -440,7 +442,7 @@ int postProduction::handleSeriesAdjustBeforePost()
       XDialog::Rejected))
   {
     cleanup.exec();
-    QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+    QMessageBox::information( this, tr("Post Production"), tr("Detail distribution was cancelled.") );
     return -1;
   }
 
@@ -541,7 +543,7 @@ int postProduction::handleTransferSeriesAdjustBeforePost()
       XDialog::Rejected)
   {
     cleanup.exec();
-    QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+    QMessageBox::information( this, tr("Post Production"), tr("Detail distribution was cancelled.") );
     return -1;
   }
 
@@ -708,7 +710,7 @@ void postProduction::sPost()
   // Stage cleanup function to be called on error
   XSqlQuery cleanup;
   cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE), "
-                  " CASE WHEN :twItemlocSeries IS NOT NULL THEN deleteitemlocseries(:twItemlocSeries) END;");
+                  " CASE WHEN :twItemlocSeries IS NOT NULL THEN deleteitemlocseries(:twItemlocSeries, true) END;");
   cleanup.bindValue(":itemlocSeries", itemlocSeries);
   if (twItemlocSeries > 0)
     cleanup.bindValue(":twItemlocSeries", twItemlocSeries);
@@ -724,7 +726,7 @@ void postProduction::sPost()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
   postPost.exec("BEGIN;");
-  postPost.prepare("SELECT postProduction(:wo_id, :qty, :backflushMaterials, :itemlocSeries, :date, TRUE, TRUE) AS result;");
+  postPost.prepare("SELECT postProduction(:wo_id, :qty, :backflushMaterials, :itemlocSeries, :date::timestamp with time zone, TRUE) AS result;");
   postPost.bindValue(":wo_id", _wo->id());
   if (_wo->method() == "A")
     postPost.bindValue(":qty", _qty->toDouble());
@@ -732,9 +734,7 @@ void postProduction::sPost()
     postPost.bindValue(":qty", _qty->toDouble() * -1);
   postPost.bindValue(":backflushMaterials", QVariant(_backflush->isChecked()));
   postPost.bindValue(":itemlocSeries", itemlocSeries);
-  postPost.bindValue(":date",  _transDate->date() == QDate::currentDate()
-                               ? QDateTime::currentDateTime() : QDateTime(_transDate->date()));
-
+  postPost.bindValue(":date",  _transDate->date());
   postPost.exec();
   if (postPost.first())
   {
@@ -814,7 +814,7 @@ void postProduction::sPost()
   }
 
   if (_captive)
-    done(itemlocSeries);
+    close();
   else
     clear();
 }
