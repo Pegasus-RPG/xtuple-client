@@ -2276,18 +2276,10 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   mainwindowval.setProperty("S60",      QScriptValue(engine, S60), ro);
   mainwindowval.setProperty("Unknown",  QScriptValue(engine, Unknown), ro);
 
-
-  QScriptValue metricsval = engine->newQObject(_metrics);
-  engine->globalObject().setProperty("metrics", metricsval);
-
-  QScriptValue metricsencval = engine->newQObject(_metricsenc);
-  engine->globalObject().setProperty("metricsenc", metricsencval);
-
-  QScriptValue preferencesval = engine->newQObject(_preferences);
-  engine->globalObject().setProperty("preferences", preferencesval);
-
-  QScriptValue privilegesval = engine->newQObject(_privileges);
-  engine->globalObject().setProperty("privileges", privilegesval);
+  setupParameters(engine, "metrics",      _metrics);
+  setupParameters(engine, "metricsenc",   _metricsenc);
+  setupParameters(engine, "preferences",  _preferences);
+  setupParameters(engine, "privileges",   _privileges);
 
   QScriptValue settingsval = engine->newFunction(settingsValue, 2);
   engine->globalObject().setProperty("settingsValue", settingsval);
@@ -2327,7 +2319,7 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   mainwindowval.setProperty("cNoReportDefinition", QScriptValue(engine, cNoReportDefinition), ro);
 
   setupScriptApi(engine);
-  setupWidgetsScriptApi(engine);
+  setupWidgetsScriptApi(engine, ScriptableWidget::_guiClientInterface); // what's a better way?
   setupSetupApi(engine);
   setupGuiErrorCheck(engine);
 

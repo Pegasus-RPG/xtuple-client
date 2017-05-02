@@ -115,6 +115,16 @@ QScriptValue FillRuletoScriptValue(QScriptEngine *engine, const enum Qt::FillRul
   return QScriptValue(engine, (int)p);
 }
 
+QScriptValue FindChildOptionToScriptValue(QScriptEngine *engine, const enum Qt::FindChildOption &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
+QScriptValue FindChildOptionsToScriptValue(QScriptEngine *engine, const Qt::FindChildOptions &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+
 QScriptValue FocusPolicytoScriptValue(QScriptEngine *engine, const Qt::FocusPolicy &p)
 {
   return QScriptValue(engine, (int)p);
@@ -432,6 +442,16 @@ void EventPriorityfromScriptValue(const QScriptValue &obj, enum Qt::EventPriorit
 void FillRulefromScriptValue(const QScriptValue &obj, enum Qt::FillRule &p)
 {
   p = (enum Qt::FillRule)obj.toInt32();
+}
+
+void FindChildOptionFromScriptValue(const QScriptValue &obj, enum Qt::FindChildOption &p)
+{
+  p = (enum Qt::FindChildOption)obj.toInt32();
+}
+
+void FindChildOptionsFromScriptValue(const QScriptValue &obj, Qt::FindChildOptions &p)
+{
+  p = (Qt::FindChildOptions)obj.toInt32();
 }
 
 void FocusPolicyfromScriptValue(const QScriptValue &obj, Qt::FocusPolicy &p)
@@ -823,6 +843,11 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("StrongFocus",               QScriptValue(engine, Qt::StrongFocus),            ro);
   widget.setProperty("WheelFocus",                QScriptValue(engine, Qt::WheelFocus),             ro);
   widget.setProperty("NoFocus",                   QScriptValue(engine, Qt::NoFocus),                ro);
+
+  qScriptRegisterMetaType(engine,  FindChildOptionToScriptValue,  FindChildOptionFromScriptValue);
+  qScriptRegisterMetaType(engine,  FindChildOptionsToScriptValue, FindChildOptionsFromScriptValue);
+  widget.setProperty("FindDirectChildrenOnly",    QScriptValue(engine, Qt::FindDirectChildrenOnly), ro);
+  widget.setProperty("FindChildrenRecursively",   QScriptValue(engine, Qt::FindChildrenRecursively),ro);
 
   qScriptRegisterMetaType(engine, FocusReasontoScriptValue, FocusReasonfromScriptValue);
   widget.setProperty("MouseFocusReason",          QScriptValue(engine, Qt::MouseFocusReason),       ro);

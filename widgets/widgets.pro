@@ -1,19 +1,24 @@
 include( ../global.pri )
+
 TARGET   = xtuplewidgets
 TEMPLATE = lib
 CONFIG  += qt warn_on plugin
-QT      += sql script scripttools
+QT      += core network printsupport script scripttools sql \
+           webkit webkitwidgets widgets xml
 
 greaterThan(QT_MAJOR_VERSION, 4) {
-  QT += widgets printsupport designer uitools
+  QT += designer printsupport serialport uitools \
+        webchannel websockets widgets
 } else {
   CONFIG += designer uitools
 }
 
-INCLUDEPATH += ../common ../scriptapi .
 DBFILE       = widgets.db
 LANGUAGE     = C++
-DEPENDPATH  += ../common ../scriptapi
+INCLUDEPATH += ../common ../scriptapi .
+DEPENDPATH  += $${INCLUDEPATH} ../lib
+LIBS        += -lxtuplescriptapi -lxtuplecommon -lwrtembed \
+               -lqzint -ldmtx -lrenderer -lMetaSQL -lopenrptcommon
 
 dynamic { 
     CONFIG      += dll # plugin implies dll but this fixes a cross-compile problem
@@ -21,7 +26,6 @@ dynamic {
     MOC_DIR      = tmp/dll
     OBJECTS_DIR  = tmp/dll
     UI_DIR       = tmp/dll
-    LIBS        += -lxtuplescriptapi -lxtuplecommon -lwrtembed -lrenderer -lMetaSQL -lopenrptcommon
     DEFINES     += MAKEDLL
     QMAKE_LIBDIR = ../lib $$OPENRPT_LIBDIR $$QMAKE_LIBDIR
 } else {

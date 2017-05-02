@@ -16,6 +16,11 @@
 #include <QString>
 #include <QAction>
 
+class Metrics;
+class Metricsenc;
+class Preferences;
+class Privileges;
+
 class GuiClientInterface : public QObject
 {
   Q_OBJECT
@@ -35,6 +40,11 @@ class GuiClientInterface : public QObject
     virtual const QStringList hunspell_suggest(const QString word) = 0;
     virtual int hunspell_add(const QString word) = 0;
     virtual int hunspell_ignore(const QString word) = 0;
+
+    virtual Metrics     *getMetrics()               = 0;
+    virtual Metricsenc  *getMetricsenc()            = 0;
+    virtual Preferences *getPreferences()           = 0;
+    virtual Privileges  *getPrivileges()            = 0;
 
   signals:
     void dbConnectionLost();

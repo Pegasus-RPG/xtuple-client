@@ -41,6 +41,7 @@ class Privileges;
 class QMdiArea;
 class QScriptEngine;
 class QWidget;
+class GuiClientInterface;
 
 extern Preferences *_x_preferences;
 extern Metrics     *_x_metrics;
@@ -48,7 +49,7 @@ extern QMdiArea    *_x_workspace;
 extern Privileges  *_x_privileges;
 extern QString     _x_username;
 
-void setupWidgetsScriptApi(QScriptEngine *engine);
+void setupWidgetsScriptApi(QScriptEngine *engine, GuiClientInterface *client = 0);
 
 #endif
 

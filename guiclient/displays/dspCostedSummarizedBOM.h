@@ -24,6 +24,7 @@ public:
     dspCostedSummarizedBOM(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList &params);
+    using display::sFillList;
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
