@@ -27,6 +27,7 @@ public slots:
     virtual void sDeleteUnused();
     virtual void sNew();
     virtual void sEdit();
+    virtual void sPrint();
     virtual void sFillList();
 
 protected slots:

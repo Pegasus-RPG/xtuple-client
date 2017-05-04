@@ -13,6 +13,7 @@
 #include <parameter.h>
 #include "poType.h"
 #include "errorReporter.h"
+#include <openreports.h>
 #include "guiclient.h"
 
 poTypes::poTypes(QWidget* parent, const char* name, Qt::WindowFlags fl)
@@ -25,7 +26,7 @@ poTypes::poTypes(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_deleteunused, SIGNAL(clicked()), this, SLOT(sDeleteUnused()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_potype, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
 
   _potype->addColumn(tr("Code"),        -1, Qt::AlignLeft, true, "potype_code" );
@@ -107,6 +108,15 @@ void poTypes::sEdit()
 
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
+}
+
+void poTypes::sPrint()
+{
+  orReport report("PurchaseOrderTypes");
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void poTypes::sFillList()
