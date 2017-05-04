@@ -45,17 +45,13 @@ QScriptEngine *ScriptablePrivate::engine()
   omfgThis->loadScriptGlobals(engine);
   QScriptValue mywidget = engine->globalObject().property("mywidget");
 
-  // mywindow is required for backwards compatibility.
-  // scriptablewidget creates mywidget.
   engine->globalObject().setProperty("mywindow", mywidget);
 
   // mydialog is required for backwards compatibility.
   // we had problems when we first started scripting [qx]dialogs.
   // i don't know if these remain. gjm
-  if (dynamic_cast<QDialog*>(this))
-  {
-    engine->globalObject().setProperty("mydialog", mywidget);
-  }
+  if (_self->inherits("QDialog"))
+    _engine->globalObject().setProperty("mydialog", mywidget);
 
   return engine;
 }
