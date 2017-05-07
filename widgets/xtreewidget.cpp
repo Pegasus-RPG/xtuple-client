@@ -945,6 +945,12 @@ int XTreeWidget::column(const QString pName) const
   return colIdx;
 }
 
+QString XTreeWidget::column(const int pIndex) const
+{
+  if (pIndex >= 0 && pIndex < _roles.size())
+    return _roles.value(pIndex)->value("qteditrole").toString();
+}
+
 XTreeWidgetItem *XTreeWidget::currentItem() const
 {
   return (XTreeWidgetItem *)QTreeWidget::currentItem();
