@@ -949,6 +949,8 @@ QString XTreeWidget::column(const int pIndex) const
 {
   if (pIndex >= 0 && pIndex < _roles.size())
     return _roles.value(pIndex)->value("qteditrole").toString();
+  else
+    return QString();
 }
 
 XTreeWidgetItem *XTreeWidget::currentItem() const
