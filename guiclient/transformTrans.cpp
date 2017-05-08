@@ -197,10 +197,6 @@ void transformTrans::sPost()
     return;
   }
 
-  XSqlQuery rollback;
-  rollback.prepare("ROLLBACK;");
-
-  transformPost.exec("BEGIN;");	// because of possible distribution cancelations
   transformPost.prepare( "SELECT postTransformTrans(s.itemsite_id, t.itemsite_id,"
              "                          :itemloc_id, :qty, :docnumber,"
               "                          :comments, :date) AS result "
@@ -223,7 +219,6 @@ void transformTrans::sPost()
     int result = transformPost.value("result").toInt();
     if (result < 0)
     {
-      rollback.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
                              storedProcErrorLookup("postTransformTrans", result),
                              __FILE__, __LINE__);
@@ -231,32 +226,19 @@ void transformTrans::sPost()
     }
     else if (transformPost.lastError().type() != QSqlError::NoError)
     {
-      rollback.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
                            transformPost, __FILE__, __LINE__);
       return;
     }
-
-    if (distributeInventory::SeriesAdjust(transformPost.value("result").toInt(), this) == XDialog::Rejected)
-    {
-      rollback.exec();
-      QMessageBox::information(this, tr("Transform Transaction"),
-                               tr("Transaction Canceled") );
-      return;
-    }
-
-    transformPost.exec("COMMIT;");
   }
   else if (transformPost.lastError().type() != QSqlError::NoError)
   {
-    rollback.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
                          transformPost, __FILE__, __LINE__);
     return;
   }
   else
   {
-    rollback.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
                          tr("%1: <p>No transaction occurred due to either Item %2 or Item "
                             "%3 was not found at Site %4.")
