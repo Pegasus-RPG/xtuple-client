@@ -10,18 +10,20 @@
 
 #include "poTypes.h"
 
-#include <parameter.h>
-#include "poType.h"
-#include "errorReporter.h"
-#include <openreports.h>
-#include "guiclient.h"
+#include <QSqlDriver>
 
-poTypes::poTypes(QWidget* parent, const char* name, Qt::WindowFlags fl)
+#include <openreports.h>
+#include <parameter.h>
+
+#include "errorReporter.h"
+#include "guiclient.h"
+#include "poType.h"
+
+poTypes::poTypes(QWidget *parent, const char *name, Qt::WindowFlags fl)
   : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
@@ -32,22 +34,32 @@ poTypes::poTypes(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _potype->addColumn(tr("Code"),        -1, Qt::AlignLeft, true, "potype_code" );
   _potype->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "potype_descr" );
   _potype->addColumn(tr("Active"),      -1, Qt::AlignLeft, true, "potype_active" );
-  _potype->addColumn(tr("Default"),      -1, Qt::AlignLeft, true, "potype_default" );
+  _potype->addColumn(tr("Default"),     -1, Qt::AlignLeft, true, "potype_default" );
   
   if (_privileges->check("MaintainPurchaseTypes"))
   {
-    connect(_potype, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-    connect(_potype, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    connect(_potype, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+    connect(_potype, SIGNAL(valid(bool)),         _edit, SLOT(setEnabled(bool)));
+    connect(_potype, SIGNAL(valid(bool)),       _delete, SLOT(setEnabled(bool)));
+    connect(_potype, SIGNAL(itemSelected(int)),   _edit, SLOT(animateClick()));
   }
   else
   {
     _new->setEnabled(false);
+    _deleteunused->setEnabled(false);
   }
+
+  _edit->setEnabled(false);
+  _delete->setEnabled(false);
 
   connect(omfgThis, SIGNAL(itemGroupsUpdated(int, bool)), this, SLOT(sFillList()));
 
   sFillList();
+
+  QSqlDatabase db = QSqlDatabase::database();
+  if (! db.driver()->subscribedToNotifications().contains("potype"))
+    db.driver()->subscribeToNotification("potype");
+  connect(db.driver(), SIGNAL(notification(const QString&)),
+          this,        SLOT(sNotified(const QString&)));
 }
 
 poTypes::~poTypes()
@@ -121,8 +133,13 @@ void poTypes::sPrint()
 
 void poTypes::sFillList()
 {
-  _potype->populate( "SELECT * "
-                      "FROM potype "
-                      "ORDER BY potype_code;" );
+  _potype->populate("SELECT potype_id, *"
+                    "  FROM potype"
+                    " ORDER BY potype_code;");
 }
 
+void poTypes::sNotified(const QString &notice)
+{
+  if (notice == "potype")
+    sFillList();
+}

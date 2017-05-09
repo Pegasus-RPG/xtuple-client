@@ -627,7 +627,8 @@ bool project::sSave(bool partial)
   projectSave.bindValue(":prj_descrip", _descrip->toPlainText());
   projectSave.bindValue(":prj_status", _projectStatuses[_status->currentIndex()]);
   projectSave.bindValue(":prj_priority_id", _priority->id());
-  projectSave.bindValue(":prj_dept_id", _dept->id());
+  if (_dept->id() > 0)
+    projectSave.bindValue(":prj_dept_id", _dept->id());
   projectSave.bindValue(":prj_so", QVariant(_so->isChecked()));
   projectSave.bindValue(":prj_wo", QVariant(_wo->isChecked()));
   projectSave.bindValue(":prj_po", QVariant(_po->isChecked()));

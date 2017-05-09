@@ -849,7 +849,7 @@ to be bound by its terms.</comment>
        <item>
         <widget class="Comments" name="_comments">
          <property name="type">
-          <number>0</number>
+           <enum>Comments::Project</enum>
          </property>
         </widget>
        </item>
@@ -863,7 +863,7 @@ to be bound by its terms.</comment>
        <item row="0" column="0">
         <widget class="Documents" name="_documents">
          <property name="type">
-          <number>0</number>
+          <enum>Documents::Project</enum>
          </property>
         </widget>
        </item>
@@ -979,10 +979,14 @@ to be bound by its terms.</comment>
   <tabstop>_crmacct</tabstop>
   <tabstop>_owner</tabstop>
   <tabstop>_assignedTo</tabstop>
+  <tabstop>_dept</tabstop>
+  <tabstop>_status</tabstop>
+  <tabstop>_priority</tabstop>
   <tabstop>_due</tabstop>
   <tabstop>_started</tabstop>
   <tabstop>_assigned</tabstop>
   <tabstop>_completed</tabstop>
+  <tabstop>_pctCompl</tabstop>
   <tabstop>_cntct</tabstop>
   <tabstop>_tab</tabstop>
   <tabstop>_so</tabstop>

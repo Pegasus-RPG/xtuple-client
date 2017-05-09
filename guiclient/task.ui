@@ -561,7 +561,7 @@ to be bound by its terms.</comment>
        <item row="0" column="0">
         <widget class="Comments" name="_comments">
          <property name="type">
-          <number>0</number>
+           <enum>Comments::Task</enum>
          </property>
         </widget>
        </item>
@@ -585,7 +585,7 @@ to be bound by its terms.</comment>
        <item>
         <widget class="Documents" name="_documents">
          <property name="type">
-          <number>0</number>
+           <enum>Documents::ProjectTask</enum>
          </property>
         </widget>
        </item>
