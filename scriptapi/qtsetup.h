@@ -38,6 +38,8 @@ Q_DECLARE_METATYPE(enum Qt::DockWidgetArea);
 Q_DECLARE_METATYPE(enum Qt::DropAction);
 Q_DECLARE_METATYPE(enum Qt::EventPriority);
 Q_DECLARE_METATYPE(enum Qt::FillRule);
+Q_DECLARE_METATYPE(enum Qt::FindChildOption);
+Q_DECLARE_METATYPE(Qt::FindChildOptions);
 Q_DECLARE_METATYPE(enum Qt::FocusReason);
 Q_DECLARE_METATYPE(enum Qt::GlobalColor);
 Q_DECLARE_METATYPE(enum Qt::HitTestAccuracy);

@@ -22,10 +22,11 @@
 #include "include.h"
 #include "qtsetup.h"
 #include "scriptcache.h"
+#include "setupscriptapi.h"
 #include "widgets.h"
 #include "xsqlquery.h"
 
-#define DEBUG true
+#define DEBUG false
 
 GuiClientInterface *ScriptableWidget::_guiClientInterface = 0;
 ScriptCache        *ScriptableWidget::_cache              = 0;
@@ -58,6 +59,8 @@ QScriptEngine *ScriptableWidget::engine()
 
     setupQt(_engine);
     setupInclude(_engine);
+    setupScriptApi(_engine);
+    setupWidgetsScriptApi(_engine, _guiClientInterface);
     QScriptValue mywidget = _engine->newQObject(w);
     _engine->globalObject().setProperty("mywidget",  mywidget);
   }

@@ -104,3 +104,24 @@ int xTupleGuiClientInterface::hunspell_ignore(const QString word)
 {
   return omfgThis->hunspell_ignore(word);
 }
+
+Metrics *xTupleGuiClientInterface::getMetrics()
+{
+  return _metrics;
+}
+
+Metricsenc *xTupleGuiClientInterface::getMetricsenc()
+{
+  return _metricsenc;
+}
+
+Preferences *xTupleGuiClientInterface::getPreferences()
+{
+  return _preferences;
+}
+
+Privileges *xTupleGuiClientInterface::getPrivileges()
+{
+  return _privileges;
+}
+

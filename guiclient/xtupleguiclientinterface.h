@@ -26,4 +26,9 @@ class xTupleGuiClientInterface : public GuiClientInterface
     virtual const QStringList hunspell_suggest(const QString word);
     virtual int               hunspell_add(const QString word);
     virtual int               hunspell_ignore(const QString word);
+
+    virtual Metrics     *getMetrics();
+    virtual Metricsenc  *getMetricsenc();
+    virtual Preferences *getPreferences();
+    virtual Privileges  *getPrivileges();
 };
