@@ -51,8 +51,6 @@ poTypes::poTypes(QWidget *parent, const char *name, Qt::WindowFlags fl)
   _edit->setEnabled(false);
   _delete->setEnabled(false);
 
-  connect(omfgThis, SIGNAL(itemGroupsUpdated(int, bool)), this, SLOT(sFillList()));
-
   sFillList();
 
   QSqlDatabase db = QSqlDatabase::database();
