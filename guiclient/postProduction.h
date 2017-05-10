@@ -25,7 +25,6 @@ public:
     ~postProduction();
 
     Q_INVOKABLE bool    captive() { return _captive; }
-    Q_INVOKABLE QString handleSeriesAdjustAfterPost(int itemlocSeries);
     Q_INVOKABLE int     handleSeriesAdjustBeforePost();
     Q_INVOKABLE int     handleTransferSeriesAdjustBeforePost();
     Q_INVOKABLE QString handleTransferAfterPost(int itemlocSeries);
