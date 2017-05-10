@@ -197,44 +197,44 @@ void transformTrans::sPost()
     return;
   }
 
-  transformPost.prepare( "SELECT postTransformTrans(s.itemsite_id, t.itemsite_id,"
-             "                          :itemloc_id, :qty, :docnumber,"
-              "                          :comments, :date) AS result "
-             "FROM itemsite AS s, itemsite AS t "
-             "WHERE ( (s.itemsite_warehous_id=t.itemsite_warehous_id)"
-             " AND (s.itemsite_warehous_id=:warehous_id)"
-             " AND (s.itemsite_item_id=:sourceItemid)"
-             " AND (t.itemsite_item_id=:targetItemid) );" );
-  transformPost.bindValue(":warehous_id",  _warehouse->id());
-  transformPost.bindValue(":sourceItemid", _item->id());
-  transformPost.bindValue(":targetItemid", _target->id());
-  transformPost.bindValue(":itemloc_id",   _source->altId());
-  transformPost.bindValue(":qty",          _qty->toDouble());
-  transformPost.bindValue(":comments",     _notes->toPlainText());
-  transformPost.bindValue(":docnumber",    _documentNum->text());
-  transformPost.bindValue(":date",         _transDate->date());
-  transformPost.exec();
-  if (transformPost.first())
+  int sourceItemsiteId;
+  int targetItemsiteId;
+  int targetItemlocSeries = 0;
+  bool targetItemsiteReqDist = false;
+
+  XSqlQuery itemsites;
+  itemsites.prepare("SELECT s.itemsite_id AS source_itemsite_id, "
+                    " t.itemsite_id AS target_itemsite_id, "
+                    " isControlledItemsite(t.itemsite_id) "
+                    "   AND ((t.itemsite_loccntrl != s.itemsite_loccntrl) "
+                    "     OR (t.itemsite_controlmethod != s.itemsite_controlmethod "
+                    "       AND t.itemsite_controlmethod IN ('L', 'S')) "
+                    " ) AS target_requires_dist, "
+                    " ls_number AS source_ls_number "
+                    "FROM itemsite AS s "
+                    " LEFT JOIN itemloc ON s.itemsite_id=itemloc_itemsite_id "
+                    " LEFT JOIN ls ON ls_id=itemloc_ls_id, "
+                    " itemsite AS t "
+                    "WHERE s.itemsite_warehous_id=t.itemsite_warehous_id "
+                    " AND s.itemsite_warehous_id=:warehous_id "
+                    " AND s.itemsite_item_id=:sourceItemid "
+                    " AND t.itemsite_item_id=:targetItemid "
+                    " AND itemloc_id=:itemlocId;");
+  itemsites.bindValue(":warehous_id",  _warehouse->id());
+  itemsites.bindValue(":sourceItemid", _item->id());
+  itemsites.bindValue(":targetItemid", _target->id());
+  itemsites.bindValue(":itemlocId",   _source->altId());
+  itemsites.exec();
+  if (itemsites.first()) 
   {
-    int result = transformPost.value("result").toInt();
-    if (result < 0)
-    {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
-                             storedProcErrorLookup("postTransformTrans", result),
-                             __FILE__, __LINE__);
-      return;
-    }
-    else if (transformPost.lastError().type() != QSqlError::NoError)
-    {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
-                           transformPost, __FILE__, __LINE__);
-      return;
-    }
+    sourceItemsiteId = itemsites.value("source_itemsite_id").toInt();
+    targetItemsiteId = itemsites.value("target_itemsite_id").toInt();
+    targetItemsiteReqDist = itemsites.value("target_requires_dist").toBool();
   }
-  else if (transformPost.lastError().type() != QSqlError::NoError)
+  else if (itemsites.lastError().type() != QSqlError::NoError)
   {
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
-                         transformPost, __FILE__, __LINE__);
+                             itemsites, __FILE__, __LINE__);
     return;
   }
   else
@@ -246,6 +246,52 @@ void transformTrans::sPost()
                          .arg(_item->itemNumber())
                          .arg(_target->currentText())
                          .arg(_warehouse->currentText()),__FILE__,__LINE__);
+    return;
+  }
+
+  // Stage cleanup query
+  XSqlQuery cleanup;
+  cleanup.prepare("SELECT deleteitemlocseries(:targetItemlocSeries, TRUE);");
+
+  // If the target itemsite has more control 
+  if (targetItemsiteReqDist)
+  {
+    targetItemlocSeries = distributeInventory::SeriesCreate(targetItemsiteId, _qty->toDouble(), "RT", "RT");
+    if (targetItemlocSeries <= 0)
+    {
+      cleanup.exec();
+      return;
+    }
+    cleanup.bindValue(":targetItemlocSeries", targetItemlocSeries);
+
+    if (distributeInventory::SeriesAdjust(targetItemlocSeries, this, itemsites.value("source_ls_number").toString(), QDate(),
+      QDate(), true) == XDialog::Rejected)
+    {
+      cleanup.exec();
+      QMessageBox::information(this, tr("Transform Transaction"),
+                               tr("Transaction Canceled") );
+      return;
+    }
+  }
+  
+  transformPost.prepare( "SELECT postTransformTrans(:sItemsiteId, :tItemsiteId, :itemloc_id, :qty::numeric, "
+                         ":docnumber, :comments, :date, NULL, :targetItemlocSeries) AS result;" );
+  transformPost.bindValue(":sItemsiteId",  sourceItemsiteId);
+  transformPost.bindValue(":tItemsiteId",  targetItemsiteId);
+  transformPost.bindValue(":itemloc_id",   _source->altId());
+  transformPost.bindValue(":qty",          _qty->toDouble());
+  transformPost.bindValue(":comments",     _notes->toPlainText());
+  transformPost.bindValue(":docnumber",    _documentNum->text());
+  transformPost.bindValue(":date",         _transDate->date());
+  if (targetItemlocSeries > 0)
+    transformPost.bindValue(":targetItemlocSeries", targetItemlocSeries);
+  transformPost.exec();
+  if (!transformPost.first() || transformPost.lastError().type() != QSqlError::NoError)
+  {
+    cleanup.exec();
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Transaction"),
+                         transformPost, __FILE__, __LINE__);
+    return;
   }
 
   if (_captive)

@@ -1857,29 +1857,71 @@ void transferOrder::sIssueLineBalance()
           return;
       }
 
+      int itemsiteId;
+      double balance = 0;
+
+      // Get some required vars
+      XSqlQuery itemsite;
+      itemsite.prepare("SELECT itemsite_id, "
+                       "  calcIssueToShippingLineBalance('TO', toitem_id) AS balance "
+                       "FROM toitem "
+                       "  JOIN tohead ON toitem_tohead_id=tohead_id "
+                       "  JOIN itemsite ON toitem_item_id=itemsite_item_id AND tohead_src_warehous_id=itemsite_warehous_id "
+                       "WHERE toitem_id=:toitemId;");
+      itemsite.bindValue(":toitemId", toitem->id());
+      itemsite.exec();
+      if (itemsite.first())
+      {
+        itemsiteId = itemsite.value("itemsite_id").toInt();
+        balance = itemsite.value("balance").toDouble();
+      }
+      else 
+      {
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error checking balance"),
+          itemsite.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+      
+      // Stage cleanup query
+      XSqlQuery cleanup;
+      cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+
+      // Generate the series and itemlocdist record (if controlled)
+      int itemlocSeries = distributeInventory::SeriesCreate(itemsiteId, balance * -1, "TO", "IS", 0, toitem->id());
+      if (itemlocSeries <= 0)
+        return;
+      cleanup.bindValue(":itemlocSeries", itemlocSeries);
+
+      // Distribute inventory
+      if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+        QDate(), true) == XDialog::Rejected)
+      {
+        cleanup.exec();
+        QMessageBox::information(this, tr("Issue to Shipping"),
+                                 tr("Detail Distribution Canceled") );
+        return;
+      }
+    
       XSqlQuery rollback;
       rollback.prepare("ROLLBACK;");
 
-      transferIssueLineBalance.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-      transferIssueLineBalance.prepare("SELECT issueLineBalanceToShipping('TO', :toitem_id, CURRENT_TIMESTAMP) AS result;");
-      transferIssueLineBalance.bindValue(":toitem_id", toitem->id());
+      transferIssueLineBalance.exec("BEGIN;");	// TODO - remove after negative return values have been removed from issueToShipping() 
+      transferIssueLineBalance.prepare("SELECT issueToShipping('TO', :toitemId, :qty, :itemlocSeries, CURRENT_TIMESTAMP, NULL, FALSE, TRUE) AS result;");
+      transferIssueLineBalance.bindValue(":toitemId", toitem->id());
+      transferIssueLineBalance.bindValue(":qty", balance);
+      transferIssueLineBalance.bindValue(":itemlocSeries", itemlocSeries);
       transferIssueLineBalance.exec();
       if (transferIssueLineBalance.first())
       {
         int result = transferIssueLineBalance.value("result").toInt();
-        if (result < 0)
+        if (result < 0 || result != itemlocSeries)
         {
           rollback.exec();
+          cleanup.exec();
           ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Line Item Balance"),
                                storedProcErrorLookup("issueLineBalance", result) +
                                tr("<br>Line Item %1").arg(selected[i]->text(0)),
                                __FILE__, __LINE__);
-          return;
-        }
-        if (distributeInventory::SeriesAdjust(transferIssueLineBalance.value("result").toInt(), this) == XDialog::Rejected)
-        {
-          rollback.exec();
-          QMessageBox::information( this, tr("Issue to Shipping"), tr("Transaction Canceled") );
           return;
         }
 
