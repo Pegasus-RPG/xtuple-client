@@ -98,6 +98,106 @@ void distributeInventory::languageChange()
 {
   retranslateUi(this);
 }
+
+int distributeInventory::SeriesCreate(int itemsiteId, double qty, const QString & orderType, 
+  const QString & transType, int parentItemlocSeries, int orderitemId, int invhistId )
+{
+  XSqlQuery parentItemlocdist;
+  int itemlocSeries = -1;
+  int itemlocdistId = -1;
+  bool controlled = false;
+
+  // itemsiteId, qty, orderType, transType required
+
+  // Stage distribution cleanup function to be called on error
+  XSqlQuery cleanup;
+  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+
+  // Generate a series id to be used for itemlocdist if controlled, and for returnWoMaterial()
+  XSqlQuery parentSeries;
+  parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result, isControlledItemsite(:itemsiteId) AS controlled;");
+  parentSeries.bindValue(":itemsiteId", itemsiteId);
+  parentSeries.exec();
+  if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
+  {
+    itemlocSeries = parentSeries.value("result").toInt();
+    controlled = parentSeries.value("controlled").toBool();
+    cleanup.bindValue(":itemlocSeries", itemlocSeries);
+  }
+  else
+  {
+    ErrorReporter::error(QtCriticalMsg, 0, tr("Failed to Retrieve the Next itemloc_series_seq"),
+      parentSeries, __FILE__, __LINE__);
+    return -1;
+  }
+
+  // if parentItemlocSeries sent, get the itemlocdist_id to send to createItemlocdistParent
+  if (parentItemlocSeries > 0 && controlled)
+  {
+    parentItemlocdist.prepare("SELECT itemlocdist_id "
+                              "FROM itemlocdist "
+                              "WHERE itemlocdist_series = :parentItemlocSeries;");
+    parentItemlocdist.bindValue(":parentItemlocSeries", parentItemlocSeries);
+    parentItemlocdist.exec();
+    if (parentItemlocdist.size() != 1)
+    {
+      ErrorReporter::error(QtCriticalMsg, 0,
+        tr("Expected a single itemlocdist record for itemlocdist_series %1").arg(parentItemlocSeries),
+        parentItemlocdist, __FILE__, __LINE__);
+      return -1;
+    }
+    else if (parentItemlocdist.first())
+    {
+      itemlocdistId = parentItemlocdist.value("itemlocdist_id").toInt();
+      if (controlled && itemlocdistId < 0)
+      {
+        ErrorReporter::error(QtCriticalMsg, 0, 
+          tr("Could not find the itemlocdist_id for itemlocdist_series %1").arg(parentItemlocSeries),
+          parentItemlocdist, __FILE__, __LINE__);
+        return -1;
+      }
+    }
+    else 
+    {
+      ErrorReporter::error(QtCriticalMsg, 0,
+        tr("Error looking up itemlocdist_id value for itemlocdist_series %1").arg(parentItemlocSeries),
+        parentItemlocdist, __FILE__, __LINE__);
+      return -1;
+    }
+  }
+
+  if (controlled)
+  {
+    // Create the itemlocdist record if controlled
+    parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsiteId, :qty, :orderType, :orderitemId, "
+                              " :itemlocSeries, :invhistId, :itemlocdistId, :transType) AS result;");
+    parentItemlocdist.bindValue(":itemsiteId", itemsiteId);
+    parentItemlocdist.bindValue(":qty", qty);
+    parentItemlocdist.bindValue(":orderType", orderType);
+    parentItemlocdist.bindValue(":transType", transType);
+    if (orderitemId > 0)
+      parentItemlocdist.bindValue(":orderitemId", orderitemId);
+    if (itemlocSeries > 0)
+      parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+    if (invhistId > 0)
+      parentItemlocdist.bindValue(":invhistId", invhistId);
+    if (itemlocdistId > 0)
+      parentItemlocdist.bindValue(":itemlocdistId", itemlocdistId);
+    if (transType > 0)
+      parentItemlocdist.bindValue(":transType", transType);
+    parentItemlocdist.exec();
+    if (parentItemlocdist.lastError().type() != QSqlError::NoError)
+    {
+      cleanup.exec();
+      ErrorReporter::error(QtCriticalMsg, 0, tr("Error Creating itemlocdist record for post "
+        "production controlled item"), parentItemlocdist, __FILE__, __LINE__);
+      return -1;
+    }
+  }
+
+  return itemlocSeries;
+}
+
 int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, 
   const QString & pPresetLotnum, const QDate & pPresetLotexp, const QDate & pPresetLotwarr,
   bool pPreDistributed)
