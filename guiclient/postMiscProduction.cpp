@@ -89,11 +89,7 @@ enum SetResponse postMiscProduction::set(const ParameterList &pParams)
 void postMiscProduction::sPost()
 {
   XSqlQuery postPost;
-  if (!okToPost())  
-    return;
-
-  // todo - either move this down below or call close (delete) wo
-  if (!createwo())
+  if (!okToPost())
     return;
 
   int itemlocSeries = handleSeriesAdjustBeforePost();
@@ -117,6 +113,12 @@ void postMiscProduction::sPost()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
   postPost.exec("BEGIN;");
+  if (!createwo())
+  {
+    rollback.exec();
+    cleanup.exec();
+    return;
+  }
   if (!post(itemlocSeries))
   {
     rollback.exec();
