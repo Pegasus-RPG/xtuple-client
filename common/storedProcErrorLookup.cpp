@@ -939,6 +939,10 @@ const struct {
 
   { "isControlledItemsite",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "No Itemsite Found."),  0, "" },
 
+  { "isInventoryItemsite",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "No itemsite found."),  0, "" },
+  { "isInventoryItemsite",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Itemsite is not active."),  0, "" },
+  { "isInventoryItemsite",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Item is not active."),  0, "" },
+
   { "issueAllBalanceToShipping",  -1, "",	 -1, "issueToShipping" },
   { "issueAllBalanceToShipping", -10, "",	-10, "issueToShipping" },
   { "issueAllBalanceToShipping", -12, "",	-12, "issueToShipping" },
