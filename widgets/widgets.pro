@@ -18,7 +18,7 @@ LANGUAGE     = C++
 INCLUDEPATH += ../common ../scriptapi .
 DEPENDPATH  += $${INCLUDEPATH} ../lib
 LIBS        += -lxtuplescriptapi -lxtuplecommon -lwrtembed \
-               -lqzint -ldmtx -lrenderer -lMetaSQL -lopenrptcommon
+               -lrenderer -ldmtx -lqzint -lMetaSQL -lopenrptcommon
 
 dynamic { 
     CONFIG      += dll # plugin implies dll but this fixes a cross-compile problem
