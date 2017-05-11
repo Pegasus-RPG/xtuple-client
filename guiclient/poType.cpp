@@ -10,22 +10,20 @@
 
 #include "poType.h"
 
+#include <QVariant>
+
 #include <metasql.h>
 #include "mqlutil.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
-
-#include <QMessageBox>
-#include <QVariant>
 
 poType::poType(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_save,  SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-
 }
 
 poType::~poType()
@@ -40,6 +38,7 @@ void poType::languageChange()
 
 enum SetResponse poType::set(const ParameterList &pParams)
 {
+  XDialog::set(pParams);
   XSqlQuery poType;
   QVariant param;
   bool     valid;
@@ -65,11 +64,11 @@ enum SetResponse poType::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
+
       _typeCode->setEnabled(false);
       _typeDescr->setEnabled(false);
       _close->setText(tr("&Close"));
@@ -100,13 +99,11 @@ void poType::sSave()
 {
   XSqlQuery typeSave;
   XSqlQuery defaultSave;
-  if (_typeCode->text().trimmed().length() == 0)
-  {
-    QMessageBox::warning( this, tr("Cannot Save Purchase Order Type"),
-                          tr("You must enter a Code for this PO Type before you may save it.") );
-    _typeCode->setFocus();
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_typeCode->text().trimmed().isEmpty(), _typeCode,
+                          tr("You must enter a Code for this PO Type before you may save it."));
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Purchase Order Type"), errors))
     return;
-  }
 
   if (_mode == cNew)
     typeSave.prepare( "INSERT INTO potype "
@@ -143,7 +140,6 @@ void poType::sSave()
       return;
     }
   }
-  omfgThis->sItemGroupsUpdated(-1, true);
 
   close();
 }

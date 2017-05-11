@@ -29,6 +29,7 @@ public slots:
     virtual void sEdit();
     virtual void sPrint();
     virtual void sFillList();
+    virtual void sNotified(const QString &notice);
 
 protected slots:
     virtual void languageChange();
