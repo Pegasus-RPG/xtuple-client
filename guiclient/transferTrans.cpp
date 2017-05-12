@@ -29,7 +29,7 @@ transferTrans::transferTrans(QWidget* parent, const char* name, Qt::WindowFlags 
 //  (void)statusBar();
 
   connect(_item, SIGNAL(newId(int)), this, SLOT(sHandleItem()));
-  connect(_fromWarehouse, SIGNAL(newID(int)), this, SLOT(sPopulateFromQty(int)));
+  connect(_fromWarehouse, SIGNAL(newID(int)), this, SLOT(sPopulateFromQty()));
   connect(_post, SIGNAL(clicked()),                   this, SLOT(sPost()));
   connect(_qty,  SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQty(const QString&)));
   connect(_toWarehouse, SIGNAL(newID(int)), this, SLOT(sPopulateToQty(int)));
@@ -170,6 +170,8 @@ void transferTrans::sHandleItem()
     _qty->setValidator(omfgThis->transQtyVal());
   else
     _qty->setValidator(new QIntValidator(this));
+
+  sPopulateFromQty();
 }
 
 void transferTrans::sPost()
@@ -273,17 +275,17 @@ void transferTrans::sPost()
   }
 }
 
-void transferTrans::sPopulateFromQty(int pWarehousid)
+void transferTrans::sPopulateFromQty()
 {
   XSqlQuery transferPopulateFromQty;
-  if (_mode != cView)
+  if (_mode != cView && _item->isValid() && _fromWarehouse->isValid())
   {
     transferPopulateFromQty.prepare( "SELECT itemsite_qtyonhand "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
     transferPopulateFromQty.bindValue(":item_id", _item->id());
-    transferPopulateFromQty.bindValue(":warehous_id", pWarehousid);
+    transferPopulateFromQty.bindValue(":warehous_id", _fromWarehouse->id());
     transferPopulateFromQty.exec();
     if (transferPopulateFromQty.first())
     {

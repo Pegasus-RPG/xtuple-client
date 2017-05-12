@@ -31,8 +31,10 @@ SOURCES = applock.cpp              \
           calendarcontrol.cpp      \
           calendargraphicsitem.cpp \
 	  checkForUpdates.cpp      \
+          cmdlinemessagehandler.cpp \
           errorReporter.cpp        \
           exporthelper.cpp \
+          guimessagehandler.cpp \
           importhelper.cpp \
           format.cpp \
           graphicstextbuttonitem.cpp \
@@ -45,6 +47,7 @@ SOURCES = applock.cpp              \
           shortcuts.cpp \
           storedProcErrorLookup.cpp \
           tarfile.cpp \
+          xabstractmessagehandler.cpp \
           xbase32.cpp \
           xtupleproductkey.cpp \
           xtNetworkRequestManager.cpp \
@@ -52,12 +55,14 @@ SOURCES = applock.cpp              \
 HEADERS = applock.h              \
           calendarcontrol.h      \
           calendargraphicsitem.h \
+          cmdlinemessagehandler.h \
           checkForUpdates.h      \
           errorReporter.h        \
           exporthelper.h \
           importhelper.h \
           format.h \
           graphicstextbuttonitem.h \
+          guimessagehandler.h \
           gunzip.h \
           login2.h \
           metrics.h \
@@ -67,6 +72,7 @@ HEADERS = applock.h              \
           shortcuts.h \
           storedProcErrorLookup.h \
           tarfile.h \
+          xabstractmessagehandler.h \
           xbase32.h \
           xtupleproductkey.h \
           xtNetworkRequestManager.h \

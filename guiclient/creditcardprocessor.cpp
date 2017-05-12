@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -354,31 +354,48 @@ CreditCardProcessor::CreditCardProcessor()
   QSslConfiguration config = QSslConfiguration::defaultConfiguration();
   config.setProtocol(QSsl::SecureProtocols);
   QList<QSslCertificate> certs = config.caCertificates();
-  QDir certDir(QApplication::applicationDirPath() + "/certificates");
-  if (DEBUG) qDebug() << "looking for certificates in" << certDir;
-  foreach (QString filename, certDir.entryList(QDir::Files | QDir::Readable)) {
-    if (DEBUG) qDebug() << "checking" << filename;
-    QFile certfile(certDir.path() + "/" + filename);
-    if (certfile.open(QIODevice::ReadOnly))
-    {
-      if (DEBUG) qDebug() << "opening" << filename;
-      QString suffix = QFileInfo(certfile).suffix().toLower();
-      QSslCertificate *cert = new QSslCertificate(&certfile, QSsl::Pem);
-      if (! certificateIsValid(cert))
+  QStringList paths;
+#if QT_VERSION >= 0x050400
+  paths << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)
+        << QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation);
+#endif
+#if defined Q_OS_MAC
+  paths << (QApplication::applicationDirPath() + "/../Resources");
+#else
+  paths << QApplication::applicationDirPath()
+        << "/usr/lib/postbooks";
+#endif
+  (void)paths.removeDuplicates();
+  for (int i = paths.length(); i > 0; i--)
+    paths.insert(i, paths.at(i - 1) + "/certificates");
+
+  foreach (QString dirname, paths) {
+    QDir certDir(dirname);
+    if (DEBUG) qDebug() << "looking for certificates in" << certDir;
+    foreach (QString filename, certDir.entryList(QDir::Files | QDir::Readable)) {
+      if (DEBUG) qDebug() << "checking" << filename;
+      QFile certfile(certDir.path() + "/" + filename);
+      if (certfile.open(QIODevice::ReadOnly))
       {
-        delete cert;
-        cert = new QSslCertificate(&certfile, QSsl::Der);
+        if (DEBUG) qDebug() << "opening" << filename;
+        QString suffix = QFileInfo(certfile).suffix().toLower();
+        QSslCertificate *cert = new QSslCertificate(&certfile, QSsl::Pem);
+        if (! certificateIsValid(cert))
+        {
+          delete cert;
+          cert = new QSslCertificate(&certfile, QSsl::Der);
+        }
+        if (certificateIsValid(cert))
+        {
+          certs.append(*cert);
+          if (DEBUG) qDebug() << "adding certificate" << cert;
+        }
       }
-      if (certificateIsValid(cert))
-      {
-        certs.append(*cert);
-        if (DEBUG) qDebug() << "adding certificate" << cert;
-      }
+      else
+        qDebug() << "opening" << filename << "failed:" << certfile.errorString()
+                 << certfile.error();
+      certfile.close();
     }
-    else
-      qDebug() << "opening" << filename << "failed:" << certfile.errorString()
-               << certfile.error();
-    certfile.close();
   }
   config.setCaCertificates(certs);
   QSslConfiguration::setDefaultConfiguration(config);

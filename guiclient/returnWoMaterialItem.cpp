@@ -128,14 +128,12 @@ void returnWoMaterialItem::sReturn()
     XSqlQuery parentItemlocdist;
     parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, "
                               " itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, :qty), "
-                              " 'WO', :orderitemId, :itemlocSeries, NULL, NULL, 'IM') AS result "
+                              " 'WO', womatl_wo_id, :itemlocSeries, NULL, NULL, 'IM') AS result "
                               "FROM womatl "
                               " JOIN itemsite ON womatl_itemsite_id = itemsite_id "
                               "WHERE womatl_id = :womatl_id;");
     parentItemlocdist.bindValue(":itemsite_id", _itemsiteId);
     parentItemlocdist.bindValue(":qty", _qty->toDouble());
-    parentItemlocdist.bindValue(":woId", _wo->id());
-    parentItemlocdist.bindValue(":orderitemId", _womatl->id());
     parentItemlocdist.bindValue(":womatl_id", _womatl->id());
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
     parentItemlocdist.exec();

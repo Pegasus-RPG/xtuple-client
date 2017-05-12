@@ -27,8 +27,9 @@ scrapTrans::scrapTrans(QWidget* parent, const char* name, Qt::WindowFlags fl)
   
   connect(_post,      SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_qty,       SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateQty()));
-  connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateQOH(int)));
-  
+  connect(_item,      SIGNAL(newId(int)), this, SLOT(sPopulateQOH()));
+  connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateQOH()));
+
   _captive = false;
 
   _item->setType(ItemLineEdit::cGeneralInventory | ItemLineEdit::cActive);
@@ -256,10 +257,10 @@ void scrapTrans::sPost()
   }
 }
 
-void scrapTrans::sPopulateQOH(int pWarehousid)
+void scrapTrans::sPopulateQOH()
 {
   XSqlQuery scrapPopulateQOH;
-  if (_mode != cView)
+  if (_mode != cView && _item->isValid() && _warehouse->isValid())
   {
     scrapPopulateQOH.prepare( "SELECT itemsite_qtyonhand, itemsite_id, "
                "  isControlledItemsite(itemsite_id) AS controlled "
@@ -267,7 +268,7 @@ void scrapTrans::sPopulateQOH(int pWarehousid)
                "WHERE ( (itemsite_item_id=:item_id) "
                " AND (itemsite_warehous_id=:warehous_id) );" );
     scrapPopulateQOH.bindValue(":item_id", _item->id());
-    scrapPopulateQOH.bindValue(":warehous_id", pWarehousid);
+    scrapPopulateQOH.bindValue(":warehous_id", _warehouse->id());
     scrapPopulateQOH.exec();
     if (scrapPopulateQOH.first())
     {
@@ -275,7 +276,6 @@ void scrapTrans::sPopulateQOH(int pWarehousid)
       _controlledItem = scrapPopulateQOH.value("controlled").toBool();
       _cachedQOH = scrapPopulateQOH.value("itemsite_qtyonhand").toDouble();
       _beforeQty->setDouble(scrapPopulateQOH.value("itemsite_qtyonhand").toDouble());
-
       if (_item->isFractional())
         _qty->setValidator(omfgThis->transQtyVal());
       else

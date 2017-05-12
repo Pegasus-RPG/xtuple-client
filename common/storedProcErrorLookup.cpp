@@ -60,6 +60,10 @@ const struct {
   { "calculateFreightDistribution", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Voucher you are attempting to distribute freight "
                                     "to has incorrect item totals for the desired distribution method. Please check that Voucher"),     0, "" },
 
+  { "calcIssueToShippingLineBalance", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+                            "The order type is not valid for issue to shipping."),     0, "" },
+
+
   { "changeCMHeadTaxAuth", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Return was not found."),	0, "" },
   { "changeCMHeadTaxAuth", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Tax Authority was not found."),	0, "" },
 
@@ -952,6 +956,10 @@ const struct {
   { "issueLineBalanceToShipping", -20, "",	-20, "issueToShipping" },
 
   { "issueToShipping",	-1, "",		 	 -1, "postInvTrans" },
+  { "issueToShipping",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."), 0, "" },
+  { "issueToShipping",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+             "Expected Count of Distribution Detail Records Posted for Controlled Item."), 0, "" },
+  { "issueToShipping",  -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Cost Category."),0, ""},
   { "issueToShipping", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Next Shipment Number has not been set in "
 			       "the Configure S/R window. Set that value and "
 			       "try issuing to shipping again."), 0, "" },
@@ -1070,6 +1078,10 @@ const struct {
                        "cannot be posted for these. You must contact your "
                        "Systems Administrator to have this corrected before "
                        "you may post these Billing Approvals."),       0, "" },
+
+  { "createItemlocdistParent", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Itemsite Must be Lot/Serial or Location Controlled."), 0, "" },
+  { "createItemlocdistParent", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Series is required."), 0, "" },
+  { "createItemlocdistParent", -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Failed to Create Parent Itemlocdist Record."), 0, "" },
 
   { "postCashReceipt", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Cash Receipt cannot be posted as "
 			      "the amount distributed is greater than the "
@@ -1238,6 +1250,12 @@ const struct {
   { "postInvTrans",	-4, "",	 -4, "insertGLTransaction" },
   { "postInvTrans",	-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not post this inventory transaction because"
 			       " the transaction will cause the Item Qty. on Hand to go negative which is not allowed."), 0, "" },
+  { "postInvTrans", -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This transaction will cause an item to go negative"
+             " and negative inventory is currently disallowed."), 0, "" },
+  { "postInvTrans", -7, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+             "Transaction series must be provided."), 0, "" },
+  { "postInvTrans", -8, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+             "Could not find the itemlocSeries for the pInvhistId provided."), 0, "" },
 
   { "postPoReceipt",	-1, "",	 -1, "postReceipt" },
   { "postPoReceipt",	-2, "",	 -2, "postReceipt" },
@@ -1254,6 +1272,10 @@ const struct {
                              "to missing Item Sites."),	0, "" },
   { "postProduction", -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Production because of missing "
                            "Item Site or Cost Category."), 0, "" },
+  { "postProduction", -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "An itemlocSeries is Required."), 0, "" },
+  { "postProduction", -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+         "Expected Count of Distribution Detail Records Posted for Controlled Item."), 0, "" },
+  { "postProduction", -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing cost category."), 0, "" },
 
   { "postReceipt",  -1, "",	 -1, "postInvTrans" },
   { "postReceipt",  -2, "",	 -2, "postInvTrans" },
@@ -1299,6 +1321,11 @@ const struct {
          "Expected Count of Distribution Detail Records Posted for Controlled Item."), 0, "" },
   { "postReceipt", -42, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
          "Could not insert G/L transaction: no cost category found for itemsite_id."), 0, "" },
+
+  { "postSoItemProduction", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+         "pItemlocSeries is Required when pPreDistributed."), 0, "" },
+  { "postSoItemProduction", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+         "The postSoLineBalanceProduction function may only be used with Job costed item sites."), 0, "" },
 
   { "postPoReceipts",   -1, "",	 -1, "postPoReceipt" },
   { "postPoReceipts",   -3, "",	 -3, "postPoReceipt" },
@@ -1405,6 +1432,8 @@ const struct {
 			       "you may Return this Shipment."),
 								0, "" },
 
+  { "returnShipmentTransaction", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Cost Category for itemsite"), 0, "" },
+  { "returnShipmentTransaction", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Cost Category for itemsite"), 0, "" },
   { "returnShipmentTransaction",
 			-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Either a Cost Category for the Items you are "
 			       "trying to Return is not configured with a "
@@ -1416,6 +1445,7 @@ const struct {
 			       "Administrator to have this corrected before "
 			       "you may Return this Shipment."),
 								0, "" },
+  { "returnShipmentTransaction", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Can not return shipment for this order type"), 0, "" },
 
   { "reverseapapplication", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The amount paid is less than the applied amount."),
                                 	0, "" },
