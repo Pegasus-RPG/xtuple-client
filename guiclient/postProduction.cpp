@@ -293,7 +293,7 @@ int postProduction::handleSeriesAdjustBeforePost()
       "        THEN (womatl_qtyfxd + (roundQty(woitem.item_fractional, :qty) + wo_qtyrcv) * womatl_qtyper) * womatl_scrap "
       "        ELSE womatl_qtywipscrap END)) "
       " ELSE " // returnWoMaterial qty = expected * -1
-      "   roundQty(woitem.item_fractional, :qty) * womatl_qtyper " 
+      "   (roundQty(woitem.item_fractional, :qty) * womatl_qtyper) * -1 " 
       " END AS qty, "
       "	womatl_id, womatl_wo_id, womatl_uom_id, womatl_qtyreq, womatl_qtyiss "
       "FROM womatl, wo "
