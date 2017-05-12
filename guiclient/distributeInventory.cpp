@@ -124,7 +124,7 @@ int distributeInventory::SeriesCreate(int itemsiteId, double qty, const QString 
   else
   {
     ErrorReporter::error(QtCriticalMsg, 0, tr("Failed to Retrieve the Next itemloc_series_seq"),
-      parentSeries, __FILE__, __LINE__);
+      parentSeries.lastError().databaseText(), __FILE__, __LINE__);
     return -1;
   }
 
@@ -677,10 +677,7 @@ void distributeInventory::sFillList()
   distributeFillList.prepare( "SELECT itemsite_id, "
              "       COALESCE(itemsite_location_id,-1) AS itemsite_location_id,"
              "       formatlotserialnumber(itemlocdist_ls_id) AS lotserial,"
-             "       CASE WHEN itemlocdist_order_id IS NOT NULL "
-             "              AND itemlocdist_order_type IN ('SO', 'PO', 'TO', 'WO', 'RA', 'IN') " // these types are handled by formatOrderLineItemNumber
-             "            THEN (itemlocdist_order_type || ' ' || formatOrderLineItemNumber(itemlocdist_order_type, itemlocdist_order_id)) "
-             "            ELSE '' END AS order, "
+             "       itemlocdist_order_type || ' ' || formatOrderLineItemNumber(itemlocdist_order_type, itemlocdist_order_id) AS order, "
              "       (itemsite_controlmethod IN ('L', 'S')) AS lscontrol,"
              "       parent.itemlocdist_qty AS qtytodistribute,"
              "       ( ( SELECT COALESCE(SUM(child.itemlocdist_qty), 0)"

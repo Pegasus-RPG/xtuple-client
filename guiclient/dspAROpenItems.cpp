@@ -670,7 +670,7 @@ void dspAROpenItems::sVoidCreditMemo()
   while (cmitems.next())
   {
     if (distributeInventory::SeriesCreate(cmitems.value("itemsite_id").toInt(), 
-      cmitems.value("qty").toDouble(), "CM", "RS", itemlocSeries, cmitems.value("cmitem_id").toInt()) < 0)
+      cmitems.value("qty").toDouble(), "CM", "RS", cmitems.value("cmitem_id").toInt(), itemlocSeries) < 0)
       return;  
 
     hasControlledItems = true;
@@ -865,7 +865,7 @@ void dspAROpenItems::sVoidInvoiceDetails()
   while (invcitems.next())
   {
     if (distributeInventory::SeriesCreate(invcitems.value("itemsite_id").toInt(), 
-      invcitems.value("qty").toDouble(), "IN", "SH", itemlocSeries, invcitems.value("invcitem_id").toInt()) < 0)
+      invcitems.value("qty").toDouble(), "IN", "SH", invcitems.value("invcitem_id").toInt(), itemlocSeries) < 0)
     return;  
 
     hasControlledItems = true;
@@ -1194,8 +1194,8 @@ void dspAROpenItems::sPostCreditMemo()
   while (cmitems.next())
   {
     if (distributeInventory::SeriesCreate(cmitems.value("itemsite_id").toInt(), 
-      cmitems.value("qty").toDouble(), "CM", "RS", itemlocSeries, cmitems.value("cmitem_id").toInt()) < 0)
-      return;  
+      cmitems.value("qty").toDouble(), "CM", "RS", cmitems.value("cmitem_id").toInt(), itemlocSeries) < 0)
+      return;
 
     hasControlledItems = true;
   }
@@ -1406,7 +1406,7 @@ void dspAROpenItems::sPostInvoice()
   while (invcitems.next())
   {
     if (distributeInventory::SeriesCreate(invcitems.value("itemsite_id").toInt(), 
-      invcitems.value("qty").toDouble(), "IN", "SH", itemlocSeries, invcitems.value("invcitem_id").toInt()) < 0)
+      invcitems.value("qty").toDouble(), "IN", "SH", invcitems.value("invcitem_id").toInt(), itemlocSeries) < 0)
       return;  
 
     hasControlledItems = true;
