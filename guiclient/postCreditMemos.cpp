@@ -105,10 +105,12 @@ void postCreditMemos::sPost()
   creditMemos.exec();
   while (creditMemos.next())
   {
+    QString creditMemoNumber = creditMemos.value("cmhead_number").toString();
+    int creditMemoId = creditMemos.value("cmhead_id").toInt();
     int itemlocSeries = distributeInventory::SeriesCreate(0, 0, QString(), QString());
     if (itemlocSeries < 0)
     {
-      failedItems.append(creditMemos.value("cmhead_number").toString());
+      failedItems.append(creditMemoNumber);
       errors.append(tr("Failed to create a new series for credit memo %1")
         .arg(creditMemos.lastError().databaseText()));
       continue;
@@ -142,7 +144,7 @@ void postCreditMemos::sPost()
       if (distributeInventory::SeriesCreate(cmitems.value("itemsite_id").toInt(), 
         cmitems.value("qty").toDouble(), "CM", "RS", cmitems.value("cmitem_id").toInt(), itemlocSeries) < 0)
       {
-        failedItems.append(creditMemos.value("cmhead_number").toString());
+        failedItems.append(creditMemoNumber);
         errors.append(tr("Failed to create itemlocdist record for item %1")
           .arg(cmitems.value("item_number").toString()));
         cmitemFail = true;
@@ -161,9 +163,27 @@ void postCreditMemos::sPost()
       QDate(), true) == XDialog::Rejected)
     {
       cleanup.exec();
-      failedItems.append(creditMemos.value("cmhead_number").toString());
-      errors.append(tr("Transaction Cancelled"));
-      continue;
+      // If it's not the last credit memo, ask user if they want to continue
+      if (creditMemos.at() != creditMemos.size())
+      {
+        if (QMessageBox::question(this,  tr("Post Credit Memo"),
+          tr("Posting distribution detail for credit memo number %1 was cancelled but "
+             "there other credit memos to Post. Continue posting the remaining credit memos?")
+          .arg(creditMemoNumber), 
+          QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+        {
+          failedItems.append(creditMemoNumber);
+          errors.append(tr("Detail Distribution Cancelled"));
+          continue;
+        }
+        else
+        {
+          failedItems.append(creditMemoNumber);
+          errors.append(tr("Detail Distribution Cancelled"));
+          break;
+        }
+      }
+      
     }
 
     XSqlQuery rollback;
@@ -171,7 +191,7 @@ void postCreditMemos::sPost()
 
     postPost.exec("BEGIN;");  // TODO - remove this when postCreditMemo no longer returns negative error codes
     postPost.prepare("SELECT postCreditMemo(:cmheadId, :journalNumber, :itemlocSeries, TRUE) AS result;");
-    postPost.bindValue(":cmheadId", creditMemos.value("cmhead_id").toInt());
+    postPost.bindValue(":cmheadId", creditMemoId);
     postPost.bindValue(":journalNumber", journalNumber);
     postPost.bindValue(":itemlocSeries", itemlocSeries);
     postPost.exec();
@@ -183,7 +203,7 @@ void postCreditMemos::sPost()
       {
         rollback.exec();
         cleanup.exec();
-        failedItems.append(creditMemos.value("cmhead_number").toString());
+        failedItems.append(creditMemoNumber);
         errors.append(tr("Error Posting Credit Memo %1")
           .arg(storedProcErrorLookup("postCreditMemo", result)));
         continue;
@@ -196,7 +216,7 @@ void postCreditMemos::sPost()
     {
       rollback.exec();
       cleanup.exec();
-      failedItems.append(creditMemos.value("cmhead_number").toString());
+      failedItems.append(creditMemoNumber);
       errors.append(tr("Error Posting Credit Memo %1")
         .arg(postPost.lastError().databaseText()));
       continue;
