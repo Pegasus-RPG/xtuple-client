@@ -1172,6 +1172,7 @@ const struct {
   { "postCountTagLocation", -3, "", -3, "postCountTag" },
   { "postCountTagLocation", -4, "", -4, "postCountTag" },
 
+  { "postCreditMemo",  -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Posting Distribution Detail Returned 0 Results."),  0, "" },
   { "postCreditMemo",	-10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Return cannot be posted because it "
 			       "has already been posted."),	 0, "" },
   { "postCreditMemo",	-11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Return is on Hold and, thus, cannot "
@@ -1235,6 +1236,7 @@ const struct {
   { "postInvoice",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site or Cost Category."), 0, "" },
   { "postInvoice",  -4, "", -4, "insertIntoGLSeries" },
   { "postInvoice",  -5, "", -5, "postGLSeries" },
+  { "postInvoice",  -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Posting Distribution Detail Returned 0 Results."),  0, "" },
   { "postInvoice", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because it has "
                                           "already been posted."), 0, "" },
   { "postInvoice", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because the Sales "
@@ -1638,6 +1640,7 @@ const struct {
   { "voidCreditMemo",  -1, "", -1, "insertIntoGLSeries" },
   { "voidCreditMemo",  -4, "", -4, "insertIntoGLSeries" },
   { "voidCreditMemo",  -5, "", -5, "postGLSeries" },
+  { "voidCreditMemo",  -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Posting Distribution Detail Returned 0 Results."),  0, "" },
   { "voidCreditMemo", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Credit Memo because it has "
                          "not been posted."),		 0, "" },
   { "voidCreditMemo", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Credit Memo because the Sales "
@@ -1648,6 +1651,7 @@ const struct {
   { "voidInvoice",  -1, "", -1, "insertIntoGLSeries" },
   { "voidInvoice",  -4, "", -4, "insertIntoGLSeries" },
   { "voidInvoice",  -5, "", -5, "postGLSeries" },
+  { "voidInvoice",  -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Posting Distribution Detail Returned 0 Results."),  0, "" },
   { "voidInvoice", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Invoice because it has "
                          "not been posted."),		 0, "" },
   { "voidInvoice", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Invoice because the Sales "
