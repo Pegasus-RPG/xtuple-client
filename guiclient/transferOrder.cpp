@@ -1887,7 +1887,7 @@ void transferOrder::sIssueLineBalance()
       cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
 
       // Generate the series and itemlocdist record (if controlled)
-      int itemlocSeries = distributeInventory::SeriesCreate(itemsiteId, balance * -1, "TO", "IS", 0, toitem->id());
+      int itemlocSeries = distributeInventory::SeriesCreate(itemsiteId, balance * -1, "TO", "IS", toitem->id());
       if (itemlocSeries <= 0)
         return;
       cleanup.bindValue(":itemlocSeries", itemlocSeries);

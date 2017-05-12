@@ -644,29 +644,13 @@ void dspAROpenItems::sVoidCreditMemo()
   }
 
   bool hasControlledItems = false;
-  int itemlocSeries = 0;
+  int itemlocSeries = distributeInventory::SeriesCreate(0, 0, QString(), QString());
+  if (itemlocSeries < 0)
+    return;
 
   XSqlQuery cleanup; // Stage cleanup function to be called on error
   cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-
-  XSqlQuery parentSeries;
-  parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
-  parentSeries.exec();
-  if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
-  {
-    itemlocSeries = parentSeries.value("result").toInt();
-    cleanup.bindValue(":itemlocSeries", itemlocSeries);
-  }
-  else
-  {
-    ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
-      parentSeries, __FILE__, __LINE__);
-    return;
-  }
-
-  XSqlQuery parentItemlocdist;
-  parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsiteId, :qty, 'CM', :orderitemId, "
-    ":itemlocSeries, NULL, NULL, 'RS') AS result;");
+  cleanup.bindValue(":itemlocSeries", itemlocSeries);
   
   // Cycle through credit memo items that are controlled and have qty returned, create an itemlocdist record for each
   XSqlQuery cmitems;
@@ -685,26 +669,11 @@ void dspAROpenItems::sVoidCreditMemo()
   cmitems.exec();
   while (cmitems.next())
   {
+    if (distributeInventory::SeriesCreate(cmitems.value("itemsite_id").toInt(), 
+      cmitems.value("qty").toDouble(), "CM", "RS", itemlocSeries, cmitems.value("cmitem_id").toInt()) < 0)
+      return;  
+
     hasControlledItems = true;
-    parentItemlocdist.bindValue(":itemsiteId", cmitems.value("cmitem_itemsite_id").toInt());
-    parentItemlocdist.bindValue(":qty", cmitems.value("qty").toDouble());
-    parentItemlocdist.bindValue(":orderitemId", cmitems.value("cmitem_id").toInt());
-    parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
-    parentItemlocdist.exec();
-    if (!parentItemlocdist.first())
-    {
-      cleanup.exec();
-      QMessageBox::information( this, tr("Void Credit Memo"), 
-        tr("Failed to Create an itemlocdist record for credit memo item %1.")
-        .arg(cmitems.value("item_number").toString()) );
-      return;
-    }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-      parentItemlocdist, __FILE__, __LINE__))
-    {
-      cleanup.exec();
-      return;
-    }
   }
 
   // Distribute detail for the records created above
@@ -869,29 +838,13 @@ void dspAROpenItems::sVoidInvoiceDetails()
   }
 
   bool hasControlledItems = false;
-  int itemlocSeries = 0;
+  int itemlocSeries = distributeInventory::SeriesCreate(0, 0, QString(), QString());
+  if (itemlocSeries < 0)
+    return;
 
   XSqlQuery cleanup; // Stage cleanup function to be called on error
   cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-
-  XSqlQuery parentSeries;
-  parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
-  parentSeries.exec();
-  if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
-  {
-    itemlocSeries = parentSeries.value("result").toInt();
-    cleanup.bindValue(":itemlocSeries", itemlocSeries);
-  }
-  else
-  {
-    ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
-      parentSeries, __FILE__, __LINE__);
-    return;
-  }
-
-  XSqlQuery parentItemlocdist;
-  parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsiteId, :qty, 'IN', :orderitemId, "
-    ":itemlocSeries, NULL, NULL, 'SH') AS result;");
+  cleanup.bindValue(":itemlocSeries", itemlocSeries);
   
   // Cycle through credit memo items that are controlled and have qty returned, create an itemlocdist record for each
   XSqlQuery invcitems;
@@ -911,26 +864,11 @@ void dspAROpenItems::sVoidInvoiceDetails()
   invcitems.exec();
   while (invcitems.next())
   {
+    if (distributeInventory::SeriesCreate(invcitems.value("itemsite_id").toInt(), 
+      invcitems.value("qty").toDouble(), "IN", "SH", itemlocSeries, invcitems.value("invcitem_id").toInt()) < 0)
+    return;  
+
     hasControlledItems = true;
-    parentItemlocdist.bindValue(":itemsiteId", invcitems.value("itemsite_id").toInt());
-    parentItemlocdist.bindValue(":qty", invcitems.value("qty").toDouble());
-    parentItemlocdist.bindValue(":orderitemId", invcitems.value("invcitem_id").toInt());
-    parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
-    parentItemlocdist.exec();
-    if (!parentItemlocdist.first())
-    {
-      cleanup.exec();
-      QMessageBox::information( this, tr("Void Invoice"), 
-        tr("Failed to Create an itemlocdist record for invoice item %1.")
-        .arg(invcitems.value("item_number").toString()) );
-      return;
-    }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-      parentItemlocdist, __FILE__, __LINE__))
-    {
-      cleanup.exec();
-      return;
-    }
   }
 
   // Distribute detail for the records created above
@@ -1228,29 +1166,13 @@ void dspAROpenItems::sPostCreditMemo()
   }
 
   bool hasControlledItems = false;
-  int itemlocSeries = 0;
+  int itemlocSeries = distributeInventory::SeriesCreate(0, 0, QString(), QString());
+  if (itemlocSeries < 0)
+    return;
 
   XSqlQuery cleanup; // Stage cleanup function to be called on error
   cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-
-  XSqlQuery parentSeries;
-  parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
-  parentSeries.exec();
-  if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
-  {
-    itemlocSeries = parentSeries.value("result").toInt();
-    cleanup.bindValue(":itemlocSeries", itemlocSeries);
-  }
-  else
-  {
-    ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
-      parentSeries, __FILE__, __LINE__);
-    return;
-  }
-
-  XSqlQuery parentItemlocdist;
-  parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsiteId, :qty, 'CM', :orderitemId, "
-    ":itemlocSeries, NULL, NULL, 'RS') AS result;");
+  cleanup.bindValue(":itemlocSeries", itemlocSeries);
   
   // Cycle through credit memo items that are controlled and have qty returned, create an itemlocdist record for each
   XSqlQuery cmitems;
@@ -1271,26 +1193,11 @@ void dspAROpenItems::sPostCreditMemo()
   cmitems.exec();
   while (cmitems.next())
   {
+    if (distributeInventory::SeriesCreate(cmitems.value("itemsite_id").toInt(), 
+      cmitems.value("qty").toDouble(), "CM", "RS", itemlocSeries, cmitems.value("cmitem_id").toInt()) < 0)
+      return;  
+
     hasControlledItems = true;
-    parentItemlocdist.bindValue(":itemsiteId", cmitems.value("itemsite_id").toInt());
-    parentItemlocdist.bindValue(":qty", cmitems.value("qty").toDouble());
-    parentItemlocdist.bindValue(":orderitemId", cmitems.value("cmitem_id").toInt());
-    parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
-    parentItemlocdist.exec();
-    if (!parentItemlocdist.first())
-    {
-      cleanup.exec();
-      QMessageBox::information( this, tr("Post Credit Memo"), 
-        tr("Failed to Create an itemlocdist record for credit memo item %1.")
-        .arg(cmitems.value("item_number").toString()) );
-      return;
-    }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-      parentItemlocdist, __FILE__, __LINE__))
-    {
-      cleanup.exec();
-      return;
-    }
   }
 
   // Distribute detail for the records created above
@@ -1471,30 +1378,14 @@ void dspAROpenItems::sPostInvoice()
   }
 
   bool hasControlledItems = false;
-  int itemlocSeries = 0;
+  int itemlocSeries = distributeInventory::SeriesCreate(0, 0, QString(), QString());
+  if (itemlocSeries < 0)
+    return;
 
   XSqlQuery cleanup; // Stage cleanup function to be called on error
   cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+  cleanup.bindValue(":itemlocSeries", itemlocSeries);
 
-  XSqlQuery parentSeries;
-  parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
-  parentSeries.exec();
-  if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
-  {
-    itemlocSeries = parentSeries.value("result").toInt();
-    cleanup.bindValue(":itemlocSeries", itemlocSeries);
-  }
-  else
-  {
-    ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve the Next itemloc_series_seq"),
-      parentSeries, __FILE__, __LINE__);
-    return;
-  }
-
-  XSqlQuery parentItemlocdist;
-  parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsiteId, :qty, 'IN', :orderitemId, "
-    ":itemlocSeries, NULL, NULL, 'SH') AS result;");
-  
   // Cycle through credit memo items that are controlled and have qty returned, create an itemlocdist record for each
   XSqlQuery invcitems;
   invcitems.prepare("SELECT invcitem_id, itemsite_id, item_number, "
@@ -1514,26 +1405,11 @@ void dspAROpenItems::sPostInvoice()
   invcitems.exec();
   while (invcitems.next())
   {
+    if (distributeInventory::SeriesCreate(invcitems.value("itemsite_id").toInt(), 
+      invcitems.value("qty").toDouble(), "IN", "SH", itemlocSeries, invcitems.value("invcitem_id").toInt()) < 0)
+      return;  
+
     hasControlledItems = true;
-    parentItemlocdist.bindValue(":itemsiteId", invcitems.value("itemsite_id").toInt());
-    parentItemlocdist.bindValue(":qty", invcitems.value("qty").toDouble());
-    parentItemlocdist.bindValue(":orderitemId", invcitems.value("invcitem_id").toInt());
-    parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
-    parentItemlocdist.exec();
-    if (!parentItemlocdist.first())
-    {
-      cleanup.exec();
-      QMessageBox::information( this, tr("Post Invoice"), 
-        tr("Failed to Create an itemlocdist record for invoice item %1.")
-        .arg(invcitems.value("item_number").toString()) );
-      return;
-    }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
-      parentItemlocdist, __FILE__, __LINE__))
-    {
-      cleanup.exec();
-      return;
-    }
   }
 
   // Distribute detail for the records created above

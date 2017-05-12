@@ -26,7 +26,7 @@ public:
     ~distributeInventory();
 
     static int SeriesCreate(int itemsiteId, double qty, const QString & orderType, const QString & transType,
-        int parentItemlocSeries = 0, int orderitemId = 0, int invhistId = 0);
+        int orderitemId = 0, int itemlocSeries = 0, int itemlocdistId = 0, int invhistId = 0);
     static int SeriesAdjust( int pItemlocSeries, QWidget * pParent, 
         const QString & = QString::null, const QDate & = QDate(), 
         const QDate & = QDate(), bool pPreDistributed = false );

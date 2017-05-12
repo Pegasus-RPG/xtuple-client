@@ -223,7 +223,7 @@ void scrapWoMaterialFromWIP::sScrap()
     {      
       // Generate the series and itemlocdist record (if controlled)
       itemlocSeries = distributeInventory::SeriesCreate(itemsite.value("wo_itemsite_id").toInt(),
-        _topLevelQty->toDouble() * -1, "SI", "SI", 0, _wo->id());
+        _topLevelQty->toDouble() * -1, "SI", "SI", _wo->id());
       if (itemlocSeries <= 0)
         return;
       cleanup.bindValue(":itemlocSeries", itemlocSeries);
