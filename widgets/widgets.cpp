@@ -243,6 +243,8 @@ void setupWidgetsScriptApi(QScriptEngine *engine, GuiClientInterface *client)
   setupXDataWidgetMapper(engine);
   setupXDateEdit(engine);
   setupXDocCopySetter(engine);
+  setupXLabel(engine);
+  setupXLineEdit(engine);
   setupXSqlTableModel(engine);
   setupXTreeWidget(engine);
   setupXTreeWidgetItem(engine);
