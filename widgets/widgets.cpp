@@ -9,6 +9,8 @@
  */
 
 #include "widgets.h"
+#include "metrics.h"
+#include "metricsenc.h"
 
 #include "xtupleplugin.h"
 
@@ -204,7 +206,7 @@ void initializePlugin(Preferences *pPreferences, Metrics *pMetrics, Privileges *
   _x_username = pUsername;
 }
 
-void setupWidgetsScriptApi(QScriptEngine *engine)
+void setupWidgetsScriptApi(QScriptEngine *engine, GuiClientInterface *client)
 {
 
   setupAddressCluster(engine);
@@ -241,9 +243,18 @@ void setupWidgetsScriptApi(QScriptEngine *engine)
   setupXDataWidgetMapper(engine);
   setupXDateEdit(engine);
   setupXDocCopySetter(engine);
+  setupXLabel(engine);
+  setupXLineEdit(engine);
   setupXSqlTableModel(engine);
   setupXTreeWidget(engine);
   setupXTreeWidgetItem(engine);
   setupXt(engine);
 
+  if (client)
+  {
+    setupParameters(engine, "metrics",      client->getMetrics());
+    setupParameters(engine, "metricsenc",   client->getMetricsenc());
+    setupParameters(engine, "preferences",  client->getPreferences());
+    setupParameters(engine, "privileges",   client->getPrivileges());
+  }
 }

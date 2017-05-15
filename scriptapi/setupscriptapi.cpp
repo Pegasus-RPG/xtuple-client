@@ -13,6 +13,7 @@
 #include "char.h"
 #include "engineevaluate.h"
 #include "exporthelper.h"
+#include "format.h"
 #include "include.h"
 #include "jsconsole.h"
 #include "metasqlhighlighterproto.h"
@@ -284,4 +285,5 @@ void setupScriptApi(QScriptEngine *engine)
   setupXWebSync(engine);
   setupchar(engine);
 
+  setupFormat(engine);
 }
