@@ -100,10 +100,16 @@ void returnWoMaterialBatch::sReturn()
          returnReturn.value("wo_status").toString() == "I")
       {
         XSqlQuery items;
+        COALESCE(itemuomtouom(:itemsite_item_id, NULL, :womatl_uom_id, :qty), :qty)
         items.prepare("SELECT womatl_id, womatl_uom_id, womatl_qtyreq, womatl_qtyiss, "
-                      " CASE WHEN wo_qtyord >= 0 THEN womatl_qtyiss "
-                      "   ELSE ((womatl_qtyreq - womatl_qtyiss) * -1) "
-                      " END AS qty, "
+                      " COALESCE(itemuomtouom(item_id, NULL, womatl_uom_id, "
+                      "   CASE WHEN wo_qtyord >= 0 THEN womatl_qtyiss "
+                      "        ELSE ((womatl_qtyreq - womatl_qtyiss) * -1) "
+                      "   END), "
+                      "   CASE WHEN wo_qtyord >= 0 THEN womatl_qtyiss "
+                      "        ELSE ((womatl_qtyreq - womatl_qtyiss) * -1) "
+                      "   END "
+                      " ) AS qty, "
                       " itemsite_id, itemsite_item_id, item_number, "
                       " isControlledItemsite(itemsite_id) AS controlled "
                       "  FROM wo, womatl, itemsite, item"
@@ -116,7 +122,6 @@ void returnWoMaterialBatch::sReturn()
         items.bindValue(":wo_id", _wo->id());
         items.exec();
 
-        bool trynext = true;
         int succeeded = 0;
         QList<QString> failedItems;
         QList<QString> errors;
@@ -132,20 +137,12 @@ void returnWoMaterialBatch::sReturn()
           cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
 
           // Get the parent series id
-          XSqlQuery parentSeries;
-          parentSeries.prepare("SELECT NEXTVAL('itemloc_series_seq') AS result;");
-          parentSeries.exec();
-          if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
-          {
-            itemlocSeries = parentSeries.value("result").toInt();
-            cleanup.bindValue(":itemlocSeries", itemlocSeries);
-          }
-          else
-          {
-            failedItems.append(items.value("item_number").toString());
-            errors.append("Failed to Retrieve the Next itemloc_series_seq");
-            continue;
-          }
+          itemlocSeries = distributeInventory::SeriesCreate(items.value("itemsite_id").toInt(),
+            items.value("qty").toDouble(), "WO", "IM", _wo->id());
+          if (itemlocSeries <= 0)
+            return;
+
+          cleanup.bindValue(":itemlocSeries", itemlocSeries);
 
           // If controlled and backflush item has relevant qty for returnWoMaterial
           if (items.value("controlled").toBool() && 
@@ -153,59 +150,37 @@ void returnWoMaterialBatch::sReturn()
               items.value("womatl_qtyiss").toDouble() >= items.value("qty").toDouble() : 
               items.value("womatl_qtyiss").toDouble() <= items.value("qty").toDouble()))
           {
-            // Create the parent itemlocdist record for each line item requiring distribution and call distributeInventory::seriesAdjust
-            XSqlQuery parentItemlocdist;
-            parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, "
-                                      " COALESCE(itemuomtouom(:itemsite_item_id, NULL, :womatl_uom_id, :qty), :qty), "
-                                      "'WO', :orderitemId, :itemlocSeries, NULL, NULL, 'IM');");
-            parentItemlocdist.bindValue(":itemsite_id", items.value("itemsite_id").toInt());
-            parentItemlocdist.bindValue(":itemsite_item_id", items.value("itemsite_item_id").toInt());
-            parentItemlocdist.bindValue(":womatl_uom_id", items.value("womatl_uom_id").toInt());
-            parentItemlocdist.bindValue(":qty", items.value("qty").toDouble());
-            parentItemlocdist.bindValue(":orderitemId", _wo->id());
-            parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
-            parentItemlocdist.exec();
-            if (parentItemlocdist.first())
+           
+            if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
+              QDate(), true) == XDialog::Rejected)
             {
-              if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
-                QDate(), true) == XDialog::Rejected)
+              cleanup.exec();
+              // If it's not the last item in the loop, ask the user to exit loop or continue
+              if (items.at() != (items.size() -1))
               {
-                cleanup.exec();
-                // If it's not the last item in the loop, ask the user to exit loop or continue
-                if (items.at() != (items.size() -1))
-                {
-                  if (QMessageBox::question(this,  tr("Return WO Material"),
-                  tr("Posting distribution detail for item number %1 was cancelled but "
-                    "there are more items to issue. Continue issuing the remaining materials?")
-                  .arg(items.value("item_number").toString()),
-                  QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
-                  {
-                    failedItems.append(items.value("item_number").toString());
-                    errors.append("Detail Distribution Cancelled");
-                    continue;
-                  }
-                  else
-                  {
-                    failedItems.append(items.value("item_number").toString());
-                    errors.append("Detail Distribution Cancelled");
-                    break;
-                  }
-                }
-                else 
+                if (QMessageBox::question(this,  tr("Return WO Material"),
+                tr("Posting distribution detail for item number %1 was cancelled but "
+                  "there are more items to issue. Continue issuing the remaining materials?")
+                .arg(items.value("item_number").toString()),
+                QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
                 {
                   failedItems.append(items.value("item_number").toString());
                   errors.append("Detail Distribution Cancelled");
                   continue;
                 }
+                else
+                {
+                  failedItems.append(items.value("item_number").toString());
+                  errors.append("Detail Distribution Cancelled");
+                  break;
+                }
               }
-            }
-            else
-            {
-              cleanup.exec();
-              failedItems.append(items.value("item_number").toString());
-              errors.append(tr("Error Creating itemlocdist Records. %1")
-                .arg(parentItemlocdist.lastError().text()));
-              continue;
+              else 
+              {
+                failedItems.append(items.value("item_number").toString());
+                errors.append("Detail Distribution Cancelled");
+                continue;
+              }
             }
           }
 
