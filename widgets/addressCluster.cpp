@@ -962,11 +962,42 @@ void AddressCluster::setMode(Mode p)
 
 // script exposure /////////////////////////////////////////////////////////////
 
+QScriptValue AddressClusterPointerToScriptValue(QScriptEngine *engine, AddressCluster *const &item)
+{
+  return engine->newQObject(item);
+}
+
+void AddressClusterPointerFromScriptValue(const QScriptValue &obj, AddressCluster * &item)
+{
+  item = qobject_cast<AddressCluster *>(obj.toQObject());
+}
+
+QScriptValue addressClusterConstructor(QScriptContext *context, QScriptEngine *engine)
+{
+#if QT_VERSION >= 0x050000
+  AddressCluster *obj = 0;
+
+  if (context->argumentCount() >= 2)
+    obj = new AddressCluster(qobject_cast<QWidget*>(context->argument(0).toQObject()),
+                             context->argument(1).toString().toLatin1().data());
+  else if (context->argumentCount() == 1)
+    obj = new AddressCluster(qobject_cast<QWidget*>(context->argument(0).toQObject()));
+  else
+    obj = new AddressCluster(0);
+
+  return engine->toScriptValue(obj);
+#else
+  Q_UNUSED(context); Q_UNUSED(engine); return QScriptValue();
+#endif
+}
+
 void setupAddressCluster(QScriptEngine *engine)
 {
   if (! engine->globalObject().property("AddressCluster").isObject())
   {
-    QScriptValue ctor = engine->newObject(); //engine->newFunction(addressClusterConstructor);
+    qScriptRegisterMetaType(engine, AddressClusterPointerToScriptValue,     AddressClusterPointerFromScriptValue);
+
+    QScriptValue ctor = engine->newFunction(addressClusterConstructor);
     QScriptValue meta = engine->newQMetaObject(&AddressCluster::staticMetaObject, ctor);
 
     engine->globalObject().setProperty("AddressCluster", meta,
