@@ -100,7 +100,6 @@ void returnWoMaterialBatch::sReturn()
          returnReturn.value("wo_status").toString() == "I")
       {
         XSqlQuery items;
-        COALESCE(itemuomtouom(:itemsite_item_id, NULL, :womatl_uom_id, :qty), :qty)
         items.prepare("SELECT womatl_id, womatl_uom_id, womatl_qtyreq, womatl_qtyiss, "
                       " COALESCE(itemuomtouom(item_id, NULL, womatl_uom_id, "
                       "   CASE WHEN wo_qtyord >= 0 THEN womatl_qtyiss "
@@ -222,6 +221,9 @@ void returnWoMaterialBatch::sReturn()
 
           dlg.exec();
         }
+
+        if (succeeded == 0 && errors.size() == 0)
+          QMessageBox::information( this, tr("Return WO Material Batch"), tr("There is no Qty to Return.") );
       }
     }
   }

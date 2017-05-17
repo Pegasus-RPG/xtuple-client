@@ -181,6 +181,8 @@ void issueWoMaterialBatch::sIssue()
   QList<QString> errors;
   while(items.next())
   { 
+    if (items.value("qty").toDouble() <= 0)
+      continue;
     // Stage distribution cleanup function to be called on error
     XSqlQuery cleanup;
     cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
@@ -329,6 +331,9 @@ void issueWoMaterialBatch::sIssue()
 
     dlg.exec();
   }
+
+  if (succeeded == 0 && errors.size() == 0)
+    QMessageBox::information( this, tr("Issue WO Material Batch"), tr("There is no Qty to Issue.") );
 
   omfgThis->sWorkOrdersUpdated(_wo->id(), true);
 
