@@ -975,6 +975,7 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_number</tabstop>
+  <tabstop>_projectType</tabstop>
   <tabstop>_name</tabstop>
   <tabstop>_crmacct</tabstop>
   <tabstop>_owner</tabstop>
