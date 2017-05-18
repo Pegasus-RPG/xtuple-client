@@ -259,7 +259,6 @@ void transferTrans::sPost()
     itemlocdist.prepare("SELECT itemlocdist_id FROM itemlocdist WHERE itemlocdist_series=:itemlocSeries;");
     itemlocdist.bindValue(":itemlocSeries", itemlocSeries);
     itemlocdist.exec();
-    qDebug() << "itemlocdist.size: " << itemlocdist.size();
     if (itemlocdist.size() != 1)
     {
       cleanup.exec();
