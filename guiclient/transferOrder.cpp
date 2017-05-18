@@ -879,6 +879,7 @@ void transferOrder::sNew()
   params.append("orderDate",	_orderDate->date());
   params.append("taxzone_id",	_taxzone->id());
   params.append("curr_id",	_freightCurrency->id());
+  params.append("status", _statusTypes[_status->currentIndex()]);
 
   if ((_mode == cNew) || (_mode == cEdit))
     params.append("mode", "new");
