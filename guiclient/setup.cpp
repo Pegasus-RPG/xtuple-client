@@ -78,19 +78,6 @@ setup::setup(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   insert(tr("Registration"), "registrationKey", Configure, Xt::SystemModule, mode("MaintainRegistrationKey"), 0 );
   insert(tr("Schedule"), "configureMS", Configure, Xt::ScheduleModule, mode("ConfigureMS"), 0 );
 
-  // TODO: remove this 4.10 hack when WF is self-contained
-  XSqlQuery wf("SELECT EXISTS("
-               "  SELECT 1"
-               "    FROM pg_proc"
-               "    JOIN pg_namespace n ON pronamespace = n.oid"
-               "   WHERE nspname = 'xt'"
-               "     AND proname = 'createwf_after_insert'"
-               "  ) AS isInstalled;");
-  if (wf.first() && wf.value("isInstalled").toBool())
-  {
-    insert(tr("Workflow"), "configureWF", Configure, Xt::SystemModule, mode("ConfigureWF"), 0 );
-  }
-
   insert(tr("Search Path"), "configureSearchPath", Configure, Xt::SystemModule, _privileges->isDba() ? cEdit : 0, 0);
 
   // Account Mappings
@@ -206,6 +193,9 @@ setup::setup(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
 
   modeVal = mode("MaintainReasonCodes");
   insert(tr("Reason Codes"), "reasonCodes", MasterInformation, Xt::InventoryModule | Xt::AccountingModule, modeVal, modeVal);
+
+  modeVal = mode("MaintainPurchaseTypes", "ViewPurchaseTypes");
+  insert(tr("Purchase Types"), "poTypes", MasterInformation, Xt::PurchaseModule, modeVal, modeVal);
 
   modeVal = mode("MaintainRejectCodes", "ViewRejectCodes");
   insert(tr("Reject Codes"), "rejectCodes", MasterInformation, Xt::PurchaseModule, modeVal, modeVal);

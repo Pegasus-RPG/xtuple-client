@@ -21,6 +21,7 @@
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "storedProcErrorLookup.h"
+#include "userPreferences.h"
 
 user::user(QWidget* parent, const char * name, Qt::WindowFlags fl)
   : XDialog(parent, name, fl)
@@ -84,6 +85,7 @@ user::user(QWidget* parent, const char * name, Qt::WindowFlags fl)
 
   if (!_metrics->boolean("MultiWhs"))
     _tab->removeTab(_tab->indexOf(_siteTab));
+
 }
 
 user::~user()
@@ -110,7 +112,28 @@ enum SetResponse user::set(const ParameterList &pParams)
 
   param = pParams.value("username", &valid);
   if (valid)
+  {
     _cUsername = param.toString();
+    _pref = new Preferences(_cUsername);
+
+    _inventoryMenu->setChecked(_pref->boolean("ShowIMMenu"));
+    _productsMenu->setChecked(_pref->boolean("ShowPDMenu"));
+    _scheduleMenu->setChecked(_pref->boolean("ShowMSMenu"));
+    _manufactureMenu->setChecked(_pref->boolean("ShowWOMenu"));
+    _crmMenu2->setChecked(_pref->boolean("ShowCRMMenu"));
+    _purchaseMenu->setChecked(_pref->boolean("ShowPOMenu"));
+    _salesMenu->setChecked(_pref->boolean("ShowSOMenu"));
+    _accountingMenu->setChecked(_pref->boolean("ShowGLMenu"));
+
+    _inventoryToolbar->setChecked(_pref->boolean("ShowIMToolbar"));
+    _productsToolbar->setChecked(_pref->boolean("ShowPDToolbar"));
+    _scheduleToolbar->setChecked(_pref->boolean("ShowMSToolbar"));
+    _manufactureToolbar->setChecked(_pref->boolean("ShowWOToolbar"));
+    _crmToolbar2->setChecked(_pref->boolean("ShowCRMToolbar"));
+    _purchaseToolbar->setChecked(_pref->boolean("ShowPOToolbar"));
+    _salesToolbar->setChecked(_pref->boolean("ShowSOToolbar"));
+    _accountingToolbar->setChecked(_pref->boolean("ShowGLToolbar"));
+  }
 
   if (! _cUsername.isEmpty() || _crmacctid > 0)
     if (! sPopulate())
@@ -336,7 +359,23 @@ bool user::save()
             "       setUserPreference(:username, 'initials', :initials),"
             "       setUserPreference(:username, 'locale_id', text(:locale_id)),"
             "       setUserPreference(:username, 'agent', :agent),"
-            "       setUserPreference(:username, 'active', :active);");
+            "       setUserPreference(:username, 'active', :active),"
+            "       setUserPreference(:username, 'ShowIMMenu', :ShowIMMenu),"
+            "       setUserPreference(:username, 'ShowPDMenu', :ShowPDMenu),"
+            "       setUserPreference(:username, 'ShowMSMenu', :ShowMSMenu),"
+            "       setUserPreference(:username, 'ShowWOMenu', :ShowWOMenu),"
+            "       setUserPreference(:username, 'ShowCRMMenu', :ShowCRMMenu),"
+            "       setUserPreference(:username, 'ShowPOMenu', :ShowPOMenu),"
+            "       setUserPreference(:username, 'ShowSOMenu', :ShowSOMenu),"
+            "       setUserPreference(:username, 'ShowGLMenu', :ShowGLMenu),"
+            "       setUserPreference(:username, 'ShowIMToolbar', :ShowIMToolbar),"
+            "       setUserPreference(:username, 'ShowPDToolbar', :ShowPDToolbar),"
+            "       setUserPreference(:username, 'ShowMSToolbar', :ShowMSToolbar),"
+            "       setUserPreference(:username, 'ShowWOToolbar', :ShowWOToolbar),"
+            "       setUserPreference(:username, 'ShowCRMToolbar', :ShowCRMToolbar),"
+            "       setUserPreference(:username, 'ShowPOToolbar', :ShowPOToolbar),"
+            "       setUserPreference(:username, 'ShowSOToolbar', :ShowSOToolbar),"
+            "       setUserPreference(:username, 'ShowGLToolbar', :ShowGLToolbar)");
   usrq.bindValue(":username", username);
   usrq.bindValue(":export", (_exportContents->isChecked() ? "t" : "f"));
   usrq.bindValue(":enhanced", (_enhancedAuth->isChecked() ? "t" : "f"));
@@ -347,6 +386,25 @@ bool user::save()
   usrq.bindValue(":locale_id", _locale->id());
   usrq.bindValue(":agent", (_agent->isChecked() ? "t" : "f"));
   usrq.bindValue(":active", (_active->isChecked() ? "t" : "f"));
+
+  usrq.bindValue(":ShowIMMenu",  (_inventoryMenu->isChecked() ? "t" : "f"));
+  usrq.bindValue(":ShowPDMenu",  (_productsMenu->isChecked() ? "t" : "f"));
+  usrq.bindValue(":ShowMSMenu",  (_scheduleMenu->isChecked() ? "t" : "f"));
+  usrq.bindValue(":ShowWOMenu",  (_manufactureMenu->isChecked() ? "t" : "f"));
+  usrq.bindValue(":ShowCRMMenu", (_crmMenu2->isChecked() ? "t" : "f"));
+  usrq.bindValue(":ShowPOMenu",  (_purchaseMenu->isChecked() ? "t" : "f"));
+  usrq.bindValue(":ShowSOMenu",  (_salesMenu->isChecked() ? "t" : "f"));
+  usrq.bindValue(":ShowGLMenu",  (_accountingMenu->isChecked() ? "t" : "f"));
+ 
+  usrq.bindValue(":ShowIMToolbar",  (_inventoryToolbar->isChecked() ? "t" : "f"));
+  usrq.bindValue(":ShowPDToolbar",  (_productsToolbar->isChecked() ? "t" : "f"));
+  usrq.bindValue(":ShowMSToolbar",  (_scheduleToolbar->isChecked() ? "t" : "f"));
+  usrq.bindValue(":ShowWOToolbar",  (_manufactureToolbar->isChecked() ? "t" : "f"));
+  usrq.bindValue(":ShowCRMToolbar", (_crmToolbar2->isChecked() ? "t" : "f"));
+  usrq.bindValue(":ShowPOToolbar",  (_purchaseToolbar->isChecked() ? "t" : "f"));
+  usrq.bindValue(":ShowSOToolbar",  (_salesToolbar->isChecked() ? "t" : "f"));
+  usrq.bindValue(":ShowGLToolbar",  (_accountingToolbar->isChecked() ? "t" : "f"));
+
   usrq.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Saving User Account"),
                            usrq, __FILE__, __LINE__))

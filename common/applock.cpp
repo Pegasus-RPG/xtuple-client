@@ -28,6 +28,10 @@ class AppLockPrivate
         _otherLock(false),
         _parent(parent)
     {
+      _dbIsOpen = QSqlDatabase::database().isOpen();
+      if (! _dbIsOpen)
+        return;
+
       if (_mobilizedDb.isNull()) {
         XSqlQuery q("SELECT EXISTS(SELECT 1"
                     "  FROM pg_class c"
@@ -55,6 +59,9 @@ class AppLockPrivate
     }
 
     void updateLockStatus() {
+      if (! _dbIsOpen)
+        return;
+
       XSqlQuery q;
       if (_mobilizedDb.toBool()) {
         q.prepare("SELECT lock_pid = pg_backend_pid() AS mylock, lock_username"
@@ -110,6 +117,7 @@ class AppLockPrivate
     QString  _actPidCol;
     QString  _error;
     int      _id;
+    bool     _dbIsOpen;
     bool     _myLock;
     bool     _otherLock;
     AppLock *_parent;
@@ -153,6 +161,9 @@ AppLock::~AppLock()
  */
 bool AppLock::acquire(AppLock::AcquireMode mode)
 {
+  if (! _p->_dbIsOpen)
+    return false;
+
   if (_p->_id < 0 || _p->_table.isEmpty()) {
     _p->_error = tr("Cannot acquire a lock without a table and record id.");
     if (mode == Interactive) {
@@ -229,7 +240,7 @@ bool AppLock::isLockedOut() const
 
 bool AppLock::release()
 {
-  if (_p->_id < 0 || _p->_table.isEmpty())
+  if (_p->_id < 0 || _p->_table.isEmpty() || ! _p->_dbIsOpen)
     return true;
 
   bool released = false;

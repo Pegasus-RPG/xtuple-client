@@ -27,7 +27,7 @@ Makefile.Release
 object_script.*.Debug
 object_script.*.Release
 *-build-*
-wmsg.*.qm
+*.qm
 *.qmake*
 
 macx.pri
