@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -18,10 +18,7 @@
 #include <metasql.h>
 #include <openreports.h>
 
-#include "addresscluster.h"
-#include "comment.h"
 #include "crmaccount.h"
-#include "dspAPApplications.h"
 #include "dspCheckRegister.h"
 #include "dspPOsByVendor.h"
 #include "dspPoItemReceivingsByVendor.h"
@@ -29,11 +26,9 @@
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "selectPayments.h"
-#include "storedProcErrorLookup.h"
 #include "taxRegistration.h"
 #include "unappliedAPCreditMemos.h"
 #include "vendorAddress.h"
-#include "xcombobox.h"
 
 #define DEBUG false
 
@@ -421,8 +416,7 @@ bool vendor::sSave()
 {
   XSqlQuery vendorSave;
   QList<GuiErrorCheck> errors;
-  errors
-         << GuiErrorCheck(_number->number().trimmed().isEmpty(), _number,
+  errors << GuiErrorCheck(_number->number().trimmed().isEmpty(), _number,
                           tr("Please enter a Number for this new Vendor."))
          << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
                           tr("Please enter a Name for this new Vendor."))
@@ -452,19 +446,18 @@ bool vendor::sSave()
   if (_number->number().trimmed().toUpper() != _cachedNumber.toUpper())
   {
     XSqlQuery dupq;
-    dupq.prepare("SELECT vend_name "
-                 "FROM vendinfo "
-                 "WHERE (UPPER(vend_number)=UPPER(:vend_number)) "
-                 "  AND (vend_id<>:vend_id);" );
+    dupq.prepare("SELECT 1"
+                 "  FROM vendinfo"
+                 " WHERE UPPER(vend_number) = UPPER(:vend_number)"
+                 "   AND vend_id != :vend_id;");
     dupq.bindValue(":vend_number", _number->number().trimmed());
-    dupq.bindValue(":vend_id", _vendid);
+    dupq.bindValue(":vend_id",     _vendid);
     dupq.exec();
     if (dupq.first())
-      GuiErrorCheck(true, _number,
-                    tr("<p>The newly entered Vendor Number cannot be "
-                       "used as it is already used by the Vendor '%1'. "
-                       "Please correct or enter a new Vendor Number." )
-                    .arg(vendorSave.value("vend_name").toString()) );
+      errors << GuiErrorCheck(true, _number,
+                              tr("<p>The number % is already used by another "
+                                 "vendor. Please use a different vendor number.")
+                              .arg(_number->number()));
   }
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Vendor"), errors))
@@ -611,7 +604,9 @@ bool vendor::sSave()
   params.append("vend_vendtype_id", _vendtype->id());
   params.append("vend_terms_id", _defaultTerms->id());
   params.append("vend_curr_id", _defaultCurr->id());
-  params.append("vend_potype_id", _defaultPoType->id());
+
+  if (_defaultPoType->id() >= 0)
+    params.append("vend_potype_id", _defaultPoType->id());
 
   params.append("vend_number",   _number->number().trimmed().toUpper());
   params.append("vend_accntnum", _accountNumber->text().trimmed());
@@ -691,7 +686,7 @@ bool vendor::sSave()
   {
     rollback.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Vendor"),
-                         vendorSave, __FILE__, __LINE__);
+                         upsq, __FILE__, __LINE__);
     return false;
   }
 
