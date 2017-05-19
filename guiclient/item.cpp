@@ -2084,6 +2084,7 @@ void item::sFillSourceList()
                
   ParameterList params;
   params.append("item_id", _itemid);
+  params.append("showInactive", true);
   itemFillSourceList = mql.toQuery(params);
   _itemsrc->populate(itemFillSourceList);
 }
