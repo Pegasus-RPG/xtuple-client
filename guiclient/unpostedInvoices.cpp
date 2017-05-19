@@ -369,6 +369,12 @@ void unpostedInvoices::sPost()
           break;
         }
       }
+      else
+      {
+        failedInvoices.append(invoiceNumber);
+        errors.append(tr("Detail Distribution Cancelled"));
+        continue;
+      }
     }
 
     // Post this invoice

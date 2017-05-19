@@ -319,6 +319,12 @@ void unpostedCreditMemos::sPost()
           break;
         }
       }
+      else 
+      {
+        failedMemos.append(memoNumber);
+        errors.append(tr("Detail Distribution Cancelled"));
+        continue;
+      }
     }
 
     // Post credit memo
