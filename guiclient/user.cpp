@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -610,6 +610,57 @@ void user::sAddGroup()
                                 grpq, __FILE__, __LINE__))
     return;
 
+  // Get default role menus and add to user menu preferences
+  grpq.prepare("SELECT grp_showimmenu, grp_showpdmenu, grp_showmsmenu, "
+               "grp_showwomenu, grp_showcrmmenu, grp_showpomenu, "
+               "grp_showsomenu, grp_showglmenu, "
+               "grp_showimtoolbar, grp_showpdtoolbar, grp_showmstoolbar, "
+               "grp_showwotoolbar, grp_showcrmtoolbar, grp_showpotoolbar, "
+               "grp_showsotoolbar, grp_showgltoolbar "
+               "FROM grp WHERE grp_id=:grp_id;");
+  grpq.bindValue(":grp_id", _availableGroup->id());
+  grpq.exec();
+  if (grpq.first())
+  {
+    // Only switch menus on - don't switch off
+    if (grpq.value("grp_showimmenu").toBool())
+      _inventoryMenu->setChecked(true);
+    if (grpq.value("grp_showpdmenu").toBool())
+      _productsMenu->setChecked(true);
+    if (grpq.value("grp_showmsmenu").toBool())
+      _scheduleMenu->setChecked(true);
+    if (grpq.value("grp_showwomenu").toBool())
+      _manufactureMenu->setChecked(true);
+    if (grpq.value("grp_showcrmmenu").toBool())
+      _crmMenu2->setChecked(true);
+    if (grpq.value("grp_showpomenu").toBool())
+      _purchaseMenu->setChecked(true);
+    if (grpq.value("grp_showsomenu").toBool())
+      _salesMenu->setChecked(true);
+    if (grpq.value("grp_showglmenu").toBool())
+      _accountingMenu->setChecked(true);
+
+    if (grpq.value("grp_showimtoolbar").toBool()) 
+      _inventoryToolbar->setChecked(true);
+    if (grpq.value("grp_showpdtoolbar").toBool())
+      _productsToolbar->setChecked(true);
+    if (grpq.value("grp_showmstoolbar").toBool())
+      _scheduleToolbar->setChecked(true);
+    if (grpq.value("grp_showwotoolbar").toBool())
+      _manufactureToolbar->setChecked(true);
+    if (grpq.value("grp_showcrmtoolbar").toBool())
+      _crmToolbar2->setChecked(true);
+    if (grpq.value("grp_showpotoolbar").toBool())
+      _purchaseToolbar->setChecked(true);
+    if (grpq.value("grp_showsotoolbar").toBool())
+      _salesToolbar->setChecked(true);
+    if (grpq.value("grp_showgltoolbar").toBool())
+      _accountingToolbar->setChecked(true);
+  }
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Updating Group Default Menus"),
+                                grpq, __FILE__, __LINE__))
+    return;
+    
   sModuleSelected(_module->currentText());
 }
 
