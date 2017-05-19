@@ -955,10 +955,15 @@ void purchaseOrder::sSave()
     purchaseSave.bindValue(":pohead_status", "O");
   else if (_status->currentIndex() == 2)
     purchaseSave.bindValue(":pohead_status", "C");
-  purchaseSave.bindValue(":pohead_potype_id", _purchaseType->id());
+  if (_purchaseType->id() >= 0)
+    purchaseSave.bindValue(":pohead_potype_id", _purchaseType->id());
   purchaseSave.bindValue(":pohead_dropship", QVariant(_dropShip->isChecked()));
 
   purchaseSave.exec();
+
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Purchase Order"),
+                           purchaseSave, __FILE__, __LINE__))
+    return;
  
   omfgThis->sPurchaseOrdersUpdated(_poheadid, true);
 
