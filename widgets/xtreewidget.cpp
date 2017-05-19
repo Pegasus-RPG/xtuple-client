@@ -127,11 +127,7 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   setContextMenuPolicy(Qt::CustomContextMenu);
   setSelectionBehavior(QAbstractItemView::SelectRows);
   header()->setStretchLastSection(false);
-#if QT_VERSION >= 0x050000
   header()->setSectionsClickable(true);
-#else
-  header()->setClickable(true);
-#endif
   if (_x_preferences)
     setAlternatingRowColors(!_x_preferences->boolean("NoAlternatingRowColors"));
 
@@ -904,19 +900,11 @@ void XTreeWidget::addColumn(const QString &pString, int pWidth, int pAlignment, 
   if (pWidth >= 0)
   {
     header()->resizeSection(column, pWidth);
-    #if QT_VERSION >= 0x050000
     header()->setSectionResizeMode(column, QHeaderView::Interactive);
-    #else
-    header()->setResizeMode(column, QHeaderView::Interactive);
-    #endif
   }
   else
   {
-    #if QT_VERSION >= 0x050000
     header()->setSectionResizeMode(column, QHeaderView::Interactive);
-    #else
-    header()->setResizeMode(column, QHeaderView::Interactive);
-    #endif
     _stretch.append(column);
   }
   bool forgetCache = _forgetful;
@@ -2033,19 +2021,37 @@ double XTreeWidgetItem::totalForItem(const int pcol, const int pset) const
 
 // script exposure of xtreewidgetitem /////////////////////////////////////////
 
-QScriptValue XTreeWidgetItemtoScriptValue(QScriptEngine *engine, XTreeWidgetItem *const &item)
+QScriptValue XTreeWidgetItemToScriptValue(QScriptEngine *engine, XTreeWidgetItem *const &item)
 {
   return engine->newQObject(item);
 }
 
-void XTreeWidgetItemfromScriptValue(const QScriptValue &obj, XTreeWidgetItem * &item)
+void XTreeWidgetItemFromScriptValue(const QScriptValue &obj, XTreeWidgetItem * &item)
 {
   item = qobject_cast<XTreeWidgetItem *>(obj.toQObject());
 }
 
+QScriptValue XTreeWidgetItemListToScriptValue(QScriptEngine *engine, QList<XTreeWidgetItem *> const &cpplist)
+{
+  QScriptValue scriptlist = engine->newArray(cpplist.size());
+  for (int i = 0; i < cpplist.size(); i++)
+    scriptlist.setProperty(i, engine->newQObject(cpplist.at(i)));
+  return scriptlist;
+}
+
+void XTreeWidgetItemListFromScriptValue(const QScriptValue &scriptlist, QList<XTreeWidgetItem *> &cpplist)
+{
+  cpplist.clear();
+  int listlen = scriptlist.property("length").toInt32();
+  for (int i = 0; i < listlen; i++)
+  {
+    XTreeWidgetItem *tmp = qobject_cast<XTreeWidgetItem *>(scriptlist.property(i).toQObject());
+    cpplist.append(tmp);
+  }
+}
+
 QScriptValue constructXTreeWidgetItem(QScriptContext *context,QScriptEngine  *engine)
 {
-#if QT_VERSION >= 0x050000
   XTreeWidget     *tree  = qscriptvalue_cast<XTreeWidget *>(context->argument(0));
   XTreeWidgetItem *obj   = 0;
   int variantidx         = 0; // index in arg list of first qvariant
@@ -2132,18 +2138,14 @@ QScriptValue constructXTreeWidgetItem(QScriptContext *context,QScriptEngine  *en
   }
 
   return engine->toScriptValue(obj);
-#else
-  Q_UNUSED(context); Q_UNUSED(engine); return QScriptValue();
-#endif
 }
 
 void setupXTreeWidgetItem(QScriptEngine *engine)
 {
   if (! engine->globalObject().property("XTreeWidgetItem").isFunction())
   {
-#if QT_VERSION >= 0x050000
-    qScriptRegisterMetaType(engine, XTreeWidgetItemtoScriptValue,     XTreeWidgetItemfromScriptValue);
-#endif
+    qScriptRegisterMetaType(engine, XTreeWidgetItemToScriptValue,     XTreeWidgetItemFromScriptValue);
+    qScriptRegisterMetaType(engine, XTreeWidgetItemListToScriptValue, XTreeWidgetItemListFromScriptValue);
     QScriptValue ctor = engine->newFunction(constructXTreeWidgetItem);
     QScriptValue meta = engine->newQMetaObject(&XTreeWidgetItem::staticMetaObject, ctor);
 
@@ -2154,21 +2156,19 @@ void setupXTreeWidgetItem(QScriptEngine *engine)
 
 // xtreewidget ////////////////////////////////////////////////////////////////
 
-QScriptValue XTreeWidgettoScriptValue(QScriptEngine *engine, XTreeWidget *const &item)
+QScriptValue XTreeWidgetToScriptValue(QScriptEngine *engine, XTreeWidget *const &item)
 {
   return engine->newQObject(item);
 }
 
-void XTreeWidgetfromScriptValue(const QScriptValue &obj, XTreeWidget * &item)
+void XTreeWidgetFromScriptValue(const QScriptValue &obj, XTreeWidget * &item)
 {
   item = qobject_cast<XTreeWidget *>(obj.toQObject());
 }
 
 void setupXTreeWidget(QScriptEngine *engine)
 {
-#if QT_VERSION >= 0x050000
-  qScriptRegisterMetaType(engine, XTreeWidgettoScriptValue, XTreeWidgetfromScriptValue);
-#endif
+  qScriptRegisterMetaType(engine, XTreeWidgetToScriptValue, XTreeWidgetFromScriptValue);
 
   if (! engine->globalObject().property("XTreeWidget").isObject())
   {
