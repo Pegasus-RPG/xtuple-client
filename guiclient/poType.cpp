@@ -11,6 +11,7 @@
 #include "poType.h"
 
 #include <QVariant>
+#include <QMessageBox>
 
 #include <metasql.h>
 #include "mqlutil.h"
@@ -104,6 +105,19 @@ void poType::sSave()
                           tr("You must enter a Code for this PO Type before you may save it."));
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Purchase Order Type"), errors))
     return;
+
+  XSqlQuery check;
+  check.prepare("SELECT 1 "
+                "  FROM potype "
+                " WHERE potype_code=:potype_code;");
+  check.bindValue(":potype_code", _typeCode->text());
+  check.exec();
+  if (check.first())
+  {
+    QMessageBox::critical(this, tr("Duplicate Purchase Order Type"),
+                                tr("A Purchase Order Type already exists with this Code."));
+    return;
+  }
 
   if (_mode == cNew)
     typeSave.prepare( "INSERT INTO potype "
