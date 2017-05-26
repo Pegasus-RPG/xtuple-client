@@ -143,79 +143,31 @@ void correctProductionPosting::sCorrect()
   if (! okToPost())
     return;
 
-  int itemlocSeries;
-  bool hasControlledMaterialItems;
+  // xtmfg calls correctProductionPosting::okToPost() but not ::sPost() && has a situation
+  // where qty 0 is OK, so don't move the _qty == 0 check to okToPost()
+  if (_qty->toDouble() == 0.0)
+  {
+    QMessageBox::critical(this, tr("Enter Quantity to Post"),
+                          tr("You must enter a quantity of production to Post.") );
+    _qty->setFocus();
+    return;
+  }
+
+  int itemlocSeries = handleSeriesAdjustBeforePost();
 
   // Stage distribution cleanup function to be called on error
   XSqlQuery cleanup;
   cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-
-  // Get the parent series id
-  XSqlQuery postInfo;
-  postInfo.prepare("SELECT item_type, roundQty(item_fractional, :qty) AS parent_qty, wo_status, wo_itemsite_id, "
-                       "  isControlledItemsite(wo_itemsite_id) AS controlled "
-                       "FROM wo "
-                       "  JOIN itemsite ON itemsite_id=wo_itemsite_id "                       
-                       "  JOIN item ON item_id=itemsite_item_id "
-                       "WHERE wo_id=:wo_id;");
-  postInfo.bindValue(":wo_id", _wo->id());
-  if (_wo->method() == "A")
-    postInfo.bindValue(":qty", _qty->toDouble());
-  else
-    postInfo.bindValue(":qty", _qty->toDouble() * -1);
-  postInfo.exec();
-  if (!postInfo.first())
-  {
-    ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve WO and Itemsite Info"),
-                            postInfo, __FILE__, __LINE__);
-    return;
-  }
-
-  itemlocSeries = distributeInventory::SeriesCreate(postInfo.value("wo_itemsite_id").toInt(),
-    postInfo.value("parent_qty").toDouble() * -1, "WO", "RM", _wo->id());
-  if (itemlocSeries <= 0)
-    return;
-
   cleanup.bindValue(":itemlocSeries", itemlocSeries);
 
-  // If backflush materials, createItemlocdistParent for each (for returnWoMaterial() call)
-  if (_backFlush->isChecked())
-  {
-    XSqlQuery backflushMaterials;
-    backflushMaterials.prepare("SELECT wo_qtyrcv, womatl_id, womatl_uom_id, itemsite_id, "
-                               "  roundQty(item_fractional, "
-                               "    (CASE WHEN wo_qtyrcv - :qty > 0 THEN 0 ELSE womatl_qtyfxd END + :qty * womatl_qtyper) * (1 + womatl_scrap)) * -1 AS qty "
-                               "FROM wo "
-                               "  JOIN womatl ON (womatl_wo_id=wo_id AND womatl_issuemethod='L') "
-                               "  JOIN itemsite ON (itemsite_id=womatl_itemsite_id) "
-                               "  JOIN item ON (item_id=itemsite_item_id) "
-                               "WHERE wo_id=:wo_id "
-                               "  AND isControlledItemsite(womatl_itemsite_id);");
-    backflushMaterials.bindValue(":wo_id", _wo->id());
-    backflushMaterials.bindValue(":qty", postInfo.value("parent_qty").toDouble());
-    backflushMaterials.exec();
-    while (backflushMaterials.next())
-    {
-      if (backflushMaterials.value("qty").toDouble() > 0)
-      {
-        hasControlledMaterialItems = true;
-        int result = distributeInventory::SeriesCreate(backflushMaterials.value("itemsite_id").toInt(),
-          backflushMaterials.value("qty").toDouble(), "WO", "IM", _wo->id(), itemlocSeries);
-        if (result != itemlocSeries)
-          return;
-      }
-    }
-  }
-
-  // Call distribute inventory if needed
-  if ((postInfo.value("controlled").toBool() || hasControlledMaterialItems) && 
-    (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true) == XDialog::Rejected))
+  // If the series aren't set properly, cleanup and exit. handleSeriesAdjustBeforePost already displayed the error messages.
+  if (itemlocSeries <= 0)
   {
     cleanup.exec();
-    QMessageBox::information( this, tr("Correct Production Posting"), tr("Transaction Canceled") );
     return;
   }
 
+  // correctProduction
   XSqlQuery correctCorrect;
   correctCorrect.prepare("SELECT correctProduction(:wo_id, :qty, :backflushMaterials, "
                          ":itemlocSeries, :date, NULL, TRUE) AS result;");
@@ -278,4 +230,84 @@ void correctProductionPosting::populate()
 
     _qtyReceivedCache = 0;
   }
+}
+
+int correctProductionPosting::handleSeriesAdjustBeforePost()
+{
+  bool hasControlledMaterialItems = false;
+  // Get the parent series id
+  XSqlQuery postInfo;
+  postInfo.prepare("SELECT item_type, roundQty(item_fractional, :qty) AS parent_qty, wo_status, wo_itemsite_id, "
+                       "  isControlledItemsite(wo_itemsite_id) AS controlled "
+                       "FROM wo "
+                       "  JOIN itemsite ON itemsite_id=wo_itemsite_id "                       
+                       "  JOIN item ON item_id=itemsite_item_id "
+                       "WHERE wo_id=:wo_id;");
+  postInfo.bindValue(":wo_id", _wo->id());
+  postInfo.bindValue(":qty", _qty->toDouble());
+  postInfo.exec();
+  if (!postInfo.first())
+  {
+    ErrorReporter::error(QtCriticalMsg, this, tr("Failed to Retrieve WO and Itemsite Info"),
+                            postInfo, __FILE__, __LINE__);
+    return -1;
+  }
+
+  int itemlocSeries = distributeInventory::SeriesCreate(postInfo.value("wo_itemsite_id").toInt(),
+    postInfo.value("parent_qty").toDouble() * -1, "WO", "RM", _wo->id());
+  if (itemlocSeries <= 0)
+    return -1;
+
+  // If backflush materials, createItemlocdistParent for each (for returnWoMaterial() call)
+  if (_backFlush->isChecked())
+  {
+    XSqlQuery backflushMaterials;
+    backflushMaterials.prepare("SELECT womatl_id, itemsite_id, qty, womatl_qtyreq, womatl_qtyiss, "
+                               "  COALESCE(itemuomtouom(item_id, womatl_uom_id, NULL, qty), qty) AS itemlocdist_qty " // from returnWoMaterial.sql
+                               "FROM ( "
+                               "  SELECT wo_qtyrcv, womatl_id, womatl_uom_id, itemsite_id, womatl_qtyreq, womatl_qtyiss, item_id, "
+                               "    roundQty(item_fractional, "
+                               "      (CASE WHEN wo_qtyrcv - :qty > 0 THEN 0 ELSE womatl_qtyfxd END "
+                               "        + :qty * womatl_qtyper) "
+                               "      * (1 + womatl_scrap)) AS qty " // from correctProduction.sql
+                               "FROM wo "
+                               "  JOIN womatl ON (womatl_wo_id=wo_id AND womatl_issuemethod='L') "
+                               "  JOIN itemsite ON (itemsite_id=womatl_itemsite_id) "
+                               "  JOIN item ON (item_id=itemsite_item_id) "
+                               "WHERE wo_id=:wo_id "
+                               "  AND isControlledItemsite(womatl_itemsite_id) "
+                               ") data "
+                               "ORDER BY womatl_id;");
+    backflushMaterials.bindValue(":wo_id", _wo->id());
+    backflushMaterials.bindValue(":qty", postInfo.value("parent_qty").toDouble());
+    backflushMaterials.exec();
+    while (backflushMaterials.next())
+    {
+      if (backflushMaterials.value("qty").toDouble() > 0)
+      {
+        // Check another returnWoMaterial.sql condition
+        if (backflushMaterials.value("womatl_qtyreq").toDouble() >= 0 ? 
+            backflushMaterials.value("womatl_qtyiss").toDouble() >= backflushMaterials.value("qty").toDouble() : 
+            backflushMaterials.value("womatl_qtyiss").toDouble() <= backflushMaterials.value("qty").toDouble())
+        {
+          int result = distributeInventory::SeriesCreate(backflushMaterials.value("itemsite_id").toInt(),
+            backflushMaterials.value("itemlocdist_qty").toDouble(), "WO", "IM", _wo->id(), itemlocSeries);
+          if (result != itemlocSeries)
+            return -1;
+
+          hasControlledMaterialItems = true;
+        }
+      }
+    }
+  }
+
+  // Call distribute inventory if needed
+  if ((postInfo.value("controlled").toBool() || hasControlledMaterialItems) && 
+    (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true) == XDialog::Rejected))
+  {
+    QMessageBox::information( this, tr("Correct Production Posting"), tr("Transaction Canceled") );
+    return -1;
+  }
+
+  return itemlocSeries;
 }

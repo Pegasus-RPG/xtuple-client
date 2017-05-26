@@ -669,9 +669,12 @@ void dspAROpenItems::sVoidCreditMemo()
   cmitems.exec();
   while (cmitems.next())
   {
-    if (distributeInventory::SeriesCreate(cmitems.value("itemsite_id").toInt(), 
+    if (distributeInventory::SeriesCreate(cmitems.value("cmitem_itemsite_id").toInt(), 
       cmitems.value("qty").toDouble(), "CM", "RS", cmitems.value("cmitem_id").toInt(), itemlocSeries) < 0)
-      return;  
+    {
+      cleanup.exec();
+      return;
+    }
 
     hasControlledItems = true;
   }
@@ -849,7 +852,7 @@ void dspAROpenItems::sVoidInvoiceDetails()
   // Cycle through credit memo items that are controlled and have qty returned, create an itemlocdist record for each
   XSqlQuery invcitems;
   invcitems.prepare("SELECT invcitem_id, itemsite_id, item_number, "
-                    " (invcitem_billed * invcitem_qty_invuomratio) * -1 AS qty "
+                    " (invcitem_billed * invcitem_qty_invuomratio) AS qty "
                     "FROM invchead "
                     " JOIN invcitem ON invcitem_invchead_id=invchead_id "
                     "   AND invcitem_billed <> 0 "
@@ -866,7 +869,9 @@ void dspAROpenItems::sVoidInvoiceDetails()
   {
     if (distributeInventory::SeriesCreate(invcitems.value("itemsite_id").toInt(), 
       invcitems.value("qty").toDouble(), "IN", "SH", invcitems.value("invcitem_id").toInt(), itemlocSeries) < 0)
-    return;  
+    {
+      cleanup.exec();
+    }
 
     hasControlledItems = true;
   }
@@ -1176,7 +1181,7 @@ void dspAROpenItems::sPostCreditMemo()
   
   // Cycle through credit memo items that are controlled and have qty returned, create an itemlocdist record for each
   XSqlQuery cmitems;
-  cmitems.prepare("SELECT cmitem_id, itemsite_id, item_number, "
+  cmitems.prepare("SELECT itemsite_id, item_number, "
                     " SUM(cmitem_qtyreturned * cmitem_qty_invuomratio) AS qty "
                     "FROM cmhead JOIN cmitem ON cmitem_cmhead_id=cmhead_id "
                     " JOIN itemsite ON itemsite_id=cmitem_itemsite_id "
@@ -1187,15 +1192,18 @@ void dspAROpenItems::sPostCreditMemo()
                     " AND cmhead_id=:cmheadId "
                     " AND isControlledItemsite(itemsite_id) "
                     " AND itemsite_costmethod != 'J' "
-                    "GROUP BY cmitem_id, itemsite_id, item_number "
-                    "ORDER BY cmitem_id;");
+                    "GROUP BY itemsite_id, item_number "
+                    "ORDER BY itemsite_id;");
   cmitems.bindValue(":cmheadId", id);
   cmitems.exec();
   while (cmitems.next())
   {
     if (distributeInventory::SeriesCreate(cmitems.value("itemsite_id").toInt(), 
       cmitems.value("qty").toDouble(), "CM", "RS", cmitems.value("cmitem_id").toInt(), itemlocSeries) < 0)
+    {
+      cleanup.exec();
       return;
+    }
 
     hasControlledItems = true;
   }
@@ -1407,7 +1415,10 @@ void dspAROpenItems::sPostInvoice()
   {
     if (distributeInventory::SeriesCreate(invcitems.value("itemsite_id").toInt(), 
       invcitems.value("qty").toDouble(), "IN", "SH", invcitems.value("invcitem_id").toInt(), itemlocSeries) < 0)
-      return;  
+    {
+      cleanup.exec();
+      return;
+    }
 
     hasControlledItems = true;
   }

@@ -104,10 +104,6 @@ int distributeInventory::SeriesCreate(int itemsiteId, double qty, const QString 
 {
   bool controlled = false;
 
-  // Stage distribution cleanup function to be called on error
-  XSqlQuery cleanup;
-  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-
   // Generate a series id to be used for itemlocdist if controlled, and for returnWoMaterial()
   XSqlQuery parentSeries;
   parentSeries.prepare("SELECT COALESCE(:itemlocSeries, NEXTVAL('itemloc_series_seq')) AS result, isControlledItemsite(:itemsiteId) AS controlled;");
@@ -119,7 +115,6 @@ int distributeInventory::SeriesCreate(int itemsiteId, double qty, const QString 
   {
     itemlocSeries = parentSeries.value("result").toInt();
     controlled = parentSeries.value("controlled").toBool();
-    cleanup.bindValue(":itemlocSeries", itemlocSeries);
   }
   else
   {

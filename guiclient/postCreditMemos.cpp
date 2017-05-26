@@ -124,7 +124,7 @@ void postCreditMemos::sPost()
     bool hasControlledItems = false;
     bool cmitemFail = false;
     XSqlQuery cmitems;
-    cmitems.prepare("SELECT cmitem_id, itemsite_id, item_number, "
+    cmitems.prepare("SELECT itemsite_id, item_number, "
                       " SUM(cmitem_qtyreturned * cmitem_qty_invuomratio) AS qty "
                       "FROM cmhead JOIN cmitem ON cmitem_cmhead_id=cmhead_id "
                       " JOIN itemsite ON itemsite_id=cmitem_itemsite_id "
@@ -135,8 +135,8 @@ void postCreditMemos::sPost()
                       " AND cmitem_updateinv "
                       " AND isControlledItemsite(itemsite_id) "
                       " AND itemsite_costmethod != 'J' "
-                      "GROUP BY cmitem_id, itemsite_id, item_number "
-                      "ORDER BY cmitem_id;");
+                      "GROUP BY itemsite_id, item_number "
+                      "ORDER BY itemsite_id;");
     cmitems.bindValue(":cmheadId", creditMemos.value("cmhead_id").toInt());
     cmitems.exec();
     while (cmitems.next())
@@ -156,15 +156,21 @@ void postCreditMemos::sPost()
 
     // Don't continue on this credit memo because there was an issue with one of it's line items
     if (cmitemFail)
+    {
+      cleanup.exec();
       continue;
+    }
 
     // Distribute detail for the records created above
     if (hasControlledItems && distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
       QDate(), true) == XDialog::Rejected)
     {
       cleanup.exec();
+      failedItems.append(creditMemoNumber);
+      errors.append(tr("Detail Distribution Cancelled"));
+
       // If it's not the last credit memo, ask user if they want to continue
-      if (creditMemos.at() != creditMemos.size())
+      if (creditMemos.at() != creditMemos.size() -1)
       {
         if (QMessageBox::question(this,  tr("Post Credit Memo"),
           tr("Posting distribution detail for credit memo number %1 was cancelled but "
@@ -172,18 +178,14 @@ void postCreditMemos::sPost()
           .arg(creditMemoNumber), 
           QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
         {
-          failedItems.append(creditMemoNumber);
-          errors.append(tr("Detail Distribution Cancelled"));
           continue;
         }
         else
         {
-          failedItems.append(creditMemoNumber);
-          errors.append(tr("Detail Distribution Cancelled"));
           break;
         }
       }
-      
+      continue;
     }
 
     XSqlQuery rollback;

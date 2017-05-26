@@ -1636,9 +1636,13 @@ const struct {
 			"window."),					0, "" },
 
   { "voidCreditMemo",  -1, "", -1, "insertIntoGLSeries" },
+  { "voidCreditMemo",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site or Cost Category."),  0, "" },
   { "voidCreditMemo",  -4, "", -4, "insertIntoGLSeries" },
   { "voidCreditMemo",  -5, "", -5, "postGLSeries" },
   { "voidCreditMemo",  -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Posting Distribution Detail Returned 0 Results."),  0, "" },
+  { "voidCreditMemo",  -7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Failed to create GL entry, no accnt record found."),  0, "" },
+  { "voidCreditMemo",  -8, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Failed to create GL entry, no accnt record found."),  0, "" },
+  { "voidCreditMemo",  -9, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Failed to create GL entry, no accnt record found."),  0, "" },
   { "voidCreditMemo", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Credit Memo because it has "
                          "not been posted."),		 0, "" },
   { "voidCreditMemo", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Credit Memo because the Sales "
@@ -1647,6 +1651,7 @@ const struct {
                          "A/R Applications posted against this Credit Memo."), 0, "" },
 
   { "voidInvoice",  -1, "", -1, "insertIntoGLSeries" },
+  { "voidInvoice",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site or Cost Category."),  0, "" },
   { "voidInvoice",  -4, "", -4, "insertIntoGLSeries" },
   { "voidInvoice",  -5, "", -5, "postGLSeries" },
   { "voidInvoice",  -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Posting Distribution Detail Returned 0 Results."),  0, "" },

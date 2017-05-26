@@ -1332,6 +1332,7 @@ void workOrder::sReturnMatlBatch()
                     " AND womatl_itemsite_id=itemsite_id "
                     " AND itemsite_item_id=item_id "
                     " AND womatl_wo_id=:wo_id "
+                    " AND ((wo_qtyord < 0) OR (womatl_issuemethod IN ('S','M'))) "
                     "ORDER BY womatl_id;");
       items.bindValue(":wo_id", _woIndentedList->id());
       items.exec();
@@ -1383,7 +1384,7 @@ void workOrder::sReturnMatlBatch()
           // Create the parent itemlocdist record for each line item requiring distribution and call distributeInventory::seriesAdjust
           XSqlQuery parentItemlocdist;
           parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, "
-                                    " COALESCE(itemuomtouom(:itemsite_item_id, NULL, :womatl_uom_id, :qty), :qty), "
+                                    " COALESCE(itemuomtouom(:itemsite_item_id, :womatl_uom_id, NULL, :qty), :qty), "
                                     "'WO', :orderitemId, :itemlocSeries, NULL, NULL, 'IM');");
           parentItemlocdist.bindValue(":itemsite_id", items.value("itemsite_id").toInt());
           parentItemlocdist.bindValue(":itemsite_item_id", items.value("itemsite_item_id").toInt());
@@ -1504,7 +1505,8 @@ void workOrder::sIssueMatlBatch()
                 "   AND (womatl_itemsite_id=itemsite_id) "
                 "   AND (itemsite_item_id=item_id) "
                 "   AND (itemsite_warehous_id=warehous_id) "
-                "   AND (NOT ((item_type = 'R') OR (itemsite_controlmethod = 'N'))) "
+                "   AND ((itemsite_controlmethod IN ('L', 'S')) OR (itemsite_loccntrl)) "
+                "   AND (womatl_issuemethod IN ('S', 'M')) "
                 "   AND (womatl_wo_id=:wo_id)); ");
   items.bindValue(":wo_id", _woIndentedList->id());
   items.exec();
@@ -1514,14 +1516,6 @@ void workOrder::sIssueMatlBatch()
   QList<QString> errors;
   while (items.next())
   {
-    if (items.value("womatl_issuemethod").toString() == "L")
-    {
-      failedItems.append(items.value("item_number").toString());
-      errors.append(tr("Skipping Item Number %1 because it's Issue Method is Pull.")
-          .arg(items.value("item_number").toString()));
-      continue;
-    }
-
     if (items.value("controlled").toBool() && !items.value("isqtyavail").toBool())
     {
       failedItems.append(items.value("item_number").toString());

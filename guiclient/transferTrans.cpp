@@ -240,7 +240,6 @@ void transferTrans::sPost()
   }
   else
   {
-    cleanup.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Finding TO Warehouse Itemsite"),
       itemsiteInfo, __FILE__, __LINE__);
     return;
@@ -290,9 +289,12 @@ void transferTrans::sPost()
   if (toItemsiteControlled)
   {
     // FROM itemsite itemlocdist_id is valid, proceed to create itemlocdist record for TO itemsite
-    int result = distributeInventory::SeriesCreate(toItemsiteId, _qty->toDouble(), "TW", "TR", 0, itemlocSeries, itemlocdistId);
+    int result = distributeInventory::SeriesCreate(toItemsiteId, _qty->toDouble(), "TW", "TW", 0, itemlocSeries, itemlocdistId);
     if (result != itemlocSeries)
+    {
+      cleanup.exec();
       return;
+    }
   }
 
   // Distribute detail

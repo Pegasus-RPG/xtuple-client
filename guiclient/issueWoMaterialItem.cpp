@@ -224,7 +224,12 @@ void issueWoMaterialItem::sIssue()
     }
   }
 
+  // Wrap issueWoMaterial and INSERT in a transaction in case insert fails.
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
   // Post inventory
+  issueIssue.exec("BEGIN;");
   issueIssue.prepare("SELECT issueWoMaterial(:womatl_id, :qty, :itemlocSeries, true, :date, true) AS result;");
   issueIssue.bindValue(":womatl_id", _womatl->id());
   issueIssue.bindValue(":qty", _qtyToIssue->toDouble());
@@ -236,6 +241,7 @@ void issueWoMaterialItem::sIssue()
     int result = issueIssue.value("result").toInt();
     if (result < 0 || result != itemlocSeries)
     {
+      rollback.exec();
       cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Material To Work Order #: %1")
                            .arg(_wo->id()),
@@ -262,6 +268,7 @@ void issueWoMaterialItem::sIssue()
       lsdetail.exec();
       if (lsdetail.lastError().type() != QSqlError::NoError)
       {
+        rollback.exec();
         cleanup.exec();
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating Work Order Material Information"),
                              lsdetail, __FILE__, __LINE__);
@@ -271,12 +278,15 @@ void issueWoMaterialItem::sIssue()
   }
   else
   {
+    rollback.exec();
     cleanup.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Material to Work Order #: %1")
                          .arg(_wo->id()),
                          issueIssue, __FILE__, __LINE__);
     return;
   }
+
+  issueIssue.exec("COMMIT;");
 
   if (_captive)
     close();

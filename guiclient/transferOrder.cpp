@@ -879,7 +879,6 @@ void transferOrder::sNew()
   params.append("orderDate",	_orderDate->date());
   params.append("taxzone_id",	_taxzone->id());
   params.append("curr_id",	_freightCurrency->id());
-  params.append("status", _statusTypes[_status->currentIndex()]);
 
   if ((_mode == cNew) || (_mode == cEdit))
     params.append("mode", "new");
@@ -1813,11 +1812,51 @@ void transferOrder::sIssueStock()
 
 void transferOrder::sIssueLineBalance()
 {
+  int itemsiteId;
+  int succeeded = 0;
+  double balance;
+  QString itemNumber;
+  QList<QString> failedItems;
+  QList<QString> errors;
+
   XSqlQuery transferIssueLineBalance;
   QList<XTreeWidgetItem*> selected = _toitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem* toitem = (XTreeWidgetItem*)(selected[i]);
+
+    // Get toitem and related info
+    XSqlQuery toitemInfo;
+    toitemInfo.prepare("SELECT itemsite_id, item_number, tohead_srcname, calcIssueToShippingLineBalance('TO', toitem_id) AS balance "
+                       "FROM toitem "
+                       "  JOIN tohead ON toitem_tohead_id=tohead_id "
+                       "  JOIN item ON toitem_item_id=item_id "
+                       "  JOIN itemsite ON item_id=itemsite_item_id "
+                       "    AND tohead_src_warehous_id=itemsite_warehous_id "
+                       "WHERE toitem_id=:toitem_id; ");
+    toitemInfo.bindValue(":toitem_id", toitem->id());
+    toitemInfo.exec();
+    if (toitemInfo.first())
+    {
+      itemsiteId = toitemInfo.value("itemsite_id").toInt();
+      itemNumber = toitemInfo.value("item_number").toString();
+      balance = toitemInfo.value("balance").toDouble();
+    }
+    else 
+    {
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Checking Item Availability"),
+        transferIssueLineBalance, __FILE__, __LINE__);
+      failedItems.append(selected[i]->text(1)); // todo - don't hardcode
+      errors.append(tr("Failed to retrieve Transfer Order Item information for Line # %1. %2")
+        .arg(selected[i]->text(0))
+        .arg(toitemInfo.lastError().databaseText()));
+      continue;
+    }
+
+    // balance is 0, nothing to do
+    if (balance == 0)
+      continue;
+
     // skip if status = C or X or U
     if (toitem->altId() != 1 && toitem->altId() != 4 && toitem->altId() != 5)
     {
@@ -1832,55 +1871,20 @@ void transferOrder::sIssueLineBalance()
           int result = transferIssueLineBalance.value("result").toInt();
           if (result < 0)
           {
-            transferIssueLineBalance.prepare("SELECT item_number, tohead_srcname "
-                "  FROM toitem, tohead, item "
-                " WHERE ((toitem_item_id=item_id)"
-                "   AND  (toitem_tohead_id=tohead_id)"
-                "   AND  (toitem_id=:toitem_id)); ");
-            transferIssueLineBalance.bindValue(":toitem_id", toitem->id());
-            transferIssueLineBalance.exec();
-            if (transferIssueLineBalance.first())
-            {
-              ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Transfer Order Item Information"),
-                                     storedProcErrorLookup("sufficientInventoryToShipItem", result)
-                                     .arg(transferIssueLineBalance.value("item_number").toString())
-                                     .arg(transferIssueLineBalance.value("tohead_srcname").toString()),
-                                     __FILE__, __LINE__);
-              return;
-            } else {
-                ErrorReporter::error(QtCriticalMsg, this, tr("Error Checking Item Availability"),
-                                     transferIssueLineBalance, __FILE__, __LINE__);
-            }
+            failedItems.append(itemNumber);
+            errors.append(tr("Error Checking Item Availability %1")
+              .arg(storedProcErrorLookup("sufficientInventoryToShipItem", result)));
+            continue;
           }
         }
         else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Checking Inventory"),
                                transferIssueLineBalance, __FILE__, __LINE__))
-          return;
-      }
-
-      int itemsiteId;
-      double balance = 0;
-
-      // Get some required vars
-      XSqlQuery itemsite;
-      itemsite.prepare("SELECT itemsite_id, "
-                       "  calcIssueToShippingLineBalance('TO', toitem_id) AS balance "
-                       "FROM toitem "
-                       "  JOIN tohead ON toitem_tohead_id=tohead_id "
-                       "  JOIN itemsite ON toitem_item_id=itemsite_item_id AND tohead_src_warehous_id=itemsite_warehous_id "
-                       "WHERE toitem_id=:toitemId;");
-      itemsite.bindValue(":toitemId", toitem->id());
-      itemsite.exec();
-      if (itemsite.first())
-      {
-        itemsiteId = itemsite.value("itemsite_id").toInt();
-        balance = itemsite.value("balance").toDouble();
-      }
-      else 
-      {
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error checking balance"),
-          itemsite.lastError().databaseText(), __FILE__, __LINE__);
-        return;
+        {
+          failedItems.append(itemNumber);
+          errors.append(tr("Error Checking Inventory %1")
+            .arg(transferIssueLineBalance.lastError().databaseText()));
+          continue;
+        }
       }
       
       // Stage cleanup query
@@ -1888,19 +1892,42 @@ void transferOrder::sIssueLineBalance()
       cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
 
       // Generate the series and itemlocdist record (if controlled)
-      int itemlocSeries = distributeInventory::SeriesCreate(itemsiteId, balance * -1, "TO", "IS", toitem->id());
+      int itemlocSeries = distributeInventory::SeriesCreate(itemsiteId, balance * -1, "TO", "SH", toitem->id());
       if (itemlocSeries <= 0)
-        return;
-      cleanup.bindValue(":itemlocSeries", itemlocSeries);
+      {
+        failedItems.append(itemNumber);
+        errors.append(tr("Error Issuing Item at distributeInventory::SeriesCreate."));
+        continue;
+      }
+      else 
+        cleanup.bindValue(":itemlocSeries", itemlocSeries);
 
       // Distribute inventory
       if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
         QDate(), true) == XDialog::Rejected)
       {
         cleanup.exec();
-        QMessageBox::information(this, tr("Issue to Shipping"),
-                                 tr("Detail Distribution Canceled") );
-        return;
+        failedItems.append(itemNumber);
+        errors.append("Detail Distribution Cancelled");
+
+        // If it's not the last item in the loop, ask the user to exit loop or continue
+        if (i != (selected.size() -1))
+        {
+          if (QMessageBox::question(this,  tr("Issue Line Balance to Shipping"),
+            tr("Posting distribution detail for item number %1 was cancelled but "
+              "there are more items to Issue to Shipping. Continue issuing the remaining materials?")
+            .arg(itemNumber),
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+          {
+            continue;
+          }
+          else
+          {
+            break;
+          }
+        }
+        else
+          continue;
       }
     
       XSqlQuery rollback;
@@ -1919,23 +1946,38 @@ void transferOrder::sIssueLineBalance()
         {
           rollback.exec();
           cleanup.exec();
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Line Item Balance"),
-                               storedProcErrorLookup("issueLineBalance", result) +
-                               tr("<br>Line Item %1").arg(selected[i]->text(0)),
-                               __FILE__, __LINE__);
-          return;
+          failedItems.append(itemNumber);
+          errors.append(tr("Error Issuing Item. %1")
+            .arg(storedProcErrorLookup("issueLineBalance", result)));
+          continue;
         }
 
+        succeeded++;
         transferIssueLineBalance.exec("COMMIT;");
       }
       else
       {
-        rollback.exec();     
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Issuing Line Item %1\n").arg(selected[i]->text(0)),
-                             transferIssueLineBalance, __FILE__, __LINE__);
-        return;
+        rollback.exec();
+        cleanup.exec();    
+        failedItems.append(itemNumber);
+        errors.append(tr("Error Issuing Item. %1")
+          .arg(transferIssueLineBalance.lastError().databaseText()));
+        continue;
       }
     }
+  }
+
+  if (errors.size() > 0)
+  {
+    QMessageBox dlg(QMessageBox::Critical, "Errors Issuing to Shipping", "", QMessageBox::Ok, this);
+    dlg.setText(tr("%1 Items succeeded.\n%2 Items failed.").arg(succeeded).arg(failedItems.size()));
+
+    QString details;
+    for (int i=0; i<failedItems.size(); i++)
+      details += tr("Item %1 failed with:\n%2\n").arg(failedItems[i]).arg(errors[i]);
+    dlg.setDetailedText(details);
+
+    dlg.exec();
   }
 
   sFillItemList();

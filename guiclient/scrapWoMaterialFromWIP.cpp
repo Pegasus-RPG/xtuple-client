@@ -169,7 +169,7 @@ void scrapWoMaterialFromWIP::sScrap()
   else if (_scrapTopLevel->isChecked())
   {
     XSqlQuery itemsite;
-    itemsite.prepare("SELECT wo_itemsite_id, wo_prj_id "
+    itemsite.prepare("SELECT wo_itemsite_id, wo_prj_id, itemsite_costmethod "
                      "FROM wo "
                      "WHERE wo_id=:woId;");
     itemsite.bindValue(":woId", _wo->id());
@@ -178,6 +178,12 @@ void scrapWoMaterialFromWIP::sScrap()
     {
       ErrorReporter::error(QtCriticalMsg, this, tr("Error checking balance"),
         itemsite.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+    if (itemsite.value("itemsite_costmethod").toString() == tr("J"))
+    {
+      QMessageBox::information( this, tr("Scrap Work Order Material"), tr("This item is Job costed and can not be scrapped.") );
       return;
     }
 
@@ -219,8 +225,8 @@ void scrapWoMaterialFromWIP::sScrap()
         }
       }
     }
-    else // If not Post Production, handle detail distribution.
-    {      
+    else
+    {
       // Generate the series and itemlocdist record (if controlled)
       itemlocSeries = distributeInventory::SeriesCreate(itemsite.value("wo_itemsite_id").toInt(),
         _topLevelQty->toDouble() * -1, "SI", "SI", _wo->id());

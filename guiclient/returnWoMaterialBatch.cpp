@@ -101,7 +101,7 @@ void returnWoMaterialBatch::sReturn()
       {
         XSqlQuery items;
         items.prepare("SELECT womatl_id, womatl_uom_id, womatl_qtyreq, womatl_qtyiss, "
-                      " COALESCE(itemuomtouom(item_id, NULL, womatl_uom_id, "
+                      " COALESCE(itemuomtouom(item_id, womatl_uom_id, NULL, "
                       "   CASE WHEN wo_qtyord >= 0 THEN womatl_qtyiss "
                       "        ELSE ((womatl_qtyreq - womatl_qtyiss) * -1) "
                       "   END), "
@@ -126,7 +126,10 @@ void returnWoMaterialBatch::sReturn()
         QList<QString> errors;
         while(items.next())
         {
-          if(items.value("qty").toDouble() == 0.0)
+          // From returnWoMaterial, skip if no valid qty to return
+          if ((items.value("qty").toDouble() == 0.0) || (items.value("womatl_qtyreq").toDouble() >= 0 ? 
+              items.value("womatl_qtyiss").toDouble() < items.value("qty").toDouble() : 
+              items.value("womatl_qtyiss").toDouble() > items.value("qty").toDouble()))
             continue;
 
           int itemlocSeries;
@@ -139,21 +142,24 @@ void returnWoMaterialBatch::sReturn()
           itemlocSeries = distributeInventory::SeriesCreate(items.value("itemsite_id").toInt(),
             items.value("qty").toDouble(), "WO", "IM", _wo->id());
           if (itemlocSeries <= 0)
-            return;
+          {
+            failedItems.append(items.value("item_number").toString());
+            errors.append("distributeInventory::SeriesCreate failed");
+            continue;
+          }
 
           cleanup.bindValue(":itemlocSeries", itemlocSeries);
 
           // If controlled and backflush item has relevant qty for returnWoMaterial
-          if (items.value("controlled").toBool() && 
-             (items.value("womatl_qtyreq").toDouble() >= 0 ? 
-              items.value("womatl_qtyiss").toDouble() >= items.value("qty").toDouble() : 
-              items.value("womatl_qtyiss").toDouble() <= items.value("qty").toDouble()))
+          if (items.value("controlled").toBool())
           {
-           
             if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(),
               QDate(), true) == XDialog::Rejected)
             {
               cleanup.exec();
+              failedItems.append(items.value("item_number").toString());
+              errors.append("Detail Distribution Cancelled");
+
               // If it's not the last item in the loop, ask the user to exit loop or continue
               if (items.at() != (items.size() -1))
               {
@@ -163,26 +169,19 @@ void returnWoMaterialBatch::sReturn()
                 .arg(items.value("item_number").toString()),
                 QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
                 {
-                  failedItems.append(items.value("item_number").toString());
-                  errors.append("Detail Distribution Cancelled");
                   continue;
                 }
                 else
                 {
-                  failedItems.append(items.value("item_number").toString());
-                  errors.append("Detail Distribution Cancelled");
                   break;
                 }
               }
-              else 
-              {
-                failedItems.append(items.value("item_number").toString());
-                errors.append("Detail Distribution Cancelled");
+              else
                 continue;
-              }
             }
           }
 
+          // returnWoMaterial
           returnReturn.prepare("SELECT returnWoMaterial(:womatl_id, :qty, :itemlocSeries, :date, FALSE, TRUE, TRUE) AS result;");
           returnReturn.bindValue(":womatl_id", items.value("womatl_id").toInt());
           returnReturn.bindValue(":qty", items.value("qty").toDouble());
@@ -202,9 +201,11 @@ void returnWoMaterialBatch::sReturn()
           }
           else
           {
-            ErrorReporter::error(QtCriticalMsg, this, tr("Error Returning Work Order Material Batch, W/O ID #%1")
-                                 .arg(_wo->id()),returnReturn, __FILE__, __LINE__);\
-            return;
+            cleanup.exec();
+            failedItems.append(items.value("item_number").toString());
+            errors.append(tr("Return WO Material failed. %1")
+              .arg(returnReturn.lastError().text()));
+            continue;
           }
           succeeded++;
         }
