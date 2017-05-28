@@ -105,7 +105,7 @@ void UsernameLineEdit::setUsername(const QString & pUsername)
   XSqlQuery query;
   QString sql("SELECT usr_id, usr_username AS number "
                 "  FROM usr"
-                " WHERE ((usr_username ~* :username) ");
+                " WHERE ((usr_username = :username) ");
   if(UsersActive == _type)
     sql += " AND (usr_active)";
   else if(UsersInactive == _type)
@@ -113,7 +113,7 @@ void UsernameLineEdit::setUsername(const QString & pUsername)
   sql += ") ORDER BY usr_username LIMIT 1;";
 
   query.prepare(sql);
-  query.bindValue(":username", QString(pUsername).prepend("^"));
+  query.bindValue(":username", QString(pUsername));
   query.exec();
   if(query.first())
     setId(query.value("usr_id").toInt());
