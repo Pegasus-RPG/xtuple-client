@@ -156,6 +156,7 @@ FORMS =   absoluteCalendarItem.ui               \
           checkFormat.ui                        \
           checkFormats.ui                       \
           classCode.ui                          \
+          classCodeTax.ui                       \
           classCodes.ui                         \
           closePurchaseOrder.ui                 \
           closeWo.ui                            \
@@ -718,6 +719,7 @@ HEADERS = ../common/format.h                    \
           checkFormat.h                 \
           checkFormats.h                \
           classCode.h                   \
+          classCodeTax.h                \
           classCodes.h                  \
           closePurchaseOrder.h          \
           closeWo.h                     \
@@ -1338,6 +1340,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           checkFormat.cpp                       \
           checkFormats.cpp                      \
           classCode.cpp                         \
+          classCodeTax.cpp                      \
           classCodes.cpp                        \
           closePurchaseOrder.cpp                \
           closeWo.cpp                           \
