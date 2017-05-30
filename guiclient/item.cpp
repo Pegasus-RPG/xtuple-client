@@ -847,7 +847,8 @@ void item::sSave()
   itemSave.bindValue(":item_price_uom_id", _priceUOM->id());
   itemSave.bindValue(":item_listprice", _listprice->toDouble());
   itemSave.bindValue(":item_listcost", _listcost->toDouble());
-  itemSave.bindValue(":item_upccode", _upcCode->text());
+  if (_upcCode->text().trimmed().length() > 0)
+    itemSave.bindValue(":item_upccode", _upcCode->text());
   itemSave.bindValue(":item_active", QVariant(_active->isChecked()));
   itemSave.bindValue(":item_picklist", QVariant(_pickListItem->isChecked()));
   itemSave.bindValue(":item_fractional", QVariant(_fractional->isChecked()));
