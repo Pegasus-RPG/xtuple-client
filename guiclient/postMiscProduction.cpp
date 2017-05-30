@@ -391,24 +391,19 @@ int postMiscProduction::handleSeriesAdjustBeforePost()
   XSqlQuery parentItemlocdist;
   bool hasControlledBackflushItems = false;
 
-  // Stage cleanup function to be called on error
-  XSqlQuery cleanup;
-  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-
   // Get series
   int itemlocSeries = distributeInventory::SeriesCreate(0, 0, QString(), QString());
   if (itemlocSeries <= 0)
     return -1;
 
-  cleanup.bindValue(":itemlocSeries", itemlocSeries);
-
   if (_backflush->isChecked())
   {
     // Handle creation of itemlocdist records for each eligible backflush item (sql below from postProduction backflush handling)
     XSqlQuery backflushItems;
-    backflushItems.prepare("SELECT womatl_id, item_number, womatl_itemsite_id, COALESCE(itemuomtouom(item_id, womatl_uom_id, NULL, qty), qty) * -1 AS qty "
+    backflushItems.prepare("SELECT womatl_id, item_number, womatl_itemsite_id, womatl_qtyreq, womatl_qtyiss, "
+                           "  COALESCE(itemuomtouom(item_id, womatl_uom_id, NULL, qty), qty) * -1 AS itemlocdist_qty, qty "
                            "FROM ( "
-                           "  SELECT matlitem.item_number, matlitem.item_id, womatl_itemsite_id, womatl_uom_id, womatl_id, "
+                           "  SELECT matlitem.item_number, matlitem.item_id, womatl_itemsite_id, womatl_uom_id, womatl_id, womatl_qtyreq, womatl_qtyiss, "
                            "    CASE WHEN :qty > 0 THEN "
                            "      noNeg(((womatl_qtyfxd + ((roundQty(woitem.item_fractional, :qty) + wo_qtyrcv) * womatl_qtyper)) * (1 + womatl_scrap)) - "
                            "        (womatl_qtyiss + "
@@ -436,12 +431,15 @@ int postMiscProduction::handleSeriesAdjustBeforePost()
     {
       hasControlledBackflushItems = true;
 
-      int result = distributeInventory::SeriesCreate(backflushItems.value("womatl_itemsite_id").toInt(), backflushItems.value("qty").toDouble(), "WO", "IM", _woid, itemlocSeries);
+      // If disassembly, check additonal returnWoMaterial.sql condition
+      if ((_qty < 0) && (backflushItems.value("womatl_qtyreq").toDouble() >= 0 ? 
+            backflushItems.value("womatl_qtyiss").toDouble() < backflushItems.value("qty").toDouble() : 
+            backflushItems.value("womatl_qtyiss").toDouble() > backflushItems.value("qty").toDouble()))
+        continue;
+
+      int result = distributeInventory::SeriesCreate(backflushItems.value("womatl_itemsite_id").toInt(), backflushItems.value("itemlocdist_qty").toDouble(), "WO", "IM", 0, itemlocSeries);
       if (result != itemlocSeries)
-      {
-        cleanup.exec();
-        return -1;
-      }
+        return -1; // cleanup will occur in ::sPost
     }
   }
 
@@ -450,7 +448,7 @@ int postMiscProduction::handleSeriesAdjustBeforePost()
   {
     if (_controlled)
     {
-      int result = distributeInventory::SeriesCreate(_itemsiteid, _qty, "WO", "RM", _woid, itemlocSeries);
+      int result = distributeInventory::SeriesCreate(_itemsiteid, _qty, "WO", "RM", 0, itemlocSeries);
       if (result != itemlocSeries)
         return -1;
     }
@@ -458,7 +456,6 @@ int postMiscProduction::handleSeriesAdjustBeforePost()
     if (distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true) ==
       XDialog::Rejected)
     {
-      cleanup.exec();
       QMessageBox::information( this, tr("Post Production"), tr("Detail distribution was cancelled.") );
       return -1;
     }
@@ -474,10 +471,6 @@ int postMiscProduction::handleTransferSeriesAdjustBeforePost()
 
   if (!_immediateTransfer->isChecked())
     return -1;
-
-  // Stage cleanup function to be called on error
-  XSqlQuery cleanup;
-  cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
 
   // Get TO warehouse itemsite and control values
   XSqlQuery toWh;
@@ -499,7 +492,6 @@ int postMiscProduction::handleTransferSeriesAdjustBeforePost()
   }
   else
   {
-    cleanup.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error finding TO warehouse itemsite"),
       toWh, __FILE__, __LINE__);
     return -1;
@@ -511,11 +503,7 @@ int postMiscProduction::handleTransferSeriesAdjustBeforePost()
       _assembly->isChecked() ? _qty * -1 : _qty, 
       "W", "TW", _woid);
   if (twItemlocSeries <= 0)
-  {
-    cleanup.exec();
     return -1;
-  }
-  cleanup.bindValue(":itemlocSeries", twItemlocSeries);
 
   // Exit now if neither is controlled return twItemlocSeries to use for interWarehouseTransfer
   if (!_controlled && !toWhControlled)
@@ -530,7 +518,6 @@ int postMiscProduction::handleTransferSeriesAdjustBeforePost()
     itemlocdist.exec();
     if (itemlocdist.size() != 1)
     {
-      cleanup.exec();
       QMessageBox::information(this, tr("Site Transfer"),
                                tr("Error looking up itemlocdist info. Expected 1 record for itemlocdist_series %1").arg(twItemlocSeries) );
       return -1;
@@ -540,7 +527,6 @@ int postMiscProduction::handleTransferSeriesAdjustBeforePost()
       itemlocdistId = itemlocdist.value("itemlocdist_id").toInt();
       if (!(itemlocdistId > 0))
       {
-        cleanup.exec();
         QMessageBox::information(this, tr("Site Transfer"),
                                tr("Error looking up itemlocdist info. Expected itemlocdist_id to be > 0, not %1 for itemlocdist_series %2")
                                .arg(itemlocdistId).arg(twItemlocSeries) );
@@ -553,14 +539,10 @@ int postMiscProduction::handleTransferSeriesAdjustBeforePost()
         _disassembly->isChecked() ? _qty * -1 : _qty, 
         "W", "TW", _woid, twItemlocSeries, itemlocdistId);
       if (result != twItemlocSeries)
-      {
-        cleanup.exec();
         return -1;
-      }
     }
     else 
     {
-      cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Finding Itemlocdist Info"),
         itemlocdist, __FILE__, __LINE__);
       return -1;
@@ -571,7 +553,6 @@ int postMiscProduction::handleTransferSeriesAdjustBeforePost()
   if (distributeInventory::SeriesAdjust(twItemlocSeries, this, QString(), QDate(), QDate(), true) ==
       XDialog::Rejected)
   {
-    cleanup.exec();
     QMessageBox::information( this, tr("Post Production"), tr("Detail distribution was cancelled.") );
     return -1;
   }
