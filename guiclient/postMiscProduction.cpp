@@ -28,7 +28,6 @@ postMiscProduction::postMiscProduction(QWidget* parent, const char* name, bool m
   _captive = false;
   _controlled = false;
   _itemsiteid = -1;
-  _sense = 1;
   _qty = 0;
 
   _item->setType(ItemLineEdit::cManufactured);
@@ -125,7 +124,7 @@ void postMiscProduction::sPost()
     cleanup.exec();
     return;
   }
-  if (!returntool(itemlocSeries))
+  if (!returntool())
   {
     rollback.exec();
     cleanup.exec();
@@ -284,25 +283,25 @@ bool postMiscProduction::post(int itemlocSeries)
   return true;
 }
 
-bool postMiscProduction::returntool(int itemlocSeries)
+bool postMiscProduction::returntool()
 {
+  int itemlocseries = 0;
   XSqlQuery post;
-  post.prepare("SELECT returnWoMaterial(womatl_id, womatl_qtyiss, :itemlocSeries, CURRENT_DATE, FALSE, TRUE, TRUE) AS result "
+  post.prepare("SELECT returnWoMaterial(womatl_id, womatl_qtyiss, CURRENT_DATE) AS result "
                "FROM womatl JOIN itemsite ON (itemsite_id=womatl_itemsite_id) "
                "            JOIN item ON (item_id=itemsite_item_id) "
                "WHERE (womatl_wo_id=:wo_id) "
                "  AND (item_type='T')"
                "  AND (womatl_qtyiss > 0);");
   post.bindValue(":wo_id", _woid);
-  post.bindValue(":itemlocSeries", itemlocSeries);
   post.exec();
   if (post.first())
   {
-    int result = post.value("result").toInt();
-    if (result < 0 || result != itemlocSeries)
+    itemlocseries = post.value("result").toInt();
+    if (itemlocseries < 0)
     {
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Returning Work Order Material"),
-                             storedProcErrorLookup("returnWoMaterial", result),
+                             storedProcErrorLookup("returnWoMaterial", itemlocseries),
                              __FILE__, __LINE__);
       return false;
     }
@@ -313,6 +312,13 @@ bool postMiscProduction::returntool(int itemlocSeries)
     return false;
   }
 
+  // Distribute Inventory
+  if (distributeInventory::SeriesAdjust(itemlocseries, this) == XDialog::Rejected)
+  {
+    QMessageBox::information( this, tr("Post Misc. Production"), tr("Transaction Canceled") );
+    return false;
+  }
+  
   return true;
 }
 
@@ -353,7 +359,10 @@ bool postMiscProduction::transfer(int itemlocSeries)
   posttransfer.bindValue(":item_id", _item->id());
   posttransfer.bindValue(":from_warehous_id", _warehouse->id());
   posttransfer.bindValue(":to_warehous_id", _transferWarehouse->id());
-  posttransfer.bindValue(":qty", _qty * _sense);
+  if (_qty < 0)
+    posttransfer.bindValue(":qty", _qty * -1);
+  else 
+    posttransfer.bindValue(":qty", _qty);
   if (_documentNum->text().length() > 0)
     posttransfer.bindValue(":documentNumber", _documentNum->text().trimmed());
   else 
@@ -429,17 +438,19 @@ int postMiscProduction::handleSeriesAdjustBeforePost()
     backflushItems.exec();
     while (backflushItems.next())
     {
-      hasControlledBackflushItems = true;
-
       // If disassembly, check additonal returnWoMaterial.sql condition
       if ((_qty < 0) && (backflushItems.value("womatl_qtyreq").toDouble() >= 0 ? 
-            backflushItems.value("womatl_qtyiss").toDouble() < backflushItems.value("qty").toDouble() : 
-            backflushItems.value("womatl_qtyiss").toDouble() > backflushItems.value("qty").toDouble()))
+            backflushItems.value("womatl_qtyiss").toDouble() < backflushItems.value("itemlocdist_qty").toDouble() : 
+            backflushItems.value("womatl_qtyiss").toDouble() > backflushItems.value("itemlocdist_qty").toDouble()))
         continue;
 
-      int result = distributeInventory::SeriesCreate(backflushItems.value("womatl_itemsite_id").toInt(), backflushItems.value("itemlocdist_qty").toDouble(), "WO", "IM", 0, itemlocSeries);
+      int result = distributeInventory::SeriesCreate(
+        backflushItems.value("womatl_itemsite_id").toInt(),
+        backflushItems.value("itemlocdist_qty").toDouble(), "WO", "IM", 0, itemlocSeries);
       if (result != itemlocSeries)
         return -1; // cleanup will occur in ::sPost
+
+      hasControlledBackflushItems = true;
     }
   }
 
@@ -448,8 +459,20 @@ int postMiscProduction::handleSeriesAdjustBeforePost()
   {
     if (_controlled)
     {
-      int result = distributeInventory::SeriesCreate(_itemsiteid, _qty, "WO", "RM", 0, itemlocSeries);
-      if (result != itemlocSeries)
+      XSqlQuery parentItemlocdist;
+      parentItemlocdist.prepare("SELECT createitemlocdistparent(wo_itemsite_id, "
+                                " roundQty(item_fractional, :qty), "
+                                " 'WO', wo_id, :itemlocSeries, NULL, NULL, 'RM') AS result "
+                                "FROM wo "
+                                " JOIN itemsite ON wo_itemsite_id=itemsite_id "
+                                " JOIN item ON itemsite_item_id=item_id "
+                                "WHERE wo_id=:woId;");
+      parentItemlocdist.bindValue(":woId", _woid);
+      parentItemlocdist.bindValue(":qty", _qty);
+      parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+      parentItemlocdist.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating itemlocdist Records"),
+                                parentItemlocdist, __FILE__, __LINE__))
         return -1;
     }
 

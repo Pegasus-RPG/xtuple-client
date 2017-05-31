@@ -33,7 +33,7 @@ public:
     Q_INVOKABLE int     handleSeriesAdjustBeforePost();
     Q_INVOKABLE int     handleTransferSeriesAdjustBeforePost();
     Q_INVOKABLE bool    post(int itemlocSeries = 0);
-    Q_INVOKABLE bool    returntool(int itemlocSeries = 0);
+    Q_INVOKABLE bool    returntool();
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams);

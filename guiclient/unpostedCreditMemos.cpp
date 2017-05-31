@@ -166,48 +166,8 @@ void unpostedCreditMemos::sPrint()
 void unpostedCreditMemos::sPost()
 {
   XSqlQuery unpostedPost;
-  bool changeDate = false;
-  QDate newDate = QDate::currentDate();
 
-  if (_privileges->check("ChangeSOMemoPostDate"))
-  {
-    getGLDistDate newdlg(this, "", true);
-    newdlg.sSetDefaultLit(tr("Credit Memo Date"));
-    if (newdlg.exec() == XDialog::Accepted)
-    {
-      newDate = newdlg.date();
-      changeDate = (newDate.isValid());
-    }
-    else
-      return;
-  }
-
-  XSqlQuery setDate;
-  setDate.prepare("UPDATE cmhead SET cmhead_gldistdate=:distdate "
-		  "WHERE cmhead_id=:cmhead_id;");
-
-  QList<XTreeWidgetItem*> selected = _cmhead->selectedItems();
-
-  for (int i = 0; i < selected.size(); i++)
-  {
-    if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
-    {
-      int id = ((XTreeWidgetItem*)(selected[i]))->id();
-
-      if (changeDate)
-      {
-        setDate.bindValue(":distdate",  newDate);
-        setDate.bindValue(":cmhead_id", id);
-        setDate.exec();
-        if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Credit Memo Information"),
-                                      setDate, __FILE__, __LINE__))
-        {
-          return;
-        }
-      }
-    }
-  }
-
+  
   unpostedPost.exec("SELECT fetchJournalNumber('AR-CM') AS result");
   if (!unpostedPost.first())
   {
@@ -218,167 +178,250 @@ void unpostedCreditMemos::sPost()
 
   int journalNumber = unpostedPost.value("result").toInt();
 
+  XSqlQuery setDate;
+  setDate.prepare("UPDATE cmhead SET cmhead_gldistdate=:distdate "
+                  "WHERE cmhead_id=:cmhead_id;");
 
-  int succeeded = 0;
-  QList<QString> failedMemos;
-  QList<QString> errors;
-  for (int i = 0; i < selected.size(); i++)
-  {
-    int memoId = ((XTreeWidgetItem*)(selected[i]))->id();
-    QString memoNumber;
+  // Wrap in do/while in case of date issues
+  QList<XTreeWidgetItem*> selected = _cmhead->selectedItems();
+  QList<XTreeWidgetItem*> triedToClosed;
+  bool tryagain = false;
+  do {
+    bool changeDate = false;
+    QDate newDate = QDate::currentDate();
 
-    XSqlQuery memo;
-    memo.prepare("SELECT cmhead_number FROM cmhead WHERE cmhead_id=:cmheadId;");
-    memo.bindValue(":cmheadId", memoId);
-    memo.exec();
-    if (!memo.first())
+    if (_privileges->check("ChangeSOMemoPostDate"))
     {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Journal Number"),
-        memo.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      getGLDistDate newdlg(this, "", true);
+      newdlg.sSetDefaultLit(tr("Credit Memo Date"));
+      if (newdlg.exec() == XDialog::Accepted)
+      {
+        newDate = newdlg.date();
+        changeDate = (newDate.isValid());
+
+        if (changeDate)
+        { // Update credit memo dates
+          for (int i = 0; i < selected.size(); i++)
+          {
+            int id = ((XTreeWidgetItem*)(selected[i]))->id();
+            if (checkSitePrivs(id))
+            {
+              setDate.bindValue(":distdate",  newDate);
+              setDate.bindValue(":cmhead_id", id);
+              setDate.exec();
+              if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Changing Credit Memo GL Distribution Date"),
+                setDate, __FILE__, __LINE__))
+              {
+                return;
+              }
+            }
+          }
+        }
+      }
+      else
+        return;
     }
 
-    memoNumber = memo.value("cmhead_number").toString();
-
-    // Set the series for this memo
-    int itemlocSeries = distributeInventory::SeriesCreate(0, 0, QString(), QString());
-    if (itemlocSeries < 0)
+    // Loop through the selected credit memos
+    int succeeded = 0;
+    QList<QString> failedMemos;
+    QList<QString> errors;
+    for (int i = 0; i < selected.size(); i++)
     {
-      failedMemos.append(memoNumber);
-      errors.append(tr("Failed to create a new series for the memo."));
-      continue;
-    }
+      int memoId = ((XTreeWidgetItem*)(selected[i]))->id();
+      QString memoNumber;
 
-    XSqlQuery cleanup; // Stage cleanup function to be called on error
-    cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
-    cleanup.bindValue(":itemlocSeries", itemlocSeries);
+      // Skip this CM if no privilege
+      if (!checkSitePrivs(memoId))
+        continue;
 
-    bool memoLineFailed = false;
-    bool hasControlledItems = false;
+      // Check if the date is in a closed period
+      XSqlQuery closedPeriod;
+      closedPeriod.prepare("SELECT period_closed, cmhead_number "
+                           "FROM cmhead "
+                           "  JOIN period ON COALESCE(cmhead_gldistdate, cmhead_docdate) BETWEEN period_start AND period_end "
+                           "WHERE cmhead_id=:cmhead_id;");
+      closedPeriod.bindValue(":cmhead_id", memoId);
+      closedPeriod.exec();
+      if (!closedPeriod.first() || closedPeriod.value("period_closed").toBool())
+      {
+        if (_privileges->check("ChangeSOMemoPostDate"))
+        {
+          if (changeDate)
+          {
+            triedToClosed = selected;
+            break;
+          }
+          else
+            triedToClosed.append(selected[i]);
+        }
+        continue;  
+      }
+      else
+        memoNumber = closedPeriod.value("cmhead_number").toString();
 
-    // Handle the Inventory and G/L Transactions for any billed Inventory where invcitem_updateinv is true
-    XSqlQuery items;
-    items.prepare("SELECT cmitem_id, itemsite_id, item_number, "
-                      " SUM(cmitem_qtyreturned * cmitem_qty_invuomratio) AS qty "
-                      "FROM cmhead JOIN cmitem ON cmitem_cmhead_id=cmhead_id "
-                      " JOIN itemsite ON itemsite_id=cmitem_itemsite_id "
-                      " JOIN item ON item_id=itemsite_item_id "
-                      " JOIN costcat ON costcat_id=itemsite_costcat_id "
-                      "WHERE cmhead_id=:cmheadId "
-                      " AND cmitem_qtyreturned <> 0 "
-                      " AND cmitem_updateinv "
-                      " AND isControlledItemsite(itemsite_id) "
-                      " AND itemsite_costmethod != 'J' "
-                      "GROUP BY cmitem_id, itemsite_id, item_number "
-                      "ORDER BY cmitem_id;");
-    items.bindValue(":cmheadId", memoId);
-    items.exec();
-    while (items.next())
-    {
-      int result = distributeInventory::SeriesCreate(items.value("itemsite_id").toInt(), 
-        items.value("qty").toDouble(), "CM", "RS", items.value("cmitem_id").toInt(), itemlocSeries);
-      if (result < 0)
+      // Set the series for this memo
+      int itemlocSeries = distributeInventory::SeriesCreate(0, 0, QString(), QString());
+      if (itemlocSeries < 0)
+      {
+        failedMemos.append(memoNumber);
+        errors.append(tr("Failed to create a new series for the memo."));
+        continue;
+      }
+
+      XSqlQuery cleanup; // Stage cleanup function to be called on error
+      cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+      cleanup.bindValue(":itemlocSeries", itemlocSeries);
+
+      bool memoLineFailed = false;
+      bool hasControlledItems = false;
+
+      // Loop through controlled items that have qty to return and create itemlocdist record for each
+      XSqlQuery items;
+      items.prepare("SELECT itemsite_id, item_number, "
+                        " SUM(cmitem_qtyreturned * cmitem_qty_invuomratio) AS qty "
+                        "FROM cmhead JOIN cmitem ON cmitem_cmhead_id=cmhead_id "
+                        " JOIN itemsite ON itemsite_id=cmitem_itemsite_id "
+                        " JOIN item ON item_id=itemsite_item_id "
+                        " JOIN costcat ON costcat_id=itemsite_costcat_id "
+                        "WHERE cmhead_id=:cmheadId "
+                        " AND cmitem_qtyreturned <> 0 "
+                        " AND cmitem_updateinv "
+                        " AND isControlledItemsite(itemsite_id) "
+                        " AND itemsite_costmethod != 'J' "
+                        "GROUP BY itemsite_id, item_number "
+                        "ORDER BY itemsite_id;");
+      items.bindValue(":cmheadId", memoId);
+      items.exec();
+      while (items.next())
+      {
+        int result = distributeInventory::SeriesCreate(items.value("itemsite_id").toInt(), 
+          items.value("qty").toDouble(), "CM", "RS", items.value("cmitem_id").toInt(), itemlocSeries);
+        if (result < 0)
+        {
+          cleanup.exec();
+          failedMemos.append(memoNumber);
+          errors.append(tr("Error Creating itemlocdist Record for item %1").arg(items.value("item_number").toString()));
+          memoLineFailed = true;
+          break;
+        }
+        else if (itemlocSeries == 0) // The first time through the loop, set itemlocSeries
+          itemlocSeries = result;
+
+        hasControlledItems = true;
+      }
+
+      if (memoLineFailed)
+        continue;
+
+      // Distribute the items from above
+      if (hasControlledItems && distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
+        == XDialog::Rejected)
       {
         cleanup.exec();
-        failedMemos.append(memoNumber);
-        errors.append(tr("Error Creating itemlocdist Record for item %1").arg(items.value("item_number").toString()));
-        memoLineFailed = true;
-        break;
-      }
-      else if (itemlocSeries == 0) // The first time through the loop, set itemlocSeries
-        itemlocSeries = result;
-
-      hasControlledItems = true;
-    }
-
-    if (memoLineFailed)
-      continue;
-
-    // Distribute the items from above
-    if (hasControlledItems && distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
-      == XDialog::Rejected)
-    {
-      cleanup.exec();
-      // If it's not the last memo in the loop, ask the user to exit loop or continue
-      if (i != (selected.size() -1))
-      {
-        if (QMessageBox::question(this,  tr("Post Credit Memo"),
-          tr("Posting distribution detail for credit memo number %1 was cancelled but "
-             "there other credit memos to Post. Continue posting the remaining credit memos?")
-          .arg(memoNumber), 
-          QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+        // If it's not the last memo in the loop, ask the user to exit loop or continue
+        if (i != (selected.size() -1))
+        {
+          if (QMessageBox::question(this,  tr("Post Credit Memo"),
+            tr("Posting distribution detail for credit memo number %1 was cancelled but "
+               "there other credit memos to Post. Continue posting the remaining credit memos?")
+            .arg(memoNumber), 
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+          {
+            failedMemos.append(memoNumber);
+            errors.append(tr("Detail Distribution Cancelled"));
+            continue;
+          }
+          else
+          {
+            failedMemos.append(memoNumber);
+            errors.append(tr("Detail Distribution Cancelled"));
+            break;
+          }
+        }
+        else 
         {
           failedMemos.append(memoNumber);
           errors.append(tr("Detail Distribution Cancelled"));
           continue;
         }
-        else
+      }
+
+      // Post credit memo
+      XSqlQuery rollback;
+      rollback.prepare("ROLLBACK;");
+
+      XSqlQuery postPost;
+      postPost.exec("BEGIN;");  // TODO - remove this when postCreditMemo no longer returns negative error codes
+      postPost.prepare("SELECT postCreditMemo(:cmheadId, :journalNumber, :itemlocSeries, TRUE) AS result;");
+      postPost.bindValue(":cmheadId", memoId);
+      postPost.bindValue(":journalNumber", journalNumber);
+      postPost.bindValue(":itemlocSeries", itemlocSeries);
+      postPost.exec();
+      if (postPost.first())
+      {
+        int result = postPost.value("result").toInt();
+
+        if (result < 0 || result != itemlocSeries)
         {
+          rollback.exec();
+          cleanup.exec();
           failedMemos.append(memoNumber);
-          errors.append(tr("Detail Distribution Cancelled"));
+          errors.append(tr("Error Posting Credit Memo %1")
+            .arg(storedProcErrorLookup("postCreditMemo", result)));
+          continue;
+        }
+
+        postPost.exec("COMMIT;");
+        succeeded++;
+      }
+      else if (postPost.lastError().databaseText().contains("post to closed period"))
+      {
+        if (changeDate)
+        {
+          triedToClosed = selected;
           break;
         }
+        else
+          triedToClosed.append(selected[i]);
       }
-      else 
-      {
-        failedMemos.append(memoNumber);
-        errors.append(tr("Detail Distribution Cancelled"));
-        continue;
-      }
-    }
-
-    // Post credit memo
-    XSqlQuery rollback;
-    rollback.prepare("ROLLBACK;");
-
-    XSqlQuery postPost;
-    postPost.exec("BEGIN;");  // TODO - remove this when postCreditMemo no longer returns negative error codes
-    postPost.prepare("SELECT postCreditMemo(:cmheadId, :journalNumber, :itemlocSeries, TRUE) AS result;");
-    postPost.bindValue(":cmheadId", memoId);
-    postPost.bindValue(":journalNumber", journalNumber);
-    postPost.bindValue(":itemlocSeries", itemlocSeries);
-    postPost.exec();
-    if (postPost.first())
-    {
-      int result = postPost.value("result").toInt();
-
-      if (result < 0 || result != itemlocSeries)
+      else
       {
         rollback.exec();
         cleanup.exec();
         failedMemos.append(memoNumber);
         errors.append(tr("Error Posting Credit Memo %1")
-          .arg(storedProcErrorLookup("postCreditMemo", result)));
+          .arg(postPost.lastError().databaseText()));
         continue;
       }
-
-      postPost.exec("COMMIT;");
-      succeeded++;
     }
-    else
+
+    // Report any errors in a single dialog
+    if (errors.size() > 0)
     {
-      rollback.exec();
-      cleanup.exec();
-      failedMemos.append(memoNumber);
-      errors.append(tr("Error Posting Credit Memo %1")
-        .arg(postPost.lastError().databaseText()));
-      continue;
+      QMessageBox dlg(QMessageBox::Critical, "Errors Posting Credit Memo ", "", QMessageBox::Ok, this);
+      dlg.setText(tr("%1 Credit Memos Succeeded.\n%2 Credit Memos Failed.").arg(succeeded).arg(failedMemos.size()));
+
+      QString details;
+      for (int i=0; i<failedMemos.size(); i++)
+        details += tr("Credit Memo %1 failed with:\n%2\n").arg(failedMemos[i]).arg(errors[i]);
+      dlg.setDetailedText(details);
+
+      dlg.exec();
     }
-  } // selected credit memo loop
 
-  // Report any errors in a single dialog
-  if (errors.size() > 0)
-  {
-    QMessageBox dlg(QMessageBox::Critical, "Errors Posting Credit Memo ", "", QMessageBox::Ok, this);
-    dlg.setText(tr("%1 Credit Memos Succeeded.\n%2 Credit Memos Failed.").arg(succeeded).arg(failedMemos.size()));
+    if (triedToClosed.size() > 0)
+    {
+      failedPostList newdlg(this, "", true);
+      newdlg.sSetList(triedToClosed, _cmhead->headerItem(), _cmhead->header());
+      tryagain = (newdlg.exec() == XDialog::Accepted);
+      selected = triedToClosed;
+      triedToClosed.clear();
+    }
+    else 
+      tryagain = false;
 
-    QString details;
-    for (int i=0; i<failedMemos.size(); i++)
-      details += tr("Credit Memo %1 failed with:\n%2\n").arg(failedMemos[i]).arg(errors[i]);
-    dlg.setDetailedText(details);
-
-    dlg.exec();
-  }
+  } while (tryagain); // selected credit memo loop
 
   omfgThis->sCreditMemosUpdated();
 }
