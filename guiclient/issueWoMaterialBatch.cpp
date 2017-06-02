@@ -181,8 +181,6 @@ void issueWoMaterialBatch::sIssue()
   QList<QString> errors;
   while(items.next())
   { 
-    if (items.value("qty").toDouble() <= 0)
-      continue;
     // Stage distribution cleanup function to be called on error
     XSqlQuery cleanup;
     cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
@@ -221,6 +219,8 @@ void issueWoMaterialBatch::sIssue()
           QDate(), true) == XDialog::Rejected)
         {
           cleanup.exec();
+          failedItems.append(items.value("item_number").toString());
+          errors.append("Detail Distribution Cancelled");
           // If it's not the last item in the loop, ask the user to exit loop or continue
           if (items.at() != (items.size() -1))
           {
@@ -230,23 +230,13 @@ void issueWoMaterialBatch::sIssue()
             .arg(items.value("item_number").toString()),
             QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
             {
-              failedItems.append(items.value("item_number").toString());
-              errors.append("Detail Distribution Cancelled");
               continue;
             }
             else
-            {
-              failedItems.append(items.value("item_number").toString());
-              errors.append("Detail Distribution Cancelled");
               break;
-            }
           }
-          else 
-          {
-            failedItems.append(items.value("item_number").toString());
-            errors.append("Detail Distribution Cancelled");
+          else
             continue;
-          }
         }
       }
       else

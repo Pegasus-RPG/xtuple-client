@@ -1342,14 +1342,6 @@ void workOrder::sReturnMatlBatch()
       QList<QString> errors;
       while(items.next())
       {
-        if (items.value("wo_qtyord").toDouble() > 0 && (items.value("womatl_issuemethod").toString() == "L"))
-        {
-          failedItems.append(items.value("item_number").toString());
-          errors.append(tr("Skipping Item Number %1 because it's Issue Method is Pull.")
-              .arg(items.value("item_number").toString()));
-          continue;
-        }
-
         if (items.value("qty").toDouble() == 0.0)
           continue;
 
