@@ -109,8 +109,7 @@ void postMiscProduction::sPost()
   if (itemlocSeries <= 0 || (_immediateTransfer->isChecked() && twItemlocSeries <= 0))
   {
     cleanup.exec();
-    closewo();
-    // clear() as well?
+    deletewo();
     return;
   }
 
@@ -122,6 +121,7 @@ void postMiscProduction::sPost()
   {
     rollback.exec();
     cleanup.exec();
+    deletewo();
     return;
   }
   if (!returntool())
@@ -134,6 +134,7 @@ void postMiscProduction::sPost()
   {
     rollback.exec();
     cleanup.exec();
+    deletewo();
     return;
   }
   if (_immediateTransfer->isChecked())
@@ -142,6 +143,7 @@ void postMiscProduction::sPost()
     {
       rollback.exec();
       cleanup.exec();
+      deletewo();
       return;
     }
   }
@@ -338,7 +340,22 @@ bool postMiscProduction::closewo()
       return false;
     }
   }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Closing Work Order"),
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Closing Work Order"),  
+                                close, __FILE__, __LINE__))
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool postMiscProduction::deletewo()
+{
+  XSqlQuery close;
+  close.prepare("SELECT deleteWo(:wo_id, true, true) AS result;");
+  close.bindValue(":wo_id", _woid);
+  close.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Work Order"),  
                                 close, __FILE__, __LINE__))
   {
     return false;

@@ -29,6 +29,7 @@ public:
     Q_INVOKABLE bool    okToPost();
     Q_INVOKABLE bool    createwo();
     Q_INVOKABLE bool    closewo();
+    Q_INVOKABLE bool    deletewo();
     Q_INVOKABLE bool    transfer(int itemlocSeries = 0);
     Q_INVOKABLE int     handleSeriesAdjustBeforePost();
     Q_INVOKABLE int     handleTransferSeriesAdjustBeforePost();
