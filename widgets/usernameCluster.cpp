@@ -103,9 +103,9 @@ void UsernameLineEdit::setUsername(const QString & pUsername)
   }
 
   XSqlQuery query;
-  QString sql("SELECT usr_id, usr_username AS number "
-                "  FROM usr"
-                " WHERE ((usr_username = :username) ");
+  QString sql("SELECT usr_id"
+              "  FROM usr"
+              " WHERE UPPER(usr_username) = UPPER(:username) ");
   if(UsersActive == _type)
     sql += " AND (usr_active)";
   else if(UsersInactive == _type)
