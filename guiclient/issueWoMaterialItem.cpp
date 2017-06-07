@@ -224,11 +224,12 @@ void issueWoMaterialItem::sIssue()
     }
   }
 
+  // Wrap issueWoMaterial and INSERT in a transaction in case insert fails.
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
   // Post inventory
-  issueIssue.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+  issueIssue.exec("BEGIN;");
   issueIssue.prepare("SELECT issueWoMaterial(:womatl_id, :qty, :itemlocSeries, true, :date, true) AS result;");
   issueIssue.bindValue(":womatl_id", _womatl->id());
   issueIssue.bindValue(":qty", _qtyToIssue->toDouble());
@@ -274,8 +275,6 @@ void issueWoMaterialItem::sIssue()
         return;
       }
     }
-
-    issueIssue.exec("COMMIT;");
   }
   else
   {
@@ -286,6 +285,8 @@ void issueWoMaterialItem::sIssue()
                          issueIssue, __FILE__, __LINE__);
     return;
   }
+
+  issueIssue.exec("COMMIT;");
 
   if (_captive)
     close();

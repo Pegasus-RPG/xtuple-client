@@ -236,6 +236,17 @@ const struct {
   { "correctReceipt",  -19, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
               "Failed to create a GL transaction for the purchase price variance."),  0, "" },
 
+  { "correctProduction",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+              "Can not correct production, WO must be status In-Process."),  0, "" },
+  { "correctProduction",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+              "Correct production does not support Job costed items."),  0, "" },
+  { "correctProduction",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+              "ItemlocSeries is required when pPreDistributed."),  0, "" },
+  { "correctProduction",  -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+              "Missing cost category."),  0, "" },
+  { "correctProduction",  -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", 
+              "Posting Distribution Detail Returned 0 Results."),  0, "" },
+
   { "createAccountingPeriod",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Start Date falls within another "
 				      "Accounting Period."),	0, "" },
   { "createAccountingPeriod",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The End Date falls within another "
@@ -1159,6 +1170,7 @@ const struct {
   { "postCountTagLocation", -3, "", -3, "postCountTag" },
   { "postCountTagLocation", -4, "", -4, "postCountTag" },
 
+  { "postCreditMemo",  -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Posting Distribution Detail Returned 0 Results."),  0, "" },
   { "postCreditMemo",	-10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Return cannot be posted because it "
 			       "has already been posted."),	 0, "" },
   { "postCreditMemo",	-11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Return is on Hold and, thus, cannot "
@@ -1222,6 +1234,7 @@ const struct {
   { "postInvoice",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site or Cost Category."), 0, "" },
   { "postInvoice",  -4, "", -4, "insertIntoGLSeries" },
   { "postInvoice",  -5, "", -5, "postGLSeries" },
+  { "postInvoice",  -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Posting Distribution Detail Returned 0 Results."),  0, "" },
   { "postInvoice", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because it has "
                                           "already been posted."), 0, "" },
   { "postInvoice", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to post this Invoice because the Sales "
@@ -1623,18 +1636,29 @@ const struct {
 			"window."),					0, "" },
 
   { "voidCreditMemo",  -1, "", -1, "insertIntoGLSeries" },
+  { "voidCreditMemo",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site or Cost Category."),  0, "" },
+  { "voidCreditMemo",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "pItemlocSeries is Required when pPreDistributed."),  0, "" },
   { "voidCreditMemo",  -4, "", -4, "insertIntoGLSeries" },
   { "voidCreditMemo",  -5, "", -5, "postGLSeries" },
+  { "voidCreditMemo",  -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Posting Distribution Detail Returned 0 Results."),  0, "" },
+  { "voidCreditMemo",  -7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Failed to create GL entry, no accnt record found."),  0, "" },
+  { "voidCreditMemo",  -8, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Failed to create GL entry, no accnt record found."),  0, "" },
+  { "voidCreditMemo",  -9, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Failed to create GL entry, no accnt record found."),  0, "" },
   { "voidCreditMemo", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Credit Memo because it has "
                          "not been posted."),		 0, "" },
   { "voidCreditMemo", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Credit Memo because the Sales "
                          "Account was not found."),		 0, "" },
+  { "voidCreditMemo", -12, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot Void Credit Memo as cmhead not found."),  0, "" },
+  { "voidCreditMemo", -13, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot Void Credit Memo as aropen not found."),  0, "" },
   { "voidCreditMemo", -20, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Credit Memo because there "
                          "A/R Applications posted against this Credit Memo."), 0, "" },
 
   { "voidInvoice",  -1, "", -1, "insertIntoGLSeries" },
+  { "voidInvoice",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Missing Item Site or Cost Category."),  0, "" },
+  { "voidInvoice",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "pItemlocSeries is Required when pPreDistributed."),  0, "" },
   { "voidInvoice",  -4, "", -4, "insertIntoGLSeries" },
   { "voidInvoice",  -5, "", -5, "postGLSeries" },
+  { "voidInvoice",  -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Posting Distribution Detail Returned 0 Results."),  0, "" },
   { "voidInvoice", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Invoice because it has "
                          "not been posted."),		 0, "" },
   { "voidInvoice", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Invoice because the Sales "

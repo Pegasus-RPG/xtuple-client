@@ -200,7 +200,7 @@ void transformTrans::sPost()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  transformPost.exec("BEGIN;");	// because of possible distribution cancelations
+  transformPost.exec("BEGIN;"); // Until postTransformTrans no longer returns 0/-. 
   transformPost.prepare( "SELECT postTransformTrans(s.itemsite_id, t.itemsite_id,"
              "                          :itemloc_id, :qty, :docnumber,"
               "                          :comments, :date) AS result "
@@ -236,7 +236,8 @@ void transformTrans::sPost()
                            transformPost, __FILE__, __LINE__);
       return;
     }
-
+    // TODO - this does nothing currently. There is a feature gap/bug for items that have different control metrics, 
+    // in that case SeriesAdjust should be called but additional logic will be needed here and in the postTransformTrans function.
     if (distributeInventory::SeriesAdjust(transformPost.value("result").toInt(), this) == XDialog::Rejected)
     {
       rollback.exec();
@@ -291,7 +292,7 @@ void transformTrans::sPopulateTarget()
   XSqlQuery transformPopulateTarget;
   if (!_item->isValid() || !_target->isValid() || !_warehouse->isValid())
     return;
-	
+  
   transformPopulateTarget.prepare( "SELECT item_descrip1, item_descrip2, itemsite_qtyonhand "
              "FROM itemsite JOIN item ON (item_id=itemsite_item_id) "
              "WHERE ( (itemsite_item_id=:item_id) "
