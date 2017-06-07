@@ -668,6 +668,8 @@ void unpostedPoReceipts::sPost()
       selected = triedToClosed;
       triedToClosed.clear();
     }
+    else
+      tryagain = false;
   } while (tryagain);
 
   omfgThis->sPurchaseOrderReceiptsUpdated();

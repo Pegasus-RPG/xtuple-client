@@ -98,6 +98,57 @@ void distributeInventory::languageChange()
 {
   retranslateUi(this);
 }
+
+int distributeInventory::SeriesCreate(int itemsiteId, double qty, const QString & orderType, 
+  const QString & transType, int orderitemId, int itemlocSeries, int itemlocdistId, int invhistId )
+{
+  bool controlled = false;
+
+  // Generate a series id to be used for itemlocdist if controlled, and for returnWoMaterial()
+  XSqlQuery parentSeries;
+  parentSeries.prepare("SELECT COALESCE(:itemlocSeries, NEXTVAL('itemloc_series_seq')) AS result, isControlledItemsite(:itemsiteId) AS controlled;");
+  parentSeries.bindValue(":itemsiteId", itemsiteId);
+  if (itemlocSeries > 0)
+    parentSeries.bindValue(":itemlocSeries", itemlocSeries);
+  parentSeries.exec();
+  if (parentSeries.first() && parentSeries.value("result").toInt() > 0)
+  {
+    itemlocSeries = parentSeries.value("result").toInt();
+    controlled = parentSeries.value("controlled").toBool();
+  }
+  else
+  {
+    ErrorReporter::error(QtCriticalMsg, 0, tr("Failed to Retrieve the Next itemloc_series_seq"),
+      parentSeries.lastError().databaseText(), __FILE__, __LINE__);
+    return -1;
+  }
+
+  if (controlled)
+  {
+    // Create the itemlocdist record if controlled
+    XSqlQuery parentItemlocdist;
+    parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsiteId, :qty, :orderType, :orderitemId, "
+                              " :itemlocSeries, :invhistId, :itemlocdistId, :transType) AS result;");
+    parentItemlocdist.bindValue(":itemsiteId", itemsiteId);
+    parentItemlocdist.bindValue(":qty", qty);
+    parentItemlocdist.bindValue(":orderType", orderType);
+    parentItemlocdist.bindValue(":transType", transType);
+    parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
+    if (orderitemId > 0)
+      parentItemlocdist.bindValue(":orderitemId", orderitemId);
+    if (itemlocdistId > 0)
+      parentItemlocdist.bindValue(":itemlocdistId", itemlocdistId);
+    if (invhistId > 0)
+      parentItemlocdist.bindValue(":invhistId", invhistId);
+    parentItemlocdist.exec();
+    if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error Creating itemlocdist record for post "
+        "production controlled item"), parentItemlocdist, __FILE__, __LINE__))
+      return -1;
+  }
+
+  return itemlocSeries;
+}
+
 int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, 
   const QString & pPresetLotnum, const QDate & pPresetLotexp, const QDate & pPresetLotwarr,
   bool pPreDistributed)
@@ -621,10 +672,7 @@ void distributeInventory::sFillList()
   distributeFillList.prepare( "SELECT itemsite_id, "
              "       COALESCE(itemsite_location_id,-1) AS itemsite_location_id,"
              "       formatlotserialnumber(itemlocdist_ls_id) AS lotserial,"
-             "       CASE WHEN itemlocdist_order_id IS NOT NULL "
-             "              AND itemlocdist_order_type IN ('SO', 'PO', 'TO', 'WO', 'RA', 'IN') " // these types are handled by formatOrderLineItemNumber
-             "            THEN (itemlocdist_order_type || ' ' || formatOrderLineItemNumber(itemlocdist_order_type, itemlocdist_order_id)) "
-             "            ELSE '' END AS order, "
+             "       itemlocdist_order_type || ' ' || formatOrderLineItemNumber(itemlocdist_order_type, itemlocdist_order_id) AS order, "
              "       (itemsite_controlmethod IN ('L', 'S')) AS lscontrol,"
              "       parent.itemlocdist_qty AS qtytodistribute,"
              "       ( ( SELECT COALESCE(SUM(child.itemlocdist_qty), 0)"
