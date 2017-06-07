@@ -31,6 +31,7 @@ check::check(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _items->addColumn(tr("A/P Doc."),   _orderColumn, Qt::AlignRight, true, "apopen_docnumber");
   _items->addColumn(tr("A/R Doc."),   _orderColumn, Qt::AlignRight, true, "aropen_docnumber");
   _items->addColumn(tr("Doc. Date"),   _dateColumn, Qt::AlignCenter,true, "checkitem_docdate");
+  _items->addColumn(tr("Amount (pre-discount)"),     _moneyColumn, Qt::AlignRight, true, "checkitem_amount_prediscount");
   _items->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight, true, "checkitem_amount");
   _items->addColumn(tr("Discount"),    _itemColumn, Qt::AlignRight, true, "checkitem_discount");
   _items->addColumn(tr("Amount (in %1)").arg(CurrDisplay::baseCurrAbbr()),
