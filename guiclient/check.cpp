@@ -149,6 +149,7 @@ void check::sFillList()
                      "       checkitem_vouchernumber, checkitem_invcnumber,"
                      "       checkitem_cmnumber, checkitem_ranumber,"
                      "       checkitem_docdate, checkitem_amount, checkitem_discount,"
+                     "       (checkitem_amount + checkitem_discount) as checkitem_amount_prediscount,"
                      "       apopen_docnumber, aropen_docnumber,"
                      "       currToBase(<? value('curr_id') ?>, checkitem_amount,"
                      "                  checkitem_docdate) AS baseamount,"
