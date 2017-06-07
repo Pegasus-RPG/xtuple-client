@@ -3529,6 +3529,31 @@ bool salesOrder::deleteSalesOrder(int pId, QWidget *parent)
       return false;
     }
   }
+  
+  //ensure no line items have an associated open PO (drop shipped items)
+  XSqlQuery qtyDropshippedq;
+  qtyDropshippedq.prepare("select coalesce(bool_or((poitem_id) is not null),'f') as opendropship"
+                         "  from coitem left outer join poitem on (poitem_id=coitem_order_id)"
+                         "  where coitem_order_type = 'P'"
+                         "  and coitem_order_id is not null"
+                         "  and coitem_order_id > 0"
+                         "  and poitem_status != 'C'"
+                         "  and coitem_cohead_id=:coheadid");
+  qtyDropshippedq.bindValue(":coheadid", pId);
+  qtyDropshippedq.exec();
+  if (qtyDropshippedq.first() && qtyDropshippedq.value("opendropship").toBool())
+  {
+    QMessageBox::critical(parent, tr("Open Dropship"),
+                          tr("You may not delete this Sales Order as it "
+                             "has one or more dropshipped line items "
+                             "on an open Purchase Order.")) ;
+    return false;
+  }
+  else if (ErrorReporter::error(QtCriticalMsg, parent,
+                              tr("Getting Linked PO Items"),
+                              qtyDropshippedq, __FILE__, __LINE__))
+  return false;
+  
 
   XSqlQuery atshippingq;
   atshippingq.prepare("SELECT BOOL_OR(qtyAtShipping(coitem_id) > 0) AS atshipping"
