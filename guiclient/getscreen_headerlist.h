@@ -61,6 +61,7 @@
 #include "check.h"
 #include "classCode.h"
 #include "classCodes.h"
+#include "classCodeTax.h"
 #include "closePurchaseOrder.h"
 #include "closeWo.h"
 #include "commentType.h"

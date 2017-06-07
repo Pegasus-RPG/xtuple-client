@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -293,7 +293,6 @@ enum SetResponse item::set(const ParameterList &pParams)
       itemet.exec("SELECT NEXTVAL('item_item_id_seq') AS item_id");
       if (itemet.first())
         _itemid = itemet.value("item_id").toInt();
-//  ToDo
 
       _comments->setId(_itemid);
       _documents->setId(_itemid);
@@ -321,6 +320,7 @@ enum SetResponse item::set(const ParameterList &pParams)
       setObjectName(QString("item edit %1").arg(_itemid));
       _mode = cEdit;
 
+      connect(_classcode, SIGNAL(newID(int)), this, SLOT(sDefaultItemTaxes()));
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
       connect(_uomconv, SIGNAL(valid(bool)), _editUOM, SLOT(setEnabled(bool)));
@@ -481,6 +481,7 @@ void item::saveCore()
   _elements->findChild<ItemCluster*>("_item")->setId(_itemid);
   
   sHandleRightButtons();
+  sDefaultItemTaxes();
   
   emit saved(_itemid);
 }
@@ -2197,3 +2198,25 @@ void item::setId(int p)
   emit newId(_itemid);
 }
 
+void item::sDefaultItemTaxes()
+{
+  XSqlQuery itemDefaultTaxes;
+  itemDefaultTaxes.prepare("INSERT INTO itemtax (itemtax_item_id, itemtax_taxzone_id, itemtax_taxtype_id) "
+                           "SELECT :item_id, classcodetax_taxzone_id, classcodetax_taxtype_id "
+                           "FROM classcodetax "
+                           "WHERE classcodetax_classcode_id = :classcode_id "
+                           "AND NOT EXISTS(SELECT 1 FROM itemtax "
+                           "               WHERE itemtax_item_id=:item_id "
+                           "               AND COALESCE(itemtax_taxtype_id,-1)=COALESCE(classcodetax_taxtype_id, -1) "
+                           "               AND COALESCE(itemtax_taxzone_id, -1)=COALESCE(classcodetax_taxzone_id,-1));");
+  itemDefaultTaxes.bindValue(":item_id", _itemid);
+  itemDefaultTaxes.bindValue(":classcode_id", _classcode->id());
+  itemDefaultTaxes.exec();
+  if (itemDefaultTaxes.lastError().type() != QSqlError::NoError)
+  {
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating Item Taxes"),
+                         itemDefaultTaxes, __FILE__, __LINE__);
+    return;
+  }
+  sFillListItemtax();
+}

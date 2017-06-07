@@ -8,43 +8,34 @@
  * to be bound by its terms.
  */
 
-#ifndef CLASSCODE_H
-#define CLASSCODE_H
+#ifndef CLASSCODETAX_H
+#define CLASSCODETAX_H
 
 #include "guiclient.h"
 #include "xdialog.h"
 #include <parameter.h>
 
-#include "ui_classCode.h"
+#include "ui_classCodeTax.h"
 
-class classCode : public XDialog, public Ui::classCode
+class classCodeTax : public XDialog, public Ui::classCodeTax
 {
-    Q_OBJECT
+  Q_OBJECT
 
-public:
-    classCode(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WindowFlags fl = 0);
-    ~classCode();
+  public:
+    classCodeTax(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WindowFlags fl = 0);
+    ~classCodeTax();
 
-public slots:
+  public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void populate();
-    virtual void sNewTax();
-    virtual void sEditTax();
-    virtual void sDeleteTax();
-    virtual void sFillListTax();
-    virtual bool sSave();
+    virtual void sSave();
 
-protected slots:
+  protected slots:
     virtual void languageChange();
 
-    virtual void sSaveAndDone();
-    virtual void sCheck();
-
-
-private:
+  private:
+    int _classcodetaxid;
     int _classcodeid;
     int _mode;
-
 };
 
-#endif // CLASSCODE_H
+#endif // CLASSCODETAX_H
