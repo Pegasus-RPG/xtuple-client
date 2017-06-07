@@ -11,6 +11,7 @@
 #include "poType.h"
 
 #include <QVariant>
+#include <QMessageBox>
 
 #include <metasql.h>
 #include "mqlutil.h"
@@ -18,7 +19,8 @@
 #include "guiErrorCheck.h"
 
 poType::poType(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
-  : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl),
+    _potypeid(-1)
 {
   setupUi(this);
 
@@ -39,7 +41,6 @@ void poType::languageChange()
 enum SetResponse poType::set(const ParameterList &pParams)
 {
   XDialog::set(pParams);
-  XSqlQuery poType;
   QVariant param;
   bool     valid;
 
@@ -56,10 +57,6 @@ enum SetResponse poType::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-
-      poType.exec("SELECT NEXTVAL('potype_potype_id_seq') AS potype_id;");
-      if (poType.first())
-        _potypeid = poType.value("potype_id").toInt();
     }
     else if (param.toString() == "edit")
     {
@@ -105,16 +102,34 @@ void poType::sSave()
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Purchase Order Type"), errors))
     return;
 
+  XSqlQuery check;
+  check.prepare("SELECT 1 "
+                "  FROM potype "
+                " WHERE potype_code = :potype_code"
+                "   AND potype_id  != :potype_id;");
+  check.bindValue(":potype_code", _typeCode->text());
+  check.bindValue(":potype_id",   _potypeid);
+  check.exec();
+  if (check.first())
+  {
+    QMessageBox::critical(this, tr("Duplicate Purchase Order Type"),
+                                tr("A Purchase Order Type already exists with this Code."));
+    _typeCode->setFocus();
+    return;
+  }
+
   if (_mode == cNew)
-    typeSave.prepare( "INSERT INTO potype "
-               "(potype_id, potype_code, potype_descr, potype_active, potype_default ) "
-               "VALUES "
-               "(:potype_id, :potype_typeCode, :potype_typeDescr, :potype_active, :potype_default);" );
+    typeSave.prepare("INSERT INTO potype ("
+                     "  potype_code, potype_descr, potype_active, potype_default"
+                     ") VALUES ("
+                     "  :potype_typeCode, :potype_typeDescr, :potype_active, :potype_default"
+                     ") RETURNING potype_id;" );
   else
-    typeSave.prepare( "UPDATE potype "
-               "SET potype_code=:potype_typeCode, potype_descr=:potype_typeDescr, potype_active=:potype_active, "
-               "    potype_default=:potype_default  "
-               "WHERE (potype_id=:potype_id);" );
+    typeSave.prepare("UPDATE potype"
+                     "   SET potype_code=:potype_typeCode, potype_descr=:potype_typeDescr,"
+                     "       potype_active=:potype_active, potype_default=:potype_default"
+                     " WHERE potype_id = :potype_id"
+                     " RETURNING potype_id;" );
 
   typeSave.bindValue(":potype_id", _potypeid);
   typeSave.bindValue(":potype_typeCode", _typeCode->text());
@@ -122,7 +137,9 @@ void poType::sSave()
   typeSave.bindValue(":potype_active", QVariant(_active->isChecked()));
   typeSave.bindValue(":potype_default", QVariant(_default->isChecked()));
   typeSave.exec();
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Purchase Order Type"),
+  if (typeSave.first())
+    _potypeid = typeSave.value("potype_id").toInt();
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Purchase Order Type"),
                                 typeSave, __FILE__, __LINE__))
   {
     return;
