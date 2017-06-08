@@ -1483,3 +1483,87 @@ void VirtualInfo::showEvent(QShowEvent* e)
   QDialog::showEvent(e);
 }
 
+// script exposure /////////////////////////////////////////////////////////////
+
+QScriptValue constructVirtualClusterLineEdit(QScriptContext *context,
+                                             QScriptEngine  *engine)
+{
+  VirtualClusterLineEdit *w = 0;
+
+  if (context->argumentCount() >= 9)
+    w = new VirtualClusterLineEdit(qscriptvalue_cast<QWidget*>(context->argument(0)),
+                                   context->argument(1).toString().toLatin1().data(),
+                                   context->argument(2).toString().toLatin1().data(),
+                                   context->argument(3).toString().toLatin1().data(),
+                                   context->argument(4).toString().toLatin1().data(),
+                                   context->argument(5).toString().toLatin1().data(),
+                                   context->argument(6).toString().toLatin1().data(),
+                                   context->argument(7).toString().toLatin1().data(),
+                                   context->argument(8).toString().toLatin1().data());
+  else if (context->argumentCount() == 8)
+    w = new VirtualClusterLineEdit(qscriptvalue_cast<QWidget*>(context->argument(0)),
+                                   context->argument(1).toString().toLatin1().data(),
+                                   context->argument(2).toString().toLatin1().data(),
+                                   context->argument(3).toString().toLatin1().data(),
+                                   context->argument(4).toString().toLatin1().data(),
+                                   context->argument(5).toString().toLatin1().data(),
+                                   context->argument(6).toString().toLatin1().data(),
+                                   context->argument(7).toString().toLatin1().data());
+  else if (context->argumentCount() == 7)
+    w = new VirtualClusterLineEdit(qscriptvalue_cast<QWidget*>(context->argument(0)),
+                                   context->argument(1).toString().toLatin1().data(),
+                                   context->argument(2).toString().toLatin1().data(),
+                                   context->argument(3).toString().toLatin1().data(),
+                                   context->argument(4).toString().toLatin1().data(),
+                                   context->argument(5).toString().toLatin1().data(),
+                                   context->argument(6).toString().toLatin1().data());
+  else
+    context->throwError(QScriptContext::UnknownError,
+                        QString("Could not find an appropriate VirtualClusterLineEdit constructor"));
+
+  return engine->toScriptValue(w);
+}
+
+QScriptValue constructVirtualCluster(QScriptContext *context,
+                                     QScriptEngine  *engine)
+{
+  VirtualCluster         *w = 0;
+  VirtualClusterLineEdit *l = 0;
+  
+  if (context->argumentCount() >= 2)
+    l = qscriptvalue_cast<VirtualClusterLineEdit*>(context->argument(1));
+
+  if (context->argumentCount() >= 3)
+    w = new VirtualCluster(qscriptvalue_cast<QWidget*>(context->argument(0)),
+                           l,
+                           context->argument(2).toString().toLatin1().data());
+  else if (context->argumentCount() == 2 && l)
+    w = new VirtualCluster(qscriptvalue_cast<QWidget*>(context->argument(0)),
+                           l);
+  else if (context->argumentCount() == 2 && ! l)
+    w = new VirtualCluster(qscriptvalue_cast<QWidget*>(context->argument(0)),
+                           context->argument(1).toString().toLatin1().data());
+  else if (context->argumentCount() == 1)
+    w = new VirtualCluster(qscriptvalue_cast<QWidget*>(context->argument(0)), "VirtualCluster");
+  else
+    context->throwError(QScriptContext::UnknownError,
+                        QString("Could not find an appropriate VirtualCluster constructor"));
+
+  return engine->toScriptValue(w);
+}
+
+void setupVirtualCluster(QScriptEngine *engine)
+{
+  if (! engine->globalObject().property("VirtualClusterLineEdit").isFunction())
+  {
+    QScriptValue ctor = engine->newFunction(constructVirtualClusterLineEdit);
+    QScriptValue meta = engine->newQMetaObject(&VirtualClusterLineEdit::staticMetaObject, ctor);
+    engine->globalObject().setProperty("VirtualClusterLineEdit", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+    ctor = engine->newFunction(constructVirtualCluster);
+    meta = engine->newQMetaObject(&VirtualCluster::staticMetaObject, ctor);
+    engine->globalObject().setProperty("VirtualCluster", meta,
+                                       QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  }
+}
