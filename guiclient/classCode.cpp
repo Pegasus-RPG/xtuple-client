@@ -139,6 +139,7 @@ bool classCode::sSave()
                          classSave, __FILE__, __LINE__))
       return false;
 
+  _mode = cEdit;
   return true;
 
 }
@@ -202,11 +203,9 @@ void classCode::sFillListTax()
 
 void classCode::sNewTax()
 {
-  if (_classcodeid < 0)
-  {
-    if (!sSave())
-      return;
-  }
+  if (!sSave())
+    return;
+
   ParameterList params;
   params.append("mode", "new");
   params.append("classcode_id", _classcodeid);
