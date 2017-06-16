@@ -1569,7 +1569,8 @@ void salesOrderItem::sSave(bool pPartial)
 
   if ( (pPartial) && ((cNew == _mode) || (cNewQuote == _mode)) )
   {
-    _item->setReadOnly(true);
+    if (_item->isValid())
+      _item->setReadOnly(true);
     _warehouse->setEnabled(false);
     _partialsaved = true;
     return;
