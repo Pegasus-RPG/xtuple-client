@@ -58,6 +58,7 @@ void Parametersenc::_set(const QString &pName, QVariant pValue)
 Metricsenc::Metricsenc(const QString &pKey, QObject *parent)
   : Parametersenc(pKey, parent)
 {
+  _notifyName = "metricsencUpdated";
   _readSql = "SELECT metricenc_name AS key,"
              "       decrypt(setbytea(metricenc_value), setbytea(:key), 'bf') AS value"
              "  FROM metricenc;";
