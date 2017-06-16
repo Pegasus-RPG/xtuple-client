@@ -29,10 +29,10 @@ class Parametersenc : public Parameters
     Parametersenc(const QString &key, QObject *parent = 0);
     virtual ~Parametersenc() {};
 
-    void load();
+    virtual void load();
 
   protected:
-    void _set(const QString &pName, QVariant pValue);
+    virtual void _set(const QString &pName, QVariant pValue);
 
 };
 
