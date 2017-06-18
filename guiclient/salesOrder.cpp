@@ -3546,7 +3546,7 @@ bool salesOrder::deleteSalesOrder(int pId, QWidget *parent)
     QMessageBox::critical(parent, tr("Open Dropship"),
                           tr("You may not delete this Sales Order as it "
                              "has one or more dropshipped line items "
-                             "on an open Purchase Order.")) ;
+                             "on a Purchase Order.")) ;
     return false;
   }
   else if (ErrorReporter::error(QtCriticalMsg, parent,
