@@ -300,7 +300,7 @@ void unpostedInvoices::sPost()
       XSqlQuery closedPeriod;
       closedPeriod.prepare("SELECT period_closed "
                            "FROM invchead "
-                           "  JOIN period ON invchead_gldistdate BETWEEN period_start AND period_end "
+                           "  JOIN period ON COALESCE(invchead_gldistdate, invchead_invcdate) BETWEEN period_start AND period_end "
                            "WHERE invchead_id=:invchead_id;");
       closedPeriod.bindValue(":invchead_id", invoiceId);
       closedPeriod.exec();
