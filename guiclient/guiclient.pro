@@ -1907,12 +1907,12 @@ macx {
   EXTRASDIR=${DESTDIR}
 }
 
-certificates.path = ${EXTRASDIR}certificates
+certificates.path = $$absolute_path($${DESTDIR})/certificates
 certificates.files = ../share/certificates/*
-dictionaries.path = ${EXTRASDIR}hunspell
+dictionaries.path = $$absolute_path($${DESTDIR})/hunspell
 dictionaries.files = ../hunspell/*.aff ../hunspell/*.dic
 
 TRANSLATIONS = ../share/dict/*.ts
-translations.path = ${EXTRASDIR}dict
+translations.path = $$absolute_path($${DESTDIR})/dict
 translations.files = $$replace(TRANSLATIONS, ts, qm)
 translations.extra = cd ../share/dict && $$dirname(QMAKE_QMAKE)/lrelease xTuple*.ts
