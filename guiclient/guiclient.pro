@@ -1902,17 +1902,17 @@ include( hunspell.pri )
 RESOURCES += guiclient.qrc $${OPENRPT_IMAGE_DIR}/OpenRPTMetaSQL.qrc
 
 macx {
-  EXTRASDIR=${DESTDIR}xtuple.app/Contents/Resources
+  EXTRASDIR=$$absolute_path($${DESTDIR})/xtuple.app/Contents/Resources
 } else {
-  EXTRASDIR=${DESTDIR}
+  EXTRASDIR=$$absolute_path($${DESTDIR})
 }
 
-certificates.path = $$absolute_path($${DESTDIR})/certificates
+certificates.path = $$absolute_path($${EXTRASDIR})/certificates
 certificates.files = ../share/certificates/*
-dictionaries.path = $$absolute_path($${DESTDIR})/hunspell
+dictionaries.path = $$absolute_path($${EXTRASDIR})/hunspell
 dictionaries.files = ../hunspell/*.aff ../hunspell/*.dic
 
 TRANSLATIONS = ../share/dict/*.ts
-translations.path = $$absolute_path($${DESTDIR})/dict
+translations.path = $$absolute_path($${EXTRASDIR})/dict
 translations.files = $$replace(TRANSLATIONS, ts, qm)
 translations.extra = cd ../share/dict && $$dirname(QMAKE_QMAKE)/lrelease xTuple*.ts
