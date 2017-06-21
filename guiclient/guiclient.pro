@@ -156,6 +156,7 @@ FORMS =   absoluteCalendarItem.ui               \
           checkFormat.ui                        \
           checkFormats.ui                       \
           classCode.ui                          \
+          classCodeTax.ui                       \
           classCodes.ui                         \
           closePurchaseOrder.ui                 \
           closeWo.ui                            \
@@ -176,7 +177,6 @@ FORMS =   absoluteCalendarItem.ui               \
           configurePO.ui                        \
           configureSearchPath.ui                \
           configureSO.ui                        \
-          configureWF.ui                        \
           configureWO.ui                        \
           confirmAchOK.ui                       \
           contact.ui                            \
@@ -411,6 +411,8 @@ FORMS =   absoluteCalendarItem.ui               \
           postStandardJournal.ui                \
           postStandardJournalGroup.ui           \
           postVouchers.ui                       \
+          poType.ui                             \
+          poTypes.ui                            \
           prepareCheckRun.ui                    \
           priceList.ui                          \
           pricingScheduleAssignment.ui          \
@@ -717,6 +719,7 @@ HEADERS = ../common/format.h                    \
           checkFormat.h                 \
           checkFormats.h                \
           classCode.h                   \
+          classCodeTax.h                \
           classCodes.h                  \
           closePurchaseOrder.h          \
           closeWo.h                     \
@@ -738,7 +741,6 @@ HEADERS = ../common/format.h                    \
           configurePO.h                 \
           configureSearchPath.h         \
           configureSO.h                 \
-          configureWF.h                 \
           configureWO.h                 \
           confirmAchOK.h                \
           contact.h                     \
@@ -1009,6 +1011,8 @@ HEADERS = ../common/format.h                    \
           postStandardJournal.h         \
           postStandardJournalGroup.h    \
           postVouchers.h                \
+          poType.h                      \
+          poTypes.h                     \
           prepareCheckRun.h             \
           priceList.h                   \
           pricingScheduleAssignment.h   \
@@ -1336,6 +1340,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           checkFormat.cpp                       \
           checkFormats.cpp                      \
           classCode.cpp                         \
+          classCodeTax.cpp                      \
           classCodes.cpp                        \
           closePurchaseOrder.cpp                \
           closeWo.cpp                           \
@@ -1357,7 +1362,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           configurePO.cpp                       \
           configureSearchPath.cpp               \
           configureSO.cpp                       \
-          configureWF.cpp                       \
           configureWO.cpp                       \
           confirmAchOK.cpp                      \
           contact.cpp                           \
@@ -1625,6 +1629,8 @@ SOURCES = absoluteCalendarItem.cpp              \
           postStandardJournal.cpp               \
           postStandardJournalGroup.cpp          \
           postVouchers.cpp                      \
+          poType.cpp                            \
+          poTypes.cpp                           \
           prepareCheckRun.cpp                   \
           priceList.cpp                         \
           pricingScheduleAssignment.cpp         \

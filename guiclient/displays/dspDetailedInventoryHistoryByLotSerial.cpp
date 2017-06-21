@@ -226,7 +226,7 @@ bool dspDetailedInventoryHistoryByLotSerial::setParams(ParameterList &params)
   else
   {
     params.append("pattern", "t");
-    params.append("lotSerial", _lotSerialPattern->text().trimmed());
+    params.append("lotSerial", _lotSerialPattern->text().trimmed().toUpper());
   }
 
   return true;

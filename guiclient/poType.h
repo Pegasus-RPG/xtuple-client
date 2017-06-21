@@ -8,43 +8,35 @@
  * to be bound by its terms.
  */
 
-#ifndef CLASSCODE_H
-#define CLASSCODE_H
+#ifndef POTYPE_H
+#define POTYPE_H
 
 #include "guiclient.h"
 #include "xdialog.h"
 #include <parameter.h>
+#include "ui_poType.h"
 
-#include "ui_classCode.h"
-
-class classCode : public XDialog, public Ui::classCode
+class poType : public XDialog, public Ui::poType
 {
     Q_OBJECT
 
 public:
-    classCode(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WindowFlags fl = 0);
-    ~classCode();
+    poType(QWidget* parent = 0, const char* name = 0, bool modal = true, Qt::WindowFlags fl = 0);
+    ~poType();
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void populate();
-    virtual void sNewTax();
-    virtual void sEditTax();
-    virtual void sDeleteTax();
-    virtual void sFillListTax();
-    virtual bool sSave();
 
 protected slots:
     virtual void languageChange();
-
-    virtual void sSaveAndDone();
-    virtual void sCheck();
-
+    virtual void sSave();
+    virtual void sClose();
 
 private:
-    int _classcodeid;
     int _mode;
+    int _potypeid;
 
 };
 
-#endif // CLASSCODE_H
+#endif // POTYPE_H

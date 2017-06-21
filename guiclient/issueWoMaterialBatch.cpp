@@ -176,16 +176,11 @@ void issueWoMaterialBatch::sIssue()
   MetaSQLQuery mqlitems(sqlitems);
   XSqlQuery items = mqlitems.toQuery(params);
 
-  bool trynext = true;
   int succeeded = 0;
   QList<QString> failedItems;
   QList<QString> errors;
   while(items.next())
-  {
-    // Previous error and user did not want to continue posting remaining invoices. Do nothing for the rest of the loop.
-    if (!trynext)
-      continue;
-    
+  { 
     // Stage distribution cleanup function to be called on error
     XSqlQuery cleanup;
     cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
@@ -224,6 +219,8 @@ void issueWoMaterialBatch::sIssue()
           QDate(), true) == XDialog::Rejected)
         {
           cleanup.exec();
+          failedItems.append(items.value("item_number").toString());
+          errors.append("Detail Distribution Cancelled");
           // If it's not the last item in the loop, ask the user to exit loop or continue
           if (items.at() != (items.size() -1))
           {
@@ -233,24 +230,13 @@ void issueWoMaterialBatch::sIssue()
             .arg(items.value("item_number").toString()),
             QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
             {
-              failedItems.append(items.value("item_number").toString());
-              errors.append("Detail Distribution Cancelled");
               continue;
             }
             else
-            {
-              trynext = false;
-              failedItems.append(items.value("item_number").toString());
-              errors.append("Detail Distribution Cancelled");
               break;
-            }
           }
-          else 
-          {
-            failedItems.append(items.value("item_number").toString());
-            errors.append("Detail Distribution Cancelled");
+          else
             continue;
-          }
         }
       }
       else
@@ -335,6 +321,9 @@ void issueWoMaterialBatch::sIssue()
 
     dlg.exec();
   }
+
+  if (succeeded == 0 && errors.size() == 0)
+    QMessageBox::information( this, tr("Issue WO Material Batch"), tr("There is no Qty to Issue.") );
 
   omfgThis->sWorkOrdersUpdated(_wo->id(), true);
 

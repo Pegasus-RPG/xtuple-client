@@ -176,16 +176,12 @@ void postInvoices::sPost()
     return;
   }
 
-  bool trynext = true;
   int succeeded = 0;
   QList<QString> failedInvoiceNumbers;
   QList<QString> errors;
   for (int i = 0; i < invoiceIds.size(); i++)
   {
     bool invoiceLineFailed = false;
-    // Previous error and user did not want to continue posting remaining invoices. Do nothing for the rest of the loop.
-    if (!trynext)
-      continue;
 
     QString invoiceNumber;
     int invoiceId = invoiceIds.at(i);
@@ -250,10 +246,9 @@ void postInvoices::sPost()
       }
       else
       {
-        trynext = false;
         failedInvoiceNumbers.append(invoiceNumber);
         errors.append(tr("Detail Distribution Cancelled"));
-        continue;
+        break;
       }
     }
 

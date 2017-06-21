@@ -235,6 +235,7 @@ void setupWidgetsScriptApi(QScriptEngine *engine, GuiClientInterface *client)
   setupUsernameCluster(engine);
   setupUsernameLineEdit(engine);
   setupVendorGroup(engine);
+  setupVirtualCluster(engine);
   setupWComboBox(engine);
   setupWoCluster(engine);
   setupWomatlCluster(engine);
@@ -243,6 +244,8 @@ void setupWidgetsScriptApi(QScriptEngine *engine, GuiClientInterface *client)
   setupXDataWidgetMapper(engine);
   setupXDateEdit(engine);
   setupXDocCopySetter(engine);
+  setupXLabel(engine);
+  setupXLineEdit(engine);
   setupXSqlTableModel(engine);
   setupXTreeWidget(engine);
   setupXTreeWidgetItem(engine);

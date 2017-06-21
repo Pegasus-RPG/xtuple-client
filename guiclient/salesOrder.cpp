@@ -3529,6 +3529,31 @@ bool salesOrder::deleteSalesOrder(int pId, QWidget *parent)
       return false;
     }
   }
+  
+  //ensure no line items have an associated open PO (drop shipped items)
+  XSqlQuery qtyDropshippedq;
+  qtyDropshippedq.prepare("select coalesce(bool_or((poitem_id) is not null),'f') as opendropship"
+                         "  from coitem left outer join poitem on (poitem_id=coitem_order_id)"
+                         "  where coitem_order_type = 'P'"
+                         "  and coitem_order_id is not null"
+                         "  and coitem_order_id > 0"
+                         "  and poitem_status != 'C'"
+                         "  and coitem_cohead_id=:coheadid");
+  qtyDropshippedq.bindValue(":coheadid", pId);
+  qtyDropshippedq.exec();
+  if (qtyDropshippedq.first() && qtyDropshippedq.value("opendropship").toBool())
+  {
+    QMessageBox::critical(parent, tr("Open Dropship"),
+                          tr("You may not delete this Sales Order as it "
+                             "has one or more dropshipped line items "
+                             "on an open Purchase Order.")) ;
+    return false;
+  }
+  else if (ErrorReporter::error(QtCriticalMsg, parent,
+                              tr("Getting Linked PO Items"),
+                              qtyDropshippedq, __FILE__, __LINE__))
+  return false;
+  
 
   XSqlQuery atshippingq;
   atshippingq.prepare("SELECT BOOL_OR(qtyAtShipping(coitem_id) > 0) AS atshipping"
@@ -3577,14 +3602,14 @@ bool salesOrder::deleteSalesOrder(int pId, QWidget *parent)
     delq.exec();
     if (delq.first())
     {
-      bool closeInstead = false;
+      bool cancelInstead = false;
       int result = delq.value("result").toInt();
       if (result == -1 && _privileges->check("ProcessCreditCards"))
       {
         if (QMessageBox::question(parent, tr("Cannot Delete Sales Order"),
                                    storedProcErrorLookup("deleteSo", result) +
                                    "<br>Would you like to refund the amount "
-                                   "charged and close the Sales Order instead?",
+                                   "charged and cancel the Sales Order instead?",
                                    QMessageBox::Yes | QMessageBox::Default,
                                    QMessageBox::No) == QMessageBox::Yes)
         {
@@ -3650,16 +3675,16 @@ bool salesOrder::deleteSalesOrder(int pId, QWidget *parent)
               {
                 QMessageBox::warning(parent, tr("Credit Card Processing Warning"),
                                      cardproc->errorMsg());
-                closeInstead = true;
+                cancelInstead = true;
               }
               else if (! cardproc->errorMsg().isEmpty())
               {
                 QMessageBox::information(parent, tr("Credit Card Processing Note"),
                                      cardproc->errorMsg());
-                closeInstead = true;
+                cancelInstead = true;
               }
               else
-                closeInstead = true;
+                cancelInstead = true;
             } while (ccq.next());
             else if (ErrorReporter::error(QtCriticalMsg, parent,
                                           tr("Credit Card Processing Error"),
@@ -3681,11 +3706,11 @@ bool salesOrder::deleteSalesOrder(int pId, QWidget *parent)
       {
         if ( QMessageBox::question(parent, tr("Cannot Delete Sales Order"),
                                    storedProcErrorLookup("deleteSo", result) +
-                                   "<br>Would you like to Close the selected "
+                                   "<br>Would you like to Cancel the selected "
                                    "Sales Order instead?",
                                    QMessageBox::Yes | QMessageBox::Default,
                                    QMessageBox::No) == QMessageBox::Yes)
-          closeInstead = true;
+          cancelInstead = true;
       }
       else if (result == -20)
         QMessageBox::information(parent, "Cannot Delete Purchase Order",
@@ -3698,17 +3723,18 @@ bool salesOrder::deleteSalesOrder(int pId, QWidget *parent)
         return false;
       }
 
-      if (closeInstead)
+      if (cancelInstead)
       {
-        XSqlQuery closeq;
-        closeq.prepare( "UPDATE coitem "
-                   "SET coitem_status='C' "
-                   "WHERE ((coitem_status <> 'X')"
+      	//cancel all items with a status that is not already CLOSED
+        XSqlQuery cancelq;
+        cancelq.prepare( "UPDATE coitem "
+                   "SET coitem_status='X' "
+                   "WHERE ((coitem_status <> 'C')"
                    "  AND  (coitem_cohead_id=:sohead_id));" );
-        closeq.bindValue(":sohead_id", pId);
-        closeq.exec();
-        if (ErrorReporter::error(QtCriticalMsg, parent, tr("Error Closing"),
-                                 closeq, __FILE__, __LINE__))
+        cancelq.bindValue(":sohead_id", pId);
+        cancelq.exec();
+        if (ErrorReporter::error(QtCriticalMsg, parent, tr("Error Cancelling"),
+                                 cancelq, __FILE__, __LINE__))
           return false;
       }
 

@@ -168,9 +168,15 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
     friend class VirtualSearch;
 
     public:
-        VirtualClusterLineEdit(QWidget*, const char*, const char*, const char*,
-                               const char*, const char*, const char*,
-                               const char* = 0, const char* = 0);
+        VirtualClusterLineEdit(QWidget    *parent,
+                               const char *pTabName,
+                               const char *pIdColumn,
+                               const char *pNumberColumn,
+                               const char *pNameColumn,
+                               const char *pDescripColumn,
+                               const char *pExtra,
+                               const char *pName         = 0,
+                               const char *pActiveColumn = 0);
 
        void setMenu(QMenu *menu);
        QMenu *menu() const { return _menu; }
@@ -320,8 +326,8 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget, public ScriptableWid
     friend class VirtualClusterLineEdit;
 
     public:
-        VirtualCluster(QWidget*, const char* = 0);
-        VirtualCluster(QWidget*, VirtualClusterLineEdit* = 0, const char* = 0);
+        VirtualCluster(QWidget *pParent, const char *pName = 0);
+        VirtualCluster(QWidget *pParent, VirtualClusterLineEdit *pNumberWidget = 0, const char *pName = 0);
 
         Q_INVOKABLE virtual int     id()             const;
                     virtual QString label()          const;
@@ -397,5 +403,7 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget, public ScriptableWid
     private:
         virtual void init();
 };
+
+void setupVirtualCluster(QScriptEngine *engine);
 
 #endif
