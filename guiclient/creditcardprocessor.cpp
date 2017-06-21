@@ -281,7 +281,7 @@ CreditCardProcessor::FraudCheckResult::FraudCheckResult(QChar pcode, int /*TODO:
 
 bool CreditCardProcessor::certificateIsValid(const QSslCertificate *cert)
 {
-  if (! cert)
+  if (! cert || cert->isNull())
     return false;
 
 #if QT_VERSION >= 0x050000
@@ -354,6 +354,20 @@ CreditCardProcessor::CreditCardProcessor()
   QSslConfiguration config = QSslConfiguration::defaultConfiguration();
   config.setProtocol(QSsl::SecureProtocols);
   QList<QSslCertificate> certs = config.caCertificates();
+
+  QStringList certExtensions;
+  certExtensions << "cer"
+                 << "crt"
+                 << "der"
+                 << "key"
+                 << "p12"
+                 << "p7b"
+                 << "p7c"
+                 << "p7r"
+                 << "pem"
+                 << "pfx"
+                 << "spc";
+
   QStringList paths;
 #if QT_VERSION >= 0x050400
   paths << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)
@@ -371,14 +385,22 @@ CreditCardProcessor::CreditCardProcessor()
 
   foreach (QString dirname, paths) {
     QDir certDir(dirname);
+    if (! certDir.exists())
+      continue;
+
     if (DEBUG) qDebug() << "looking for certificates in" << certDir;
     foreach (QString filename, certDir.entryList(QDir::Files | QDir::Readable)) {
       if (DEBUG) qDebug() << "checking" << filename;
+
       QFile certfile(certDir.path() + "/" + filename);
+      QString suffix = QFileInfo(certfile).suffix().toLower();
+      if (! certExtensions.contains(suffix, Qt::CaseInsensitive)) {
+        continue;
+      }
+
       if (certfile.open(QIODevice::ReadOnly))
       {
         if (DEBUG) qDebug() << "opening" << filename;
-        QString suffix = QFileInfo(certfile).suffix().toLower();
         QSslCertificate *cert = new QSslCertificate(&certfile, QSsl::Pem);
         if (! certificateIsValid(cert))
         {
@@ -390,11 +412,11 @@ CreditCardProcessor::CreditCardProcessor()
           certs.append(*cert);
           if (DEBUG) qDebug() << "adding certificate" << cert;
         }
+        certfile.close();
       }
       else
         qDebug() << "opening" << filename << "failed:" << certfile.errorString()
                  << certfile.error();
-      certfile.close();
     }
   }
   config.setCaCertificates(certs);
