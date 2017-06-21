@@ -1569,8 +1569,7 @@ void salesOrderItem::sSave(bool pPartial)
 
   if ( (pPartial) && ((cNew == _mode) || (cNewQuote == _mode)) )
   {
-    if (_item->isValid())
-      _item->setReadOnly(true);
+    _item->setReadOnly(true);
     _warehouse->setEnabled(false);
     _partialsaved = true;
     return;
@@ -2274,7 +2273,12 @@ void salesOrderItem::sDetermineAvailability( bool p )
     return;
   
   if (_qtyOrdered->toDouble() > 0)
-    sSave(true);
+  {
+    if (!_item->isValid())
+      _item->setFocus();
+    else 
+      sSave(true);
+  }
 
   _availabilityLastItemid      = _item->id();
   _availabilityLastWarehousid  = _warehouse->id();
