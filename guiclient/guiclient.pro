@@ -458,8 +458,8 @@ FORMS =   absoluteCalendarItem.ui               \
           profitCenters.ui                      \
           project.ui                            \
           projects.ui                           \
-	  projectType.ui			\
-	  projectTypes.ui			\
+          projectType.ui                        \
+          projectTypes.ui                       \
           prospect.ui                           \
           purchaseOrder.ui                      \
           purchaseOrderItem.ui                  \
@@ -515,7 +515,7 @@ FORMS =   absoluteCalendarItem.ui               \
           salesOrder.ui                         \
           salesOrderInformation.ui              \
           salesOrderItem.ui                     \
-          salesOrderSimple.ui                     \
+          salesOrderSimple.ui                   \
           salesRep.ui                           \
           salesReps.ui                          \
           saleType.ui                           \
@@ -1116,7 +1116,7 @@ HEADERS = ../common/format.h                    \
           salesOrder.h                          \
           salesOrderInformation.h               \
           salesOrderItem.h                      \
-          salesOrderSimple.h                     \
+          salesOrderSimple.h                    \
           salesRep.h                            \
           salesReps.h                           \
           saleType.h                            \
@@ -1676,8 +1676,8 @@ SOURCES = absoluteCalendarItem.cpp              \
           profitCenters.cpp                     \
           project.cpp                           \
           projects.cpp                          \
-	  projectType.cpp			\
-	  projectTypes.cpp			\
+          projectType.cpp                       \
+          projectTypes.cpp                      \
           prospect.cpp                          \
           prospects.cpp                         \
           purchaseOrder.cpp                     \
@@ -1734,7 +1734,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           salesOrder.cpp                        \
           salesOrderInformation.cpp             \
           salesOrderItem.cpp                    \
-          salesOrderSimple.cpp                     \
+          salesOrderSimple.cpp                  \
           salesRep.cpp                          \
           salesReps.cpp                         \
           saleType.cpp                          \
@@ -1902,17 +1902,17 @@ include( hunspell.pri )
 RESOURCES += guiclient.qrc $${OPENRPT_IMAGE_DIR}/OpenRPTMetaSQL.qrc
 
 macx {
-  EXTRASDIR=${DESTDIR}/xtuple.app/Contents/Resources
+  EXTRASDIR=$$absolute_path($${DESTDIR})/xtuple.app/Contents/Resources
 } else {
-  EXTRASDIR=${DESTDIR}
+  EXTRASDIR=$$absolute_path($${DESTDIR})
 }
 
-certificates.path = $${EXTRASDIR}/certificates
+certificates.path = $$absolute_path($${EXTRASDIR})/certificates
 certificates.files = ../share/certificates/*
-dictionaries.path = $${EXTRASDIR}/hunspell
+dictionaries.path = $$absolute_path($${EXTRASDIR})/hunspell
 dictionaries.files = ../hunspell/*.aff ../hunspell/*.dic
 
 TRANSLATIONS = ../share/dict/*.ts
-translations.path = $${EXTRASDIR}/dict
+translations.path = $$absolute_path($${EXTRASDIR})/dict
 translations.files = $$replace(TRANSLATIONS, ts, qm)
 translations.extra = cd ../share/dict && $$dirname(QMAKE_QMAKE)/lrelease xTuple*.ts
