@@ -1274,7 +1274,6 @@ HEADERS = ../common/format.h                    \
           xtupleguiclientinterface.h    \
           xuiloader.h                   \
           xwidget.h                     \
-          yourpayprocessor.h            \
           zeroUncountedCountTagsByWarehouse.h \
           printStatementsByCustomerGroup.h
 
@@ -1892,7 +1891,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           xtupleguiclientinterface.cpp          \
           xuiloader.cpp                         \
           xwidget.cpp                           \
-          yourpayprocessor.cpp                  \
           zeroUncountedCountTagsByWarehouse.cpp \
           printStatementsByCustomerGroup.cpp
 

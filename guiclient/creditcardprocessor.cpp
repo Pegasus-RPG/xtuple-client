@@ -39,7 +39,6 @@
 #include "authorizedotnetprocessor.h"
 #include "externalccprocessor.h"
 #include "verisignprocessor.h"
-#include "yourpayprocessor.h"
 #include "paymentechprocessor.h"
 #include "cybersourceprocessor.h"
 
@@ -84,11 +83,7 @@
 
     It is the subclass' responsibility to ensure that all of the
     configuration options available on the Credit Card Configuration
-    window are implemented either here or in the subclass. An example
-    of an option that @b must be implemented in each subclass is
-    @c CCTestResult since the method for requesting error responses from
-    the credit card processing service is different for every
-    service.
+    window are implemented either here or in the subclass.
 
     In addition to subclassing CreditCardProcessor, alternate credit
     card processing services require changing
@@ -149,7 +144,6 @@
     @see CyberSourceProcessor
     @see ExternalCCProcessor
     @see PaymentechProcessor
-    @see YourPayProcessor
     @see configureCC
 
     @todo expose portions of this in the scriptapi doxygen module
@@ -460,9 +454,6 @@ CreditCardProcessor * CreditCardProcessor::getProcessor(const QString pcompany)
   else if (pcompany == "Verisign")
     return new VerisignProcessor();
 
-  else if (pcompany == "YourPay")
-    return new YourPayProcessor();
-
   else if (pcompany == "Paymentech")
     return new PaymentechProcessor();
 
@@ -485,9 +476,6 @@ CreditCardProcessor * CreditCardProcessor::getProcessor(const QString pcompany)
 
   else if (_metrics->value("CCCompany") == "Verisign")
     processor = new VerisignProcessor();
-
-  else if ((_metrics->value("CCCompany") == "YourPay"))
-    processor = new YourPayProcessor();
 
   else if ((_metrics->value("CCCompany") == "Paymentech"))
     processor = new PaymentechProcessor();
@@ -1835,13 +1823,10 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
   if (isTest())
     _metrics->set("CCOrder", prequest);
 
-  /* TODO: replace references to YourPay with ! _pemfile.isEmpty()
-     http://bugreports.qt.nokia.com/browse/QTBUG-13418
+  /* http://bugreports.qt.nokia.com/browse/QTBUG-13418
      means we must use cURL to handle certificates in some Qt versions.
    */
-  if (!_metrics->boolean("CCUseCurl") &&
-     (_metrics->value("CCCompany") != "YourPay"
-      || (_metrics->value("CCCompany") == "YourPay" && QT_VERSION > 0x040600)))
+  if (!_metrics->boolean("CCUseCurl"))
   {
 #if QT_VERSION < 0x050000
     QHttp::ConnectionMode cmode = QHttp::ConnectionModeHttps;
