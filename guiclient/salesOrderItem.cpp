@@ -4199,12 +4199,11 @@ void salesOrderItem::sNext()
   XSqlQuery salesNext;
   if (_modified)
   {
-    switch ( QMessageBox::question( this, tr("Unsaved Changed"),
-                                    tr("<p>You have made some changes which have not yet been saved!\n"
-                                         "Would you like to save them now?"),
-                                    QMessageBox::Yes | QMessageBox::Default,
-                                    QMessageBox::No,
-                                    QMessageBox::Cancel | QMessageBox::Escape ) )
+    switch (QMessageBox::question(this, tr("Unsaved Changed"),
+                                  tr("<p>You have made some changes which have not yet been saved."
+                                     "<br/>Would you like to save them now?</p>"),
+                                  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
+                                  QMessageBox::Yes) )
     {
       case QMessageBox::Yes:
         sSave(false);
@@ -4220,6 +4219,7 @@ void salesOrderItem::sNext()
     }
   }
 
+  int currentItemId = _soitemid; // cache because clear/prepare resets it
   clear();
   prepare();
   _item->setFocus();
@@ -4249,7 +4249,7 @@ void salesOrderItem::sNext()
                       "   AND  (b.coitem_id=:id))"
                       " ORDER BY a.coitem_linenumber, a.coitem_subnumber"
                       " LIMIT 1;");
-  salesNext.bindValue(":id", _soitemid);
+  salesNext.bindValue(":id", currentItemId);
   salesNext.exec();
   if (salesNext.first())
   {
@@ -4300,12 +4300,11 @@ void salesOrderItem::sPrev()
   XSqlQuery salesPrev;
   if (_modified)
   {
-    switch ( QMessageBox::question( this, tr("Unsaved Changed"),
-                                    tr("<p>You have made some changes which have not yet been saved!\n"
-                                         "Would you like to save them now?"),
-                                    QMessageBox::Yes | QMessageBox::Default,
-                                    QMessageBox::No,
-                                    QMessageBox::Cancel | QMessageBox::Escape ) )
+    switch (QMessageBox::question(this, tr("Unsaved Changed"),
+                                  tr("<p>You have made some changes which have not yet been saved."
+                                     "<br/>Would you like to save them now?</p>"),
+                                  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
+                                  QMessageBox::Yes))
     {
       case QMessageBox::Yes:
         sSave(false);
@@ -4321,6 +4320,7 @@ void salesOrderItem::sPrev()
     }
   }
 
+  int currentItemId = _soitemid; // cache because clear/prepare resets it
   clear();
   prepare();
   _item->setFocus();
@@ -4362,7 +4362,7 @@ void salesOrderItem::sPrev()
                 " ORDER BY a.coitem_linenumber DESC, a.coitem_subnumber DESC"
                 " LIMIT 1;");
   }
-  salesPrev.bindValue(":id", _soitemid);
+  salesPrev.bindValue(":id",        currentItemId);
   salesPrev.bindValue(":sohead_id", _soheadid);
   salesPrev.exec();
   if (salesPrev.first())
