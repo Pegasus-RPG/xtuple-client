@@ -41,7 +41,7 @@ QWidget* xTupleGuiClientInterface::openWindow(const QString      pname,
 
   if (w)
   {
-    if (w->inherits("QDialog"))
+    if (w->inherits("XDialog"))
     {
       XDialog* xdlg = (XDialog*)w;
       xdlg->set(pparams);
