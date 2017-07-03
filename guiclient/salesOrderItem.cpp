@@ -4434,13 +4434,13 @@ void salesOrderItem::reject()
   {
     QString errMsg;
     if (ISQUOTE(_mode)) {
-      salesreject.prepare("SELECT deleteQuoteItem(:coitem_id);"
-                          "DELETE FROM comment WHERE comment_source_id=:coitem_id AND comment_source = 'QI';");
-    errMsg = "Quote";
+      salesreject.prepare("SELECT deleteQuoteItem(:coitem_id);");
+      errMsg = "Quote";
+      omfgThis->sQuotesUpdated(_soheadid);
     } else {
-      salesreject.prepare("SELECT deleteSoItem(:coitem_id);"
-                          "DELETE FROM comment WHERE comment_source_id=:coitem_id AND comment_source = 'SI';");
-    errMsg = "Sales Order";
+      salesreject.prepare("SELECT deleteSoItem(:coitem_id);");
+      errMsg = "Sales Order";
+      omfgThis->sSalesOrdersUpdated(_soheadid);
     }
     salesreject.bindValue(":coitem_id", _soitemid);
     salesreject.exec();
@@ -4450,11 +4450,6 @@ void salesOrderItem::reject()
       return;
     }
   }
-
-  if (_mode == cNew)
-    omfgThis->sSalesOrdersUpdated(_soheadid);
-  else if (_mode == cNewQuote)
-    omfgThis->sQuotesUpdated(_soheadid);
 
   XDialog::reject();
 }
