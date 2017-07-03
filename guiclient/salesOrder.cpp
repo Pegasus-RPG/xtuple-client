@@ -72,17 +72,20 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
   : XWidget(parent, name, fl),
     _saved         (false),
     _saving        (false),
-    _soheadid      (-1),
-    _orderNumberGen(0),
-    _numSelected   (0),
     _calcfreight   (false),
+    _orderNumberGen(0),
     _freightCache  (0),
-    _taxzoneidCache(-1),
-    _custtaxzoneid (-1),
-    _crmacctid     (-1),
+    _userEnteredOrderNumber(false),
+    _ignoreSignals (true),
+    _blanketPos    (false),
+    _usesPos       (false),
     _captive       (false),
     _holdOverride  (false),
-    _ignoreSignals (true)
+    _soheadid      (-1),
+    _numSelected   (0),
+    _custtaxzoneid (-1),
+    _taxzoneidCache(-1),
+    _crmacctid     (-1)
 {
   setupUi(this);
 
@@ -2138,7 +2141,6 @@ void salesOrder::sEdit()
 void salesOrder::sHandleButtons()
 {
   XTreeWidgetItem *selected = 0;
-  _numSelected = 0;
 
   QList<XTreeWidgetItem *> selectedlist = _soitem->selectedItems();
   _numSelected = selectedlist.size();
@@ -2695,7 +2697,7 @@ void salesOrder::populate()
 
       _cust->setId(qu.value("quhead_cust_id").toInt());
 
-        setFreeFormShipto(qu.value("cust_ffshipto").toBool());
+      setFreeFormShipto(qu.value("cust_ffshipto").toBool());
       _blanketPos = qu.value("cust_blanketpos").toBool();
 
       _warehouse->setId(qu.value("quhead_warehous_id").toInt());
@@ -3379,18 +3381,16 @@ void salesOrder::sFreightDetail()
 
 void salesOrder::setFreeFormShipto(bool pFreeForm)
 {
-  _ffShipto = pFreeForm;
+  bool ffShipto = pFreeForm;
 
-  // If we are in view mode it doesn't matter as we
-  // always want these fields disabled.
-  if ( (_mode == cView) || (_mode == cViewQuote) )
-    _ffShipto = false;
+  if (_mode == cView || _mode == cViewQuote)
+    ffShipto = false;
 
-  _shipToName->setEnabled(_ffShipto);
-  _shipToAddr->setEnabled(_ffShipto);
-  _shipToCntct->setEnabled(_ffShipto);
+  _shipToName->setEnabled(ffShipto);
+  _shipToAddr->setEnabled(ffShipto);
+  _shipToCntct->setEnabled(ffShipto);
 
-  _copyToShipto->setEnabled(_ffShipto);
+  _copyToShipto->setEnabled(ffShipto);
 }
 
 void salesOrder::setViewMode()

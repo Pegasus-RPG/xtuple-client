@@ -133,14 +133,10 @@ class salesOrder : public XWidget, public Ui::salesOrder
     bool    _calcfreight;
     int     _orderNumberGen;
     double  _freightCache;
-    double  _amountOutstanding;
-    double  _amountAllocated;
-    double  _taxableSubtotal;
     bool    _userEnteredOrderNumber;
     bool    _ignoreSignals;
     bool    _blanketPos;
     bool    _usesPos;
-    bool    _ffShipto;
     bool    _captive;
     bool    _holdOverride;
     int     _soheadid;
@@ -149,7 +145,6 @@ class salesOrder : public XWidget, public Ui::salesOrder
     AppLock _lock;
     int     _mode;
     int     _numSelected;
-    int     _originalPrjid;
     int     _custtaxzoneid;
     int     _taxzoneidCache;
     int     _crmacctid;
