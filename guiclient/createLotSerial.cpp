@@ -322,6 +322,7 @@ void createLotSerial::sAssign()
   }
 
   QList<GuiErrorCheck>errors;
+  float decimals = _qtyToAssign->toDouble() - floor(_qtyToAssign->toDouble());
   errors<<GuiErrorCheck(_qtyToAssign->toDouble() == 0.0, _qtyToAssign,
                         tr("<p>You must enter a positive value to assign to "
                            "this Lot/Serial number."))
@@ -331,7 +332,7 @@ void createLotSerial::sAssign()
         <<GuiErrorCheck((_warranty->isEnabled()) && (!_warranty->isValid()), _warranty,
                       tr("<p>You must enter a warranty expiration date for this "
                          "Lot/Serial number."))
-        <<GuiErrorCheck((!_fractional) && (_qtyToAssign->toDouble() != _qtyToAssign->text().toInt()), _qtyToAssign,
+        <<GuiErrorCheck((!_fractional) && (decimals > 0), _qtyToAssign,
                      tr("<p>The Item in question is not stored in "
                         "fractional quantities. You must enter a "
                         "whole value to assign to this Lot/Serial "
