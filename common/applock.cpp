@@ -32,7 +32,7 @@ class AppLockPrivate
       if (! _dbIsOpen)
         return;
 
-      if (_mobilizedDb.isNull())
+      if (_isWebEnabled.isNull())
       {
         XSqlQuery q("SELECT EXISTS(SELECT 1"
                     "  FROM pg_class c"
@@ -40,24 +40,12 @@ class AppLockPrivate
                     " WHERE relname = 'lock'"
                     "   AND nspname = 'xt') AS mobilized;");
         if (q.first())
-          _mobilizedDb = q.value("mobilized");
+          _isWebEnabled = q.value("mobilized");
         else
           (void)ErrorReporter::error(QtCriticalMsg,
                                      qobject_cast<QWidget*>(parent->parent()),
                                      parent->tr("Locking Error"),
                                      q, __FILE__, __LINE__);
-      }
-
-      if (_actPidCol.isEmpty())
-      {
-        XSqlQuery vq("SELECT compareversion('9.2.0') <= 0 AS isNew;");
-        if (vq.first())
-          _actPidCol = vq.value("isNew").toBool() ? "pid" : "procpid";
-        else
-          (void)ErrorReporter::error(QtCriticalMsg,
-                                     qobject_cast<QWidget*>(parent->parent()),
-                                     parent->tr("Locking Error"),
-                                     vq, __FILE__, __LINE__);
       }
 
       updateLockStatus();
@@ -69,7 +57,7 @@ class AppLockPrivate
         return;
 
       XSqlQuery q;
-      if (_mobilizedDb.toBool())
+      if (_isWebEnabled.toBool())
         q.prepare("SELECT lock_pid = pg_backend_pid() AS mylock, lock_username"
                   "  FROM xt.lock"
                   "  JOIN pg_class c ON lock_table_oid = c.oid"
@@ -80,7 +68,7 @@ class AppLockPrivate
                   "  FROM pg_locks l"
                   "  JOIN pg_class c    on classid = c.oid"
                   "  JOIN pg_database d on database = d.oid"
-                  "  JOIN pg_stat_activity a ON l.pid = a." + _actPidCol +
+                  "  JOIN pg_stat_activity a ON l.pid = a.pid"
                   " WHERE d.datname = current_database()"
                   "   AND relname = :table"
                   "   AND objid   = :id"
@@ -117,12 +105,10 @@ class AppLockPrivate
     QString  _table;
     QString  _username;
 
-    static QString  _actPidCol;
-    static QVariant _mobilizedDb;
+    static QVariant _isWebEnabled;
 };
 
-QString  AppLockPrivate::_actPidCol;
-QVariant AppLockPrivate::_mobilizedDb;
+QVariant AppLockPrivate::_isWebEnabled;
 
 AppLock::AppLock(QObject *parent)
   : QObject(parent)
