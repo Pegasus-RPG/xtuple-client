@@ -39,6 +39,7 @@ createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, 
   adjustSize();
 
   _qtyToAssign->setValidator(omfgThis->qtyVal());
+  _qtyRemaining->setPrecision(omfgThis->qtyVal());
 
   _charWidgets = LotSerialUtils::addLotCharsToGridLayout(this, gridLayout, _lschars);
 }
@@ -68,11 +69,11 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
   if (valid)
   {
     _itemlocdistid = param.toInt();
-    // When #22868 is complete, the attempt to use invhist will be removed and replaced with something (hopefully not a case statement) 
+    // When #22868 is complete, the attempt to use invhist will be removed and replaced with something (hopefully not a case statement)
     // that can match the types that were inserted in creation of the original lsdetail records.
-    // Example of the lsdetail record creation that we're now looking for in this query: 
+    // Example of the lsdetail record creation that we're now looking for in this query:
     // https://github.com/xtuple/qt-client/blob/4_10_x/guiclient/issueWoMaterialItem.cpp#L211
-                     
+
     createet.prepare("SELECT item_fractional, itemsite_controlmethod, itemsite_item_id, "
                       " itemsite_id, itemsite_perishable, itemsite_warrpurc, "
                       " COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id, "
@@ -91,7 +92,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
       if (createet.value("itemsite_controlmethod").toString() == "S")
       {
         _serial = true;
-        _qtyToAssign->setText("1");
+        _qtyToAssign->setDouble(1.0);
         _qtyToAssign->setEnabled(false);
       }
       else
@@ -102,7 +103,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
       _expiration->setEnabled(createet.value("itemsite_perishable").toBool());
       _warranty->setEnabled(createet.value("itemsite_warrpurc").toBool() && createet.value("ordtype").toString() == "PO");
       _fractional = createet.value("item_fractional").toBool();
-      
+
       //If there is preassigned trace info for an associated order, force user to select from list
       //Pick latest lsdetail record as it can be duplicated when lot/serial returned/re-added to the shipment
       XSqlQuery preassign;
@@ -175,10 +176,10 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
       return UndefinedError;
     }
   }
-  
+
   param = pParams.value("qtyRemaining", &valid);
   if (valid)
-    _qtyRemaining->setText(param.toString());
+    _qtyRemaining->setDouble(param.toDouble());
 
   return NoError;
 }
@@ -295,27 +296,14 @@ void createLotSerial::clearCharacteristics()
 void createLotSerial::sAssign()
 {
   XSqlQuery createAssign;
-  
-  if (_lotSerial->currentText().isEmpty())
-  {
-    if (_lotSerial->isEditable()) 
-    {
-      QMessageBox::critical( this, tr("Enter Lot/Serial Number"),
-                           tr("<p>You must enter a Lot/Serial number."));  
-    }
-    else
-      QMessageBox::critical( this, tr("Select Preassigned Lot/Serial Number"),
-                           tr("<p>You must select a preassigned Lot/Serial number."));
-    
-    _lotSerial->setFocus();
-    return;
-  }
-  else if (_lotSerial->currentText().contains(QRegExp("\\s")) &&
-           QMessageBox::question(this, tr("Lot/Serial Number Contains Spaces"),
-                                 tr("<p>The Lot/Serial Number contains spaces. Do "
-                                    "you want to save it anyway?"),
-                                 QMessageBox::Yes,
-                                 QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+
+  QString lsnum = _lotSerial->currentText().trimmed().toUpper();
+  if (lsnum.contains(QRegExp("\\s")) &&
+      QMessageBox::question(this, tr("Lot/Serial Number Contains Spaces"),
+                            tr("<p>The Lot/Serial Number contains spaces. Do "
+                               "you want to save it anyway?"),
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No) == QMessageBox::No)
   {
     _lotSerial->setFocus();
     return;
@@ -323,22 +311,25 @@ void createLotSerial::sAssign()
 
   QList<GuiErrorCheck>errors;
   float decimals = _qtyToAssign->toDouble() - floor(_qtyToAssign->toDouble());
-  errors<<GuiErrorCheck(_qtyToAssign->toDouble() == 0.0, _qtyToAssign,
+  errors<<GuiErrorCheck(lsnum.isEmpty() && _lotSerial->isEditable(), _lotSerial,
+                        tr("<p>You must enter a Lot/Serial number."))
+        <<GuiErrorCheck(lsnum.isEmpty() && ! _lotSerial->isEditable(), _lotSerial,
+                        tr("<p>You must select a preassigned Lot/Serial number."))
+        <<GuiErrorCheck(_qtyToAssign->toDouble() == 0.0, _qtyToAssign,
                         tr("<p>You must enter a positive value to assign to "
                            "this Lot/Serial number."))
         <<GuiErrorCheck((_expiration->isEnabled()) && (!_expiration->isValid()), _expiration,
-                       tr("<p>You must enter an expiration date to this "
-                          "Perishable Lot/Serial number."))
+                        tr("<p>You must enter an expiration date to this "
+                           "Perishable Lot/Serial number."))
         <<GuiErrorCheck((_warranty->isEnabled()) && (!_warranty->isValid()), _warranty,
-                      tr("<p>You must enter a warranty expiration date for this "
-                         "Lot/Serial number."))
+                        tr("<p>You must enter a warranty expiration date for this "
+                           "Lot/Serial number."))
         <<GuiErrorCheck((!_fractional) && (decimals > 0), _qtyToAssign,
-                     tr("<p>The Item in question is not stored in "
-                        "fractional quantities. You must enter a "
-                        "whole value to assign to this Lot/Serial "
-                        "number."))
-        <<GuiErrorCheck(_qtyToAssign->toDouble() > _qtyRemaining->text().toDouble(), _qtyToAssign,
-                        tr("<p>The Qty to Assign must be less than or equal to the Qty Remaining."));
+                        tr("<p>The Item in question is not stored in "
+                           "fractional quantities. You must enter a "
+                           "whole value to assign to this Lot/Serial "
+                           "number."))
+  ;
 
   if(GuiErrorCheck::reportErrors(this,tr("Cannot Assign Lot/Serial number"),errors))
       return;
@@ -393,7 +384,7 @@ void createLotSerial::sAssign()
                          "  AND UPPER(ls_number) = UPPER(:lotserial)"
                          "  AND itemlocdist_source_type = 'D';");
     createAssign.bindValue(":item_id", _item->id());
-    createAssign.bindValue(":lotserial", _lotSerial->currentText());
+    createAssign.bindValue(":lotserial", lsnum);
     createAssign.exec();
     if (createAssign.first())
     {
@@ -417,7 +408,7 @@ void createLotSerial::sAssign()
               "AND (ls_item_id=itemsite_item_id) "
               "AND (itemsite_id=:itemsiteid) );");
     createAssign.bindValue(":itemsiteid", _itemsiteid);
-    createAssign.bindValue(":lotserial", _lotSerial->currentText());
+    createAssign.bindValue(":lotserial", lsnum);
     createAssign.exec();
     if (createAssign.first())
     {
@@ -425,8 +416,8 @@ void createLotSerial::sAssign()
         if (QMessageBox::question(this, tr("Use Existing?"),
                                   tr("<p>A record with for lot number %1 for this item already exists.  "
                                      "Reference existing lot?").arg(createAssign.value("ls_number").toString().toUpper()),
-                                  QMessageBox::Yes | QMessageBox::Default,
-                                  QMessageBox::No  | QMessageBox::Escape) == QMessageBox::No)
+                                  QMessageBox::Yes | QMessageBox::No,
+                                  QMessageBox::Yes) == QMessageBox::No)
           return;
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Lot/Serial Information"),
@@ -451,7 +442,7 @@ void createLotSerial::sAssign()
 
   createAssign.prepare(sql);
   createAssign.bindValue(":itemsite_id", _itemsiteid);
-  createAssign.bindValue(":lotserial", _lotSerial->currentText().toUpper());
+  createAssign.bindValue(":lotserial",   lsnum);
   createAssign.bindValue(":itemlocseries", _itemlocSeries);
   createAssign.bindValue(":lsdetail_id", _lotSerial->id());
   createAssign.bindValue(":qty", _qtyToAssign->toDouble());
