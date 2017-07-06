@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -1048,80 +1048,20 @@ void returnAuthorization::sDelete()
 
 void returnAuthorization::sFillList()
 {
-  XSqlQuery returnFillList;
-  returnFillList.prepare( "SELECT raitem_id, "
-             "       CASE WHEN (raitem_status='C')     THEN -1"
-             "            WHEN (raitem_disposition='C') THEN 0"
-             "            WHEN (raitem_disposition='R') THEN 1"
-             "            WHEN (raitem_disposition='P') THEN 2"
-             "            WHEN (raitem_disposition='V') THEN 3"
-             "            WHEN (raitem_disposition='S') THEN 4"
-             "            ELSE -1 END AS disposition_code,"
-             "       formatRaLineNumber(raitem_id) AS f_linenumber, raitem_subnumber,"
-             "       item_number, uom_name, item_type,"
-             "       (item_descrip1 || ' ' || item_descrip2) AS item_descrip,"
-             "       (SELECT warehous_code FROM whsinfo JOIN itemsite ON itemsite_warehous_id=warehous_id" 
-             "            WHERE itemsite_id = COALESCE(raitem_coitem_itemsite_id, raitem_itemsite_id)) AS warehous_code,"
-             "       raitem_status, "
-             "       CASE WHEN (raitem_disposition='C') THEN :credit "
-             "            WHEN (raitem_disposition='R') THEN :return "
-             "            WHEN (raitem_disposition='P') THEN :replace "
-             "            WHEN (raitem_disposition='V') THEN :service "
-             "            WHEN (raitem_disposition='S') THEN :ship "
-             "            ELSE 'Error' END AS disposition, "
-             "       raitem_warranty,"
-             "       COALESCE(oc.coitem_qtyshipped,0) AS oldcoitem_qtyshipped,"
-             "       raitem_qtyauthorized,"
-             "       raitem_qtyreceived,"
-             "       qtyToReceive('RA', raitem_id) AS raitem_qtytoreceive,"
-             "       COALESCE(nc.coitem_qtyshipped,0) AS newcoitem_qtyshipped,"
-             "       raitem_unitprice,"
-             "       round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio),2) AS raitem_extprice,"
-             "       raitem_amtcredited,"
-             "       raitem_saleprice,"
-             "       round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_saleprice / raitem_price_invuomratio),2) AS raitem_extsaleprice,"
-             "       round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio),2) - "
-             "       round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_saleprice / raitem_price_invuomratio),2) AS raitem_netdue,"
-             "       och.cohead_number::text || '-' || oc.coitem_linenumber::text AS oldcohead_number, "
-             "       COALESCE(och.cohead_id,-1) AS oldcohead_number_xtidrole, "
-             "       nch.cohead_number::text || '-' || nc.coitem_linenumber::text AS newcohead_number, "
-             "       COALESCE(nch.cohead_id,-1) AS newcohead_number_xtidrole, "
-             "       raitem_scheddate, "
-             "       'qty' AS oldcoitem_qtyshipped_xtnumericrole, "
-             "       'qty' AS raitem_qtyauthorized_xtnumericrole, "
-             "       'qty' AS raitem_qtyreceived_xtnumericrole, "
-             "       'qty' AS raitem_qtytoreceive_xtnumericrole, "
-             "       'qty' AS newcoitem_qtyshipped_xtnumericrole, "
-             "       'salesprice' AS raitem_unitprice_xtnumericrole, "
-             "       'extprice' AS raitem_extprice_xtnumericrole, "
-             "       'curr' AS raitem_amtcredited_xtnumericrole, "
-             "       'salesprice' AS raitem_saleprice_xtnumericrole, "
-             "       'extprice' AS raitem_extsaleprice_xtnumericrole, "
-             "       'extprice' AS raitem_netdue_xtnumericrole, "
-             "        :na AS raitem_scheddate_xtnullrole,"
-             "       CASE WHEN raitem_subnumber = 0 THEN 0"
-             "            ELSE 1 END AS xtindentrole "
-             "FROM raitem "
-             " LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
-             " LEFT OUTER JOIN cohead och ON (och.cohead_id=oc.coitem_cohead_id) "
-             " LEFT OUTER JOIN coitem nc ON (raitem_new_coitem_id=nc.coitem_id) "
-             " LEFT OUTER JOIN cohead nch ON (nch.cohead_id=nc.coitem_cohead_id),"
-             " itemsite, item, uom "
-             "WHERE ( (raitem_itemsite_id=itemsite_id)"
-             " AND (itemsite_item_id=item_id)"
-             " AND (raitem_rahead_id=:rahead_id) "
-             " AND (raitem_qty_uom_id=uom_id) ) "
-             "ORDER BY raitem_linenumber, raitem_subnumber;" );
-  returnFillList.bindValue(":rahead_id", _raheadid);
-  returnFillList.bindValue(":credit", tr("Credit"));
-  returnFillList.bindValue(":return", tr("Return"));
-  returnFillList.bindValue(":replace", tr("Replace"));
-  returnFillList.bindValue(":service", tr("Service"));
-  returnFillList.bindValue(":ship", tr("Ship"));
-  returnFillList.bindValue(":na", tr("N/A"));
-  returnFillList.exec();
+  MetaSQLQuery recvm = mqlLoad("returnAuthorizationItems", "list");
+
+  ParameterList params;
+  params.append("rahead_id", _raheadid);
+  params.append("credit",  tr("Credit"));
+  params.append("return",  tr("Return"));
+  params.append("replace", tr("Replace"));
+  params.append("service", tr("Service"));
+  params.append("ship",    tr("Ship"));
+  params.append("na",      tr("N/A"));
+
+  XSqlQuery returnFillList = recvm.toQuery(params);
   _raitem->populate(returnFillList, true);
-  if ((returnFillList.first()) && (_mode == cEdit))
+  if (returnFillList.first() && _mode == cEdit)
   {
     _cust->setDisabled(_cust->isValid());
   }
