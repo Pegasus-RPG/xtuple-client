@@ -18,7 +18,6 @@
 #include <metasql.h>
 #include <openreports.h>
 
-#include "distributeInventory.h"
 #include "errorReporter.h"
 #include "storedProcErrorLookup.h"
 
@@ -277,14 +276,6 @@ bool printMulticopyDocument::sPostOneDoc(XSqlQuery *docq)
                              __FILE__, __LINE__);
         return false;
       }
-      if (_distributeInventory &&
-          (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected))
-      {
-        rollback.exec();
-        QMessageBox::information(this, tr("Posting Canceled"),
-                                 tr("Transaction Canceled") );
-        return false;
-      }
     }
     else if (postq.lastError().type() != QSqlError::NoError)
     {
@@ -322,6 +313,11 @@ void printMulticopyDocument::sPrint()
 
     // This indirection allows scripts to replace core behavior - 14285
     emit aboutToStart(&docinfoq);
+
+    // Distribute inventory detail
+    if (_distributeInventory && !distributeInventory(&docinfoq))
+      return;
+
     emit timeToPrintOneDoc(&docinfoq);
     emit timeToMarkOnePrinted(&docinfoq);
     emit timeToPostOneDoc(&docinfoq);
@@ -455,6 +451,11 @@ void printMulticopyDocument::clear()
 XDocCopySetter *printMulticopyDocument::copies()
 {
   return _data->_copies;
+}
+
+bool printMulticopyDocument::distributeInventory(XSqlQuery *qry)
+{
+  return true;
 }
 
 QString printMulticopyDocument::doctype()

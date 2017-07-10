@@ -49,6 +49,7 @@ class printMulticopyDocument : public XDialog
 
     Q_INVOKABLE virtual void            clear();
     Q_INVOKABLE virtual XDocCopySetter *copies();
+    Q_INVOKABLE virtual bool            distributeInventory(XSqlQuery *qry);
                 virtual QString         doctype();
     Q_INVOKABLE virtual ParameterList   getParamsDocList();
     Q_INVOKABLE virtual ParameterList   getParamsOneCopy(const int row, XSqlQuery *qry);

@@ -12,6 +12,7 @@
 
 #include <QSqlError>
 #include <QVariant>
+#include <QMessageBox>
 
 #include <metasql.h>
 #include <mqlutil.h>
@@ -126,5 +127,69 @@ void printInvoices::sHandleAboutToStart(XSqlQuery *qry)
 void printInvoices::sHandleFinishedWithAll()
 {
   omfgThis->sInvoicesUpdated(-1, true);
+}
+
+bool printInvoices::distributeInventory(XSqlQuery *qry)
+{
+  if (qry)
+  {
+    int invoiceId = qry->value("docid").toInt();
+
+    // Set the series for this invoice
+    int itemlocSeries = distributeInventory::SeriesCreate(0, 0, QString(), QString());
+    if (itemlocSeries < 0)
+      return false;
+
+    XSqlQuery cleanup; // Stage cleanup function to be called on error
+    cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+    cleanup.bindValue(":itemlocSeries", itemlocSeries);
+
+    bool hasControlledItems = false;
+
+    // Handle the Inventory and G/L Transactions for any billed Inventory where invcitem_updateinv is true
+    XSqlQuery items;
+    items.prepare("SELECT item_number, itemsite_id, invcitem_id, "
+                  " (invcitem_billed * invcitem_qty_invuomratio) * -1 AS qty, "
+                  " invchead_invcnumber "
+                  "FROM invchead " 
+                  " JOIN invcitem ON invcitem_invchead_id = invchead_id "
+                  "   AND invcitem_billed <> 0 " 
+                  "   AND invcitem_updateinv "
+                  " JOIN itemsite ON itemsite_item_id = invcitem_item_id " 
+                  "   AND itemsite_warehous_id = invcitem_warehous_id "
+                  " JOIN item ON item_id = invcitem_item_id "
+                  "WHERE invchead_id = :invchead_id "
+                  " AND itemsite_costmethod != 'J' "
+                  " AND (itemsite_loccntrl OR itemsite_controlmethod IN ('L', 'S')) "
+                  " AND itemsite_controlmethod != 'N' "
+                  "ORDER BY invcitem_id;");
+    items.bindValue(":invchead_id", invoiceId);
+    items.exec();
+    while (items.next())
+    {
+      int result = distributeInventory::SeriesCreate(items.value("itemsite_id").toInt(), 
+        items.value("qty").toDouble(), "IN", "SH", items.value("invcitem_id").toInt(), itemlocSeries);
+      if (result < 0)
+      {
+        cleanup.exec();
+        return false;
+      }
+      else if (itemlocSeries == 0) // The first time through the loop, set itemlocSeries
+        itemlocSeries = result;
+
+      hasControlledItems = true;
+    }
+
+    // Distribute the items from above
+    if (hasControlledItems && distributeInventory::SeriesAdjust(itemlocSeries, this, QString(), QDate(), QDate(), true)
+      == XDialog::Rejected)
+    {
+      cleanup.exec();
+      QMessageBox::information( this, tr("Print Invoice"), tr("Detail Distribution was Cancelled") );
+      return false;
+    }
+
+    return true;
+  }
 }
 
