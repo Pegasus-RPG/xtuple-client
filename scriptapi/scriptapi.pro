@@ -43,6 +43,7 @@ HEADERS += setupscriptapi.h \
     qcoreapplicationproto.h \
     qcryptographichashproto.h \
     qdatawidgetmapperproto.h    \
+    qdateproto.h \
     qdialogbuttonboxproto.h \
     qdialogsetup.h \
     qdirproto.h \
@@ -176,6 +177,7 @@ SOURCES += setupscriptapi.cpp \
     qcoreapplicationproto.cpp \
     qcryptographichashproto.cpp \
     qdatawidgetmapperproto.cpp  \
+    qdateproto.cpp \
     qdialogbuttonboxproto.cpp \
     qdialogsetup.cpp \
     qdirproto.cpp \
