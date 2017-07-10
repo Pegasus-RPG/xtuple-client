@@ -1184,6 +1184,7 @@ void item::sHandleItemtype()
   bool config    = false;
   bool purchased = false;
   bool freight   = false;
+  bool upc       = false;
   
   _configured->setEnabled(false);
 
@@ -1194,6 +1195,7 @@ void item::sHandleItemtype()
     weight   = true;
     purchased = true;
     freight  = true;
+    upc      = true;
   }
 
   if (itemType == "M")
@@ -1204,6 +1206,7 @@ void item::sHandleItemtype()
     config   = true;
     purchased = true;
     freight  = true;
+    upc      = true;
   }
 
   // nothing to do if (itemType == "F")
@@ -1220,6 +1223,7 @@ void item::sHandleItemtype()
     sold     = true;
     weight   = true;
     freight  = true;
+    upc      = true;
   }
 
   if (itemType == "Y")
@@ -1228,6 +1232,7 @@ void item::sHandleItemtype()
     sold     = true;
     weight   = true;
     freight  = true;
+    upc      = true;
   }
 
   if (itemType == "R")
@@ -1236,6 +1241,7 @@ void item::sHandleItemtype()
     weight   = true;
     freight  = true;
     config   = true;
+    upc      = true;
   }
 
   if (itemType == "T")
@@ -1245,6 +1251,7 @@ void item::sHandleItemtype()
     freight  = true;
     purchased = true;
     sold = true;
+    upc      = true;
   }
 
   if (itemType == "O")
@@ -1263,6 +1270,7 @@ void item::sHandleItemtype()
   {
     sold     = true;
     weight   = true;
+    upc      = true;
     _fractional->setChecked(false);
   }
   _fractional->setEnabled(itemType!="K");
@@ -1283,6 +1291,8 @@ void item::sHandleItemtype()
   _packWeight->setEnabled(weight);
 
   _freightClass->setEnabled(freight);
+
+  _upcCode->setEnabled(upc);
 
   _tab->setTabEnabled(_tab->indexOf(_sourcesTab), 
         (_privileges->check("ViewItemSources") || 
