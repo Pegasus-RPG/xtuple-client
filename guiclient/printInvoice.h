@@ -23,7 +23,7 @@ class printInvoice : public printMulticopyDocument,
     printInvoice(QWidget *parent = 0, const char *name = 0, bool modal = false, Qt::WindowFlags fl = 0);
     ~printInvoice();
 
-    Q_INVOKABLE virtual bool distributeInventory(XSqlQuery *qry);
+    Q_INVOKABLE virtual int distributeInventory(XSqlQuery *qry);
 
   protected slots:
     virtual void languageChange();

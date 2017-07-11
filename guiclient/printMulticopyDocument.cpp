@@ -78,8 +78,8 @@ printMulticopyDocument::printMulticopyDocument(QWidget    *parent,
           this, SLOT(sPrintOneDoc(XSqlQuery*)));
   connect(this, SIGNAL(timeToMarkOnePrinted(XSqlQuery*)),
           this, SLOT(sMarkOnePrinted(XSqlQuery*)));
-  connect(this, SIGNAL(timeToPostOneDoc(XSqlQuery*)),
-          this, SLOT(sPostOneDoc(XSqlQuery*)));
+  connect(this, SIGNAL(timeToPostOneDoc(XSqlQuery*, int)),
+          this, SLOT(sPostOneDoc(XSqlQuery*, int)));
 
   _distributeInventory = false;
 }
@@ -107,8 +107,8 @@ printMulticopyDocument::printMulticopyDocument(QString numCopiesMetric,
           this, SLOT(sPrintOneDoc(XSqlQuery*)));
   connect(this, SIGNAL(timeToMarkOnePrinted(XSqlQuery*)),
           this, SLOT(sMarkOnePrinted(XSqlQuery*)));
-  connect(this, SIGNAL(timeToPostOneDoc(XSqlQuery*)),
-          this, SLOT(sPostOneDoc(XSqlQuery*)));
+  connect(this, SIGNAL(timeToPostOneDoc(XSqlQuery*, int)),
+          this, SLOT(sPostOneDoc(XSqlQuery*, int)));
 
   _distributeInventory = false;
 
@@ -208,7 +208,7 @@ bool printMulticopyDocument::sMarkOnePrinted(XSqlQuery *docq)
   return wasMarked;
 }
 
-bool printMulticopyDocument::sPostOneDoc(XSqlQuery *docq)
+bool printMulticopyDocument::sPostOneDoc(XSqlQuery *docq, int itemlocSeries)
 {
   if (! _postQuery.isEmpty()    &&
       _data->_post->isChecked() &&
@@ -222,6 +222,13 @@ bool printMulticopyDocument::sPostOneDoc(XSqlQuery *docq)
     postp.append("docid",     docq->value("docid"));
     postp.append("docnumber", docq->value("docnumber"));
 
+    XSqlQuery cleanup; // Stage cleanup function to be called on error
+    cleanup.prepare("SELECT deleteitemlocseries(:itemlocSeries, TRUE);");
+    cleanup.bindValue(":itemlocSeries", itemlocSeries);
+  
+    if (itemlocSeries > 0)
+      postp.append("itemlocSeries", itemlocSeries);
+
     if (! _askBeforePostingQry.isEmpty())
     {
       MetaSQLQuery askm(_askBeforePostingQry);
@@ -229,14 +236,21 @@ bool printMulticopyDocument::sPostOneDoc(XSqlQuery *docq)
       if (ErrorReporter::error(QtCriticalMsg, this,
                                tr("Cannot Post %1").arg(docnumber),
                                askq, __FILE__, __LINE__))
+      {
+        cleanup.exec();
         return false;
+      }
+        
       else if (askq.value("ask").toBool() &&
                QMessageBox::question(this, tr("Post Anyway?"),
                                      _askBeforePostingMsg.arg(docnumber),
                                       QMessageBox::Yes,
                                       QMessageBox::No | QMessageBox::Default)
                   == QMessageBox::No)
+      {
+        cleanup.exec();
         return false;
+      }
     }
 
     if (! _errCheckBeforePostingQry.isEmpty())
@@ -246,13 +260,19 @@ bool printMulticopyDocument::sPostOneDoc(XSqlQuery *docq)
       if (ErrorReporter::error(QtCriticalMsg, this,
                                tr("Cannot Post %1").arg(docnumber),
                                errq, __FILE__, __LINE__))
+      {
+        cleanup.exec();
         return false;
+      }
       else if (! errq.first() || ! errq.value("ok").toBool())
       {
         ErrorReporter::error(QtCriticalMsg, this,
                              tr("Cannot Post %1").arg(docnumber),
                              _errCheckBeforePostingMsg, __FILE__, __LINE__);
-        return false;
+        {
+          cleanup.exec();
+          return false;
+        }
       }
     }
 
@@ -270,6 +290,7 @@ bool printMulticopyDocument::sPostOneDoc(XSqlQuery *docq)
       if (result < 0)
       {
         rollback.exec();
+        cleanup.exec();
         ErrorReporter::error(QtCriticalMsg, this,
                              tr("Cannot Post %1").arg(docnumber),
                              storedProcErrorLookup(_postFunction, result),
@@ -280,6 +301,7 @@ bool printMulticopyDocument::sPostOneDoc(XSqlQuery *docq)
     else if (postq.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
+      cleanup.exec();
       ErrorReporter::error(QtCriticalMsg, this,
                            tr("Cannot Post %1").arg(docnumber),
                            postq, __FILE__, __LINE__);
@@ -314,13 +336,20 @@ void printMulticopyDocument::sPrint()
     // This indirection allows scripts to replace core behavior - 14285
     emit aboutToStart(&docinfoq);
 
+
     // Distribute inventory detail
-    if (_distributeInventory && !distributeInventory(&docinfoq))
-      return;
+    int itemlocSeries = 0;
+
+    if (_distributeInventory)
+    {
+      itemlocSeries = distributeInventory(&docinfoq);
+      if (itemlocSeries <= 0)
+        return;
+    }
 
     emit timeToPrintOneDoc(&docinfoq);
     emit timeToMarkOnePrinted(&docinfoq);
-    emit timeToPostOneDoc(&docinfoq);
+    emit timeToPostOneDoc(&docinfoq, itemlocSeries);
 
     message("");
   }
@@ -453,9 +482,9 @@ XDocCopySetter *printMulticopyDocument::copies()
   return _data->_copies;
 }
 
-bool printMulticopyDocument::distributeInventory(XSqlQuery *qry)
+int printMulticopyDocument::distributeInventory(XSqlQuery *qry)
 {
-  return true;
+  return 0;
 }
 
 QString printMulticopyDocument::doctype()
