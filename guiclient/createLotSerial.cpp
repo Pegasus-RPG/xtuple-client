@@ -495,14 +495,14 @@ void createLotSerial::sLotSerialSelected()
 
     XSqlQuery itemloc;
 
-    if (!_preassigned)
-      itemloc.prepare("SELECT itemloc_expiration, itemloc_warrpurc "
-                      "FROM itemloc "
-                      "WHERE itemloc_id=:itemloc_id; ");
-    else
+    if (_preassigned)
       itemloc.prepare("SELECT COALESCE(itemloc_expiration, lsdetail_expiration), COALESCE(itemloc_warrpurc, lsdetail_warrpurc) "
                       "FROM lsdetail LEFT OUTER JOIN itemloc ON (itemloc_itemsite_id=lsdetail_itemsite_id AND itemloc_ls_id=lsdetail_ls_id) "
                       "WHERE lsdetail_id=:itemloc_id; ");
+    else
+      itemloc.prepare("SELECT itemloc_expiration, itemloc_warrpurc "
+                      "FROM itemloc "
+                      "WHERE itemloc_id=:itemloc_id; ");
     itemloc.bindValue(":itemloc_id", _lotSerial->id());
     itemloc.exec();
     if (itemloc.first()) {
