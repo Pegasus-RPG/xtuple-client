@@ -16,9 +16,9 @@
 
 StatusBarMessageHandler::StatusBarMessageHandler(QObject *parent)
   : XAbstractMessageHandler(parent),
-    _widget(0)
+    _widget(0),
+    _timeout(0)
 {
-  _timeout = 0;
 }
 
 StatusBarMessageHandler::~StatusBarMessageHandler()
