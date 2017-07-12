@@ -110,7 +110,7 @@ void UsernameLineEdit::setUsername(const QString & pUsername)
                     "  <? if exists('isInactive') ?>AND NOT usr_active<? endif ?>"
                     ";");
   ParameterList params;
-  params.append(pUsername);
+  params.append("username", pUsername);
   if (UsersActive == _type)        params.append("isActive",   true);
   else if (UsersInactive == _type) params.append("isInactive", true);
 
@@ -176,7 +176,7 @@ void UsernameCluster::addNumberWidget(VirtualClusterLineEdit* pNumberWidget)
 
 	if(matchType == 0)
 	  return;
-	  
+
     _number = matchType;
     if (! _number)
       return;
