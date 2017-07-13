@@ -239,8 +239,6 @@ void cashReceiptItem::sDiscount()
   if(_discountAmount->localValue() != 0.0)
     params.append("amount", _discountAmount->localValue());
 
-  double oldDiscount = _discountAmount->localValue();
-
   applyARDiscount newdlg(this, "", true);
   newdlg.set(params);
 
@@ -250,6 +248,7 @@ void cashReceiptItem::sDiscount()
     if(_mode == cNew)
       _amountToApply->setLocalValue(_openAmount->localValue() - _discountAmount->localValue());
     else
-      _amountToApply->setLocalValue(_amountToApply->localValue() + oldDiscount - _discountAmount->localValue());
+      _amountToApply->setLocalValue(qMin(_amountToApply->localValue(),
+                                         _openAmount->localValue() - _discountAmount->localValue()));
   }
 }
