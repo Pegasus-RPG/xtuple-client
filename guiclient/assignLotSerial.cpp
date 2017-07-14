@@ -151,7 +151,7 @@ void assignLotSerial::sNew()
   ParameterList params;
   params.append("itemloc_series", _itemlocSeries);
   params.append("itemlocdist_id", _itemlocdistid);
-  params.append("qtyRemaining",    _qtyBalance->text());
+  params.append("qtyRemaining",   _qtyBalance->toDouble());
 
   createLotSerial newdlg(this, "", true);
   newdlg.set(params);
