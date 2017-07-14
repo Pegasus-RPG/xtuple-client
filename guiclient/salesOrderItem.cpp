@@ -2676,19 +2676,36 @@ void salesOrderItem::sHandleSupplyOrder()
     return;
 
   XSqlQuery ordq;
+  XSqlQuery uomq;
   if (_createSupplyOrder->isChecked() && ISORDER(_mode))
   {
     double valqty = 0.0;
+    double venduomratio = 1.0;
+    if (_supplyOrderType == "P" && (_supplyOrderId > 0))
+    {
+      uomq.prepare("SELECT poitem_invvenduomratio FROM poitem "
+                   " WHERE poitem_id=:poitem;");
+      uomq.bindValue(":poitem", _supplyOrderId);
+      uomq.exec();
+      if (uomq.first())
+        venduomratio = uomq.value("poitem_invvenduomratio").toDouble();
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
+                                  uomq, __FILE__, __LINE__))
+          return;
+    }
+
     ordq.prepare( "SELECT validateOrderQty(itemsite_id, :qty, true) AS qty "
                   "FROM itemsite "
                   "WHERE ((itemsite_item_id=:item_id)"
                   " AND (itemsite_warehous_id=:warehous_id));" );
-    ordq.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
+    ordq.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio / venduomratio);
     ordq.bindValue(":item_id", _item->id());
     ordq.bindValue(":warehous_id", _warehouse->id());
     ordq.exec();
     if (ordq.first())
+    {
       valqty = ordq.value("qty").toDouble();
+    }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
                                   ordq, __FILE__, __LINE__))
     {
