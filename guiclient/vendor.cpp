@@ -267,6 +267,7 @@ SetResponse vendor::set(const ParameterList &pParams)
 
       
       clear();
+      _accountingTab->setEnabled(false);
 
       if (_privileges->check("MaintainVendorAddresses"))
       {
