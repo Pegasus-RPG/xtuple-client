@@ -70,6 +70,10 @@ user::user(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _grantedSite->addColumn("Granted Sites",      -1, Qt::AlignLeft);
 
   _locale->setType(XComboBox::Locales);
+  XSqlQuery locq;
+  locq.exec("SELECT locale_id FROM locale WHERE locale_code='Default'");
+  if (locq.first())
+    _locale->setId(locq.value("locale_id").toInt());
 
   XSqlQuery modq;
   modq.exec( "SELECT DISTINCT priv_module FROM priv ORDER BY priv_module;" );
