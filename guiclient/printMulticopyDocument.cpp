@@ -335,7 +335,8 @@ void printMulticopyDocument::sPrint()
 
     // This indirection allows scripts to replace core behavior - 14285
     emit aboutToStart(&docinfoq);
-
+    emit timeToPrintOneDoc(&docinfoq);
+    emit timeToMarkOnePrinted(&docinfoq);
 
     // Distribute inventory detail
     int itemlocSeries = 0;
@@ -346,9 +347,7 @@ void printMulticopyDocument::sPrint()
       if (itemlocSeries <= 0)
         return;
     }
-
-    emit timeToPrintOneDoc(&docinfoq);
-    emit timeToMarkOnePrinted(&docinfoq);
+    
     emit timeToPostOneDoc(&docinfoq, itemlocSeries);
 
     message("");

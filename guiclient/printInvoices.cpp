@@ -183,7 +183,7 @@ int printInvoices::distributeInventory(XSqlQuery *qry)
     == XDialog::Rejected)
   {
     cleanup.exec();
-    QMessageBox::information( this, tr("Print Invoice"), tr("Detail Distribution was Cancelled") );
+    QMessageBox::information( this, tr("Print Invoices"), tr("Detail Distribution was Cancelled") );
     return -1;
   }
 
