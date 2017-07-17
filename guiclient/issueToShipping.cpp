@@ -489,10 +489,13 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
     return false;
   }
 
+  double balance = issueDetail.value("balance").toDouble();
+  if (balance == 0)
+    return false;  // nothing to issue
+
   int invhistid = 0;
   int itemlocSeries;
   int itemsiteId = issueDetail.value("itemsite_id").toInt();;
-  double balance = issueDetail.value("balance").toDouble();
   bool controlled = issueDetail.value("controlled").toBool();;
   bool hasControlledBackflushItems = false;
   bool jobItem = (altId == 1 && balance > 0);
