@@ -48,6 +48,8 @@
 
 #define DEBUG false
 
+static QVariant _booEnabled = QVariant();
+
 workOrder::workOrder(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
@@ -116,15 +118,12 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WindowFlags fl)
     _warehouse->hide();
   }
 
-  static QVariant _booEnabled = QVariant();
-
   if (_booEnabled.isNull())
   {
-    XSqlQuery boohead;
-    boohead.prepare("SELECT 1 "
-                    "  FROM pg_class "
-                    " WHERE relname='boohead';");
-    boohead.exec();
+    XSqlQuery boohead("SELECT 1 "
+                      "  FROM pg_class "
+                      " WHERE relname='boohead' "
+                      "   AND relkind='r';");
 
     if (boohead.first())
       _booEnabled = QVariant(true);

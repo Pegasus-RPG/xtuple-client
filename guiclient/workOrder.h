@@ -84,7 +84,6 @@ signals:
   
 
 private:
-    QVariant _booEnabled;
     bool _captive;
     int _planordid;
     int _sense;
