@@ -28,9 +28,9 @@ class CustInfo;
 #define __allCustomers    0x01
 #define __activeCustomers 0x02
 
-#define CREDITSTATUS    5
-#define CRMACCT_ID      6
-#define ISCUSTOMER      7
+#define CREDITSTATUS    4
+#define CRMACCT_ID      5
+#define ISCUSTOMER      6
 
 class XTUPLEWIDGETS_EXPORT CLineEdit : public VirtualClusterLineEdit
 {
