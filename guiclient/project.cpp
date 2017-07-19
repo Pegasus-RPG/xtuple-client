@@ -694,6 +694,13 @@ void project::sPrintTasks()
 
 void project::sPrintOrders()
 {
+  if (!_showSo->isChecked() && !_showWo->isChecked() && !_showPo->isChecked())
+  {
+    QMessageBox::critical( this, tr("Cannot Print Orders"),
+        tr("Please first select an order type or types to print."));
+    return;
+  }
+
   ParameterList params;
 
   params.append("prj_id", _prjid);
