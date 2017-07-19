@@ -48,6 +48,8 @@
 
 #define DEBUG false
 
+static QVariant _booEnabled = QVariant();
+
 workOrder::workOrder(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
 {
@@ -116,7 +118,24 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WindowFlags fl)
     _warehouse->hide();
   }
 
-  if (!_metrics->boolean("Routings"))
+  if (_booEnabled.isNull())
+  {
+    XSqlQuery boohead("SELECT 1 "
+                      "  FROM pg_class "
+                      " WHERE relname='boohead' "
+                      "   AND relkind='r';");
+
+    if (boohead.first())
+      _booEnabled = QVariant(true);
+    else
+    {
+      _booEnabled = QVariant(false);
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error checking for boohead"),
+                           boohead, __FILE__, __LINE__);
+    }
+  }
+
+  if (!_booEnabled.toBool())
   {
    _booGroup->hide();
    _showOperations->setChecked(false);
@@ -147,7 +166,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _woIndentedList->addColumn(tr("Received"),        _qtyColumn,     Qt::AlignRight     , true,   "qtyrcv");
   _woIndentedList->addColumn(tr("Available QOH"),   _qtyColumn,     Qt::AlignRight     , false,  "qoh");
   _woIndentedList->addColumn(tr("Short"),           _qtyColumn,     Qt::AlignRight     , false,  "short");
-  if (_metrics->boolean("Routings"))
+  if (_booEnabled.toBool())
   {
     _woIndentedList->addColumn(tr("Setup Remain."),           _qtyColumn,     Qt::AlignRight     , false,  "wodata_setup");
     _woIndentedList->addColumn(tr("Run Remain."),             _qtyColumn,     Qt::AlignRight     , false,  "wodata_run");
@@ -877,7 +896,7 @@ void workOrder::sFillList()
 
   ParameterList params;
   params.append("wo_id", _woid);
-  params.append("showops", QVariant(_metrics->boolean("Routings") && _showOperations->isChecked()));
+  params.append("showops", QVariant(_booEnabled.toBool() && _showOperations->isChecked()));
   params.append("showmatl", QVariant(_showMaterials->isChecked()));
   params.append("showindent", QVariant(_indented->isChecked()));
   XSqlQuery workFillList = mql.toQuery(params);
