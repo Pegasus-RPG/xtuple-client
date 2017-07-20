@@ -1698,53 +1698,22 @@ void item::sDeleteItemSite()
   itemDeleteItemSite.exec();
   if (itemDeleteItemSite.first())
   {
-    switch (itemDeleteItemSite.value("result").toInt())
+    int result = itemDeleteItemSite.value("result").toInt();
+    if (result < 0)
     {
-      case -1:
-        QMessageBox::warning( this, tr("Cannot Delete Item Site"),
-                              tr( "The selected Item Site cannot be deleted as there is Inventory History posted against it.\n"
-                                  "You may edit the Item Site and deactivate it." ) );
-        return;
-
-      case -2:
-        QMessageBox::warning( this, tr("Cannot Delete Item Site"),
-                              tr( "The selected Item Site cannot be deleted as there is Work Order History posted against it.\n"
-                                  "You may edit the Item Site and deactivate it." ) );
-        return;
-
-      case -3:
-        QMessageBox::warning( this, tr("Cannot Delete Item Site"),
-                              tr( "The selected Item Site cannot be deleted as there is Sales History posted against it.\n"
-                                  "You may edit the Item Site and deactivate it." ) );
-        return;
-
-      case -4:
-        QMessageBox::warning( this, tr("Cannot Delete Item Site"),
-                              tr( "The selected Item Site cannot be deleted as there is Purchasing History posted against it.\n"
-                                  "You may edit the Item Site and deactivate it." ) );
-        return;
-
-      case -5:
-        QMessageBox::warning( this, tr("Cannot Delete Item Site"),
-                              tr( "The selected Item Site cannot be deleted as there is Planning History posted against it.\n"
-                                  "You may edit the Item Site and deactivate it." ) );
-        return;
-
-      case -9:
-        QMessageBox::warning( this, tr("Cannot Delete Item Site"),
-                              tr("The selected Item Site cannot be deleted as there is a non-zero Inventory Quantity posted againt it.") );
-        return;
-
-
-      default:
-//  ToDo
-
-      case 0:
-        sFillListItemSites();
-        break;
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Item Site"),
+                             storedProcErrorLookup("deleteItemSite", result),
+                             __FILE__, __LINE__);
+      return;
     }
   }
-//  ToDo
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Item Site"),
+                                itemDeleteItemSite, __FILE__, __LINE__))
+  {
+    return;
+  }
+
+  sFillListItemSites();
 }
 
 void item::sFillListItemSites()
