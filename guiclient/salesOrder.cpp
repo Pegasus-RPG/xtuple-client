@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -1882,7 +1882,12 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
       _orderCurrency->setId(cust.value("cust_curr_id").toInt());
 
       if (cust.value("cust_preferred_warehous_id").toInt() > 0)
+      {
         _warehouse->setId(cust.value("cust_preferred_warehous_id").toInt());
+        _custWhs = cust.value("cust_preferred_warehous_id").toInt();
+      }
+      else
+        _custWhs = -1;
 
       setFreeFormShipto(cust.value("cust_ffshipto").toBool());
       _shipTo->setCustid(pCustid);
@@ -1953,6 +1958,7 @@ void salesOrder::populateShipto(int pShiptoid)
                     "       shipto_shipvia, shipto_shipcomments, shipto_comments,"
                     "       shipto_shipchrg_id, shipto_shipform_id,"
                     "       COALESCE(shipto_taxzone_id, -1) AS shipto_taxzone_id,"
+                    "       shipto_preferred_warehous_id, "
                     "       shipto_salesrep_id, shipto_commission AS commission "
                     "FROM shiptoinfo LEFT OUTER JOIN "
                     "     cntct ON (shipto_cntct_id = cntct_id) "
@@ -1978,6 +1984,11 @@ void salesOrder::populateShipto(int pShiptoid)
       _orderComments->setText(shipto.value("shipto_comments").toString());
       if (shipto.value("shipto_taxzone_id").toInt() > 0)
         _taxZone->setId(shipto.value("shipto_taxzone_id").toInt());
+      if (shipto.value("shipto_preferred_warehous_id").toInt() > 0 )
+        _warehouse->setId(shipto.value("shipto_preferred_warehous_id").toInt());
+      else if (_custWhs > 0)
+        _warehouse->setId(_custWhs);
+
       _ignoreSignals=false;
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Ship To Information"),
