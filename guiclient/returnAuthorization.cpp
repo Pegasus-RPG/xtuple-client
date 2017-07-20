@@ -625,24 +625,6 @@ void returnAuthorization::sOrigSoChanged()
   {
     if (_origso->isValid())
     {
-      if ( !_warehouse->isValid() )
-      {
-        QMessageBox::warning( this, tr("Invalid Receiving Site"),
-                             tr("<p>You must enter a valid Receiving Site." ) );
-        _warehouse->setFocus();
-        _origso->setId(-1);
-        return;
-      }
-
-      if ( !_shipWhs->isValid() )
-      {
-        QMessageBox::warning( this, tr("Invalid Shipping Site"),
-                             tr("<p>You must enter a valid Shipping Site." ) );
-        _shipWhs->setFocus();
-        _origso->setId(-1);
-        return;
-      }
-
       XSqlQuery sohead;
       sohead.prepare("SELECT cohead_salesrep_id, cohead_commission,"
                      "       cohead_taxzone_id, cohead_custponumber, cohead_prj_id,"
@@ -655,7 +637,7 @@ void returnAuthorization::sOrigSoChanged()
                      "       cohead_shiptoname, cohead_shiptoaddress1,"
                      "       cohead_shiptoaddress2, cohead_shiptoaddress3,"
                      "       cohead_shiptocity, cohead_shiptostate,"
-                     "       cohead_shiptozipcode, cohead_shiptocountry,"
+                     "       cohead_shiptozipcode, cohead_shiptocountry, cohead_warehous_id,"
                      "       cust_ffshipto, custtype_code, cohead_commission, "
                      "       shipto_num"
                      "  FROM cohead"
@@ -669,6 +651,35 @@ void returnAuthorization::sOrigSoChanged()
       sohead.exec();
       if (sohead.first())
       {
+        // Update Recv and Ship site to match that from SO
+        if (sohead.value("cohead_warehous_id").toInt() > 0 && (
+            _warehouse->id() != sohead.value("cohead_warehous_id").toInt() ||
+            _shipWhs->id() != sohead.value("cohead_warehous_id").toInt()))
+        {
+          _ignoreWhsSignals = true;
+          _warehouse->setId(sohead.value("cohead_warehous_id").toInt());
+          _shipWhs->setId(sohead.value("cohead_warehous_id").toInt());
+          _ignoreWhsSignals = false;
+        }
+
+        if ( !_warehouse->isValid() )
+        {
+          QMessageBox::warning( this, tr("Invalid Receiving Site"),
+                               tr("<p>You must enter a valid Receiving Site." ) );
+          _warehouse->setFocus();
+          _origso->setId(-1);
+          return;
+        }
+
+        if ( !_shipWhs->isValid() )
+        {
+          QMessageBox::warning( this, tr("Invalid Shipping Site"),
+                               tr("<p>You must enter a valid Shipping Site." ) );
+          _shipWhs->setFocus();
+          _origso->setId(-1);
+          return;
+        }
+
         _salesRep->setId(sohead.value("cohead_salesrep_id").toInt());
         _commission->setDouble(sohead.value("cohead_commission").toDouble() * 100);
 
