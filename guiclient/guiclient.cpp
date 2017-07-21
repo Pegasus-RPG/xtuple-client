@@ -1707,7 +1707,7 @@ QString translationFile(QString localestr, const QString component, QString &ver
       doc.appendChild(root);
     }
 
-    if (elemThis.isNull())
+    if (currentVersion.isEmpty())
     {
       elemThis = doc.createElement(filename);
       elemThis.setAttribute("version", data.value("qm_version").toString());
