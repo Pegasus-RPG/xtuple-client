@@ -24,6 +24,7 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QDir>
+#include <QDomDocument>
 #include <QPixmap>
 #include <QTextStream>
 #include <QCloseEvent>
@@ -1618,11 +1619,11 @@ QString translationFile(QString localestr, const QString component)
  */
 QString translationFile(QString localestr, const QString component, QString &version)
 {
+  Q_UNUSED(version);
+
   QStringList paths;
-#if QT_VERSION >= 0x050400
-  paths << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)
-        << QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation);
-#endif
+  paths << QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation)
+        << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
 #if defined Q_OS_MAC
   paths << QApplication::applicationDirPath() + "/../Resources";
 #else
@@ -1633,23 +1634,97 @@ QString translationFile(QString localestr, const QString component, QString &ver
   for (int i = paths.length(); i > 0; i--)
     paths.insert(i, paths.at(i - 1) + "/dict");
 
-  QTranslator translator;
-  foreach (QString dir, paths)
+  QString filename = component + "." + localestr;
+  QString dir;
+
+  foreach (QString testDir, paths)
   {
-    QString filename = component + "." + localestr;
-    if (DEBUG) qDebug() << "looking for translation" << dir << filename;
-    if (translator.load(filename, dir)) // this doesn't install the translation
+    if (DEBUG) qDebug() << "looking for translation" << testDir << filename;
+
+    QFile test(testDir + "/" + filename);
+    if (test.exists())
     {
-      if (! version.isNull())
-        version = translator.translate(component.toLatin1().data(), "Version");
-      if (DEBUG)
-        qDebug() << "loadable translation" << dir << filename
-                 << "test:" << translator.translate("GUIClient", "Custom");
-      return dir + "/" + filename;
+      dir = testDir;
+      break;
     }
   }
 
-  return QString::null;
+  if (dir.isEmpty())
+  {
+    dir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+    QDir mkdir(dir);
+    if (!mkdir.exists())
+      mkdir.mkpath(dir);
+  }
+
+  QDomDocument doc;
+  QDomElement elemThis;
+  QString currentVersion = "";
+
+  QFile versions(dir + "/" + "translationVersions.xml");
+      
+  if (versions.exists() && versions.open(QIODevice::ReadOnly))
+  {
+    if (doc.setContent(versions.readAll()))
+    {
+      QDomNodeList nList = doc.documentElement().childNodes();
+      for (int n = 0; n < nList.count(); n++)
+      {
+        elemThis = nList.item(n).toElement();
+        if (elemThis.tagName() == filename)
+        {
+          currentVersion = elemThis.attribute("version");
+          break;
+        }
+      }
+    }
+
+    versions.close();
+  }
+
+  XSqlQuery data;
+  data.prepare("SELECT qm_version, qm_data "
+               "  FROM qm "
+               " WHERE qm_extension_name=:extension "
+               "   AND qm_lang=:lang "
+               "   AND qm_country=:country "
+               "   AND qm_version!=:version;");
+  data.bindValue(":extension", component);
+  data.bindValue(":lang", localestr.split("_")[0]);
+  data.bindValue(":country", localestr.contains("_") ? localestr.split("_")[1] : "");
+  data.bindValue(":version", currentVersion);
+  data.exec();
+  if (data.first())
+  {
+    QFile qm(dir + "/" + filename + ".qm");
+    if (qm.open(QIODevice::WriteOnly))
+      qm.write(data.value("qm_data").toByteArray());
+    qm.close();
+
+    if (doc.isNull())
+    {
+      QDomElement root = doc.createElement("translationVersions");
+      doc.appendChild(root);
+    }
+
+    if (elemThis.isNull())
+    {
+      elemThis = doc.createElement(filename);
+      elemThis.setAttribute("version", data.value("qm_version").toString());
+      doc.documentElement().appendChild(elemThis);
+    }
+    else
+      elemThis.setAttribute("version", data.value("qm_version").toString());
+
+    if (versions.open(QIODevice::WriteOnly))
+      versions.write(doc.toByteArray());
+    versions.close();
+  }
+  else if(ErrorReporter::error(QtCriticalMsg, 0, "Error loading QM data",
+                         data, __FILE__, __LINE__))
+    return "";
+
+  return dir + "/" + filename;
 }
 
 /** @brief Build a Custom submenu from the @c cmd table.
