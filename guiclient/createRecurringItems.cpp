@@ -31,6 +31,7 @@ createRecurringItems::createRecurringItems(QWidget* parent, const char* name, Qt
   connect(_todoItems, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
 
   sHandleButtons();
+  _submit->setVisible(_metrics->boolean("EnableBatchManager"));
 }
 
 createRecurringItems::~createRecurringItems()
