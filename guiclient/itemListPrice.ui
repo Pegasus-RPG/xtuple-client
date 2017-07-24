@@ -436,7 +436,7 @@ to be bound by its terms.</comment>
                 <string>Standard</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignCenter</set>
+                <set>Qt::AlignRight</set>
                </property>
               </widget>
              </item>
@@ -452,7 +452,7 @@ to be bound by its terms.</comment>
                 <string>Actual</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignCenter</set>
+                <set>Qt::AlignRight</set>
                </property>
               </widget>
              </item>
