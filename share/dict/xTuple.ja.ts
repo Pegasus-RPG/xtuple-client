@@ -5308,13 +5308,6 @@ returned %2
     </message>
 </context>
 <context>
-    <name>StatusBarMessageHandler</name>
-    <message>
-        <source>Status Bar cannot answer this question: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Sudoable</name>
     <message>
         <source>Password:</source>
@@ -58602,27 +58595,11 @@ post Vouchers.</source>
         <source>Print Sales Credit</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Print Credit Memo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Detail Distribution was Cancelled</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>printCreditMemos</name>
     <message>
         <source>Print Sales Credits</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Print Credit Memos</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Detail Distribution was Cancelled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58643,10 +58620,6 @@ post Vouchers.</source>
     <message>
         <source>Invoice #:</source>
         <translation type="unfinished">請求書 #:</translation>
-    </message>
-    <message>
-        <source>Detail Distribution was Cancelled</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -58677,10 +58650,6 @@ post Vouchers.</source>
     </message>
     <message>
         <source>Getting Invoices to Print</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Detail Distribution was Cancelled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58918,6 +58887,10 @@ post Vouchers.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Transaction Canceled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Purchase Order</source>
         <translation type="unfinished">購買発注</translation>
     </message>
@@ -58935,6 +58908,10 @@ post Vouchers.</source>
     </message>
     <message>
         <source>Mark Documents as Printed?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Posting Canceled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -83483,6 +83460,10 @@ and Purchase Order amounts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Checks</source>
+        <translation type="unfinished">小切手（チェック）</translation>
+    </message>
+    <message>
         <source>Earliest</source>
         <translation type="unfinished"></translation>
     </message>
@@ -86099,10 +86080,6 @@ Please correct before creating this Work Order</source>
     </message>
     <message>
         <source>Error issuing Work Order Material. %</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error checking for boohead</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
