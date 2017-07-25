@@ -1910,7 +1910,6 @@ certificates.files = ../share/certificates/*
 dictionaries.path = $$absolute_path($${EXTRASDIR})/hunspell
 dictionaries.files = ../hunspell/*.aff ../hunspell/*.dic
 
-TRANSLATIONS = ../share/dict/*.ts
 translations.path = $$absolute_path($${EXTRASDIR})/dict
 translations.files = $$replace(TRANSLATIONS, ts, qm)
 translations.extra = cd ../share/dict && $$dirname(QMAKE_QMAKE)/lrelease xTuple*.ts

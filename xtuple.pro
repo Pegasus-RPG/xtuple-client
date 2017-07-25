@@ -15,3 +15,33 @@ SUBDIRS = common \
           guiclient
 
 CONFIG += ordered
+
+TRANSLATIONS = share/dict/xTuple.ar_eg.ts \
+               share/dict/xTuple.base.ts \
+               share/dict/xTuple.bg.ts \
+               share/dict/xTuple.cs.ts \
+               share/dict/xTuple.de_at.ts \
+               share/dict/xTuple.de_ch.ts \
+               share/dict/xTuple.de.ts \
+               share/dict/xTuple.en_ca.ts \
+               share/dict/xTuple.es_ar.ts \
+               share/dict/xTuple.es_mx.ts \
+               share/dict/xTuple.es.ts \
+               share/dict/xTuple.et_ee.ts \
+               share/dict/xTuple.fr_ca.ts \
+               share/dict/xTuple.fr.ts \
+               share/dict/xTuple.hr.ts \
+               share/dict/xTuple.it.ts \
+               share/dict/xTuple.ja.ts \
+               share/dict/xTuple.nl.ts \
+               share/dict/xTuple.no.ts \
+               share/dict/xTuple.pl.ts \
+               share/dict/xTuple.pt_br.ts \
+               share/dict/xTuple.pt.ts \
+               share/dict/xTuple.ru.ts \
+               share/dict/xTuple.sk.ts \
+               share/dict/xTuple.tr.ts \
+               share/dict/xTuple.uk.ts \
+               share/dict/xTuple.zh_hk.ts \
+               share/dict/xTuple.zh.ts \
+               share/dict/xTuple.zh_tw.ts
