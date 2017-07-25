@@ -1683,22 +1683,27 @@ QString translationFile(QString localestr, const QString component, QString &ver
   }
 
   XSqlQuery data;
-  data.prepare("SELECT qm_version, qm_data "
-               "  FROM qm "
-               " WHERE qm_extension_name=:extension "
-               "   AND qm_lang=:lang "
-               "   AND qm_country=:country "
-               "   AND qm_version!=:version;");
+  data.prepare("SELECT dict_data, dict_version "
+               "  FROM dict "
+               "  JOIN pg_class ON dict.tableoid=pg_class.oid "
+               "  JOIN pg_namespace ON pg_class.relnamespace=pg_namespace.oid "
+               "  JOIN lang ON dict_lang_id=lang_id "
+               "  LEFT OUTER JOIN country ON dict_country_id=country_id "
+               " WHERE nspname=:extension "
+               "   AND lang_abbr2=:lang "
+               "   AND (country_abbr=:country OR :country IS NULL) "
+               "   AND dict_version!=:version;");
   data.bindValue(":extension", component);
   data.bindValue(":lang", localestr.split("_")[0]);
-  data.bindValue(":country", localestr.contains("_") ? localestr.split("_")[1] : "");
+  if (localestr.contains("_"))
+    data.bindValue(":country", localestr.split("_")[1]);
   data.bindValue(":version", currentVersion);
   data.exec();
   if (data.first())
   {
     QFile qm(dir + "/" + filename + ".qm");
     if (qm.open(QIODevice::WriteOnly))
-      qm.write(data.value("qm_data").toByteArray());
+      qm.write(data.value("dict_data").toByteArray());
     qm.close();
 
     if (doc.isNull())
@@ -1710,11 +1715,11 @@ QString translationFile(QString localestr, const QString component, QString &ver
     if (currentVersion.isEmpty())
     {
       elemThis = doc.createElement(filename);
-      elemThis.setAttribute("version", data.value("qm_version").toString());
+      elemThis.setAttribute("version", data.value("dict_version").toString());
       doc.documentElement().appendChild(elemThis);
     }
     else
-      elemThis.setAttribute("version", data.value("qm_version").toString());
+      elemThis.setAttribute("version", data.value("dict_version").toString());
 
     if (versions.open(QIODevice::WriteOnly))
       versions.write(doc.toByteArray());
