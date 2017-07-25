@@ -1641,7 +1641,7 @@ QString translationFile(QString localestr, const QString component, QString &ver
   {
     if (DEBUG) qDebug() << "looking for translation" << testDir << filename;
 
-    QFile test(testDir + "/" + filename);
+    QFile test(testDir + "/" + filename + ".qm");
     if (test.exists())
     {
       dir = testDir;
