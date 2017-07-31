@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include "standardJournalItem.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 standardJournal::standardJournal(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -123,12 +124,6 @@ enum SetResponse standardJournal::set(const ParameterList &pParams)
 void standardJournal::sSave()
 {
   XSqlQuery standardSave;
-  if (_name->text().length() == 0)
-  {
-    QMessageBox::warning( this, tr("Cannot Save Standard Journal"),
-                          tr("You must enter a valid Name.") );
-    return;
-  }
   
   standardSave.prepare( "SELECT stdjrnl_id"
              "  FROM stdjrnl "
@@ -137,14 +132,16 @@ void standardJournal::sSave()
   standardSave.bindValue(":stdjrnl_name", _name->text());
   standardSave.bindValue(":stdjrnl_id", _stdjrnlid);
   standardSave.exec();
-  if (standardSave.first())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Standard Journal"),
-                          tr("The Name you have entered for this Standard Journal already exists. "
-                             "Please enter in a different Name for this Standard Journal."));
-    _name->setFocus();
+
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(_name->text().length() == 0, _name,
+                         tr("You must enter a valid Name.")),
+  errors<< GuiErrorCheck(standardSave.first(), _name,
+                         tr("The Name you have entered for this Standard Journal already exists. "
+                           "Please enter in a different Name for this Standard Journal."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Standard Journal"), errors))
     return;
-  }
 
   if (_mode == cNew)
     standardSave.prepare( "INSERT INTO stdjrnl "

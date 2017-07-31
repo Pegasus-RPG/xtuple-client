@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QValidator>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 standardJournalItem::standardJournalItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -84,20 +85,14 @@ void standardJournalItem::sSave()
   if (_debit->isChecked())
     amount *= -1;
 
-  if (_amount->isZero())
-  {
-    QMessageBox::warning( this, tr("Incomplete Data"),
-      tr("You must enter an amount value.") );
-    _amount->setFocus();
-    return;
-  }
-
-  if(!_account->isValid())
-  {
-    QMessageBox::warning( this, tr("Incomplete Data"),
-      tr("You must enter an account.") );
-    return;
-  }
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_amount->isZero(), _amount,
+                           tr("You must enter an amount value."))
+          << GuiErrorCheck(!_account->isValid(), _account,
+                           tr("You must enter an account."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Incomplete Data"), errors))
+      return;
 
   if (! _amount->isBase() &&
       QMessageBox::question(this, tr("G/L Transaction Not In Base Currency"),
