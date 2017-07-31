@@ -37,6 +37,7 @@
 #include "warehouse.h"
 #include "xsqlquery.h"
 #include <time.h>
+#include "guiErrorCheck.h"
 
 struct privSet {
   bool canEdit;
@@ -491,9 +492,12 @@ void contact::sSave()
 {
   if (_contact->first().isEmpty() && _contact->last().isEmpty())
   {
-    QMessageBox::information(this, tr("Contact Blank"),
-                             tr("<p>You must fill in a contact first or last name as a minimum before saving."));
-    return;
+    QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_contact->first().isEmpty() && _contact->last().isEmpty(), _contact,
+                           tr("You must fill in a contact first or last name as a minimum before saving."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Incident"), errors))
+      return;
   }
 
   if (_data->_activeCache && ! _contact->active())

@@ -21,6 +21,7 @@
 #include "returnAuthorization.h"
 #include "storedProcErrorLookup.h"
 #include "todoItem.h"
+#include "guiErrorCheck.h"
 
 #include <openreports.h>
 
@@ -353,35 +354,18 @@ bool incident::save(bool partial)
   XSqlQuery incidentave;
   if (! partial)
   {
-    if(_crmacct->id() == -1)
-    {
-      QMessageBox::critical( this, tr("Incomplete Information"),
-        tr("You must specify the Account that this incident is for.") );
+    QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_crmacct->id() == -1, _number,
+                           tr("You must specify the Account that this incident is for."))
+          << GuiErrorCheck(_cntct->id() <= 0 && _cntct->name().simplified().isEmpty(), _cntct,
+                           tr("You must specify a Contact for this Incident."))
+          << GuiErrorCheck(_description->text().trimmed().isEmpty(), _description,
+                           tr("You must specify a description for this incident report."))
+          << GuiErrorCheck(_status->currentIndex() == 3 && _assignedTo->username().isEmpty(), _assignedTo,
+                           tr("You must specify an assignee when the status is assigned."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Incident"), errors))
       return false;
-    }
-
-    if(_cntct->id() <= 0 && _cntct->name().simplified().isEmpty())
-    {
-      QMessageBox::critical( this, tr("Incomplete Information"),
-        tr("You must specify a Contact for this Incident.") );
-      return false;
-    }
-
-    if(_description->text().trimmed().isEmpty())
-    {
-      QMessageBox::critical( this, tr("Incomplete Information"),
-        tr("You must specify a description for this incident report.") );
-      _description->setFocus();
-      return false;
-    }
-
-    if (_status->currentIndex() == 3 && _assignedTo->username().isEmpty())
-    {
-      QMessageBox::critical( this, tr("Incomplete Information"),
-        tr("You must specify an assignee when the status is assigned.") );
-      _description->setFocus();
-      return false;
-    }
   }
 
   RecurrenceWidget::RecurrenceChangePolicy cp = _recurring->getChangePolicy();
