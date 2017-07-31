@@ -18,6 +18,7 @@
 #include "glcluster.h"
 #include <openreports.h>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 glTransaction::glTransaction(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -98,37 +99,21 @@ enum SetResponse glTransaction::set(const ParameterList &pParams)
 void glTransaction::sPost()
 {
   XSqlQuery glPost;
-  struct {
-    bool	condition;
-    QString	msg;
-    QWidget*	widget;
-  } error[] = {
-    { _amount->isZero(), tr("<p>You must enter an amount for this G/L "
-			    "Transaction before you may Post it."), _amount },
 
-    { ! _debit->isValid(), tr("<p>You must select a Debit Account for this G/L "
-			    "Transaction before you may Post it." ), _debit },
-    { ! _credit->isValid(), tr("<p>You must select a Credit Account for this G/L "
-			     "Transaction before you may Post it." ), _credit },
-    { !_metrics->boolean("IgnoreCompany") &&
-      _credit->companyId() != _debit->companyId(),
-      tr("The Accounts must belong to the same Company to Post this transaciton." ), _credit },
-    { _metrics->boolean("MandatoryGLEntryNotes") &&
-      _notes->toPlainText().trimmed().isEmpty(),
-      tr("<p>You must enter some Notes to describe this transaction."), _notes},
-    { true, "", NULL }
-  }; // error[]
-
-  int errIndex;
-  for (errIndex = 0; ! error[errIndex].condition; errIndex++)
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_amount->isZero(), _amount,
+                           tr("You must enter an amount for this G/L Transaction before you may Post it."))
+          << GuiErrorCheck(! _debit->isValid(), _debit,
+                           tr("You must select a Debit Account for this G/L Transaction before you may Post it."))
+          << GuiErrorCheck(! _credit->isValid(), _credit,
+                           tr("You must select a Credit Account for this G/L Transaction before you may Post it."))
+          << GuiErrorCheck(!_metrics->boolean("IgnoreCompany") && _credit->companyId() != _debit->companyId(), _credit,
+                           tr("The Accounts must belong to the same Company to Post this transaciton."))
+          << GuiErrorCheck(_metrics->boolean("MandatoryGLEntryNotes") && _notes->toPlainText().trimmed().isEmpty(), _notes,
+                           tr("You must enter some Notes to describe this transaction."))
     ;
-  if (! error[errIndex].msg.isEmpty())
-  {
-    QMessageBox::critical(this, tr("Cannot Post G/L Journal Entry"),
-			  error[errIndex].msg);
-    error[errIndex].widget->setFocus();
-    return;
-  }
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Post G/L Journal Entry"), errors))
+      return;
 
   if (! _amount->isBase() &&
       QMessageBox::question(this, tr("G/L Transaction Not In Base Currency"),
