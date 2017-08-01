@@ -201,6 +201,13 @@ enum SetResponse glSeries::set(const ParameterList &pParams)
 void glSeries::sNew()
 {
 
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(!_date->isValid(), _date,
+                           tr("You must enter a Distribution Date for this Series."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Maintain G/L Series"), errors))
+      return;
+
   ParameterList params;
   params.append("mode", "new");
   params.append("doctype", _doctype->currentText());
@@ -223,6 +230,13 @@ void glSeries::sNew()
 
 void glSeries::sEdit()
 {
+
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(!_date->isValid(), _date,
+                           tr("You must enter a Distribution Date for this Series."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Maintain G/L Series"), errors))
+      return;
 
   ParameterList params;
   params.append("mode", "edit");

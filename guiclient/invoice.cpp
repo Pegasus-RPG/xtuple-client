@@ -536,15 +536,6 @@ void invoice::sCopyToShipto()
 
 void invoice::sSave()
 {
-  struct {
-    bool	condition;
-    QString	msg;
-    QWidget*	widget;
-  } error[] = {
-    // TODO: add more error checks here?
-    { true, "", NULL }
-  };
-
   QList<GuiErrorCheck> errors;
     errors<< GuiErrorCheck(_cust->id() <= 0, _cust,
                            tr("You must enter a Customer for this Invoice before saving it."))
@@ -568,18 +559,6 @@ void invoice::sSave()
     _miscChargeAccount->setFocus();
     return;
   }
-
-
-  int errIndex;
-  for (errIndex = 0; ! error[errIndex].condition; errIndex++)
-    ;
-  if (! error[errIndex].msg.isEmpty())
-  {
-    QMessageBox::critical(this, tr("Cannot Save Invoice"), error[errIndex].msg);
-    error[errIndex].widget->setFocus();
-    return;
-  }
-
   // save address info in case someone wants to use 'em again later
   // but don't make any global changes to the data and ignore errors
   _shipToAddr->blockSignals(true);
