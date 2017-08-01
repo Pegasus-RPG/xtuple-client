@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QFile>
 #include <QProgressDialog>
+#include "guiErrorCheck.h"
 
 purgeInvoices::purgeInvoices(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -39,12 +40,13 @@ void purgeInvoices::languageChange()
 void purgeInvoices::sPurge()
 {
   XSqlQuery purgePurge;
-  if (!_cutOffDate->isValid())
-  {
-    QMessageBox::warning( this, tr("Enter Cutoff Date"),
-                          tr("You must enter a valid cutoff date before purging Invoice Records.") );
-    return;
-  }
+
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(!_cutOffDate->isValid(), _cutOffDate,
+                           tr("You must enter a valid cutoff date before purging Invoice Records."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Enter Cutoff Date"), errors))
+      return;
 
   if ( QMessageBox::warning( this, tr("Delete Invoice Records"),
                              tr( "This function will purge Invoices and all of the associated documents including:\n"

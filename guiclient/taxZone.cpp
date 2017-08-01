@@ -17,6 +17,7 @@
 
 #include "storedProcErrorLookup.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 taxZone::taxZone(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -101,12 +102,13 @@ void taxZone::sCheck()
 void taxZone::sSave()
 {
   XSqlQuery taxSave;
-  if (_taxZone->text().length() == 0)
-  {
-      QMessageBox::warning( this, tr("Cannot Save Tax Zone"),
-                            tr("You must enter a valid Code.") );
+
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_taxZone->text().length() == 0, _taxZone,
+                           tr("You must enter a valid Code."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Tax Zone"), errors))
       return;
-  }
   
   if (_mode == cEdit)
   {

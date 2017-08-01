@@ -13,6 +13,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 subAccntType::subAccntType(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -85,14 +86,13 @@ void subAccntType::sSave()
     subSave.bindValue(":subaccnttype_id", _subaccnttypeid);
     subSave.bindValue(":subaccnttype_code", _code->text());
     subSave.exec();
-    if (subSave.first())
-    {
-      QMessageBox::critical( this, tr("Cannot Create Subaccount Type"),
-                             tr( "A Subaccount Type with the entered code already exists."
-                                 "You may not create a Subaccount Type with this code." ) );
-      _code->setFocus();
+
+    QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(subSave.first(), _code,
+                           tr("A Subaccount Type with the entered code already exists. You may not create a Subaccount Type with this code."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Create Subaccount Type"), errors))
       return;
-    }
 
     subSave.prepare( "UPDATE subaccnttype "
                "SET subaccnttype_code=:subaccnttype_code,"
@@ -121,14 +121,13 @@ void subAccntType::sSave()
                "WHERE (subaccnttype_code=:subaccnttype_code);");
     subSave.bindValue(":subaccnttype_code", _code->text().trimmed());
     subSave.exec();
-    if (subSave.first())
-    {
-      QMessageBox::critical( this, tr("Cannot Create Subaccount Type"),
-                             tr( "A Subaccount Type with the entered code already exists.\n"
-                                 "You may not create a Subaccount Type with this code." ) );
-      _code->setFocus();
+
+    QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(subSave.first(), _code,
+                           tr("A Subaccount Type with the entered code already exists. You may not create a Subaccount Type with this code."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Create Subaccount Type"), errors))
       return;
-    }
 
     subSave.exec("SELECT NEXTVAL('subaccnttype_subaccnttype_id_seq') AS subaccnttype_id;");
     if (subSave.first())

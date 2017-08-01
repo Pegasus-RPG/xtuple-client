@@ -14,6 +14,7 @@
 #include <QSqlError>
 #include <QVariant>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 subaccount::subaccount(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -73,13 +74,7 @@ enum SetResponse subaccount::set(const ParameterList &pParams )
 void subaccount::sSave()
 {
   XSqlQuery subaccountSave;
-  if (_number->text().length() == 0)
-  {
-      QMessageBox::warning( this, tr("Cannot Save Sub Account"),
-                            tr("You must enter a valid Number.") );
-      return;
-  }
-  
+
   subaccountSave.prepare("SELECT subaccnt_id"
             "  FROM subaccnt"
             " WHERE((subaccnt_id != :subaccnt_id)"
@@ -87,12 +82,15 @@ void subaccount::sSave()
   subaccountSave.bindValue(":subaccnt_id", _subaccntid);
   subaccountSave.bindValue(":subaccnt_number", _number->text());
   subaccountSave.exec();
-  if(subaccountSave.first())
-  {
-    QMessageBox::critical(this, tr("Duplicate Sub Account Number"),
-      tr("A Sub Account Number already exists for the one specified.") );
-    return;
-  }
+
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_number->text().length() == 0, _number,
+                           tr("You must enter a valid Number."))
+          << GuiErrorCheck(subaccountSave.first(), _number,
+                           tr("A Sub Account Number already exists for the one specified."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Sub Account"), errors))
+      return;
 
   if (_mode == cNew)
   {

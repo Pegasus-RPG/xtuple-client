@@ -23,6 +23,7 @@
 #include "xabstractconfigure.h"
 #include "xtreewidget.h"
 #include "xwidget.h"
+#include "guiErrorCheck.h"
 
 void setupSetupApi(QScriptEngine *engine)
 {
@@ -506,10 +507,14 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
         QUiLoader loader;
         QByteArray ba = screenq.value("uiform_source").toByteArray();
         QBuffer uiFile(&ba);
-        if (!uiFile.open(QIODevice::ReadOnly))
-          QMessageBox::critical(0, tr("Could not load UI"),
-                                tr("<p>There was an error loading the UI Form "
-                                   "from the database."));
+
+        QList<GuiErrorCheck> errors;
+        errors<< GuiErrorCheck(!uiFile.open(QIODevice::ReadOnly), _tree,
+                           tr("There was an error loading the UI Form from the database."))
+        ;
+        if (GuiErrorCheck::reportErrors(this, tr("Could not load UI"), errors))
+          return;
+
         w = loader.load(&uiFile);
         w->setObjectName(uiName);
         uiFile.close();

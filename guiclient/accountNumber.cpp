@@ -17,6 +17,7 @@
 #include <metasql.h>
 #include <parameter.h>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 accountNumber::accountNumber(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -196,13 +197,12 @@ void accountNumber::sSave()
 
   if (_mode == cNew)
   {
-    if(_number->text().trimmed().isEmpty())
-    {
-      QMessageBox::warning(this, tr("No Account Number"),
-			   tr("<p>You must specify an account number before "
-			      "you may save this record."));
+    QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_number->text().trimmed().isEmpty(), _number,
+                           tr("You must specify an account number before you may save this record."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("No Account Number"), errors))
       return;
-    }
 
     accountSave.exec("SELECT NEXTVAL('accnt_accnt_id_seq') AS _accnt_id;");
     if (accountSave.first())
