@@ -180,6 +180,9 @@ void dspDetailedInventoryHistoryByLocation::sPopulateMenu(QMenu *menuThis, QTree
 
 bool dspDetailedInventoryHistoryByLocation::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   params.append("byLocation");
  
   if (!_dates->startDate().isValid())

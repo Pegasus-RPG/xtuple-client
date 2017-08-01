@@ -70,6 +70,9 @@ enum SetResponse dspSalesOrderStatus::set(const ParameterList &pParams)
 
 bool dspSalesOrderStatus::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   params.append("sohead_id", _so->id());
 
   return true;

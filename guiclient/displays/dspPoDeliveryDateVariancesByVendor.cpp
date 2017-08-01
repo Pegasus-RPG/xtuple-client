@@ -56,6 +56,9 @@ void dspPoDeliveryDateVariancesByVendor::languageChange()
 
 bool dspPoDeliveryDateVariancesByVendor::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if (!_vendor->isValid())
   {
     QMessageBox::warning(this, tr("Vendor Required"),

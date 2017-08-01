@@ -130,6 +130,9 @@ void dspUninvoicedReceivings::sCreateCreditMemo()
 
 bool dspUninvoicedReceivings::setParams(ParameterList &pParams)
 {
+  if (!display::setParams(pParams))
+    return false;
+
   _warehouse->appendValue(pParams);
   if(_selectedPurchasingAgent->isChecked())
     pParams.append("agentUsername", _agent->currentText());

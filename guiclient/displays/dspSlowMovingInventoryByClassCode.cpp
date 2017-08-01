@@ -66,6 +66,9 @@ void dspSlowMovingInventoryByClassCode::languageChange()
 
 bool dspSlowMovingInventoryByClassCode::setParams(ParameterList & params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if(!_cutoffDate->isValid())
   {
     QMessageBox::warning(this, tr("No Cutoff Date"),
