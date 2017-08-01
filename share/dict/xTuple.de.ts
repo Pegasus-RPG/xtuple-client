@@ -5328,6 +5328,13 @@ zurückgegeben %2
     </message>
 </context>
 <context>
+    <name>StatusBarMessageHandler</name>
+    <message>
+        <source>Status Bar cannot answer this question: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Sudoable</name>
     <message>
         <source>Password:</source>
@@ -46729,12 +46736,6 @@ Vor dem Fortfahren bitte sicherstellen, daß der Ist-Vorrat ausreicht.</translat
         <translation>Anbieter</translation>
     </message>
     <message>
-        <source>The selected Item Site cannot be deleted as there is Sales History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>Der gewählte Artikelstandort kann nicht gelöscht werden, weil ein Umsatzverlauf auf ihn verbucht ist.
-Sie können den Artikelstandort bearbeiten und ihn deaktivieren.</translation>
-    </message>
-    <message>
         <source>None</source>
         <translation>Kein</translation>
     </message>
@@ -46817,10 +46818,6 @@ Sie können den Artikelstandort bearbeiten und ihn deaktivieren.</translation>
     <message>
         <source>Name</source>
         <translation>Name</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is a non-zero Inventory Quantity posted againt it.</source>
-        <translation>Der Artikelstandort kann nicht gelöscht werden, es sind noch Bestände vorhanden.</translation>
     </message>
     <message>
         <source>This item is used in an active bill of materials for a kit and must be marked as sold. Expire the bill of material items or deactivate the kit items to allow this item to not be sold.</source>
@@ -46975,10 +46972,6 @@ Sie können den Artikelstandort bearbeiten und ihn deaktivieren.</translation>
         <translation>Kann Artikel nicht sichern</translation>
     </message>
     <message>
-        <source>Cannot Delete Item Site</source>
-        <translation>Kann Artikelstandort nicht löschen</translation>
-    </message>
-    <message>
         <source>Cost</source>
         <translation type="unfinished">Kosten</translation>
     </message>
@@ -46989,12 +46982,6 @@ Sie können den Artikelstandort bearbeiten und ihn deaktivieren.</translation>
     <message>
         <source>Elements</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Inventory History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>Der gewählte Artikelstandort kann nicht gelöscht werden, weil ein Warenbestandsverlauf auf ihn verbucht ist.
-Sie können den Artikelstandort bearbeiten und ihn deaktivieren.</translation>
     </message>
     <message>
         <source>Value</source>
@@ -47021,12 +47008,6 @@ Sie können den Artikelstandort bearbeiten und ihn deaktivieren.</translation>
         <translation>Chargen-Nr.</translation>
     </message>
     <message>
-        <source>The selected Item Site cannot be deleted as there is Work Order History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>Der gewählte Artikelstandort kann nicht gelöscht werden, weil eine Fertigungsauftragsrückschau auf ihn verbucht ist.
-Sie können den Artikelstandort bearbeiten und deaktivieren.</translation>
-    </message>
-    <message>
         <source>Warranty:</source>
         <translation>Gewährleistung:</translation>
     </message>
@@ -47037,12 +47018,6 @@ Sie können den Artikelstandort bearbeiten und deaktivieren.</translation>
     <message>
         <source>&amp;Print</source>
         <translation>&amp;Drucken</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Purchasing History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>Der gewählte Artikelstandort kann nicht gelöscht werden, weil eine Einkaufsrückschau auf ihn verbucht ist.
-Sie können den Artikelstandort bearbeiten und ihn deaktivieren.</translation>
     </message>
     <message>
         <source>BOM Items should be marked as Sold</source>
@@ -47071,12 +47046,6 @@ Sie können den Artikelstandort bearbeiten und ihn deaktivieren.</translation>
     <message>
         <source>This Item is used in an active Bill of Materials and must be marked as active. Expire the Bill of Material items to allow this Item to not be active.</source>
         <translation>Dieser Artikel wird in einer Aktiven Materialrechnung benutzt und muss als aktiv markiert werden. Lassen Sie die Gültigkeit der Materialrechnung auslaufen, um diesem Artikel zu erlauben nicht aktiv zu sein.</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Planning History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>Der gewählte Artikelstandort kann nicht gelöscht werden, weil eine Planungsrückschau auf ihn verbucht ist.
-Sie können den Artikelstandort bearbeiten und ihn deaktivieren.</translation>
     </message>
     <message>
         <source>Site</source>
@@ -47324,6 +47293,10 @@ Sie können den Artikelstandort bearbeiten und ihn deaktivieren.</translation>
     </message>
     <message>
         <source>Error Updating Item Taxes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Deleting Item Site</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58740,11 +58713,27 @@ Der Systemadministrator dieses Programms muß das korrigieren, bevor Sie Bezugsb
         <source>Print Sales Credit</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Print Credit Memo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>printCreditMemos</name>
     <message>
         <source>Print Sales Credits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print Credit Memos</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58765,6 +58754,10 @@ Der Systemadministrator dieses Programms muß das korrigieren, bevor Sie Bezugsb
     <message>
         <source>Invoice #:</source>
         <translation type="unfinished">Rechnungsnr.:</translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -58795,6 +58788,10 @@ Der Systemadministrator dieses Programms muß das korrigieren, bevor Sie Bezugsb
     </message>
     <message>
         <source>&lt;p&gt;Invoice %1 has a total value of 0.&lt;br/&gt;Would you like to post it anyway?&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -59020,19 +59017,11 @@ Der Systemadministrator dieses Programms muß das korrigieren, bevor Sie Bezugsb
         <translation type="unfinished">&amp;Drucken</translation>
     </message>
     <message>
-        <source>Transaction Canceled</source>
-        <translation type="unfinished">Transaktion abgebrochen</translation>
-    </message>
-    <message>
         <source>Post Anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Posting %1 #%2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Posting Canceled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -60661,6 +60650,14 @@ Sie können mit diesem Schlüssel keine Produktkategorie erstellen.</translation
         <source>Percent Complete:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cannot Print Orders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please first select an order type or types to print.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>projectCopy</name>
@@ -62088,6 +62085,14 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
     <message>
         <source>Error Saving Purchase Order</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selected Item Missing Cost</source>
+        <translation type="unfinished">Ausgwählter Artikel Fehlende Kosten</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;The selected item has no Std. Costing information. Please see your controller to correct this situation before continuing.</source>
+        <translation type="unfinished">&lt;p&gt;Der ausgewählte Artikel besitzt keine Standard-Kostenermittlungsinformation. Bevor Sie fortfahren, muß der Systemadministrator dieses Problem erst beheben.</translation>
     </message>
 </context>
 <context>
@@ -83663,10 +83668,6 @@ by an Item Source</source>
         <translation type="unfinished">V/K Rückschau</translation>
     </message>
     <message>
-        <source>Checks</source>
-        <translation type="unfinished">Schecks</translation>
-    </message>
-    <message>
         <source>Earliest</source>
         <translation type="unfinished">Frühestens</translation>
     </message>
@@ -86299,6 +86300,10 @@ Please correct before creating this Work Order</source>
     </message>
     <message>
         <source>Error issuing Work Order Material. %</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error checking for boohead</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
