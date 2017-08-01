@@ -5309,6 +5309,13 @@ returned %2
     </message>
 </context>
 <context>
+    <name>StatusBarMessageHandler</name>
+    <message>
+        <source>Status Bar cannot answer this question: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Sudoable</name>
     <message>
         <source>Password:</source>
@@ -15051,7 +15058,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktifleştirildi</translation>
     </message>
     <message>
         <source>Schemas Not in Order:</source>
@@ -46644,22 +46651,12 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
         <translation>Aktif</translation>
     </message>
     <message>
-        <source>The selected Item Site cannot be deleted as there is Planning History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>malzeme deposu</translation>
-    </message>
-    <message>
         <source>Cntrl. Method</source>
         <translation>Denetim Yöntemi</translation>
     </message>
     <message>
         <source>Notes</source>
         <translation>Notlar</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Sales History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>Seçili malzeme/üretim yeri silinemez</translation>
     </message>
     <message>
         <source>Vendor Item</source>
@@ -46722,11 +46719,6 @@ You may edit the Item Site and deactivate it.</source>
         <translation>Kaynaklar</translation>
     </message>
     <message>
-        <source>The selected Item Site cannot be deleted as there is Purchasing History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>Seçili malzeme/üretim yeri silinemez</translation>
-    </message>
-    <message>
         <source>This Item is used in an active Item Source and must be marked as active. Deactivate the Item Sources to allow this Item to not be active.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -46753,11 +46745,6 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <source>Freight Class:</source>
         <translation>Nakliye Sınıfı:</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Work Order History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>Seçili malzeme/üretim yeri silinemez</translation>
     </message>
     <message>
         <source>Ratio</source>
@@ -46822,11 +46809,6 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <source>Planning</source>
         <translation>Planlama</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Inventory History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>Seçili malzeme/deposu silinemez</translation>
     </message>
     <message>
         <source>&amp;No</source>
@@ -47001,10 +46983,6 @@ You may edit the Item Site and deactivate it.</source>
         <translation>Garanti</translation>
     </message>
     <message>
-        <source>The selected Item Site cannot be deleted as there is a non-zero Inventory Quantity posted againt it.</source>
-        <translation>Seçilen ürün mevkinde sıfır olmayan envanter miktarı olduğu için silinemiyor. </translation>
-    </message>
-    <message>
         <source>&amp;New</source>
         <translation>Yeni</translation>
     </message>
@@ -47095,10 +47073,6 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <source>Manufactured</source>
         <translation>Üretilen</translation>
-    </message>
-    <message>
-        <source>Cannot Delete Item Site</source>
-        <translation>Malzeme Deposu Silinemiyor</translation>
     </message>
     <message>
         <source>Characteristic</source>
@@ -47210,6 +47184,10 @@ You may edit the Item Site and deactivate it.</source>
     </message>
     <message>
         <source>Error Updating Item Taxes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Deleting Item Site</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58592,11 +58570,27 @@ post Vouchers.</source>
         <source>Print Sales Credit</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Print Credit Memo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>printCreditMemos</name>
     <message>
         <source>Print Sales Credits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print Credit Memos</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58616,6 +58610,10 @@ post Vouchers.</source>
     </message>
     <message>
         <source>Invoice #:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58647,6 +58645,10 @@ post Vouchers.</source>
     </message>
     <message>
         <source>Could not post Invoice %1 because of a missing exchange rate.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58861,14 +58863,6 @@ post Vouchers.</source>
     </message>
     <message>
         <source>Cannot Find Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Transaction Canceled</source>
-        <translation type="unfinished">İşlem iptal edildi</translation>
-    </message>
-    <message>
-        <source>Posting Canceled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -60510,6 +60504,14 @@ You may not create a Product Category with this code.</source>
         <source>Percent Complete:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cannot Print Orders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please first select an order type or types to print.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>projectCopy</name>
@@ -61936,6 +61938,14 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
     </message>
     <message>
         <source>Error Saving Purchase Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selected Item Missing Cost</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;The selected item has no Std. Costing information. Please see your controller to correct this situation before continuing.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -79882,7 +79892,7 @@ otherwise a new one will be created.</source>
     </message>
     <message>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktifleştirildi</translation>
     </message>
     <message>
         <source>Description</source>
@@ -83456,10 +83466,6 @@ and Purchase Order amounts</source>
         <translation type="unfinished">Borçlar Hesabı Tarihçesi</translation>
     </message>
     <message>
-        <source>Checks</source>
-        <translation type="unfinished">Çekler</translation>
-    </message>
-    <message>
         <source>Earliest</source>
         <translation type="unfinished">En Erken</translation>
     </message>
@@ -86076,6 +86082,10 @@ Please correct before creating this Work Order</source>
     </message>
     <message>
         <source>Error issuing Work Order Material. %</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error checking for boohead</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
