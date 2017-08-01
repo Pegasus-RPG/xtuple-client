@@ -187,10 +187,6 @@ void reconcileBankaccount::sReconcile()
 {
   XSqlQuery reconcileReconcile;
 
-  if(!_datesAreOK){
-    _datesAreOK = false;
-  }
-
   QList<GuiErrorCheck> errors;
     errors<< GuiErrorCheck(_bankrecid == -1, _bankaccnt,
                            tr("There was an error trying to reconcile this account. Please contact your Systems Administrator."))

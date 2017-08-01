@@ -108,7 +108,7 @@ void glTransaction::sPost()
           << GuiErrorCheck(! _credit->isValid(), _credit,
                            tr("You must select a Credit Account for this G/L Transaction before you may Post it."))
           << GuiErrorCheck(!_metrics->boolean("IgnoreCompany") && _credit->companyId() != _debit->companyId(), _credit,
-                           tr("The Accounts must belong to the same Company to Post this transaciton."))
+                           tr("The Accounts must belong to the same Company to Post this transaction."))
           << GuiErrorCheck(_metrics->boolean("MandatoryGLEntryNotes") && _notes->toPlainText().trimmed().isEmpty(), _notes,
                            tr("You must enter some Notes to describe this transaction."))
     ;

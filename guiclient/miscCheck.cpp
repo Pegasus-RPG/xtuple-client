@@ -110,7 +110,7 @@ void miscCheck::sSave()
                            tr("You must enter a date for this payment."))
           << GuiErrorCheck(_amount->isZero(), _amount,
                            tr("You must enter an amount for this payment."))
-          << GuiErrorCheck((_applytocm->isChecked()) && (_cmCluster->id() == -1), _expcat,
+          << GuiErrorCheck((_applytocm->isChecked()) && (_cmCluster->id() == -1), _cmCluster,
                            tr("You must select a Credit Memo for this expensed payment."))
           << GuiErrorCheck(_applytocm->isChecked() && _cmCluster->isValid() && (_amt > _aropenamt), _amount,
                            tr("You must enter an amount less than or equal to the credit memo selected."))
