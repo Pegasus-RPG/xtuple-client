@@ -14,6 +14,7 @@
 #include "guiErrorCheck.h"
 #include "glSeries.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 postStandardJournalGroup::postStandardJournalGroup(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -69,11 +70,11 @@ void postStandardJournalGroup::sPost()
   XSqlQuery postPost;
 
   QList<GuiErrorCheck> errors;
-  errors<< GuiErrorCheck(!_distDate->isValid(), _distDate,
-                         tr("You must enter a Distribution Date before you may post this Standard Journal Group."))
-  ;
-  if (GuiErrorCheck::reportErrors(this, tr("Cannot Post Standard Journal Group"), errors))
-    return;
+    errors<< GuiErrorCheck(!_distDate->isValid(), _distDate,
+                           tr("You must enter a Distribution Date before you may post this Standard Journal Group."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Post Standard Journal Group"), errors))
+      return;
 
   postPost.prepare("SELECT postStandardJournalGroup(:stdjrnlgrp_id, :distDate, :reverse) AS result;");
   postPost.bindValue(":stdjrnlgrp_id", _stdjrnlgrp->id());

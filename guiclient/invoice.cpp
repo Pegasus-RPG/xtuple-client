@@ -26,6 +26,7 @@
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
 #include "allocateARCreditMemo.h"
+#include "guiErrorCheck.h"
 
 #define cViewQuote (0x20 | cView)
 
@@ -535,35 +536,16 @@ void invoice::sCopyToShipto()
 
 void invoice::sSave()
 {
-  struct {
-    bool	condition;
-    QString	msg;
-    QWidget*	widget;
-  } error[] = {
-    { _cust->id() <= 0,
-      tr("<p>You must enter a Customer for this Invoice before saving it."),
-      _cust
-    },
-    // TODO: add more error checks here?
-    { true, "", NULL }
-  };
-
-  if (_total->localValue() < 0 )
-  {
-    QMessageBox::information(this, tr("Total Less than Zero"),
-                             tr("<p>The Total must be a positive value.") );
-    _cust->setFocus();
-    return;
-  }
-
-  //Invoices must have atleast one line item.
-  if (_invcitem->topLevelItemCount() <= 0 )
-  {
-    QMessageBox::information(this, tr("No Line Items"),
-                             tr("<p>There must be at least one line item for an invoice.") );
-    _new->setFocus();
-    return;
-  }
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_cust->id() <= 0, _cust,
+                           tr("You must enter a Customer for this Invoice before saving it."))
+          << GuiErrorCheck(_total->localValue() < 0, _cust,
+                           tr("The Total must be a positive value."))
+          << GuiErrorCheck(_invcitem->topLevelItemCount() <= 0, _new,
+                           tr("There must be at least one line item for an invoice."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Invoice"), errors))
+      return;
 
   //  We can't post a Misc. Charge without a Sales Account
   if ( (! _miscAmount->isZero()) && (!_miscChargeAccount->isValid()) )
@@ -577,18 +559,6 @@ void invoice::sSave()
     _miscChargeAccount->setFocus();
     return;
   }
-
-
-  int errIndex;
-  for (errIndex = 0; ! error[errIndex].condition; errIndex++)
-    ;
-  if (! error[errIndex].msg.isEmpty())
-  {
-    QMessageBox::critical(this, tr("Cannot Save Invoice"), error[errIndex].msg);
-    error[errIndex].widget->setFocus();
-    return;
-  }
-
   // save address info in case someone wants to use 'em again later
   // but don't make any global changes to the data and ignore errors
   _shipToAddr->blockSignals(true);

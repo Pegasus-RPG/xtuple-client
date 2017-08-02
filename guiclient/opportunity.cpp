@@ -26,6 +26,7 @@
 #include "quoteList.h"
 #include "printQuote.h"
 #include "printSoForm.h"
+#include "guiErrorCheck.h"
 
 bool opportunity::userHasPriv(const int pMode, const int pId)
 {
@@ -287,20 +288,14 @@ bool opportunity::save(bool partial)
   XSqlQuery opportunityave;
   if (! partial)
   {
-    if(_crmacct->id() == -1)
-    {
-      QMessageBox::critical( this, tr("Incomplete Information"),
-	tr("You must specify the Account that this opportunity is for.") );
+    QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_crmacct->id() == -1, _crmacct,
+                           tr("You must specify the Account that this opportunity is for."))
+          << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                           tr("You must specify a Name for this opportunity report."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Incident"), errors))
       return false;
-    }
-
-    if(_name->text().trimmed().isEmpty())
-    {
-      QMessageBox::critical( this, tr("Incomplete Information"),
-	tr("You must specify a Name for this opportunity report.") );
-      _name->setFocus();
-      return false;
-    }
   }
 
   XSqlQuery rollback;
