@@ -16,6 +16,7 @@
 #include <QList>
 #include <QMenu>
 #include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 #include <QToolBar>
 #include <QToolButton>
@@ -135,12 +136,13 @@ void dspFinancialReport::sViewTransactions()
 bool dspFinancialReport::sCheck()
 {
   XSqlQuery dspCheck;
-  if (!_periods->selectedItems().count())
-  {
-    QMessageBox::warning( this, tr("No period selected"),
-                         tr("<p>You must select at least one period.") );
+
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(!_periods->selectedItems().count(), _periods,
+                         tr("You must select at least one period."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("No period selected"), errors))
     return false;
-  }
 
   //Make sure user has upgraded period settings
   dspCheck.exec("SELECT period_id FROM period WHERE period_quarter IS NULL;");
