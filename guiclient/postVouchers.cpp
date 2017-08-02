@@ -11,6 +11,7 @@
 #include "postVouchers.h"
 
 #include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 
 #include <openreports.h>
@@ -42,12 +43,13 @@ void postVouchers::sPost()
   XSqlQuery postPost;
   postPost.prepare("SELECT count(*) AS unposted FROM vohead WHERE (NOT vohead_posted)");
   postPost.exec();
-  if(postPost.first() && postPost.value("unposted").toInt()==0)
-  {
-    QMessageBox::critical( this, tr("No Vouchers to Post"),
-                           tr("There are no Vouchers to post.") );
+
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(postPost.first() && postPost.value("unposted").toInt()==0, _post,
+                         tr("There are no Vouchers to post."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("No Vouchers to Post"), errors))
     return;
-  }
 
   postPost.prepare("SELECT postVouchers(false) AS result;");
   postPost.exec();
