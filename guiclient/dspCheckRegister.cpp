@@ -12,7 +12,7 @@
 
 #include <QAction>
 #include <QMenu>
-#include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 #include <QVariant>
 
@@ -77,14 +77,13 @@ void dspCheckRegister::languageChange()
 
 bool dspCheckRegister::setParams(ParameterList &pParams)
 {
-  if(!_dates->allValid())
-  {
-    QMessageBox::information( this, tr("Invalid Dates"),
-			      tr("<p>Invalid dates specified. Please specify a "
-				 "valid date range.") );
-    _dates->setFocus();
+
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(!_dates->allValid(), _dates,
+            tr("Invalid dates specified. Please specify a valid date range."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Invalid Dates"), errors))
     return false;
-  }
   
   if(_recipGroup->isChecked())
   {
