@@ -43,14 +43,14 @@ QString buildItemLineEditQuery(const QString pPre, const QStringList pClauses, c
     sql = pPre + " FROM ("
                  "   SELECT item_id, item_number, item_descrip1, item_descrip2, "
                  "      item_upccode, item_type, item_fractional, item_config, item_inv_uom_id, "
-                 "      item_sold, item_active "
+                 "      item_sold, item_active, NULL AS itemalias_crmacct_id "
                  "   FROM item "
                  "   UNION "
                  "   SELECT item_id, itemalias_number, "
                  "     CASE WHEN LENGTH(itemalias_descrip1) > 1 THEN itemalias_descrip1 ELSE item_descrip1 END, "
                  "     CASE WHEN LENGTH(itemalias_descrip2) > 1 THEN itemalias_descrip1 ELSE item_descrip2 END, "
                  "      item_upccode, item_type, item_fractional, item_config, item_inv_uom_id,"
-                 "      item_sold, item_active "
+                 "      item_sold, item_active, itemalias_crmacct_id "
                  "   FROM item "
                  "     JOIN itemalias ON item_id = itemalias_item_id "
                  ") AS item "
@@ -530,6 +530,11 @@ void ItemLineEdit::setItemsiteid(int pItemsiteid)
   }
 }
 
+void ItemLineEdit::setCRMAcctId(unsigned int pAcct)
+{
+  _crmacct = pAcct;
+}
+
 void ItemLineEdit::sInfo()
 {
   ParameterList params;
@@ -595,6 +600,9 @@ void ItemLineEdit::sHandleCompleter()
     clauses = _extraClauses;
     clauses << "((POSITION(:searchString IN item_number) = 1)"
             " OR (POSITION(:searchString IN item_upccode) = 1))";
+    if (_crmacct > 0)
+      clauses << QString("(itemalias_crmacct_id IS NULL OR itemalias_crmacct_id = %1)")
+                    .arg(_crmacct);
     numQ.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type, true)
                               .replace(";"," ORDER BY item_number LIMIT 10;"));
     numQ.bindValue(":searchString", QString(text().trimmed().toUpper()));
@@ -728,6 +736,9 @@ void ItemLineEdit::sAlias()
 
   if (!_extraClauses.isEmpty())
     params.append("extraClauses", _extraClauses);
+
+  if (_crmacct > 0)
+    params.append("crmacct", _crmacct);
 
   itemAliasList newdlg(parentWidget(), "", true);
   newdlg.set(params);
@@ -872,6 +883,9 @@ void ItemLineEdit::sParse()
       // first check item number
       clauses = _extraClauses;
       clauses << "(POSITION(:searchString IN item_number) = 1)";
+      if (_crmacct > 0)
+        clauses << QString("(itemalias_crmacct_id IS NULL OR itemalias_crmacct_id = %1)")
+                      .arg(_crmacct);
       item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type, true)
                                .replace(";"," ORDER BY item_number LIMIT 1;"));
       item.bindValue(":searchString", QString(text().trimmed().toUpper()));
@@ -1018,6 +1032,11 @@ void ItemCluster::setItemNumber(QString pNumber)
 void ItemCluster::setItemsiteid(int intPItemsiteid)
 {
   static_cast<ItemLineEdit* >(_number)->setItemsiteid(intPItemsiteid);
+}
+
+void ItemCluster::setCRMAcctId(unsigned int intPCRMAcctid)
+{
+  static_cast<ItemLineEdit* >(_number)->setCRMAcctId(intPCRMAcctid);
 }
 
 void ItemCluster::setOrientation(Qt::Orientation orientation)

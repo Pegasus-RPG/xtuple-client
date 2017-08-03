@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -99,8 +99,9 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
   {
     _invcheadid = param.toInt();
 
-    invoiceet.prepare("SELECT * "
-                      "FROM invchead "
+    invoiceet.prepare("SELECT i.*, crmacct_id "
+                      "FROM invchead i "
+                      "JOIN crmacct ON (crmacct_cust_id=invchead_cust_id) "
 			  "WHERE (invchead_id = :invchead_id);");
     invoiceet.bindValue(":invchead_id", _invcheadid);
     invoiceet.exec();
@@ -113,6 +114,7 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       _tax->setId(invoiceet.value("invchead_curr_id").toInt());
       _price->setId(invoiceet.value("invchead_curr_id").toInt());
       _price->setEffective(invoiceet.value("invchead_invcdate").toDate());
+      _item->setCRMAcctId(invoiceet.value("crmacct_id").toInt());
       sPriceGroup();
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Invoice Line Item Information"),

@@ -159,6 +159,7 @@ friend class ItemLineEditDelegate;
     Q_INVOKABLE QString itemType();
     Q_INVOKABLE bool    isConfigured();
     Q_INVOKABLE bool    isFractional();
+    Q_INVOKABLE void setCRMAcctId(unsigned int);
 
   public slots:
     void sHandleCompleter();
@@ -206,6 +207,7 @@ friend class ItemLineEditDelegate;
     QString _upc;
     QString _itemType;
     QStringList _extraClauses;
+    unsigned int _crmacct;
     unsigned int _type;
     unsigned int _defaultType;
     bool    _configured;
@@ -262,6 +264,7 @@ class XTUPLEWIDGETS_EXPORT ItemCluster : public VirtualCluster
     Q_INVOKABLE inline QStringList getExtraClauseList() const       { return static_cast<ItemLineEdit*>(_number)->getExtraClauseList(); }
     Q_INVOKABLE inline void clearExtraClauseList()                  { static_cast<ItemLineEdit*>(_number)->clearExtraClauseList();      }
     Q_INVOKABLE ItemLineEdit *itemLineEdit() { return static_cast<ItemLineEdit*>(_number); }
+    Q_INVOKABLE void setCRMAcctId(unsigned int);
 
     void setOrientation(Qt::Orientation orientation);
 
