@@ -12,7 +12,7 @@
 
 #include <QAction>
 #include <QMenu>
-#include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 #include <QVariant>
 #include <xdateinputdialog.h>
@@ -157,29 +157,16 @@ bool dspVendorAPHistory::setParams(ParameterList &params)
 {
   if (isVisible())
   {
-    if (_vend->isVisible() && !_vend->isValid())
-    {
-      QMessageBox::warning( this, tr("Select Vendor"),
-                            tr("Please select a valid Vendor.") );
-      _vend->setFocus();
+    QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_vend->isVisible() && !_vend->isValid(), _vend,
+              tr("Please select a valid Vendor."))
+          << GuiErrorCheck(!_dates->startDate().isValid(), _dates,
+              tr("Please enter a valid Start Date."))
+          << GuiErrorCheck(!_dates->endDate().isValid(), _dates,
+              tr("Please enter a valid End Date."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot set Parameters"), errors))
       return false;
-    }
-
-    if (!_dates->startDate().isValid())
-    {
-      QMessageBox::warning( this, tr("Enter Start Date"),
-                            tr("Please enter a valid Start Date.") );
-      _dates->setFocus();
-      return false;
-    }
-
-    if (!_dates->endDate().isValid())
-    {
-      QMessageBox::warning( this, tr("Enter End Date"),
-                            tr("Please enter a valid End Date.") );
-      _dates->setFocus();
-      return false;
-    }
   }
 
   params.append("creditMemo", tr("Credit Memo"));

@@ -13,6 +13,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 #include <QVariant>
 
@@ -212,12 +213,12 @@ void dspInvoiceRegister::sViewInvoice()
 
 bool dspInvoiceRegister::setParams(ParameterList &params)
 {
-  if(!_dates->allValid())
-  {
-    QMessageBox::warning(this, tr("Invalid Date Range"),
-      tr("You must specify a valid date range.") );
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(!_dates->allValid(), _dates,
+                         tr("You must specify a valid date range."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Invalid Date Range"), errors))
     return false;
-  }
 
   _dates->appendValue(params);
 

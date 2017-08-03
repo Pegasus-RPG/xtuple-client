@@ -12,7 +12,7 @@
 
 #include <QAction>
 #include <QMenu>
-#include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 #include <QVariant>
 
@@ -59,15 +59,14 @@ bool dspTimePhasedOpenAPItems::setParams(ParameterList &params)
   if (!display::setParams(params))
     return false;
 
-  if ((_custom->isChecked() && ! _periods->isPeriodSelected()) ||
-      (!_custom->isChecked() && ! _asOf->isValid()))
-  {
-    QMessageBox::critical(this, tr("Incomplete criteria"),
-                          tr("<p>The criteria you specified are not complete. "
-                             "Please make sure all fields are correctly filled "
-                             "out before running the report." ) );
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck((_custom->isChecked() && ! _periods->isPeriodSelected()) || (!_custom->isChecked() && ! _asOf->isValid()), _custom,
+              tr("The criteria you specified are not complete. "
+                  "Please make sure all fields are correctly filled "
+                  "out before running the report."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Incomplete criteria"), errors))
     return false;
-  }
 
   _vendorGroup->appendValue(params);
 
@@ -164,13 +163,13 @@ void dspTimePhasedOpenAPItems::sFillList()
 void dspTimePhasedOpenAPItems::sFillCustom()
 {
   XSqlQuery dspFillCustom;
-  if (!_periods->isPeriodSelected())
-  {
-    if (isVisible())
-      QMessageBox::warning( this, tr("Select Calendar Periods"),
-                            tr("Please select one or more Calendar Periods") );
+
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(!_periods->isPeriodSelected(), _periods,
+              tr("Please select one or more Calendar Periods"))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Select Calendar Periods"), errors))
     return;
-  }
 
   _columnDates.clear();
   list()->setColumnCount(2);

@@ -290,6 +290,8 @@ void dspAPOpenItemsByVendor::sOnHold()
   selectpayment.exec();
   if (selectpayment.first())
   {
+    //For instances like these where I can convert the format
+    //what exactly would I highlight?
     QMessageBox::critical( this, tr("Can not change Status"), tr( "You cannot set this item as On Hold.\nThis Item is already selected for payment." ) );
     return;
   }
