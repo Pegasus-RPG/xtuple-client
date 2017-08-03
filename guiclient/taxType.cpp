@@ -13,6 +13,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 taxType::taxType(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -97,13 +98,13 @@ void taxType::sCheck()
 void taxType::sSave()
 {
   XSqlQuery taxSave;
-  if (_name->text().trimmed().isEmpty())
-  {
-    QMessageBox::critical(this, tr("Missing Name"),
-			  tr("<p>You must name this Tax Type before saving it."));
-    _name->setFocus();
-    return;
-  }
+
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                           tr("You must name this Tax Type before saving it."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Missing Name"), errors))
+      return;
 
   if (_mode == cEdit)
   {
@@ -114,14 +115,14 @@ void taxType::sSave()
     taxSave.bindValue(":taxtype_id", _taxtypeid);
     taxSave.bindValue(":taxtype_name", _name->text().trimmed());
     taxSave.exec();
-    if (taxSave.first())
-    {
-      QMessageBox::critical( this, tr("Cannot Create Tax Type"),
-                             tr( "A Tax Type with the entered name already exists."
-                                 "You may not create a Tax Type with this name." ) );
-      _name->setFocus();
+
+    QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(taxSave.first(), _name,
+                           tr("A Tax Type with the entered name already exists."
+                                 "You may not create a Tax Type with this name."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Create Tax Type"), errors))
       return;
-    }
 
     taxSave.prepare( "UPDATE taxtype "
                "SET taxtype_name=:taxtype_name,"
@@ -139,14 +140,14 @@ void taxType::sSave()
                "WHERE (UPPER(taxtype_name)=UPPER(:taxtype_name));");
     taxSave.bindValue(":taxtype_name", _name->text().trimmed());
     taxSave.exec();
-    if (taxSave.first())
-    {
-      QMessageBox::critical( this, tr("Cannot Create Tax Type"),
-                             tr( "A Tax Type with the entered name already exists.\n"
-                                 "You may not create a Tax Type with this name." ) );
-      _name->setFocus();
+
+    QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(taxSave.first(), _name,
+                           tr("A Tax Type with the entered name already exists."
+                                 "You may not create a Tax Type with this name."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Create Tax Type"), errors))
       return;
-    }
 
     taxSave.exec("SELECT NEXTVAL('taxtype_taxtype_id_seq') AS taxtype_id;");
     if (taxSave.first())

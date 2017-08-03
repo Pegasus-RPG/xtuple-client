@@ -17,6 +17,7 @@
 #include "metasql.h"
 #include "parameter.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 taxAssignment::taxAssignment(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -237,13 +238,15 @@ void taxAssignment::sAdd()
     else
       taxAdd.bindValue(":taxass_taxtype_id", -1);
     taxAdd.exec();
-    if(taxAdd.first())
-    {
-      QMessageBox::critical(this, tr("Incorrect Tax Code"), tr("Tax codes with same group sequence as this "
-      "tax code are already assigned to this Tax Zone / Tax Type pair. \nYou first "
-      "need to Revoke those Tax Codes."));
+
+    QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(taxAdd.first(), _taxCodeOption,
+                           tr("Tax codes with same group sequence as this "
+                              "tax code are already assigned to this Tax Zone / Tax Type pair. \nYou first "
+                              "need to Revoke those Tax Codes."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Incorrect Tax Code"), errors))
       return;
-    }
   }
   else
   {
@@ -269,15 +272,15 @@ void taxAssignment::sAdd()
     else
       taxAdd.bindValue(":taxass_taxtype_id", -1);
     taxAdd.exec();
-    if(taxAdd.first())
-    {
-      QMessageBox::critical(this, tr("Incorrect Tax Code"),
-                            tr("<p>Tax codes with the same group sequence as this "
-                               "one and which have subordinate taxes are already "
-                               "assigned to this Tax Zone / Tax Type pair.</p>"
-                               "<p>You first need to Revoke those Tax Codes.</p>"));
+
+    QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(taxAdd.first(), _taxCodeOption,
+                           tr("Tax codes with same group sequence as this "
+                              "tax code are already assigned to this Tax Zone / Tax Type pair. \nYou first "
+                              "need to Revoke those Tax Codes."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Incorrect Tax Code"), errors))
       return;
-    }
   }
     
   XSqlQuery rollback;

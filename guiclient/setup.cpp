@@ -506,10 +506,13 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
         QUiLoader loader;
         QByteArray ba = screenq.value("uiform_source").toByteArray();
         QBuffer uiFile(&ba);
-        if (!uiFile.open(QIODevice::ReadOnly))
-          QMessageBox::critical(0, tr("Could not load UI"),
-                                tr("<p>There was an error loading the UI Form "
-                                   "from the database."));
+
+         if (!uiFile.open(QIODevice::ReadOnly))
+            QMessageBox::critical(0, tr("Could not load UI"),
+                 tr("<p>There was an error loading the UI Form "
+                    "from the database."));
+
+
         w = loader.load(&uiFile);
         w->setObjectName(uiName);
         uiFile.close();
