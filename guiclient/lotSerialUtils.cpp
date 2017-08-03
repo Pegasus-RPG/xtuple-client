@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2013 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -89,7 +89,7 @@ void LotSerialUtils::updateLotCharacteristics(int ls_id, const QList<QWidget *> 
         XSqlQuery q;
         bool success = q.exec(QString("INSERT INTO charass "
                               "(charass_value, charass_target_type, charass_target_id, charass_char_id) "
-                              "VALUES ('%1', 'LS', %2, %3)").arg(char_text).arg(ls_id).arg(_charIds.at(i)));
+                              "VALUES ($$%1$$, 'LS', %2, %3)").arg(char_text).arg(ls_id).arg(_charIds.at(i)));
         if (!success)
         {
             qDebug() << "UpdateLotCharacteristics Error:" << q.lastError().text();
