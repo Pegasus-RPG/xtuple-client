@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -12,6 +12,7 @@
 
 #include <QMessageBox>
 #include <QVariant>
+#include <QCloseEvent>
 
 #include <metasql.h>
 #include <mqlutil.h>
@@ -251,6 +252,7 @@ contact::contact(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   _owner->setType(UsernameLineEdit::UsersActive);
   _owner->setEnabled(_privileges->check("EditOwner"));
 
+  _cntctid = -1;
 }
 
 contact::~contact()
@@ -276,6 +278,7 @@ enum SetResponse contact::set(const ParameterList &pParams)
     _comments->setId(_contact->id());
     _documents->setId(_contact->id());
     _charass->setId(_contact->id());
+    _cntctid = _contact->id();
     sPopulate();
   }
 
@@ -488,6 +491,14 @@ void contact::sClose()
   reject();
 }
 
+void contact::closeEvent(QCloseEvent *pEvent)
+{
+  if(_data->_mode == cNew && _cntctid == -1)
+    sClose();
+
+  XDialog::closeEvent(pEvent);
+}
+
 void contact::sSave()
 {
   QList<GuiErrorCheck> errors;
@@ -574,7 +585,7 @@ void contact::sSave()
                          .arg(saveResult), __FILE__, __LINE__);
     return;
   }
-
+  _cntctid = _contact->id();
   done(_contact->id());
 }
 
