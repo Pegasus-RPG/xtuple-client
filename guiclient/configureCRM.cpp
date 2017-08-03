@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -129,6 +129,9 @@ bool configureCRM::sSave()
   configq.bindValue(":innumber", _nextInNumber->text().toInt());
   configq.exec();
   
+  if (QString(numberGenerationTypes[_acctGeneration->currentIndex()]) != "M" && _nextAcctNumber->text().toInt() < 1)
+    _nextAcctNumber->setText("1");
+
   configq.prepare( "SELECT setNextCRMAccountNumber(:acnumber);" );
   configq.bindValue(":acnumber", _nextAcctNumber->text().toInt());
   configq.exec();
