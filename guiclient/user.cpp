@@ -88,8 +88,10 @@ user::user(QWidget* parent, const char * name, Qt::WindowFlags fl)
   }
 
   if (!_metrics->boolean("MultiWhs"))
+  {
     _tab->removeTab(_tab->indexOf(_siteTab));
-
+    _useFullApp->setVisible(false);
+  }
 }
 
 user::~user()
