@@ -13,7 +13,7 @@
 
 #include <QVariant>
 #include <QValidator>
-#include <QMessageBox>
+#include "guiErrorCheck.h"
 
 /*
  *  Constructs a cashReceiptItem as a child of 'parent', with the
@@ -114,13 +114,12 @@ enum SetResponse cashReceiptItem::set(const ParameterList &pParams)
 void cashReceiptItem::sSave()
 {
   double epsilon = 0.005;
-  if ((_amountToApply->localValue() + _discountAmount->localValue()) - _openAmount->localValue() > epsilon)
-  {
-    QMessageBox::warning( this, tr("Cannot Apply"),
-      tr("You may not apply more than the balance of this item.") );
-    _amountToApply->setFocus();
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck((_amountToApply->localValue() + _discountAmount->localValue()) - _openAmount->localValue() > epsilon, _amountToApply,
+                         tr("You may not apply more than the balance of this item."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Apply"), errors))
     return;
-  }
 
   int sense = 1;
   if (_docType->text() == "C" || _docType->text() == "R")

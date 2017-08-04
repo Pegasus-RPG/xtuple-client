@@ -11,7 +11,7 @@
 #include "standardJournalGroupItem.h"
 
 #include <QVariant>
-#include <QMessageBox>
+#include "guiErrorCheck.h"
 
 standardJournalGroupItem::standardJournalGroupItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -89,29 +89,17 @@ enum SetResponse standardJournalGroupItem::set(const ParameterList &pParams)
 void standardJournalGroupItem::sSave()
 {
   XSqlQuery standardSave;
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter Effective Date"),
-                           tr("You must enter an effective date for this Standard Journal Group Item.") );
-    _dates->setFocus();
-    return;
-  }
 
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter Expiration Date"),
-                           tr("You must enter an expiration date for this Standard Journal Group Item.") );
-    _dates->setFocus();
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(!_dates->startDate().isValid(), _dates,
+                         tr("You must enter an effective date for this Standard Journal Group Item."))
+        << GuiErrorCheck(!_dates->endDate().isValid(), _dates,
+                         tr("You must enter an expiration date for this Standard Journal Group Item."))
+        << GuiErrorCheck(_dates->endDate() < _dates->startDate(), _dates,
+                         tr("The expiration date cannot be earlier than the effective date."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Journal Group"), errors))
     return;
-  }
-
-  if (_dates->endDate() < _dates->startDate())
-  {
-    QMessageBox::critical( this, tr("Invalid Expiration Date"),
-                           tr("The expiration date cannot be earlier than the effective date.") );
-    _dates->setFocus();
-    return;
-  }
 
   if (_mode == cNew)
   {
