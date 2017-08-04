@@ -142,7 +142,7 @@ bool dspFinancialReport::sCheck()
 
   QList<GuiErrorCheck> errors;
   errors<< GuiErrorCheck(!_periods->selectedItems().count(), _periods,
-                         tr("You must select at least one period."))
+                         tr("You must select at least one period.")),
         << GuiErrorCheck(dspCheck.first(), _periods,
                          tr("Please make sure all accounting periods "
                             "are associated with a quarter and fiscal year "
