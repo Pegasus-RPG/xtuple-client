@@ -525,9 +525,9 @@ void invoiceItem::sDeterminePrice()
                                tr("<p>This item is marked as exclusive and "
                                   "no qualifying price schedule was found. "
                                   "You may click on the price list button "
-				                          "(...) next to the Unit Price to determine "
+				                  "(...) next to the Unit Price to determine "
                                   "if there is a minimum quantity the selected "
-				                          "Customer may purchase." ) );
+				                  "Customer may purchase." ) );
         _custPrice->clear();
         _price->clear();
         _billed->clear();
