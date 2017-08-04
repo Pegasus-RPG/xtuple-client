@@ -165,7 +165,7 @@ void dspTimePhasedOpenAPItems::sFillCustom()
   XSqlQuery dspFillCustom;
 
   QList<GuiErrorCheck> errors;
-  errors<< GuiErrorCheck(!_periods->isPeriodSelected(), _periods,
+  errors<< GuiErrorCheck(!_periods->isPeriodSelected() && isVisible(), _periods,
               tr("Please select one or more Calendar Periods"))
   ;
   if (GuiErrorCheck::reportErrors(this, tr("Select Calendar Periods"), errors))

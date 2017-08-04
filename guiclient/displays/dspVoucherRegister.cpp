@@ -127,13 +127,11 @@ bool dspVoucherRegister::setParams(ParameterList & params)
             tr("Enter a valid Start Date."))
         << GuiErrorCheck(! _dates->endDate().isValid(), _dates,
             tr("Enter a valid End Date."))
-        << GuiErrorCheck(! _account->isValid(), _account,
+        << GuiErrorCheck(_selectedAccount->isChecked() && ! _account->isValid(), _account,
             tr("Enter a valid Account."))
   ;
   if (GuiErrorCheck::reportErrors(this, tr("Invalid Dates"), errors))
     return false;
-
-  if (_selectedAccount->isChecked())
 
   _dates->appendValue(params);
 
