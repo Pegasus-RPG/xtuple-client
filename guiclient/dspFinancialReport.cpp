@@ -137,23 +137,19 @@ bool dspFinancialReport::sCheck()
 {
   XSqlQuery dspCheck;
 
+  //Make sure user has upgraded period settings
+  dspCheck.exec("SELECT period_id FROM period WHERE period_quarter IS NULL;");
+
   QList<GuiErrorCheck> errors;
   errors<< GuiErrorCheck(!_periods->selectedItems().count(), _periods,
-                         tr("You must select at least one period."))
+                         tr("You must select at least one period.")),
+        << GuiErrorCheck(dspCheck.first(), _periods,
+                         tr("Please make sure all accounting periods "
+                            "are associated with a quarter and fiscal year "
+                            "before using this application."))
   ;
   if (GuiErrorCheck::reportErrors(this, tr("No period selected"), errors))
     return false;
-
-  //Make sure user has upgraded period settings
-  dspCheck.exec("SELECT period_id FROM period WHERE period_quarter IS NULL;");
-  if (dspCheck.first())
-  {
-    QMessageBox::warning( this, tr("Setup Incomplete"),
-                         tr("<p>Please make sure all accounting periods "
-                            "are associated with a quarter and fiscal year "
-                            "before using this application.") );
-    return false;
-  }
 
   return true;
 }
