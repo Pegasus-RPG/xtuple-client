@@ -38,6 +38,10 @@ dspSingleLevelBOM::dspSingleLevelBOM(QWidget* parent, const char*, Qt::WindowFla
 
 bool dspSingleLevelBOM::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   params.append("bySingleLvl");
   return dspBOMBase::setParams(params);
 }
+

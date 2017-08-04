@@ -52,6 +52,9 @@ void dspPoDeliveryDateVariancesByItem::languageChange()
 
 bool dspPoDeliveryDateVariancesByItem::setParams(ParameterList &pParams)
 {
+  if (!display::setParams(pParams))
+    return false;
+
   pParams.append("byItem");
   pParams.append("item_id", _item->id());
 

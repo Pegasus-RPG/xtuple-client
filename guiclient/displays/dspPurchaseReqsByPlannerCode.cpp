@@ -71,6 +71,9 @@ void dspPurchaseReqsByPlannerCode::languageChange()
 
 bool dspPurchaseReqsByPlannerCode::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if (!_dates->allValid())
   {
     QMessageBox::warning( this, tr("Enter a Valid Start Date and End Date"),

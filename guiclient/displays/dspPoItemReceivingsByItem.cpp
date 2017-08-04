@@ -60,6 +60,9 @@ void dspPoItemReceivingsByItem::languageChange()
 
 bool dspPoItemReceivingsByItem::setParams(ParameterList &pParams)
 {
+  if (!display::setParams(pParams))
+    return false;
+
   if (!_item->isValid())
   {
     QMessageBox::warning( this, tr("Enter Item Number"),

@@ -94,6 +94,9 @@ void dspPricesByCustomer::sHandleCosts(bool pShowCosts)
 
 bool dspPricesByCustomer::setParams(ParameterList & params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if(!_cust->isValid())
   {
     QMessageBox::warning(this, tr("Customer Required"),

@@ -64,6 +64,9 @@ void dspPurchaseReqsByItem::languageChange()
 
 bool dspPurchaseReqsByItem::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if (! _item->isValid())
   {
     QMessageBox::information(this, tr("Item Required"),

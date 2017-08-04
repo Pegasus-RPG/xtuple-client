@@ -187,6 +187,9 @@ void dspDetailedInventoryHistoryByLotSerial::sSelect()
 
 bool dspDetailedInventoryHistoryByLotSerial::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   QString trace = "N";
   params = parameterWidget()->parameters();
 

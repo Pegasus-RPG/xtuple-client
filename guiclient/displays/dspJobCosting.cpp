@@ -60,6 +60,9 @@ enum SetResponse dspJobCosting::set(const ParameterList &pParams)
 
 bool dspJobCosting::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if (! _wo->isValid())
   {
    QMessageBox::warning(this, tr("Select Options"),

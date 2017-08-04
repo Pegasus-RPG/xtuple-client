@@ -29,6 +29,9 @@ dspSummarizedBOM::dspSummarizedBOM(QWidget* parent, const char*, Qt::WindowFlags
 
 bool dspSummarizedBOM::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   params.append("bySummarized");
   return dspBOMBase::setParams(params);
 }

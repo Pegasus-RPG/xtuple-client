@@ -86,6 +86,9 @@ void dspSummarizedSales::languageChange()
 
 bool dspSummarizedSales::setParams(ParameterList & params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if (!_cust->isChecked() &&
       !_custtype->isChecked() &&
       !_salesrep->isChecked() &&

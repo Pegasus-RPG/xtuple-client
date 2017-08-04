@@ -203,6 +203,9 @@ void dspARApplications::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem*, int)
 
 bool dspARApplications::setParams(ParameterList & params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if ( (_selectedCustomer->isChecked()) && (!_cust->isValid()) )
   {
     QMessageBox::warning( this, tr("Select Customer"),

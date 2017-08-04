@@ -226,6 +226,9 @@ void dspAPApplications::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem*, int)
 
 bool dspAPApplications::setParams(ParameterList & params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if (! _vendorgroup->isValid())
   {
     QMessageBox::warning( this, tr("Select Vendor"),
