@@ -104,6 +104,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
   connect(_clear,               SIGNAL(pressed()),                              this,         SLOT(sClear()));
   connect(_copyToShipto,        SIGNAL(clicked()),                              this,         SLOT(sCopyToShipto()));
   connect(_cust,                SIGNAL(newId(int)),                             this,         SLOT(sPopulateCustomerInfo(int)));
+  connect(_cancel,              SIGNAL(clicked()),                              this,         SLOT(sCancel()));
   connect(_delete,              SIGNAL(clicked()),                              this,         SLOT(sDelete()));
   connect(_downCC,              SIGNAL(clicked()),                              this,         SLOT(sMoveDown()));
   connect(_edit,                SIGNAL(clicked()),                              this,         SLOT(sEdit()));
@@ -573,6 +574,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_paymentPage));
     _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_shipmentsPage));
     _showCanceled->hide();
+    _cancel->hide();
     _total->setBaseVisible(true);
   }
   else
@@ -1393,7 +1395,20 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
           menuItem->setEnabled(_privileges->check("FirmSalesOrder"));
         }
         pMenu->addAction(tr("Close Line..."), this, SLOT(sAction()));
-        pMenu->addAction(tr("Delete Line..."), this, SLOT(sDelete()));
+        pMenu->addAction(tr("Cancel Line..."), this, SLOT(sCancel()));
+
+        XSqlQuery invhist;
+        invhist.prepare("SELECT 1 "
+                        "  FROM invhist "
+                        " WHERE invhist_ordnumber=formatSoNumber(:soitemid) "
+                        "   AND invhist_ordtype='SO';");
+        invhist.bindValue(":soitemid", _soitem->id());
+        invhist.exec();
+        if (!invhist.first())
+          pMenu->addAction(tr("Delete Line..."), this, SLOT(sDelete()));
+        else if(ErrorReporter::error(QtCriticalMsg, this, "Error checking invhist",
+                                     invhist, __FILE__, __LINE__))
+          return;
       }
     }
 
@@ -2192,6 +2207,7 @@ void salesOrder::sHandleButtons()
 
           _action->setText(tr("Open"));
           _action->setEnabled(true);
+          _cancel->setEnabled(false);
           _delete->setEnabled(false);
         }
         else if (lineMode == 2)
@@ -2200,6 +2216,7 @@ void salesOrder::sHandleButtons()
 
           _action->setText(tr("Close"));
           _action->setEnabled(true);
+          _cancel->setEnabled(false);
           _delete->setEnabled(false);
         }
         else if (lineMode == 3)
@@ -2208,6 +2225,7 @@ void salesOrder::sHandleButtons()
 
           _action->setText(tr("Close"));
           _action->setEnabled(true);
+          _cancel->setEnabled(true);
           _delete->setEnabled(true);
         }
         else if (lineMode == 4)
@@ -2215,11 +2233,13 @@ void salesOrder::sHandleButtons()
           _lineMode = cCanceled;
 
           _action->setEnabled(false);
+          _cancel->setEnabled(false);
           _delete->setEnabled(false);
         }
         else
         {
           _action->setEnabled(false);
+          _cancel->setEnabled(false);
           _delete->setEnabled(false);
         }
 
@@ -2247,12 +2267,26 @@ void salesOrder::sHandleButtons()
         if (selected->rawValue("coitem_subnumber").toInt() != 0)
         {
           _edit->setText(tr("View"));
+          _cancel->setEnabled(false);
           _delete->setEnabled(false);
         }
         else if (cNew == _mode || cEdit == _mode || cNewQuote == _mode || cEditQuote == _mode)
         {
           _edit->setText(tr("&Edit"));
         }
+
+        XSqlQuery invhist;
+        invhist.prepare("SELECT 1 "
+                        "  FROM invhist "
+                        " WHERE invhist_ordnumber=formatSoNumber(:soitemid) "
+                        "   AND invhist_ordtype='SO';");
+        invhist.bindValue(":soitemid", selected->id());
+        invhist.exec();
+        if (invhist.first())
+          _delete->setEnabled(false);
+        else if(ErrorReporter::error(QtCriticalMsg, this, "Error checking invhist",
+                                     invhist, __FILE__, __LINE__))
+          return;
       }
     }
     else
@@ -2263,6 +2297,7 @@ void salesOrder::sHandleButtons()
       else
         _edit->setEnabled(false);
       _action->setEnabled(false);
+      _cancel->setEnabled(false);
       _delete->setEnabled(false);
     }
   }
@@ -2270,6 +2305,7 @@ void salesOrder::sHandleButtons()
   {
     _edit->setEnabled(false);
     _action->setEnabled(false);
+    _cancel->setEnabled(false);
     _delete->setEnabled(false);
     _issueStock->setEnabled(false);
     _issueLineBalance->setEnabled(false);
@@ -2347,6 +2383,37 @@ void salesOrder::sAction()
     actionSales.bindValue(":coitem_id", _soitemid);
     actionSales.exec();
   }
+
+  sFillItemList();
+}
+
+void salesOrder::sCancel()
+{
+  XSqlQuery existpo;
+  existpo.prepare("SELECT 1 "
+                  "  FROM coitem JOIN poitem ON coitem_order_type='P' "
+                  "                         AND coitem_order_id=poitem_id "
+                  " WHERE coitem_id=:soitem_id;");
+  existpo.bindValue(":soitem_id", _soitem->id());
+  existpo.exec();
+  if (existpo.first())
+    QMessageBox::warning(this, tr("Can not delete PO"),
+                         tr("Purchase Order linked to this Sales Order "
+                            "Item will not be affected. The Purchase Order "
+                            "should be closed or deleted manually if necessary."));
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Linked P/O"),
+                                existpo, __FILE__, __LINE__))
+    return;
+
+  XSqlQuery salesCancel;
+  salesCancel.prepare("UPDATE coitem "
+                      "   SET coitem_status='X' "
+                      " WHERE coitem_id=:soitem_id;");
+  salesCancel.bindValue(":soitem_id", _soitem->id());
+  salesCancel.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Cancelling Item"),
+                                salesCancel, __FILE__, __LINE__))
+    return;
 
   sFillItemList();
 }

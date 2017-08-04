@@ -979,6 +979,22 @@ to be bound by its terms.</comment>
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="_cancel">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="text">
+              <string>&amp;Cancel</string>
+             </property>
+             <property name="autoDefault">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="_delete">
              <property name="enabled">
               <bool>false</bool>
