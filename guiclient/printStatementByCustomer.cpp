@@ -11,6 +11,7 @@
 #include "printStatementByCustomer.h"
 
 #include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QVariant>
 
 #include <metasql.h>
@@ -93,14 +94,14 @@ ParameterList printStatementByCustomer::getParams()
 
 bool printStatementByCustomer::isOkToPrint()
 {
-  if (!_cust->isValid())
-  {
-    QMessageBox::warning(this, tr("Enter a Valid Customer Number"),
-                         tr("<p>You must enter a valid Customer Number for "
-                            "this Statement.") );
-    _cust->setFocus();
+
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(!_cust->isValid(), _cust,
+                         tr("You must enter a valid Customer Number for "
+                            "this Statement."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Enter a Valid Customer Number"), errors))
     return false;
-  }
 
   ParameterList params = getParams();
   if (params.value("checkParamsReturn") == false)

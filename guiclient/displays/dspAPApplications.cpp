@@ -13,6 +13,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 
 #include "apOpenItem.h"
@@ -226,39 +227,18 @@ void dspAPApplications::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem*, int)
 
 bool dspAPApplications::setParams(ParameterList & params)
 {
-  if (! _vendorgroup->isValid())
-  {
-    QMessageBox::warning( this, tr("Select Vendor"),
-                          tr("You must select the Vendor(s) whose A/R Applications you wish to view.") );
-    _vendorgroup->setFocus();
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(! _vendorgroup->isValid(), _vendorgroup,
+            tr("You must select the Vendor(s) whose A/R Applications you wish to view."))
+        << GuiErrorCheck(!_dates->startDate().isValid(), _dates,
+            tr("You must enter a valid Start Date."))
+        << GuiErrorCheck(!_dates->endDate().isValid(), _dates,
+            tr("You must enter a valid End Date."))
+        << GuiErrorCheck(!_showChecks->isChecked() && !_showCreditMemos->isChecked(), _showChecks,
+            tr("You must indicate which Document Type(s) you wish to view."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot set Parameters"), errors))
     return false;
-  }
-
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter Start Date"),
-                           tr("You must enter a valid Start Date.") );
-    _dates->setFocus();
-    return false;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter End Date"),
-                           tr("You must enter a valid End Date.") );
-    _dates->setFocus();
-    return false;
-  }
-
-  if ( !_showChecks->isChecked() && !_showCreditMemos->isChecked())
-  {
-    //TODO ??
-    //if (windowFlags() & (Qt::Window | Qt::Dialog))
-      QMessageBox::critical( this, tr("Select Document Type"),
-                             tr("You must indicate which Document Type(s) you wish to view.") );
-    _showChecks->setFocus();
-    return false;
-  }
   
   if (_showChecks->isChecked() && _showCreditMemos->isChecked())
     params.append("doctypeList", "'C', 'K'");

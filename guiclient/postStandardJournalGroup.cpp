@@ -11,10 +11,9 @@
 #include "postStandardJournalGroup.h"
 
 #include <QVariant>
-#include <QMessageBox>
+#include "guiErrorCheck.h"
 #include "glSeries.h"
 #include "errorReporter.h"
-#include "guiErrorCheck.h"
 
 postStandardJournalGroup::postStandardJournalGroup(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)

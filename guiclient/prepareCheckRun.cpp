@@ -10,7 +10,7 @@
 
 #include "prepareCheckRun.h"
 
-#include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 #include <QVariant>
 
@@ -57,11 +57,13 @@ enum SetResponse prepareCheckRun::set(const ParameterList &pParams)
 void prepareCheckRun::sPrint()
 {
   XSqlQuery preparePrint;
-  if(!_bankaccnt->isValid())
-  {
-    QMessageBox::warning(this, tr("No Bank Account"), tr("You must select a Bank Account before you may continue."));
+  
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(!_bankaccnt->isValid(), _bankaccnt,
+                         tr("You must select a Bank Account before you may continue."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("No Bank Account"), errors))
     return;
-  }
 
   preparePrint.prepare("SELECT createChecks(:bankaccnt_id, :checkDate) AS result;");
   preparePrint.bindValue(":bankaccnt_id", _bankaccnt->id());
