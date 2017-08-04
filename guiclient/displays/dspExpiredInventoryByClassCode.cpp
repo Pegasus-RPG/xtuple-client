@@ -188,6 +188,9 @@ void dspExpiredInventoryByClassCode::sFillList()
 
 bool dspExpiredInventoryByClassCode::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if (_perishability->isChecked())
   {
     params.append("perishability");

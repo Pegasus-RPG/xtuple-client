@@ -203,6 +203,9 @@ void dspOrders::sChangePoitemQty()
 
 bool dspOrders::setParams(ParameterList & params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if ( !((_item->isValid()) &&
        ( (_leadTime->isChecked()) || (_byDays->isChecked()) ||
          ((_byDate->isChecked()) && (_date->isValid())) ||

@@ -47,6 +47,9 @@ void dspPoReturnsByVendor::languageChange()
 
 bool dspPoReturnsByVendor::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
 
   if(!_vendor->isValid())
   {

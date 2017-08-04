@@ -607,7 +607,7 @@ void miscVoucher::sPopulateDistDate()
 
 void miscVoucher::sPopulateDueDate()
 {
-  if ( _invoiceDate->isValid() && _terms->isValid() && (!_dueDate->isValid()) )
+  if ( _invoiceDate->isValid() && _terms->isValid() )
   {
     XSqlQuery dateq;
     dateq.prepare("SELECT determineDueDate(:terms_id, :invoiceDate) AS duedate;");

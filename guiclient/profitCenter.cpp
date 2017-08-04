@@ -14,6 +14,7 @@
 #include <QSqlError>
 #include <QVariant>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 profitCenter::profitCenter(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -76,12 +77,6 @@ enum SetResponse profitCenter::set(const ParameterList &pParams )
 void profitCenter::sSave()
 {
   XSqlQuery profitSave;
-  if (_number->text().trimmed().length() == 0)
-  {
-      QMessageBox::warning( this, tr("Cannot Save Profit Center"),
-                            tr("You must enter a valid Number.") );
-      return;
-  }
   
   profitSave.prepare("SELECT prftcntr_id"
             "  FROM prftcntr"
@@ -90,12 +85,15 @@ void profitCenter::sSave()
   profitSave.bindValue(":prftcntr_id", _prftcntrid);
   profitSave.bindValue(":prftcntr_number", _number->text());
   profitSave.exec();
-  if(profitSave.first())
-  {
-    QMessageBox::critical(this, tr("Duplicate Profit Center Number"),
-      tr("A Profit Center Number already exists for the one specified.") );
-    return;
-  }
+
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_number->text().trimmed().length() == 0, _number,
+                           tr("You must enter a valid Number."))
+          << GuiErrorCheck(profitSave.first(), _number,
+                           tr("A Profit Center Number already exists for the one specified."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Profit Center"), errors))
+      return;
 
   if (_mode == cNew)
   {

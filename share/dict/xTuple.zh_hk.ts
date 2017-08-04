@@ -5309,6 +5309,13 @@ returned %2
     </message>
 </context>
 <context>
+    <name>StatusBarMessageHandler</name>
+    <message>
+        <source>Status Bar cannot answer this question: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Sudoable</name>
     <message>
         <source>Password:</source>
@@ -46689,17 +46696,6 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
         <translation>來源</translation>
     </message>
     <message>
-        <source>The selected Item Site cannot be deleted as there is Work Order History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>選取的物品控制台無法被刪除, 因為已經有工作單歷史紀錄.你可以編輯此物品控制台將它設定為無效.</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Inventory History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>選取的物品控制台無法被刪除, 因為已經有庫存歷史紀錄.
-你可以編輯此物品控制台將它設定為無效.</translation>
-    </message>
-    <message>
         <source>Comments</source>
         <translation>註釋</translation>
     </message>
@@ -46718,11 +46714,6 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <source>Documents</source>
         <translation>文件</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Sales History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>選取的物品控制台無法被刪除, 因為已經有銷售歷史紀錄.你可以編輯此物品控制台將它設定為無效.</translation>
     </message>
     <message>
         <source>Conversions</source>
@@ -46783,11 +46774,6 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <source>Alias Number</source>
         <translation>別名編號</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Purchasing History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>選取的物品控制台無法被刪除, 因為已經有採購歷史紀錄.你可以編輯此物品控制台將它設定為無效.</translation>
     </message>
     <message>
         <source>None</source>
@@ -47146,17 +47132,8 @@ You may edit the Item Site and deactivate it.</source>
         <translation>控制法</translation>
     </message>
     <message>
-        <source>Cannot Delete Item Site</source>
-        <translation>無法刪除物品控制台</translation>
-    </message>
-    <message>
         <source>&amp;No</source>
         <translation>否 &amp;N</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Planning History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>選取的物品控制台無法被刪除, 因為已經有計畫歷史紀錄.你可以編輯此物品控制台將它設定為無效.</translation>
     </message>
     <message>
         <source>Add conversions?</source>
@@ -47165,10 +47142,6 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <source>Fractional</source>
         <translation>分數數量</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is a non-zero Inventory Quantity posted againt it.</source>
-        <translation>選取的物品控制台無法刪除因為有非零的庫存數量過帳.</translation>
     </message>
     <message>
         <source>Regular</source>
@@ -47256,6 +47229,10 @@ You may edit the Item Site and deactivate it.</source>
     </message>
     <message>
         <source>Error Updating Item Taxes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Deleting Item Site</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58660,11 +58637,27 @@ post Vouchers.</source>
         <source>Print Sales Credit</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Print Credit Memo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>printCreditMemos</name>
     <message>
         <source>Print Sales Credits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print Credit Memos</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58685,6 +58678,10 @@ post Vouchers.</source>
     <message>
         <source>Invoice #:</source>
         <translation type="unfinished">發票 #:</translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -58716,6 +58713,10 @@ post Vouchers.</source>
     <message>
         <source>Getting Invoices to Print</source>
         <translation>列印獲得發票</translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -58916,10 +58917,6 @@ post Vouchers.</source>
         <translation>採購訂單</translation>
     </message>
     <message>
-        <source>Posting Canceled</source>
-        <translation>已取消過帳</translation>
-    </message>
-    <message>
         <source>&lt;p&gt;Report &apos;%1&apos; cannot be run. Parameters are missing.</source>
         <translation type="unfinished">報告無法執行 &apos;&apos;%1&apos;&apos;。缺乏參數。</translation>
     </message>
@@ -58942,10 +58939,6 @@ post Vouchers.</source>
     <message>
         <source>Mark Documents as Printed?</source>
         <translation>標記文件已列印?</translation>
-    </message>
-    <message>
-        <source>Transaction Canceled</source>
-        <translation>交易記錄已取消</translation>
     </message>
     <message>
         <source>No Documents to Print</source>
@@ -60580,6 +60573,14 @@ You may not create a Product Category with this code.</source>
         <source>Percent Complete:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cannot Print Orders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please first select an order type or types to print.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>projectCopy</name>
@@ -62006,6 +62007,14 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
     </message>
     <message>
         <source>Error Saving Purchase Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selected Item Missing Cost</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;The selected item has no Std. Costing information. Please see your controller to correct this situation before continuing.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -83546,10 +83555,6 @@ and Purchase Order amounts</source>
         <translation type="unfinished">應付歷史</translation>
     </message>
     <message>
-        <source>Checks</source>
-        <translation type="unfinished">支票</translation>
-    </message>
-    <message>
         <source>Earliest</source>
         <translation type="unfinished">最早</translation>
     </message>
@@ -86167,6 +86172,10 @@ Please correct before creating this Work Order</source>
     </message>
     <message>
         <source>Error issuing Work Order Material. %</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error checking for boohead</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

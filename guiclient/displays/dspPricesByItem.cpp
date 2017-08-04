@@ -69,6 +69,9 @@ void dspPricesByItem::sHandleCosts(bool pShowCosts)
 
 bool dspPricesByItem::setParams(ParameterList & params)
 {
+  if (!display::setParams(params))
+    return false;
+
   XSqlQuery dspetParams;
   double list = 0.0;
   double cost = 0.0;

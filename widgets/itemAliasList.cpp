@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -140,12 +140,17 @@ void itemAliasList::set(const ParameterList &pParams)
   if (valid)
     _extraClauses = param.toStringList();
 
+  param = pParams.value("crmacct", &valid);
+  if (valid)
+    _crmacct = param.toInt();
+
   _showInactive->setChecked(false);
   _showInactive->setEnabled(!(_itemType & ItemLineEdit::cActive));
 
   param = pParams.value("sql", &valid);
   if (valid)
     _sql = param.toString();
+
 }
 
 void itemAliasList::sSelect()
@@ -160,11 +165,16 @@ void itemAliasList::sFillList()
   if (_alias->text().trimmed().length() == 0)
     return;
 
-  QString pre( "SELECT item_id, itemalias_id, itemalias_number, item_number, (item_descrip1 || ' ' || item_descrip2) AS item_descrip "
+  QString pre( "SELECT item_id, itemalias_id, itemalias_number, item_number, "
+               " CASE WHEN itemalias_usedescrip THEN itemalias_descrip1 "
+               "           ELSE (item_descrip1 || ' ' || item_descrip2) END AS item_descrip "
                "FROM (SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2");
   QString post(") AS data, itemalias "
-               "WHERE ( (itemalias_item_id=item_id)"
-               " AND (UPPER(itemalias_number)~UPPER(:searchString)) )" );
+               "WHERE (itemalias_item_id=item_id)"
+               " AND (UPPER(itemalias_number)~UPPER(:searchString)) " );
+  if (_crmacct > 0)
+    post += QString(" AND (itemalias_crmacct_id IS NULL OR itemalias_crmacct_id = %1) ")
+                .arg(_crmacct);
 
   if(_x_preferences && _x_preferences->boolean("ListNumericItemNumbersFirst"))
     post += " ORDER BY toNumeric(item_number, 999999999999999), item_number";

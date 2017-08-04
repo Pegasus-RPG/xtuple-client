@@ -17,6 +17,7 @@
 
 #include "storedProcErrorLookup.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 taxClass::taxClass(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -102,12 +103,13 @@ void taxClass::sCheck()
 void taxClass::sSave()
 {
   XSqlQuery taxSave;
-  if (_taxClass->text().length() == 0)
-  {
-      QMessageBox::warning( this, tr("Cannot Save Tax Class"),
-                            tr("You must enter a valid Code.") );
+
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_taxClass->text().length() == 0, _taxClass,
+                           tr("You must enter a valid Code."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Tax Class"), errors))
       return;
-  }
   
   if (_mode == cEdit)
   {

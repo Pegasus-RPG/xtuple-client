@@ -5305,6 +5305,13 @@ returned %2
     </message>
 </context>
 <context>
+    <name>StatusBarMessageHandler</name>
+    <message>
+        <source>Status Bar cannot answer this question: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Sudoable</name>
     <message>
         <source>Password:</source>
@@ -46625,10 +46632,6 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
         <translation>beliebig</translation>
     </message>
     <message>
-        <source>The selected Item Site cannot be deleted as there is a non-zero Inventory Quantity posted againt it.</source>
-        <translation>Der Lagerort kann nicht gelöscht werden, es sind noch Bestände vorhanden.</translation>
-    </message>
-    <message>
         <source>Weight</source>
         <translation>Gewicht</translation>
     </message>
@@ -46741,11 +46744,6 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The selected Item Site cannot be deleted as there is Planning History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Delete Item Source</source>
         <translation type="unfinished"></translation>
     </message>
@@ -46759,11 +46757,6 @@ You may edit the Item Site and deactivate it.</source>
     </message>
     <message>
         <source>This item source is used by existing purchase order records and may not be deleted.  Would you like to deactivate it instead?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Purchasing History posted against it.
-You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -46781,11 +46774,6 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <source>You must enter a Item Number for this Item before continuing.</source>
         <translation>Um weiterzufahren müssen Sie erst eine Artikelnummer für diesen Artikel wählen.</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Sales History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>This item source is used by existing purchase order records and may not be deleted.</source>
@@ -46838,15 +46826,6 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <source>Cannot Save Item</source>
         <translation>Kann Artikel nicht sichern</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Work Order History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cannot Delete Item Site</source>
-        <translation>Kann Lagerort nicht löschen</translation>
     </message>
     <message>
         <source>Sites</source>
@@ -46915,11 +46894,6 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <source>Cntrl. Method</source>
         <translation>Kontrolmethode</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Inventory History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Access Denied</source>
@@ -47215,6 +47189,10 @@ You may edit the Item Site and deactivate it.</source>
     </message>
     <message>
         <source>Error Updating Item Taxes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Deleting Item Site</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58597,11 +58575,27 @@ post Vouchers.</source>
         <source>Print Sales Credit</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Print Credit Memo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>printCreditMemos</name>
     <message>
         <source>Print Sales Credits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print Credit Memos</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58622,6 +58616,10 @@ post Vouchers.</source>
     <message>
         <source>Invoice #:</source>
         <translation type="unfinished">Rechnung #:</translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -58652,6 +58650,10 @@ post Vouchers.</source>
     </message>
     <message>
         <source>Could not post Invoice %1 because of a missing exchange rate.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58869,10 +58871,6 @@ post Vouchers.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Transaction Canceled</source>
-        <translation type="unfinished">Vorgang abgebrochen</translation>
-    </message>
-    <message>
         <source>Cannot Post %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -58906,10 +58904,6 @@ post Vouchers.</source>
     </message>
     <message>
         <source>Print Multiple Copies of Document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Posting Canceled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -60515,6 +60509,14 @@ You may not create a Product Category with this code.</source>
         <source>Percent Complete:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cannot Print Orders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please first select an order type or types to print.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>projectCopy</name>
@@ -61942,6 +61944,14 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
     <message>
         <source>Error Saving Purchase Order</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selected Item Missing Cost</source>
+        <translation type="unfinished">Ausgwählter Artikel hat keine Kosten</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;The selected item has no Std. Costing information. Please see your controller to correct this situation before continuing.</source>
+        <translation type="unfinished">&lt;p&gt;Der Ausgewählte Artikel hat keine Standard Kosten.</translation>
     </message>
 </context>
 <context>
@@ -83461,10 +83471,6 @@ by an Item Source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Checks</source>
-        <translation type="unfinished">Schecks</translation>
-    </message>
-    <message>
         <source>Earliest</source>
         <translation type="unfinished">Frühestens</translation>
     </message>
@@ -86081,6 +86087,10 @@ Please correct before creating this Work Order</source>
     </message>
     <message>
         <source>Error issuing Work Order Material. %</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error checking for boohead</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

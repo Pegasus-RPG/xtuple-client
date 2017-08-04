@@ -131,6 +131,14 @@ enum SetResponse dspSalesHistory::set(const ParameterList &pParams)
   if (valid)
     parameterWidget()->setDefault(tr("Product Category Pattern"), param.toString());
 
+  param = pParams.value("custgrp_id", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Customer Group"), param.toInt());
+
+  param = pParams.value("custgrp_pattern", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Customer Group Pattern"), param.toString());
+
   param = pParams.value("salesrep_id", &valid);
   if (valid)
     parameterWidget()->setDefault(tr("Sales Rep."), param.toInt());

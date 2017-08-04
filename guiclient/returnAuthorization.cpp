@@ -56,7 +56,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_subtotal, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_tax, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_miscCharge, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+  connect(_freight, SIGNAL(editingFinished()), this, SLOT(sFreightChanged()));
   connect(_taxzone, SIGNAL(newID(int)), this, SLOT(sTaxZoneChanged()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sRecvWhsChanged()));
   connect(_shipWhs, SIGNAL(newID(int)), this, SLOT(sShipWhsChanged()));
@@ -1087,9 +1087,7 @@ void returnAuthorization::sFillList()
     if (returnFillList.first())
     {
       _freightCache = returnFillList.value("freight").toDouble();
-      disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
       _freight->setLocalValue(_freightCache);
-      connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Information"),
                                   returnFillList, __FILE__, __LINE__))
@@ -1278,10 +1276,8 @@ void returnAuthorization::populate()
     // Auto calculated _freight is populated in sFillItemList
     if (!_calcfreight)
     {
-      disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
       _freightCache = rahead.value("rahead_freight").toDouble();
       _freight->setLocalValue(_freightCache);
-      connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
     }
 
 
@@ -2007,9 +2003,7 @@ void returnAuthorization::sFreightChanged()
         _calcfreight = false;
       else
       {
-        disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
         _freight->setLocalValue(_freightCache);
-        connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
       }
     }
     else if ( (!_calcfreight) &&
@@ -2026,9 +2020,7 @@ void returnAuthorization::sFreightChanged()
       if (answer == QMessageBox::Yes)
       {
         _calcfreight = true;
-        disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
         _freight->setLocalValue(_freightCache);
-        connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
       }
     }
     else

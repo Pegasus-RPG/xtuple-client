@@ -52,6 +52,9 @@ void dspMaterialUsageVarianceByWorkOrder::languageChange()
 
 bool dspMaterialUsageVarianceByWorkOrder::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if(!_wo->isValid())
   {
     QMessageBox::warning(this, tr("Work Order Required"),

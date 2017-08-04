@@ -17,6 +17,7 @@
 #include <parameter.h>
 #include <openreports.h>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 /*
  *  Constructs a duplicateAccountNumbers as a child of 'parent', with the
@@ -55,12 +56,13 @@ void duplicateAccountNumbers::languageChange()
 void duplicateAccountNumbers::sDuplicate()
 {
   XSqlQuery duplicateDuplicate;
-  if(!(_changeCompany->isChecked() || _changeProfit->isChecked() || _changeSub->isChecked()))
-  {
-    QMessageBox::warning( this, tr("No Segments Selected for Change"),
-      tr("You have not selected any segments for changing. You must select at least one segment to be changed.") );
-    return;
-  }
+
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(!(_changeCompany->isChecked() || _changeProfit->isChecked() || _changeSub->isChecked()), _changeCompany,
+                           tr("You have not selected any segments for changing. You must select at least one segment to be changed."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("No Segments Selected for Change"), errors))
+      return;
 
   QString sql ("INSERT INTO accnt"
                "      (accnt_number, accnt_descrip,"

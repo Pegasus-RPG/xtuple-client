@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -71,6 +71,9 @@ void dspPurchaseReqsByPlannerCode::languageChange()
 
 bool dspPurchaseReqsByPlannerCode::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if (!_dates->allValid())
   {
     QMessageBox::warning( this, tr("Enter a Valid Start Date and End Date"),
@@ -97,6 +100,9 @@ void dspPurchaseReqsByPlannerCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *
   menuItem->setEnabled(_privileges->check("ViewInventoryAvailability"));
 
   pMenu->addSeparator();
+
+  menuItem = pMenu->addAction(tr("Edit P/R..."), this, SLOT(sEdit()));
+  menuItem->setEnabled(_privileges->check("MaintainPurchaseRequests"));
 
   menuItem = pMenu->addAction(tr("Release P/R..."), this, SLOT(sRelease()));
   menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));

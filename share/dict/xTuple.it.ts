@@ -5305,6 +5305,13 @@ returned %2
     </message>
 </context>
 <context>
+    <name>StatusBarMessageHandler</name>
+    <message>
+        <source>Status Bar cannot answer this question: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Sudoable</name>
     <message>
         <source>Password:</source>
@@ -46635,10 +46642,6 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
         <translation>UM Magazz&amp;ino:</translation>
     </message>
     <message>
-        <source>Cannot Delete Item Site</source>
-        <translation>Impossibile eliminare Deposito Articolo</translation>
-    </message>
-    <message>
         <source>The selected Item is already a Transformation target for this Item.</source>
         <translation>L\&apos;articolo selezionato è già una Trasformazione di questo articolo.</translation>
     </message>
@@ -46835,11 +46838,6 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
         <translation>Prezzo di listino:</translation>
     </message>
     <message>
-        <source>The selected Item Site cannot be deleted as there is Inventory History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Print</source>
         <translation>Stam&amp;pa</translation>
     </message>
@@ -46948,26 +46946,12 @@ You may edit the Item Site and deactivate it.</source>
         <translation>Nessun Deposito Articolo Trovato</translation>
     </message>
     <message>
-        <source>The selected Item Site cannot be deleted as there is Work Order History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Manufactured</source>
         <translation>Prodotto</translation>
     </message>
     <message>
-        <source>The selected Item Site cannot be deleted as there is Sales History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Item</source>
         <translation>Articolo</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is a non-zero Inventory Quantity posted againt it.</source>
-        <translation>Il Deposito selezionato non può essere eliminato in quanto esiste una Disponibilità maggiore di zero.</translation>
     </message>
     <message>
         <source>&amp;Active</source>
@@ -47080,16 +47064,6 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <source>Kit</source>
         <translation>Kit</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Purchasing History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Planning History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Edit</source>
@@ -47217,6 +47191,10 @@ You may edit the Item Site and deactivate it.</source>
     </message>
     <message>
         <source>Error Updating Item Taxes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Deleting Item Site</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58599,11 +58577,27 @@ post Vouchers.</source>
         <source>Print Sales Credit</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Print Credit Memo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>printCreditMemos</name>
     <message>
         <source>Print Sales Credits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print Credit Memos</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58624,6 +58618,10 @@ post Vouchers.</source>
     <message>
         <source>Invoice #:</source>
         <translation type="unfinished">Fattura n.:</translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -58654,6 +58652,10 @@ post Vouchers.</source>
     </message>
     <message>
         <source>&lt;p&gt;Invoice %1 has a total value of 0.&lt;br/&gt;Would you like to post it anyway?&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58855,10 +58857,6 @@ post Vouchers.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Posting Canceled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>A/R Statement</source>
         <translation type="unfinished"></translation>
     </message>
@@ -58905,10 +58903,6 @@ post Vouchers.</source>
     <message>
         <source>Purchase Order</source>
         <translation type="unfinished">Ordine di Acquisto</translation>
-    </message>
-    <message>
-        <source>Transaction Canceled</source>
-        <translation type="unfinished">Transazione Annullata</translation>
     </message>
     <message>
         <source>Packing List</source>
@@ -60517,6 +60511,14 @@ You may not create a Product Category with this code.</source>
         <source>Percent Complete:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cannot Print Orders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please first select an order type or types to print.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>projectCopy</name>
@@ -61944,6 +61946,14 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
     <message>
         <source>Error Saving Purchase Order</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selected Item Missing Cost</source>
+        <translation type="unfinished">L\&apos;Articolo selezionato non ha un costo</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;The selected item has no Std. Costing information. Please see your controller to correct this situation before continuing.</source>
+        <translation type="unfinished">L\&apos;articolo selezionato non ha informazioni in merito al costo standard. Prego verificare con il responsabile per correggere il problema prima di continuare.</translation>
     </message>
 </context>
 <context>
@@ -83463,10 +83473,6 @@ and Purchase Order amounts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Checks</source>
-        <translation type="unfinished">Assegni</translation>
-    </message>
-    <message>
         <source>Earliest</source>
         <translation type="unfinished">Prima</translation>
     </message>
@@ -86083,6 +86089,10 @@ Please correct before creating this Work Order</source>
     </message>
     <message>
         <source>Error issuing Work Order Material. %</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error checking for boohead</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

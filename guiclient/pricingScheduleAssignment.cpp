@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -13,6 +13,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 pricingScheduleAssignment::pricingScheduleAssignment(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -101,12 +102,20 @@ enum SetResponse pricingScheduleAssignment::set(const ParameterList &pParams)
 void pricingScheduleAssignment::sAssign()
 {
   XSqlQuery pricingAssign;
-  if (!_ipshead->isValid())
-  {
-    QMessageBox::critical(this, tr("Cannot Save Pricing Schedule Assignment"),
-                          tr("<p>You must select a Pricing Schedule."));
+  QRegExp shiptoTest(_shiptoPattern->text());
+  QRegExp custtypeTest(_customerType->text());
+  QList<GuiErrorCheck> errors;
+
+  errors << GuiErrorCheck(!_ipshead->isValid(), _ipshead,
+                          tr("<p>You must select a Pricing Schedule."))
+         << GuiErrorCheck(_selectedShiptoPattern->isChecked() && !shiptoTest.isValid(), _shiptoPattern,
+                          tr("<p>You must enter a valid Ship To pattern."))
+         << GuiErrorCheck(_customerTypePattern->isChecked() && !custtypeTest.isValid(), _customerType,
+                          tr("<p>You must enter a valid Customer Type pattern."))
+  ;
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Pricing Schedule Assignment"), errors))
     return;
-  }
 
   pricingAssign.prepare("SELECT ipsass_id "
                         "FROM ipsass "

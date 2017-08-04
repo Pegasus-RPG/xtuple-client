@@ -5311,6 +5311,13 @@ returned %2
     </message>
 </context>
 <context>
+    <name>StatusBarMessageHandler</name>
+    <message>
+        <source>Status Bar cannot answer this question: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Sudoable</name>
     <message>
         <source>Password:</source>
@@ -46726,10 +46733,6 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
         <translation>Este Producto se emplea en una Lista de Materiales activa y debe marcarse como activo. Caduque los productos de la Lista de Materiales para permitir que este Producto no esté activo.</translation>
     </message>
     <message>
-        <source>The selected Item Site cannot be deleted as there is a non-zero Inventory Quantity posted againt it.</source>
-        <translation>La Ubicación del Producto seleccionada no puede ser eliminada porque hay una cantidad del Inventario</translation>
-    </message>
-    <message>
         <source>Create New Item Sites</source>
         <translation>Crear Nuevas Ubicaciones del Producto</translation>
     </message>
@@ -46780,11 +46783,6 @@ Si responde No, entonces el Producto se guardará y puede encontrar se con error
         <translation>Debe seleccionar una UM de Venta para este Producto Vendido antes de poder continuar.</translation>
     </message>
     <message>
-        <source>The selected Item Site cannot be deleted as there is Inventory History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>No se puede eliminar el Centro de Producto seleccionado porque tiene registrado Historial de Inventario. Puede editar el Centro de Producto y desactivarlo.</translation>
-    </message>
-    <message>
         <source>Tax Type</source>
         <translation>Tipo Impuesto</translation>
     </message>
@@ -46805,16 +46803,6 @@ You may edit the Item Site and deactivate it.</source>
         <translation>Cualquiera</translation>
     </message>
     <message>
-        <source>The selected Item Site cannot be deleted as there is Planning History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>No se puede eliminar el Centro de Producto seleccionado porque tiene registrado Historial de Planificación. Puede editar el Centro de Producto y desactivarlo.</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Purchasing History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>No se puede eliminar el Centro de Producto seleccionado porque tiene registrado Historial de Compras. Puede editar el Centro de Producto y desactivarlo.</translation>
-    </message>
-    <message>
         <source>Weight in </source>
         <translation>Peso en</translation>
     </message>
@@ -46829,11 +46817,6 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <source>Name</source>
         <translation>Nombre</translation>
-    </message>
-    <message>
-        <source>The selected Item Site cannot be deleted as there is Work Order History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>No se puede eliminar el Centro de Producto seleccionado porque tiene registrado Historial de Órdenes de Trabajo. Puede editar el Centro de Producto y desactivarlo.</translation>
     </message>
     <message>
         <source>Description</source>
@@ -46948,11 +46931,6 @@ You may edit the Item Site and deactivate it.</source>
         <translation>Nº de Serie</translation>
     </message>
     <message>
-        <source>The selected Item Site cannot be deleted as there is Sales History posted against it.
-You may edit the Item Site and deactivate it.</source>
-        <translation>No se puede eliminar el Centro de Producto seleccionado porque tiene registrado Historial de Ventas. Puede editar el Centro de Producto y desactivarlo.</translation>
-    </message>
-    <message>
         <source>Would you like to create Item site inventory settings for the newly created Item now?</source>
         <translation>¿Desea crear ahora los ajustes de inventario del Centro para el Producto recién creado?</translation>
     </message>
@@ -47039,10 +47017,6 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <source>Outside Process</source>
         <translation>Proceso Externo</translation>
-    </message>
-    <message>
-        <source>Cannot Delete Item Site</source>
-        <translation>No es posible Eliminar este Centro de Producto</translation>
     </message>
     <message>
         <source>You must select a Class Code for this Item before continuing.</source>
@@ -47230,6 +47204,10 @@ You may edit the Item Site and deactivate it.</source>
     </message>
     <message>
         <source>Error Updating Item Taxes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Deleting Item Site</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58621,11 +58599,27 @@ Si responde &apos;&apos;Sí&apos;&apos; se imprimirá un cheque. Si responde &ap
         <source>Print Sales Credit</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Print Credit Memo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>printCreditMemos</name>
     <message>
         <source>Print Sales Credits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print Credit Memos</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58645,6 +58639,10 @@ Si responde &apos;&apos;Sí&apos;&apos; se imprimirá un cheque. Si responde &ap
     </message>
     <message>
         <source>Invoice #:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58677,6 +58675,10 @@ Si responde &apos;&apos;Sí&apos;&apos; se imprimirá un cheque. Si responde &ap
     <message>
         <source>All Ship Vias</source>
         <translation>Todos los Envíos Por</translation>
+    </message>
+    <message>
+        <source>Detail Distribution was Cancelled</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -58881,15 +58883,7 @@ Si responde &apos;&apos;Sí&apos;&apos; se imprimirá un cheque. Si responde &ap
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Transaction Canceled</source>
-        <translation type="unfinished">Transacción Cancelada</translation>
-    </message>
-    <message>
         <source>&lt;p&gt;Did all of the documents print correctly?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Posting Canceled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -60540,6 +60534,14 @@ Si responde &apos;&apos;No&apos;&apos; entonce modifique de nuevo el Número a %
         <source>Percent Complete:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cannot Print Orders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please first select an order type or types to print.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>projectCopy</name>
@@ -61967,6 +61969,14 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
     <message>
         <source>Error Saving Purchase Order</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selected Item Missing Cost</source>
+        <translation type="unfinished">Costo Ausente del Producto Seleccionado</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;The selected item has no Std. Costing information. Please see your controller to correct this situation before continuing.</source>
+        <translation type="unfinished">&lt;p&gt; El producto seleccionado no tiene ninguna información del Cálculo de Costos Estándar. Por favor vea a su controlador para corregir esta situación antes de continuar.</translation>
     </message>
 </context>
 <context>
@@ -83494,10 +83504,6 @@ and Purchase Order amounts</source>
         <translation type="unfinished">Historial Acreedores</translation>
     </message>
     <message>
-        <source>Checks</source>
-        <translation type="unfinished">Cheques</translation>
-    </message>
-    <message>
         <source>Earliest</source>
         <translation type="unfinished"></translation>
     </message>
@@ -86118,6 +86124,10 @@ Please correct before creating this Work Order</source>
     </message>
     <message>
         <source>Error issuing Work Order Material. %</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error checking for boohead</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

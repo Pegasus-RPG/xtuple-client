@@ -86,6 +86,9 @@ enum SetResponse dspCostedSummarizedBOM::set(const ParameterList &pParams)
 
 bool dspCostedSummarizedBOM::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if(!_item->isValid())
   {
     QMessageBox::warning(this, tr("Item Required"),

@@ -204,7 +204,6 @@ void dspARApplications::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem*, int)
 
 bool dspARApplications::setParams(ParameterList & params)
 {
-
   QList<GuiErrorCheck> errors;
   errors<< GuiErrorCheck((_selectedCustomer->isChecked()) && (!_cust->isValid()), _cust,
                          tr("You must select a Customer whose A/R Applications you wish to view."))

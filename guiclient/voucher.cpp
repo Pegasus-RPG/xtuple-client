@@ -905,7 +905,7 @@ void voucher::sPopulateDistDate()
 
 void voucher::sPopulateDueDate()
 {
-  if ( (_invoiceDate->isValid()) && (!_dueDate->isValid()) )
+  if ( (_invoiceDate->isValid()) )
   {
     XSqlQuery dateq;
     dateq.prepare("SELECT determineDueDate(:terms_id, :invoiceDate) AS duedate;");
