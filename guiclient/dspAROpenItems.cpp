@@ -13,6 +13,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 #include <QToolBar>
 #include <QToolButton>
@@ -385,13 +386,14 @@ void dspAROpenItems::sApplyAropenCM()
 void dspAROpenItems::sCCRefundCM()
 {
   XSqlQuery dspCCRefundCM;
-  if (list()->id("ccard_number") < 0)
-  {
-    QMessageBox::warning(this, tr("Cannot Refund by Credit Card"),
-			 tr("<p>The application cannot refund this "
-			    "transaction using a credit card."));
+
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(list()->id("ccard_number") < 0, _credits,
+                         tr("The application cannot refund this "
+                            "transaction using a credit card."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Refund by Credit Card"), errors))
     return;
-  }
   
   int     ccardid = -1;
   double  total   =  0.0;

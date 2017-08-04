@@ -18,6 +18,7 @@
 #include <glcluster.h>
 #include <openreports.h>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 maintainBudget::maintainBudget(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -109,13 +110,6 @@ enum SetResponse maintainBudget::set(const ParameterList & pParams)
 void maintainBudget::sSave()
 {
   XSqlQuery maintainSave;
-  if(_name->text().trimmed().isEmpty())
-  {
-    QMessageBox::warning(this, tr("Cannot Save Budget"),
-        tr("You must specify a name for this budget before saving."));
-    _name->setFocus();
-    return;
-  }
 
   XSqlQuery qry;
   qry.prepare("SELECT budghead_id "
@@ -125,13 +119,15 @@ void maintainBudget::sSave()
   qry.bindValue(":budghead_id", _budgheadid);
   qry.bindValue(":budghead_name", _name->text());
   qry.exec();
-  if (qry.first())
-  {
-    QMessageBox::warning(this, tr("Cannot Save Budget"),
-        tr("The name is already in use by another budget."));
-    _name->setFocus();
-    return;
-  }
+
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                           tr("You must specify a name for this budget before saving."))
+          << GuiErrorCheck(qry.first(), _name,
+                           tr("The name is already in use by another budget."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Budget"), errors))
+      return;
 
   _save->setFocus();
 
@@ -387,16 +383,16 @@ void maintainBudget::generateTable(bool pVerbose)
       periods.prepend(item->text());
     }
   }
+
+  QList<GuiErrorCheck> errors;
   if (periodlist.isEmpty())
   {
-    if (pVerbose)
-    {
-      QMessageBox::critical(this, tr("Incomplete criteria"),
-                            tr("<p>Please select at least one Period "
-                               "before generating the table." ) );
-    }
-    return;
+    errors<< GuiErrorCheck(pVerbose, _table,
+                           tr("Please select at least one Period before generating the table."))
+    ;
   }
+    if (GuiErrorCheck::reportErrors(this, tr("Incomplete criteria"), errors))
+      return;
   
   _periodsRef.prepend(-1);
   periods.prepend(tr("Account"));

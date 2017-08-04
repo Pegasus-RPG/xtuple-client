@@ -13,7 +13,7 @@
 
 #include <QAction>
 #include <QMenu>
-#include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 #include <QVariant>
 
@@ -172,13 +172,13 @@ void dspGLSeries::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int)
 
 bool dspGLSeries::setParams(ParameterList &params)
 {
-  if(!_dates->allValid())
-  {
-    QMessageBox::warning(this, tr("Invalid Date Range"),
-                         tr("You must first specify a valid date range.") );
-    _dates->setFocus();
+
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(!_dates->allValid(), _dates,
+                         tr("You must first specify a valid date range."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Invalid Date Range"), errors))
     return false;
-  }
 
   _dates->appendValue(params);
 

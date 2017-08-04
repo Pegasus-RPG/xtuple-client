@@ -26,6 +26,7 @@
 #include "toggleBankrecCleared.h"
 #include "storedProcErrorLookup.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -185,48 +186,21 @@ bool reconcileBankaccount::sSave(bool closeWhenDone)
 void reconcileBankaccount::sReconcile()
 {
   XSqlQuery reconcileReconcile;
-  if(_bankrecid == -1)
-  {
-    QMessageBox::critical( this, tr("Cannot Reconcile Account"),
-      tr("<p>There was an error trying to reconcile this account. "
-         "Please contact your Systems Administrator.") );
-    return;
-  }
 
-  if (!_startDate->isValid())
-  {
-    QMessageBox::warning( this, tr("Missing Opening Date"),
-      tr("<p>No Opening Date was specified for this reconciliation. Please specify an Opening Date.") );
-    _startDate->setFocus();
-    return;
-  }
-
-  if (!_endDate->isValid())
-  {
-    QMessageBox::warning( this, tr("Missing Ending Date"),
-      tr("<p>No Ending Date was specified for this reconciliation. Please specify an Ending Date.") );
-    _endDate->setFocus();
-    return;
-  }
-
-  if (_endDate->date() < _startDate->date())
-  {
-    QMessageBox::warning( this, tr("Invalid End Date"),
-                           tr("The end date cannot be earlier than the start date.") );
-    _endDate->setFocus();
-    return;
-  }
-
-  if(!_datesAreOK)
-  {
-    QMessageBox::critical( this, tr("Dates already reconciled"),
-                tr("The date range you have entered already has "
-                   "reconciled dates in it. Please choose a different "
-                   "date range.") );
-    _startDate->setFocus();
-    _datesAreOK = false;
-    return;
-  }
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_bankrecid == -1, _bankaccnt,
+                           tr("There was an error trying to reconcile this account. Please contact your Systems Administrator."))
+          << GuiErrorCheck(!_startDate->isValid(), _startDate,
+                           tr("No Opening Date was specified for this reconciliation. Please specify an Opening Date."))
+          << GuiErrorCheck(!_endDate->isValid(), _endDate,
+                           tr("No Ending Date was specified for this reconciliation. Please specify an Ending Date."))
+          << GuiErrorCheck(_endDate->date() < _startDate->date(), _endDate,
+                           tr("The end date cannot be earlier than the start date."))
+          << GuiErrorCheck(!_datesAreOK, _startDate,
+                           tr("The date range you have entered already has reconciled dates in it. Please choose a different date range."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Reconcile Account"), errors))
+      return;
 
   double begBal = _openBal->localValue();
   double endBal = _endBal->localValue();

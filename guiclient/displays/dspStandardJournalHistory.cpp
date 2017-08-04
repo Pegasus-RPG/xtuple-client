@@ -12,7 +12,7 @@
 
 #include <QAction>
 #include <QMenu>
-#include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 #include <QVariant>
 
@@ -74,13 +74,13 @@ void dspStandardJournalHistory::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, i
 
 bool dspStandardJournalHistory::setParams(ParameterList &params)
 {
-  if (!_dates->allValid())
-  {
-    QMessageBox::warning( this, tr("Enter Date"),
-                          tr("Please enter a valid Start Date & End Date.") );
-    _dates->setFocus();
+
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(!_dates->allValid(), _dates,
+                         tr("Please enter a valid Start Date & End Date."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Enter Date"), errors))
     return false;
-  }
 
   params.append("startDate", _dates->startDate());
   params.append("endDate", _dates->endDate());

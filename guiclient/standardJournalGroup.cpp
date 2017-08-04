@@ -13,6 +13,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include "standardJournalGroupItem.h"
+#include "guiErrorCheck.h"
 
 standardJournalGroup::standardJournalGroup(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -150,13 +151,6 @@ void standardJournalGroup::sClose()
 void standardJournalGroup::sSave()
 {
   XSqlQuery standardSave;
-  if (_name->text().trimmed().length() == 0)
-  {
-    QMessageBox::warning( this, tr("Cannot Save Standard Journal Group"),
-                          tr("You must enter a Name for this Standard Journal Group before you may save it.") );
-    _name->setFocus();
-    return;
-  }
 
   standardSave.prepare( "SELECT stdjrnlgrp_id"
              "  FROM stdjrnlgrp"
@@ -165,14 +159,15 @@ void standardJournalGroup::sSave()
   standardSave.bindValue(":stdjrnlgrp_name", _name->text());
   standardSave.bindValue(":stdjrnlgrp_id", _stdjrnlgrpid);
   standardSave.exec();
-  if (standardSave.first())
-  {
-    QMessageBox::warning(this, tr("Cannot Save Standard Journal Group"),
-                         tr("The Name you have entered for this Standard Journal Group is already in use. "
-                            "Please enter in a different Name for this Standard Journal Group."));
-    _name->setFocus();
-    return;
-  }
+
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_name->text().trimmed().length() == 0, _name,
+                           tr("You must enter a Name for this Standard Journal Group before you may save it."))
+          << GuiErrorCheck(standardSave.first(), _name,
+                           tr("The Name you have entered for this Standard Journal Group is already in use."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Standard Journal Group"), errors))
+      return;
 
   if (_mode == cNew)
     standardSave.prepare( "INSERT INTO stdjrnlgrp "

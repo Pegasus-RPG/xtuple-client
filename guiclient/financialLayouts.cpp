@@ -12,6 +12,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QInputDialog>
 //#include <QStatusBar>
 #include <parameter.h>
@@ -116,13 +117,14 @@ void financialLayouts::sDelete()
             "   AND  (flhead_sys));");
   financialDelete.bindValue(":flhead_id", _flhead->id());
   financialDelete.exec();
-  if (financialDelete.first())
-  {
-    QMessageBox::critical(this, tr("System Report"), 
-            tr("You may not delete a system report,\n"
-               "but you may deactivate it."));
+
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(financialDelete.first(), _new,
+                         tr("You may not delete a system report,\n"
+                            "but you may deactivate it."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("System Report"), errors))
     return;
-  }
 
   if(QMessageBox::question( this, tr("Confirm Delete"),
        tr("You are about to delete the selected Financial Report and all of its items.\n"

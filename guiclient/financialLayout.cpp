@@ -21,6 +21,7 @@
 #include "financialLayoutItem.h"
 #include "financialLayoutGroup.h"
 #include "financialLayoutSpecial.h"
+#include "guiErrorCheck.h"
 
 #define cFlRoot  0
 #define cFlItem  1
@@ -179,13 +180,13 @@ void financialLayout::sCheck()
 void financialLayout::sSave()
 {
   XSqlQuery financialSave;
-  if (_name->text().length() == 0)
-  {
-    QMessageBox::warning( this, tr("Layout Name is Invalid"),
-                          tr("You must enter a valid name for this Financial Report.") );
-    _name->setFocus();
-    return;
-  }
+
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_name->text().length() == 0, _name,
+                           tr("You must enter a valid name for this Financial Report."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Financial Report"), errors))
+      return;
   
   financialSave.prepare( "UPDATE flhead "
              "SET flhead_name=:flhead_name, flhead_descrip=:flhead_descrip,"

@@ -11,7 +11,7 @@
 #include "postStandardJournalGroup.h"
 
 #include <QVariant>
-#include <QMessageBox>
+#include "guiErrorCheck.h"
 #include "glSeries.h"
 #include "errorReporter.h"
 
@@ -67,13 +67,13 @@ enum SetResponse postStandardJournalGroup::set(const ParameterList &pParams)
 void postStandardJournalGroup::sPost()
 {
   XSqlQuery postPost;
-  if (!_distDate->isValid())
-  {
-    QMessageBox::critical( this, tr("Cannot Post Standard Journal Group"),
-                           tr("You must enter a Distribution Date before you may post this Standard Journal Group.") );
-    _distDate->setFocus();
-    return;
-  }
+
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(!_distDate->isValid(), _distDate,
+                           tr("You must enter a Distribution Date before you may post this Standard Journal Group."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Post Standard Journal Group"), errors))
+      return;
 
   postPost.prepare("SELECT postStandardJournalGroup(:stdjrnlgrp_id, :distDate, :reverse) AS result;");
   postPost.bindValue(":stdjrnlgrp_id", _stdjrnlgrp->id());
