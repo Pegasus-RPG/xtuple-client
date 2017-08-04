@@ -13,6 +13,7 @@
 #include <math.h>
 
 #include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 #include <QValidator>
 #include <QVariant>
@@ -116,15 +117,15 @@ void glSeriesItem::sSave()
     co.bindValue(":glseries_id", _glseriesid);
     co.bindValue(":company_id", _account->companyId());
     co.exec();
-    if (co.first())
-    {
-      QMessageBox::critical(this, tr("Can not Save Series Item"),
-                            tr("The Company of this Account does not match the "
+
+    QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(co.first(), _account,
+                           tr("The Company of this Account does not match the "
                                "Companies for other Accounts on this series.  This "
-                               "entry can not be saved."));
-      _account->setFocus();
+                               "entry can not be saved."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Can not Save Series Item"), errors))
       return;
-    }
   }
 
   double amount = _amount->baseValue();
