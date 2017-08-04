@@ -11,6 +11,7 @@
 #include "dspCashReceipts.h"
 
 #include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 #include <QVariant>
 
@@ -61,21 +62,14 @@ bool dspCashReceipts::setParams(ParameterList &pParams)
     return false;
   }
 
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter Start Date"),
-                           tr("You must enter a valid Start Date.") );
-    _dates->setFocus();
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(!_dates->startDate().isValid(), _dates,
+                         tr("You must enter a valid Start Date."))
+        << GuiErrorCheck(!_dates->endDate().isValid(), _dates,
+                         tr("You must enter a valid End Date."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Date not Entered"), errors))
     return false;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter End Date"),
-                           tr("You must enter a valid End Date.") );
-    _dates->setFocus();
-    return false;
-  }
 
   _customerSelector->appendValue(pParams);
   _dates->appendValue(pParams);

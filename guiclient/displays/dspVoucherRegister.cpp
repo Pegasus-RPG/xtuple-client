@@ -12,7 +12,7 @@
 
 #include <QAction>
 #include <QMenu>
-#include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QVariant>
 
 #include "glTransactionDetail.h"
@@ -121,33 +121,16 @@ void dspVoucherRegister::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem*, int)
 
 bool dspVoucherRegister::setParams(ParameterList & params)
 {
-  if (!display::setParams(params))
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(! _dates->startDate().isValid(), _dates,
+            tr("Enter a valid Start Date."))
+        << GuiErrorCheck(! _dates->endDate().isValid(), _dates,
+            tr("Enter a valid End Date."))
+        << GuiErrorCheck(_selectedAccount->isChecked() && ! _account->isValid(), _account,
+            tr("Enter a valid Account."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Invalid Dates"), errors))
     return false;
-
-  if (! _dates->startDate().isValid())
-  {
-    QMessageBox::warning(this, tr("Invalid Date"),
-                          tr("Enter a valid Start Date."));
-	_dates->setFocus();
-    return false;
-  }
-
-  if (! _dates->endDate().isValid())
-  {
-    QMessageBox::warning(this, tr("Invalid Date"),
-                          tr("Enter a valid End Date."));
-    _dates->setFocus();
-    return false;
-  }
-
-  if (_selectedAccount->isChecked())
-    if (! _account->isValid())
-    {
-      QMessageBox::warning(this, tr("Invalid Account"),
-                           tr("Enter a valid Account."));
-      _account->setFocus();
-      return false;
-    }
 
   _dates->appendValue(params);
 

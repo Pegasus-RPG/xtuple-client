@@ -11,6 +11,7 @@
 #include "postInvoices.h"
 
 #include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 #include <QVariant>
 
@@ -62,15 +63,14 @@ void postInvoices::sPost()
     }
     while (postPost.next());
 
-    if ( ( (unprinted) && (!printed) ) && (!_postUnprinted->isChecked()) )
-    {
-      QMessageBox::warning( this, tr("No Invoices to Post"),
-                            tr( "Although there are unposted Invoices, there are no unposted Invoices that have been printed.\n"
-                                "You must manually print these Invoices or select 'Post Unprinted Invoices' before these Invoices\n"
-                                "may be posted." ) );
-      _postUnprinted->setFocus();
+    QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(( (unprinted) && (!printed) ) && (!_postUnprinted->isChecked()), _postUnprinted,
+                           tr("Although there are unposted Invoices, there are no unposted Invoices that have been printed.\n"
+                              "You must manually print these Invoices or select 'Post Unprinted Invoices' before these Invoices\n"
+                              "may be posted."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("No Invoices to Post"), errors))
       return;
-    }
   }
   else
   {
