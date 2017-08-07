@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -118,6 +118,48 @@ void termses::sDelete()
     return;
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Vendor Information"),
+                                termsesDelete, __FILE__, __LINE__))
+  {
+    return;
+  }
+
+  termsesDelete.prepare( "SELECT pohead_id FROM pohead "
+                         "WHERE pohead_terms_id=:terms_id "
+                         "UNION "
+                         "SELECT apopen_id FROM apopen "
+                         "WHERE apopen_terms_id=:terms_id;");
+  termsesDelete.bindValue(":terms_id", _terms->id());
+  termsesDelete.exec();
+  if (termsesDelete.first())
+  {
+    QMessageBox::critical( this, tr("Cannot Delete Terms Code"),
+                           tr("<p>You may not delete the selected Terms Code "
+                              "as there are one or more Purchase Orders or A/P documents "
+                              "assigned to it." ) );
+    return;
+  }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving A/P Information"),
+                                termsesDelete, __FILE__, __LINE__))
+  {
+    return;
+  }
+
+  termsesDelete.prepare( "SELECT cohead_id FROM cohead "
+                         "WHERE cohead_terms_id=:terms_id "
+                         "UNION "
+                         "SELECT aropen_id FROM aropen "
+                         "WHERE aropen_terms_id=:terms_id;");
+  termsesDelete.bindValue(":terms_id", _terms->id());
+  termsesDelete.exec();
+  if (termsesDelete.first())
+  {
+    QMessageBox::critical( this, tr("Cannot Delete Terms Code"),
+                           tr("<p>You may not delete the selected Terms Code "
+                              "as there are one or more Sales Orders or A/R documents "
+                              "assigned to it." ) );
+    return;
+  }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving A/P Information"),
                                 termsesDelete, __FILE__, __LINE__))
   {
     return;
