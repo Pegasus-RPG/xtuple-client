@@ -47,7 +47,6 @@ itemPricingSchedules::itemPricingSchedules(QWidget* parent, const char* name, Qt
     connect(_ipshead, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_ipshead, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));
     connect(_ipshead, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    connect(_ipshead, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   }
   else
     _new->setEnabled(false);
