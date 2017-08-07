@@ -1405,10 +1405,12 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
         invhist.bindValue(":soitemid", _soitem->id());
         invhist.exec();
         if (!invhist.first())
+        {
+          if(ErrorReporter::error(QtCriticalMsg, this, "Error checking invhist",
+                                  invhist, __FILE__, __LINE__))
+            return;
           pMenu->addAction(tr("Delete Line..."), this, SLOT(sDelete()));
-        else if(ErrorReporter::error(QtCriticalMsg, this, "Error checking invhist",
-                                     invhist, __FILE__, __LINE__))
-          return;
+        }
       }
     }
 
@@ -2390,17 +2392,42 @@ void salesOrder::sAction()
 void salesOrder::sCancel()
 {
   XSqlQuery existpo;
-  existpo.prepare("SELECT 1 "
+  existpo.prepare("SELECT poitem_id "
                   "  FROM coitem JOIN poitem ON coitem_order_type='P' "
                   "                         AND coitem_order_id=poitem_id "
                   " WHERE coitem_id=:soitem_id;");
   existpo.bindValue(":soitem_id", _soitem->id());
   existpo.exec();
-  if (existpo.first())
-    QMessageBox::warning(this, tr("Can not delete PO"),
-                         tr("Purchase Order linked to this Sales Order "
-                            "Item will not be affected. The Purchase Order "
-                            "should be closed or deleted manually if necessary."));
+  if (existpo.first() && QMessageBox::question(this, tr("Delete Purchase Order Item?"),
+                                               tr("Do you wish to delete the Purchase Order Item "
+                                                  "linked to this Sales Order Item? The associated "
+                                                  "Purchase Order will also be deleted if no other "
+                                                  "Purchase Order Item exists for that Purchase "
+                                                  "Order."),
+                                               QMessageBox::Yes,
+                                               QMessageBox::No | QMessageBox::Default)
+                         == QMessageBox::Yes)
+  {
+    XSqlQuery deletepo;
+    deletepo.prepare("SELECT deletepoitem(:poitemid) AS result;");
+    deletepo.bindValue(":poitemid", existpo.value("poitem_id").toInt());
+    deletepo.exec();
+    if (deletepo.first() && deletepo.value("result").toInt() < 0)
+    {
+      XSqlQuery closepo;
+      closepo.prepare("UPDATE poitem "
+                      "   SET poitem_status='C' "
+                      " WHERE poitem_id=:poitemid");
+      closepo.bindValue(":poitem", existpo.value("poitem_id").toInt());
+      closepo.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error closing P/O Line"),
+                               closepo, __FILE__, __LINE__))
+        return;
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting P/O Item"),
+                                  deletepo, __FILE__, __LINE__))
+      return;
+  }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Linked P/O"),
                                 existpo, __FILE__, __LINE__))
     return;
