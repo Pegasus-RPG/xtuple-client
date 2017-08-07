@@ -331,8 +331,7 @@ void financialLayoutGroup::sToggled()
     _altSubtotal->setChecked(false);
     _altSubtotal->setEnabled(false);
   }
-  else
-    _altSubtotal->setEnabled(_showSubtotal->isEnabled());
+  _altSubtotal->setEnabled(_showSubtotal->isChecked() && _showSubtotal->isEnabled());
   _showStart->setEnabled(on);
   _showEnd->setEnabled(on);
   _showDelta->setEnabled(on);
