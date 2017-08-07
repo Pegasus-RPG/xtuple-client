@@ -13,6 +13,7 @@
 
 #include <QMessageBox>
 #include <QSqlError>
+#include <QCloseEvent>
 
 #include <metasql.h>
 #include "mqlutil.h"
@@ -581,4 +582,8 @@ void contactMerge::sSrcCntctView()
   sFillList();
 }
 
-
+void contactMerge::closeEvent(QCloseEvent *pEvent)
+{
+  XSqlQuery clear("DELETE FROM cntctsel;");
+  pEvent->accept();
+}
