@@ -185,6 +185,8 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     bool    populateLinear();
     void    setPopulateLinear(bool alwaysLinear = true);
 
+    void keyPressEvent(QKeyEvent* e);
+
     Q_INVOKABLE int   altId() const;
     Q_INVOKABLE int   id()    const;
     Q_INVOKABLE int   id(const QString)     const;
