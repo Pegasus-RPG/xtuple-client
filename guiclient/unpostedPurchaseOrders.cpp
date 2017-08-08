@@ -173,7 +173,12 @@ void unpostedPurchaseOrders::sDelete()
 
           // If locked, don't proceed
           if (!_lock.acquire("pohead", ((XTreeWidgetItem*)(selected[i]))->id(), AppLock::Interactive))
-            continue;
+          {
+            if (i == selected.size() - 1)
+              return;
+            else
+              continue;
+          }
 
           unpostedDelete.bindValue(":pohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
           unpostedDelete.exec();
@@ -190,6 +195,8 @@ void unpostedPurchaseOrders::sDelete()
                                unpostedDelete, __FILE__, __LINE__);
           else
             done = true;
+
+          _lock.release();
         }
       }
     }
@@ -255,7 +262,12 @@ void unpostedPurchaseOrders::sRelease()
     {
       // If locked, don't proceed
       if (!_lock.acquire("pohead", ((XTreeWidgetItem*)(selected[i]))->id(), AppLock::Interactive))
-        continue;
+      {
+        if (i == selected.size() - 1)
+          return;
+        else
+          continue;
+      }
 
       unpostedRelease.bindValue(":pohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
       unpostedRelease.exec();
@@ -272,6 +284,8 @@ void unpostedPurchaseOrders::sRelease()
       else if (unpostedRelease.lastError().type() != QSqlError::NoError)
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Releasing Purchase Order"),
                            unpostedRelease, __FILE__, __LINE__);
+
+      _lock.release();
     }
   }
   if (done)
@@ -299,7 +313,12 @@ void unpostedPurchaseOrders::sUnrelease()
     {
       // If locked, don't proceed
       if (!_lock.acquire("pohead", ((XTreeWidgetItem*)(selected[i]))->id(), AppLock::Interactive))
-        continue;
+      {
+        if (i == selected.size() - 1)
+          return;
+        else
+          continue;
+      }
 
       unRelease.bindValue(":pohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
       unRelease.exec();
@@ -316,6 +335,8 @@ void unpostedPurchaseOrders::sUnrelease()
       else if (unRelease.lastError().type() != QSqlError::NoError)
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Unreleasing Purchase Order"),
                            unRelease, __FILE__, __LINE__);
+
+      _lock.release();
     }
   }
   if (done)
