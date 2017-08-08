@@ -1745,10 +1745,10 @@ void ParameterWidget::storeFilterValue(int pId, QObject* filter)
   _filterWidgets[foundRow] = wfilter;
 
   if (pp && ! newvalue.isNull())
-  {
     _filterValues[foundRow] = qMakePair(pp->param, newvalue);
-    emit updated();
-  }
+  else
+    _filterValues.remove(foundRow);
+  emit updated();
 
   if (!_usedTypes.isEmpty())
     _usedTypes.remove(foundRow);
