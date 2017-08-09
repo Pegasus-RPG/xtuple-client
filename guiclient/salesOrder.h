@@ -56,6 +56,7 @@ class salesOrder : public XWidget, public Ui::salesOrder
     virtual void        sFirm();
     virtual void        sSoften();
     virtual void        sAction();
+    virtual void        sCancel();
     virtual void        sDelete();
     virtual void        populate();
     virtual void        sFillItemList();
