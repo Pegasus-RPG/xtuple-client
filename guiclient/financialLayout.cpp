@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -61,7 +61,7 @@ financialLayout::financialLayout(QWidget* parent, const char* name, bool modal, 
   connect(_adHoc, SIGNAL(clicked()), this, SLOT(sSetType()));
   connect(_addCol, SIGNAL(clicked()), this, SLOT(sAddCol()));
   connect(_editCol, SIGNAL(clicked()), this, SLOT(sEditCol()));
-  connect(_viewCol, SIGNAL(clicked()), this, SLOT(sEditCol()));
+  connect(_viewCol, SIGNAL(clicked()), this, SLOT(sViewCol()));
   connect(_deleteCol, SIGNAL(clicked()), this, SLOT(sDeleteCol()));
   connect(_layouts, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtonsCol()));
   connect(_layouts, SIGNAL(itemSelected(int)), this, SLOT(sEditCol()));
@@ -1105,6 +1105,27 @@ void financialLayout::sEditCol()
   
   if(ok)
     sFillList();
+}
+
+void financialLayout::sViewCol()
+{
+  bool ok = false;
+  ParameterList params;
+
+  params.append("mode", "view");
+  params.append("flhead_id", _flheadid);
+  params.append("flcol_id", _layouts->id());
+  if (_income->isChecked())
+    params.append("type", "income");
+  if (_balance->isChecked())
+    params.append("type", "balance");
+  if (_cash->isChecked())
+    params.append("type", "cash");
+  if (_adHoc->isChecked())
+    params.append("type", "adhoc");
+  financialLayoutColumns newdlg(this, "", true);
+  newdlg.set(params);
+  newdlg.exec();
 }
 
 void financialLayout::sDeleteCol()

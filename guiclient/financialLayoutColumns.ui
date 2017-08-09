@@ -433,22 +433,6 @@ to be bound by its terms.</comment>
  <connections>
   <connection>
    <sender>_buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>financialLayoutColumns</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>721</x>
-     <y>180</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>233</x>
-     <y>29</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_buttonBox</sender>
    <signal>rejected()</signal>
    <receiver>financialLayoutColumns</receiver>
    <slot>reject()</slot>
