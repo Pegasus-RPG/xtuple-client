@@ -123,10 +123,7 @@ void termses::sDelete()
     return;
   }
 
-  termsesDelete.prepare( "SELECT pohead_id FROM pohead "
-                         "WHERE pohead_terms_id=:terms_id "
-                         "UNION "
-                         "SELECT apopen_id FROM apopen "
+  termsesDelete.prepare( "SELECT apopen_id FROM apopen "
                          "WHERE apopen_terms_id=:terms_id;");
   termsesDelete.bindValue(":terms_id", _terms->id());
   termsesDelete.exec();
@@ -134,7 +131,7 @@ void termses::sDelete()
   {
     QMessageBox::critical( this, tr("Cannot Delete Terms Code"),
                            tr("<p>You may not delete the selected Terms Code "
-                              "as there are one or more Purchase Orders or A/P documents "
+                              "as there are one or more A/P documents "
                               "assigned to it." ) );
     return;
   }
@@ -144,10 +141,7 @@ void termses::sDelete()
     return;
   }
 
-  termsesDelete.prepare( "SELECT cohead_id FROM cohead "
-                         "WHERE cohead_terms_id=:terms_id "
-                         "UNION "
-                         "SELECT aropen_id FROM aropen "
+  termsesDelete.prepare( "SELECT aropen_id FROM aropen "
                          "WHERE aropen_terms_id=:terms_id;");
   termsesDelete.bindValue(":terms_id", _terms->id());
   termsesDelete.exec();
@@ -155,7 +149,7 @@ void termses::sDelete()
   {
     QMessageBox::critical( this, tr("Cannot Delete Terms Code"),
                            tr("<p>You may not delete the selected Terms Code "
-                              "as there are one or more Sales Orders or A/R documents "
+                              "as there are one or more A/R documents "
                               "assigned to it." ) );
     return;
   }
@@ -169,7 +163,11 @@ void termses::sDelete()
              "WHERE (terms_id=:terms_id);" );
   termsesDelete.bindValue(":terms_id", _terms->id());
   termsesDelete.exec();
-
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Terms"),
+                                  termsesDelete, __FILE__, __LINE__))
+  {
+    return;
+  }
   sFillList();
 }
 
