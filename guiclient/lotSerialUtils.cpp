@@ -87,10 +87,12 @@ void LotSerialUtils::updateLotCharacteristics(int ls_id, const QList<QWidget *> 
         }
 
         XSqlQuery q;
-        bool success = q.exec(QString("INSERT INTO charass "
-                              "(charass_value, charass_target_type, charass_target_id, charass_char_id) "
-                              "VALUES ($$%1$$, 'LS', %2, %3)").arg(char_text).arg(ls_id).arg(_charIds.at(i)));
-        if (!success)
+        q.prepare("INSERT INTO charass (charass_value, charass_target_type, charass_target_id, charass_char_id)"
+                              " VALUES (:value, 'LS', :target, :char)");
+        q.bindValue(":value", char_text);
+        q.bindValue(":target", ls_id);
+        q.bindValue(":char", _charIds.at(i));
+        if (!q.exec())
         {
             qDebug() << "UpdateLotCharacteristics Error:" << q.lastError().text();
             continue;
