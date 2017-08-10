@@ -17,9 +17,12 @@ QScriptValue QDateToScriptValue(QScriptEngine *engine, const QDate &in)
   XSqlQuery getTZ("SELECT EXTRACT(TIMEZONE FROM now()) AS offset;");
   if (getTZ.first())
     return engine->newDate(QDateTime(in, QTime(), QTimeZone(getTZ.value("offset").toInt())));
-  else if (ErrorReporter::error(QtCriticalMsg, 0, "Failed to fetch server time zone",
-                                getTZ, __FILE__, __LINE__))
+  else
+  {
+    ErrorReporter::error(QtCriticalMsg, 0, "Failed to fetch server time zone",
+                                getTZ, __FILE__, __LINE__);
     return engine->newDate(QDateTime(in));
+  }
 }
 
 void QDateFromScriptValue(const QScriptValue &object, QDate &out)
