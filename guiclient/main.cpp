@@ -311,28 +311,29 @@ int main(int argc, char *argv[])
     lang << sysl.name().toLower();
   (void)lang.removeDuplicates();
 
-  QStringList transfile;
-  transfile << "qt" << "default" << "xTuple" << "openrpt" << "reports";
-  XSqlQuery pkglist("SELECT pkghead_name"
+  QList<QPair<QString, QString> > transfile;
+  transfile << qMakePair(QString("qt"), _Version) << qMakePair(QString("default"), _Version) << qMakePair(QString("xTuple"), _Version) << qMakePair(QString("openrpt"), QString()) << qMakePair(QString("reports"), QString());
+  XSqlQuery pkglist("SELECT pkghead_name, pkghead_version "
                     "  FROM pkghead"
                     " WHERE packageIsEnabled(pkghead_name);");
   while (pkglist.next())
-    transfile << pkglist.value("pkghead_name").toString();
+    transfile << qMakePair(pkglist.value("pkghead_name").toString(), pkglist.value("pkghead_version").toString());
   ErrorReporter::error(QtCriticalMsg, 0, QObject::tr("Error Getting Extension Names"),
                        pkglist, __FILE__, __LINE__);
 
   bool foundxTuple = false;
   QTranslator *translator = new QTranslator(&app);
-  foreach (QString f, transfile)
+  QPair<QString, QString> f;
+  foreach (f, transfile)
   {
     foreach (QString l, lang)
     {
-      if (translator->load(translationFile(l, f)))
+      if (translator->load(translationFile(l, f.first, f.second)))
       {
         app.installTranslator(translator);
-        qDebug() << "installed" << l << f;
+        qDebug() << "installed" << l << f.first;
         translator = new QTranslator(&app);
-        if (f == "xTuple")
+        if (f.first == "xTuple")
           foundxTuple = true;
         break;
       }

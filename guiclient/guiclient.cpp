@@ -24,7 +24,6 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QDir>
-#include <QDomDocument>
 #include <QPixmap>
 #include <QTextStream>
 #include <QCloseEvent>
@@ -1619,8 +1618,6 @@ QString translationFile(QString localestr, const QString component)
  */
 QString translationFile(QString localestr, const QString component, QString &version)
 {
-  Q_UNUSED(version);
-
   QStringList paths;
   paths << QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation)
         << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
@@ -1635,55 +1632,26 @@ QString translationFile(QString localestr, const QString component, QString &ver
     paths.insert(i, paths.at(i - 1) + "/dict");
 
   QString filename = component + "." + localestr;
-  QString dir;
+  QString versiondir;
+  if (!version.isEmpty())
+    versiondir = "/" + component + "-" + version;
 
   foreach (QString testDir, paths)
   {
     if (DEBUG) qDebug() << "looking for translation" << testDir << filename;
 
-    QFile test(testDir + "/" + filename + ".qm");
+    QFile test(testDir + versiondir + "/" + filename + ".qm");
     if (test.exists())
-    {
-      dir = testDir;
-      break;
-    }
+      return testDir + versiondir + "/" + filename;
   }
 
-  if (dir.isEmpty())
-  {
-    dir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-    QDir mkdir(dir);
-    if (!mkdir.exists())
-      mkdir.mkpath(dir);
-  }
-
-  QDomDocument doc;
-  QDomElement elemThis;
-  QString currentVersion = "";
-
-  QFile versions(dir + "/" + "translationVersions.xml");
-      
-  if (versions.exists() && versions.open(QIODevice::ReadOnly))
-  {
-    if (doc.setContent(versions.readAll()))
-    {
-      QDomNodeList nList = doc.documentElement().childNodes();
-      for (int n = 0; n < nList.count(); n++)
-      {
-        elemThis = nList.item(n).toElement();
-        if (elemThis.tagName() == filename)
-        {
-          currentVersion = elemThis.attribute("version");
-          break;
-        }
-      }
-    }
-
-    versions.close();
-  }
+  QString dir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+  QDir mkdir(dir);
+  if (!mkdir.exists())
+    mkdir.mkpath(dir);
 
   XSqlQuery data;
-  data.prepare("SELECT dict_data, dict_version "
+  data.prepare("SELECT dict_data "
                "  FROM dict "
                "  JOIN pg_class ON dict.tableoid=pg_class.oid "
                "  JOIN pg_namespace ON pg_class.relnamespace=pg_namespace.oid "
@@ -1692,44 +1660,31 @@ QString translationFile(QString localestr, const QString component, QString &ver
                " WHERE nspname=:extension "
                "   AND lang_abbr2=:lang "
                "   AND (country_abbr=:country OR :country IS NULL) "
-               "   AND dict_version!=:version;");
-  data.bindValue(":extension", component);
+               "   AND dict_version=:version;");
+  data.bindValue(":extension", component=="xTuple" ? "public" : component);
   data.bindValue(":lang", localestr.split("_")[0]);
   if (localestr.contains("_"))
-    data.bindValue(":country", localestr.split("_")[1]);
-  data.bindValue(":version", currentVersion);
+    data.bindValue(":country", localestr.split("_")[1].toUpper());
+  data.bindValue(":version", version);
   data.exec();
   if (data.first())
   {
-    QFile qm(dir + "/" + filename + ".qm");
+    QDir mkdir(dir + versiondir);
+    if(!mkdir.exists())
+      mkdir.mkpath(dir + versiondir);
+    QFile qm(dir + versiondir + "/" + filename + ".qm");
     if (qm.open(QIODevice::WriteOnly))
       qm.write(data.value("dict_data").toByteArray());
     qm.close();
 
-    if (doc.isNull())
-    {
-      QDomElement root = doc.createElement("translationVersions");
-      doc.appendChild(root);
-    }
-
-    if (currentVersion.isEmpty())
-    {
-      elemThis = doc.createElement(filename);
-      elemThis.setAttribute("version", data.value("dict_version").toString());
-      doc.documentElement().appendChild(elemThis);
-    }
-    else
-      elemThis.setAttribute("version", data.value("dict_version").toString());
-
-    if (versions.open(QIODevice::WriteOnly))
-      versions.write(doc.toByteArray());
-    versions.close();
+    return dir + versiondir + "/" + filename;
   }
-  else if(ErrorReporter::error(QtCriticalMsg, 0, "Error loading QM data",
-                         data, __FILE__, __LINE__))
+  else
+  {
+    ErrorReporter::error(QtCriticalMsg, 0, "Error loading QM data",
+                         data, __FILE__, __LINE__);
     return "";
-
-  return dir + "/" + filename;
+  }
 }
 
 /** @brief Build a Custom submenu from the @c cmd table.
