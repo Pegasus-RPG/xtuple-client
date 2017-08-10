@@ -14,6 +14,7 @@
 #include <QSqlError>
 #include <QVariant>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 #include "storedProcErrorLookup.h"
 #include "unpostedGLTransactions.h"
@@ -129,12 +130,12 @@ void accountingPeriod::sHandleNumber()
 
 void accountingPeriod::sSave()
 {
-  if (_startDate->date() >= _endDate->date())
-  {
-    QMessageBox::critical( this, tr("Cannot Save Period"),
-          tr("The start date must be less than the end date.") );
-    return;
-  }
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_startDate->date() >= _endDate->date(), _endDate,
+                           tr("The start date must be less than the end date."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Period"), errors))
+      return;
 
   XSqlQuery saveAccounting;
   if (_mode == cNew)

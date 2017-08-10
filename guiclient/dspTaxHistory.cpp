@@ -19,6 +19,7 @@
 #include "currdisplay.h"
 #include "mqlutil.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 dspTaxHistory::dspTaxHistory(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -115,28 +116,16 @@ enum SetResponse dspTaxHistory::set(const ParameterList &pParams)
 
 bool dspTaxHistory::setParams(ParameterList &params)
 {
-  if (!(_sales->isChecked() || _purchases->isChecked()))
-  {
-    QMessageBox::warning( this, tr("Select items to show"),
-                          tr("You must select sales or purchase items to show.") );
-    return false;
-  }
-  
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::warning( this, tr("Enter Valid Start Date"),
-                          tr("You must enter a valid Start Date to print this report.") );
-    _dates->setFocus();
-    return false;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::warning( this, tr("Enter Valid End Date"),
-                          tr("You must enter a valid End Date to print this report.") );
-    _dates->setFocus();
-    return false;
-  }
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(!(_sales->isChecked() || _purchases->isChecked()), _sales,
+                           tr("You must select sales or purchase items to show.")),
+    errors<< GuiErrorCheck(!_dates->startDate().isValid(), _dates,
+                           tr("You must enter a valid Start Date to print this report.")),
+    errors<< GuiErrorCheck(!_dates->endDate().isValid(), _dates,
+                           tr("You must enter a valid End Date to print this report."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Execute Tax History"), errors))
+      return false;
   
   if (_metrics->boolean("CashBasedTax"))
     params.append("cashbasedtax", true);

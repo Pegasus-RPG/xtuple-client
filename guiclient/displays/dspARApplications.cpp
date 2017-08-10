@@ -13,6 +13,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 
 #include <datecluster.h>
@@ -203,37 +204,18 @@ void dspARApplications::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem*, int)
 
 bool dspARApplications::setParams(ParameterList & params)
 {
-  if ( (_selectedCustomer->isChecked()) && (!_cust->isValid()) )
-  {
-    QMessageBox::warning( this, tr("Select Customer"),
-                          tr("You must select a Customer whose A/R Applications you wish to view.") );
-    _cust->setFocus();
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck((_selectedCustomer->isChecked()) && (!_cust->isValid()), _cust,
+                         tr("You must select a Customer whose A/R Applications you wish to view."))
+        << GuiErrorCheck(!_dates->startDate().isValid(), _dates,
+                         tr("You must enter a valid Start Date."))
+        << GuiErrorCheck(!_dates->endDate().isValid(), _dates,
+                         tr("You must enter a valid End Date."))
+        << GuiErrorCheck((!_cashReceipts->isChecked()) && (!_creditMemos->isChecked()), _cashReceipts,
+                         tr("You must indicate which Document Type(s) you wish to view."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Set Parameters"), errors))
     return false;
-  }
-
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter Start Date"),
-                           tr("You must enter a valid Start Date.") );
-    _dates->setFocus();
-    return false;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter End Date"),
-                           tr("You must enter a valid End Date.") );
-    _dates->setFocus();
-    return false;
-  }
-
-  if ( (!_cashReceipts->isChecked()) && (!_creditMemos->isChecked()) )
-  {
-    QMessageBox::critical( this, tr("Select Document Type"),
-                           tr("You must indicate which Document Type(s) you wish to view.") );
-    _cashReceipts->setFocus();
-    return false;
-  }
   
   if (_cashReceipts->isChecked())
     params.append("includeCashReceipts");

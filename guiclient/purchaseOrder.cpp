@@ -235,13 +235,24 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
                    "       CASE WHEN(pr_order_type='S') THEN pr_order_id"
                    "            ELSE -1"
                    "       END AS parentso,"
-                   "       pr_prj_id, pr_releasenote "
+                   "       pr_prj_id, pr_releasenote, "
+                   "       stdCost(itemsite_item_id) AS stdcost "
                    "FROM pr "
+                   "JOIN itemsite ON itemsite_id=pr_itemsite_id "
                    "WHERE (pr_id=:pr_id);" );
         purchaseet.bindValue(":pr_id", _prid);
         purchaseet.exec();
         if (purchaseet.first())
         {
+          if(_metrics->boolean("RequireStdCostForPOItem") && purchaseet.value("stdcost").toDouble() == 0.0)
+          {
+            QMessageBox::critical( this, tr("Selected Item Missing Cost"),
+                    tr("<p>The selected item has no Std. Costing information. "
+                       "Please see your controller to correct this situation "
+                       "before continuing."));
+            return UndefinedError;
+          }
+
           itemsiteid = purchaseet.value("pr_itemsite_id").toInt();
           qty = purchaseet.value("pr_qtyreq").toDouble();
           dueDate = purchaseet.value("pr_duedate").toDate();

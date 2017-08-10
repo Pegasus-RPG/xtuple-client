@@ -26,6 +26,7 @@
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
 #include "allocateARCreditMemo.h"
+#include "guiErrorCheck.h"
 
 #define cViewQuote (0x20 | cView)
 
@@ -402,7 +403,7 @@ void invoice::sPopulateCustomerInfo(int pCustid)
     XSqlQuery cust;
     cust.prepare( "SELECT cust_name, COALESCE(cntct_addr_id,-1) AS addr_id, "
                   "       cust_salesrep_id, cust_commprcnt * 100 AS commission,"
-                  "       cust_creditstatus, cust_terms_id, "
+                  "       cust_creditstatus, cust_terms_id, cust_shipvia,"
                   "       COALESCE(cust_taxzone_id, -1) AS cust_taxzone_id,"
                   "       COALESCE(cust_shipchrg_id, -1) AS cust_shipchrg_id,"
                   "       cust_ffshipto, cust_ffbillto, "
@@ -426,6 +427,8 @@ void invoice::sPopulateCustomerInfo(int pCustid)
 	_taxzone->setId(cust.value("cust_taxzone_id").toInt());
 	_custCurrency->setId(cust.value("cust_curr_id").toInt());
         _shipChrgs->setId(cust.value("cust_shipchrg_id").toInt());
+        _shipVia->setText(cust.value("cust_shipvia").toString());
+        _custShipVia = _shipVia->currentText();
 
 	bool ffBillTo = cust.value("cust_ffbillto").toBool();
         if (_mode != cView)
@@ -469,13 +472,15 @@ void invoice::populateShipto(int pShiptoid)
   {
     XSqlQuery shipto;
     shipto.prepare( "SELECT shipto_id, shipto_num, shipto_name, shipto_addr_id, "
-                    "       cntct_phone, shipto_shipvia, shipto_salesrep_id, "
+                    "       cntct_phone, shipto_salesrep_id, "
+                    "       COALESCE(shipto_shipvia, cust_shipvia, '') AS shipvia, "
                     "       COALESCE(shipto_taxzone_id, -1) AS shipto_taxzone_id,"
                     "       COALESCE(shipto_shipchrg_id, -1) AS shipto_shipchrg_id,"
                     "       COALESCE(shipto_shipzone_id, -1) AS shipto_shipzone_id,"
                     "       shipto_commission * 100 AS commission "
-                    "FROM shiptoinfo LEFT OUTER JOIN "
-		    "     cntct ON (shipto_cntct_id=cntct_id)"
+                    "FROM shiptoinfo "
+                    "LEFT OUTER JOIN cntct ON (shipto_cntct_id=cntct_id) "
+                    "JOIN custinfo ON (shipto_cust_id=cust_id) "
                     "WHERE (shipto_id=:shipto_id);" );
     shipto.bindValue(":shipto_id", pShiptoid);
     shipto.exec();
@@ -498,7 +503,7 @@ void invoice::populateShipto(int pShiptoid)
 
       _salesrep->setId(shipto.value("shipto_salesrep_id").toInt());
       _commission->setDouble(shipto.value("commission").toDouble());
-      _shipVia->setText(shipto.value("shipto_shipvia"));
+      _shipVia->setText(shipto.value("shipvia"));
       _taxzone->setId(shipto.value("shipto_taxzone_id").toInt());
       _shipChrgs->setId(shipto.value("shipto_shipchrg_id").toInt());
       _shippingZone->setId(shipto.value("shipto_shipzone_id").toInt());
@@ -529,41 +534,24 @@ void invoice::sCopyToShipto()
   _shipToAddr->setId(_billToAddr->id());
   _shipToPhone->setText(_billToPhone->text());
   _taxzone->setId(_custtaxzoneid);
+  _shipVia->setText(_custShipVia);
+
   _shipTo->blockSignals(false);
   _shipToAddr->blockSignals(false);
 }
 
 void invoice::sSave()
 {
-  struct {
-    bool	condition;
-    QString	msg;
-    QWidget*	widget;
-  } error[] = {
-    { _cust->id() <= 0,
-      tr("<p>You must enter a Customer for this Invoice before saving it."),
-      _cust
-    },
-    // TODO: add more error checks here?
-    { true, "", NULL }
-  };
-
-  if (_total->localValue() < 0 )
-  {
-    QMessageBox::information(this, tr("Total Less than Zero"),
-                             tr("<p>The Total must be a positive value.") );
-    _cust->setFocus();
-    return;
-  }
-
-  //Invoices must have atleast one line item.
-  if (_invcitem->topLevelItemCount() <= 0 )
-  {
-    QMessageBox::information(this, tr("No Line Items"),
-                             tr("<p>There must be at least one line item for an invoice.") );
-    _new->setFocus();
-    return;
-  }
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_cust->id() <= 0, _cust,
+                           tr("You must enter a Customer for this Invoice before saving it."))
+          << GuiErrorCheck(_total->localValue() < 0, _cust,
+                           tr("The Total must be a positive value."))
+          << GuiErrorCheck(_invcitem->topLevelItemCount() <= 0, _new,
+                           tr("There must be at least one line item for an invoice."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Invoice"), errors))
+      return;
 
   //  We can't post a Misc. Charge without a Sales Account
   if ( (! _miscAmount->isZero()) && (!_miscChargeAccount->isValid()) )
@@ -577,18 +565,6 @@ void invoice::sSave()
     _miscChargeAccount->setFocus();
     return;
   }
-
-
-  int errIndex;
-  for (errIndex = 0; ! error[errIndex].condition; errIndex++)
-    ;
-  if (! error[errIndex].msg.isEmpty())
-  {
-    QMessageBox::critical(this, tr("Cannot Save Invoice"), error[errIndex].msg);
-    error[errIndex].widget->setFocus();
-    return;
-  }
-
   // save address info in case someone wants to use 'em again later
   // but don't make any global changes to the data and ignore errors
   _shipToAddr->blockSignals(true);

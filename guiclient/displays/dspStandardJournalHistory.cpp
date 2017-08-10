@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -12,7 +12,7 @@
 
 #include <QAction>
 #include <QMenu>
-#include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 #include <QVariant>
 
@@ -74,13 +74,12 @@ void dspStandardJournalHistory::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, i
 
 bool dspStandardJournalHistory::setParams(ParameterList &params)
 {
-  if (!_dates->allValid())
-  {
-    QMessageBox::warning( this, tr("Enter Date"),
-                          tr("Please enter a valid Start Date & End Date.") );
-    _dates->setFocus();
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(!_dates->allValid(), _dates,
+                         tr("Please enter a valid Start Date & End Date."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Enter Date"), errors))
     return false;
-  }
 
   params.append("startDate", _dates->startDate());
   params.append("endDate", _dates->endDate());

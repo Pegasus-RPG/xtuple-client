@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -18,6 +18,7 @@
 #include <openreports.h>
 #include <reporthandler.h>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 financialLayoutColumns::financialLayoutColumns(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -123,13 +124,18 @@ void financialLayoutColumns::sSave()
   XSqlQuery financialSave;
   QString sql;
 
-  if ((!_month->isChecked()) && (!_quarter->isChecked()) && (!_year->isChecked()))
-  {
-    QMessageBox::critical( this, tr("Cannot Save settings"),
-              tr("<p>At least one of Month, Date or Year must be selected.") );
-    return;
-  }
-      
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck((!_month->isChecked()) && (!_quarter->isChecked()) && (!_year->isChecked()),
+                            _month, tr("<p>At least one of Month, Date or Year must be selected.") )
+         << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                          tr("Please enter a name"))
+         << GuiErrorCheck(_descrip->text().trimmed().isEmpty(), _descrip,
+                          tr("Please enter a description"))
+  ;
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Columns"), errors))
+      return;
+
   if (_mode == cNew)
   {
     financialSave.exec("SELECT NEXTVAL('flcol_flcol_id_seq') AS flcol_id;");
@@ -176,8 +182,8 @@ void financialLayoutColumns::sSave()
      
   financialSave.bindValue(":flcol_id", _flcolid);
   financialSave.bindValue(":flcol_flhead_id", _flheadid);
-  financialSave.bindValue(":flcol_name", _name->text());
-  financialSave.bindValue(":flcol_descrip", _descrip->text());
+  financialSave.bindValue(":flcol_name", _name->text().trimmed());
+  financialSave.bindValue(":flcol_descrip", _descrip->text().trimmed());
   financialSave.bindValue(":flcol_report_id", _report->id());
   financialSave.bindValue(":flcol_month", _month->isChecked());
   financialSave.bindValue(":flcol_quarter", _quarter->isChecked());

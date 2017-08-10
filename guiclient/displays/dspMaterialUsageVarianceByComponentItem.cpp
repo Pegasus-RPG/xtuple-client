@@ -53,6 +53,9 @@ void dspMaterialUsageVarianceByComponentItem::languageChange()
 
 bool dspMaterialUsageVarianceByComponentItem::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if(!_dates->allValid())
   {
     QMessageBox::warning(this, tr("Invalid Date Range"),

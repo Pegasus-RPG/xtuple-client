@@ -14,6 +14,7 @@
 #include <QSqlError>
 #include <QVariant>
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 taxRegistration::taxRegistration(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -119,12 +120,7 @@ enum SetResponse taxRegistration::set(const ParameterList& pParams)
 void taxRegistration::sSave() 
 {
   XSqlQuery taxSave;
- if( _dates->startDate() > _dates->endDate()) 
-	{
-	  QMessageBox::critical(this, tr("Incorrect Date Entry"),
-	   tr("The start date should be earlier than the end date.") );
-	  return;
-	}
+
   taxSave.prepare("SELECT taxreg_id"
             "  FROM taxreg"
             " WHERE((taxreg_id != :taxreg_id)"
@@ -144,13 +140,15 @@ void taxRegistration::sSave()
   if(!_reltype.isEmpty())
     taxSave.bindValue(":taxreg_rel_type", _reltype);
   taxSave.exec();
-  if(taxSave.first())
-  {
-    QMessageBox::critical(this, tr("Duplicate Tax Registration"),
-      tr("A Tax Registration already exists for the parameters specified.") );
-    _taxZone->setFocus();
-    return;
-  }
+
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(_dates->startDate() > _dates->endDate(), _dates,
+                           tr("The start date should be earlier than the end date.")),
+    errors<< GuiErrorCheck(taxSave.first(), _taxZone,
+                           tr("A Tax Registration already exists for the parameters specified."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Incorrect Date Entry"), errors))
+      return;
 
 
   if (cNew == _mode) 

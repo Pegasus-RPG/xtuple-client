@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -12,7 +12,7 @@
 
 #include <QAction>
 #include <QMenu>
-#include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QVariant>
 
 #include "glTransactionDetail.h"
@@ -121,30 +121,16 @@ void dspVoucherRegister::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem*, int)
 
 bool dspVoucherRegister::setParams(ParameterList & params)
 {
-  if (! _dates->startDate().isValid())
-  {
-    QMessageBox::warning(this, tr("Invalid Date"),
-                          tr("Enter a valid Start Date."));
-	_dates->setFocus();
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(! _dates->startDate().isValid(), _dates,
+            tr("Enter a valid Start Date."))
+        << GuiErrorCheck(! _dates->endDate().isValid(), _dates,
+            tr("Enter a valid End Date."))
+        << GuiErrorCheck(_selectedAccount->isChecked() && ! _account->isValid(), _account,
+            tr("Enter a valid Account."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Invalid Dates"), errors))
     return false;
-  }
-
-  if (! _dates->endDate().isValid())
-  {
-    QMessageBox::warning(this, tr("Invalid Date"),
-                          tr("Enter a valid End Date."));
-    _dates->setFocus();
-    return false;
-  }
-
-  if (_selectedAccount->isChecked())
-    if (! _account->isValid())
-    {
-      QMessageBox::warning(this, tr("Invalid Account"),
-                           tr("Enter a valid Account."));
-      _account->setFocus();
-      return false;
-    }
 
   _dates->appendValue(params);
 

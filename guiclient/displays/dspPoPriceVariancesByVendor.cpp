@@ -62,6 +62,9 @@ void dspPoPriceVariancesByVendor::languageChange()
 
 bool dspPoPriceVariancesByVendor::setParams(ParameterList &pParams)
 {
+  if (!display::setParams(pParams))
+    return false;
+
   if (!_dates->allValid())
   {
     QMessageBox::warning( this, tr("Enter Valid Dates"),

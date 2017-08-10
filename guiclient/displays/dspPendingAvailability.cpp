@@ -68,6 +68,9 @@ void dspPendingAvailability::languageChange()
 
 bool dspPendingAvailability::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if(!_item->isValid())
   {
     QMessageBox::warning(this, tr("Item Required"),

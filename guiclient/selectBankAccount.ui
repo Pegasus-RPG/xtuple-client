@@ -117,6 +117,9 @@ to be bound by its terms.</comment>
          <property name="default">
           <bool>true</bool>
          </property>
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
       </layout>
@@ -158,5 +161,22 @@ to be bound by its terms.</comment>
   <include location="global">parameter.h</include>
  </includes>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>_bankaccnt</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_select</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

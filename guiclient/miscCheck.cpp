@@ -17,6 +17,7 @@
 #include "mqlutil.h"
 #include "errorReporter.h"
 #include "storedProcErrorLookup.h"
+#include "guiErrorCheck.h"
 
 miscCheck::miscCheck(QWidget* parent, const char* name, Qt::WindowFlags fl)
     : XWidget(parent, name, fl)
@@ -103,49 +104,21 @@ void miscCheck::sSave()
   double _amt;
   _amt=_amount->localValue();
   XSqlQuery check;
-  if (!_date->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Create Miscellaneous Payment"),
-                          tr("<p>You must enter a date for this payment.") );
-    _date->setFocus();
-    return;
-  }
-  
-  if (_amount->isZero())
-  {
-    QMessageBox::warning( this, tr("Cannot Create Miscellaneous Payment"),
-                          tr("<p>You must enter an amount for this payment.") );
-    _date->setFocus();
-    return;
-  }
 
-  if ( (_applytocm->isChecked()) && (_cmCluster->id() == -1) )
-  {
-    QMessageBox::warning( this, tr("Cannot Create Miscellaneous Payment"),
-                          tr("<p>You must select a Credit Memo for this "
-			     "expensed payment.") );
-    _expcat->setFocus();
-    return;
-  }
- 
-  if (_applytocm->isChecked() && _cmCluster->isValid() && (_amt > _aropenamt))
-  {
-    QMessageBox::warning( this, tr("Invalid Amount"),
-                            tr("<p>You must enter an amount less than or equal to the  "
-	   		                   "credit memo selected.") );
-    _amount->setLocalValue(_aropenamt);
-	_amount->setFocus();
-	return;
-  }
- 
-  if ( (_expense->isChecked()) && (_expcat->id() == -1) )
-  {
-    QMessageBox::warning( this, tr("Cannot Create Miscellaneous Payment"),
-                          tr("<p>You must select an Expense Category for this "
-			     "expensed payment.") );
-    _expcat->setFocus();
-    return;
-  }
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(!_date->isValid(), _date,
+                           tr("You must enter a date for this payment."))
+          << GuiErrorCheck(_amount->isZero(), _amount,
+                           tr("You must enter an amount for this payment."))
+          << GuiErrorCheck((_applytocm->isChecked()) && (_cmCluster->id() == -1), _cmCluster,
+                           tr("You must select a Credit Memo for this expensed payment."))
+          << GuiErrorCheck(_applytocm->isChecked() && _cmCluster->isValid() && (_amt > _aropenamt), _amount,
+                           tr("You must enter an amount less than or equal to the credit memo selected."))
+          << GuiErrorCheck((_expense->isChecked()) && (_expcat->id() == -1), _expcat,
+                           tr("You must select an Expense Category for this expensed payment."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Miscellaneous Payment"), errors))
+      return;
  
   if (_mode == cNew)
   {

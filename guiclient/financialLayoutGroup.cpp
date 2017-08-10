@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -9,6 +9,7 @@
  */
 
 #include "financialLayoutGroup.h"
+#include "guiErrorCheck.h"
 
 #include <QVariant>
 
@@ -160,6 +161,17 @@ void financialLayoutGroup::sCheck()
 void financialLayoutGroup::sSave()
 {
   XSqlQuery financialSave;
+
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                          tr("Please enter a name"))
+         << GuiErrorCheck(_description->text().trimmed().isEmpty(), _description,
+                          tr("Please enter a description"))
+  ;
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Group"), errors))
+      return;
+
   int order = 1;
   if (_mode == cNew)
   {
@@ -229,8 +241,8 @@ void financialLayoutGroup::sSave()
   financialSave.bindValue(":flgrp_id", _flgrpid);
   financialSave.bindValue(":flgrp_flgrp_id", _flgrp_flgrpid);
   financialSave.bindValue(":flgrp_flhead_id", _flheadid);
-  financialSave.bindValue(":flgrp_name", _name->text());
-  financialSave.bindValue(":flgrp_descrip", _description->text());
+  financialSave.bindValue(":flgrp_name", _name->text().trimmed());
+  financialSave.bindValue(":flgrp_descrip", _description->text().trimmed());
   financialSave.bindValue(":flgrp_order", order);
   financialSave.bindValue(":flgrp_subtotal",  QVariant(_showSubtotal->isChecked()));
   financialSave.bindValue(":flgrp_summarize", QVariant(_summarize->isChecked()));
@@ -319,8 +331,7 @@ void financialLayoutGroup::sToggled()
     _altSubtotal->setChecked(false);
     _altSubtotal->setEnabled(false);
   }
-  else
-    _altSubtotal->setEnabled(_showSubtotal->isEnabled());
+  _altSubtotal->setEnabled(_showSubtotal->isChecked() && _showSubtotal->isEnabled());
   _showStart->setEnabled(on);
   _showEnd->setEnabled(on);
   _showDelta->setEnabled(on);

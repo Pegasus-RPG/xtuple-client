@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include "glSeries.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 postStandardJournal::postStandardJournal(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -67,13 +68,13 @@ enum SetResponse postStandardJournal::set(const ParameterList &pParams)
 void postStandardJournal::sPost()
 {
   XSqlQuery postPost;
-  if (!_distDate->isValid())
-  {
-    QMessageBox::critical( this, tr("Cannot Post Standard Journal"),
-                           tr("You must enter a Distribution Date before you may post this Standard Journal.") );
-    _distDate->setFocus();
-    return;
-  }
+
+  QList<GuiErrorCheck> errors;
+    errors<< GuiErrorCheck(!_distDate->isValid(), _distDate,
+                           tr("You must enter a Distribution Date before you may post this Standard Journal."))
+    ;
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Post Standard Journal"), errors))
+      return;
 
   postPost.prepare("SELECT postStandardJournal(:stdjrnl_id, :distDate, :reverse) AS result;");
   postPost.bindValue(":stdjrnl_id", _stdjrnl->id());

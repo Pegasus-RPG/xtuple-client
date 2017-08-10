@@ -57,6 +57,9 @@ void dspCountTagsBase::languageChange()
 
 bool dspCountTagsBase::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if(_item->isVisibleTo(this))
   {
     if (! _item->isValid())

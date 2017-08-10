@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -86,6 +86,9 @@ void dspSummarizedSales::languageChange()
 
 bool dspSummarizedSales::setParams(ParameterList & params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if (!_cust->isChecked() &&
       !_custtype->isChecked() &&
       !_salesrep->isChecked() &&
@@ -183,11 +186,11 @@ void dspSummarizedSales::sViewHistory()
       params.append("item_id", list()->id("item_number"));
   if (_site->isChecked())
       params.append("warehous_id", list()->id("warehous_code"));
-  params.append("run");
 
   dspSalesHistory *newdlg = new dspSalesHistory();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
+  newdlg->sFillList();
 }
 
 void dspSummarizedSales::sGroupByChanged()

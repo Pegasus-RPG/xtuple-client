@@ -36,6 +36,9 @@ dspIndentedBOM::dspIndentedBOM(QWidget* parent, const char*, Qt::WindowFlags fl)
 
 bool dspIndentedBOM::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   params.append("byIndented");
   return dspBOMBase::setParams(params);
 }

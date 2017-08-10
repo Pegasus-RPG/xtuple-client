@@ -151,6 +151,9 @@ void dspSubstituteAvailabilityByItem::sPopulateMenu(QMenu *menu, QTreeWidgetItem
 
 bool dspSubstituteAvailabilityByItem::setParams(ParameterList &params)
 {
+  if (!display::setParams(params))
+    return false;
+
   if(!_item->isValid())
   {
     QMessageBox::warning(this, tr("Item Required"),
