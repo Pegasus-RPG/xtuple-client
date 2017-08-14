@@ -19,11 +19,11 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QSqlError>
 #include <QSqlQueryModel>
 #include <QSqlRecord>
 #include <QVBoxLayout>
 
+#include "errorReporter.h"
 #include "guiclientinterface.h"
 #include "shortcuts.h"
 #include "xcheckbox.h"
@@ -817,11 +817,9 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
       if (_hasActive)
         setStrikeOut(!idQ.value("active").toBool());
     }
-    else if (idQ.lastError().type() != QSqlError::NoError)
-      QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                            .arg(__FILE__)
-                            .arg(__LINE__),
-                            idQ.lastError().databaseText());
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error setting id"),
+                                  idQ, __FILE__, __LINE__))
+      return;
   }
 
   _parsed = true;
@@ -861,8 +859,11 @@ void VirtualClusterLineEdit::sParse()
         numQ.prepare(_query + _numClause +
 		    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
                     ((_hasActive && ! _showInactive) ? _activeClause : "" ) +
-                    QString(" ORDER BY exactMatch DESC, %1 %2 LIMIT 1;")
-                            .arg(QString(_hasActive ? "active DESC," : ""), _numColName));
+                    " ORDER BY " +
+                    (_query.contains("exactMatch", Qt::CaseInsensitive) ? "exactMatch DESC," : " ") +
+                    (_hasActive ? "active DESC," : " ") +
+                    _numColName +
+                    " LIMIT 1;");
         numQ.bindValue(":number", "^" + stripped);
         numQ.exec();
         if (numQ.first())
@@ -876,12 +877,9 @@ void VirtualClusterLineEdit::sParse()
 	}
 	else
 	{
-            setId(-1);
-            if (numQ.lastError().type() != QSqlError::NoError)
-		QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-					      .arg(__FILE__)
-					      .arg(__LINE__),
-                        numQ.lastError().databaseText());
+          setId(-1);
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error parsing"),
+                               numQ, __FILE__, __LINE__);
 	}
       }
       emit valid(_valid);
@@ -1495,11 +1493,8 @@ void VirtualInfo::sPopulate()
 	if (_parent->_hasDescription)
 	    _descrip->setText(qry.value("description").toString());
     }
-    else if (qry.lastError().type() != QSqlError::NoError)
-	QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-					  .arg(__FILE__)
-					  .arg(__LINE__),
-				  qry.lastError().databaseText());
+    else ErrorReporter::error(QtCriticalMsg, this, tr("Error populating Info"),
+                              qry, __FILE__, __LINE__);
 }
 
 void VirtualInfo::showEvent(QShowEvent* e)
