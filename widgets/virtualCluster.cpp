@@ -1190,13 +1190,15 @@ void VirtualList::sFillList()
       return;
 
     _listTab->clear();
-    XSqlQuery query(_parent->_query +
+    XSqlQuery query;
+    query.prepare(_parent->_query +
 		    (_parent->_extraClause.isEmpty() ? "" :
 					    " AND " + _parent->_extraClause) +
                     ((_parent->_hasActive && ! _parent->_showInactive) ? _parent->_activeClause : "") +
                     QString(" ORDER BY %1 %2;")
                             .arg(QString(_parent->_hasActive ? "active DESC," : ""),
                                  QString(_parent->_hasName   ? "name"         : "number")));
+    query.exec();
     _listTab->populate(query);
 }
 
@@ -1382,7 +1384,8 @@ void VirtualSearch::sFillList()
     }
 
 
-    XSqlQuery qry(_parent->_query +
+    XSqlQuery qry;
+    qry.prepare(_parent->_query +
 		    (search.isEmpty() ? "" :  " AND " + search) +
 		    (_parent->_extraClause.isEmpty() ? "" :
 					    " AND " + _parent->_extraClause) +
@@ -1390,6 +1393,7 @@ void VirtualSearch::sFillList()
                     QString(" ORDER BY %1 %2;")
                             .arg(QString(_parent->_hasActive ? "active DESC," : ""),
                                  QString(_parent->_hasName   ? "name"         : "number")));
+    qry.exec();
     _listTab->populate(qry);
 }
 
