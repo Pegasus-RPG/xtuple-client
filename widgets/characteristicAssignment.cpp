@@ -429,6 +429,10 @@ void CharacteristicAssignmentPrivate::handleTargetType()
   model->setQuery("SELECT char_id, char_name, char_type"
                   "  FROM char JOIN charuse ON char_id = charuse_char_id"
                   " WHERE charuse_target_type = '" + charuseTargetType + "'"
+                  " AND CASE WHEN '" + charuseTargetType + "' = 'I' THEN true ELSE"
+                  "            charuse_char_id NOT IN (select charuse_char_id from charuse"
+                  "                        where charuse_target_type = 'I')"
+                  "          END"
                   " ORDER BY char_order, char_name");
   parent->_char->setModel(model);
   idCol   = model->query().record().indexOf("char_id");

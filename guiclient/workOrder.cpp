@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -112,6 +112,8 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WindowFlags fl)
   ItemCharacteristicDelegate * delegate = new ItemCharacteristicDelegate(this);
   _itemcharView->setItemDelegate(delegate);
 
+  _wocharView->setType("WO");
+
   if (!_metrics->boolean("MultiWhs"))
   {
     _warehouseLit->hide();
@@ -218,6 +220,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
   if (valid)
   {
     _woid = param.toInt();
+    _wocharView->setId(_woid);
     emit newId(_woid);
   }
 
@@ -290,6 +293,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
       _close->setText(tr("&Close"));
       _project->setEnabled(false);
       _itemcharView->setEnabled(false);
+      _wocharView->setEnabled(false);
       _jobCosGroup->setEnabled(false);
     }
 
@@ -501,6 +505,7 @@ void workOrder::sCreate()
     }
   
     _woid = workCreate.value("result").toInt();
+    _wocharView->setId(_woid);
     emit newId(_woid);
   
     workCreate.prepare("SELECT updateCharAssignment('W', :target_id, :char_id, :char_value);");
@@ -542,6 +547,7 @@ void workOrder::sCreate()
       if (workCreate.first())
       {
         _woid = workCreate.value("wo_id").toInt();
+        _wocharView->setId(_woid);
         emit newId(_woid);
       }
       else

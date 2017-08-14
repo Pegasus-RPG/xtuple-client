@@ -177,10 +177,13 @@ void CharacteristicsWidget::sFillList()
              "       CASE WHEN char_type = 2 THEN formatDate(charass_value::date)"
              "            ELSE charass_value"
              "       END AS charass_value,"
-             "       charass_default"
+             "       charass_default,"
+             "       charass_value AS charass_value_qttooltiprole"
              "  FROM charass JOIN char ON charass_char_id = char_id"
              " WHERE charass_target_type = :type"
              "   AND charass_target_id   = :id"
+             "   AND charass_char_id NOT IN (select charuse_char_id from charuse"
+             "                               where charuse_target_type = 'I') "
              " ORDER BY char_order, char_name;" );
   q.bindValue(":type", _d->type);
   q.bindValue(":id",   _d->id);
