@@ -2287,6 +2287,9 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       return;
     }
 
+    _itemcharView->resizeColumnToContents(CHAR_ID);
+    _itemcharView->resizeColumnToContents(CHAR_VALUE);
+
     // Setup widgets and signals needed to handle configuration
     if (_item->isConfigured())
     {
