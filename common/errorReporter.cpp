@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -285,7 +285,7 @@ const struct {
 //{ "cohead_cohead_taxtype_id_fkey",            Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "cohead_cohead_taxzone_id_fkey",            Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "cohead_cohead_taxzone_id_fkey",            Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
-//{ "cohead_cohead_terms_id_fkey",              Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
+  { "cohead_cohead_terms_id_fkey",              Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "Cannot delete Terms as they exist on a Sales Order.") },
 //{ "cohead_cohead_terms_id_fkey",              Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "cohead_cohead_warehous_id_fkey",           Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "cohead_cohead_warehous_id_fkey",           Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
@@ -739,7 +739,7 @@ const struct {
 //{ "pohead_pohead_taxtype_id_fkey",            Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "pohead_pohead_taxzone_id_fkey",            Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "pohead_pohead_taxzone_id_fkey",            Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
-//{ "pohead_pohead_terms_id_fkey",              Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
+  { "pohead_pohead_terms_id_fkey",              Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "Cannot delete Terms as they exist on a Purchase Order.") },
 //{ "pohead_pohead_terms_id_fkey",              Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "pohead_pohead_vend_cntct_id_fkey",         Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "pohead_pohead_vend_cntct_id_fkey",         Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
