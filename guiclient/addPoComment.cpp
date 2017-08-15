@@ -16,6 +16,8 @@ addPoComment::addPoComment(QWidget* parent, const char* name, bool modal, Qt::Wi
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
+
+  _po->setLockSelected(true);
 }
 
 addPoComment::~addPoComment()

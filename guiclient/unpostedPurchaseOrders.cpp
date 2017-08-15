@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -158,7 +158,7 @@ void unpostedPurchaseOrders::sDelete()
         if (selected[i]->rawValue("pohead_status").toString() == "U")
         {
           if (selected[i]->altId() != -1)
-		  {
+		      {
             QString question = tr("<p>The Purchase Order that you selected to delete was created "
             "to satisfy Sales Order demand. If you delete the selected "
             "Purchase Order then the Sales Order demand will remain but "
@@ -168,8 +168,18 @@ void unpostedPurchaseOrders::sDelete()
                                       question,
                                       QMessageBox::Yes,
                                       QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-			  continue;
-		  }
+			        continue;
+		      }
+
+          // If locked, don't proceed
+          if (!_lock.acquire("pohead", ((XTreeWidgetItem*)(selected[i]))->id(), AppLock::Interactive))
+          {
+            if (i == selected.size() - 1)
+              return;
+            else
+              continue;
+          }
+
           unpostedDelete.bindValue(":pohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
           unpostedDelete.exec();
           if (unpostedDelete.first() && ! unpostedDelete.value("result").toBool())
@@ -185,6 +195,8 @@ void unpostedPurchaseOrders::sDelete()
                                unpostedDelete, __FILE__, __LINE__);
           else
             done = true;
+
+          _lock.release();
         }
       }
     }
@@ -247,7 +259,16 @@ void unpostedPurchaseOrders::sRelease()
     if ((selected[i]->rawValue("pohead_status").toString() == "U")
       && (_privileges->check("ReleasePurchaseOrders"))
       && (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id())))
+    {
+      // If locked, don't proceed
+      if (!_lock.acquire("pohead", ((XTreeWidgetItem*)(selected[i]))->id(), AppLock::Interactive))
       {
+        if (i == selected.size() - 1)
+          return;
+        else
+          continue;
+      }
+
       unpostedRelease.bindValue(":pohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
       unpostedRelease.exec();
       if (unpostedRelease.first())
@@ -263,6 +284,8 @@ void unpostedPurchaseOrders::sRelease()
       else if (unpostedRelease.lastError().type() != QSqlError::NoError)
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Releasing Purchase Order"),
                            unpostedRelease, __FILE__, __LINE__);
+
+      _lock.release();
     }
   }
   if (done)
@@ -276,6 +299,7 @@ void unpostedPurchaseOrders::sRelease()
 
 void unpostedPurchaseOrders::sUnrelease()
 {
+
   XSqlQuery unRelease;
   unRelease.prepare("SELECT unreleasePurchaseOrder(:pohead_id) AS result;");
   
@@ -287,6 +311,15 @@ void unpostedPurchaseOrders::sUnrelease()
         && (_privileges->check("UnreleasePurchaseOrders"))
         && (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id())))
     {
+      // If locked, don't proceed
+      if (!_lock.acquire("pohead", ((XTreeWidgetItem*)(selected[i]))->id(), AppLock::Interactive))
+      {
+        if (i == selected.size() - 1)
+          return;
+        else
+          continue;
+      }
+
       unRelease.bindValue(":pohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
       unRelease.exec();
       if (unRelease.first())
@@ -302,6 +335,8 @@ void unpostedPurchaseOrders::sUnrelease()
       else if (unRelease.lastError().type() != QSqlError::NoError)
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Unreleasing Purchase Order"),
                            unRelease, __FILE__, __LINE__);
+
+      _lock.release();
     }
   }
   if (done)
