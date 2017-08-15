@@ -47,6 +47,10 @@ enum SetResponse externalCCTransaction::set(const ParameterList &pParams)
   if (valid)
     _ccard->setText(param.toString());
 
+  param = pParams.value("ccard_exp", &valid);
+  if (valid)
+    _expDate->setDate(param.toString());
+
   param = pParams.value("currid", &valid);
   if (valid)
     _amount->setId(param.toInt());
