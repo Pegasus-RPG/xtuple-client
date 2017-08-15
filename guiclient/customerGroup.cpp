@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -126,6 +126,8 @@ void customerGroup::sCheck()
       return;
     }
   }
+  _save->setEnabled(_name->text().length());
+  _new->setEnabled(_name->text().length());
 }
 
 void customerGroup::sClose()
@@ -287,6 +289,8 @@ void customerGroup::populate()
   {
     _name->setText(customerpopulate.value("custgrp_name").toString());
     _descrip->setText(customerpopulate.value("custgrp_descrip").toString());
+    _save->setEnabled(true);
+    _new->setEnabled(true);
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Customer Group Information"),
                                 customerpopulate, __FILE__, __LINE__))
