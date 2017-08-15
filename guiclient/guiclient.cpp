@@ -1619,10 +1619,8 @@ QString translationFile(QString localestr, const QString component)
 QString translationFile(QString localestr, const QString component, QString &version)
 {
   QStringList paths;
-#if QT_VERSION >= 0x050400
-  paths << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)
-        << QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation);
-#endif
+  paths << QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation)
+        << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
 #if defined Q_OS_MAC
   paths << QApplication::applicationDirPath() + "/../Resources";
 #else
@@ -1633,23 +1631,60 @@ QString translationFile(QString localestr, const QString component, QString &ver
   for (int i = paths.length(); i > 0; i--)
     paths.insert(i, paths.at(i - 1) + "/dict");
 
-  QTranslator translator;
-  foreach (QString dir, paths)
+  QString filename = component + "." + localestr;
+  QString versiondir;
+  if (!version.isEmpty())
+    versiondir = "/" + component + "-" + version;
+
+  foreach (QString testDir, paths)
   {
-    QString filename = component + "." + localestr;
-    if (DEBUG) qDebug() << "looking for translation" << dir << filename;
-    if (translator.load(filename, dir)) // this doesn't install the translation
-    {
-      if (! version.isNull())
-        version = translator.translate(component.toLatin1().data(), "Version");
-      if (DEBUG)
-        qDebug() << "loadable translation" << dir << filename
-                 << "test:" << translator.translate("GUIClient", "Custom");
-      return dir + "/" + filename;
-    }
+    if (DEBUG) qDebug() << "looking for translation" << testDir << filename;
+
+    QFile test(testDir + versiondir + "/" + filename + ".qm");
+    if (test.exists())
+      return testDir + versiondir + "/" + filename;
   }
 
-  return QString::null;
+  QString dir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+  QDir mkdir(dir);
+  if (!mkdir.exists())
+    mkdir.mkpath(dir);
+
+  XSqlQuery data;
+  data.prepare("SELECT dict_data "
+               "  FROM dict "
+               "  JOIN pg_class ON dict.tableoid=pg_class.oid "
+               "  JOIN pg_namespace ON pg_class.relnamespace=pg_namespace.oid "
+               "  JOIN lang ON dict_lang_id=lang_id "
+               "  LEFT OUTER JOIN country ON dict_country_id=country_id "
+               " WHERE nspname=:extension "
+               "   AND lang_abbr2=:lang "
+               "   AND (country_abbr=:country OR :country IS NULL) "
+               "   AND dict_version=:version;");
+  data.bindValue(":extension", component=="xTuple" ? "public" : component);
+  data.bindValue(":lang", localestr.split("_")[0]);
+  if (localestr.contains("_"))
+    data.bindValue(":country", localestr.split("_")[1].toUpper());
+  data.bindValue(":version", version);
+  data.exec();
+  if (data.first())
+  {
+    QDir mkdir(dir + versiondir);
+    if(!mkdir.exists())
+      mkdir.mkpath(dir + versiondir);
+    QFile qm(dir + versiondir + "/" + filename + ".qm");
+    if (qm.open(QIODevice::WriteOnly))
+      qm.write(data.value("dict_data").toByteArray());
+    qm.close();
+
+    return dir + versiondir + "/" + filename;
+  }
+  else
+  {
+    ErrorReporter::error(QtCriticalMsg, 0, "Error loading QM data",
+                         data, __FILE__, __LINE__);
+    return "";
+  }
 }
 
 /** @brief Build a Custom submenu from the @c cmd table.
