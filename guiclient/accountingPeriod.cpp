@@ -87,6 +87,15 @@ enum SetResponse accountingPeriod::set(const ParameterList &pParams)
             pdate = pdate.addDays(1);
             pmonth = pdate.month();
           }
+
+          XSqlQuery setYear;
+          setYear.prepare("SELECT yearperiod_id "
+                          "  FROM yearperiod "
+                          " WHERE :date BETWEEN yearperiod_start AND yearperiod_end;");
+          setYear.bindValue(":date", pdate);
+          setYear.exec();
+          if (setYear.first())
+            _year->setId(setYear.value("yearperiod_id").toInt());
         }
         sHandleNumber();
         connect(_year, SIGNAL(newID(int)), this, SLOT(sHandleNumber()));
