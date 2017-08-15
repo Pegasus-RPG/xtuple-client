@@ -1073,7 +1073,7 @@ void returnAuthorization::sFillList()
 
   sCalculateSubtotal();
 
-  if (_creditBy->currentIndex() != 0 && _calcfreight)
+  if (_calcfreight)
   {
     returnFillList.prepare("SELECT SUM(freightdata_total) AS freight "
               "FROM freightDetail('RA', :head_id, :cust_id, :shipto_id, :orderdate, :shipvia, :curr_id);");
