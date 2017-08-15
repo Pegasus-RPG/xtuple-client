@@ -160,12 +160,6 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   connect(menuAct, SIGNAL(triggered()), this, SLOT(sShowMenu()));
   addAction(menuAct);
 
-  QAction* itemSelectedAct = new QAction(this);
-  itemSelectedAct->setShortcut(QKeySequence(QKeySequence::InsertParagraphSeparator));
-  itemSelectedAct->setShortcutContext(Qt::WidgetShortcut);
-  connect(itemSelectedAct, SIGNAL(triggered()), this, SLOT(sItemSelected()));
-  addAction(itemSelectedAct);
-
 }
 
 XTreeWidget::~XTreeWidget()
@@ -2764,4 +2758,22 @@ QVariant XTreeWidget::rawValue(const QString colname) const
       return item->rawValue(colname);
     }
     return QVariant();
+}
+
+void XTreeWidget::keyPressEvent(QKeyEvent* e)
+{
+  if (e->key()==Qt::Key_Enter)
+  {
+    bool hasDefault = false;
+    QList<QPushButton*> buttons = window()->findChildren<QPushButton*>();
+    foreach (QPushButton* button, buttons)
+      if (button->isDefault())
+        hasDefault = true;
+    if (window()->inherits("QDialog") && hasDefault)
+      e->ignore();
+    else
+      sItemSelected();
+  }
+  else
+    e->ignore();
 }
