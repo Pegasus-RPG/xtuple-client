@@ -625,24 +625,6 @@ void returnAuthorization::sOrigSoChanged()
   {
     if (_origso->isValid())
     {
-      if ( !_warehouse->isValid() )
-      {
-        QMessageBox::warning( this, tr("Invalid Receiving Site"),
-                             tr("<p>You must enter a valid Receiving Site." ) );
-        _warehouse->setFocus();
-        _origso->setId(-1);
-        return;
-      }
-
-      if ( !_shipWhs->isValid() )
-      {
-        QMessageBox::warning( this, tr("Invalid Shipping Site"),
-                             tr("<p>You must enter a valid Shipping Site." ) );
-        _shipWhs->setFocus();
-        _origso->setId(-1);
-        return;
-      }
-
       XSqlQuery sohead;
       sohead.prepare("SELECT cohead_salesrep_id, cohead_commission,"
                      "       cohead_taxzone_id, cohead_custponumber, cohead_prj_id,"
@@ -655,13 +637,15 @@ void returnAuthorization::sOrigSoChanged()
                      "       cohead_shiptoname, cohead_shiptoaddress1,"
                      "       cohead_shiptoaddress2, cohead_shiptoaddress3,"
                      "       cohead_shiptocity, cohead_shiptostate,"
-                     "       cohead_shiptozipcode, cohead_shiptocountry,"
+                     "       cohead_shiptozipcode, cohead_shiptocountry, cohead_warehous_id,"
                      "       cust_ffshipto, custtype_code, cohead_commission, "
-                     "       shipto_num"
+                     "       shipto_num, "
+                     "       warehous_code "
                      "  FROM cohead"
                      "  JOIN custinfo ON (cohead_cust_id=cust_id)"
                      "  JOIN custtype ON (cust_custtype_id=custtype_id)"
                      "  LEFT OUTER JOIN shiptoinfo ON (cohead_shipto_id=shipto_id)"
+                     "  LEFT OUTER JOIN warehous ON (cohead_warehous_id=warehous_id)"
                      " WHERE (cohead_id=:cohead_id)"
                      " LIMIT 1;");
       // TODO: why left outer join shipto if we don't use the shipto_num?
@@ -669,6 +653,79 @@ void returnAuthorization::sOrigSoChanged()
       sohead.exec();
       if (sohead.first())
       {
+        // If the sites don't match the cohead ask the user if they want to make changes
+        if (_metrics->boolean("MultiWhs") && sohead.value("cohead_warehous_id").toInt() > 0 &&
+            (_warehouse->id() != sohead.value("cohead_warehous_id").toInt() ||
+             _shipWhs->id() != sohead.value("cohead_warehous_id").toInt()) )
+        {
+          if (_warehouse->id() != sohead.value("cohead_warehous_id").toInt() &&
+              _shipWhs->id() != sohead.value("cohead_warehous_id").toInt())
+          {
+            if (QMessageBox::question(this, tr("Sites Do Not Match"),
+                tr("The Orig. Sales Order Site (%1) does not match the Receiving Site (%2) nor Shipping Site (%3). <p>"
+                   "Do you want to update both of them to match the Sales Order?")
+                .arg(sohead.value("warehous_code").toString())
+                .arg(_warehouse->currentText())
+                .arg(_shipWhs->currentText()),
+                QMessageBox::Yes | QMessageBox::No,
+                QMessageBox::Yes) == QMessageBox::Yes)
+            {
+              _ignoreWhsSignals = true;
+              _warehouse->setId(sohead.value("cohead_warehous_id").toInt());
+              _shipWhs->setId(sohead.value("cohead_warehous_id").toInt());
+              _ignoreWhsSignals = false;
+            }
+          }
+          else if (_warehouse->id() != sohead.value("cohead_warehous_id").toInt())
+          {
+            if (QMessageBox::question(this, tr("Sites Do Not Match"),
+                tr("The Original Sales Order Site (%1) does not match the Receiving Site (%2). <p>"
+                   "Do you want to update it to match the Sales Order?")
+                .arg(sohead.value("warehous_code").toString())
+                .arg(_warehouse->currentText()),
+                QMessageBox::Yes | QMessageBox::No,
+                QMessageBox::Yes) == QMessageBox::Yes)
+            {
+              _ignoreWhsSignals = true;
+              _warehouse->setId(sohead.value("cohead_warehous_id").toInt());
+              _ignoreWhsSignals = false;
+            }
+          }
+          else if (_shipWhs->id() != sohead.value("cohead_warehous_id").toInt())
+          {
+            if (QMessageBox::question(this, tr("Sites Do Not Match"),
+                tr("The Original Sales Order Site (%1) does not match the Shipping Site (%2). <p>"
+                   "Do you want to update it to match the Sales Order?")
+                .arg(sohead.value("warehous_code").toString())
+                .arg(_shipWhs->currentText()),
+                QMessageBox::Yes | QMessageBox::No,
+                QMessageBox::Yes) == QMessageBox::Yes)
+            {
+              _ignoreWhsSignals = true;
+              _shipWhs->setId(sohead.value("cohead_warehous_id").toInt());
+              _ignoreWhsSignals = false;
+            }
+          }
+        }
+
+        if ( !_warehouse->isValid() )
+        {
+          QMessageBox::warning( this, tr("Invalid Receiving Site"),
+                               tr("<p>You must enter a valid Receiving Site." ) );
+          _warehouse->setFocus();
+          _origso->setId(-1);
+          return;
+        }
+
+        if ( !_shipWhs->isValid() )
+        {
+          QMessageBox::warning( this, tr("Invalid Shipping Site"),
+                               tr("<p>You must enter a valid Shipping Site." ) );
+          _shipWhs->setFocus();
+          _origso->setId(-1);
+          return;
+        }
+
         _salesRep->setId(sohead.value("cohead_salesrep_id").toInt());
         _commission->setDouble(sohead.value("cohead_commission").toDouble() * 100);
 

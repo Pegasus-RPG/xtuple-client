@@ -279,8 +279,6 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _mode = cEdit;
 
       _item->setReadOnly(true);
-      _warehouse->setEnabled(false);
-      _shipWhs->setEnabled(false);
       _comments->setType(Comments::ReturnAuthItem);
       _comments->setReadOnly(false);
 
@@ -955,7 +953,11 @@ void returnAuthorizationItem::populate()
         raitem.value("qtyshipd").toDouble() > 0 ||
         raitem.value("qtytorcv").toDouble() > 0 ||
         _qtycredited > 0)
+    {
       _disposition->setEnabled(false);
+      _warehouse->setEnabled(false);
+      _shipWhs->setEnabled(false);
+    }
 
     if (_orderId != -1)
     {
