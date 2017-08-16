@@ -11,6 +11,7 @@
 #include "releaseWorkOrdersByPlannerCode.h"
 
 #include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QSqlError>
 
 #include <metasql.h>
@@ -43,13 +44,13 @@ void releaseWorkOrdersByPlannerCode::languageChange()
 
 bool releaseWorkOrdersByPlannerCode::setParams(ParameterList &pParams)
 {
-  if (!_cutoffDate->isValid())
-  {
-    QMessageBox::critical( this, tr("Enter Cutoff Date"),
-                           tr("Please enter a valid Cutoff Date.") );
-    _cutoffDate->setFocus();
+
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(!_cutoffDate->isValid(), _cutoffDate,
+                         tr("Please enter a valid Cutoff Date."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Enter Cutoff Date"), errors))
     return false;
-  }
 
   pParams.append("cutOffDate", _cutoffDate->date());
   if (_startDate->isChecked())
@@ -71,32 +72,32 @@ void releaseWorkOrdersByPlannerCode::sRelease()
      2 - to release the work orders
    */
   QString sql( "SELECT <? if exists(\"paperwork\") ?>"
-	       "       wo_id, CAST(wo_qtyord AS INTEGER) AS wo_qtyord_int "
-	       "       <? else ?>"
-	       "       releaseWo(wo_id, false) "
-	       "       <? endif ?>"
-	       "FROM wo, itemsite, plancode "
-	       "WHERE ((wo_itemsite_id=itemsite_id)"
-	       "  AND  (itemsite_plancode_id=plancode_id)"
-	       "  AND  (wo_status='E')"
-	       "<? if exists (\"byStartDate\") ?>"
-	       "  AND  (wo_startdate<=<? value(\"cutOffDate\") ?>)"
-	       "<? elseif exists (\"byDueDate\") ?>"
-	       "  AND  (wo_duedate<=<? value(\"cutOffDate\") ?>)"
-	       "<? endif ?>"
-	       "<? if exists(\"warehous_id\") ?>"
-	       "  AND  (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
-	       "<? endif ?>"
-	       "<? if exists(\"plancode_id\") ?>"
-	       "  AND  (itemsite_plancode_id=<? value(\"plancode_id\") ?>)"
-	       "<? elseif exists(\"plancode_pattern\") ?>"
-	       "  AND  (itemsite_plancode_id IN ("
-	       "    SELECT plancode_id"
-	       "    FROM plancode"
-	       "    WHERE (plancode_code ~ <? value(\"plancode_pattern\") ?>)))"
-	       "<? endif ?>"
-	       ");"
-	       );
+         "       wo_id, CAST(wo_qtyord AS INTEGER) AS wo_qtyord_int "
+         "       <? else ?>"
+         "       releaseWo(wo_id, false) "
+         "       <? endif ?>"
+         "FROM wo, itemsite, plancode "
+         "WHERE ((wo_itemsite_id=itemsite_id)"
+         "  AND  (itemsite_plancode_id=plancode_id)"
+         "  AND  (wo_status='E')"
+         "<? if exists (\"byStartDate\") ?>"
+         "  AND  (wo_startdate<=<? value(\"cutOffDate\") ?>)"
+         "<? elseif exists (\"byDueDate\") ?>"
+         "  AND  (wo_duedate<=<? value(\"cutOffDate\") ?>)"
+         "<? endif ?>"
+         "<? if exists(\"warehous_id\") ?>"
+         "  AND  (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+         "<? endif ?>"
+         "<? if exists(\"plancode_id\") ?>"
+         "  AND  (itemsite_plancode_id=<? value(\"plancode_id\") ?>)"
+         "<? elseif exists(\"plancode_pattern\") ?>"
+         "  AND  (itemsite_plancode_id IN ("
+         "    SELECT plancode_id"
+         "    FROM plancode"
+         "    WHERE (plancode_code ~ <? value(\"plancode_pattern\") ?>)))"
+         "<? endif ?>"
+         ");"
+         );
   if (_pickList->isChecked() || _routing->isChecked() ||
       _woLabel->isChecked()  || _packingList->isChecked())
   {
@@ -121,13 +122,13 @@ void releaseWorkOrdersByPlannerCode::sRelease()
     while (releaseRelease.next())
     {
       if (setupPrinter &&
-	  orReport::beginMultiPrint(&printer, userCanceled) == false)
+    orReport::beginMultiPrint(&printer, userCanceled) == false)
       {
-	if(!userCanceled)
+  if(!userCanceled)
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
                          tr("%1: Could not initialize printing system for "
                             "multiple reports.").arg(windowTitle()),__FILE__,__LINE__);
-	return;
+  return;
       }
 
       ParameterList params;
@@ -136,75 +137,75 @@ void releaseWorkOrdersByPlannerCode::sRelease()
 
       if (_pickList->isChecked())
       {
-	orReport report("PickList", params);
+  orReport report("PickList", params);
 
-	if (report.isValid() && report.print(&printer, setupPrinter))
-	  setupPrinter = false;
-	else
-	{
-	  report.reportError(this);
-	  orReport::endMultiPrint(&printer);
-	  return;
-	}
+  if (report.isValid() && report.print(&printer, setupPrinter))
+    setupPrinter = false;
+  else
+  {
+    report.reportError(this);
+    orReport::endMultiPrint(&printer);
+    return;
+  }
       }
 
       if (_routing->isChecked())
       {
-	orReport report("Routing", params);
+  orReport report("Routing", params);
 
-	if (report.isValid() && report.print(&printer, setupPrinter))
-	  setupPrinter = false;
-	else
-	{
-	  report.reportError(this);
-	  orReport::endMultiPrint(&printer);
-	  return;
-	}
+  if (report.isValid() && report.print(&printer, setupPrinter))
+    setupPrinter = false;
+  else
+  {
+    report.reportError(this);
+    orReport::endMultiPrint(&printer);
+    return;
+  }
       }
 
       if (_woLabel->isChecked())
       {
-	orReport report("WOLabel", params);
-	if (report.isValid() && report.print(&printer, setupPrinter))
-	  setupPrinter = false;
-	else
-	{
-	  report.reportError(this);
-	  orReport::endMultiPrint(&printer);
-	  return;
-	}
+  orReport report("WOLabel", params);
+  if (report.isValid() && report.print(&printer, setupPrinter))
+    setupPrinter = false;
+  else
+  {
+    report.reportError(this);
+    orReport::endMultiPrint(&printer);
+    return;
+  }
       }
 
       if (_packingList->isChecked())
       {
-	XSqlQuery query;
-	query.prepare( "SELECT cohead_id, findCustomerForm(cohead_cust_id, 'L') AS reportname "
-		       "FROM cohead, coitem, wo "
-		       "WHERE ( (coitem_cohead_id=cohead_id)"
-		       " AND (wo_ordid=coitem_id)"
-		       " AND (wo_ordtype='S')"
-		       " AND (wo_id=:wo_id) );" );
-	query.bindValue(":wo_id", releaseRelease.value("wo_id"));	// from outer loop query
-	query.exec();
-	if (query.first())
-	{
-	  ParameterList params;
-	  params.append("sohead_id", query.value("cohead_id"));
-	  params.append("head_id",  query.value("cohead_id"));
-	  params.append("head_type",  "SO");
-	  if (_metrics->boolean("MultiWhs"))
-	    params.append("MultiWhs");
+  XSqlQuery query;
+  query.prepare( "SELECT cohead_id, findCustomerForm(cohead_cust_id, 'L') AS reportname "
+           "FROM cohead, coitem, wo "
+           "WHERE ( (coitem_cohead_id=cohead_id)"
+           " AND (wo_ordid=coitem_id)"
+           " AND (wo_ordtype='S')"
+           " AND (wo_id=:wo_id) );" );
+  query.bindValue(":wo_id", releaseRelease.value("wo_id")); // from outer loop query
+  query.exec();
+  if (query.first())
+  {
+    ParameterList params;
+    params.append("sohead_id", query.value("cohead_id"));
+    params.append("head_id",  query.value("cohead_id"));
+    params.append("head_type",  "SO");
+    if (_metrics->boolean("MultiWhs"))
+      params.append("MultiWhs");
 
-	  orReport report(query.value("reportname").toString(), params);
-	  if (report.isValid() && report.print(&printer, setupPrinter))
-	    setupPrinter = false;
-	  else
-	  {
-	    report.reportError(this);
-	    orReport::endMultiPrint(&printer);
-	    return;
-	  }
-	}
+    orReport report(query.value("reportname").toString(), params);
+    if (report.isValid() && report.print(&printer, setupPrinter))
+      setupPrinter = false;
+    else
+    {
+      report.reportError(this);
+      orReport::endMultiPrint(&printer);
+      return;
+    }
+  }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Work Order Information"),
                                   query, __FILE__, __LINE__))
     {
@@ -214,13 +215,13 @@ void releaseWorkOrdersByPlannerCode::sRelease()
       }
     }
 
-    if (! setupPrinter)	// we tried to print something
+    if (! setupPrinter) // we tried to print something
       orReport::endMultiPrint(&printer);
 
     if (QMessageBox::question(this, tr("Print Correctly?"),
-			      tr("<p>Did the documents all print correctly?"),
-			      QMessageBox::Yes,
-			      QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+            tr("<p>Did the documents all print correctly?"),
+            QMessageBox::Yes,
+            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       return;
   }
 

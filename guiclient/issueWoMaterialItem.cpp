@@ -13,6 +13,7 @@
 #include <QSqlError>
 #include <QVariant>
 #include <QMessageBox>
+#include "guiErrorCheck.h"
 #include <QValidator>
 
 #include "inputManager.h"
@@ -136,13 +137,13 @@ void issueWoMaterialItem::sIssue()
 {
   XSqlQuery issueIssue;
   int itemlocSeries;
-  if (!_transDate->isValid())
-  {
-    QMessageBox::critical(this, tr("Invalid date"),
-                          tr("You must enter a valid transaction date.") );
-    _transDate->setFocus();
+  
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(!_transDate->isValid(), _transDate,
+                         tr("You must enter a valid transaction date."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Invalid date"), errors))
     return;
-  }
 
   // Stage distribution cleanup function to be called on error
   XSqlQuery cleanup;
