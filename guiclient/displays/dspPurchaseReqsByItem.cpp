@@ -86,7 +86,7 @@ bool dspPurchaseReqsByItem::setParams(ParameterList &params)
 
 void dspPurchaseReqsByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem* pItem, int)
 {
-  XTreeWidgetItem * item = (XTreeWidgetItem*)pItem;
+  XTreeWidgetItem *item = dynamic_cast<XTreeWidgetItem *>(pItem);
   if(0 == item)
     return;
 
