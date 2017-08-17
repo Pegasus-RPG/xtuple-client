@@ -12,6 +12,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
+#include "guiErrorCheck.h"
 #include "inputManager.h"
 #include "distributeInventory.h"
 #include "errorReporter.h"
@@ -69,13 +70,13 @@ enum SetResponse returnWoMaterialBatch::set(const ParameterList &pParams)
 void returnWoMaterialBatch::sReturn()
 {
   XSqlQuery returnReturn;
-  if (!_transDate->isValid())
-  {
-    QMessageBox::critical(this, tr("Invalid date"),
-                          tr("You must enter a valid transaction date.") );
-    _transDate->setFocus();
+
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(!_transDate->isValid(), _transDate,
+                         tr("You must enter a valid transaction date."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Invalid date"), errors))
     return;
-  }
   
   returnReturn.prepare( "SELECT wo_qtyrcv, wo_status "
              "FROM wo "
