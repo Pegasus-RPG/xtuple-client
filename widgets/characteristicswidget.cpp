@@ -182,10 +182,9 @@ void CharacteristicsWidget::sFillList()
              "  FROM charass JOIN char ON charass_char_id = char_id"
              " WHERE charass_target_type = :type"
              "   AND charass_target_id   = :id"
-             "   AND CASE WHEN charass_target_type IN ('INVI','PI','QI','SI','W') THEN "
-             "            charass_char_id NOT IN (SELECT charuse_char_id FROM charuse"
-             "                               WHERE charuse_target_type = 'I') "
-             "       ELSE true END"
+             "   AND (charass_target_type NOT IN ('INVI','PI','QI','SI','W') "
+             "        OR charass_char_id NOT IN (SELECT charuse_char_id FROM charuse"
+             "                               WHERE charuse_target_type = 'I') )"
              " ORDER BY char_order, char_name;" );
   q.bindValue(":type", _d->type);
   q.bindValue(":id",   _d->id);
