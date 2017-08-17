@@ -93,7 +93,7 @@ void returnWoMaterialItem::sReturn()
   errors<< GuiErrorCheck(!_transDate->isValid(), _transDate,
                          tr("You must enter a valid transaction date."));
   errors<< GuiErrorCheck(!_wo->isValid(), _wo,
-                         tr("You must select the Work Order from which you with to return Materal"))
+                         tr("You must select the Work Order from which you wish to return Material"))
   ;
   if (GuiErrorCheck::reportErrors(this, tr("Invalid Return"), errors))
     return;
