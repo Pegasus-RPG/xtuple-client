@@ -81,7 +81,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _wonumber = -1;
   _oldPriority = _priority->value();
 
-  _lastWarehousid = _warehouse->id();
+  _lastWarehousid = -1;
   _lastItemid = -1;
   _comments->setReadOnly(true);
 //  _documents->setReadOnly(true);
@@ -767,6 +767,8 @@ void workOrder::sPopulateItemChar( int pItemid )
       _itemchar->setData(idx, pItemid, Qt::UserRole);
       row++;
     }
+
+    sPopulateLeadTime(_warehouse->id());
   }
 }
 
