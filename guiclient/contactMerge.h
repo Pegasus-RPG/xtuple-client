@@ -52,6 +52,7 @@ protected slots:
     virtual void sDeselect(int);
     virtual void sDeselectCntct();
     virtual void sDeselectSource();
+    virtual void closeEvent( QCloseEvent * pEvent );
 
 private:
     int _selectCol;
