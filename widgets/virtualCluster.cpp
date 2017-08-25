@@ -353,10 +353,8 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
         _completer->setPopup(view);
         _completer->setCaseSensitivity(Qt::CaseInsensitive);
         _completer->setCompletionColumn(1);
-        _completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
         connect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
-        connect(_completer, SIGNAL(highlighted(QString)), this, SLOT(setText(QString)));
-        connect(_completer, SIGNAL(highlighted(const QModelIndex &)), this, SLOT(completerHighlighted(const QModelIndex &)));
+        connect(_completer, SIGNAL(activated(const QModelIndex &)), this, SLOT(completerHighlighted(const QModelIndex &)));
       }
     }
 
@@ -564,7 +562,8 @@ void VirtualClusterLineEdit::sHandleCompleter()
   numQ.prepare(_query + _numClause +
                (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
                ((_hasActive && ! _showInactive) ? _activeClause : "") +
-               QString(" ORDER BY %1 LIMIT 10;").arg(_numColName));
+               QString(" ORDER BY %1 %2 LIMIT 10;")
+                       .arg(QString(_hasActive ? "active DESC," : ""), _numColName));
   numQ.bindValue(":number", "^" + stripped);
   numQ.exec();
   if (numQ.first())
@@ -572,6 +571,7 @@ void VirtualClusterLineEdit::sHandleCompleter()
     int numberCol = numQ.record().indexOf("number");
     int nameCol = numQ.record().indexOf("name");
     int descripCol = numQ.record().indexOf("description");
+    int activeDCol = numQ.record().indexOf("active_qtdisplayrole");
     model->setQuery(numQ);
     _completer->setCompletionPrefix(stripped);
 
@@ -579,7 +579,8 @@ void VirtualClusterLineEdit::sHandleCompleter()
     {
       if ( (i != numberCol) &&
            (!_hasName || i != nameCol ) &&
-           (!_hasDescription || i != descripCol) )
+           (!_hasDescription || i != descripCol) &&
+           (! _hasActive     || i != activeDCol))
       {
         view->hideColumn(i);
       }
@@ -596,6 +597,11 @@ void VirtualClusterLineEdit::sHandleCompleter()
     {
       view->resizeColumnToContents(descripCol);
       width += view->columnWidth(descripCol);
+    }
+    if (_hasActive)
+    {
+      view->resizeColumnToContents(activeDCol);
+      width += view->columnWidth(activeDCol);
     }
   }
   else
@@ -617,7 +623,8 @@ void VirtualClusterLineEdit::completerHighlighted(const QModelIndex & index)
   _completerId = _completer->completionModel()->data(index.sibling(index.row(), 0)).toInt();
   if (DEBUG)
     qDebug() << objectName() << "::completerHighlighted(" << index << ")"
-             << "enterd with completerId" << _completerId;
+             << "corresponds to completerId" << _completerId;
+  sParse();
 }
 
 void VirtualClusterLineEdit::sHandleNullStr()
@@ -693,7 +700,10 @@ void VirtualClusterLineEdit::setTableAndColumnNames(const char* pTabName,
 
   _hasActive = (pActiveColumn && QString(pActiveColumn).trimmed().length());
   if (_hasActive)
-    _query += QString(", %1 AS active ").arg(pActiveColumn);
+    _query += QString(", %1 AS active,"
+                      "CASE WHEN %1 THEN '%2' ELSE '%3' END AS active_qtdisplayrole,"
+                      "CASE WHEN NOT %1 THEN 'grey' END AS qtforegroundrole ")
+              .arg(pActiveColumn, tr("Active"), tr("Inactive"));
 
   _query += QString("FROM %1 WHERE (true) ").arg(pTabName);
 
@@ -850,7 +860,8 @@ void VirtualClusterLineEdit::sParse()
         numQ.prepare(_query + _numClause +
 		    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
                     ((_hasActive && ! _showInactive) ? _activeClause : "" ) +
-                    QString("ORDER BY %1 LIMIT 1;").arg(_numColName));
+                    QString(" ORDER BY %1 %2 LIMIT 1;")
+                            .arg(QString(_hasActive ? "active DESC," : ""), _numColName));
         numQ.bindValue(":number", "^" + stripped);
         numQ.exec();
         if (numQ.first())
@@ -912,7 +923,8 @@ void VirtualClusterLineEdit::sSearch()
       numQ.prepare(_query + _numClause +
                    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
                    ((_hasActive && ! _showInactive) ? _activeClause : "" ) +
-                   QString("ORDER BY %1;").arg(_numColName));
+                   QString(" ORDER BY %1 %2;")
+                           .arg(QString(_hasActive ? "active DESC," : ""), _numColName));
       numQ.bindValue(":number", "^" + stripped);
       numQ.exec();
       if (numQ.first())
@@ -1128,7 +1140,12 @@ VirtualList::VirtualList(QWidget* pParent, Qt::WindowFlags pFlags )
       if (_parent->_hasDescription)
       {
 	  _listTab->addColumn(tr("Description"),  -1, Qt::AlignLeft, true, "description");
-	  _listTab->setColumnWidth(_listTab->columnCount() - 1, 100);
+      }
+
+      if (_parent->_hasActive)
+      {
+        _listTab->addColumn("Active", -1, Qt::AlignLeft, true, "active");
+        _listTab->setColumnWidth(_listTab->columnCount() - 1, 100);
       }
 
       _id = _parent->_id;
@@ -1178,8 +1195,9 @@ void VirtualList::sFillList()
 		    (_parent->_extraClause.isEmpty() ? "" :
 					    " AND " + _parent->_extraClause) +
                     ((_parent->_hasActive && ! _parent->_showInactive) ? _parent->_activeClause : "") +
-		    QString(" ORDER BY ") +
-		    QString((_parent->_hasName) ? "name" : "number"));
+                    QString(" ORDER BY %1 %2;")
+                            .arg(QString(_parent->_hasActive ? "active DESC," : ""),
+                                 QString(_parent->_hasName   ? "name"         : "number")));
     _listTab->populate(query);
 }
 
@@ -1296,6 +1314,12 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 	  _listTab->setColumnWidth(_listTab->columnCount() - 1, 100);
       }
 
+      if (_parent->_hasActive)
+      {
+        _listTab->addColumn("Active", -1, Qt::AlignLeft, true, "active");
+        _listTab->setColumnWidth(_listTab->columnCount() - 1, 100);
+      }
+
       _searchName->setHidden(! _parent->_hasName);
       _searchDescrip->setHidden(! _parent->_hasDescription);
       _id = _parent->_id;
@@ -1364,9 +1388,9 @@ void VirtualSearch::sFillList()
 		    (_parent->_extraClause.isEmpty() ? "" :
 					    " AND " + _parent->_extraClause) +
                     ((_parent->_hasActive && ! _parent->_showInactive) ? _parent->_activeClause : "") +
-		    QString(" ORDER BY ") +
-		    QString((_parent->_hasName) ? "name" : "number"));
-
+                    QString(" ORDER BY %1 %2;")
+                            .arg(QString(_parent->_hasActive ? "active DESC," : ""),
+                                 QString(_parent->_hasName   ? "name"         : "number")));
     _listTab->populate(qry);
 }
 
