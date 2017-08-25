@@ -908,6 +908,15 @@ void purchaseOrderItem::sFindWarehouseItemsites( int id )
   _warehouse->findItemsites(id);
   if(_preferredWarehouseid > 0)
     _warehouse->setId(_preferredWarehouseid);
+
+  if (_item->id() > 0 && _warehouse->count() < 1)
+  {
+    QMessageBox::information(this, tr("No Supplying Site"),
+            tr("No Supplying Sites exist for this item."));
+    _item->setId(-1);
+    _item->setFocus();
+    return;
+  }
 }
 
 void purchaseOrderItem::sPopulateItemInfo(int pItemid)
