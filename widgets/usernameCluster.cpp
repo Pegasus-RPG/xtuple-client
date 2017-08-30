@@ -8,11 +8,10 @@
  * to be bound by its terms.
  */
 
-#include <QMenu>
-
-#include <QtScript>
-
 #include "usernamecluster.h"
+
+#include <QMenu>
+#include <QtScript>
 
 UsernameLineEdit::UsernameLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "usr", "usr_id", "usr_username", "usr_propername", 0, 0, pName, "usr_active"),
