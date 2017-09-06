@@ -23,6 +23,7 @@
 #include "taxDetail.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
+#include "itemCharacteristicDelegate.h"
 
 /* TODO: connect(_warehouse id, SIGNAL(newId(int)), ...) to set _trackqoh?
          bug 16465 - seems too disruptive now as we're between 3.8.0RC and RC2
@@ -50,6 +51,16 @@ invoiceItem::invoiceItem(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _billed->setValidator(omfgThis->qtyVal());
 
   _altRevAccnt->setType(GLCluster::cRevenue);
+
+  _itemchar = new QStandardItemModel(0, 2, this);
+  _itemchar->setHeaderData( 0, Qt::Horizontal, tr("Name"), Qt::DisplayRole);
+  _itemchar->setHeaderData( 1, Qt::Horizontal, tr("Value"), Qt::DisplayRole);
+
+  _itemcharView->setModel(_itemchar);
+  ItemCharacteristicDelegate * delegate = new ItemCharacteristicDelegate(this);
+  _itemcharView->setItemDelegate(delegate);
+
+  _invcharView->setType("INVI");
 
   _taxtype->setEnabled(_privileges->check("OverrideTax"));
   
@@ -128,6 +139,7 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
   if (valid)
   {
     _invcitemid = param.toInt();
+    _invcharView->setId(_invcitemid);
     populate();
   }
 
@@ -140,7 +152,10 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
 
       invoiceet.exec("SELECT NEXTVAL('invcitem_invcitem_id_seq') AS invcitem_id;");
       if (invoiceet.first())
+      {
         _invcitemid = invoiceet.value("invcitem_id").toInt();
+        _invcharView->setId(_invcitemid);
+      }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Adding New Line Item"),
                                     invoiceet, __FILE__, __LINE__))
       {
@@ -188,6 +203,8 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       _altRevAccnt->setEnabled(false);
       _qtyUOM->setEnabled(false);
       _pricingUOM->setEnabled(false);
+      _itemcharView->setEnabled(false);
+      _invcharView->setEnabled(false);
 
       _save->hide();
       _close->setText(tr("&Cancel"));
@@ -307,6 +324,20 @@ void invoiceItem::sSave()
   {
     return;
   }
+
+  invoiceSave.prepare("SELECT updateCharAssignment('INVI', :target_id, :char_id, :char_value);");
+
+  QModelIndex idx1, idx2;
+  for(int i = 0; i < _itemchar->rowCount(); i++)
+  {
+    idx1 = _itemchar->index(i, 0);
+    idx2 = _itemchar->index(i, 1);
+    invoiceSave.bindValue(":target_id", _invcitemid);
+    invoiceSave.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
+    invoiceSave.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
+    invoiceSave.exec();
+  }
+
   _saved = true;
   emit saved(_invcitemid);
 
@@ -485,6 +516,58 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
                                   invoicePopulateItemInfo, __FILE__, __LINE__))
     {
       return;
+    }
+
+    XSqlQuery item;
+    invoicePopulateItemInfo.prepare( "SELECT char_id, char_name, "
+             "  CASE WHEN char_type < 2 THEN "
+             "    charass_value "
+             "  ELSE "
+             "    formatDate(charass_value::date) "
+             " END AS f_charass_value, "
+             "  charass_value, charass_value AS charass_value_qttooltiprole "
+             " FROM ( "
+             " SELECT char_id, char_type, char_name, "
+             "   COALESCE(i.charass_value,i2.charass_value) AS charass_value "
+             " FROM "
+             "   (SELECT DISTINCT char_id, char_type, char_name "
+             "    FROM charass, char, charuse "
+             "    WHERE ((charass_char_id=char_id) "
+             "    AND (charuse_char_id=char_id AND charuse_target_type='INVI') "
+             "    AND (charass_target_type='I') "
+             "    AND (charass_target_id=:item_id) )"
+             "    UNION SELECT char_id, char_type, char_name "
+             "    FROM charass, char "
+             "    WHERE ((charass_char_id=char_id) "
+             "    AND charass_char_id IN (SELECT charuse_char_id FROM charuse"
+             "                           WHERE charuse_target_type = 'I')"
+             "    AND  (charass_target_type = 'INVI' AND charass_target_id=:invcitem_id)) ) AS data "
+             "   LEFT OUTER JOIN charass  i  ON ((:invcitem_id=i.charass_target_id) "
+             "                               AND ('INVI'=i.charass_target_type) "
+             "                               AND (i.charass_char_id=char_id)) "
+             "   LEFT OUTER JOIN item     i1 ON (i1.item_id=:item_id) "
+             "   LEFT OUTER JOIN charass  i2 ON ((i1.item_id=i2.charass_target_id) "
+             "                               AND ('I'=i2.charass_target_type) "
+             "                               AND (i2.charass_char_id=char_id) "
+             "                               AND (i2.charass_default))) data2 "
+             " ORDER BY char_name;"  );
+    invoicePopulateItemInfo.bindValue(":item_id", pItemid);
+    invoicePopulateItemInfo.bindValue(":invcitem_id", _invcitemid);
+    invoicePopulateItemInfo.exec();
+    int row = 0;
+    _itemchar->removeRows(0, _itemchar->rowCount());
+    QModelIndex idx;
+    while(invoicePopulateItemInfo.next())
+    {
+      _itemchar->insertRow(_itemchar->rowCount());
+      idx = _itemchar->index(row, 0);
+      _itemchar->setData(idx, invoicePopulateItemInfo.value("char_name"), Qt::DisplayRole);
+      _itemchar->setData(idx, invoicePopulateItemInfo.value("char_id"), Qt::UserRole);
+      idx = _itemchar->index(row, 1);
+      _itemchar->setData(idx, invoicePopulateItemInfo.value("charass_value"), Qt::DisplayRole);
+      _itemchar->setData(idx, _item->id(), Xt::IdRole);
+      _itemchar->setData(idx, _item->id(), Qt::UserRole);
+      row++;
     }
   }
   else

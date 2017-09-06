@@ -1389,6 +1389,16 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="_characteristicsPage">
+      <attribute name="title">
+       <string>Characteristics</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="CharacteristicsWidget" name="_charass"/>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="_authCommentsPage">
       <attribute name="title">
        <string>N&amp;otes</string>

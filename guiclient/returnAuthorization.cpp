@@ -101,6 +101,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
 
   _custType->setText("");
   _currency->setLabel(_currencyLit);
+  _charass->setType("RA");
 
   _raitem->addColumn(tr("#"),             _seqColumn,   Qt::AlignCenter,true,  "f_linenumber");
   _raitem->addColumn(tr("Kit Seq. #"),    _seqColumn,   Qt::AlignRight, false, "raitem_subnumber");
@@ -193,6 +194,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
         _raheadid = returnet.value("rahead_id").toInt();
         _comments->setId(_raheadid);
         _documents->setId(_raheadid);
+        _charass->setId(_raheadid);
       }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving RA Information"),
                                     returnet, __FILE__, __LINE__))
@@ -290,6 +292,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
     _raheadid = param.toInt();
     _comments->setId(_raheadid);
     _documents->setId(_raheadid);
+    _charass->setId(_raheadid);
     populate();
   }
 
@@ -324,6 +327,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _notes->setEnabled(false);
       _comments->setReadOnly(true);
       _documents->setReadOnly(true);
+      _charass->setReadOnly(true);
       _copyToShipto->setEnabled(false);
       _shipTo->setEnabled(false);
       _shipToName->setEnabled(false);

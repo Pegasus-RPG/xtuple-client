@@ -21,6 +21,7 @@
 #include "dspRunningAvailability.h"
 #include "purchaseOrder.h"
 #include "purchaseRequest.h"
+#include "salesOrderItem.h"
 #include "errorReporter.h"
 
 dspPurchaseReqsByItem::dspPurchaseReqsByItem(QWidget* parent, const char*, Qt::WindowFlags fl)
@@ -83,8 +84,12 @@ bool dspPurchaseReqsByItem::setParams(ParameterList &params)
   return true;
 }
 
-void dspPurchaseReqsByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
+void dspPurchaseReqsByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem* pItem, int)
 {
+  XTreeWidgetItem *item = dynamic_cast<XTreeWidgetItem *>(pItem);
+  if(0 == item)
+    return;
+
   QAction *menuItem;
 
   menuItem = pMenu->addAction(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()));
@@ -100,6 +105,13 @@ void dspPurchaseReqsByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 
   menuItem = pMenu->addAction(tr("Delete P/R..."), this, SLOT(sDelete()));
   menuItem->setEnabled(_privileges->check("MaintainPurchaseRequests"));
+
+  if(item->rawValue("parent").toString().indexOf("S/O") == 0)
+  {
+    pMenu->addSeparator();
+    menuItem = pMenu->addAction(tr("View S/O Item"), this, SLOT(sViewSOItem()));
+    menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
+  }
 }
 
 void dspPurchaseReqsByItem::sDspRunningAvailability()
@@ -202,5 +214,28 @@ void dspPurchaseReqsByItem::sDelete()
 
   sFillList();
   omfgThis->sPurchaseRequestsUpdated();
+}
+
+void dspPurchaseReqsByItem::sViewSOItem()
+{
+  XSqlQuery soitem;
+  soitem.prepare("SELECT pr_order_id AS so FROM pr WHERE pr_id=:pr_id");
+  soitem.bindValue(":pr_id", list()->id());
+  soitem.exec();
+  if (soitem.first())
+  {
+    ParameterList params;
+    params.append("soitem_id", soitem.value("so"));
+    params.append("mode", "view");
+
+    salesOrderItem *newdlg = new salesOrderItem();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error opening Sales Order item"),
+                                      soitem, __FILE__, __LINE__))
+  {
+    return;
+  }
 }
 

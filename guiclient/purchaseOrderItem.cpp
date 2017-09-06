@@ -88,6 +88,8 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   ItemCharacteristicDelegate * delegate = new ItemCharacteristicDelegate(this);
   _itemcharView->setItemDelegate(delegate);
 
+  _pocharView->setType("PI");
+
   _minOrderQty->setValidator(omfgThis->qtyVal());
   _orderQtyMult->setValidator(omfgThis->qtyVal());
   _received->setValidator(omfgThis->qtyVal());
@@ -235,6 +237,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
   if (valid)
   {
     _poitemid = param.toInt();
+    _pocharView->setId(_poitemid);
 
     purchaseet.prepare( "SELECT pohead_number, pohead_id "
                "FROM pohead, poitem "
@@ -264,7 +267,10 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
 
       purchaseet.exec("SELECT NEXTVAL('poitem_poitem_id_seq') AS poitem_id;");
       if (purchaseet.first())
+      {
         _poitemid = purchaseet.value("poitem_id").toInt();
+        _pocharView->setId(_poitemid);
+      }
       else
       {
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Item Information"),
@@ -526,53 +532,7 @@ void purchaseOrderItem::populate()
         _manufItemDescrip->setText(purchasepopulate.value("itemsrc_manuf_item_descrip").toString());
     }
 
-    purchasepopulate.prepare( "SELECT char_id, char_name, "
-             "  CASE WHEN char_type < 2 THEN "
-             "    charass_value "
-             "  ELSE "
-             "    formatDate(charass_value::date) "
-             " END AS f_charass_value, "
-             "  charass_value "
-             " FROM ( "
-             " SELECT char_id, char_type, char_name, "
-             "   COALESCE(pi.charass_value,i2.charass_value) AS charass_value "
-             " FROM "
-             "   (SELECT DISTINCT char_id, char_type, char_name "
-             "    FROM charass, char, charuse "
-             "    WHERE ((charass_char_id=char_id) "
-             "    AND (charuse_char_id=char_id AND charuse_target_type='PI') "
-             "    AND (charass_target_type='I') "
-             "    AND (charass_target_id=:item_id) ) "
-             "    UNION SELECT char_id, char_type, char_name "
-             "    FROM charass, char "
-             "    WHERE ((charass_char_id=char_id) "
-             "    AND  (charass_target_type = 'PI' AND charass_target_id=:poitem_id)) ) AS data "
-             "   LEFT OUTER JOIN charass  pi ON ((:poitem_id=pi.charass_target_id) "
-             "                               AND ('PI'=pi.charass_target_type) "
-             "                               AND (pi.charass_char_id=char_id)) "
-             "   LEFT OUTER JOIN item     i1 ON (i1.item_id=:item_id) "
-             "   LEFT OUTER JOIN charass  i2 ON ((i1.item_id=i2.charass_target_id) "
-             "                               AND ('I'=i2.charass_target_type) "
-             "                               AND (i2.charass_char_id=char_id) "
-             "                               AND (i2.charass_default))) data2 "
-             " ORDER BY char_name;"  );
-    purchasepopulate.bindValue(":item_id", _item->id());
-    purchasepopulate.bindValue(":poitem_id", _poitemid);
-    purchasepopulate.exec();
-    int row = 0;
-    QModelIndex idx;
-    while(purchasepopulate.next())
-    {
-      _itemchar->insertRow(_itemchar->rowCount());
-      idx = _itemchar->index(row, 0);
-      _itemchar->setData(idx, purchasepopulate.value("char_name"), Qt::DisplayRole);
-      _itemchar->setData(idx, purchasepopulate.value("char_id"), Qt::UserRole);
-      idx = _itemchar->index(row, 1);
-      _itemchar->setData(idx, purchasepopulate.value("charass_value"), Qt::DisplayRole);
-      _itemchar->setData(idx, _item->id(), Xt::IdRole);
-      _itemchar->setData(idx, _item->id(), Qt::UserRole);
-      row++;
-    }
+    sPopulateItemChar();
 
     _comments->setId(_poitemid);
   }
@@ -587,6 +547,7 @@ void purchaseOrderItem::prepare()
   {
     _poitemid = prepareq.value("_poitem_id").toInt();
     _comments->setId(_poitemid);
+    _pocharView->setId(_poitemid);
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Purchase Order Item Information"),
                                 prepareq, __FILE__, __LINE__))
@@ -611,6 +572,7 @@ void purchaseOrderItem::prepare()
 void purchaseOrderItem::clear()
 {
   _poitemid = -1;
+  _pocharView->setId(-1);
   _item->setId(-1);
 //  _warehouse->setId(-1);
   _expcat->setId(-1);
@@ -945,55 +907,7 @@ void purchaseOrderItem::sPopulateItemInfo(int pItemid)
         _maxCost = item.value("maxcost").toDouble();
 
         sPopulateItemsiteInfo();
-
-        item.prepare( "SELECT char_id, char_name, "
-             "  CASE WHEN char_type < 2 THEN "
-             "    charass_value "
-             "  ELSE "
-             "    formatDate(charass_value::date) "
-             " END AS f_charass_value, "
-             "  charass_value "
-             " FROM ( "
-             " SELECT char_id, char_type, char_name, "
-             "   COALESCE(pi.charass_value,i2.charass_value) AS charass_value "
-             " FROM "
-             "   (SELECT DISTINCT char_id, char_type, char_name "
-             "    FROM charass, char, charuse "
-             "    WHERE ((charass_char_id=char_id) "
-             "    AND (charuse_char_id=char_id AND charuse_target_type='PI') "
-             "    AND (charass_target_type='I') "
-             "    AND (charass_target_id=:item_id) ) "
-             "    UNION SELECT char_id, char_type, char_name "
-             "    FROM charass, char "
-             "    WHERE ((charass_char_id=char_id) "
-             "    AND  (charass_target_type = 'PI' AND charass_target_id=:poitem_id)) ) AS data "
-             "   LEFT OUTER JOIN charass  pi ON ((:poitem_id=pi.charass_target_id) "
-             "                               AND ('PI'=pi.charass_target_type) "
-             "                               AND (pi.charass_char_id=char_id)) "
-             "   LEFT OUTER JOIN item     i1 ON (i1.item_id=:item_id) "
-             "   LEFT OUTER JOIN charass  i2 ON ((i1.item_id=i2.charass_target_id) "
-             "                               AND ('I'=i2.charass_target_type) "
-             "                               AND (i2.charass_char_id=char_id) "
-             "                               AND (i2.charass_default))) data2 "
-             " ORDER BY char_name;"  );
-        item.bindValue(":item_id", pItemid);
-        item.bindValue(":poitem_id", _poitemid);
-        item.exec();
-        int row = 0;
-        _itemchar->removeRows(0, _itemchar->rowCount());
-        QModelIndex idx;
-        while(item.next())
-        {
-          _itemchar->insertRow(_itemchar->rowCount());
-          idx = _itemchar->index(row, 0);
-          _itemchar->setData(idx, item.value("char_name"), Qt::DisplayRole);
-          _itemchar->setData(idx, item.value("char_id"), Qt::UserRole);
-          idx = _itemchar->index(row, 1);
-          _itemchar->setData(idx, item.value("charass_value"), Qt::DisplayRole);
-          _itemchar->setData(idx, pItemid, Xt::IdRole);
-          _itemchar->setData(idx, pItemid, Qt::UserRole);
-          row++;
-        }
+        sPopulateItemChar();
 
         item.prepare("SELECT itemsrc_id "
                      "FROM itemsrc, pohead "
@@ -1048,6 +962,61 @@ void purchaseOrderItem::sPopulateItemInfo(int pItemid)
           _orderMultiple = 0;
         }
       }
+  }
+}
+
+void purchaseOrderItem::sPopulateItemChar()
+{
+  XSqlQuery item;
+  item.prepare( "SELECT char_id, char_name, "
+             "  CASE WHEN char_type < 2 THEN "
+             "    charass_value "
+             "  ELSE "
+             "    formatDate(charass_value::date) "
+             " END AS f_charass_value, "
+             "  charass_value, charass_value AS charass_value_qttooltiprole "
+             " FROM ( "
+             " SELECT char_id, char_type, char_name, "
+             "   COALESCE(pi.charass_value,i2.charass_value) AS charass_value "
+             " FROM "
+             "   (SELECT DISTINCT char_id, char_type, char_name "
+             "    FROM charass, char, charuse "
+             "    WHERE ((charass_char_id=char_id) "
+             "    AND (charuse_char_id=char_id AND charuse_target_type='PI') "
+             "    AND (charass_target_type='I') "
+             "    AND (charass_target_id=:item_id) )"
+             "    UNION SELECT char_id, char_type, char_name "
+             "    FROM charass, char "
+             "    WHERE ((charass_char_id=char_id) "
+             "    AND charass_char_id IN (SELECT charuse_char_id FROM charuse"
+             "                            WHERE charuse_target_type = 'I')"
+             "    AND  (charass_target_type = 'PI' AND charass_target_id=:poitem_id)) ) AS data "
+             "   LEFT OUTER JOIN charass  pi ON ((:poitem_id=pi.charass_target_id) "
+             "                               AND ('PI'=pi.charass_target_type) "
+             "                               AND (pi.charass_char_id=char_id)) "
+             "   LEFT OUTER JOIN item     i1 ON (i1.item_id=:item_id) "
+             "   LEFT OUTER JOIN charass  i2 ON ((i1.item_id=i2.charass_target_id) "
+             "                               AND ('I'=i2.charass_target_type) "
+             "                               AND (i2.charass_char_id=char_id) "
+             "                               AND (i2.charass_default))) data2 "
+             " ORDER BY char_name;"  );
+  item.bindValue(":item_id", _item->id());
+  item.bindValue(":poitem_id", _poitemid);
+  item.exec();
+  int row = 0;
+  _itemchar->removeRows(0, _itemchar->rowCount());
+  QModelIndex idx;
+  while(item.next())
+  {
+    _itemchar->insertRow(_itemchar->rowCount());
+    idx = _itemchar->index(row, 0);
+    _itemchar->setData(idx, item.value("char_name"), Qt::DisplayRole);
+    _itemchar->setData(idx, item.value("char_id"), Qt::UserRole);
+    idx = _itemchar->index(row, 1);
+    _itemchar->setData(idx, item.value("charass_value"), Qt::DisplayRole);
+    _itemchar->setData(idx, _item->id(), Xt::IdRole);
+    _itemchar->setData(idx, _item->id(), Qt::UserRole);
+    row++;
   }
 }
 

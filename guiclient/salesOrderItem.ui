@@ -2,7 +2,7 @@
 <ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
-Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple.
+Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
 It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -1898,64 +1898,89 @@ to be bound by its terms.</comment>
         <attribute name="title">
          <string>Ch&amp;aracteristics</string>
         </attribute>
-        <layout class="QGridLayout">
-         <item row="0" column="0">
-          <widget class="QLabel" name="_baseUnitPriceLit">
-           <property name="text">
-            <string>Base Price:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
-           </property>
-           <property name="margin">
-            <number>5</number>
-           </property>
-          </widget>
+        <layout class="QVBoxLayout" name="verticalLayout_12">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_19">
+           <item>
+            <widget class="QLabel" name="_baseUnitPriceLit">
+             <property name="text">
+              <string>Base Price:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+             </property>
+             <property name="margin">
+              <number>5</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="CurrCluster" name="_baseUnitPrice">
+             <property name="minimumSize">
+              <size>
+               <width>140</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="format">
+              <enum>CurrDisplay::Cost</enum>
+             </property>
+             <property name="currencyEditable" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_8">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
-         <item row="0" column="1">
-          <widget class="CurrCluster" name="_baseUnitPrice">
-           <property name="minimumSize">
-            <size>
-             <width>140</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="format">
-            <enum>CurrDisplay::Cost</enum>
-           </property>
-           <property name="currencyEditable" stdset="0">
-            <bool>false</bool>
-           </property>
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2">
-          <spacer>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>221</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="1" column="0" colspan="3">
-          <widget class="QTreeView" name="_itemcharView">
-           <property name="editTriggers">
-            <set>QAbstractItemView::AllEditTriggers</set>
-           </property>
-           <property name="rootIsDecorated">
-            <bool>false</bool>
-           </property>
-           <property name="itemsExpandable">
-            <bool>false</bool>
-           </property>
-          </widget>
+         <item>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="1" column="1">
+            <widget class="CharacteristicsWidget" name="_socharView"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QTreeView" name="_itemcharView">
+             <property name="editTriggers">
+              <set>QAbstractItemView::AllEditTriggers</set>
+             </property>
+             <property name="rootIsDecorated">
+              <bool>false</bool>
+             </property>
+             <property name="itemsExpandable">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="XLabel" name="_soItemCharLit">
+             <property name="text">
+              <string>Item Characteristics:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="XLabel" name="_soCharLit">
+             <property name="text">
+              <string>Sales Item Characteristics</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -2509,6 +2534,11 @@ to be bound by its terms.</comment>
  </widget>
  <layoutdefault spacing="5" margin="5"/>
  <customwidgets>
+  <customwidget>
+   <class>CharacteristicsWidget</class>
+   <extends>QWidget</extends>
+   <header>characteristicswidget.h</header>
+  </customwidget>
   <customwidget>
    <class>Comments</class>
    <extends>QWidget</extends>

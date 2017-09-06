@@ -51,6 +51,8 @@ dspReturnAuthorizations::dspReturnAuthorizations(QWidget* parent, const char*, Q
   parameterWidget()->append(tr("Date From"), "dateFrom", ParameterWidget::Date);
   parameterWidget()->append(tr("Date To"), "dateTo", ParameterWidget::Date);
 
+  setupCharacteristics("RA");
+
   connect(omfgThis, SIGNAL(returnAuthorizationsUpdated(int, bool)), this, SLOT(sFillList()));
 }
 

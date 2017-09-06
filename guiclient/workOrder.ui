@@ -637,31 +637,39 @@ to be bound by its terms.</comment>
          <string>Characteristics</string>
         </attribute>
         <layout class="QVBoxLayout">
-         <item row="1" column="0">
-          <widget class="XLabel" name="_itemCharLit">
-           <property name="text">
-            <string>Work Order Item Characteristics:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
          <item>
-          <widget class="QTreeView" name="_itemcharView">
-           <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
-           </property>
-           <property name="editTriggers">
-            <set>QAbstractItemView::AllEditTriggers</set>
-           </property>
-           <property name="rootIsDecorated">
-            <bool>false</bool>
-           </property>
-           <property name="itemsExpandable">
-            <bool>false</bool>
-           </property>
-          </widget>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="1" column="1">
+            <widget class="CharacteristicsWidget" name="_wocharView"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QTreeView" name="_itemcharView">
+             <property name="editTriggers">
+              <set>QAbstractItemView::AllEditTriggers</set>
+             </property>
+             <property name="rootIsDecorated">
+              <bool>false</bool>
+             </property>
+             <property name="itemsExpandable">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="XLabel" name="_woItemCharLit">
+             <property name="text">
+              <string>Item Characteristics:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="XLabel" name="_woCharLit">
+             <property name="text">
+              <string>Work Order Characteristics</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>

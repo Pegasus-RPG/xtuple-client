@@ -699,6 +699,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
     _comments->setReadOnly(viewMode);
     _taxtype->setEnabled(!viewMode);
     _itemcharView->setEnabled(!viewMode);
+    _socharView->setEnabled(!viewMode);
     _promisedDate->setEnabled(!viewMode);
     _qtyUOM->setEnabled(!viewMode);
     _priceUOM->setEnabled(!viewMode);
@@ -718,13 +719,17 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
     populate();
 
     if (ISQUOTE(_mode))
+    {
       setSales.prepare("SELECT a.quitem_id AS id"
                        "  FROM quitem AS a, quitem as b"
                        " WHERE ((a.quitem_quhead_id=b.quitem_quhead_id)"
                        "   AND  (b.quitem_id=:id))"
                        " ORDER BY a.quitem_linenumber "
                        " LIMIT 1;");
+      _socharView->setType("QI");
+    }
     else
+    {
       setSales.prepare("SELECT a.coitem_id AS id"
                        "  FROM coitem AS a, coitem AS b"
                        " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
@@ -732,6 +737,8 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
                        "   AND  (b.coitem_id=:id))"
                        " ORDER BY a.coitem_linenumber, a.coitem_subnumber"
                        " LIMIT 1;");
+      _socharView->setType("SI");
+    }
     setSales.bindValue(":id", _soitemid);
     setSales.exec();
     if (!setSales.first() || setSales.value("id").toInt() == _soitemid)
@@ -741,6 +748,8 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
     {
       return UndefinedError;
     }
+
+    _socharView->setId(_soitemid);
 
     if (ISQUOTE(_mode))
       setSales.prepare("SELECT a.quitem_id AS id"
@@ -843,6 +852,8 @@ void salesOrderItem::prepare()
     if (salesprepare.first())
     {
       _soitemid = salesprepare.value("_coitem_id").toInt();
+      _socharView->setType("SI");
+      _socharView->setId(_soitemid);
       _comments->setId(_soitemid);
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
@@ -885,7 +896,11 @@ void salesOrderItem::prepare()
     //  Grab the next quitem_id
     salesprepare.exec("SELECT NEXTVAL('quitem_quitem_id_seq') AS _quitem_id");
     if (salesprepare.first())
+    {
       _soitemid = salesprepare.value("_quitem_id").toInt();
+      _socharView->setType("QI");
+      _socharView->setId(_soitemid);
+    }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Quote Information"),
                                   salesprepare, __FILE__, __LINE__))
     {
@@ -941,6 +956,7 @@ void salesOrderItem::clear()
   }
 
   _soitemid = -1;
+  _socharView->setId(-1);
   _modified = false;
   _partialsaved = false;
   _supplyOrderType = "";
@@ -2199,7 +2215,8 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
               " ELSE "
               "   formatDate(charass_value::date) "
               "END AS f_charass_value, "
-              " charass_value, charass_price "
+              " charass_value, charass_price, "
+              " charass_value AS charass_value_qttooltiprole "
               "FROM ("
               "SELECT "
               "  char_id, "
@@ -2218,10 +2235,12 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
               "   WHERE ((charass_char_id=char_id)"
               "   AND (charuse_char_id=char_id AND charuse_target_type=:sotype)"
               "   AND (charass_target_type='I')"
-              "   AND (charass_target_id=:item_id) ) "
+              "   AND (charass_target_id=:item_id) )"
               "   UNION SELECT char_id, char_type, char_name, char_order "
               "   FROM charass, char "
               "   WHERE ((charass_char_id=char_id) "
+              "   AND charass_char_id IN (SELECT charuse_char_id FROM charuse"
+              "                           WHERE charuse_target_type = 'I')"
               "   AND  (charass_target_type = :sotype AND charass_target_id=:coitem_id)) ) AS data"
               "  LEFT OUTER JOIN charass  si ON ((:coitem_id=si.charass_target_id)"
               "                              AND (:sotype=si.charass_target_type)"
@@ -2267,6 +2286,9 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
     {
       return;
     }
+
+    _itemcharView->resizeColumnToContents(CHAR_ID);
+    _itemcharView->resizeColumnToContents(CHAR_VALUE);
 
     // Setup widgets and signals needed to handle configuration
     if (_item->isConfigured())
