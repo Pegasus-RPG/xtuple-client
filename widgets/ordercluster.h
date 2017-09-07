@@ -64,7 +64,7 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     Q_INVOKABLE virtual bool      toSitePrivsEnforced()   const {return _toPrivs; }
     Q_INVOKABLE virtual void      setExtraClause(const QString & p) {VirtualClusterLineEdit::setExtraClause(p);}
     Q_INVOKABLE virtual void          setExtraClause(const QString &, const QString &);
-    Q_INVOKABLE virtual void          setExtraClause(const OrderTypes, const QString &);
+    virtual void                      setExtraClause(const OrderTypes, const QString &);  // Not Q_INVOKABLE because scripts can't handle the overload. See issue #30620
     Q_INVOKABLE virtual void      setFromSitePrivsEnforced(const bool p);
     Q_INVOKABLE virtual void      setToSitePrivsEnforced(const bool p);
     Q_INVOKABLE virtual OrderStatus          status();
@@ -151,8 +151,8 @@ class XTUPLEWIDGETS_EXPORT OrderCluster : public VirtualCluster
     Q_INVOKABLE virtual bool    fromSitePrivsEnforced() const;
     Q_INVOKABLE virtual bool    toSitePrivsEnforced()   const;
     Q_INVOKABLE virtual void    setExtraClause(const QString &, const QString &);
-    Q_INVOKABLE virtual void    setExtraClause(const OrderLineEdit::OrderTypes,
-                                               const QString &);
+    virtual void                setExtraClause(const OrderLineEdit::OrderTypes,
+                                               const QString &); // Not Q_INVOKABLE because scripts can't handle the overload. See issue #30620
     Q_INVOKABLE virtual OrderLineEdit::OrderStatus status()            const;
     Q_INVOKABLE virtual QString                    to()                const;
     Q_INVOKABLE virtual QString                    type()              const;
