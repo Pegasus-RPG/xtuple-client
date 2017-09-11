@@ -10,6 +10,8 @@
 
 #include "setupscriptapi.h"
 
+#include "applock.h"
+#include "xtsettings.h"
 #include "char.h"
 #include "engineevaluate.h"
 #include "exporthelper.h"
@@ -154,6 +156,8 @@
 void setupScriptApi(QScriptEngine *engine)
 {
 
+  setupAppLockProto(engine);
+  setupXtSettings(engine);
   setupEngineEvaluate(engine);
   setupExportHelper(engine);
   setupInclude(engine);

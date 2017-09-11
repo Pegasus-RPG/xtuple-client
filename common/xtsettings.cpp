@@ -39,3 +39,38 @@ void xtsettingsSetValue(const QString & key, const QVariant & value)
   settings.setValue(key, value);
 }
 
+QScriptValue xtsettingsValueProto(QScriptContext *context, QScriptEngine *engine)
+{
+  QVariant result;
+
+  if (context->argumentCount() == 2 &&
+      context->argument(0).isString() &&
+      context->argument(1).toVariant().isValid())
+    result = xtsettingsValue(context->argument(0).toString(), context->argument(1).toVariant());
+  else
+    context->throwError(QScriptContext::UnknownError,
+                        "Could not find appropriate xtsettingsValue()");
+
+  return engine->newVariant(result);
+}
+
+QScriptValue xtsettingsSetValueProto(QScriptContext *context, QScriptEngine *engine)
+{
+  Q_UNUSED(engine)
+
+  if (context->argumentCount() == 2 &&
+      context->argument(0).isString() &&
+      context->argument(1).toVariant().isValid())
+    xtsettingsSetValue(context->argument(0).toString(), context->argument(1).toVariant());
+  else
+    context->throwError(QScriptContext::UnknownError,
+                        "Could not find appropriate xtsettingsSetValue()");
+
+  return QScriptValue();
+}
+
+void setupXtSettings(QScriptEngine *engine)
+{
+  engine->globalObject().setProperty("xtsettingsValue", engine->newFunction(xtsettingsValueProto));
+  engine->globalObject().setProperty("xtsettingsSetValue", engine->newFunction(xtsettingsSetValueProto));
+}
