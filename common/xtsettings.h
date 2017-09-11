@@ -14,9 +14,12 @@
 
 #include <QString>
 #include <QVariant>
+#include <QtScript>
 
 QVariant xtsettingsValue(const QString & key, const QVariant & defaultValue = QVariant());
 void xtsettingsSetValue(const QString & key, const QVariant & value);
+
+void setupXtSettings(QScriptEngine *engine);
 
 #endif
 
