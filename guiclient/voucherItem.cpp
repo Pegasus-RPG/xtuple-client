@@ -98,6 +98,29 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
     _tax->setEffective(param.toDate());
   }
 
+  param = pParams.value("mode", &valid);
+  if (valid)
+  {
+    if (param.toString() == "new")
+      _mode = cNew;
+    else if(param.toString() == "view")
+    {
+      _mode = cView;
+      _save->setEnabled(false);
+      _closePoitem->setEnabled(false);
+      _new->setEnabled(false);
+      _delete->setEnabled(false);
+      _freightToVoucher->setEnabled(false);
+      _taxtype->setEnabled(false);
+      _vendDescription->setEnabled(false);
+
+      _edit->setText("View");
+
+      disconnect(_uninvoiced, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(sToggleReceiving(QTreeWidgetItem*)));
+      disconnect(_uninvoiced, SIGNAL(populateMenu(QMenu*, XTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, XTreeWidgetItem*)));
+    }
+  }
+
   param = pParams.value("vohead_id", &valid);
   if (valid)
   {
@@ -454,7 +477,10 @@ void voucherItem::sEdit()
 {
   ParameterList params;
   params.append("vodist_id", _vodist->id());
-  params.append("mode", "edit");
+  if (_mode == cView)
+    params.append("mode", "view");
+  else
+    params.append("mode", "edit");
   params.append("curr_id", _freightToVoucher->id());
   params.append("effective", _freightToVoucher->effective());
 

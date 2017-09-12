@@ -91,6 +91,16 @@ enum SetResponse voucherItemDistrib::set(const ParameterList &pParams)
 
       _costelem->setEnabled(false);
     }
+    else if (param.toString() == "view")
+    {
+      _mode = cView;
+
+      _costelem->setEnabled(false);
+      _amount->setEnabled(false);
+      _discountable->setEnabled(false);
+      _notes->setEnabled(false);
+      _save->setEnabled(false);
+    }
   }
 
   return NoError;

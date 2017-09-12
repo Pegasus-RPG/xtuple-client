@@ -176,7 +176,6 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       _dueDate->setEnabled(false);
       _invoiceNum->setEnabled(false);
       _reference->setEnabled(false);
-      _distributions->setEnabled(false);
       _miscDistrib->setEnabled(false);
       _new->setEnabled(false);
       _terms->setEnabled(false);
@@ -191,7 +190,6 @@ enum SetResponse voucher::set(const ParameterList &pParams)
 
       _save->hide();
 
-      disconnect(_poitem, SIGNAL(valid(bool)), _distributions, SLOT(setEnabled(bool)));
       disconnect(_poitem, SIGNAL(valid(bool)), _distributeline, SLOT(setEnabled(bool)));
       disconnect(_poitem, SIGNAL(valid(bool)), _clear, SLOT(setEnabled(bool)));
       disconnect(_poNumber, SIGNAL(valid(bool)), _distributeall, SLOT(setEnabled(bool)));
@@ -420,7 +418,10 @@ void voucher::sDistributions()
   foreach (XTreeWidgetItem *item, _poitem->selectedItems())
   {
     ParameterList params;
-    params.append("mode", "new");
+    if (_mode == cView)
+      params.append("mode", "view");
+    else
+      params.append("mode", "new");
     params.append("vohead_id", _voheadid);
     params.append("poitem_id",  item->id());
     params.append("curr_id", _amountToDistribute->id());
