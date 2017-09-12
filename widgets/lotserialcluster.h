@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -45,34 +45,32 @@ class XTUPLEWIDGETS_EXPORT LotserialLineEdit : public VirtualClusterLineEdit
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool strict	READ	strict	WRITE setStrict)
+    Q_PROPERTY(bool strict      READ    strict  WRITE setStrict)
 
     friend class LotserialCluster;
 
     public:
-	LotserialLineEdit(QWidget*, const char* = 0);
+        LotserialLineEdit(QWidget*, const char* = 0);
 
-	inline virtual int	itemId() const		{ return _itemid; };
-	inline virtual bool	strict() const		{ return _strict; };
+        inline virtual int      itemId() const          { return _itemid; };
+        inline virtual bool     strict() const          { return isStrict(); };
 
     public slots:
         virtual void setId(const int);
-	virtual void clear();
-	virtual void sParse();
-	virtual void setItemId(const int);
-	inline virtual void	setStrict(const bool p)	{ _strict = p; };
+        virtual void clear();
+        virtual void sParse();
+        virtual void setItemId(const int);
 
     protected slots:
-	virtual LotserialList*		listFactory();
-	virtual LotserialSearch*	searchFactory();
-	// virtual LotserialInfo*	infoFactory();
-	
+        virtual LotserialList*          listFactory();
+        virtual LotserialSearch*        searchFactory();
+        // virtual LotserialInfo*       infoFactory();
+        
     signals:
         void newItemId(int);
-	
+        
     private:
-	int	_itemid;
-	bool	_strict;
+        int     _itemid;
 };
 
 class XTUPLEWIDGETS_EXPORT LotserialCluster : public VirtualCluster
@@ -84,15 +82,14 @@ class XTUPLEWIDGETS_EXPORT LotserialCluster : public VirtualCluster
     friend class LotserialLineEdit;
 
     public:
-	LotserialCluster(QWidget*, const char* = 0);
+        LotserialCluster(QWidget*, const char* = 0);
 
-	virtual bool	strict()          const;
-	virtual int	itemId()          const;
+        virtual bool    strict()          const;
+        virtual int     itemId()          const;
 
     public slots:
-	virtual void	setItemId           (const int);
-	virtual void	setStrict           (const bool);
-	
+        virtual void    setItemId           (const int);
+        
     signals:
         void newItemId(int);
 

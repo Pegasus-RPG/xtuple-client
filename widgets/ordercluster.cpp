@@ -8,6 +8,7 @@
  * to be bound by its terms.
  */
 
+#include <QDebug>
 #include <QGridLayout>
 #include <QLabel>
 #include <QMessageBox>
@@ -20,13 +21,14 @@
 #include "xcheckbox.h"
 #include "xtreewidget.h"
 
-#define DEBUG false
+#include "xtuplecommon.h"
+#define DEBUG    false
 
 OrderCluster::OrderCluster(QWidget *pParent, const char *pName) :
   VirtualCluster(pParent, pName)
 {
   addNumberWidget(new OrderLineEdit(this, pName));
-  
+
   _name->setVisible(true);
   _grid->removeWidget(_number);
   _grid->removeWidget(_description);
@@ -301,7 +303,7 @@ OrderLineEdit::OrderLineEdit(QWidget *pParent, const char *pName) :
   _fromPrivs=false;
   _custid = -1;
   _lockOnSelect = false;
-  
+
   setTitles(tr("Order"), tr("Orders"));
 
   connect(this, SIGNAL(newId(int)), this, SLOT(sNewId(int)));
@@ -326,68 +328,71 @@ void OrderLineEdit::sNewId(const int p)
 void OrderLineEdit::sParse()
 {
   if (DEBUG)
-    qDebug("VCLE %s::sParse() entered with _parsed %d and text() %s",
-           qPrintable(objectName()), _parsed, qPrintable(text()));
+    qDebug() << objectName() << "::sParse() entered with" << _parsed << text();
 
-    if (! _parsed)
+  if (_completerId)
+  {
+    setId(_completerId);
+    _completerId = 0;
+  }
+  else if (! _parsed)
+  {
+    QString stripped = text().trimmed().toUpper();
+    if (stripped.isEmpty())
     {
       _parsed = true;
-      QString stripped = text().trimmed().toUpper();
-      if (stripped.length() == 0)
+      setId(-1);
+    }
+    else
+    {
+      XSqlQuery numQ;
+      numQ.prepare(_query + _numClause +
+                  (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
+                  ((_hasActive && ! _showInactive) ? _activeClause : "" ) +
+                  QString(" ORDER BY %1 LIMIT 1;").arg(_numColName));
+      numQ.bindValue(":number", "^" + stripped);
+      numQ.exec();
+      if(numQ.first())
       {
-        setId(-1);
-      }
-      else
-      { 
-        XSqlQuery numQ;
-        numQ.prepare(_query + _numClause +
-                    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
-                    (_hasActive ? _activeClause : "" ) +
-                    QString("ORDER BY %1 LIMIT 1;").arg(_numColName));
-        numQ.bindValue(":number", "^" + stripped);
-        numQ.exec();
-        if(numQ.first())
+        // Check for other active orders with the same number {
+        XSqlQuery countQ;
+        countQ.prepare("SELECT COUNT(*) AS count FROM orderhead WHERE true " + _numClause +
+                        (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
+                        (_hasActive ? _activeClause : "" ) + QString(";"));
+        countQ.bindValue(":number", numQ.value("number").toString());
+        countQ.exec();
+        countQ.first();
+        int result = countQ.value("count").toInt();
+        if (DEBUG) qDebug() << objectName() << "::sParse() countQ returned" << result;
+        if (result <= 0)
+          setId(-1);
+        else if (result == 1)
         {
-          // Check for other active orders with the same number
-          XSqlQuery countQ;
-          countQ.prepare("SELECT COUNT(*) AS count FROM orderhead WHERE (true) " + _numClause +
-                          (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
-                          (_hasActive ? _activeClause : "" ) + QString(";"));
-          countQ.bindValue(":number", numQ.value("number").toString());
-          countQ.exec();
-          countQ.first();
-          int result = countQ.value("count").toInt();
-          if (result <= 0)
-            setId(-1);
-          else if (result == 1)
-          {
-            _valid = true;
-            _name = (numQ.value("name").toString());
-            _description = numQ.value("description").toString();
-            _from = numQ.value("orderhead_from").toString();
-            _to	= numQ.value("orderhead_to").toString();
-            setId(numQ.value("id").toInt(), numQ.value("name").toString());
-          }
-          else
-          {
-            setText(numQ.value("number").toString());
-            sEllipses();
-          }
+          _valid = true;
+          _name = (numQ.value("name").toString());
+          _description = numQ.value("description").toString();
+          _from = numQ.value("orderhead_from").toString();
+          _to	= numQ.value("orderhead_to").toString();
+          setId(numQ.value("id").toInt(), numQ.value("name").toString());
         }
         else
         {
-          setId(-1);
-          if (numQ.lastError().type() != QSqlError::NoError)
-              QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                                            .arg(__FILE__)
-                                            .arg(__LINE__),
-                      numQ.lastError().databaseText());
+          setText(numQ.value("number").toString());
+          sEllipses();
         }
+        // }
       }
-      emit valid(_valid);
-      emit parsed();
-      emit numberChanged(text(), _name);
+      else
+      {
+        setId(-1);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Checking Order Number"),
+                             numQ, __FILE__, __LINE__);
+      }
     }
+    emit valid(_valid);
+    emit parsed();
+    emit numberChanged(text(), _name);
+  }
 }
 
 void OrderLineEdit::sList()
@@ -456,8 +461,10 @@ OrderLineEdit::OrderTypes OrderLineEdit::allowedTypes() const
 
 void OrderLineEdit::clear()
 {
+  unlock();
+
   _from = "";
-  _to = "";
+  _to   = "";
   VirtualClusterLineEdit::clear();
 }
 
@@ -551,7 +558,7 @@ void OrderLineEdit::setToSitePrivsEnforced(const bool p)
 {
   if (_toPrivs == p)
     return;
-  
+
   _toPrivs=p;
   if (p)
     _toPrivsClause = " AND ((orderhead_type='TO' "
@@ -565,7 +572,7 @@ void OrderLineEdit::setFromSitePrivsEnforced(const bool p)
 {
   if (_fromPrivs == p)
     return;
-  
+
   _fromPrivs=p;
   if (p)
     _fromPrivsClause = " AND ((orderhead_type='TO' "
@@ -717,42 +724,50 @@ void OrderLineEdit::setCustId(int pId)
 
 void OrderLineEdit::setId(const int pId, const QString &pType)
 {
-  // Release any previous lock
-  unlock();
+  if (DEBUG)
+    qDebug() << objectName() << "::setId(pId, pType) entered with" << pId << pType;
 
-  if (pId == -1)
+  if (pId == -1 || pId == 0)
+  {
     clear();
+    emit parsed();
+  }
   else
   {
+    const int  oldId    = _id;
     OrderTypes oldTypes = _allowedTypes;
-    if(!pType.isNull())
+
+    if (!pType.isNull())
       setAllowedType(pType);
     silentSetId(pId);
-    // Attempt to obtain an application lock on the order
+
     if (_lockOnSelect && _id != -1)
     {
-      QString _table;
+      QString table;
       if (isPO())
-        _table = "pohead";
+        table = "pohead";
       else if (isSO())
-        _table = "cohead";
+        table = "cohead";
       else if (isRA())
-        _table = "rahead";
+        table = "rahead";
       else if (isTO())
-        _table = "tohead";
+        table = "tohead";
 
-      if (!_lock.acquire(_table, _id, AppLock::Interactive))
+      if (DEBUG)
+        qDebug() << objectName() << "setId() found table" << table;
+
+      if (table.isEmpty() || !_lock.acquire(table, _id, AppLock::Interactive))
       {
         clear();
-        if(!pType.isNull())
-          setAllowedTypes(oldTypes);
-        return;
       }
     }
-    if(!pType.isNull())
+    if (_id != oldId)
+    {
+      emit newId(pId, pType);
+      emit valid(_valid);
+    }
+    if (! pType.isNull())
       setAllowedTypes(oldTypes);
-    emit newId(pId, pType);
-    emit valid(_valid);
   }
 }
 
@@ -768,8 +783,6 @@ QString OrderLineEdit::buildExtraClause()
   if (! _toClause.isEmpty())	 clauses << _toClause;
 
   QString tmpClause = clauses.join(" AND ");
-  if (DEBUG) qDebug("buildExtraClause returning %s",
-                    qPrintable(tmpClause));
 
   if (_custid != -1 && !tmpClause.isEmpty())
     tmpClause += " AND ";
@@ -777,72 +790,46 @@ QString OrderLineEdit::buildExtraClause()
   if (_custid != -1)
     tmpClause += QString(" orderhead_to_id=%1 ").arg(_custid);
 
+  if (DEBUG)
+    qDebug() << objectName() << "::buildExtraClause() returning" << tmpClause;
   return tmpClause;
 }
 
 void OrderLineEdit::silentSetId(const int pId)
 {
+  if (DEBUG)
+    qDebug() << objectName() << "::silentSetId(pId) entered with" << pId;
+
   if (pId == -1)
     XLineEdit::clear();
   else
   {
-    QString oldExtraClause = _extraClause;
-
-    XSqlQuery countQ;
-    countQ.prepare("SELECT COUNT(*) AS count FROM orderhead WHERE (true) " + _idClause +
-		    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
-		    QString(";"));
-    countQ.bindValue(":id", pId);
-    countQ.exec();
-    if (countQ.first())
+    XSqlQuery idQ;
+    idQ.prepare(_query + _idClause +
+                (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
+                QString(";"));
+    idQ.bindValue(":id", pId);
+    idQ.exec();
+    if (idQ.first())
     {
-      int result = countQ.value("count").toInt();
-      if (result <= 0)
+      if (idQ.size() > 1)
       {
-	_id = -1;
-	XLineEdit::clear();
-      }
-      else if (result == 1)
-	_id = pId;
-      else
-      {
-	_extraClause += "AND (orderhead_id=" + QString::number(pId) + ")";
+        _extraClause += "AND (orderhead_id=" + QString::number(pId) + ")";
         sEllipses();
-	_extraClause += "AND (orderhead_type='" + type() + "')";
+        return;
       }
-    }
-    else if (countQ.lastError().type() != QSqlError::NoError)
-    {
-      QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-				    .arg(__FILE__)
-                                    .arg(__LINE__),
-			    countQ.lastError().databaseText());
-    }
 
-    if (_id > 0)
-    {
-      XSqlQuery idQ;
-      idQ.prepare(_query + _idClause +
-		  (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
-		  QString(";"));
-      idQ.bindValue(":id", pId);
-      idQ.exec();
-      if (idQ.first())
-      {
-	_id = pId;
-	_valid = true;
-	setText(idQ.value("number").toString());
-	_name		= idQ.value("name").toString();
-	_description	= idQ.value("description").toString();
-	_from		= idQ.value("orderhead_from").toString();
-	_to		= idQ.value("orderhead_to").toString();
-      }
-      else if (idQ.lastError().type() != QSqlError::NoError)
-	QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-				      .arg(__FILE__)
-				      .arg(__LINE__),
-			      idQ.lastError().databaseText());
+      _id = pId;
+      _valid = true;
+      setText(idQ.value("number").toString());
+      _name		= idQ.value("name").toString();
+      _description	= idQ.value("description").toString();
+      _from		= idQ.value("orderhead_from").toString();
+      _to		= idQ.value("orderhead_to").toString();
     }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error setting id"),
+                                  idQ, __FILE__, __LINE__))
+      return;
   }
 
   if (isPO())
@@ -910,7 +897,7 @@ OrderList::OrderList(QWidget *pParent, Qt::WindowFlags pFlags) :
 
   _listTab->addColumn(tr("From"), -1, Qt::AlignLeft, true, "orderhead_from");
   _listTab->addColumn(tr("To"),   -1, Qt::AlignLeft, true, "orderhead_to");
-  
+
   OrderLineEdit *lineedit = qobject_cast<OrderLineEdit*>(_parent);
   if (lineedit)
   {
@@ -953,20 +940,20 @@ OrderSearch::OrderSearch(QWidget *pParent, Qt::WindowFlags pFlags) :
   QTreeWidgetItem *headerItem = _listTab->headerItem();
   headerItem->setText(1, tr("Order Type"));
   headerItem->setText(2, tr("Status"));
-  
+
   resize( QSize(490, 390).expandedTo(minimumSizeHint()) );
-  
+
   _searchName->setText(tr("Search through Order Type"));
   _searchDescrip->setText(tr("Search through Status"));
 
   _listTab->addColumn(tr("From"), -1, Qt::AlignLeft, true, "orderhead_from");
   _listTab->addColumn(tr("To"),   -1, Qt::AlignLeft, true, "orderhead_to");
-  
+
   if (! ((OrderLineEdit*)_parent)->fromPrivsClause().isEmpty())
      ((OrderLineEdit*)_parent)->setExtraClause(((OrderLineEdit*)_parent)->extraClause() + ((OrderLineEdit*)_parent)->fromPrivsClause());
   if (! ((OrderLineEdit*)_parent)->toPrivsClause().isEmpty())
      ((OrderLineEdit*)_parent)->setExtraClause(((OrderLineEdit*)_parent)->extraClause() + ((OrderLineEdit*)_parent)->toPrivsClause());
-       
+
   sFillList();
 }
 

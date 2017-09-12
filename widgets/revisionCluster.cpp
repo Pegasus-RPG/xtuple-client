@@ -15,6 +15,8 @@
 #include <QSqlError>
 #include <QtScript>
 
+#include "errorReporter.h"
+
 QString RevisionLineEdit::typeText()
 {
   return _typeText;
@@ -117,7 +119,6 @@ RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
                          QString("case rev_status when 'A' then '%1' when 'S' then '%2' when 'P' then '%3' else '%4' end ").arg(tr("Active")).arg(tr("Substitute")).arg(tr("Pending")).arg(tr("Inactive")).toLatin1(),
                          0, pName),
   _allowNew(false),
-  _isRevControl(false),
   _mode(View),
   _type(All),
   _targetId(-1),
@@ -132,44 +133,41 @@ RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
 {
   setTitles(tr("Revision"), tr("Revisions"));
 
-  if (_x_metrics)
+  _isRevControl = (_x_metrics && _x_metrics->boolean("RevControl"));
+  if (!_isRevControl)
   {
-    _isRevControl=(_x_metrics->boolean("RevControl"));
-    if (!_isRevControl)
-    {
-      _menuLabel->hide();
-      disconnect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
-      _listAct->disconnect();
-      _searchAct->disconnect();
-    }
-    else
-    {
-      _activateSep = new QAction(this);
-      _activateSep->setSeparator(true);
-      _activateSep->setVisible(false);
+    _menuLabel->hide();
+    disconnect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
+    _listAct->disconnect();
+    _searchAct->disconnect();
+  }
+  else
+  {
+    _activateSep = new QAction(this);
+    _activateSep->setSeparator(true);
+    _activateSep->setVisible(false);
 
-      _activateAct = new QAction(tr("Activate"), this);
-      _activateAct->setToolTip(tr("Activate revision"));
-      _activateAct->setVisible(false);
-      connect(_activateAct, SIGNAL(triggered()), this, SLOT(activate()));
-      addAction(_activateAct);
+    _activateAct = new QAction(tr("Activate"), this);
+    _activateAct->setToolTip(tr("Activate revision"));
+    _activateAct->setVisible(false);
+    connect(_activateAct, SIGNAL(triggered()), this, SLOT(activate()));
+    addAction(_activateAct);
 
-      menu()->addAction(_activateSep);
-      menu()->addAction(_activateAct);
+    menu()->addAction(_activateSep);
+    menu()->addAction(_activateAct);
 
-      _deactivateSep = new QAction(this);
-      _deactivateSep->setSeparator(true);
-      _deactivateSep->setVisible(false);
-      
-      _deactivateAct = new QAction(tr("Deactivate"), this);
-      _deactivateAct->setToolTip(tr("Deactivate revision"));
-      _deactivateAct->setVisible(false);
-      connect(_deactivateAct, SIGNAL(triggered()), this, SLOT(deactivate()));
-      addAction(_deactivateAct);
-      
-      menu()->addAction(_deactivateSep);
-      menu()->addAction(_deactivateAct);
-    }
+    _deactivateSep = new QAction(this);
+    _deactivateSep->setSeparator(true);
+    _deactivateSep->setVisible(false);
+
+    _deactivateAct = new QAction(tr("Deactivate"), this);
+    _deactivateAct->setToolTip(tr("Deactivate revision"));
+    _deactivateAct->setVisible(false);
+    connect(_deactivateAct, SIGNAL(triggered()), this, SLOT(deactivate()));
+    addAction(_deactivateAct);
+
+    menu()->addAction(_deactivateSep);
+    menu()->addAction(_deactivateAct);
   }
 }
 
@@ -200,19 +198,19 @@ RevisionLineEdit::Statuses RevisionLineEdit::status()
 
 void RevisionLineEdit::activate()
 {
-  QString _message = "";
-  if (_x_metrics->boolean("BOOSubstitute"))
-    _message = tr("This action will make this revision the system default for the "
-                  "item it belongs to and substitute the currently active revision. "
-                  "Are you sure you want proceed?");
+  QString message = "";
+  if (_x_metrics && _x_metrics->boolean("BOOSubstitute"))
+    message = tr("This action will make this revision the system default for the "
+                 "item it belongs to and substitute the currently active revision. "
+                 "Are you sure you want proceed?");
   else
-    _message = tr("This action will make this revision the system default for the "
-                  "item it belongs to and deactivate the currently active revision. "
-                  "Are you sure you want proceed?");
+    message = tr("This action will make this revision the system default for the "
+                 "item it belongs to and deactivate the currently active revision. "
+                 "Are you sure you want proceed?");
 
-  if (QMessageBox::question(this, tr("Activate Revision"), _message,
-                            QMessageBox::Yes,
-                            QMessageBox::No  | QMessageBox::Escape | QMessageBox::Default) == QMessageBox::No)
+  if (QMessageBox::question(this, tr("Activate Revision"), message,
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No) == QMessageBox::No)
     return;
 
   XSqlQuery activate;
@@ -221,39 +219,31 @@ void RevisionLineEdit::activate()
   activate.exec();
   if (activate.first())
     setId(_id); // refresh
-  else  if (activate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Activationg Revision"),
+                                activate, __FILE__, __LINE__))
   {
-    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                                            .arg(__FILE__)
-                                            .arg(__LINE__),
-    activate.lastError().databaseText());
-      return;
+    return;
   }
 }
 
 void RevisionLineEdit::deactivate()
 {
-  QString _message = "";
-  _message = tr("This action will make this revision inactive. "
-                "Are you sure you want proceed?");
-  
-  if (QMessageBox::question(this, tr("Deactivate Revision"), _message,
-                            QMessageBox::Yes,
-                            QMessageBox::No  | QMessageBox::Escape | QMessageBox::Default) == QMessageBox::No)
+  if (QMessageBox::question(this, tr("Deactivate Revision"),
+                            tr("This action will make this revision inactive. "
+                               "Are you sure you want proceed?"),
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No) == QMessageBox::No)
     return;
-  
+
   XSqlQuery deactivate;
   deactivate.prepare("SELECT deactivateRev(:rev_id) AS result;");
   deactivate.bindValue(":rev_id", id());
   deactivate.exec();
   if (deactivate.first())
     setId(_id); // refresh
-  else  if (deactivate.lastError().type() != QSqlError::NoError)
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deactivating Revision"),
+                                deactivate, __FILE__, __LINE__))
   {
-    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                          .arg(__FILE__)
-                          .arg(__LINE__),
-                          deactivate.lastError().databaseText());
     return;
   }
 }
@@ -301,6 +291,8 @@ void RevisionLineEdit::setActive()
     }
     else
     {
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Active Revision"),
+                           revision, __FILE__, __LINE__);
       setId(-1);
     }
   }
@@ -309,7 +301,7 @@ void RevisionLineEdit::setActive()
 void RevisionLineEdit::setId(const int pId)
 {
   VirtualClusterLineEdit::setId(pId);
-  _cachenum = text();
+  _cachenum = text().trimmed();
   if (_name == "A")
     _status = Active;
   else if (_name == "S")
@@ -411,17 +403,21 @@ void RevisionLineEdit::setType(RevisionTypes pType)
 
 void RevisionLineEdit::sParse()
 {
-  if ((_isRevControl) && (!_parsed))
-  { 
+  if (_completerId)
+  {
+    setId(_completerId);
+    _completerId = 0;
+  }
+  else if (_isRevControl && ! _parsed)
+  {
     _parsed = true;
     QString stripped = text().trimmed().toUpper();
-    if (stripped.length() == 0)
+    if (stripped.isEmpty())
     {
       setId(-1);
     }
     else
     {
-        
       XSqlQuery numQ;
       numQ.prepare("SELECT rev_id "
                        "FROM rev "
@@ -437,48 +433,38 @@ void RevisionLineEdit::sParse()
         _valid = true;
         setId(numQ.value("rev_id").toInt());
       }
-      else
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Revision"),
+                                    numQ, __FILE__, __LINE__))
       {
-        if (_allowNew)
+        setText(_cachenum);
+        return;
+      }
+      else if (_allowNew)
+      {
+        if (QMessageBox::question(this, tr("Create New Revision?"),
+                tr("Revision does not exist.  Would you like to create a new one from the current active revision?"),
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No) == QMessageBox::Yes)
         {
-          if (QMessageBox::question(this, tr("Create New Revision?"),
-                  tr("Revision does not exist.  Would you like to create a new one from the current active revision?"),
-                             QMessageBox::Yes | QMessageBox::Default,
-                             QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
-          {
-            XSqlQuery newrev;
-            if (_type==BOM)
-              newrev.prepare("SELECT createBomRev(:target_id,:revision) AS result;");
-            else if (_type==BOO)
-              newrev.prepare("SELECT createBooRev(:target_id,:revision) AS result;");
-            newrev.bindValue(":target_id", _targetId);
-            newrev.bindValue(":revision", text());
-            newrev.exec();
-            if (newrev.first())
-              setId(newrev.value("result").toInt());
-            else
-            {
-              setText(_cachenum);
-              if (newrev.lastError().type() != QSqlError::NoError)
-                QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                              .arg(__FILE__)
-                              .arg(__LINE__),
-                           newrev.lastError().databaseText());
-            }
-          }
+          XSqlQuery newrev;
+          if (_type==BOM)
+            newrev.prepare("SELECT createBomRev(:target_id,:revision) AS result;");
+          else if (_type==BOO)
+            newrev.prepare("SELECT createBooRev(:target_id,:revision) AS result;");
+          newrev.bindValue(":target_id", _targetId);
+          newrev.bindValue(":revision", text());
+          newrev.exec();
+          if (newrev.first())
+            setId(newrev.value("result").toInt());
           else
+          {
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating Revision"),
+                                 newrev, __FILE__, __LINE__);
             setText(_cachenum);
-         }
-         else 
-         {
-            setText(_cachenum);
-            if (numQ.lastError().type() != QSqlError::NoError)
-            QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                              .arg(__FILE__)
-                              .arg(__LINE__),
-            numQ.lastError().databaseText());
-           
-         }
+          }
+        }
+        else
+          setText(_cachenum);
       }
     }
   }
