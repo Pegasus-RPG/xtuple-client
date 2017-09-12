@@ -358,7 +358,7 @@ void OrderLineEdit::sParse()
         XSqlQuery countQ;
         countQ.prepare("SELECT COUNT(*) AS count FROM orderhead WHERE true " + _numClause +
                         (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
-                        (_hasActive ? _activeClause : "" ) + QString(";"));
+                        ((_hasActive && ! _showInactive) ? _activeClause : "" ) + QString(";"));
         countQ.bindValue(":number", numQ.value("number").toString());
         countQ.exec();
         countQ.first();
@@ -393,6 +393,9 @@ void OrderLineEdit::sParse()
     emit parsed();
     emit numberChanged(text(), _name);
   }
+
+  _parsed = true;
+  sHandleNullStr();
 }
 
 void OrderLineEdit::sList()
