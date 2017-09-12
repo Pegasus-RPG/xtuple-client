@@ -140,7 +140,10 @@ SetResponse dspQOH::set(const ParameterList &pParams)
     parameterWidget()->setDefault(tr("Site"), param);
 
   if (pParams.inList("run"))
+  {
+    parameterWidget()->applyDefaultFilterSet();
     sFillList();
+  }
 
   return NoError;
 }

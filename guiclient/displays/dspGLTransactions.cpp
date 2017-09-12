@@ -180,6 +180,7 @@ enum SetResponse dspGLTransactions::set(const ParameterList &pParams)
 
   if (pParams.inList("run"))
   {
+    parameterWidget()->applyDefaultFilterSet();
     emit fillList();
     return NoError_Run;
   }

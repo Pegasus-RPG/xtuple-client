@@ -95,6 +95,7 @@ enum SetResponse dspUsageStatistics::set(const ParameterList &pParams)
 
   if (pParams.inList("run"))
   {
+    parameterWidget()->applyDefaultFilterSet();
     sFillList();
     return NoError_Run;
   }
