@@ -2165,12 +2165,12 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
         sDeterminePrice();
 
       _priceRatio        = salesPopulateItemInfo.value("invpricerat").toDouble(); // Always ratio from default price uom
-      _invuomid          = salesPopulateItemInfo.value("item_inv_uom_id").toInt();
+      _invuomid          = salesPopulateItemInfo.value("item_price_uom_id").toInt();
       _invIsFractional   = salesPopulateItemInfo.value("item_fractional").toBool();
       _priceinvuomratio  = _priceRatio; // the ration from the currently selected price uom
       _qtyinvuomratio    = 1.0;
 
-      _qtyUOM->setId(salesPopulateItemInfo.value("item_inv_uom_id").toInt());
+      _qtyUOM->setId(salesPopulateItemInfo.value("item_price_uom_id").toInt());
       _priceUOM->setId(salesPopulateItemInfo.value("item_price_uom_id").toInt());
 
       _taxtype->setId(salesPopulateItemInfo.value("taxtype_id").toInt());
@@ -4138,7 +4138,7 @@ void salesOrderItem::populate()
     _shippedToDate->setDouble(item.value("qtyshipped").toDouble());
 
     _item->setId(item.value("item_id").toInt());  // should precede _taxtype/code
-    _invuomid = item.value("item_inv_uom_id").toInt();
+    _invuomid = item.value("item_price_uom_id").toInt();
     _qtyUOM->setId(item.value("qty_uom_id").toInt());
     _priceUOM->setId(item.value("price_uom_id").toInt());
     _priceUOMCache = _priceUOM->id();

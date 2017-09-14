@@ -453,7 +453,7 @@ to be bound by its terms.</comment>
             <item row="1" column="0">
              <widget class="QLabel" name="_priceUOMLit_2">
               <property name="text">
-               <string>Qty.  &amp;UOM:</string>
+               <string>Selling  &amp;UOM:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -631,6 +631,9 @@ to be bound by its terms.</comment>
             <property name="focusPolicy">
              <enum>Qt::ClickFocus</enum>
             </property>
+            <property name="visible">
+             <bool>false</bool>
+            </property>
            </widget>
           </item>
           <item>
@@ -711,6 +714,9 @@ to be bound by its terms.</comment>
           </property>
           <property name="margin">
            <number>5</number>
+          </property>
+          <property name="visible">
+           <bool>false</bool>
           </property>
           <property name="buddy">
            <cstring>_priceUOM</cstring>
