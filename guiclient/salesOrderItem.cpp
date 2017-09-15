@@ -2168,7 +2168,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       _invuomid          = salesPopulateItemInfo.value("item_price_uom_id").toInt();
       _invIsFractional   = salesPopulateItemInfo.value("item_fractional").toBool();
       _priceinvuomratio  = _priceRatio; // the ration from the currently selected price uom
-      _qtyinvuomratio    = 1.0;
+      _qtyinvuomratio    = _priceRatio;
 
       _qtyUOM->setId(salesPopulateItemInfo.value("item_price_uom_id").toInt());
       _priceUOM->setId(salesPopulateItemInfo.value("item_price_uom_id").toInt());
@@ -4750,7 +4750,7 @@ void salesOrderItem::sQtyUOMChanged()
 
   if (_qtyUOM->id() == _invuomid)
   {
-    _qtyinvuomratio = 1.0;
+    _qtyinvuomratio = _priceRatio;
     if (_invIsFractional)
       _qtyOrdered->setValidator(omfgThis->qtyVal());
     else
@@ -4832,7 +4832,7 @@ void salesOrderItem::sPriceUOMChanged()
   }
 
   if (_priceUOM->id() == _invuomid)
-    _priceinvuomratio = 1.0;
+    _priceinvuomratio = _priceRatio;
   else
   {
     XSqlQuery invuom;
