@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 
+#include "errorReporter.h"
 #include "xsqlquery.h"
 #include "xtreewidget.h"
 
@@ -37,26 +38,26 @@ LotserialSearch::LotserialSearch(QWidget* pParent, Qt::WindowFlags flags)
 LotserialCluster::LotserialCluster(QWidget* pParent, const char* pName) :
     VirtualCluster(pParent, pName)
 {
-    LotserialLineEdit* lsle=new LotserialLineEdit(this, pName);
-    addNumberWidget(lsle);
-    
-    connect(lsle, SIGNAL(newItemId(int)), this, SIGNAL(newItemId(int)));
+  LotserialLineEdit* lsle=new LotserialLineEdit(this, pName);
+  addNumberWidget(lsle);
+
+  connect(lsle, SIGNAL(newItemId(int)), this, SIGNAL(newItemId(int)));
 }
 
 LotserialLineEdit::LotserialLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "ls", "ls_id", "ls_number", "item_number", "item_id", 0, pName)
 {
-    _itemid = -1;
-    setTitles(tr("Lot/Serial Number"), tr("Lot/Serial Numbers"));
-    _query = QString("SELECT ls_id AS id, "
-                     "       ls_number AS number, "
-                     "       item_id,"
-                     "       item_number AS name, "
-                     "       ls_notes AS description "
-                     "FROM ls "
-                     "  JOIN item ON (ls_item_id=item_id) "
-                     "WHERE (true) ");
-    _strict = true;
+  _itemid = -1;
+  setTitles(tr("Lot/Serial Number"), tr("Lot/Serial Numbers"));
+  _query = QString("SELECT ls_id AS id,"
+                   "       ls_number AS number,"
+                   "       item_id,"
+                   "       item_number AS name,"
+                   "       ls_notes AS description"
+                   "  FROM ls"
+                   "  JOIN item ON (ls_item_id=item_id)"
+                   " WHERE true ");
+  _strict = true;
 }
 
 int LotserialCluster::itemId() const
@@ -74,15 +75,7 @@ void LotserialCluster::setItemId(const int p)
 
 bool LotserialCluster::strict() const
 {
-  if (_number && _number->inherits("LotserialLineEdit"))
-    return ((LotserialLineEdit*)(_number))->strict();
-  return true;
-}
-
-void LotserialCluster::setStrict(const bool p)
-{
-  if (_number && _number->inherits("LotserialLineEdit"))
-    ((LotserialLineEdit*)(_number))->setStrict(p);
+  return isStrict();
 }
 
 void LotserialLineEdit::setItemId(const int itemid)
@@ -120,13 +113,21 @@ void LotserialLineEdit::clear()
   VirtualClusterLineEdit::clear();
 }
 
-void LotserialLineEdit::setId(const int lsid)
+void LotserialLineEdit::setId(const int pId)
 {
-  if (_x_metrics)
+  if (pId == -1 || pId == 0)
   {
-    if (_x_metrics->boolean("LotSerialControl"))
+    clear();
+    emit parsed();
+  }
+  else if (_x_metrics &&_x_metrics->boolean("LotSerialControl"))
+  {
+    bool changed = (pId != _id);
+    silentSetId(pId);
+    if (changed)
     {
-      VirtualClusterLineEdit::setId(lsid);
+      emit newId(pId);
+      emit valid(_valid);
       XSqlQuery qq;
       qq.prepare("SELECT ls_item_id"
                  "  FROM ls"
@@ -145,106 +146,87 @@ void LotserialLineEdit::setId(const int lsid)
  */
 void LotserialLineEdit::sParse()
 {
-  if (_x_metrics)
-    if (_x_metrics->boolean("LotSerialControl"))
+  if (_x_metrics && _x_metrics->boolean("LotSerialControl"))
+  {
+    if (_completerId)
     {
-      if (! _parsed)
-      {
-          QString stripped = text().trimmed().toUpper();
-          if (stripped.length() == 0)
-          {
-              _parsed = true;
-              setId(-1);
-          }
-          else
-          {
-              XSqlQuery numQ;
-              numQ.prepare(_query + _numClause +
-                           (_extraClause.isEmpty() ? "" : " AND " + _extraClause) +
-                           QString("ORDER BY %1 LIMIT 1;").arg(_numColName));
-              numQ.bindValue(":number", "^" + stripped);
-              numQ.exec();
-              if (numQ.first())
-              {
-                  _valid = true;
-                  setId(numQ.value("id").toInt());
-                  _name = (numQ.value("name").toString());
-                  _itemid = (numQ.value("item_id").toInt());
-              }
-              else if (numQ.lastError().type() != QSqlError::NoError)
-              {
-                QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                                              .arg(__FILE__)
-                                              .arg(__LINE__),
-                                      numQ.lastError().databaseText());
-                return;
-              }
-              else if (_strict || _itemid == -1)
-                VirtualClusterLineEdit::clear();
-              else if (isVisible() &&
-                       QMessageBox::question(this, tr("Lot/Serial # Not Found"),
-                        (_itemid > 0 ?
-                          tr("This Lot/Serial # was not found for this item.") :
-                          tr("This Lot/Serial # was not found.")) + 
-                        tr(" Are you sure it is correct?"),
-                     QMessageBox::Yes | QMessageBox::No,
-                     QMessageBox::No) == QMessageBox::No)
-              {
-                VirtualClusterLineEdit::clear();
-                return;
-              }
-              else
-              {
-                int lsid=-1;
-                numQ.exec("SELECT nextval('ls_ls_id_seq') AS ls_id;");
-                if (numQ.first())
-                  lsid= numQ.value("ls_id").toInt();
-                else if (numQ.lastError().type() != QSqlError::NoError)
-                {
-                  QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                                                .arg(__FILE__)
-                                                .arg(__LINE__),
-                                        numQ.lastError().databaseText());
-                  return;
-                }
-                numQ.prepare("INSERT INTO ls (ls_id,ls_item_id,ls_number) "
-                             "VALUES (:ls_id,:item_id,:number)");
-                numQ.bindValue(":ls_id", lsid);
-                numQ.bindValue(":item_id", _itemid);
-                numQ.bindValue(":number", stripped);
-                numQ.exec();
-                if (numQ.lastError().type() != QSqlError::NoError)
-                {
-                  QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                                                .arg(__FILE__)
-                                                .arg(__LINE__),
-                                        numQ.lastError().databaseText());
-                  return;
-                }
-
-                numQ.prepare("INSERT INTO itemloc "
-                             "(itemloc_itemsite_id, itemloc_location_id, itemloc_qty, "
-                             "itemloc_expiration, itemloc_ls_id) "
-                             "VALUES (-1, -1, 0.0, "
-                             "endOfTime(), :ls_id);");
-                numQ.bindValue(":ls_id", lsid);
-                numQ.exec();
-                if (numQ.lastError().type() != QSqlError::NoError)
-                {
-                  QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                                                .arg(__FILE__)
-                                                .arg(__LINE__),
-                                        numQ.lastError().databaseText());
-                  return;
-                }
-                setId(lsid);
-              }
-          }
-      }
-
-      _parsed = true;
-      emit parsed();
+      setId(_completerId);
+      _completerId = 0;
     }
+    else if (! _parsed)
+    {
+      QString stripped = text().trimmed().toUpper();
+      if (stripped.isEmpty())
+      {
+        _parsed = true;
+        setId(-1);
+      }
+      else
+      {
+        XSqlQuery numQ;
+        numQ.prepare(_query + _numClause +
+                      (_extraClause.isEmpty() ? "" : " AND " + _extraClause) +
+                      QString("ORDER BY %1 LIMIT 1;").arg(_numColName));
+        numQ.bindValue(":number", "^" + stripped);
+        numQ.exec();
+        if (numQ.first())
+        {
+          _valid = true;
+          setId(numQ.value("id").toInt());
+          _name = (numQ.value("name").toString());
+          _itemid = (numQ.value("item_id").toInt());
+        }
+        else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Lot/Serial Number"),
+                                      numQ, __FILE__, __LINE__))
+          return;
+        else if (_strict || _itemid == -1)
+          VirtualClusterLineEdit::clear();
+        else if (isVisible() &&
+                  QMessageBox::question(this, tr("Lot/Serial # Not Found"),
+                  (_itemid > 0 ?
+                    tr("This Lot/Serial # was not found for this item.") :
+                    tr("This Lot/Serial # was not found.")) +
+                  tr(" Are you sure it is correct?"),
+                QMessageBox::Yes | QMessageBox::No,
+                QMessageBox::No) == QMessageBox::No)
+        {
+          VirtualClusterLineEdit::clear();
+          return;
+        }
+        else
+        {
+          int lsid = -1;
+
+          numQ.prepare("INSERT INTO ls (ls_item_id, ls_number)"
+                        "       VALUES (:item_id,   :number)"
+                        " RETURNING ls_id;");
+          numQ.bindValue(":item_id", _itemid);
+          numQ.bindValue(":number",  stripped);
+          numQ.exec();
+          if (numQ.first())
+            lsid = numQ.value("ls_id").toInt();
+          else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Inserting Lot/Serial Number"),
+                                        numQ, __FILE__, __LINE__))
+            return;
+
+          numQ.prepare("INSERT INTO itemloc "
+                        "(itemloc_itemsite_id, itemloc_location_id, itemloc_qty, "
+                        "itemloc_expiration, itemloc_ls_id) "
+                        "VALUES (-1, -1, 0.0, "
+                        "endOfTime(), :ls_id);");
+          numQ.bindValue(":ls_id", lsid);
+          numQ.exec();
+          if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating Item Location Placeholder"),
+                                   numQ, __FILE__, __LINE__))
+            return;
+          setId(lsid);
+        }
+      }
+    }
+
+    _parsed = true;
+    emit parsed();
+  }
 }
 
 LotserialList* LotserialLineEdit::listFactory()

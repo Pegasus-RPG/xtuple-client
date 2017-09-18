@@ -13,7 +13,8 @@
 
 #include "quotecluster.h"
 
-#include <metasql.h>
+#include "metasql.h"
+#include "errorReporter.h"
 #include "xtreewidget.h"
 
 QuoteList::QuoteList(QWidget *pParent, Qt::WindowFlags flags)
@@ -105,26 +106,25 @@ void QuoteLineEdit::silentSetId(const int pId)
     clear();
   else
   {
-    XSqlQuery idq;
-    idq.prepare(_query + _idClause +
+    XSqlQuery idQ;
+    idQ.prepare(_query + _idClause +
                 (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
                 QString(";"));
-    idq.bindValue(":id", pId);
-    idq.exec();
-    if (idq.first())
+    idQ.bindValue(":id", pId);
+    idQ.exec();
+    if (idQ.first())
     {
       _id = pId;
       _valid = true;
-      setText(idq.value("number").toString());
-      _name = idq.value("name").toString();
-      _description = idq.value("description").toString();
-      _recip_id = idq.value("recip_id").toInt();
-      _recip_type = idq.value("recip_type").toString();
+      setText(idQ.value("number").toString());
+      _name = idQ.value("name").toString();
+      _description = idQ.value("description").toString();
+      _recip_id = idQ.value("recip_id").toInt();
+      _recip_type = idQ.value("recip_type").toString();
     }
-    else if (idq.lastError().type() != QSqlError::NoError)
-      QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                                      .arg(__FILE__).arg(__LINE__),
-                            idq.lastError().databaseText());
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error setting id"),
+                                  idQ, __FILE__, __LINE__))
+      return;
   }
 
   _parsed = true;
@@ -134,10 +134,15 @@ void QuoteLineEdit::silentSetId(const int pId)
 // TODO: can we get _recip_id and _recip_type using the inherited sParse()?
 void QuoteLineEdit::sParse()
 {
-  if (! _parsed)
+  if (_completerId)
+  {
+    setId(_completerId);
+    _completerId = 0;
+  }
+  else if (! _parsed)
   {
     QString stripped = text().trimmed().toUpper();
-    if (stripped.length() == 0)
+    if (stripped.isEmpty())
     {
       _parsed = true;
       setId(-1);
@@ -163,12 +168,9 @@ void QuoteLineEdit::sParse()
       }
       else
       {
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Quote"),
+                             numQ, __FILE__, __LINE__);
         setId(-1);
-        if (numQ.lastError().type() != QSqlError::NoError)
-            QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                                          .arg(__FILE__)
-                                          .arg(__LINE__),
-                    numQ.lastError().databaseText());
       }
     }
     emit valid(_valid);

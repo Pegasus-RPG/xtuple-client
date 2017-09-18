@@ -37,6 +37,8 @@
 
 void VirtualCluster::init()
 {
+  if (DEBUG)
+    qDebug() << objectName() << "::init() entered";
   _number = 0;
 
   setFocusPolicy(Qt::StrongFocus);
@@ -73,6 +75,9 @@ void VirtualCluster::init()
 VirtualCluster::VirtualCluster(QWidget* pParent, const char* pName)
   : QWidget(pParent), ScriptableWidget(this)
 {
+  if (DEBUG)
+    qDebug() << "VirtualCluster::VirtualCluster(QWidget*, char*) entered with"
+             << pParent << pName;
   setObjectName(pName ? pName : "VirtualCluster");
   init();
 }
@@ -82,8 +87,10 @@ VirtualCluster::VirtualCluster(QWidget* pParent,
 			       const char* pName)
   : QWidget(pParent), ScriptableWidget(this)
 {
+  if (DEBUG)
+    qDebug() << "VirtualCluster::VirtualCluster(QWidget*, VCLE*, char*) entered with"
+             << pParent << pNumberWidget << pName;
   setObjectName(pName);
-
   init();
   if (pNumberWidget)
     addNumberWidget(pNumberWidget);
@@ -115,7 +122,7 @@ void VirtualCluster::setNumber(QString p)               { _number->setNumber(p);
 void VirtualCluster::clear()
 {
   if (DEBUG)
-    qDebug("VC %s::clear()", qPrintable(objectName()));
+    qDebug() << objectName() << "clear() entered";
 
   setId(-1);
   _number->clear();
@@ -215,8 +222,8 @@ void VirtualCluster::sSearch()
 void VirtualCluster::sRefresh()
 {
   if (DEBUG)
-    qDebug("VC %s::sRefresh() with id %d",
-           qPrintable(objectName()), _number ? _number->_id : -1);
+    qDebug() << objectName() << "::sRefresh() entered with id"
+             << (_number ? _number->_id : -1);
   _name->setText(_number->_name);
   _description->setText(_number->_description);
 }
@@ -303,13 +310,9 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
   : XLineEdit(pParent, pName)
 {
     if (DEBUG)
-      qDebug("VirtualClusterLineEdit(%p, %s, %s, %s, %s, %s, %s, %s, %s)",
-             pParent ? pParent : 0,         pTabName ? pTabName : "",
-             pIdColumn ? pIdColumn : "",     pNumberColumn ? pNumberColumn : "",
-             pNameColumn ? pNameColumn : "",
-             pDescripColumn ? pDescripColumn : "",
-             pExtra ? pExtra : "",           pName ? pName : "",
-             pActiveColumn ? pActiveColumn : "");
+      qDebug() << "VirtualClusterLineEdit() entered with"
+               << pParent        << pTabName << pIdColumn << pNumberColumn << pNameColumn
+               << pDescripColumn << pExtra   << pName     << pActiveColumn;
 
     setObjectName(pName ? pName : "VirtualClusterLineEdit");
 
@@ -737,7 +740,7 @@ bool VirtualClusterLineEdit::canOpen()
 void VirtualClusterLineEdit::clear()
 {
     if (DEBUG)
-      qDebug("VCLE %s::clear()", qPrintable(objectName()));
+      qDebug() << objectName() << "::clear() entered";
 
     int oldid = _id;
     bool oldvalid = _valid;
@@ -763,29 +766,29 @@ void VirtualClusterLineEdit::setId(const int pId, const QString &)
 void VirtualClusterLineEdit::setId(const int pId)
 {
   if (DEBUG)
-    qDebug("VCLE %s::setId(%d)", qPrintable(objectName()), pId);
+    qDebug() << objectName() << "::setId(pId) entered with" << pId;
 
-    if (pId == -1 || pId == 0)
+  if (pId == -1 || pId == 0)
+  {
+    clear();
+    emit parsed();
+  }
+  else
+  {
+    bool changed = (pId != _id);
+    silentSetId(pId);
+    if (changed)
     {
-	clear();
-        emit parsed();
+      emit newId(pId);
+      emit valid(_valid);
     }
-    else
-    {
-      bool changed = (pId != _id);
-      silentSetId(pId);
-      if (changed)
-      {
-        emit newId(pId);
-        emit valid(_valid);
-      }
-    }
+  }
 }
 
 void VirtualClusterLineEdit::silentSetId(const int pId)
 {
   if (DEBUG)
-    qDebug("VCLE %s::silentSetId(%d)", qPrintable(objectName()), pId);
+    qDebug() << objectName() << "::silentSetId(pId) called with" << pId;
 
   if (pId == -1)
   {
@@ -837,8 +840,8 @@ void VirtualClusterLineEdit::setNumber(const QString& pNumber)
 void VirtualClusterLineEdit::sParse()
 {
   if (DEBUG)
-    qDebug("VCLE %s::sParse() entered with _parsed %d and text() %s",
-           qPrintable(objectName()), _parsed, qPrintable(text()));
+    qDebug() << objectName() << "::sParse() entered with _parsed" << _parsed
+             << "and text()" << text();
 
     if (_completerId)
     {
@@ -848,10 +851,10 @@ void VirtualClusterLineEdit::sParse()
     else if (! _parsed)
     {
       QString stripped = text().trimmed().toUpper();
-      if (stripped.length() == 0)
+      if (stripped.isEmpty())
       {
         _parsed = true;
-	setId(-1);
+        setId(-1);
       }
       else
       {
@@ -867,24 +870,25 @@ void VirtualClusterLineEdit::sParse()
         numQ.bindValue(":number", "^" + stripped);
         numQ.exec();
         if (numQ.first())
-	{
-	    _valid = true;
-            setId(numQ.value("id").toInt());
-	    if (_hasName)
-              _name = (numQ.value("name").toString());
-	    if (_hasDescription)
-              _description = numQ.value("description").toString();
-	}
-	else
-	{
+        {
+          _valid = true;
+          setId(numQ.value("id").toInt());
+          if (_hasName)
+            _name = (numQ.value("name").toString());
+          if (_hasDescription)
+            _description = numQ.value("description").toString();
+        }
+        else
+        {
           setId(-1);
-          ErrorReporter::error(QtCriticalMsg, this, tr("Error parsing"),
+          ErrorReporter::error(QtCriticalMsg, this, tr("Error Finding Matching Record"),
                                numQ, __FILE__, __LINE__);
-	}
+        }
       }
       emit valid(_valid);
       emit parsed();
     }
+
     _parsed = true;
     sHandleNullStr();
 }
@@ -1485,20 +1489,21 @@ VirtualInfo::VirtualInfo(QWidget* pParent, Qt::WindowFlags pFlags)
 
 void VirtualInfo::sPopulate()
 {
-    XSqlQuery qry;
-    qry.prepare(_parent->_query + _parent->_idClause + ";");
-    qry.bindValue(":id", _parent->_id);
-    qry.exec();
-    if (qry.first())
-    {
-	_number->setText(qry.value("number").toString());
-	if (_parent->_hasName)
-	  _name->setText(qry.value("name").toString());
-	if (_parent->_hasDescription)
+  XSqlQuery qry;
+  qry.prepare(_parent->_query + _parent->_idClause + ";");
+  qry.bindValue(":id", _parent->_id);
+  qry.exec();
+  if (qry.first())
+  {
+    _number->setText(qry.value("number").toString());
+    if (_parent->_hasName)
+      _name->setText(qry.value("name").toString());
+    if (_parent->_hasDescription)
 	    _descrip->setText(qry.value("description").toString());
-    }
-    else ErrorReporter::error(QtCriticalMsg, this, tr("Error populating Info"),
-                              qry, __FILE__, __LINE__);
+  }
+  else
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Record"),
+                          qry, __FILE__, __LINE__);
 }
 
 void VirtualInfo::showEvent(QShowEvent* e)
@@ -1553,7 +1558,7 @@ QScriptValue constructVirtualCluster(QScriptContext *context,
 {
   VirtualCluster         *w = 0;
   VirtualClusterLineEdit *l = 0;
-  
+
   if (context->argumentCount() >= 2)
     l = qscriptvalue_cast<VirtualClusterLineEdit*>(context->argument(1));
 

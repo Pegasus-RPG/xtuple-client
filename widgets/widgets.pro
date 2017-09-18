@@ -261,7 +261,7 @@ HEADERS += widgets.h \
     itemAliasList.h \
     itemcluster.h \
     itemgroupcluster.h \
-    lotserialCluster.h \
+    lotserialcluster.h \
     lotserialseqcluster.h \
     menubutton.h        \
     numbergencombobox.h \
