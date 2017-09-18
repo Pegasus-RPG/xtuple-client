@@ -990,6 +990,13 @@ void XComboBox::setListIdFieldName(QString p)
 void XComboBox::removeItem(int idx)
 {
   QComboBox::removeItem(idx);
+
+  if (idx >=0 && idx < _data->_ids.size())
+  {
+    _data->_ids.removeAt(idx);
+    _data->_codes.removeAt(idx);
+    setId(_data->_ids[currentIndex()]);
+  }
 }
 
 enum XComboBox::XComboBoxTypes XComboBox::type()
