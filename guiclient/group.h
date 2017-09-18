@@ -38,6 +38,8 @@ public slots:
     virtual void sEditUser();
     virtual void sRevoke();
     virtual void sRevokeAll();
+    virtual void sCancel();
+    virtual void sChanged();
 
 protected slots:
     virtual void languageChange();
@@ -45,7 +47,7 @@ protected slots:
 private:
     int  _grpid;
     int  _mode;
-    bool _trapClose;
+    bool _modified;
 
 };
 

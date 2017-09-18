@@ -39,7 +39,24 @@ group::group(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
   connect(_granted, SIGNAL(itemSelected(int)), this, SLOT(sRevoke()));
   connect(_granted, SIGNAL(valid(bool)), _revoke, SLOT(setEnabled(bool)));
   connect(_available, SIGNAL(itemSelected(int)), this, SLOT(sAdd()));
-
+  connect(_name, SIGNAL(editingFinished()), this, SLOT(sChanged()));
+  connect(_description, SIGNAL(editingFinished()), this, SLOT(sChanged()));
+  connect(_inventoryMenu, SIGNAL(clicked(bool)), this, SLOT(sChanged()));
+  connect(_productsMenu, SIGNAL(clicked(bool)), this, SLOT(sChanged()));
+  connect(_scheduleMenu, SIGNAL(clicked(bool)), this, SLOT(sChanged()));
+  connect(_manufactureMenu, SIGNAL(clicked(bool)), this, SLOT(sChanged()));
+  connect(_crmMenu2, SIGNAL(clicked(bool)), this, SLOT(sChanged()));
+  connect(_purchaseMenu, SIGNAL(clicked(bool)), this, SLOT(sChanged()));
+  connect(_salesMenu, SIGNAL(clicked(bool)), this, SLOT(sChanged()));
+  connect(_accountingMenu, SIGNAL(clicked(bool)), this, SLOT(sChanged()));
+  connect(_inventoryToolbar, SIGNAL(clicked(bool)), this, SLOT(sChanged()));
+  connect(_productsToolbar, SIGNAL(clicked(bool)), this, SLOT(sChanged()));
+  connect(_scheduleToolbar, SIGNAL(clicked(bool)), this, SLOT(sChanged()));
+  connect(_manufactureToolbar, SIGNAL(clicked(bool)), this, SLOT(sChanged()));
+  connect(_crmToolbar2, SIGNAL(clicked(bool)), this, SLOT(sChanged()));
+  connect(_purchaseToolbar, SIGNAL(clicked(bool)), this, SLOT(sChanged()));
+  connect(_salesToolbar, SIGNAL(clicked(bool)), this, SLOT(sChanged()));
+  connect(_accountingToolbar, SIGNAL(clicked(bool)), this, SLOT(sChanged()));
 
   _available->addColumn(tr("Available Privileges"), -1, Qt::AlignLeft, true, "priv_name");
   _available->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "priv_descrip");
@@ -56,7 +73,7 @@ group::group(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
 
   connect(_assigned, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem *)), this, SLOT(sPopulateMenu(QMenu *, QTreeWidgetItem *)));
 
-  _trapClose = false;
+  _modified = false;
 }
 
 group::~group()
@@ -106,12 +123,8 @@ enum SetResponse group::set(const ParameterList &pParams)
         return UndefinedError;
       }
 
-      XSqlQuery rollback;
-      rollback.prepare("ROLLBACK;");
-
       _mode = cNew;
-      _trapClose = true;
-      groupet.exec("BEGIN;");
+      _modified = true;
       groupet.prepare( "INSERT INTO grp "
                  "( grp_id, grp_name, grp_descrip)"
                  "VALUES( :grp_id, :grp_id, '' );" );
@@ -119,10 +132,8 @@ enum SetResponse group::set(const ParameterList &pParams)
       groupet.exec();
       if (groupet.lastError().type() != QSqlError::NoError)
       {
-        rollback.exec();
         ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Group Information"),
                              groupet, __FILE__, __LINE__);
-        _trapClose = false;
         return UndefinedError;
       }
 
@@ -133,7 +144,6 @@ enum SetResponse group::set(const ParameterList &pParams)
     {
       _mode = cEdit;
       _name->setEnabled(false);
-      groupet.exec("BEGIN;");
     }
     else if (param.toString() == "view")
     {
@@ -160,9 +170,9 @@ enum SetResponse group::set(const ParameterList &pParams)
 void group::reject()
 {
   if (DEBUG)
-    qDebug("group::reject() called with _trapClose = %d", _trapClose);
+    qDebug("group::reject() called with _modified = %d", _modified);
 
-  if(_trapClose)
+  if(_modified)
   {
     XSqlQuery endtxn;
     switch(QMessageBox::question(this, tr("Save?"),
@@ -172,12 +182,10 @@ void group::reject()
     {
       case QMessageBox::Yes:
         sSave();
-        return;
-//        endtxn.exec("COMMIT;");
-//        break;
+        break;
 
       case QMessageBox::No:
-        endtxn.exec("ROLLBACK;");
+        sCancel();
         break;
 
       case QMessageBox::Cancel:
@@ -205,9 +213,8 @@ void group::sCheck()
     groupCheck.exec();
     if (groupCheck.first())
     {
-      XSqlQuery groupet;
-      groupet.exec("ROLLBACK;");
-      groupet.exec("BEGIN;");
+      sCancel();
+      _modified = false;
       _grpid = groupCheck.value("grp_id").toInt();
       _mode = cEdit;
       populate();
@@ -277,8 +284,7 @@ void group::sSave()
     return;
   }
 
-  groupSave.exec("COMMIT;");
-  _trapClose = false;
+  _modified = false;
   _mode = cEdit;
 
   done(_grpid);
@@ -361,7 +367,6 @@ void group::sAdd()
   }
 
   sModuleSelected(_module->currentText());
-  _trapClose = true;
 }
 
 void group::sAddAll()
@@ -389,7 +394,6 @@ void group::sAddAll()
   }
 
   sModuleSelected(_module->currentText());
-  _trapClose = true;
 }
 
 void group::sRevoke()
@@ -417,7 +421,6 @@ void group::sRevoke()
   }
 
   sModuleSelected(_module->currentText());
-  _trapClose = true;
 }
 
 void group::sRevokeAll()
@@ -445,7 +448,6 @@ void group::sRevokeAll()
   }
 
   sModuleSelected(_module->currentText());
-  _trapClose = true;
 }
 
 void group::populate()
@@ -532,4 +534,24 @@ void group::populateAssigned()
     return;
   }
   _assigned->populate(assignedpopulate, false);
+}
+
+void group::sCancel()
+{
+  if (_mode == cNew)
+  {
+    XSqlQuery groupet;
+    groupet.prepare("DELETE FROM grp "
+                    " WHERE grp_id=:grp_id;");
+    groupet.bindValue(":grp_id", _grpid);
+    groupet.exec();
+
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting group"),
+                         groupet.lastError(), __FILE__, __LINE__);
+  }
+}
+
+void group::sChanged()
+{
+  _modified = true;
 }
