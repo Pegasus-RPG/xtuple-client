@@ -130,16 +130,29 @@ ParameterWidget::~ParameterWidget()
       delete pp;
 }
 
+QString ParameterWidget::preferencePrefix() const
+{
+  QString result;
+  if (parent())
+  {
+    result = parent()->objectName();
+    if (result.isEmpty())
+      result = parent()->metaObject()->className();
+  }
+
+  result += "/" + objectName();
+  if (DEBUG)
+    qDebug() << objectName() << __FUNCTION__ << "returning" << result;
+  return result;
+}
+
 void ParameterWidget::showEvent(QShowEvent * event)
 {
 
-  if(!_initialized)
+  if (! _initialized)
   {
-    if(window())
-      _name = window()->objectName() + "/";
-    _settingsName = _name + objectName();
-    if(_x_preferences)
-      setFiltersVisible(_x_preferences->boolean(_settingsName + "/checked"));
+    if (_x_preferences)
+      setFiltersVisible(_x_preferences->boolean(preferencePrefix() + "/checked"));
     _initialized = true;
   }
   QWidget::showEvent(event);
@@ -185,39 +198,19 @@ void ParameterWidget::appendValue(ParameterList &pParams)
 
 void ParameterWidget::applyDefaultFilterSet()
 {
-  XSqlQuery qry;
-  QString   filter_name;
-  int       filter_id = -1;
-  QString   pname;
-
-  if(window())
-    pname = window()->objectName() + "/";
-  _settingsName2 = pname + this->objectName();
-
-  if(_x_preferences)
-  {
-    _settingsName2 += "/filter_default";
-    filter_id = _x_preferences->value(_settingsName2).toInt();
-  }
-
-  QString query = "SELECT filter_name "
-                  "FROM filter "
-                  "WHERE filter_id=:id ";
-
+  int filter_id = -1;
+  if (_x_preferences)
+    filter_id = _x_preferences->value(preferencePrefix() + "/filter_default").toInt();
   if (parent())
   {
-    QString classname(parent()->objectName());
-    if (classname.isEmpty())
-      classname = parent()->metaObject()->className();
-
-    qry.prepare(query);
+    XSqlQuery qry;
+    qry.prepare("SELECT filter_name FROM filter WHERE filter_id = :id;");
     qry.bindValue(":id", filter_id);
     qry.exec();
 
     if (qry.first())
     {
-      filter_name = qry.value("filter_name").toString();
-      setSavedFiltersIndex(filter_name);
+      setSavedFiltersIndex(qry.value("filter_name").toString());
       applySaved(0, filter_id);
     }
     else
@@ -333,17 +326,15 @@ void ParameterWidget::addParam()
 void ParameterWidget::append(QString pName, QString pParam, ParameterWidgetTypes pType, QVariant pDefault, bool pRequired, QString pExtraInfo)
 {
   if (DEBUG)
-    qDebug("%s::append(%s, %s, %d, %s, %d, %s) entered",
-           qPrintable(objectName()), qPrintable(pName), qPrintable(pParam),
-           pType, qPrintable(pDefault.toString()), pRequired,
-           qPrintable(pExtraInfo.left(50)));
+    qDebug() << objectName() << __FUNCTION__ << "() entered with"
+             << pName << pParam << pType << pDefault << pRequired
+             << pExtraInfo.left(50);
   ParamProps *pp = _params.value(_params.count(), 0);
 
   if (! pp)
   {
     if (DEBUG)
-      qDebug("%s::append() instantiating a new ParamProps",
-             qPrintable(objectName()));
+      qDebug() << objectName() << __FUNCTION__ << "instantiating a new ParamProps";
     pp = new ParamProps();
     pp->name = pName;
     pp->param = pParam;
@@ -912,8 +903,8 @@ void ParameterWidget::resetMultiselect(QTableWidgetItem *item)
     return;
 
   if (DEBUG)
-    qDebug("%s::resetMultiselect(%p) entered for %p",
-           qPrintable(objectName()), item, tab);
+    qDebug() << objectName() << __FUNCTION__ << "entered with"
+             << item << "for" << tab;
 
   disconnect(tab, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(resetMultiselect(QTableWidgetItem*)));
 
@@ -956,7 +947,8 @@ void ParameterWidget::changeFilterObject(int index)
 
   int pidx = paramIndex(mybox->currentText());
   if (DEBUG)
-    qDebug() << __FUNCTION__ << index << mybox << mybox->currentText() << pidx;
+    qDebug() << objectName() << __FUNCTION__ << index << mybox
+             << mybox->currentText() << pidx;
   if (pidx >= 0)
   {
     mybox->setDisabled(_params[pidx]->required);
@@ -1199,9 +1191,8 @@ void ParameterWidget::changeFilterObject(int index)
         item->setData(Qt::UserRole, msq.value(0));
         item->setFlags(item->flags() & (~ Qt::ItemIsEditable));
         if (DEBUG)
-          qDebug("%s::changeFilterObject() Multiselect added %s (%s) at %d",
-                 qPrintable(objectName()), qPrintable(item->text()),
-                 qPrintable(item->data(Qt::UserRole).toString()), i);
+          qDebug() << objectName() << __FUNCTION__ << "Multiselect added"
+                   << item->text() << item->data(Qt::UserRole) << "at" << i;
         tab->setItem(i, 0, item);
         tab->setRowHeight(i, (tab->fontMetrics().height() * 110) / 100); // TODO: a better way?
       }
@@ -1504,11 +1495,8 @@ void ParameterWidget::setFiltersVisible(bool visible)
 
 void ParameterWidget::setFiltersVisabiltyPreference()
 {
-  _settingsName = _name + objectName();
-  if (!_settingsName.isEmpty() && _x_preferences)
-  {
-    _x_preferences->set(_settingsName + "/checked", _filterGroup->isVisible());
-  }
+  if (_x_preferences)
+    _x_preferences->set(preferencePrefix() + "/checked", _filterGroup->isVisible());
 }
 
 /*!
@@ -1516,18 +1504,9 @@ void ParameterWidget::setFiltersVisabiltyPreference()
 */
 void ParameterWidget::setFiltersDefault()
 {
-  QString pname;
-  int filter_id;
-
-  if(parent())
-    pname = parent()->metaObject()->className();
-  pname += "/";
-  _settingsName2 = pname + this->objectName();
-
-  filter_id = _filterList->id(_filterList->currentIndex());
-
-  if (!_settingsName2.isEmpty() && _x_preferences)
-    _x_preferences->set(_settingsName2 + "/filter_default", filter_id);
+  if (_x_preferences)
+    _x_preferences->set(preferencePrefix() + "/filter_default",
+                        _filterList->id(_filterList->currentIndex()));
 }
 
 /*!
@@ -1670,8 +1649,7 @@ QWidget *ParameterWidget::getFilterWidget(const int index)
 void ParameterWidget::storeFilterValue(int pId, QObject* filter)
 {
   if (DEBUG)
-    qDebug("%s::storeFilterValue(%d, %p)",
-           qPrintable(objectName()), pId, filter);
+    qDebug() << objectName() << __FUNCTION__ << "entered with" << pId << filter;
 
   QWidget *wfilter = qobject_cast<QWidget *>(filter);
   if (! wfilter)
