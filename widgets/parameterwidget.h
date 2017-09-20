@@ -78,13 +78,13 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     void updated();
 
   protected:
+    virtual QString preferencePrefix() const;
     virtual void showEvent(QShowEvent *);
 
   private:
     enum ParameterWidgetTypes _type;
     QSignalMapper *_filterSignalMapper;
     QMap<int, QString > _usedTypes;
-    QString _settingsName, _settingsName2;
     QMap<int, QWidget*> _filterWidgets;
     QMap<int, QPair<QString, QVariant > > _filterValues;
     bool _initialized;
