@@ -14,6 +14,7 @@
 #include <QPushButton>
 #include <QScriptEngine>
 #include <QScriptEngineDebugger>
+#include <QScrollArea>
 
 #include "getscreen.h"
 #include "include.h"
@@ -577,7 +578,9 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
       }
       int idx = _stack->count();
       _itemMap[uiName].index = idx;
-      _stack->addWidget(w);
+      QScrollArea *scroll = new QScrollArea();
+      scroll->setWidget(w);
+      _stack->addWidget(scroll);
       _stack->setCurrentIndex(idx);
 
       _stackLit->setText(label.arg(item->text(0)));
