@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -55,6 +55,7 @@ configureIE::configureIE(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _atlasMap->addColumn(tr("Matches"),    -1, Qt::AlignLeft, true, "atlasmap_filter");
   _atlasMap->addColumn(tr("Atlas File"), -1, Qt::AlignLeft, true, "atlasmap_atlas");
   _atlasMap->addColumn(tr("CSV Map"),    -1, Qt::AlignLeft, true, "atlasmap_map");
+  _atlasMap->addColumn(tr("Location"),    -1, Qt::AlignLeft, true, "atlasmap_location");
 
   // TODO: fix these when support for an internal XSLT processor is enabled
   _internal->setEnabled(false);
@@ -208,7 +209,11 @@ void configureIE::sFillList()
     return;
   }
 
-  XSqlQuery atlasq("SELECT * FROM atlasmap ORDER BY atlasmap_name;");
+  XSqlQuery atlasq("SELECT *, "
+            " CASE atlasmap_atlastype WHEN 'F' THEN 'Filesystem' "
+            "                         WHEN 'D' THEN 'Database' "
+            "                         ELSE 'Error' END AS atlasmap_location "
+            " FROM atlasmap ORDER BY atlasmap_name;");
   atlasq.exec();
   _atlasMap->populate(atlasq);
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Import/Export Setting Information"),

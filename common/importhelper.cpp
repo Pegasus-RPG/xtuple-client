@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -296,7 +296,6 @@ bool ImportHelper::handleFilePostImport(const QString &pfilename, bool success, 
 bool ImportHelper::importCSV(const QString &pFileName, QString &errmsg)
 {
   errmsg = QString::null;
-
   QFile file(pFileName);
   if (! file.open(QIODevice::ReadOnly))
   {
@@ -317,7 +316,8 @@ bool ImportHelper::importCSV(const QString &pFileName, QString &errmsg)
                "       atlasmap_map, atlasmap_headerline,"
                "       CASE WHEN (:filename  ~ atlasmap_filter) THEN 0"
                "            WHEN (:firstline ~ atlasmap_filter) THEN 1"
-               "       END AS seq"
+               "       END AS seq,"
+               "       atlasmap_atlastype = 'D' AS use_db"
                "  FROM atlasmap"
                " WHERE ((:filename ~ atlasmap_filter AND atlasmap_filtertype='filename')"
                "     OR (:firstline ~ atlasmap_filter AND atlasmap_filtertype='firstline'))"
@@ -329,11 +329,12 @@ bool ImportHelper::importCSV(const QString &pFileName, QString &errmsg)
   {
     QString atlasfile = mapq.value("atlasmap_atlas").toString();
     QString map       = mapq.value("atlasmap_map").toString();
+    bool useDb        = mapq.value("use_db").toBool();
 
     CSVImpPluginInterface *csvplugin = getCSVImpPlugin();
     if (csvplugin)
     {
-      if (! csvplugin->openAtlas(atlasfile))
+      if (! csvplugin->openAtlas(atlasfile, useDb))
         errmsg = tr("Could not open Atlas %1").arg(atlasfile);
       else if (! csvplugin->setAtlasMap(map))
         errmsg = tr("Could not set Map to %1").arg(map);

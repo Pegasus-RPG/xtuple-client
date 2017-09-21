@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -11,6 +11,7 @@
 #include "atlasMap.h"
 
 #include <QAbstractMessageHandler>
+#include <QDomDocument>
 #include <QFile>
 #include <QMessageBox>
 #include <QSqlError>
@@ -80,15 +81,20 @@ atlasMap::atlasMap(QWidget* parent, const char * name, Qt::WindowFlags fl)
 {
   setupUi(this);
 
-  connect(_atlas, SIGNAL(editingFinished()), this, SLOT(sHandleAtlas()));
+  connect(_atlasFile, SIGNAL(editingFinished()), this, SLOT(sHandleAtlas()));
+  connect(_atlasDb, SIGNAL(newID(int)), this, SLOT(sHandleAtlas()));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+  connect(_fileSelect, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_dbSelect, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
 
   QString filter = tr("Atlas Files (*.xml)");
-  _atlas->setFilter(filter);
+  _atlasFile->setFilter(filter);
 
   _filtertype->append(0, tr("File name"),          "filename");
   _filtertype->append(1, tr("First line of file"), "firstline");
+
+  _atlasDb->populate("SELECT atlas_id, atlas_name FROM atlas");
 
   _mode         = cNew;
   _atlasmapId   = -1;
@@ -140,7 +146,7 @@ enum SetResponse atlasMap::set(const ParameterList &pParams)
       _name->setEnabled(false);
       _filter->setEnabled(false);
       _filtertype->setEnabled(false);
-      _atlas->setEnabled(false);
+      _atlasStack->setEnabled(false);
       _map->setEnabled(false);
       _firstLine->setEnabled(false);
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
@@ -167,8 +173,10 @@ void atlasMap::sSave()
                          tr("<p>Please enter a filter before saving this Atlas Map."))
         <<GuiErrorCheck(_filtertype->currentText().trimmed().isEmpty(), _filtertype,
                         tr("<p>Please select a filter type before saving this Atlas Map."))
-        <<GuiErrorCheck(_atlas->text().trimmed().isEmpty(), _atlas,
+        <<GuiErrorCheck(_fileSelect->isChecked() && _atlasFile->text().trimmed().isEmpty(), _atlasFile,
                         tr("<p>Please enter an Atlas File Name before saving this Atlas Map."))
+        <<GuiErrorCheck(_dbSelect->isChecked() && !_atlasDb->isValid(), _atlasDb,
+                        tr("<p>Please select an Atlas from the database before saving this Atlas Map."))
         <<GuiErrorCheck(_map->id() <= -1, _map,
                        tr("Please select a Map Name before saving this Atlas Map."));
 
@@ -202,10 +210,12 @@ void atlasMap::sSave()
   if (cNew == _mode)
     upsq.prepare("INSERT INTO atlasmap ("
                  "    atlasmap_name,  atlasmap_filter, atlasmap_filtertype,"
-                 "    atlasmap_atlas, atlasmap_map,    atlasmap_headerline"
+                 "    atlasmap_atlas, atlasmap_map,    atlasmap_headerline,"
+                 "    atlasmap_atlastype"
                  ") VALUES ("
                  "    :name,  :filter, :filtertype,"
-                 "    :atlas, :map,    :headerline"
+                 "    :atlas, :map,    :headerline,"
+                 "    :atlastype"
                  ") RETURNING atlasmap_id;");
   else if (cEdit == _mode)
   {
@@ -215,7 +225,8 @@ void atlasMap::sSave()
                  "    atlasmap_filtertype=:filtertype,"
                  "    atlasmap_atlas=:atlas,"
                  "    atlasmap_map=:map,"
-                 "    atlasmap_headerline=:headerline"
+                 "    atlasmap_headerline=:headerline,"
+                 "    atlasmap_atlastype=:atlastype"
                  " WHERE (atlasmap_id=:id)"
                  " RETURNING atlasmap_id;");
     upsq.bindValue(":id", _atlasmapId);
@@ -224,7 +235,16 @@ void atlasMap::sSave()
   upsq.bindValue(":name",       _name->text());
   upsq.bindValue(":filter",     _filter->text());
   upsq.bindValue(":filtertype", _filtertype->code());
-  upsq.bindValue(":atlas",      _atlas->text());
+  if (_fileSelect->isChecked())
+  {
+    upsq.bindValue(":atlas",      _atlasFile->text());
+    upsq.bindValue(":atlastype",  QString("F"));
+  }
+  else
+  {
+    upsq.bindValue(":atlas",      _atlasDb->currentText());
+    upsq.bindValue(":atlastype",  QString("D"));
+  }
   upsq.bindValue(":map",        _map->currentText());
   upsq.bindValue(":headerline", _firstLine->isChecked());
   upsq.exec();
@@ -247,7 +267,8 @@ void atlasMap::sPopulate()
     _name->clear();
     _filter->clear();
     _filtertype->setId(-1);
-    _atlas->clear();
+    _atlasFile->clear();
+    _atlasDb->setId(-1);
     _map->setId(-1);
     _firstLine->setChecked(false);
   }
@@ -261,7 +282,16 @@ void atlasMap::sPopulate()
       _name->setText(atlasPopulate.value("atlasmap_name").toString());
       _filter->setText(atlasPopulate.value("atlasmap_filter").toString());
       _filtertype->setCode(atlasPopulate.value("atlasmap_filtertype").toString());
-      _atlas->setText(atlasPopulate.value("atlasmap_atlas").toString());
+      if (atlasPopulate.value("atlasmap_atlastype").toString() == "F")
+      {
+        _fileSelect->setChecked(true);
+        _atlasFile->setText(atlasPopulate.value("atlasmap_atlas").toString());
+      }
+      else
+      {
+        _dbSelect->setChecked(true);
+        _atlasDb->setText(atlasPopulate.value("atlasmap_atlas").toString());
+      }
       sHandleAtlas();
       if (! atlasPopulate.value("atlasmap_map").toString().isEmpty())
         _map->setCode(atlasPopulate.value("atlasmap_map").toString());
@@ -277,68 +307,90 @@ void atlasMap::sPopulate()
 
 void atlasMap::sHandleAtlas()
 {
+  QFile file;
+  QSqlQuery atlq;
+  QDomDocument doc = QDomDocument();
+  QString errMsg;
+  int errLine, errCol;
+
   _map->clear();
 
-  if (_atlas->text().isEmpty())
+  if ((_fileSelect->isChecked() && _atlasFile->text().isEmpty()) ||
+      (_dbSelect->isChecked() && !_atlasDb->isValid()))
     return;
 
-  if (DEBUG)
-    qDebug("atlasMap::sHandleAtlas() entered with %s and %s",
-           qPrintable(_atlas->text()), qPrintable(_defaultDir));
-
-  if (! _defaultDir.isEmpty() && _atlas->text().startsWith(_defaultDir))
-    _atlas->setText(_atlas->text().remove(0, _defaultDir.length() + 1));
-
-  QFile atlasfile;
-  if (QFile::exists(_atlas->text()))
-    atlasfile.setFileName(_atlas->text());
-  else if (QFile::exists(_defaultDir + QDir::separator() + _atlas->text()))
-    atlasfile.setFileName(_defaultDir + QDir::separator() + _atlas->text());
-  else
+  if (_fileSelect->isChecked()) // Load Atlas from File
   {
-    QMessageBox::warning(this, tr("Could not find Atlas"),
-                         tr("<p>Could not find the Atlas file to open to look "
-                            "for CSV import Maps."));
-    return;
+    if (DEBUG)
+      qDebug("atlasMap::sHandleAtlas() entered with %s and %s",
+             qPrintable(_atlasFile->text()), qPrintable(_defaultDir));
+
+    if (! _defaultDir.isEmpty() && _atlasFile->text().startsWith(_defaultDir))
+      _atlasFile->setText(_atlasFile->text().remove(0, _defaultDir.length() + 1));
+
+    if (QFile::exists(_atlasFile->text()))
+      file.setFileName(_atlasFile->text());
+    else if (QFile::exists(_defaultDir + QDir::separator() + _atlasFile->text()))
+      file.setFileName(_defaultDir + QDir::separator() + _atlasFile->text());
+    else
+    {
+      QMessageBox::warning(this, tr("Could not find Atlas"),
+                           tr("<p>Could not find the Atlas file to open to look "
+                              "for CSV import Maps."));
+      return;
+    }
+
+    if(!doc.setContent(&file, &errMsg, &errLine, &errCol))
+    {
+      QMessageBox::warning(this, tr("Error Reading File"),
+                           tr("<p>An error was encountered while trying to read "
+                              "the Atlas file: %1.").arg(errMsg));
+      return;
+    }
+  }
+  else //Load Atlas from Database
+  {
+    if (DEBUG)
+      qDebug("atlasMap::sHandleAtlas() entered with %s",
+             qPrintable(_atlasDb->currentText()));
+
+    atlq.prepare("SELECT atlas_atlasmap FROM atlas WHERE atlas_name=:atlasname;");
+    atlq.bindValue(":atlasname", _atlasDb->currentText());
+    atlq.exec();
+    if (atlq.first())
+    {
+      if(!doc.setContent(atlq.value("atlas_atlasmap").toString(), &errMsg, &errLine, &errCol))
+      {
+        QMessageBox::warning(this, tr("Error Reading Database"),
+                           tr("<p>An error was encountered while trying to read "
+                              "the Atlas %1 from the Database: %2").arg(_atlasDb->currentText(), errMsg));
+        return;
+      }
+    }
   }
 
-  if (! atlasfile.open(QIODevice::ReadOnly))
-  {
-    QMessageBox::critical(this, tr("Could not open Atlas"),
-                          tr("<p>Could not open the Atlas file %1 (error %2).")
-                          .arg(atlasfile.fileName(), atlasfile.errorString()));
-    return;
-  }
-
-  QXmlQuery mapq;
-  mapq.setMessageHandler(_msghandler);
-
-  if (! mapq.setFocus(&atlasfile))
-  {
-    QMessageBox::critical(this, tr("No Focus"),
-                          tr("<p>Could not set focus on the Atlas %1")
-                          .arg(atlasfile.fileName()));
-    return;
-  }
-
-  // string() at the end tells the query to generate a sequence of values
-  mapq.setQuery("/CSVAtlas/CSVMap/Name/text()/string()");
-  if (! mapq.isValid())
-  {
-    QMessageBox::critical(this, tr("Invalid Query"),
-                          tr("<p>The query is not valid for some reason"));
-    return;
-  }
-
+  QDomNodeList nodes = doc.elementsByTagName("CSVMap");
   QStringList maplist;
-  if (! mapq.evaluateTo(&maplist))
+  for(int i = 0; i < nodes.count(); i++)
+  {
+    QDomElement elem = nodes.at(i).firstChildElement("Name");
+    maplist.append(elem.text());
+  }
+  if (maplist.size() == 0)
   {
     QMessageBox::warning(this, tr("No Maps"),
-                         tr("<p>Could not find any Maps in the Atlas %1")
-                         .arg(atlasfile.fileName()));
+                         tr("<p>Could not find any Maps in the Atlas"));
     return;
   }
   else
     for (int i = 0; i < maplist.size(); i++)
       _map->append(i, maplist.at(i));
+}
+
+void atlasMap::sHandleButtons()
+{
+  if (_fileSelect->isChecked())
+    _atlasStack->setCurrentIndex(0);
+  else
+    _atlasStack->setCurrentIndex(1);
 }

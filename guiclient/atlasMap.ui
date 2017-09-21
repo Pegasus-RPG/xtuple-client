@@ -2,7 +2,7 @@
 <ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
-Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
 It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>484</width>
-    <height>217</height>
+    <width>631</width>
+    <height>272</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,66 +23,28 @@ to be bound by its terms.</comment>
   <layout class="QHBoxLayout">
    <item>
     <layout class="QGridLayout" name="_fieldsLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="_nameLit">
-       <property name="text">
-        <string>Name:</string>
+     <item row="4" column="1">
+      <widget class="QStackedWidget" name="_atlasStack">
+       <property name="currentIndex">
+        <number>0</number>
        </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
+       <widget class="QWidget" name="page_file">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="FileCluster" name="_atlasFile"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="page_db">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="XComboBox" name="_atlasDb"/>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="_filterLit">
-       <property name="text">
-        <string>Pattern:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="_filterTypeLit">
-       <property name="text">
-        <string>Apply Pattern to:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="_atlasLit">
-       <property name="text">
-        <string>Atlas File:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="_mapLit">
-       <property name="text">
-        <string>Map:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="_name"/>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="_filter"/>
-     </item>
-     <item row="3" column="1">
-      <widget class="FileCluster" name="_atlas"/>
-     </item>
-     <item row="6" column="0">
+     <item row="7" column="0">
       <spacer name="_fieldsSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -95,7 +57,40 @@ to be bound by its terms.</comment>
        </property>
       </spacer>
      </item>
-     <item row="2" column="1">
+     <item row="1" column="0">
+      <widget class="QLabel" name="_nameLit">
+       <property name="text">
+        <string>Name:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="_mapLit">
+       <property name="text">
+        <string>Map:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="_filterLit">
+       <property name="text">
+        <string>Pattern:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="_name"/>
+     </item>
+     <item row="3" column="1">
       <widget class="XComboBox" name="_filtertype">
        <property name="allowNull">
         <bool>true</bool>
@@ -105,7 +100,30 @@ to be bound by its terms.</comment>
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="_filter"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="_atlasLit">
+       <property name="text">
+        <string>Atlas File:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="_filterTypeLit">
+       <property name="text">
+        <string>Apply Pattern to:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
       <widget class="XComboBox" name="_map">
        <property name="allowNull">
         <bool>true</bool>
@@ -115,7 +133,7 @@ to be bound by its terms.</comment>
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item row="6" column="1">
       <widget class="XCheckBox" name="_firstLine">
        <property name="text">
         <string>Treat first row as header information</string>
@@ -124,6 +142,27 @@ to be bound by its terms.</comment>
         <bool>true</bool>
        </property>
       </widget>
+     </item>
+     <item row="4" column="2">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QRadioButton" name="_fileSelect">
+         <property name="text">
+          <string>File</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="_dbSelect">
+         <property name="text">
+          <string>Database</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -160,7 +199,6 @@ to be bound by its terms.</comment>
   <tabstop>_name</tabstop>
   <tabstop>_filter</tabstop>
   <tabstop>_filtertype</tabstop>
-  <tabstop>_atlas</tabstop>
   <tabstop>_map</tabstop>
   <tabstop>_firstLine</tabstop>
  </tabstops>
