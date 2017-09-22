@@ -13,18 +13,17 @@
 #include <QAction>
 #include <QMenu>
 #include <QMessageBox>
-#include "guiErrorCheck.h"
 #include <QSqlError>
 #include <QToolBar>
 #include <QToolButton>
 #include <QVariant>
 
 #include <metasql.h>
-#include "mqlutil.h"
+#include <mqlutil.h>
 
 #include <openreports.h>
 
-#include <currcluster.h>
+#include "currcluster.h"
 
 #include "applyARCreditMemo.h"
 #include "arOpenItem.h"
@@ -37,6 +36,7 @@
 #include "dspSalesOrderStatus.h"
 #include "dspShipmentsBySalesOrder.h"
 #include "getGLDistDate.h"
+#include "guiErrorCheck.h"
 #include "invoice.h"
 #include "incident.h"
 #include "printArOpenItem.h"
@@ -887,15 +887,27 @@ void dspAROpenItems::sVoidInvoiceDetails()
     return;
   }
 
+  QVariant voidDate; // starts null
+  if (_privileges->check("ChangeARInvcDistDate"))
+  {
+    getGLDistDate newdlg(this, "", true);
+    newdlg.sSetDefaultLit(tr("Invoice Posting Date"));
+    if (newdlg.exec() == XDialog::Accepted)
+      voidDate = QVariant(newdlg.date());
+    else
+      return;
+  }
+
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
   dspVoidInvoiceDetails.exec("BEGIN;"); // TODO - remove after voidInvoice no longer returns negative error codes
 
   XSqlQuery post;
-  post.prepare("SELECT voidInvoice(:invchead_id, :itemlocSeries, TRUE) AS result;");
-  post.bindValue(":invchead_id", list()->currentItem()->id("docnumber"));
+  post.prepare("SELECT voidInvoice(:invchead_id, :itemlocSeries, TRUE, :voidDate) AS result;");
+  post.bindValue(":invchead_id",   list()->currentItem()->id("docnumber"));
   post.bindValue(":itemlocSeries", itemlocSeries);
+  post.bindValue(":voidDate",      voidDate);
   post.exec();
   if (post.first())
   {
