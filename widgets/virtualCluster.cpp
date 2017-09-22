@@ -334,34 +334,30 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     _titleSingular = tr("Object");
     _titlePlural = tr("Objects");
 
-    // Completer set up
-    if (_x_metrics)
+    if (_x_metrics && ! _x_metrics->boolean("DisableAutoComplete"))
     {
-      if (!_x_metrics->boolean("DisableAutoComplete"))
-      {
         QSqlQueryModel* hints = new QSqlQueryModel(this);
         hints->setObjectName("hints");
 
-        _completer = new QCompleter(hints,this);
+        _completer = new QCompleter(hints, this);
         _completer->setObjectName("_completer");
         _completer->setWidget(this);
 
-        QTreeView* view = new QTreeView(this);
+        QTreeView *view = new QTreeView(this);
         view->setObjectName("_view");
-        view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         view->setHeaderHidden(true);
         view->setRootIsDecorated(false);
 
         _completer->setPopup(view);
         _completer->setCaseSensitivity(Qt::CaseInsensitive);
         _completer->setCompletionColumn(1);
+        _completer->setMaxVisibleItems(10); // TODO: make this configurable?
+
         connect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
-        connect(_completer, SIGNAL(activated(const QModelIndex &)), this, SLOT(completerHighlighted(const QModelIndex &)));
-      }
+        connect(_completer, SIGNAL(activated(const QModelIndex &)), this, SLOT(completerActivated(const QModelIndex &)));
+        connect(_completer, SIGNAL(highlighted(const QModelIndex &)), this, SLOT(completerHighlighted(const QModelIndex &)));
     }
 
-    // Set up actions
     connect(_listAct, SIGNAL(triggered()), this, SLOT(sList()));
     connect(_searchAct, SIGNAL(triggered()), this, SLOT(sSearch()));
 
@@ -558,8 +554,8 @@ void VirtualClusterLineEdit::sHandleCompleter()
     return;
 
   int width = 0;
-  QSqlQueryModel* model = static_cast<QSqlQueryModel *>(_completer->model());
-  QTreeView * view = static_cast<QTreeView *>(_completer->popup());
+  QSqlQueryModel *model = static_cast<QSqlQueryModel *>(_completer->model());
+  QTreeView *view = static_cast<QTreeView *>(_completer->popup());
   _parsed = true;
   XSqlQuery numQ;
   numQ.prepare(_query + _numClause +
@@ -571,63 +567,56 @@ void VirtualClusterLineEdit::sHandleCompleter()
   numQ.exec();
   if (numQ.first())
   {
-    int numberCol = numQ.record().indexOf("number");
-    int nameCol = numQ.record().indexOf("name");
-    int descripCol = numQ.record().indexOf("description");
-    int activeDCol = numQ.record().indexOf("active_qtdisplayrole");
     model->setQuery(numQ);
     _completer->setCompletionPrefix(stripped);
 
     for (int i = 0; i < model->columnCount(); i++)
     {
-      if ( (i != numberCol) &&
-           (!_hasName || i != nameCol ) &&
-           (!_hasDescription || i != descripCol) &&
-           (! _hasActive     || i != activeDCol))
+      if (i != numQ.record().indexOf("number") &&
+          (! _hasName        || i != numQ.record().indexOf("name")) &&
+          (! _hasDescription || i != numQ.record().indexOf("description")) &&
+          (! _hasActive      || i != numQ.record().indexOf("active_qtdisplayrole")))
       {
+        if (DEBUG) qDebug() << "hiding" << i;
         view->hideColumn(i);
       }
-    }
-
-    view->resizeColumnToContents(numberCol);
-    width += view->columnWidth(numberCol);
-    if (_hasName)
-    {
-      view->resizeColumnToContents(nameCol);
-      width += view->columnWidth(nameCol);
-    }
-    if (_hasDescription)
-    {
-      view->resizeColumnToContents(descripCol);
-      width += view->columnWidth(descripCol);
-    }
-    if (_hasActive)
-    {
-      view->resizeColumnToContents(activeDCol);
-      width += view->columnWidth(activeDCol);
+      else
+      {
+        view->resizeColumnToContents(i);
+        width += view->columnWidth(i);
+        if (DEBUG) qDebug() << "width changed to" << width;
+      }
     }
   }
   else
-    model->setQuery(QSqlQuery());
-
-  if (width > 350)
-    width = 350;
+    model->clear();
 
   QRect rect;
   rect.setHeight(height());
-  rect.setWidth(width);
+  rect.setWidth(qMin(width, 350));
   rect.setBottomLeft(QPoint(0, height() - 2));
   _completer->complete(rect);
   _parsed = false;
 }
 
-void VirtualClusterLineEdit::completerHighlighted(const QModelIndex & index)
+void VirtualClusterLineEdit::completerActivated(const QModelIndex &pIndex)
 {
-  _completerId = _completer->completionModel()->data(index.sibling(index.row(), 0)).toInt();
+  _completerId = _completer->completionModel()->data(pIndex.sibling(pIndex.row(), 0)).toInt();
   if (DEBUG)
-    qDebug() << objectName() << "::completerHighlighted(" << index << ")"
+    qDebug() << objectName() << "::completerActivated(" << pIndex << ")"
              << "corresponds to completerId" << _completerId;
   sParse();
+  if (_parsed)
+    _completer->setCompletionPrefix("");
+}
+
+void VirtualClusterLineEdit::completerHighlighted(const QModelIndex &pIndex)
+{
+  _completerId = pIndex.sibling(pIndex.row(), 0).data().toInt();
+  setText(pIndex.sibling(pIndex.row(), 1).data().toString());
+  if (DEBUG)
+    qDebug() << objectName() << "::completerHighlighted(" << pIndex << ")"
+             << "corresponds to completerId" << _completerId;
 }
 
 void VirtualClusterLineEdit::sHandleNullStr()
