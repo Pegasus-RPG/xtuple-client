@@ -1204,11 +1204,7 @@ Address:</source>
     </message>
 </context>
 <context>
-    <name>Comments</name>
-    <message>
-        <source>Type</source>
-        <translation>Type</translation>
-    </message>
+    <name>CommentMap</name>
     <message>
         <source>[Pick a Document Type]</source>
         <translation type="unfinished"></translation>
@@ -1368,6 +1364,13 @@ Address:</source>
     <message>
         <source>Project Task</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Comments</name>
+    <message>
+        <source>Type</source>
+        <translation>Type</translation>
     </message>
     <message>
         <source>Verbose Text</source>
@@ -2892,7 +2895,7 @@ What would you like to do?</source>
     </message>
 </context>
 <context>
-    <name>Documents</name>
+    <name>DocumentMap</name>
     <message>
         <source>[Pick a Document Type]</source>
         <translation type="unfinished"></translation>
@@ -2901,6 +2904,9 @@ What would you like to do?</source>
         <source>Error Getting Document Types</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>Documents</name>
     <message>
         <source>Type</source>
         <translation type="unfinished">Type</translation>
@@ -3828,10 +3834,6 @@ returned %2
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>A System Error Occurred at %1::%2.</source>
-        <translation>Det oppstod en systemfeil ved %1::%2.</translation>
-    </message>
-    <message>
         <source>Lot/Serial # Not Found</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3845,6 +3847,18 @@ returned %2
     </message>
     <message>
         <source> Are you sure it is correct?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Getting Lot/Serial Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Inserting Lot/Serial Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Creating Item Location Placeholder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3981,6 +3995,14 @@ returned %2
     </message>
     <message>
         <source>Locking Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Checking Order Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error setting id</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4842,8 +4864,12 @@ returned %2
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>A System Error Occurred at %1::%2.</source>
-        <translation type="unfinished">Det oppstod en systemfeil ved %1::%2.</translation>
+        <source>Error setting id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Getting Quote</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5100,8 +5126,24 @@ returned %2
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>A System Error Occurred at %1::%2.</source>
-        <translation>Det oppstod en systemfeil ved %1::%2.</translation>
+        <source>Error Activationg Revision</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Deactivating Revision</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Getting Active Revision</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Getting Revision</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Creating Revision</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5398,20 +5440,6 @@ returned %2
     </message>
 </context>
 <context>
-    <name>UsernameList</name>
-    <message>
-        <source>User Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>UsernameSearch</name>
-    <message>
-        <source>User Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>VendorCluster</name>
     <message>
         <source>Vendor #:</source>
@@ -5530,6 +5558,22 @@ returned %2
         <source>%1::sInfo() not yet defined</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Active</source>
+        <translation type="unfinished">Aktiv</translation>
+    </message>
+    <message>
+        <source>Inactive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error setting id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Finding Matching Record</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>VirtualInfo</name>
@@ -5550,8 +5594,8 @@ returned %2
         <translation>&amp;Lukk</translation>
     </message>
     <message>
-        <source>A System Error Occurred at %1::%2.</source>
-        <translation>Det oppstod en systemfeil ved %1::%2.</translation>
+        <source>Error Getting Record</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6327,7 +6371,7 @@ returned %2
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;You must specify an account number before you may save this record.</source>
+        <source>You must specify an account number before you may save this record.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9332,35 +9376,39 @@ Are you sure that you want to save this change?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Could not open Atlas</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Could not open the Atlas file %1 (error %2).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No Focus</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Could not set focus on the Atlas %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid Query</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;The query is not valid for some reason</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>No Maps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;Could not find any Maps in the Atlas %1</source>
+        <source>File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Please select an Atlas from the database before saving this Atlas Map.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Reading File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;An error was encountered while trying to read the Atlas file: %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Reading Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;An error was encountered while trying to read the Atlas %1 from the Database: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Could not find any Maps in the Atlas</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14011,6 +14059,10 @@ p, li { white-space: pre-wrap; }
         <source>XML Export</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished">Plassering</translation>
+    </message>
 </context>
 <context>
     <name>configureIM</name>
@@ -15339,14 +15391,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Contact Blank</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;You must fill in a contact first or last name as a minimum before saving.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>In Use</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15532,6 +15576,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Are you sure that you want to remove this Contact as the Contact for this Site?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must fill in a contact first or last name as a minimum before saving.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot Save Contact</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -22794,31 +22846,15 @@ to be deleted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select Vendor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You must select the Vendor(s) whose A/R Applications you wish to view.</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter Start Date</source>
-        <translation type="unfinished">Angi startdato</translation>
     </message>
     <message>
         <source>You must enter a valid Start Date.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enter End Date</source>
-        <translation type="unfinished">Angi sluttdato</translation>
-    </message>
-    <message>
         <source>You must enter a valid End Date.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select Document Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -22840,6 +22876,10 @@ to be deleted.</source>
     <message>
         <source>Voucher</source>
         <translation type="unfinished">Bilag</translation>
+    </message>
+    <message>
+        <source>Cannot set Parameters</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -23070,31 +23110,15 @@ This Item is already selected for payment.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select Customer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You must select a Customer whose A/R Applications you wish to view.</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter Start Date</source>
-        <translation>Angi startdato</translation>
     </message>
     <message>
         <source>You must enter a valid Start Date.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enter End Date</source>
-        <translation>Angi sluttdato</translation>
-    </message>
-    <message>
         <source>You must enter a valid End Date.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select Document Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -23231,6 +23255,10 @@ This Item is already selected for payment.</source>
     </message>
     <message>
         <source>C/R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot Set Parameters</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -23410,10 +23438,6 @@ This Item is already selected for payment.</source>
     </message>
     <message>
         <source>Cannot Refund by Credit Card</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;The application cannot refund this transaction using a credit card.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -23678,6 +23702,14 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>As of Date:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The application cannot refund this transaction using a credit card.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invoice Posting Date</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -24749,16 +24781,8 @@ Would you like to post it anyway?</source>
         <translation>Beløp</translation>
     </message>
     <message>
-        <source>Enter Start Date</source>
-        <translation>Angi startdato</translation>
-    </message>
-    <message>
         <source>You must enter a valid Start Date.</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter End Date</source>
-        <translation>Angi sluttdato</translation>
     </message>
     <message>
         <source>You must enter a valid End Date.</source>
@@ -24834,6 +24858,10 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>Applications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date not Entered</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -24936,10 +24964,6 @@ Would you like to post it anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;Invalid dates specified. Please specify a valid date range.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Base Amount</source>
         <translation>Grunnbeløp</translation>
     </message>
@@ -24977,6 +25001,10 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>Payments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid dates specified. Please specify a valid date range.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -26710,10 +26738,6 @@ Would you like to post it anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Setup Incomplete</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Statement</source>
         <translation type="unfinished"></translation>
     </message>
@@ -26727,14 +26751,6 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>No period selected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;You must select at least one period.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Please make sure all accounting periods are associated with a quarter and fiscal year before using this application.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -26857,6 +26873,14 @@ Total</source>
     </message>
     <message>
         <source>You must select at least one period to report on.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must select at least one period.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please make sure all accounting periods are associated with a quarter and fiscal year before using this application.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -32898,6 +32922,18 @@ Total</source>
         <source>Purchase Requests by Item</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Edit P/R...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View S/O Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error opening Sales Order item</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>dspPurchaseReqsByPlannerCode</name>
@@ -33011,6 +33047,18 @@ Total</source>
     </message>
     <message>
         <source>You must enter a valid Start Date and End Date for this report.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit P/R...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View S/O Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error opening Sales Order item</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -36145,23 +36193,11 @@ Rate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select items to show</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You must select sales or purchase items to show.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enter Valid Start Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You must enter a valid Start Date to print this report.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter Valid End Date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -36246,6 +36282,10 @@ Rate</source>
     </message>
     <message>
         <source>Show only tax</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot Execute Tax History</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -36589,12 +36629,12 @@ Rate</source>
         <translation>Ufullstendige kriterier</translation>
     </message>
     <message>
-        <source>&lt;p&gt;The criteria you specified are not complete. Please make sure all fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Total</source>
         <translation>Sum</translation>
+    </message>
+    <message>
+        <source>The criteria you specified are not complete. Please make sure all fields are correctly filled out before running the report.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -36696,12 +36736,12 @@ Rate</source>
         <translation>Ufullstendige kriterier</translation>
     </message>
     <message>
-        <source>&lt;p&gt;The criteria you specified are not complete. Please make sure all fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Total</source>
         <translation>Sum</translation>
+    </message>
+    <message>
+        <source>The criteria you specified are not complete. Please make sure all fields are correctly filled out before running the report.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -37393,10 +37433,6 @@ Rate</source>
         <translation>Bilag</translation>
     </message>
     <message>
-        <source>Select Vendor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Credit Memo</source>
         <translation type="unfinished">Kreditnota</translation>
     </message>
@@ -37413,16 +37449,8 @@ Rate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enter Start Date</source>
-        <translation>Angi startdato</translation>
-    </message>
-    <message>
         <source>Please enter a valid Start Date.</source>
         <translation>Angi en gyldig startdato.</translation>
-    </message>
-    <message>
-        <source>Enter End Date</source>
-        <translation>Angi sluttdato</translation>
     </message>
     <message>
         <source>Please enter a valid End Date.</source>
@@ -37467,6 +37495,10 @@ Rate</source>
     <message>
         <source>Base Balance</source>
         <translation>Grunnsaldo</translation>
+    </message>
+    <message>
+        <source>Cannot set Parameters</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -37536,19 +37568,11 @@ Rate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Enter a valid Start Date.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Enter a valid End Date.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -37573,6 +37597,10 @@ Rate</source>
     </message>
     <message>
         <source>Show Username</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid Dates</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -40707,6 +40735,14 @@ Would you like to automatically create a credit memo against this return?</sourc
         <source>An XSLT Map already exists with this name.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cannot delete Terms as they exist on a Sales Order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot delete Terms as they exist on a Purchase Order.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>errorcatorter</name>
@@ -41363,6 +41399,10 @@ Would you like to automatically create a credit memo against this return?</sourc
         <source>failed or not entered</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Expiry:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>externalShipping</name>
@@ -41702,10 +41742,6 @@ Budget</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Layout Name is Invalid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You must enter a valid name for this Financial Report.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -41933,6 +41969,10 @@ Custom</source>
         <source>&amp;Ad Hoc</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cannot Save Financial Report</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>financialLayoutColumns</name>
@@ -41946,10 +41986,6 @@ Custom</source>
     </message>
     <message>
         <source>Year End</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cannot Save settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -41983,10 +42019,6 @@ Custom</source>
     <message>
         <source>% Difference</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Edit</source>
-        <translation>&amp;Rediger</translation>
     </message>
     <message>
         <source>Selected Period</source>
@@ -42042,6 +42074,18 @@ Custom</source>
     </message>
     <message>
         <source>Year To Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please enter a name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please enter a description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot Save Columns</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -42129,6 +42173,18 @@ Custom</source>
     </message>
     <message>
         <source>Alt. Subtotal Label:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please enter a name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please enter a description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot Save Group</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -43226,14 +43282,6 @@ You may not create duplicate Forms.</source>
         <translation>&amp;Konter</translation>
     </message>
     <message>
-        <source>&lt;p&gt;You must enter a Distribution Date for this Series.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;You must enter some Notes to describe this transaction.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error Posting Selected G/L Series</source>
         <translation type="unfinished"></translation>
     </message>
@@ -43263,6 +43311,14 @@ You may not create duplicate Forms.</source>
     </message>
     <message>
         <source>Cannot Maintain G/L Series</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a Distribution Date for this Series.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter some Notes to describe this transaction.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -43362,26 +43418,6 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
         <translation type="unfinished">Konter</translation>
     </message>
     <message>
-        <source>&lt;p&gt;You must enter an amount for this G/L Transaction before you may Post it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;You must select a Debit Account for this G/L Transaction before you may Post it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;You must select a Credit Account for this G/L Transaction before you may Post it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The Accounts must belong to the same Company to Post this transaciton.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;You must enter some Notes to describe this transaction.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Cannot Post G/L Journal Entry</source>
         <translation type="unfinished"></translation>
     </message>
@@ -43392,6 +43428,26 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     <message>
         <source>Document #:</source>
         <translation>Dokumentnr.:</translation>
+    </message>
+    <message>
+        <source>You must enter an amount for this G/L Transaction before you may Post it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must select a Debit Account for this G/L Transaction before you may Post it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must select a Credit Account for this G/L Transaction before you may Post it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The Accounts must belong to the same Company to Post this transaction.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter some Notes to describe this transaction.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -43655,6 +43711,10 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
         <source>Users Assigned:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error deleting group</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>groups</name>
@@ -43706,25 +43766,6 @@ You must reassign these Users before you may delete the selected Group.</source>
     <message>
         <source>&amp;Delete</source>
         <translation>&amp;Slett</translation>
-    </message>
-</context>
-<context>
-    <name>helpView</name>
-    <message>
-        <source>xTuple Help Documentation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Back</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forward</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Home</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -44504,10 +44545,6 @@ Are you sure that you want to Implode the selected Work Order?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Incomplete Information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You must specify the Account that this incident is for.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -44658,6 +44695,10 @@ Are you sure that you want to Implode the selected Work Order?</source>
     </message>
     <message>
         <source>Doc #:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot Save Incident</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -45459,10 +45500,6 @@ Are you sure that you want to Implode the selected Work Order?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;You must enter a Customer for this Invoice before saving it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Cannot Save Invoice</source>
         <translation type="unfinished"></translation>
     </message>
@@ -45528,14 +45565,6 @@ Are you sure that you want to Implode the selected Work Order?</source>
     </message>
     <message>
         <source>Error Retrieving Customer Ship-To Information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Total Less than Zero</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;The Total must be a positive value.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -45663,11 +45692,15 @@ Could not post Invoice #%1 due to a missing exchange rate.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>No Line Items</source>
+        <source>You must enter a Customer for this Invoice before saving it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;There must be at least one line item for an invoice.</source>
+        <source>The Total must be a positive value.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There must be at least one line item for an invoice.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -45880,6 +45913,26 @@ Could not post Invoice #%1 due to a missing exchange rate.</source>
     <message>
         <source>&amp;Site:</source>
         <translation>&amp;Sted:</translation>
+    </message>
+    <message>
+        <source>Characteristics</source>
+        <translation type="unfinished">Egenskaper</translation>
+    </message>
+    <message>
+        <source>Item Characteristics:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invoice Item Characteristics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Navn</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation type="unfinished">Verdi</translation>
     </message>
 </context>
 <context>
@@ -47078,10 +47131,6 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
         <translation>Dager</translation>
     </message>
     <message>
-        <source>Unit Price UOM:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Wholesale Price:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -47168,6 +47217,10 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     <message>
         <source>Kit</source>
         <translation>Pakke</translation>
+    </message>
+    <message>
+        <source>Selling UOM:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -49718,50 +49771,6 @@ already exists for this Item Source.</source>
         <source>Are you sure that you want to delete the Item Source for %1?</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>&amp;Delete</source>
-        <translation>&amp;Slett</translation>
-    </message>
-    <message>
-        <source>Item Sources:</source>
-        <translation>Varekilder:</translation>
-    </message>
-    <message>
-        <source>&amp;Close</source>
-        <translation>&amp;Lukk</translation>
-    </message>
-    <message>
-        <source>&amp;Print</source>
-        <translation>Skriv &amp;ut</translation>
-    </message>
-    <message>
-        <source>&amp;New</source>
-        <translation>&amp;Ny</translation>
-    </message>
-    <message>
-        <source>&amp;Edit</source>
-        <translation>&amp;Rediger</translation>
-    </message>
-    <message>
-        <source>&amp;View</source>
-        <translation>&amp;Vis</translation>
-    </message>
-    <message>
-        <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>List Item Sources</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>S&amp;earch for:</source>
-        <translation>Sø&amp;k etter:</translation>
-    </message>
-    <message>
-        <source>Show &amp;Inactive Item Sources</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>itemSubstitute</name>
@@ -51099,7 +51108,7 @@ You must reassign these Item Sites before you may delete the selected Planner Co
         <translation>Ufullstendige kriterier</translation>
     </message>
     <message>
-        <source>&lt;p&gt;Please select at least one Period before generating the table.</source>
+        <source>Please select at least one Period before generating the table.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -53926,34 +53935,6 @@ You must reassign these Item Sites before you may delete the selected Planner Co
         <translation>&amp;Opprett</translation>
     </message>
     <message>
-        <source>Cannot Create Miscellaneous Payment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;You must enter a date for this payment.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;You must enter an amount for this payment.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;You must select a Credit Memo for this expensed payment.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid Amount</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;You must enter an amount less than or equal to the  credit memo selected.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;You must select an Expense Category for this expensed payment.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error Saving Check Information</source>
         <translation type="unfinished"></translation>
     </message>
@@ -54060,6 +54041,30 @@ You must reassign these Item Sites before you may delete the selected Planner Co
     <message>
         <source>Notes:</source>
         <translation>Notater:</translation>
+    </message>
+    <message>
+        <source>You must enter a date for this payment.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter an amount for this payment.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must select a Credit Memo for this expensed payment.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter an amount less than or equal to the credit memo selected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must select an Expense Category for this expensed payment.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot Save Miscellaneous Payment</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -54919,10 +54924,6 @@ You must reassign these Item Sites before you may delete the selected Planner Co
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Incomplete Information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You must specify the Account that this opportunity is for.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -55173,6 +55174,10 @@ You must reassign these Item Sites before you may delete the selected Planner Co
     <message>
         <source>Comments</source>
         <translation>Kommentarer</translation>
+    </message>
+    <message>
+        <source>Cannot Save Incident</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -58007,6 +58012,14 @@ post Vouchers.</source>
         <source>Error Retrieving Pricing Schedule Assignment Information</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&lt;p&gt;You must enter a valid Ship To pattern.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;You must enter a valid Customer Type pattern.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>pricingScheduleAssignments</name>
@@ -59484,10 +59497,6 @@ post Vouchers.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;You must enter a valid Customer Number for this Statement.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Database Error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -59505,6 +59514,10 @@ post Vouchers.</source>
     </message>
     <message>
         <source>As of :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a valid Customer Number for this Statement.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -59885,10 +59898,6 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>You must enter a valid Number.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Duplicate Profit Center Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -62254,43 +62263,20 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
         <source>  Site:</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>purchaseOrderList</name>
     <message>
-        <source>Purchase Orders</source>
+        <source>Item Characteristics:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Purchase Orders:</source>
+        <source>Purchase Item Characteristics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Cancel</source>
-        <translation>&amp;Avbryt</translation>
-    </message>
-    <message>
-        <source>&amp;Select</source>
-        <translation>&amp;Velg</translation>
-    </message>
-    <message>
-        <source>Number</source>
-        <translation>Nummer</translation>
-    </message>
-    <message>
-        <source>Vendor</source>
-        <translation>Leverandør</translation>
-    </message>
-    <message>
-        <source>Agent</source>
+        <source>No Supplying Site</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Order Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>First Item</source>
+        <source>No Supplying Sites exist for this item.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -63331,18 +63317,6 @@ You must purge these records before you may delete the selected Reason Code.</so
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Missing Opening Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Missing Ending Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid End Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The end date cannot be earlier than the start date.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -63463,18 +63437,6 @@ You must purge these records before you may delete the selected Reason Code.</so
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;There was an error trying to reconcile this account. Please contact your Systems Administrator.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;No Opening Date was specified for this reconciliation. Please specify an Opening Date.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;No Ending Date was specified for this reconciliation. Please specify an Ending Date.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Balances Do Not Match</source>
         <translation type="unfinished"></translation>
     </message>
@@ -63494,6 +63456,18 @@ Please correct this before continuing.</source>
     </message>
     <message>
         <source>The date range you have entered already has reconciled dates in it. Please choose a different date range.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There was an error trying to reconcile this account. Please contact your Systems Administrator.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Opening Date was specified for this reconciliation. Please specify an Opening Date.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Ending Date was specified for this reconciliation. Please specify an Ending Date.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -65145,10 +65119,6 @@ You must Recall this Work Order before Rescheduling it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enter &amp;Receipt...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Rece&amp;ive All</source>
         <translation type="unfinished"></translation>
     </message>
@@ -65298,6 +65268,30 @@ You must Recall this Work Order before Rescheduling it.</source>
     </message>
     <message>
         <source>&lt;p&gt;You must create at least one Line Item for this Return Authorization before you may save it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter &amp;Receipt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Characteristics</source>
+        <translation type="unfinished">Egenskaper</translation>
+    </message>
+    <message>
+        <source>Sites Do Not Match</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The Orig. Sales Order Site (%1) does not match the Receiving Site (%2) nor Shipping Site (%3). &lt;p&gt;Do you want to update both of them to match the Sales Order?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The Original Sales Order Site (%1) does not match the Receiving Site (%2). &lt;p&gt;Do you want to update it to match the Sales Order?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The Original Sales Order Site (%1) does not match the Shipping Site (%2). &lt;p&gt;Do you want to update it to match the Sales Order?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -66023,19 +66017,7 @@ You must instead return each Work Order Material item individually.
 <context>
     <name>returnWoMaterialItem</name>
     <message>
-        <source>Invalid date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You must enter a valid transaction date.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select Work Order</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You must select the Work Order from which you with to return Materal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -66097,6 +66079,14 @@ You must instead return each Work Order Material item individually.
     <message>
         <source>Transaction Canceled</source>
         <translation>Transaksjon avbrutt</translation>
+    </message>
+    <message>
+        <source>You must select the Work Order from which you wish to return Material</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid Return</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -67483,14 +67473,6 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Qty UOM</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Price UOM</source>
-        <translation>Prisenhet</translation>
-    </message>
-    <message>
         <source>Error Retrieving Sales Order Information</source>
         <translation type="unfinished"></translation>
     </message>
@@ -68000,6 +67982,42 @@ Do you wish to continue saving the order?</source>
     </message>
     <message>
         <source>Outstanding Credit:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished">&amp;Avbryt</translation>
+    </message>
+    <message>
+        <source>Selling UOM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel Line...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Purchase Order Item?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you wish to delete the Purchase Order Item linked to this Sales Order Item? The associated Purchase Order will also be deleted if no other Purchase Order Item exists for that Purchase Order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error closing P/O Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error deleting P/O Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Getting Linked P/O</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Cancelling Item</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -68559,14 +68577,6 @@ Are you sure you want to do this?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Can not delete PO</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Purchase Order linked to this Sales Order Item will not be affected. The Purchase Order should be closed or deleted manually if necessary.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Getting Linked P/O</source>
         <translation type="unfinished"></translation>
     </message>
@@ -69095,10 +69105,6 @@ Are you sure you want to do this?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Qty.  &amp;UOM:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Discount %:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -69193,6 +69199,34 @@ Would you like to save them now?</source>
     </message>
     <message>
         <source>Supplying Site:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selling  &amp;UOM:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Item Characteristics:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sales Item Characteristics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Purchase Order Item?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you wish to delete the Purchase Order Item linked to this Sales Order Item? The associated Purchase Order will also be deleted if no other Purchase Order Item exists for that Purchase Order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error closing P/O Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error deleting P/O Item</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -72786,10 +72820,6 @@ You must reassign these Sites before deleting this Site Type.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The Name you have entered for this Standard Journal Group is already in use. Please enter in a different Name for this Standard Journal Group.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Always</source>
         <translation>Alltid</translation>
     </message>
@@ -72837,6 +72867,10 @@ You must reassign these Sites before deleting this Site Type.</source>
         <source>&amp;Delete</source>
         <translation>&amp;Slett</translation>
     </message>
+    <message>
+        <source>The Name you have entered for this Standard Journal Group is already in use.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>standardJournalGroupItem</name>
@@ -72861,23 +72895,11 @@ You must reassign these Sites before deleting this Site Type.</source>
         <translation>&amp;Lukk</translation>
     </message>
     <message>
-        <source>Enter Effective Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You must enter an effective date for this Standard Journal Group Item.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enter Expiration Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You must enter an expiration date for this Standard Journal Group Item.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid Expiration Date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -72911,6 +72933,10 @@ You must reassign these Sites before deleting this Site Type.</source>
     <message>
         <source>&amp;Save</source>
         <translation>&amp;Lagre</translation>
+    </message>
+    <message>
+        <source>Cannot Save Journal Group</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -75068,15 +75094,6 @@ You must first delete the Bill of Materials for the selected target item before 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>A Subaccount Type with the entered code already exists.You may not create a Subaccount Type with this code.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>A Subaccount Type with the entered code already exists.
-You may not create a Subaccount Type with this code.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error Retrieving Sub Account Information</source>
         <translation type="unfinished"></translation>
     </message>
@@ -75123,6 +75140,10 @@ You may not create a Subaccount Type with this code.</source>
     <message>
         <source>&amp;Save</source>
         <translation>&amp;Lagre</translation>
+    </message>
+    <message>
+        <source>A Subaccount Type with the entered code already exists. You may not create a Subaccount Type with this code.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -75233,10 +75254,6 @@ You must reassign these Ledger Accounts before you may delete the selected G/L S
     </message>
     <message>
         <source>You must enter a valid Number.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Duplicate Sub Account Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -76340,10 +76357,6 @@ You first need to Revoke those Tax Codes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;Tax codes with the same group sequence as this one and which have subordinate taxes are already assigned to this Tax Zone / Tax Type pair.&lt;/p&gt;&lt;p&gt;You first need to Revoke those Tax Codes.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error Adding Tax Code</source>
         <translation type="unfinished"></translation>
     </message>
@@ -77321,10 +77334,6 @@ You first need to Revoke those Tax Codes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Duplicate Tax Registration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>A Tax Registration already exists for the parameters specified.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -77407,11 +77416,6 @@ You first need to Revoke those Tax Codes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>A Tax Type with the entered name already exists.
-You may not create a Tax Type with this name.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error Retrieving Tax Type Information</source>
         <translation type="unfinished"></translation>
     </message>
@@ -77440,7 +77444,7 @@ You may not create a Tax Type with this name.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;You must name this Tax Type before saving it.</source>
+        <source>You must name this Tax Type before saving it.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -77769,6 +77773,22 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
     </message>
     <message>
         <source>List Terms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;You may not delete the selected Terms Code as there are one or more A/P documents assigned to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Retrieving A/P Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;You may not delete the selected Terms Code as there are one or more A/R documents assigned to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Deleting Terms</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -84603,10 +84623,6 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You must enter a postive Quantity to Voucher before saving this Voucher Item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You must make at least one distribution for this Voucher Item before you may save it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -84764,6 +84780,10 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     </message>
     <message>
         <source>Split Receipt...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You must enter a postive Quantity to Voucher before saving this Voucher Item.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -85988,10 +86008,6 @@ You may want to consider imploding and exploding the Work Order.
         <translation>Egenskaper</translation>
     </message>
     <message>
-        <source>Work Order Item Characteristics:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Costing</source>
         <translation>Kostnadsberegning</translation>
     </message>
@@ -86069,6 +86085,14 @@ You may want to consider imploding and exploding the Work Order.
     </message>
     <message>
         <source>Cost Recognition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Item Characteristics:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Work Order Characteristics</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
