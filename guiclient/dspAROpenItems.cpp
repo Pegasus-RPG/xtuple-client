@@ -888,12 +888,41 @@ void dspAROpenItems::sVoidInvoiceDetails()
   }
 
   QVariant voidDate; // starts null
-  if (_privileges->check("ChangeARInvcDistDate"))
+  while (_privileges->check("ChangeARInvcDistDate"))
   {
     getGLDistDate newdlg(this, "", true);
     newdlg.sSetDefaultLit(tr("Invoice Posting Date"));
     if (newdlg.exec() == XDialog::Accepted)
+    {
       voidDate = QVariant(newdlg.date());
+
+      XSqlQuery closedPeriod;
+      closedPeriod.prepare("SELECT period_closed "
+                           "  FROM invchead "
+                           "  JOIN period ON COALESCE(:distdate, invchead_gldistdate, "
+                           "                          invchead_invcdate) BETWEEN "
+                           "                 period_start AND period_end "
+                           " WHERE invchead_id=:invchead_id;");
+      closedPeriod.bindValue(":distdate", voidDate);
+      closedPeriod.bindValue(":invchead_id", list()->currentItem()->id("docnumber"));
+      closedPeriod.exec();
+      if (closedPeriod.first() && !closedPeriod.value("period_closed").toBool())
+        break;
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error voiding invoice"),
+                                    closedPeriod, __FILE__, __LINE__))
+        return;
+      else
+      {
+        if (QMessageBox::question(this, tr("Change Date?"),
+                                  tr("Could not void invoice because the accounting period for the "
+                                     "posting date is closed. Try again with a different date?"),
+                                  QMessageBox::Yes | QMessageBox::No,
+                                  QMessageBox::No) == QMessageBox::Yes)
+          continue;
+        else
+          return;
+      }
+    }
     else
       return;
   }
