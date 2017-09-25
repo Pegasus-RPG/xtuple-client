@@ -1398,6 +1398,7 @@ void vendor::clear()
   
   if (_number->editMode() || _mode == cNew)
     sPrepare();
+  _tempMode = _mode;
 }
 
 void vendor::sNumberEditable(bool p)
