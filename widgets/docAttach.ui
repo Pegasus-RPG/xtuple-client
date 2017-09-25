@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>440</width>
-    <height>278</height>
+    <width>442</width>
+    <height>286</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -133,6 +133,9 @@ to be bound by its terms.</comment>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
        <widget class="QStackedWidget" name="_documentsStack">
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
         <widget class="QWidget" name="_selectPage">
          <layout class="QGridLayout" name="gridLayout_10">
           <item row="0" column="0">
@@ -655,6 +658,96 @@ to be bound by its terms.</comment>
           </item>
          </layout>
         </widget>
+        <widget class="QWidget" name="_quPage">
+         <layout class="QVBoxLayout" name="verticalLayout_10">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_15">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_17">
+              <item>
+               <widget class="QuoteCluster" name="_qu">
+                <property name="label">
+                 <string>Quote #:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_7">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="_raPage">
+         <layout class="QVBoxLayout" name="verticalLayout_18">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_16">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_19">
+              <item>
+               <widget class="OrderCluster" name="_ra">
+                <property name="label">
+                 <string>Return Authorization #:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_17">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_15">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
         <widget class="QWidget" name="_soPage">
          <layout class="QGridLayout" name="gridLayout_13">
           <item row="0" column="0">
@@ -908,6 +1001,11 @@ to be bound by its terms.</comment>
    <class>ProjectCluster</class>
    <extends>QWidget</extends>
    <header>projectcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QuoteCluster</class>
+   <extends>QWidget</extends>
+   <header>quotecluster.h</header>
   </customwidget>
   <customwidget>
    <class>VendorCluster</class>
