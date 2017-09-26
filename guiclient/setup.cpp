@@ -580,6 +580,7 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
       _itemMap[uiName].index = idx;
       QScrollArea *scroll = new QScrollArea();
       scroll->setWidget(w);
+      scroll->setWidgetResizable(true);
       _stack->addWidget(scroll);
       _stack->setCurrentIndex(idx);
 
