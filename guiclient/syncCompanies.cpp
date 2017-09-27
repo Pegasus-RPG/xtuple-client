@@ -259,13 +259,8 @@ void syncCompanies::sSync()
       qDebug("syncCompanies::sSync() dbURL after login2 = %s", qPrintable(dbURL));
     parseDatabaseURL(dbURL, protocol, host, db, port);
 
-    QSqlDatabase testDB = QSqlDatabase::addDatabase("QPSQL7", db);
-    testDB.setHostName(host);
-    testDB.setDatabaseName(db);
-    testDB.setUserName(newdlg.username());
-    testDB.setPassword(newdlg.password());
-    testDB.setPort(port.toInt());
-    if (testDB.open())
+    QSqlDatabase testDB = QSqlDatabase::database(db, false);
+    if (testDB.isOpen())
     {
       if (DEBUG)
         qDebug("syncCompanies::sSync() opened testDB!");
