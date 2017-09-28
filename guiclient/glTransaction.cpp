@@ -208,18 +208,8 @@ void glTransaction::setupDocuments()
 {
 // Need a temporary ID to populate the docass table with.  Cannot preset GL id
 // as we need to preserve the journal sequence in case of cancellations
-  XSqlQuery docId;
-  docId.exec("SELECT (random() * 100000)::INTEGER *-1 AS result");
-  if (docId.first())
-  {
-    _placeholder = docId.value("result").toInt();
-    _documents->setId(_placeholder);
-  }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Initializing G/L Documents"),
-                                docId, __FILE__, __LINE__))
-  {
-     return;
-  }
+  _placeholder = (qrand() % 100000 + 1) * -1;
+  _documents->setId(_placeholder);
   _documents->setType("JE");
 }
 
