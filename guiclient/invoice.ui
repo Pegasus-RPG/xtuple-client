@@ -1261,6 +1261,20 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="_commentsTab">
+      <attribute name="title">
+       <string>Co&amp;mments</string>
+      </attribute>
+      <layout class="QGridLayout">
+       <item row="0" column="0">
+        <widget class="Comments" name="_comments">
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="notesTab">
       <attribute name="title">
        <string>Notes</string>

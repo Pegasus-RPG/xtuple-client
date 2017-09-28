@@ -93,6 +93,7 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _miscDistrib->addColumn(tr("Notes"),      -1,           Qt::AlignLeft,   true,  "vodist_notes" );
 
   _charass->setType("VCH");
+  _comments->setType(Comments::Voucher);
 
   _freightCostElement->populate("SELECT costelem_id, costelem_type "
                                 "FROM costelem "
@@ -147,6 +148,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
         _voheadid = insq.value("vohead_id").toInt();
         _documents->setId(_voheadid);
         _charass->setId(_voheadid);
+        _comments->setId(_voheadid);
       }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Inserting Voucher"),
                                     insq, __FILE__, __LINE__))
@@ -206,6 +208,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
     _voheadid = param.toInt();
     _documents->setId(_voheadid);
     _charass->setId(_voheadid);
+    _comments->setId(_voheadid);
     populate();
     enableWindowModifiedSetting();
   }
@@ -351,6 +354,7 @@ bool voucher::sSave()
   _miscDistrib->clear();
   _notes->setText("");
   _charass->setId(-1);
+  _comments->setId(-1);
   _freight->clear();
   _freightExpcat->setId(-1);
 
@@ -844,6 +848,7 @@ void voucher::populate()
     sFillMiscList();
     sPopulateDistributed();
     _charass->setId(_voheadid);
+    _comments->setId(_voheadid);
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Voucher"),
                                 vohead, __FILE__, __LINE__))

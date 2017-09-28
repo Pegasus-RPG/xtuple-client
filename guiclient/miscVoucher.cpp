@@ -53,6 +53,7 @@ miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _miscDistrib->addColumn(tr("Notes"),      -1,           Qt::AlignLeft,   true,  "vodist_notes"  );
 
   _charass->setType("VCH");
+  _comments->setType(Comments::Voucher);
 }
 
 miscVoucher::~miscVoucher()
@@ -100,6 +101,7 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
         _recurring->setParent(_voheadid, "V");
         _documents->setId(_voheadid);
         _charass->setId(_voheadid);
+        _comments->setId(_voheadid);
       }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Creating Voucher"),
                                insq, __FILE__, __LINE__))
@@ -149,6 +151,7 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
     _voheadid = param.toInt();
     _documents->setId(_voheadid);
     _charass->setId(_voheadid);
+    _comments->setId(_voheadid);
     populate();
   }
 

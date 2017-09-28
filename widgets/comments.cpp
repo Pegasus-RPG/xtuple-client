@@ -95,8 +95,8 @@ QMap<QString, struct CommentMap *> &Comments::commentMap() {
     addToMap(MaintOrder,        "FAMAINT", tr("Maintenance Order"),      "maintord_id",  "maintOrder"        );
     addToMap(ExchangeRate,      "FX",    tr("Exchange Rate")                                                 );
     addToMap(Incident,          "INCDT", tr("Incident"),                 "incdt_id",     "incident",     "MaintainPersonalIncidents MaintainAllIncidents");
-//  addToMap(Invoice,           "INV",   tr("Invoice"),                  "invchead_id",  "invoice"           );
-//  addToMap(InvoiceItem,       "INVI",  tr("Invoice Item")                                                  );
+    addToMap(Invoice,           "INV",   tr("Invoice"),                  "invchead_id",  "invoice"           );
+    addToMap(InvoiceItem,       "INVI",  tr("Invoice Item")                                                  );
     addToMap(Item,              "I",     tr("Item"),                     "item_id",      "item"              );
     addToMap(ItemSite,          "IS",    tr("Item Site")                                                     );
     addToMap(ItemSource,        "IR",    tr("Item Source"),              "itemsrc_id",   "itemSource"        );
@@ -120,7 +120,7 @@ QMap<QString, struct CommentMap *> &Comments::commentMap() {
     addToMap(TransferOrder,     "TO",    tr("Transfer Order"),           "tohead_id",   "transferOrder"      );
     addToMap(TransferOrderItem, "TI",    tr("Transfer Order Item")                                           );
     addToMap(Vendor,            "V",     tr("Vendor"),                   "vend_id",     "vendor"             );
-//  addToMap(Voucher,           "VCH",   tr("Voucher"),                  "vohead_id",   "voucher"            );
+    addToMap(Voucher,           "VCH",   tr("Voucher"),                  "vohead_id",   "voucher"            );
     addToMap(Warehouse,         "WH",    tr("Site")                                                          );
     addToMap(WorkOrder,         "W",     tr("Work Order"),               "wo_id",       "workOrder"          );
     addToMap(Task,              "TA",    tr("Project Task"),             "prjtask_id",  "projectTask"        );
