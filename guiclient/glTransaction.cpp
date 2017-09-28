@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -40,6 +40,8 @@ glTransaction::glTransaction(QWidget* parent, const char* name, bool modal, Qt::
     QWidget::setTabOrder(_buttonBox->button(QDialogButtonBox::Ok), _buttonBox->button(QDialogButtonBox::Cancel));
 
     _captive = false;
+
+    setupDocuments();
 }
 
 glTransaction::~glTransaction()
@@ -99,6 +101,7 @@ enum SetResponse glTransaction::set(const ParameterList &pParams)
 void glTransaction::sPost()
 {
   XSqlQuery glPost;
+  XSqlQuery updDocAss;
 
   QList<GuiErrorCheck> errors;
     errors<< GuiErrorCheck(_amount->isZero(), _amount,
@@ -140,6 +143,19 @@ void glTransaction::sPost()
   glPost.exec();
   if (glPost.first())
   {
+//  Now we know the GL Journal sequence - update the document assignments
+    updDocAss.prepare("UPDATE docass SET docass_source_id=:sequence "
+                      " WHERE docass_source_type='JE' "
+                      " AND docass_source_id=:placeholder;");
+    updDocAss.bindValue(":sequence", glPost.value("result").toInt());
+    updDocAss.bindValue(":placeholder", _placeholder);
+    updDocAss.exec();
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting G/L Transaction"),
+                                updDocAss, __FILE__, __LINE__))
+    {
+       return;
+    }
+
 //  Print on Post
     if (_print->isChecked())
     {
@@ -182,8 +198,29 @@ void glTransaction::clear()
   _credit->setId(-1);
   _notes->clear();
   _mode = cNew;
+  setupDocuments();
+  _tab->setCurrentIndex(_tab->indexOf(notesTab));
 
   _amount->setFocus();
+}
+
+void glTransaction::setupDocuments()
+{
+// Need a temporary ID to populate the docass table with.  Cannot preset GL id
+// as we need to preserve the journal sequence in case of cancellations
+  XSqlQuery docId;
+  docId.exec("SELECT (random() * 100000)::INTEGER *-1 AS result");
+  if (docId.first())
+  {
+    _placeholder = docId.value("result").toInt();
+    _documents->setId(_placeholder);
+  }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Initializing G/L Documents"),
+                                docId, __FILE__, __LINE__))
+  {
+     return;
+  }
+  _documents->setType("JE");
 }
 
 void glTransaction::populate()
