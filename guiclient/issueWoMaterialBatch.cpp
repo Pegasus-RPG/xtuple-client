@@ -271,32 +271,6 @@ void issueWoMaterialBatch::sIssue()
         continue;
       }
 
-      if (_metrics->boolean("LotSerialControl"))
-      {
-        // Insert special pre-assign records for the lot/serial#
-        // so they are available when the material is returned
-        XSqlQuery lsdetail;
-        lsdetail.prepare("INSERT INTO lsdetail "
-                         "            (lsdetail_itemsite_id, lsdetail_created, lsdetail_source_type, "
-                         "             lsdetail_source_id, lsdetail_source_number, lsdetail_ls_id, lsdetail_qtytoassign) "
-                         "SELECT invhist_itemsite_id, NOW(), 'IM', "
-                         "       :orderitemid, invhist_ordnumber, invdetail_ls_id, (invdetail_qty * -1.0) "
-                         "FROM invhist JOIN invdetail ON (invdetail_invhist_id=invhist_id) "
-                         "WHERE (invhist_series=:itemlocseries)"
-                         "  AND (COALESCE(invdetail_ls_id, -1) > 0);");
-        lsdetail.bindValue(":orderitemid", items.value("womatl_id").toInt());
-        lsdetail.bindValue(":itemlocseries", issue.value("result").toInt());
-        lsdetail.exec();
-        if (lsdetail.lastError().type() != QSqlError::NoError)
-        {
-          rollback.exec();
-          cleanup.exec();
-          failedItems.append(items.value("item_number").toString());
-          errors.append(tr("Error Issuing Material. %1").arg(lsdetail.lastError().text()));
-          continue;
-        }
-      }
-
       succeeded++;
       issue.exec("COMMIT;");      
     }
