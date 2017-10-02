@@ -909,6 +909,9 @@ const struct {
   { "freezeAccountingPeriod", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot freeze this Accounting Period "
 				     "because it is already frozen."), 0, "" },
 
+  { "getLotSerialIds", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "pOrdHeadId OR pOrdItemId param is required "
+             "when passing pOrdType."), 0, "" },
+
   { "insertGLTransaction", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "G/L Transaction can not be posted because "
              "the debit and credit accounts reference two different companies."), 0, "" },
   { "insertGLTransaction", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post a G/L transaction to a "
