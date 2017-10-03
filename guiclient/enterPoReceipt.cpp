@@ -689,16 +689,15 @@ void enterPoReceipt::sPost()
 
     dlg.exec();
   }
-
-  // TODO: update this to sReceiptsUpdated?
-  omfgThis->sPurchaseOrderReceiptsUpdated();
+  else
+    omfgThis->sPurchaseOrderReceiptsUpdated(); // TODO: update this to sReceiptsUpdated?
 
   if (_captive)
   {
     _orderitem->clear();
     close();
   }
-  else
+  else if (errors.size() == 0) // Don't clear the Order field just because there were errors
   {
     _order->setId(-1);
     _close->setText(tr("&Close"));
