@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -50,14 +50,19 @@ dspTrialBalances::dspTrialBalances(QWidget* parent, const char*, Qt::WindowFlags
 
   // Determine current period
   int periodid = -1;
+  int yearperiodid = -1;
   XSqlQuery qry;
-  qry.exec("SELECT period_id "
+  qry.exec("SELECT period_id, period_yearperiod_id "
            "FROM period "
            "WHERE (current_date BETWEEN period_start AND period_end);");
   if (qry.first())
+  {
     periodid = qry.value("period_id").toInt();
+    yearperiodid = qry.value("period_yearperiod_id").toInt();
+  }
 
   parameterWidget()->appendComboBox(tr("Period"), "period_id", XComboBox::AccountingPeriods, QVariant(periodid));
+  parameterWidget()->appendComboBox(tr("Fiscal Year"), "yearperiod_id", XComboBox::FiscalYears, QVariant(yearperiodid));
   if (_metrics->value("GLCompanySize").toInt() > 0)
     parameterWidget()->appendComboBox(tr("Company"), "company_id", XComboBox::Companies);
   parameterWidget()->append(tr("GL Account"), "accnt_id",  ParameterWidget::GLAccount);
