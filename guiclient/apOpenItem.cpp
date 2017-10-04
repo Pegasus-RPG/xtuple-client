@@ -54,7 +54,6 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::Window
 
   _journalNumber->setEnabled(false);
 
-  _accntId->setType(GLCluster::cRevenue | GLCluster::cExpense);
   sToggleAccount();
 }
 
