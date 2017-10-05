@@ -614,7 +614,12 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
 
   param = pParams.value("cust_id", &valid);
   if (valid)
+  {
     _cust->setId(param.toInt());
+    param = pParams.value("shipto_id", &valid);
+    if (valid)
+      _shipTo->setId(param.toInt());
+  }
 
   param = pParams.value("ophead_id", &valid);
   if (valid)
