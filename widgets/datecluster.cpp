@@ -206,6 +206,17 @@ void XDateEdit::parseDate()
              qPrintable(dateFormatStr));
 
     QDate tmp = QDate::fromString(dateString, dateFormatStr);
+
+    if (tmp.month() < 10 && dateFormatStr.indexOf(QRegExp("M{2}")) >= 0) // handle partial entered months
+    {
+      dateFormatStr.replace(QRegExp("M{2}"), "M");
+      if (DEBUG)
+        qDebug("%s::parseDate() rewriting 2-digit month format string to %s",
+               qPrintable(parent() ? parent()->objectName() : objectName()),
+               qPrintable(dateFormatStr));
+      tmp = QDate::fromString(dateString, dateFormatStr);
+    }
+
     bool twodigitformat = !(dateFormatStr.indexOf(QRegExp("y{4}")) >= 0);
     if (tmp.isValid())
     {
