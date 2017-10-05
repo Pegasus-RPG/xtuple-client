@@ -163,6 +163,10 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_number,                SIGNAL(editingFinished()),               this,         SLOT(sNumberEdited()));
   connect(_number,                SIGNAL(editable(bool)),                  this,         SLOT(sNumberEditable(bool)));
   connect(_number,                SIGNAL(editingFinished()),               this,         SLOT(sCheckRequired()));
+  connect(_accountSelected,       SIGNAL(toggled(bool)),                   this,         SLOT(sHandleDistButtons()));
+  connect(_expcatSelected,        SIGNAL(toggled(bool)),                   this,         SLOT(sHandleDistButtons()));
+  connect(_taxSelected,           SIGNAL(toggled(bool)),                   this,         SLOT(sHandleDistButtons()));
+
 
   connect(_address, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _contact2, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
@@ -538,7 +542,8 @@ bool vendor::sSave()
           "       vend_ach_indiv_name = <? value('vend_ach_indiv_name') ?>,"
           "       vend_accnt_id = <? value('vend_accnt_id') ?>,"
           "       vend_expcat_id = <? value('vend_expcat_id') ?>,"
-          "       vend_tax_id = <? value('vend_tax_id') ?> "
+          "       vend_tax_id = <? value('vend_tax_id') ?>, "
+          "       vend_taxtype_id = <? value('vend_taxtype_id') ?> "
           " WHERE vend_id = <? value('vend_id') ?>;" ;
   }
   else if (_mode == cNew)
@@ -556,7 +561,7 @@ bool vendor::sSave()
           "  vend_ach_use_vendinfo,"
           "  vend_ach_accnttype, vend_ach_indiv_number,"
           "  vend_ach_indiv_name,"
-          "  vend_accnt_id, vend_expcat_id, vend_tax_id) "
+          "  vend_accnt_id, vend_expcat_id, vend_tax_id, vend_taxtype_id) "
           "VALUES "
           "( <? value('vend_id') ?>,"
           "  <? value('vend_number') ?>,"
@@ -597,7 +602,8 @@ bool vendor::sSave()
           "  <? value('vend_ach_indiv_name') ?>,"
           "  <? value('vend_accnt_id') ?>,"
           "  <? value('vend_expcat_id') ?>,"
-          "  <? value('vend_tax_id') ?> "
+          "  <? value('vend_tax_id') ?>, "
+          "  <? value('vend_taxtype_id') ?> "
           "   );"  ;
 
   ParameterList params;
@@ -661,24 +667,28 @@ bool vendor::sSave()
     params.append("vend_accnt_id", _account->id());
     params.append("vend_expcat_id", -1);
     params.append("vend_tax_id", -1);
+    params.append("vend_taxtype_id", _taxType->id());
   }
   else if (_expcatSelected->isChecked() && _expcat->isValid())
   {
     params.append("vend_accnt_id", -1);
     params.append("vend_expcat_id", _expcat->id());
     params.append("vend_tax_id", -1);
+    params.append("vend_taxtype_id", _taxType->id());
   }
   else if (_taxSelected->isChecked() && _taxCode->isValid())
   {
     params.append("vend_accnt_id", -1);
     params.append("vend_expcat_id", -1);
     params.append("vend_tax_id", _taxCode->id());
+    params.append("vend_taxtype_id", -1);
   }
   else
   {
     params.append("vend_accnt_id", -1);
     params.append("vend_expcat_id", -1);
     params.append("vend_tax_id", -1);
+    params.append("vend_taxtype_id", -1);
   }
 
   MetaSQLQuery mql(sql);
@@ -1001,6 +1011,7 @@ bool vendor::sPopulate()
     _accountType->setCode(vendorPopulate.value("vend_ach_accnttype").toString());
 
     _account->setId(vendorPopulate.value("vend_accnt_id").toInt());
+    _taxType->setId(vendorPopulate.value("vend_taxtype_id").toInt());
     if(vendorPopulate.value("vend_expcat_id").toInt() != -1)
     {
       _expcatSelected->setChecked(true);
@@ -1528,6 +1539,11 @@ void vendor::sHandleButtons()
     _transmitStack->setCurrentWidget(_eftPage);
   else
     _transmitStack->setCurrentWidget(_emptyPage);
+}
+
+void vendor::sHandleDistButtons()
+{
+  _taxType->setEnabled(_accountSelected->isChecked() || _expcatSelected->isChecked());
 }
 
 void vendor::sNumberEdited()

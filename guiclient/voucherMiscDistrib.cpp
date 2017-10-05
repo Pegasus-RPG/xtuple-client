@@ -315,7 +315,8 @@ void voucherMiscDistrib::sPopulateVendorInfo(int pVendid)
   XSqlQuery populateVoucher;
   populateVoucher.prepare("SELECT COALESCE(vend_accnt_id, -1) AS vend_accnt_id,"
                           "       COALESCE(vend_expcat_id, -1) AS vend_expcat_id,"
-                          "       COALESCE(vend_tax_id, -1) AS vend_tax_id "
+                          "       COALESCE(vend_tax_id, -1) AS vend_tax_id, "
+                          "       COALESCE(vend_taxtype_id, -1) AS vend_taxtype_id "
                           "FROM vendinfo "
                           "WHERE (vend_id=:vend_id);" );
   populateVoucher.bindValue(":vend_id", pVendid);
@@ -340,6 +341,8 @@ void voucherMiscDistrib::sPopulateVendorInfo(int pVendid)
       _taxCode->setId(populateVoucher.value("vend_tax_id").toInt());
       _amount->setFocus();
     }
+    _taxType->setId(populateVoucher.value("vend_taxtype_id").toInt());
+   
   }
 }
 
