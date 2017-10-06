@@ -313,7 +313,7 @@ SetResponse vendor::set(const ParameterList &pParams)
     _captive=true;
   }
   
-  if(_metrics->value("CRMAccountNumberGeneration") == "A")
+  if(_mode == cNew && _metrics->value("CRMAccountNumberGeneration") == "A")
     _number->setEnabled(false);
 
   if(cNew == _mode || !pParams.inList("showNextPrev"))
@@ -1436,10 +1436,9 @@ void vendor::sPrepare()
   connect(_number, SIGNAL(editable(bool)), this, SLOT(sNumberEditable(bool)));
   
   // Handle Auto numbering
-  if(((_x_metrics &&
-       _x_metrics->value("CRMAccountNumberGeneration") == "A") ||
-      (_x_metrics->value("CRMAccountNumberGeneration") == "O"))
-     && _number->number().isEmpty() )
+  if(((_metrics->value("CRMAccountNumberGeneration") == "A") ||
+      (_metrics->value("CRMAccountNumberGeneration") == "O"))
+     && _number->number().trimmed().isEmpty() )
   {
     XSqlQuery num;
     num.exec("SELECT fetchCRMAccountNumber() AS number;");
