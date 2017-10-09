@@ -106,6 +106,7 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _invcitem->addColumn(tr("Margin %"),      _prcntColumn,    Qt::AlignRight,  false, "marginpercent");
 
   _charass->setType("INV");
+  _comments->setType(Comments::Invoice);
   
   _custCurrency->setLabel(_custCurrencyLit);
 
@@ -160,6 +161,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
         _recurring->setParent(_invcheadid, "I");
         _documents->setId(_invcheadid);
         _charass->setId(_invcheadid);
+        _comments->setId(_invcheadid);
       }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Invoice Information"),
                                     invoiceet, __FILE__, __LINE__))
@@ -227,6 +229,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       {
         _invcheadid = param.toInt();
         _charass->setId(_invcheadid);
+        _comments->setId(_invcheadid);
       }
 
       setObjectName(QString("invoice edit %1").arg(_invcheadid));
@@ -295,6 +298,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
     _invcheadid = param.toInt();
     _documents->setId(_invcheadid);
     _charass->setId(_invcheadid);
+    _comments->setId(_invcheadid);
     populate();
     populateCMInfo();
     populateCCInfo();

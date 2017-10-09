@@ -61,6 +61,7 @@ invoiceItem::invoiceItem(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _itemcharView->setItemDelegate(delegate);
 
   _invcharView->setType("INVI");
+  _comments->setType(Comments::InvoiceItem);
 
   _taxtype->setEnabled(_privileges->check("OverrideTax"));
   
@@ -140,6 +141,7 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
   {
     _invcitemid = param.toInt();
     _invcharView->setId(_invcitemid);
+    _comments->setId(_invcitemid);
     populate();
   }
 
@@ -155,6 +157,7 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       {
         _invcitemid = invoiceet.value("invcitem_id").toInt();
         _invcharView->setId(_invcitemid);
+        _comments->setId(_invcitemid);
       }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Adding New Line Item"),
                                     invoiceet, __FILE__, __LINE__))
@@ -205,6 +208,7 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       _pricingUOM->setEnabled(false);
       _itemcharView->setEnabled(false);
       _invcharView->setEnabled(false);
+      _comments->setReadOnly(true);
 
       _save->hide();
       _close->setText(tr("&Cancel"));
