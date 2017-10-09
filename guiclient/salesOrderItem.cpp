@@ -1796,11 +1796,25 @@ void salesOrderItem::sListPrices()
     else  // markup or list cost
       _priceMode = "M";
 
-    _baseUnitPrice->setLocalValue(price);
-    _customerPrice->setLocalValue(price);
+    double charTotal = 0;
 
-    _netUnitPrice->setLocalValue(price);
+    if (_item->isConfigured())
+    {
+      QModelIndex idx;
+
+      for (int i = 0; i < _itemchar->rowCount(); i++)
+      {
+        idx        = _itemchar->index(i, CHAR_PRICE);
+        charTotal += _itemchar->data(idx, Qt::DisplayRole).toDouble();
+      }
+    }
+
+    _baseUnitPrice->setLocalValue(price);
+    _customerPrice->setLocalValue(price + charTotal);
+
+    _netUnitPrice->setLocalValue(price + charTotal);
     _listPrice->setBaseValue(newdlg._selectedBasis * (_priceinvuomratio / _priceRatio));
+    _listPrice->setLocalValue(_listPrice->localValue() + charTotal);
 
     sCalculateDiscountPrcnt();
     _qtyOrderedCache = _qtyOrdered->toDouble();
@@ -2053,6 +2067,7 @@ void salesOrderItem::sPopulatePrices(bool update, bool allPrices, double charTot
         {
           _netUnitPrice->setLocalValue(price + charTotal);
           _listPrice->setBaseValue(itemprice.value("itemprice_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
+          _listPrice->setLocalValue(_listPrice->localValue() + charTotal);
         }
 
         sCalculateDiscountPrcnt();
