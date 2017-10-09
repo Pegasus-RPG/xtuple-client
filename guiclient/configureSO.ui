@@ -1113,10 +1113,10 @@ to be bound by its terms.</comment>
                   <item row="8" column="0">
                    <widget class="QLabel" name="_defaultStartDaysLit">
                     <property name="toolTip">
-                     <string>The default number of days prior for the Order History start date</string>
+                     <string>The default number of days prior for the Order History Start Date (Customer Workbench)</string>
                     </property>
                     <property name="text">
-                     <string>Orders Start Date:</string>
+                     <string>List SOs Start Date:</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1128,7 +1128,7 @@ to be bound by its terms.</comment>
                     <item>
                      <widget class="XSpinBox" name="_defaultStartDays">
                       <property name="toolTip">
-                       <string>The default number of days prior for the Order History start date</string>
+                       <string>The default number of days prior for the Order History Start Date (Customer Workbench)</string>
                       </property>
                       <property name="minimum">
                        <number>-999</number>
