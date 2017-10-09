@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -61,6 +61,8 @@ class docAttachPrivate {
       map.insert(Documents::Opportunity,       new StackDescriptor(p->_oppPage,     p->_opp));
       map.insert(Documents::Project,           new StackDescriptor(p->_projPage,    p->_proj));
       map.insert(Documents::PurchaseOrder,     new StackDescriptor(p->_poPage,      p->_po));
+      map.insert(Documents::Quote,             new StackDescriptor(p->_quPage,      p->_qu));
+      map.insert(Documents::ReturnAuth,        new StackDescriptor(p->_raPage,      p->_ra));
       map.insert(Documents::SalesOrder,        new StackDescriptor(p->_soPage,      p->_so));
       map.insert(Documents::Vendor,            new StackDescriptor(p->_vendPage,    p->_vend));
       map.insert(Documents::Uninitialized,     new StackDescriptor(p->_urlPage,     p->_url));
@@ -150,6 +152,7 @@ docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WindowFl
 
   _po->setAllowedTypes(OrderLineEdit::Purchase);
   _so->setAllowedTypes(OrderLineEdit::Sales);
+  _ra->setAllowedTypes(OrderLineEdit::Return);
 
   _docType->populate("SELECT * FROM"
                      "(SELECT source_docass_num, source_descrip, source_name"
