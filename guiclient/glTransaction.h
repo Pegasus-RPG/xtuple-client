@@ -30,6 +30,7 @@ public slots:
     virtual void sPost();
     virtual void clear();
     virtual void populate();
+    virtual void setupDocuments();
 
 protected slots:
     virtual void languageChange();
@@ -38,6 +39,7 @@ private:
     int _mode;
     int _glsequence;
     bool _captive;
+    int _placeholder;
 
 };
 

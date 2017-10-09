@@ -65,6 +65,7 @@ glSeries::glSeries(QWidget* parent, const char* name, bool modal, Qt::WindowFlag
   _doctype->addItem("VO");
   _doctype->addItem("WO");
   _doctype->setCurrentIndex(_doctype->findText("JE"));
+  _documents->setType("JE");
 
   _submit = false;
   _journal = 0;
@@ -97,6 +98,7 @@ enum SetResponse glSeries::set(const ParameterList &pParams)
   if (valid)
   {
     _glsequence = param.toInt();
+    _documents->setId(_glsequence);
     glet.prepare("SELECT DISTINCT glseries_distdate, glseries_source,"
 	      "                glseries_doctype,  glseries_docnumber,"
 	      "                glseries_notes"
@@ -142,7 +144,10 @@ enum SetResponse glSeries::set(const ParameterList &pParams)
 
       glet.exec("SELECT fetchGLSequence() AS glsequence;");
       if (glet.first())
+      {
         _glsequence = glet.value("glsequence").toInt();
+        _documents->setId(_glsequence);
+      }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving G/L Series Information"),
                                     glet, __FILE__, __LINE__))
       {

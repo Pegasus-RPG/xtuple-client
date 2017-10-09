@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -67,6 +67,7 @@ void glTransactionDetail::populate()
   XSqlQuery glpopulate;
   QString sql("SELECT <? literal(\"table\") ?>_date AS transdate, "
             "<? literal(\"table\") ?>_source AS source, "
+            "<? literal(\"table\") ?>_sequence AS sequence, "
             "<? literal(\"table\") ?>_journalnumber AS journalnumber, "
             "<? literal(\"table\") ?>_amount AS amount, "
             "<? literal(\"table\") ?>_username AS username, "
@@ -95,5 +96,7 @@ void glTransactionDetail::populate()
     _created->setDate(glpopulate.value("created").toDate());
     _posted->setText(glpopulate.value("posted").toBool() ? tr("Yes") : tr("No"));
     _notes->setText(glpopulate.value("notes").toString());
+    _documents->setType("JE");
+    _documents->setId(glpopulate.value("sequence").toInt());
   }
 }
