@@ -1659,7 +1659,7 @@ QString translationFile(QString localestr, const QString component, QString &ver
                "  LEFT OUTER JOIN country ON dict_country_id=country_id "
                " WHERE nspname=:extension "
                "   AND lang_abbr2=:lang "
-               "   AND (country_abbr=:country OR :country IS NULL) "
+               "   AND COALESCE(country_abbr, '')=COALESCE(:country, '') "
                "   AND dict_version=:version;");
   data.bindValue(":extension", component=="xTuple" ? "public" : component);
   data.bindValue(":lang", localestr.split("_")[0]);

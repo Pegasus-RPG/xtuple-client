@@ -272,7 +272,7 @@ int main(int argc, char *argv[])
                   "  FROM usr"
                   "  JOIN locale  ON usr_locale_id     = locale_id"
                   "  JOIN lang    ON locale_lang_id    = lang_id"
-                  "  JOIN country ON locale_country_id = country_id"
+                  "  LEFT OUTER JOIN country ON locale_country_id = country_id"
                   " WHERE usr_username = getEffectiveXtUser();");
   if (langq.first())
   {
