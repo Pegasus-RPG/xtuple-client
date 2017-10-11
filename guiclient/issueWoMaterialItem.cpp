@@ -165,7 +165,7 @@ void issueWoMaterialItem::sIssue()
     return;
   }
   
-  issueIssue.prepare("SELECT womatl_wo_id, itemsite_id, item_number, warehous_code, "
+  issueIssue.prepare("SELECT womatl_wo_id, womatl_id, itemsite_id, item_number, warehous_code, "
             "       (COALESCE((SELECT SUM(itemloc_qty) "
             "                    FROM itemloc "
             "                   WHERE (itemloc_itemsite_id=itemsite_id)), 0.0) >= roundQty(item_fractional, itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, :qty))) AS isqtyavail, "
@@ -203,7 +203,7 @@ void issueWoMaterialItem::sIssue()
                               " :orderitemId, :itemlocSeries, NULL, NULL, 'IM');");
     parentItemlocdist.bindValue(":itemsite_id", issueIssue.value("itemsite_id").toInt());
     parentItemlocdist.bindValue(":qty", issueIssue.value("post_qty").toDouble());
-    parentItemlocdist.bindValue(":orderitemId", issueIssue.value("womatl_wo_id").toInt());
+    parentItemlocdist.bindValue(":orderitemId", issueIssue.value("womatl_id").toInt());
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
     parentItemlocdist.exec();
     if (parentItemlocdist.first())

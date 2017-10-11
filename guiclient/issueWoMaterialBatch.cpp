@@ -210,7 +210,7 @@ void issueWoMaterialBatch::sIssue()
                                 " :orderitemId, :itemlocSeries, NULL, NULL, 'IM');");
       parentItemlocdist.bindValue(":itemsite_id", items.value("itemsite_id").toInt());
       parentItemlocdist.bindValue(":qty", items.value("post_qty").toDouble());
-      parentItemlocdist.bindValue(":orderitemId", items.value("womatl_wo_id").toInt());
+      parentItemlocdist.bindValue(":orderitemId", items.value("womatl_id").toInt());
       parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
       parentItemlocdist.exec();
       if (parentItemlocdist.first())
