@@ -24,6 +24,7 @@
 #include "explodeWo.h"
 #include "implodeWo.h"
 #include "issueWoMaterialItem.h"
+#include "returnWoMaterialItem.h"
 #include "postProduction.h"
 #include "printWoTraveler.h"
 #include "reprioritizeWo.h"
@@ -489,6 +490,9 @@ void dspWoSchedule::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *pSelected, int
       menuItem->setEnabled(_privileges->check("IssueWoMaterials"));
     }
 
+    menuItem = pMenu->addAction(tr("Return Material Item..."), this, SLOT(sReturnWoMaterialItem()));
+    menuItem->setEnabled(_privileges->check("ReturnWoMaterials"));
+    
     menuItem = pMenu->addAction(tr("Post Production..."), this, SLOT(sPostProduction()));
     menuItem->setEnabled(_privileges->check("PostProduction"));
 
@@ -534,6 +538,15 @@ void dspWoSchedule::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *pSelected, int
 void dspWoSchedule::sIssueWoMaterialItem()
 {
   issueWoMaterialItem newdlg(this);
+  ParameterList params;
+  params.append("wo_id", list()->id());
+  if (newdlg.set(params) == NoError)
+    newdlg.exec();
+}
+
+void dspWoSchedule::sReturnWoMaterialItem()
+{
+  returnWoMaterialItem newdlg(this);
   ParameterList params;
   params.append("wo_id", list()->id());
   if (newdlg.set(params) == NoError)
