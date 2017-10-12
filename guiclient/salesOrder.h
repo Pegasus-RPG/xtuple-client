@@ -13,12 +13,12 @@
 
 #include "applock.h"
 #include "guiclient.h"
-#include "xwidget.h"
+#include "xdocumentwindow.h"
 #include <parameter.h>
 #include "ui_salesOrder.h"
 #include "dspShipmentsBySalesOrder.h"
 
-class salesOrder : public XWidget, public Ui::salesOrder
+class salesOrder : public XDocumentWindow, public Ui::salesOrder
 {
   Q_OBJECT
 
