@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -232,7 +232,7 @@ menuSales::menuSales(GUIClient *pParent) :
     // Sales | Lookup | Sales Order Lookup
     { "menu",	tr("&Sales Order"),           (char*)lookupSoMenu,	lookupMenu,	"true",	NULL, NULL, true, NULL },
     { "so.listSalesOrders",      tr("&Search Orders..."),	SLOT(sSalesOrders()), lookupSoMenu, "MaintainSalesOrders ViewSalesOrders", NULL, NULL, true, NULL },
-    { "so.dspSalesOrderLookupByItem", tr("by &Item..."),	SLOT(sDspOrderLookupByItem()), lookupSoMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },
+    { "so.dspSalesOrderLookupByItem", tr("by &Item..."),	SLOT(sDspOrderLookupByItem()), lookupSoMenu, "MaintainSalesOrders ViewSalesOrders",	NULL, NULL, true, NULL },
     
     // Sales | Lookup | Return Auth. Lookup
     { "menu",	tr("&Return Auth."),           (char*)lookupRaMenu,	lookupMenu,	"true",	NULL, NULL, _metrics->boolean("EnableReturnAuth"), NULL },
@@ -240,7 +240,7 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.dspReturnAuthLookupByItem", tr("by &Item..."),	SLOT(sDspReturnAuthLookupByItem()), lookupRaMenu, "ViewReturns",	NULL, NULL, true, NULL },
     
     { "separator",	NULL,	NULL,	lookupMenu,	"true",		NULL, NULL, true, NULL },
-    { "so.dspSalesOrderStatus", tr("Sales Order S&tatus..."),	SLOT(sDspSalesOrderStatus()), lookupMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },   
+    { "so.dspSalesOrderStatus", tr("Sales Order S&tatus..."),	SLOT(sDspSalesOrderStatus()), lookupMenu, "MaintainSalesOrders ViewSalesOrders",	NULL, NULL, true, NULL },   
   
     // Sales | Forms
     { "menu",	tr("&Forms"),           (char*)formsMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
