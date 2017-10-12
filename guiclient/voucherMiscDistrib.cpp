@@ -323,19 +323,19 @@ void voucherMiscDistrib::sPopulateVendorInfo(int pVendid)
   populateVoucher.exec();
   if (populateVoucher.first())
   {
-    if(populateVoucher.value("vend_accnt_id").toInt() != -1)
+    if(populateVoucher.value("vend_accnt_id").toInt() > 0)
     {
       _accountSelected->setChecked(true);
       _account->setId(populateVoucher.value("vend_accnt_id").toInt());
       _amount->setFocus();
     }
-    if(populateVoucher.value("vend_expcat_id").toInt() != -1)
+    if(populateVoucher.value("vend_expcat_id").toInt() > 0)
     {
       _expcatSelected->setChecked(true);
       _expcat->setId(populateVoucher.value("vend_expcat_id").toInt());
       _amount->setFocus();
     }
-    if(populateVoucher.value("vend_tax_id").toInt() != -1)
+    if(populateVoucher.value("vend_tax_id").toInt() > 0)
     {
       _taxSelected->setChecked(true);
       _taxCode->setId(populateVoucher.value("vend_tax_id").toInt());

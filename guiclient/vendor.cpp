@@ -665,31 +665,17 @@ bool vendor::sSave()
   if(_accountSelected->isChecked() && _account->isValid())
   {
     params.append("vend_accnt_id", _account->id());
-    params.append("vend_expcat_id", -1);
-    params.append("vend_tax_id", -1);
-    params.append("vend_taxtype_id", _taxType->id());
+    if (_taxType->isValid())
+      params.append("vend_taxtype_id", _taxType->id());
   }
   else if (_expcatSelected->isChecked() && _expcat->isValid())
   {
-    params.append("vend_accnt_id", -1);
     params.append("vend_expcat_id", _expcat->id());
-    params.append("vend_tax_id", -1);
-    params.append("vend_taxtype_id", _taxType->id());
+    if (_taxType->isValid())
+      params.append("vend_taxtype_id", _taxType->id());
   }
   else if (_taxSelected->isChecked() && _taxCode->isValid())
-  {
-    params.append("vend_accnt_id", -1);
-    params.append("vend_expcat_id", -1);
     params.append("vend_tax_id", _taxCode->id());
-    params.append("vend_taxtype_id", -1);
-  }
-  else
-  {
-    params.append("vend_accnt_id", -1);
-    params.append("vend_expcat_id", -1);
-    params.append("vend_tax_id", -1);
-    params.append("vend_taxtype_id", -1);
-  }
 
   MetaSQLQuery mql(sql);
   XSqlQuery upsq = mql.toQuery(params);
@@ -1012,12 +998,12 @@ bool vendor::sPopulate()
 
     _account->setId(vendorPopulate.value("vend_accnt_id").toInt());
     _taxType->setId(vendorPopulate.value("vend_taxtype_id").toInt());
-    if(vendorPopulate.value("vend_expcat_id").toInt() != -1)
+    if(vendorPopulate.value("vend_expcat_id").toInt() > 0)
     {
       _expcatSelected->setChecked(true);
       _expcat->setId(vendorPopulate.value("vend_expcat_id").toInt());
     }
-    if(vendorPopulate.value("vend_tax_id").toInt() != -1)
+    if(vendorPopulate.value("vend_tax_id").toInt() > 0)
     {
       _taxSelected->setChecked(true);
       _taxCode->setId(vendorPopulate.value("vend_tax_id").toInt());
