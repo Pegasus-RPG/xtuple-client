@@ -220,6 +220,19 @@ int main(int argc, char *argv[])
 
   _evaluation = false;
 
+  QTranslator *translator = new QTranslator(&app);
+
+  QStringList lang;
+  QLocale sysl = QLocale::system();
+  qDebug()<<sysl.name().toLower();
+  if (sysl.language() != QLocale::C && sysl.language() != QLocale::English)
+  {
+    lang.append(sysl.name().toLower());
+
+    if (translator->load(translationFile(lang.first(), "xTuple")))
+      app.installTranslator(translator);
+  }
+
   if (!loggedIn)
   {
     ParameterList params;
@@ -265,8 +278,6 @@ int main(int argc, char *argv[])
 //{
   _splash->showMessage(QObject::tr("Loading Translations"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
-  QLocale      sysl = QLocale::system();
-  QStringList  lang;
   XSqlQuery langq("SELECT lang_abbr2,   lang_qt_number,"
                   "       country_abbr, country_qt_number"
                   "  FROM usr"
@@ -280,9 +291,9 @@ int main(int argc, char *argv[])
     QString countryAbbr = langq.value("country_abbr").toString().toUpper();
 
     if (! langAbbr.isEmpty() && ! countryAbbr.isEmpty())
-      lang << langAbbr + "_" + countryAbbr.toLower();
+      lang.prepend(langAbbr + "_" + countryAbbr.toLower());
     else if (! langAbbr.isEmpty())
-      lang << langAbbr;
+      lang.prepend(langAbbr);
 
     /* set the locale to langabbr_countryabbr, langabbr, {lang# country#}, or
        lang#, depending on what information is available
@@ -300,19 +311,17 @@ int main(int argc, char *argv[])
           QLocale(QLocale::Language(langq.value("lang_qt_number").toInt()),
                   QLocale::Country(langq.value("country_qt_number").toInt())));
     else
-      QLocale::setDefault(QLocale::system());
+      QLocale::setDefault(sysl);
 
     qDebug() << "Locale set to language" << QLocale();
   }
   ErrorReporter::error(QtCriticalMsg, 0, QObject::tr("Error Getting Locale"),
                        langq, __FILE__, __LINE__);
 
-  if (sysl.language() != QLocale::C && sysl.language() != QLocale::English)
-    lang << sysl.name().toLower();
   (void)lang.removeDuplicates();
 
   QList<QPair<QString, QString> > transfile;
-  transfile << qMakePair(QString("qt"), _Version) << qMakePair(QString("default"), _Version) << qMakePair(QString("xTuple"), _Version) << qMakePair(QString("openrpt"), QString()) << qMakePair(QString("reports"), QString());
+  transfile << qMakePair(QString("xTuple"), QString()) << qMakePair(QString("openrpt"), QString()) << qMakePair(QString("reports"), QString());
   XSqlQuery pkglist("SELECT pkghead_name, pkghead_version "
                     "  FROM pkghead"
                     " WHERE packageIsEnabled(pkghead_name);");
@@ -321,8 +330,7 @@ int main(int argc, char *argv[])
   ErrorReporter::error(QtCriticalMsg, 0, QObject::tr("Error Getting Extension Names"),
                        pkglist, __FILE__, __LINE__);
 
-  bool foundxTuple = false;
-  QTranslator *translator = new QTranslator(&app);
+  translator = new QTranslator(&app);
   QPair<QString, QString> f;
   foreach (f, transfile)
   {
@@ -333,8 +341,6 @@ int main(int argc, char *argv[])
         app.installTranslator(translator);
         qDebug() << "installed" << l << f.first;
         translator = new QTranslator(&app);
-        if (f.first == "xTuple")
-          foundxTuple = true;
         break;
       }
     }
