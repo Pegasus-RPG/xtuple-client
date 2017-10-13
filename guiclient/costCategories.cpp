@@ -183,7 +183,7 @@ void costCategories::sListItemSites()
   params.append("run");
   params.append("costcat_id", _costcat->id());
 
-  itemSites *newdlg = new itemSites();
+  itemSites *newdlg = new itemSites(window());
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
