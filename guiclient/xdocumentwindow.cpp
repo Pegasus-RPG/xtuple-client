@@ -19,7 +19,6 @@ public:
     setupUi(_parent);
   }
 
-private:
   ::XDocumentWindow * _parent;
 };
 
