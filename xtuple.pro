@@ -45,3 +45,23 @@ TRANSLATIONS = share/dict/xTuple.ar_eg.ts \
                share/dict/xTuple.zh_hk.ts \
                share/dict/xTuple.zh.ts \
                share/dict/xTuple.zh_tw.ts
+
+INSTALLS = certificates dictionaries translations
+
+DESTDIR=bin
+
+macx {
+  EXTRASDIR=$$absolute_path($${DESTDIR})/xtuple.app/Contents/Resources
+} else {
+  EXTRASDIR=$$absolute_path($${DESTDIR})
+}
+
+certificates.path = $$absolute_path($${EXTRASDIR})/certificates
+certificates.files = share/certificates/*
+
+dictionaries.path = $$absolute_path($${EXTRASDIR})/hunspell
+dictionaries.files = hunspell/*.aff hunspell/*.dic
+
+translations.path = $$absolute_path($${EXTRASDIR})/dict
+translations.files = $$replace(TRANSLATIONS, ts, qm)
+translations.extra = cd share/dict && $$dirname(QMAKE_QMAKE)/lrelease xTuple*.ts

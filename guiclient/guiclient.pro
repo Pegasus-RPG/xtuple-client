@@ -26,8 +26,6 @@ INCLUDEPATH += ../scriptapi \
 
 DEPENDPATH  += $${INCLUDEPATH}
 
-INSTALLS = certificates dictionaries translations
-
 win32-msvc* {
   PRE_TARGETDEPS += ../lib/xtuplecommon.$${XTLIBEXT}    \
                     ../lib/xtuplescriptapi.lib          \
@@ -1898,18 +1896,3 @@ include( displays/displays.pri )
 include( hunspell.pri )
 
 RESOURCES += guiclient.qrc $${OPENRPT_IMAGE_DIR}/OpenRPTMetaSQL.qrc
-
-macx {
-  EXTRASDIR=$$absolute_path($${DESTDIR})/xtuple.app/Contents/Resources
-} else {
-  EXTRASDIR=$$absolute_path($${DESTDIR})
-}
-
-certificates.path = $$absolute_path($${EXTRASDIR})/certificates
-certificates.files = ../share/certificates/*
-dictionaries.path = $$absolute_path($${EXTRASDIR})/hunspell
-dictionaries.files = ../hunspell/*.aff ../hunspell/*.dic
-
-translations.path = $$absolute_path($${EXTRASDIR})/dict
-translations.files = $$replace(TRANSLATIONS, ts, qm)
-translations.extra = cd ../share/dict && $$dirname(QMAKE_QMAKE)/lrelease xTuple*.ts
