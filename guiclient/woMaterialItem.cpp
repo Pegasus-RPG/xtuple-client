@@ -255,6 +255,32 @@ void woMaterialItem::sSave()
 
     int itemsiteid = woSave.value("itemsiteid").toInt();
 
+    woSave.prepare("SELECT itemsite_item_id, "
+                   "       CASE WHEN wo_ordtype='W' THEN wo_ordid ELSE -1 END AS id "
+                   "  FROM wo "
+                   "  JOIN itemsite ON wo_itemsite_id=itemsite_id "
+                   " WHERE wo_id=:wo_id;");
+    woSave.bindValue(":wo_id", _wo->id());
+    woSave.exec();
+    while (woSave.first())
+    {
+      if (woSave.value("itemsite_item_id").toInt()==_item->id())
+      {
+        QMessageBox::warning(this, tr("Cannot Create W/O Material Requirement"),
+                             tr("Cannot add an Item as a Material to itself."));
+        _item->setId(-1);
+        _item->setFocus();
+        return;
+      }
+
+      woSave.bindValue(":wo_id", woSave.value("id").toInt());
+      woSave.exec();
+    }
+
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Checking Parents"),
+                                  woSave, __FILE__, __LINE__))
+      return;
+
     woSave.prepare("SELECT createWoMaterial(:wo_id, :itemsite_id, :issueMethod,"
                    "                        :uom_id, :qtyFxd, :qtyPer,"
                    "                        :scrap, :bomitem_id, :notes,"
