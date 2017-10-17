@@ -44,8 +44,3 @@ QWidget* XDocumentWindow::widget()
 {
   return _data->_widget;
 }
-
-void XDocumentWindow::closeDocument()
-{
-  close();
-}

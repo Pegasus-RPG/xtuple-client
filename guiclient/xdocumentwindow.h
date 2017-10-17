@@ -25,9 +25,6 @@ class XDocumentWindow : public XWidget
 
     Q_INVOKABLE QWidget * widget();
 
-  public slots:
-    void closeDocument();
-
   private:
     XDocumentWindowPrivate * _data;
 };
