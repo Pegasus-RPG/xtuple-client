@@ -829,6 +829,7 @@ HEADERS = ../common/format.h                    \
           dspFinancialReport.h                  \
           dspInvoiceInformation.h               \
           dspMRPDetail.h                        \
+          dspProcesses.h                        \
           dspTax1099.h                          \
           dspTaxHistory.h                       \
           dspTaxReturn.h                        \
@@ -1448,6 +1449,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspFinancialReport.cpp                \
           dspInvoiceInformation.cpp             \
           dspMRPDetail.cpp                      \
+          dspProcesses.cpp                      \
           dspTax1099.cpp                        \
           dspTaxHistory.cpp                     \
           dspTaxReturn.cpp                      \

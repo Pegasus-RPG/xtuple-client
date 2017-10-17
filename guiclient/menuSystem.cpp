@@ -61,6 +61,7 @@
 
 #include "fixACL.h"
 #include "fixSerial.h"
+#include "dspProcesses.h"
 #include "exportData.h"
 #include "importData.h"
 
@@ -136,6 +137,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "menu",              tr("&Utilities"),(char*)sysUtilsMenu, systemMenu,    "true",                            NULL, NULL, true },
     { "sys.fixACL",        tr("&Access Control"),  SLOT(sFixACL()),     sysUtilsMenu,  "fixACL+#superuser",           NULL, NULL, true },
     { "sys.fixSerial",     tr("&Serial Columns"),  SLOT(sFixSerial()),  sysUtilsMenu,  "FixSerial+#superuser", NULL, NULL, true },
+    { "sys.processes",     tr("&Process/Lock Manager"), SLOT(sProcessManager()), sysUtilsMenu, "#superuser",     NULL, NULL, true },
     { "separator",      NULL,                         NULL,             sysUtilsMenu, "true",                        NULL, NULL, true },
     { "sys.CSVAtlases",  tr("Maintain CS&V Atlases..."),             SLOT(sCSVAtlases()),  sysUtilsMenu, "ConfigureImportExport", NULL, NULL, loadCSVPlugin() },
     { "sys.importData",    tr("&Import Data"),     SLOT(sImportData()), sysUtilsMenu,  "ImportXML",        NULL, NULL, true },
@@ -361,6 +363,11 @@ void menuSystem::sFixACL()
 void menuSystem::sFixSerial()
 {
   omfgThis->handleNewWindow(new fixSerial());
+}
+
+void menuSystem::sProcessManager()
+{
+  omfgThis->handleNewWindow(new dspProcesses());
 }
 
 void menuSystem::sExportData()

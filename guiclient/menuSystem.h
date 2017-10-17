@@ -63,6 +63,7 @@ class menuSystem : public QObject
 
     void sFixACL();
     void sFixSerial();
+    void sProcessManager();
     void sExportData();
     void sImportData();
     void sCSVAtlases();
