@@ -25,9 +25,11 @@ public:
     ~getGLDistDate();
 
     virtual QDate date() const;
+    virtual QDate seriesDate() const;
 
 public slots:
     virtual void sSetDefaultLit(const QString &);
+    virtual void sSetSeriesLit(const QString &);
 
 protected slots:
     virtual void languageChange();

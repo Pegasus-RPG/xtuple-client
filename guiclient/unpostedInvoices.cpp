@@ -210,6 +210,7 @@ void unpostedInvoices::sPost()
   do {
     bool changeDate = false;
     QDate newDate = QDate();
+    QDate seriesDate;
 
     if (_privileges->check("ChangeARInvcDistDate"))
     {
@@ -219,6 +220,7 @@ void unpostedInvoices::sPost()
       {
         newDate = newdlg.date();
         changeDate = (newDate.isValid());
+        seriesDate = newdlg.seriesDate();
 
         if (changeDate)
         { // Update the invoice gl distribution dates
@@ -241,6 +243,29 @@ void unpostedInvoices::sPost()
       }
       else
         continue;
+    }
+
+    XSqlQuery unpostedPost;
+
+    int journal = -1;
+    unpostedPost.prepare("SELECT fetchJournalNumber('AR-IN', :seriesDate) AS result;");
+    unpostedPost.bindValue(":seriesDate", seriesDate);
+    unpostedPost.exec();
+    if (unpostedPost.first())
+    {
+      journal = unpostedPost.value("result").toInt();
+      if (journal < 0)
+      {
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Journal Number"),
+                               storedProcErrorLookup("fetchJournalNumber", journal),
+                               __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Journal Number"),
+                                  unpostedPost, __FILE__, __LINE__))
+    {
+      return;
     }
 
     // Loop through the invoices

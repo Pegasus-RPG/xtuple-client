@@ -206,6 +206,7 @@ void openVouchers::sPost()
 {
   bool changeDate = false;
   QDate newDate = QDate::currentDate();
+  QDate seriesDate;
 
   if (_privileges->check("ChangeVOPostDate"))
   {
@@ -215,6 +216,7 @@ void openVouchers::sPost()
     {
       newDate = newdlg.date();
       changeDate = (newDate.isValid());
+      seriesDate = newdlg.seriesDate();
     }
     else
       return;
@@ -245,7 +247,8 @@ void openVouchers::sPost()
   }
   
   XSqlQuery post;
-  post.prepare("SELECT fetchJournalNumber('AP-VO') AS result;");
+  post.prepare("SELECT fetchJournalNumber('AP-VO', :seriesDate) AS result;");
+  post.bindValue(":seriesDate", seriesDate);
   post.exec();
   int journalNumber = 0;
   if(post.first())

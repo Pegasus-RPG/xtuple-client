@@ -15,6 +15,7 @@ getGLDistDate::getGLDistDate(QWidget* parent, const char* name, bool modal, Qt::
 {
   setupUi(this);
   _date->setDate(QDate::currentDate());
+  _seriesDate->setDate(QDate::currentDate());
 }
 
 getGLDistDate::~getGLDistDate()
@@ -35,7 +36,17 @@ QDate getGLDistDate::date() const
     return _date->date();
 }
 
+QDate getGLDistDate::seriesDate() const
+{
+  return _seriesDate->date();
+}
+
 void getGLDistDate::sSetDefaultLit(const QString & pStr)
 {
   _default->setText(pStr);
+}
+
+void getGLDistDate::sSetSeriesLit(const QString & pStr)
+{
+  _series->setText(pStr);
 }
