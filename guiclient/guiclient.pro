@@ -648,6 +648,7 @@ FORMS =   absoluteCalendarItem.ui               \
           workOrder.ui                          \
           workOrderMaterials.ui                 \
           xdateinputdialog.ui                   \
+          xdocumentwindow.ui                    \
           xsltMap.ui                            \
           zeroUncountedCountTagsByWarehouse.ui  \
           printStatementsByCustomerGroup.ui
@@ -1265,6 +1266,7 @@ HEADERS = ../common/format.h                    \
           xabstractconfigure.h          \
           xdateinputdialog.h            \
           xdialog.h                     \
+          xdocumentwindow.h             \
           xerrormessage.h               \
           xmainwindow.h                 \
           xmessagebox.h                 \
@@ -1883,6 +1885,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           xabstractconfigure.cpp                \
           xdateinputdialog.cpp                  \
           xdialog.cpp                           \
+          xdocumentwindow.cpp                   \
           xerrormessage.cpp                     \
           xmainwindow.cpp                       \
           xmessagebox.cpp                       \

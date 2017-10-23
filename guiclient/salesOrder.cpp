@@ -69,7 +69,7 @@
 #define iJustUpdate   3
 
 salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
-  : XWidget(parent, name, fl),
+  : XDocumentWindow(parent, name, fl),
     _saved         (false),
     _saving        (false),
     _calcfreight   (false),
@@ -87,7 +87,8 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
     _taxzoneidCache(-1),
     _crmacctid     (-1)
 {
-  setupUi(this);
+  setupUi(widget());
+  setWindowTitle(tr("Sales Order"));
 
   _dspShipmentsBySalesOrder = new dspShipmentsBySalesOrder(this, "dspShipmentsBySalesOrder", Qt::Widget);
   _dspShipmentsBySalesOrder->setObjectName("dspShipmentsBySalesOrder");
@@ -115,6 +116,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
   connect(_orderNumber,         SIGNAL(textChanged(const QString &)),           this,         SLOT(sSetUserEnteredOrderNumber()));
   connect(_save,                SIGNAL(clicked()),                              this,         SLOT(sSave()));
   connect(_saveAndAdd,          SIGNAL(clicked()),                              this,         SLOT(sSaveAndAdd()));
+  connect(_close,               SIGNAL(clicked()),                              this,         SLOT(close()));
   connect(_shippingCharges,     SIGNAL(newID(int)),                             this,         SLOT(sHandleShipchrg(int)));
   connect(_shipToAddr,          SIGNAL(changed()),                              this,         SLOT(sConvertShipTo()));
   connect(_shipToName,          SIGNAL(textChanged(const QString &)),           this,         SLOT(sConvertShipTo()));
@@ -303,7 +305,7 @@ void salesOrder::languageChange()
 enum SetResponse salesOrder:: set(const ParameterList &pParams)
 {
   XSqlQuery setSales;
-  XWidget::set(pParams);
+  XDocumentWindow::set(pParams);
   QVariant  param;
   bool      valid;
 
@@ -3370,7 +3372,7 @@ void salesOrder::closeEvent(QCloseEvent *pEvent)
 
   _preferences->set("SoShowAll", _more->isChecked());
 
-  XWidget::closeEvent(pEvent);
+  XDocumentWindow::closeEvent(pEvent);
 }
 
 void salesOrder::sHandleShipchrg(int pShipchrgid)
