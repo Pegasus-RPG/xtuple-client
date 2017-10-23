@@ -848,12 +848,12 @@ void transferOrderItem::populate()
     _dstwhsid	= item.value("tohead_dest_warehous_id").toInt();
     _orderNumber->setText(item.value("tohead_number").toString());
 
-    _warehouse->clear();
-    _warehouse->append(item.value("warehous_id").toInt(),
-		       item.value("warehous_code").toString());
-
     if (_mode == cEdit || _mode == cView)
     {
+      _warehouse->clear();
+      _warehouse->append(item.value("warehous_id").toInt(),
+                         item.value("warehous_code").toString());
+
       _itemsiteid	= item.value("itemsite_id").toInt();
       _comments->setId(_toitemid);
       _lineNumber->setText(item.value("toitem_linenumber").toString());
