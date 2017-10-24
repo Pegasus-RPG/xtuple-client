@@ -241,6 +241,7 @@ FORMS =   absoluteCalendarItem.ui               \
           deletePlannedOrdersByPlannerCode.ui   \
           department.ui                         \
           departments.ui                        \
+          description.ui                        \
           dictionaries.ui                       \
           display.ui                            \
           displayTimePhased.ui                  \
@@ -813,6 +814,7 @@ HEADERS = ../common/format.h                    \
           deletePlannedOrdersByPlannerCode.h    \
           department.h                          \
           departments.h                         \
+          description.h                         \
           dictionaries.h                        \
           display.h                             \
           displayprivate.h                      \
@@ -1435,6 +1437,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           deletePlannedOrdersByPlannerCode.cpp  \
           department.cpp                        \
           departments.cpp                       \
+          description.cpp                       \
           dictionaries.cpp                      \
           display.cpp                           \
           displayTimePhased.cpp                 \
