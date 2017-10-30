@@ -188,6 +188,7 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
       _currency->setEnabled(false);
       _shippingZone->setEnabled(false);
       _saleType->setEnabled(false);
+      _project->setEnabled(false);
 //      _documents->setReadOnly(true);
       _save->hide();
       _new->hide();
