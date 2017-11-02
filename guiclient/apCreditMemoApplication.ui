@@ -104,12 +104,6 @@ to be bound by its terms.</comment>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>32767</height>
-               </size>
-              </property>
              </widget>
             </item>
             <item>
@@ -122,12 +116,6 @@ to be bound by its terms.</comment>
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>32767</height>
-               </size>
               </property>
              </widget>
             </item>
