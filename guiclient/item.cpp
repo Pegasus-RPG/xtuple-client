@@ -153,13 +153,6 @@ item::item(QWidget* parent, const char* name, Qt::WindowFlags fl)
 //  connect(moreButton, SIGNAL(clicked()), this, SLOT(sEditBOM()));
 //  _bom->findChild<QVBoxLayout*>("_formButtonsLayout")->addWidget(moreButton);
 
-  ParameterList plist;
-  if(_privileges->check("MaintainBOMs"))
-    plist.append("mode", "edit");
-  else if (_privileges->check("ViewBOMs"))
-    plist.append("mode", "view");
-  _bom->set(plist);
-
   _uomconv->addColumn(tr("Conversions/Where Used"), _itemColumn*2, Qt::AlignLeft, true, "uomname");
   _uomconv->addColumn(tr("Ratio"),      -1, Qt::AlignRight, true, "uomvalue"  );
   _uomconv->addColumn(tr("Global"),     _ynColumn*2,    Qt::AlignCenter, true, "global" );
@@ -1105,7 +1098,6 @@ void item::populate()
     _taxRecoverable->setChecked(item.value("item_tax_recoverable").toBool());
 
     sFillList();
-    _bom->findChild<ItemCluster*>("_item")->setId(_itemid);
     _elements->findChild<ItemCluster*>("_item")->setId(_itemid);
     sFillUOMList();
     sFillSourceList();
@@ -1562,11 +1554,28 @@ void item::sEditBOM()
 {
   ParameterList params;
 
-  if(_privileges->check("MaintainBOMs") && _mode != cView)
-    params.append("mode", "edit");
-  else
-    params.append("mode", "view");
   params.append("item_id", _itemid);
+
+  XSqlQuery rev;
+  rev.prepare("SELECT bomhead_rev_id "
+              "  FROM bomhead "
+              " WHERE bomhead_item_id=:itemid "
+              "   AND bomhead_rev_id=getActiveRevId('BOM', :itemid);");
+  rev.bindValue(":itemid", _itemid);
+  rev.exec();
+  if (rev.first())
+  {
+    if(_privileges->check("MaintainBOMs") && _mode != cView)
+      params.append("mode", "edit");
+    else
+      params.append("mode", "view");
+    params.append("revision_id", rev.value("bomhead_rev_id").toInt());
+  }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Fetching BOM"),
+                                rev, __FILE__, __LINE__))
+    return;
+  else
+    params.append("mode", "new");
 
   BOM *newdlg = new BOM(this);
   newdlg->set(params);
@@ -1962,16 +1971,32 @@ bool item::checkSitePrivs(int itemsiteid)
 
 void item::sHandleButtons()
 {
-  if(_mode == cNew)
+  if (_bomButton->isChecked())
   {
     ParameterList params;
 
-    if(_privileges->check("MaintainBOMs") && _mode != cView)
-      params.append("mode", "edit");
-    else
-      params.append("mode", "view");
     params.append("item_id", _itemid);
 
+    XSqlQuery rev;
+    rev.prepare("SELECT bomhead_rev_id "
+                "  FROM bomhead "
+                " WHERE bomhead_item_id=:itemid "
+                "   AND bomhead_rev_id=getActiveRevId('BOM', :itemid);");
+    rev.bindValue(":itemid", _itemid);
+    rev.exec();
+    if (rev.first())
+    {
+      if(_privileges->check("MaintainBOMs") && _mode != cView)
+        params.append("mode", "edit");
+      else
+        params.append("mode", "view");
+      params.append("revision_id", rev.value("bomhead_rev_id").toInt());
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Fetching BOM"),
+                                  rev, __FILE__, __LINE__))
+      return;
+    else
+      params.append("mode", "new");
     _bom->set(params);
 
     _bom->sFillList();
@@ -1999,7 +2024,7 @@ void item::sHandleButtons()
 
 void item::sHandleRightButtons()
 {
-  if ((_inventoryUOM->isValid()) && (_classcode->isValid()))
+  if ((_itemNumber->text().trimmed() != "") && (_inventoryUOM->isValid()) && (_classcode->isValid()))
   {
     QString itemtype = _itemTypes[_itemtype->currentIndex()];
     if(!_privileges->check("ViewItemAvailabilityWorkbench"))
