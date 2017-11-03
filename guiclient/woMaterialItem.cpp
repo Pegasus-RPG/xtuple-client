@@ -255,6 +255,35 @@ void woMaterialItem::sSave()
 
     int itemsiteid = woSave.value("itemsiteid").toInt();
 
+    woSave.prepare("WITH RECURSIVE _wo AS ( "
+                   " SELECT itemsite_item_id, wo_ordtype, wo_ordid "
+                   "   FROM wo "
+                   "   JOIN itemsite ON wo_itemsite_id=itemsite_id "
+                   "  WHERE wo_id=:wo_id "
+                   " UNION "
+                   " SELECT parent.itemsite_item_id, wo.wo_ordtype, wo.wo_ordid "
+                   "   FROM _wo "
+                   "   JOIN wo ON _wo.wo_ordtype='W' "
+                   "          AND _wo.wo_ordid=wo.wo_id "
+                   "   JOIN itemsite parent ON wo.wo_itemsite_id=parent.itemsite_id "
+                   ") "
+                   "SELECT BOOL_OR(itemsite_item_id=:item_id) AS recursive "
+                   "  FROM _wo;");
+    woSave.bindValue(":wo_id", _wo->id());
+    woSave.bindValue(":item_id", _item->id());
+    woSave.exec();
+    if (woSave.first() && woSave.value("recursive").toBool())
+    {
+      QMessageBox::warning(this, tr("Cannot Create W/O Material Requirement"),
+                           tr("Cannot add an Item as a Material to itself."));
+      _item->setId(-1);
+      _item->setFocus();
+      return;
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Checking Parents"),
+                                  woSave, __FILE__, __LINE__))
+      return;
+
     woSave.prepare("SELECT createWoMaterial(:wo_id, :itemsite_id, :issueMethod,"
                    "                        :uom_id, :qtyFxd, :qtyPer,"
                    "                        :scrap, :bomitem_id, :notes,"
