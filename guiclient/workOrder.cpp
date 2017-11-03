@@ -1524,7 +1524,6 @@ void workOrder::sIssueMatlBatch()
                 "   AND (womatl_itemsite_id=itemsite_id) "
                 "   AND (itemsite_item_id=item_id) "
                 "   AND (itemsite_warehous_id=warehous_id) "
-                "   AND ((itemsite_controlmethod IN ('L', 'S')) OR (itemsite_loccntrl)) "
                 "   AND (womatl_issuemethod IN ('S', 'M')) "
                 "   AND (womatl_wo_id=:wo_id)); ");
   items.bindValue(":wo_id", _woIndentedList->id());
