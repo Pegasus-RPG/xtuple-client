@@ -345,6 +345,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
 
         QTreeView *view = new QTreeView(this);
         view->setObjectName("_view");
+        view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         view->setHeaderHidden(true);
         view->setRootIsDecorated(false);
 
