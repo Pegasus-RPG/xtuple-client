@@ -1,5 +1,5 @@
-<ui version="4.0" >
- <author></author>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
 Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
@@ -8,65 +8,101 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>getGLDistDate</class>
- <widget class="QDialog" name="getGLDistDate" >
-  <property name="geometry" >
+ <widget class="QDialog" name="getGLDistDate">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>493</width>
-    <height>99</height>
+    <height>120</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Get G/L Distribution Date</string>
   </property>
-  <layout class="QHBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
+  <layout class="QHBoxLayout">
+   <property name="spacing">
     <number>6</number>
    </property>
+   <property name="leftMargin">
+    <number>9</number>
+   </property>
+   <property name="topMargin">
+    <number>9</number>
+   </property>
+   <property name="rightMargin">
+    <number>9</number>
+   </property>
+   <property name="bottomMargin">
+    <number>9</number>
+   </property>
    <item>
-    <layout class="QVBoxLayout" >
-     <property name="margin" >
+    <layout class="QVBoxLayout">
+     <property name="spacing">
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>6</number>
        </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
-        <widget class="QLabel" name="label" >
-         <property name="text" >
+        <widget class="QLabel" name="label">
+         <property name="text">
           <string>Distribute to the G/L using the following date:</string>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
+        <layout class="QHBoxLayout">
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <property name="leftMargin">
           <number>0</number>
          </property>
-         <property name="spacing" >
-          <number>6</number>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
          </property>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeType" >
+           <property name="sizeType">
             <enum>QSizePolicy::Fixed</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>8</width>
              <height>20</height>
@@ -75,57 +111,93 @@ to be bound by its terms.</comment>
           </spacer>
          </item>
          <item>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
+          <layout class="QVBoxLayout">
+           <property name="spacing">
             <number>0</number>
            </property>
-           <property name="spacing" >
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <item>
-            <widget class="QRadioButton" name="_default" >
-             <property name="text" >
+            <widget class="QRadioButton" name="_default">
+             <property name="text">
               <string>Default</string>
              </property>
-             <property name="checked" >
+             <property name="checked">
               <bool>true</bool>
              </property>
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
+            <layout class="QHBoxLayout">
+             <property name="spacing">
               <number>6</number>
              </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
              <item>
-              <widget class="QRadioButton" name="_particular" >
-               <property name="text" >
+              <widget class="QRadioButton" name="_particular">
+               <property name="text">
                 <string>Alternate Date:</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="DLineEdit" name="_date" >
-               <property name="enabled" >
+              <widget class="DLineEdit" name="_date">
+               <property name="enabled">
                 <bool>false</bool>
                </property>
               </widget>
              </item>
              <item>
               <spacer>
-               <property name="orientation" >
+               <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0">
                 <size>
                  <width>0</width>
                  <height>20</height>
                 </size>
                </property>
               </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QCheckBox" name="_series">
+               <property name="text">
+                <string>Series Date:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="DLineEdit" name="_seriesDate">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -137,10 +209,10 @@ to be bound by its terms.</comment>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>282</width>
          <height>16</height>
@@ -152,10 +224,10 @@ to be bound by its terms.</comment>
    </item>
    <item>
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>51</width>
        <height>20</height>
@@ -164,33 +236,42 @@ to be bound by its terms.</comment>
     </spacer>
    </item>
    <item>
-    <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
+    <layout class="QVBoxLayout">
+     <property name="spacing">
       <number>5</number>
      </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
      <item>
-      <widget class="QPushButton" name="_cancel" >
-       <property name="text" >
+      <widget class="QPushButton" name="_cancel">
+       <property name="text">
         <string>Cancel</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="_continue" >
-       <property name="text" >
+      <widget class="QPushButton" name="_continue">
+       <property name="text">
         <string>Continue</string>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
          <height>0</height>
@@ -202,11 +283,11 @@ to be bound by its terms.</comment>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="5" margin="5" />
+ <layoutdefault spacing="5" margin="5"/>
  <customwidgets>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
   </customwidget>
  </customwidgets>
@@ -218,11 +299,11 @@ to be bound by its terms.</comment>
    <receiver>getGLDistDate</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>543</x>
-     <y>35</y>
+    <hint type="sourcelabel">
+     <x>482</x>
+     <y>32</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>259</x>
      <y>59</y>
     </hint>
@@ -234,11 +315,11 @@ to be bound by its terms.</comment>
    <receiver>getGLDistDate</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>543</x>
-     <y>68</y>
+    <hint type="sourcelabel">
+     <x>482</x>
+     <y>60</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>259</x>
      <y>59</y>
     </hint>
@@ -250,13 +331,29 @@ to be bound by its terms.</comment>
    <receiver>_date</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>115</x>
-     <y>84</y>
+    <hint type="sourcelabel">
+     <x>143</x>
+     <y>77</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>221</x>
-     <y>85</y>
+    <hint type="destinationlabel">
+     <x>301</x>
+     <y>79</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_series</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_seriesDate</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>48</x>
+     <y>103</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>153</x>
+     <y>102</y>
     </hint>
    </hints>
   </connection>

@@ -284,6 +284,7 @@ void arWorkBench::sPostCashrcpt()
   int journalNumber = -1;
   bool changeDate = false;
   QDate newDate = QDate();
+  QDate seriesDate;
   
   if (_privileges->check("ChangeCashRecvPostDate"))
   {
@@ -293,13 +294,16 @@ void arWorkBench::sPostCashrcpt()
     {
       newDate = newdlg.date();
       changeDate = (newDate.isValid());
+      seriesDate = newdlg.seriesDate();
     }
     else
       return;
   }
 
   arPostCashrcpt.exec("BEGIN;");
-  arPostCashrcpt.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
+  arPostCashrcpt.prepare("SELECT fetchJournalNumber('C/R', :seriesDate) AS journalnumber;");
+  arPostCashrcpt.bindValue(":seriesDate", seriesDate);
+  arPostCashrcpt.exec();
   if (arPostCashrcpt.first())
     journalNumber = arPostCashrcpt.value("journalnumber").toInt();
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt"),

@@ -987,6 +987,7 @@ bool cashReceipt::postReceipt()
   XSqlQuery cashPost;
   bool changeDate = false;
   QDate newDate = QDate();
+  QDate seriesDate;
   
   if (_privileges->check("ChangeCashRecvPostDate"))
   {
@@ -996,6 +997,7 @@ bool cashReceipt::postReceipt()
     {
       newDate = newdlg.date();
       changeDate = (newDate.isValid());
+      seriesDate = newdlg.seriesDate();
     }
     else
       return false;
@@ -1023,8 +1025,9 @@ bool cashReceipt::postReceipt()
     }
   }
   
-  cashPost.prepare("SELECT postCashReceipt(:cashrcpt_id, fetchJournalNumber('C/R')) AS result;");
+  cashPost.prepare("SELECT postCashReceipt(:cashrcpt_id, fetchJournalNumber('C/R', :seriesDate)) AS result;");
   cashPost.bindValue(":cashrcpt_id", _cashrcptid);
+  cashPost.bindValue(":seriesDate", seriesDate);
   cashPost.exec();
   if (cashPost.first())
   {

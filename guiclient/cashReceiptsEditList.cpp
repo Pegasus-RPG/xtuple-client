@@ -159,15 +159,18 @@ void cashReceiptsEditList::sPost()
   XSqlQuery cashPost;
   bool changeDate = false;
   QDate newDate = QDate();
+  QDate seriesDate;
   
   if (_privileges->check("ChangeCashRecvPostDate"))
   {
     getGLDistDate newdlg(this, "", true);
     newdlg.sSetDefaultLit(tr("Distribution Date"));
+    newdlg.sSetSeriesLit(tr("Deposit Date"));
     if (newdlg.exec() == XDialog::Accepted)
     {
       newDate = newdlg.date();
       changeDate = (newDate.isValid());
+      seriesDate = newdlg.seriesDate();
     }
     else
       return;
@@ -177,7 +180,9 @@ void cashReceiptsEditList::sPost()
 
   XSqlQuery tx;
   tx.exec("BEGIN;");
-  cashPost.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
+  cashPost.prepare("SELECT fetchJournalNumber('C/R', :seriesDate) AS journalnumber;");
+  cashPost.bindValue(":seriesDate", seriesDate);
+  cashPost.exec();
   if (cashPost.first())
     journalNumber = cashPost.value("journalnumber").toInt();
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting Cash Receipt Entry"),

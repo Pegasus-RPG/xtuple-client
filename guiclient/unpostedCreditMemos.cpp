@@ -165,19 +165,6 @@ void unpostedCreditMemos::sPrint()
 
 void unpostedCreditMemos::sPost()
 {
-  XSqlQuery unpostedPost;
-
-  
-  unpostedPost.exec("SELECT fetchJournalNumber('AR-CM') AS result");
-  if (!unpostedPost.first())
-  {
-    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Journal Number"),
-                         unpostedPost, __FILE__, __LINE__);
-    return;
-  }
-
-  int journalNumber = unpostedPost.value("result").toInt();
-
   XSqlQuery setDate;
   setDate.prepare("UPDATE cmhead SET cmhead_gldistdate=:distdate "
                   "WHERE cmhead_id=:cmhead_id;");
@@ -189,6 +176,7 @@ void unpostedCreditMemos::sPost()
   do {
     bool changeDate = false;
     QDate newDate = QDate::currentDate();
+    QDate seriesDate;
 
     if (_privileges->check("ChangeSOMemoPostDate"))
     {
@@ -198,6 +186,7 @@ void unpostedCreditMemos::sPost()
       {
         newDate = newdlg.date();
         changeDate = (newDate.isValid());
+        seriesDate = newdlg.seriesDate();
 
         if (changeDate)
         { // Update credit memo dates
@@ -221,6 +210,20 @@ void unpostedCreditMemos::sPost()
       else
         return;
     }
+
+    XSqlQuery unpostedPost;
+
+    unpostedPost.prepare("SELECT fetchJournalNumber('AR-CM', :seriesDate) AS result");
+    unpostedPost.bindValue(":seriesDate", seriesDate);
+    unpostedPost.exec();
+    if (!unpostedPost.first())
+    {
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Journal Number"),
+                           unpostedPost, __FILE__, __LINE__);
+      return;
+    }
+
+    int journalNumber = unpostedPost.value("result").toInt();
 
     // Loop through the selected credit memos
     int succeeded = 0;
