@@ -14,7 +14,10 @@
 
 QScriptValue QDateToScriptValue(QScriptEngine *engine, const QDate &in)
 {
-  XSqlQuery getTZ("SELECT EXTRACT(TIMEZONE FROM now()) AS offset;");
+  XSqlQuery getTZ;
+  getTZ.prepare("SELECT EXTRACT(TIMEZONE FROM :date::TIMESTAMP WITH TIME ZONE) AS offset;");
+  getTZ.bindValue(":date", in);
+  getTZ.exec();
   if (getTZ.first())
     return engine->newDate(QDateTime(in, QTime(), QTimeZone(getTZ.value("offset").toInt())));
   else
