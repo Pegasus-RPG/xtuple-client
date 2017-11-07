@@ -82,6 +82,14 @@ enum SetResponse returnWoMaterialItem::set(const ParameterList &pParams)
    }
   }
 
+  param = pParams.value("wo_id", &valid);
+  if (valid)
+  {
+    _wo->setId(param.toInt());
+    _wo->setEnabled(false);
+    _womatl->setFocus();
+  }
+
   return NoError;
 }
 
@@ -124,7 +132,7 @@ void returnWoMaterialItem::sReturn()
     XSqlQuery parentItemlocdist;
     parentItemlocdist.prepare("SELECT createitemlocdistparent(:itemsite_id, "
                               " itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, :qty), "
-                              " 'WO', womatl_wo_id, :itemlocSeries, NULL, NULL, 'IM') AS result "
+                              " 'WO', womatl_id, :itemlocSeries, NULL, NULL, 'IM') AS result "
                               "FROM womatl "
                               " JOIN itemsite ON womatl_itemsite_id = itemsite_id "
                               "WHERE womatl_id = :womatl_id;");

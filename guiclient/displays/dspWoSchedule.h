@@ -35,6 +35,7 @@ public slots:
     virtual void sImplodeWO();
     virtual void sInventoryAvailabilityByWorkOrder();
     virtual void sIssueWoMaterialItem();
+    virtual void sReturnWoMaterialItem();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected, int);
     virtual void sPostProduction();
     virtual void sPrintTraveler();

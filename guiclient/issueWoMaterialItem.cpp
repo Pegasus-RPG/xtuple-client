@@ -165,7 +165,7 @@ void issueWoMaterialItem::sIssue()
     return;
   }
   
-  issueIssue.prepare("SELECT womatl_wo_id, itemsite_id, item_number, warehous_code, "
+  issueIssue.prepare("SELECT womatl_wo_id, womatl_id, itemsite_id, item_number, warehous_code, "
             "       (COALESCE((SELECT SUM(itemloc_qty) "
             "                    FROM itemloc "
             "                   WHERE (itemloc_itemsite_id=itemsite_id)), 0.0) >= roundQty(item_fractional, itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, :qty))) AS isqtyavail, "
@@ -203,7 +203,7 @@ void issueWoMaterialItem::sIssue()
                               " :orderitemId, :itemlocSeries, NULL, NULL, 'IM');");
     parentItemlocdist.bindValue(":itemsite_id", issueIssue.value("itemsite_id").toInt());
     parentItemlocdist.bindValue(":qty", issueIssue.value("post_qty").toDouble());
-    parentItemlocdist.bindValue(":orderitemId", issueIssue.value("womatl_wo_id").toInt());
+    parentItemlocdist.bindValue(":orderitemId", issueIssue.value("womatl_id").toInt());
     parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
     parentItemlocdist.exec();
     if (parentItemlocdist.first())
@@ -249,32 +249,6 @@ void issueWoMaterialItem::sIssue()
                             storedProcErrorLookup("issueWoMaterial", result),
                             __FILE__, __LINE__);
       return;
-    }
-
-    if (_metrics->boolean("LotSerialControl"))
-    {
-      // Insert special pre-assign records for the lot/serial#
-      // so they are available when the material is returned
-      XSqlQuery lsdetail;
-      lsdetail.prepare("INSERT INTO lsdetail "
-                       "            (lsdetail_itemsite_id, lsdetail_created, lsdetail_source_type, "
-                       "             lsdetail_source_id, lsdetail_source_number, lsdetail_ls_id, lsdetail_qtytoassign) "
-                       "SELECT invhist_itemsite_id, NOW(), 'IM', "
-                       "       :orderitemid, invhist_ordnumber, invdetail_ls_id, (invdetail_qty * -1.0) "
-                       "FROM invhist JOIN invdetail ON (invdetail_invhist_id=invhist_id) "
-                       "WHERE (invhist_series=:itemlocseries)"
-                       "  AND (COALESCE(invdetail_ls_id, -1) > 0);");
-      lsdetail.bindValue(":orderitemid", _womatl->id());
-      lsdetail.bindValue(":itemlocseries", issueIssue.value("result").toInt());
-      lsdetail.exec();
-      if (lsdetail.lastError().type() != QSqlError::NoError)
-      {
-        rollback.exec();
-        cleanup.exec();
-        ErrorReporter::error(QtCriticalMsg, this, tr("Error Updating Work Order Material Information"),
-                             lsdetail, __FILE__, __LINE__);
-        return;
-      }
     }
   }
   else

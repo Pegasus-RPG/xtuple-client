@@ -141,7 +141,7 @@ void returnWoMaterialBatch::sReturn()
 
           // Get the parent series id
           itemlocSeries = distributeInventory::SeriesCreate(items.value("itemsite_id").toInt(),
-            items.value("qty").toDouble(), "WO", "IM", _wo->id());
+            items.value("qty").toDouble(), "WO", "IM", items.value("womatl_id").toInt());
           if (itemlocSeries <= 0)
           {
             failedItems.append(items.value("item_number").toString());
