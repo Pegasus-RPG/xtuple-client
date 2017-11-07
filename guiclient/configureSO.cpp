@@ -111,7 +111,8 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   else if (_metrics->value("DefaultBalanceMethod") == "O")
     _balanceMethod->setCurrentIndex(1);
 
-  int defDays = _metrics->value("DefaultOrderStartDays").toInt() ? : -90;
+  int defDays = !_metrics->value("DefaultOrderStartDays").isEmpty() ?
+                _metrics->value("DefaultOrderStartDays").toInt() : -90;
   _defaultStartDays->setValue(defDays);
 
   _custtype->setId(_metrics->value("DefaultCustType").toInt());
