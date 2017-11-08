@@ -104,6 +104,8 @@ void XDialog::showEvent(QShowEvent *event)
     QSize lsize = xtsettingsValue(objName + "/geometry/size").toSize();
     QSize currsize = size();
 
+    setAttribute(Qt::WA_DeleteOnClose);
+
     if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
       resize(lsize);
 
