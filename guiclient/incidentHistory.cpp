@@ -8,12 +8,12 @@
  * to be bound by its terms.
  */
 
-#include "description.h"
+#include "incidentHistory.h"
 
 #include "errorReporter.h"
 #include "xsqlquery.h"
 
-description::description(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl) :
+incidentHistory::incidentHistory(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl) :
   XDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -21,7 +21,7 @@ description::description(QWidget* parent, const char* name, bool modal, Qt::Wind
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 }
 
-enum SetResponse description::set(const ParameterList &pParams)
+enum SetResponse incidentHistory::set(const ParameterList &pParams)
 {
   XDialog::set(pParams);
   QVariant param;

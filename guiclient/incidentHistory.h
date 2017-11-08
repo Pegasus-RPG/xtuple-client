@@ -8,18 +8,18 @@
  * to be bound by its terms.
  */
 
-#ifndef DESCRIPTION_H
-#define DESCRIPTION_H
+#ifndef INCIDENTHISTORY_H
+#define INCIDENTHISTORY_H
 
 #include "xdialog.h"
-#include "ui_description.h"
+#include "ui_incidentHistory.h"
 
-class description : public XDialog, public Ui::description
+class incidentHistory : public XDialog, public Ui::incidentHistory
 {
   Q_OBJECT
 
   public:
-    description(QWidget* = 0, const char* = 0, bool = false, Qt::WindowFlags = 0);
+    incidentHistory(QWidget* = 0, const char* = 0, bool = false, Qt::WindowFlags = 0);
 
   public slots:
     virtual enum SetResponse set(const ParameterList&);
