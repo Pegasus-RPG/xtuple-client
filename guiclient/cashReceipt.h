@@ -24,7 +24,7 @@ class cashReceipt : public XWidget, public Ui::cashReceipt
 public:
     cashReceipt(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
     ~cashReceipt();
-    virtual bool save( bool partial );
+    Q_INVOKABLE virtual bool save( bool partial );
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
