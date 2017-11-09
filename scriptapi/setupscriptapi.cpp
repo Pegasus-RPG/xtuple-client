@@ -82,6 +82,8 @@
 #include "qmenubarproto.h"
 #include "qmenuproto.h"
 #include "qmessageboxsetup.h"
+#include "qmimedatabaseproto.h"
+#include "qmimetypeproto.h"
 #include "qnetworkaccessmanagerproto.h"
 #include "qnetworkinterfaceproto.h"
 #include "qnetworkreplyproto.h"
@@ -226,6 +228,8 @@ void setupScriptApi(QScriptEngine *engine)
   setupQMenuBarProto(engine);
   setupQMenuProto(engine);
   setupQMessageBox(engine);
+  setupQMimeDatabaseProto(engine);
+  setupQMimeTypeProto(engine);
   setupQNetworkAccessManagerProto(engine);
   setupQNetworkInterfaceProto(engine);
   setupQNetworkReplyProto(engine);
