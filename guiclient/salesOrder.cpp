@@ -3568,6 +3568,7 @@ void salesOrder::setViewMode()
   else
     _saveAndAdd->hide();
   _action->hide();
+  _cancel->hide();
   _delete->hide();
 }
 
