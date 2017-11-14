@@ -1505,10 +1505,17 @@ QString scriptHandleIncludes(QString source)
         XSqlQuery inclq;
         inclq.prepare("SELECT script_source "
                       "FROM script "
+                      "  JOIN (SELECT c.oid, n.nspname AS schema "
+                      "          FROM pg_class AS c "
+                      "          JOIN pg_namespace AS n ON c.relnamespace=n.oid) AS schema_table "
+                      "    ON script.tableoid=schema_table.oid "
+                      "  JOIN (SELECT regexp_split_to_table AS pkgname, row_number() over () AS seq "
+                      "          FROM regexp_split_to_table(buildsearchpath(), ',')) AS path "
+                      "    ON pkgname = schema "
                       "WHERE ((script_name=:name)"
                       "  AND  ((script_order=:order) OR (:order = -1))"
                       "  AND  script_enabled) "
-                      "ORDER BY script_order;");
+                      "ORDER BY script_order, seq;");
         inclq.bindValue(":name",  name);
         inclq.bindValue(":order", order);
         inclq.exec();

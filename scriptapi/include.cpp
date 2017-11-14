@@ -56,9 +56,16 @@ QScriptValue includeScript(QScriptContext *context, QScriptEngine *engine)
   XSqlQuery scriptq;
   scriptq.prepare("SELECT script_id, script_source AS src"
                   "  FROM script"
+                  "  JOIN (SELECT c.oid, n.nspname AS schema "
+                  "          FROM pg_class AS c "
+                  "          JOIN pg_namespace AS n ON c.relnamespace=n.oid) AS schema_table "
+                  "    ON script.tableoid=schema_table.oid "
+                  "  JOIN (SELECT regexp_split_to_table AS pkgname, row_number() over () AS seq "
+                  "          FROM regexp_split_to_table(buildsearchpath(), ',')) AS path "
+                  "    ON pkgname = schema "
                   " WHERE ((script_name=:script_name)"
                   "   AND  (script_enabled))"
-                  " ORDER BY script_order;");
+                  " ORDER BY script_order, seq;");
 
   context->setActivationObject(context->parentContext()->activationObject());
   context->setThisObject(context->parentContext()->thisObject());
