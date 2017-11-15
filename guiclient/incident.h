@@ -51,6 +51,7 @@ public slots:
     virtual void sSave();
     virtual void sPrint();
     virtual void sViewTodoItem();
+    virtual void sIncidentHistory();
     virtual void sReturn();
     virtual void sViewAR();
     virtual void sAssigned();
