@@ -479,7 +479,11 @@ void creditMemo::populateShipto(int pShiptoid)
   if (pShiptoid != -1)
   {
     XSqlQuery query;
-    query.prepare( "SELECT * "
+    query.prepare( "SELECT shipto_id, shipto_name, shipto_commission, "
+                   "       COALESCE(shipto_addr_id, -1) AS shipto_addr_id, "
+                   "       COALESCE(shipto_taxzone_id, -1) AS shipto_taxzone_id, "
+                   "       COALESCE(shipto_salesrep_id, -1) AS shipto_salesrep_id, "
+                   "       COALESCE(shipto_shipzone_id, -1) AS shipto_shipzone_id "
                    "FROM shiptoinfo "
                    "WHERE (shipto_id=:shipto_id);" );
     query.bindValue(":shipto_id", pShiptoid);
