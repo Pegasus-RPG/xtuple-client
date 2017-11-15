@@ -2770,10 +2770,10 @@ void XTreeWidget::keyPressEvent(QKeyEvent* e)
       if (button->isDefault())
         hasDefault = true;
     if (window()->inherits("QDialog") && hasDefault)
-      e->ignore();
+      QTreeWidget::keyPressEvent(e);
     else
       sItemSelected();
   }
   else
-    e->ignore();
+    QTreeWidget::keyPressEvent(e);
 }
