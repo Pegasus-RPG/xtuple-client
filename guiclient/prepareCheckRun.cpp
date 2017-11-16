@@ -94,11 +94,11 @@ void prepareCheckRun::sPrint()
     }
 
     if (future)
-      QMessageBox::warning(this, "Vouchers Excluded",
-                           "The system detected voucher(s) dated after the payment date. These "
-                           "have been excluded from the payment run.");
+      QMessageBox::warning(this, tr("Vouchers Excluded"),
+                           tr("The system detected voucher(s) dated after the payment date. These "
+                           "have been excluded from the payment run."));
     else if (result == 0)
-      QMessageBox::warning(this, "No Payments", "There are no selected payments to prepare.");
+      QMessageBox::warning(this, tr("No Payments"), tr("There are no selected payments to prepare."));
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Preparing Check Run for Printing"),
                                 preparePrint, __FILE__, __LINE__))
