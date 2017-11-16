@@ -591,6 +591,44 @@ void contact::sSave()
 
 void contact::sPopulate()
 {
+  if (!_lock.acquire("cntct", _cntctid, AppLock::Interactive))
+  {
+    _data->_mode = cView;
+
+    _buttonBox->setStandardButtons(QDialogButtonBox::Close);
+
+    _contact->setEnabled(false);
+    _notes->setEnabled(false);
+    _comments->setReadOnly(true);
+    _documents->setReadOnly(true);
+    _charass->setReadOnly(true);
+  }
+
+  QWidgetList list = QApplication::allWidgets();
+  _close = false;
+
+  for (int i = 0; i < list.size(); i++)
+  {
+    if (!list.at(i)->isWindow() || !list.at(i)->isVisible())
+      continue;
+
+    contact *w = qobject_cast<contact*>(list.at(i));
+
+    if (w && w->id()==_cntctid)
+    {
+      w->setFocus();
+
+      if (omfgThis->showTopLevel())
+      {
+        w->raise();
+        w->activateWindow();
+      }
+
+      _close = true;
+      break;
+    }
+  }
+
   _number->setText(_contact->number());
   _active->setChecked(_contact->active());
   _crmAccount->setId(_contact->crmAcctId());
@@ -1254,4 +1292,12 @@ void contact::sViewWarehouse()
   warehouse newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
+}
+
+void contact::setVisible(bool visible)
+{
+  if (_close)
+    close();
+  else
+    XDialog::setVisible(visible);
 }
