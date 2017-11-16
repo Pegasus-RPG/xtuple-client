@@ -31,15 +31,6 @@ class QMimeDatabaseProto : public QObject, public QScriptable
     virtual ~QMimeDatabaseProto();
 
     Q_INVOKABLE QList<QMimeType> allMimeTypes() const;
-    Q_INVOKABLE QMimeType        mimeTypeForData(const QByteArray&) const;
-    Q_INVOKABLE QMimeType        mimeTypeForData(QIODevice*) const;
-    Q_INVOKABLE QMimeType        mimeTypeForFile(const QFileInfo&, QMimeDatabase::MatchMode =
-                                                 QMimeDatabase::MatchDefault) const;
-    Q_INVOKABLE QMimeType        mimeTypeForFile(const QString&, QMimeDatabase::MatchMode = 
-                                                 QMimeDatabase::MatchDefault) const;
-    Q_INVOKABLE QMimeType        mimeTypeForFileNameAndData(const QString&, QIODevice*) const;
-    Q_INVOKABLE QMimeType        mimeTypeForFileNameAndData(const QString&,
-                                                            const QByteArray&) const;
     Q_INVOKABLE QMimeType        mimeTypeForName(const QString&) const;
     Q_INVOKABLE QMimeType        mimeTypeForUrl(const QUrl&) const;
     Q_INVOKABLE QList<QMimeType> mimeTypesForFileName(const QString&) const;

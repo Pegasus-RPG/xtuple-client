@@ -10,6 +10,10 @@
 
 #include "qmimedatabaseproto.h"
 
+#include "qbytearrayproto.h"
+#include "qfileinfoproto.h"
+#include "qmimetypeproto.h"
+
 QScriptValue QMimeDatabaseMatchModeToScriptValue(QScriptEngine *engine,
                                                  const enum QMimeDatabase::MatchMode &in)
 {
@@ -22,11 +26,76 @@ void QMimeDatabaseMatchModeFromScriptValue(const QScriptValue &object,
   out = (enum QMimeDatabase::MatchMode)object.toInt32();
 }
 
+QScriptValue mimeTypeForData(QScriptContext *context, QScriptEngine *engine)
+{
+  QMimeDatabase *item = qscriptvalue_cast<QMimeDatabase*>(context->thisObject());
+  QMimeType obj;
+
+  if (item)
+  {
+    if (context->argumentCount() == 1 && qscriptvalue_cast<QByteArray*>(context->argument(0)))
+      obj = item->mimeTypeForData(*(qscriptvalue_cast<QByteArray*>(context->argument(0))));
+    else if (context->argumentCount() == 1 && qscriptvalue_cast<QIODevice*>(context->argument(0)))
+      obj = item->mimeTypeForData(qscriptvalue_cast<QIODevice*>(context->argument(0)));
+    else
+      context->throwError(QScriptContext::UnknownError, "Could not determine correct overload.");
+  }
+
+  return engine->toScriptValue(obj);
+}
+
+QScriptValue mimeTypeForFile(QScriptContext *context, QScriptEngine *engine)
+{
+  QMimeDatabase *item = qscriptvalue_cast<QMimeDatabase*>(context->thisObject());
+  QMimeType obj;
+
+  if (item)
+  {
+    if (context->argumentCount() == 2 && qscriptvalue_cast<QFileInfo*>(context->argument(0)))
+      obj = item->mimeTypeForFile(*(qscriptvalue_cast<QFileInfo*>(context->argument(0))),
+                                  (QMimeDatabase::MatchMode)context->argument(1).toInt32());
+    else if (context->argumentCount() == 2 && context->argument(0).isString())
+      obj = item->mimeTypeForFile(context->argument(0).toString(),
+                                  (QMimeDatabase::MatchMode)context->argument(1).toInt32());
+    else if (context->argumentCount() == 1 && qscriptvalue_cast<QFileInfo*>(context->argument(0)))
+      obj = item->mimeTypeForFile(*(qscriptvalue_cast<QFileInfo*>(context->argument(0))));
+    else if (context->argumentCount() == 1 && context->argument(0).isString())
+      obj = item->mimeTypeForFile(context->argument(0).toString());
+    else
+      context->throwError(QScriptContext::UnknownError, "Could not determine correct overload.");
+  }
+
+  return engine->toScriptValue(obj);
+}
+
+QScriptValue mimeTypeForFileNameAndData(QScriptContext *context, QScriptEngine *engine)
+{
+  QMimeDatabase *item = qscriptvalue_cast<QMimeDatabase*>(context->thisObject());
+  QMimeType obj;
+
+  if (item)
+  {
+    if (context->argumentCount() == 2 && qscriptvalue_cast<QIODevice*>(context->argument(1)))
+      obj = item->mimeTypeForFileNameAndData(context->argument(0).toString(),
+                                             qscriptvalue_cast<QIODevice*>(context->argument(1)));
+    else if (context->argumentCount() == 2 && qscriptvalue_cast<QByteArray*>(context->argument(1)))
+      obj = item->mimeTypeForFileNameAndData(context->argument(0).toString(),
+                                             *(qscriptvalue_cast<QByteArray*>(context->argument(1))));
+    else
+      context->throwError(QScriptContext::UnknownError, "Could not determine correct overload.");
+  }
+
+  return engine->toScriptValue(obj);
+}
+
 void setupQMimeDatabaseProto(QScriptEngine *engine)
 {
   QScriptValue::PropertyFlags ro = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QMimeDatabaseProto(engine));
+  proto.setProperty("mimeTypeForData", engine->newFunction(mimeTypeForData));
+  proto.setProperty("mimeTypeForFile", engine->newFunction(mimeTypeForFile));
+  proto.setProperty("mimeTypeForFileNameAndData", engine->newFunction(mimeTypeForFileNameAndData));
   engine->setDefaultPrototype(qMetaTypeId<QMimeDatabase*>(), proto);
 
   QScriptValue ctor = engine->newFunction(constructQMimeDatabase, proto);
@@ -71,58 +140,6 @@ QList<QMimeType> QMimeDatabaseProto::allMimeTypes() const
   if (item)
     return item->allMimeTypes();
   return QList<QMimeType>();
-}
-
-QMimeType QMimeDatabaseProto::mimeTypeForData(const QByteArray &data) const
-{
-  QMimeDatabase *item = qscriptvalue_cast<QMimeDatabase*>(thisObject());
-  if (item)
-    return item->mimeTypeForData(data);
-  return QMimeType();
-}
-
-QMimeType QMimeDatabaseProto::mimeTypeForData(QIODevice *device) const
-{
-  QMimeDatabase *item = qscriptvalue_cast<QMimeDatabase*>(thisObject());
-  if (item)
-    return item->mimeTypeForData(device);
-  return QMimeType();
-}
-
-QMimeType QMimeDatabaseProto::mimeTypeForFile(const QFileInfo &fileInfo,
-                                              QMimeDatabase::MatchMode mode) const
-{
-  QMimeDatabase *item = qscriptvalue_cast<QMimeDatabase*>(thisObject());
-  if (item)
-    return item->mimeTypeForFile(fileInfo, mode);
-  return QMimeType();
-}
-
-QMimeType QMimeDatabaseProto::mimeTypeForFile(const QString &fileName, 
-                                              QMimeDatabase::MatchMode mode) const
-{
-  QMimeDatabase *item = qscriptvalue_cast<QMimeDatabase*>(thisObject());
-  if (item)
-    return item->mimeTypeForFile(fileName, mode);
-  return QMimeType();
-}
-
-QMimeType QMimeDatabaseProto::mimeTypeForFileNameAndData(const QString &fileName,
-                                                         QIODevice *device) const
-{
-  QMimeDatabase *item = qscriptvalue_cast<QMimeDatabase*>(thisObject());
-  if (item)
-    return item->mimeTypeForFileNameAndData(fileName, device);
-  return QMimeType();
-}
-
-QMimeType QMimeDatabaseProto::mimeTypeForFileNameAndData(const QString &fileName, 
-                                                         const QByteArray &data) const
-{
-  QMimeDatabase *item = qscriptvalue_cast<QMimeDatabase*>(thisObject());
-  if (item)
-    return item->mimeTypeForFileNameAndData(fileName, data);
-  return QMimeType();
 }
 
 QMimeType QMimeDatabaseProto::mimeTypeForName(const QString &nameOrAlias) const

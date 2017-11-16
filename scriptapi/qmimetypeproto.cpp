@@ -10,8 +10,25 @@
 
 #include "qmimetypeproto.h"
 
+QScriptValue QMimeTypeListToScriptValue(QScriptEngine *engine, QList<QMimeType> const &in)
+{
+  QScriptValue out = engine->newArray(in.size());
+  for (int i = 0; i < in.size(); i++)
+    out.setProperty(i, engine->toScriptValue(in.at(i)));
+  return out;
+}
+
+void QMimeTypeListFromScriptValue(const QScriptValue &object, QList<QMimeType> &out)
+{
+  out.clear();
+  for (int i = 0; i < object.property("length").toInt32(); i++)
+    out.append(qscriptvalue_cast<QMimeType>(object.property(i)));
+}
+
 void setupQMimeTypeProto(QScriptEngine *engine)
 {
+  qScriptRegisterMetaType(engine, QMimeTypeListToScriptValue, QMimeTypeListFromScriptValue);
+
   QScriptValue proto = engine->newQObject(new QMimeTypeProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QMimeType>(), proto);
   engine->setDefaultPrototype(qMetaTypeId<QMimeType*>(), proto);
@@ -163,9 +180,12 @@ QStringList QMimeTypeProto::suffixes() const
 
 void QMimeTypeProto::swap(QMimeType& other)
 {
-  QMimeType *item = qscriptvalue_cast<QMimeType*>(thisObject());
-  if (item)
-    item->swap(other);
+  Q_UNUSED(other)
+
+  //This function has not yet been implemented.
+  //An error is thrown if this function is called
+  //because QMimeType& is not exposed to scripting.
+  //It does not seem to be possible to expose reference types.
 }
 
 bool QMimeTypeProto::operator!=(const QMimeType &other) const

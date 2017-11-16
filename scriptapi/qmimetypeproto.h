@@ -18,6 +18,7 @@
 
 Q_DECLARE_METATYPE(QMimeType)
 Q_DECLARE_METATYPE(QMimeType*)
+Q_DECLARE_METATYPE(QList<QMimeType>)
 
 void setupQMimeTypeProto(QScriptEngine*);
 QScriptValue constructQMimeType(QScriptContext*, QScriptEngine*);
