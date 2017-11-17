@@ -25,6 +25,8 @@
 #include "setupscriptapi.h"
 #include "widgets.h"
 #include "xsqlquery.h"
+#include "metasql.h"
+#include "mqlutil.h"
 
 #define DEBUG false
 
@@ -86,16 +88,10 @@ void ScriptableWidget::loadScript(const QStringList &list)
       pair.append(QString("\"%1\": \"%2\"").arg(i).arg(list.at(i)));
     }
 
-    XSqlQuery q;
-    q.prepare("WITH jsonlist AS (SELECT *"
-              "                    FROM json_each_text(:jsonlist))"
-              "SELECT script_id, script_name, script_source"
-              "  FROM script"
-              "  JOIN jsonlist ON script_name = value"
-              " WHERE script_enabled"
-              " ORDER BY key, script_order;");
-    q.bindValue(":jsonlist", "{" + pair.join(", ") + "}");
-    q.exec();
+    ParameterList params;
+    params.append("jsonlist", "{" + pair.join(", ") + "}");
+    MetaSQLQuery mql = mqlLoad("scripts", "fetch");
+    XSqlQuery q = mql.toQuery(params);
     while (q.next())
     {
       _cache->_scriptsById.insert(q.value("script_id").toInt(),

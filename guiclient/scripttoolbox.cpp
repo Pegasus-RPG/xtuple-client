@@ -1502,16 +1502,11 @@ QString scriptHandleIncludes(QString source)
           name = words.at(1);
 
         line.replace(i, "// " + line.at(i));
-        XSqlQuery inclq;
-        inclq.prepare("SELECT script_source "
-                      "FROM script "
-                      "WHERE ((script_name=:name)"
-                      "  AND  ((script_order=:order) OR (:order = -1))"
-                      "  AND  script_enabled) "
-                      "ORDER BY script_order;");
-        inclq.bindValue(":name",  name);
-        inclq.bindValue(":order", order);
-        inclq.exec();
+        ParameterList params;
+        params.append("jsonlist", QString("{\"1\": \"%1\"}").arg(name));
+        params.append("order", order);
+        MetaSQLQuery mql = mqlLoad("scripts", "fetch");
+        XSqlQuery inclq = mql.toQuery(params);
         bool found = false;
         while (inclq.next())
         {
