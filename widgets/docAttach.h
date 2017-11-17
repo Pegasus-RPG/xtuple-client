@@ -21,10 +21,21 @@ class docAttach : public QDialog, public Ui::docAttach
     Q_OBJECT
 
 public:
+    enum SaveStatus { OK, Failed };
+    Q_ENUM(SaveStatus);
+
     docAttach(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WindowFlags fl = 0);
     ~docAttach();
 
     QPushButton* _save;
+
+signals:
+    virtual void saveBeforeBegin();
+    virtual void saveAfterBegin();
+    virtual void saveBeforeCommit();
+    virtual void saveAfterCommit();
+    virtual void saveBeforeRollback(QSqlQuery*);
+    virtual void saveAfterRollback(QSqlQuery*);
 
 public slots:
     virtual void set( const ParameterList & pParams );
@@ -32,6 +43,7 @@ public slots:
     virtual void sHandleButtons();
     virtual void sSave();
     virtual void sHandleNewId(int);
+    inline virtual void setSaveStatus(SaveStatus status) { _saveStatus = status; };
 
 protected slots:
     virtual void languageChange();
@@ -45,6 +57,7 @@ private:
     QString _purpose;
     QString _mode;
     docAttachPrivate *_p;
+    SaveStatus            _saveStatus;
 };
 
 #endif // docAttach_H

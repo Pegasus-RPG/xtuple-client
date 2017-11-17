@@ -376,6 +376,22 @@ void docAttach::sSave()
       url.setScheme("http");
   }
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  emit saveBeforeBegin();
+  if (_saveStatus==Failed)
+    return;
+
+  XSqlQuery begin("BEGIN;");
+
+  emit saveAfterBegin();
+  if (_saveStatus==Failed)
+  {
+    rollback.exec();
+    return;
+  }
+
   if (_targettype == "IMG")
   {
     // First determine if the id is in the image table, and not one of it's inherited versions
@@ -383,8 +399,18 @@ void docAttach::sSave()
     XSqlQuery qq;
     qq.prepare("SELECT image_id FROM ONLY image WHERE image_id=:image_id");
     qq.bindValue(":image_id", _targetid);
-    if(qq.exec() && !qq.first())
+    qq.exec();
+    if(!qq.first())
     {
+      if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error saving"),
+                               qq, __FILE__, __LINE__))
+      {
+        emit saveBeforeRollback(&qq);
+        rollback.exec();
+        emit saveAfterRollback(&qq);
+        return;
+      }
+
       qq.exec("SELECT nextval(('\"image_image_id_seq\"'::text)::regclass) AS newid;");
       if(qq.first())
       {
@@ -394,8 +420,24 @@ void docAttach::sSave()
                    "  FROM image WHERE image_id=:image_id;");
         qq.bindValue(":newid", newid);
         qq.bindValue(":image_id", _targetid);
-        if(qq.exec())
-          _targetid = newid;
+        qq.exec();
+        if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error saving"),
+                                 qq, __FILE__, __LINE__))
+        {
+          emit saveBeforeRollback(&qq);
+          rollback.exec();
+          emit saveAfterRollback(&qq);
+          return;
+        }
+        _targetid = newid;
+      }
+      else if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error saving"),
+                               qq, __FILE__, __LINE__))
+      {
+        emit saveBeforeRollback(&qq);
+        rollback.exec();
+        emit saveAfterRollback(&qq);
+        return;
       }
     }
      // For now images are handled differently because of legacy structures...
@@ -410,6 +452,9 @@ void docAttach::sSave()
     {
       QMessageBox::warning( this, tr("Must Specify valid path"),
                             tr("You must specify a path before you may save.") );
+      emit saveBeforeRollback(new XSqlQuery());
+      rollback.exec();
+      emit saveAfterRollback(new XSqlQuery());
       return;
     }
 
@@ -424,6 +469,9 @@ void docAttach::sSave()
       {
         QMessageBox::warning( this, tr("File Error"),
                              tr("File %1 was not found and will not be saved.").arg(url.toLocalFile()));
+        emit saveBeforeRollback(new XSqlQuery());
+        rollback.exec();
+        emit saveAfterRollback(new XSqlQuery());
         return;
       }
       QFile sourceFile(url.toLocalFile());
@@ -432,6 +480,9 @@ void docAttach::sSave()
         QMessageBox::warning( this, tr("File Open Error"),
                              tr("Could not open source file %1 for read.")
                                 .arg(url.toLocalFile()));
+        emit saveBeforeRollback(new XSqlQuery());
+        rollback.exec();
+        emit saveAfterRollback(new XSqlQuery());
         return;
       }
       bytarr = sourceFile.readAll();
@@ -474,6 +525,9 @@ void docAttach::sSave()
   {
     QMessageBox::critical(this,tr("Invalid Selection"),
                           tr("You may not attach a document to itself."));
+    emit saveBeforeRollback(new XSqlQuery());
+    rollback.exec();
+    emit saveAfterRollback(new XSqlQuery());
     return;
   }
 
@@ -483,6 +537,51 @@ void docAttach::sSave()
   newDocass.bindValue(":docass_purpose", _purpose);
 
   newDocass.exec();
+
+  if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error saving"),
+                           newDocass, __FILE__, __LINE__))
+  {
+    emit saveBeforeRollback(&newDocass);
+    rollback.exec();
+    emit saveAfterRollback(&newDocass);
+    return;
+  }
+
+  emit saveBeforeCommit();
+  if (_saveStatus==Failed)
+  {
+    rollback.exec();
+    return;
+  }
+
+  XSqlQuery commit("COMMIT;");
+
+  bool tryAgain = false;
+
+  do
+  {
+    emit saveAfterCommit();
+    if (_saveStatus==Failed)
+    {
+      QMessageBox failure(QMessageBox::Critical, tr("Script Error"),
+                          tr("A script has failed after the main window saved successfully. How do "
+                             "you wish to proceed?"));
+      QPushButton* retry = failure.addButton(tr("Retry"), QMessageBox::NoRole);
+      failure.addButton(tr("Ignore"), QMessageBox::YesRole);
+      QPushButton* cancel = failure.addButton(QMessageBox::Cancel);
+      failure.setDefaultButton(cancel);
+      failure.setEscapeButton((QAbstractButton*)cancel);
+      failure.exec();
+      if (failure.clickedButton() == (QAbstractButton*)retry)
+      {
+        setSaveStatus(OK);
+        tryAgain = true;
+      }
+      else if (failure.clickedButton() == (QAbstractButton*)cancel)
+        return;
+    }
+  }
+  while (tryAgain);
 
   accept();
   return;
