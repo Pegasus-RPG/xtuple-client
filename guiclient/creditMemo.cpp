@@ -384,7 +384,8 @@ bool creditMemo::save()
   creditave.bindValue(":cmhead_rsncode_id", _rsnCode->id());
   creditave.bindValue(":cmhead_hold",       QVariant(_hold->isChecked()));
   creditave.bindValue(":cmhead_commission", (_commission->toDouble() / 100));
-  creditave.bindValue(":cmhead_misc", _miscCharge->localValue());
+  if (_miscChargeAccount->id() > 0)
+    creditave.bindValue(":cmhead_misc", _miscCharge->localValue());
   creditave.bindValue(":cmhead_misc_accnt_id", _miscChargeAccount->id());
   creditave.bindValue(":cmhead_misc_descrip", _miscChargeDescription->text());
   creditave.bindValue(":cmhead_freight", _freight->localValue());
