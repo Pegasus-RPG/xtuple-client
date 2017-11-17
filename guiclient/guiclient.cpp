@@ -50,6 +50,8 @@
 #include "errorReporter.h"
 #include "login2.h"
 #include "storedProcErrorLookup.h"
+#include "metasql.h"
+#include "mqlutil.h"
 
 #include "systemMessage.h"
 #include "menuProducts.h"
@@ -812,19 +814,10 @@ void GUIClient::showEvent(QShowEvent *event)
     _shown = true;
     // We only want the scripting to work on the NEO menu
     // START script code
-      XSqlQuery sq;
-      sq.prepare("SELECT script_source "
-                 "  FROM script "
-                 "JOIN (SELECT c.oid, n.nspname AS schema "
-                 "  FROM pg_class AS c "
-                 "  JOIN pg_namespace AS n ON c.relnamespace=n.oid) AS schema_table "
-                 "ON script.tableoid=schema_table.oid "
-                 "JOIN (SELECT regexp_split_to_table AS pkgname, row_number() over () AS seq "
-                 "  FROM regexp_split_to_table(buildsearchpath(), ',')) AS path "
-                 "ON pkgname = schema "
-                 " WHERE script_enabled AND script_name = 'initMenu' "
-                 "ORDER BY script_order, seq;");
-      sq.exec();
+      ParameterList params;
+      params.append("jsonlist", "{\"1\": \"initMenu\"}");
+      MetaSQLQuery mql = mqlLoad("scripts", "fetch");
+      XSqlQuery sq = mql.toQuery(params);
       QScriptEngine * engine = 0;
       QScriptEngineDebugger * debugger = 0;
       bool found_one = false;

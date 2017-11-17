@@ -10,6 +10,9 @@
 
 #include "include.h"
 #include <xsqlquery.h>
+#include "metasql.h"
+#include "mqlutil.h"
+#include "parameter.h"
 
 /*! \file include.cpp
 
@@ -53,19 +56,6 @@ void setupInclude(QScriptEngine *engine)
 QScriptValue includeScript(QScriptContext *context, QScriptEngine *engine)
 {
   int count = 0;
-  XSqlQuery scriptq;
-  scriptq.prepare("SELECT script_id, script_source AS src"
-                  "  FROM script"
-                  "  JOIN (SELECT c.oid, n.nspname AS schema "
-                  "          FROM pg_class AS c "
-                  "          JOIN pg_namespace AS n ON c.relnamespace=n.oid) AS schema_table "
-                  "    ON script.tableoid=schema_table.oid "
-                  "  JOIN (SELECT regexp_split_to_table AS pkgname, row_number() over () AS seq "
-                  "          FROM regexp_split_to_table(buildsearchpath(), ',')) AS path "
-                  "    ON pkgname = schema "
-                  " WHERE ((script_name=:script_name)"
-                  "   AND  (script_enabled))"
-                  " ORDER BY script_order, seq;");
 
   context->setActivationObject(context->parentContext()->activationObject());
   context->setThisObject(context->parentContext()->thisObject());
@@ -73,11 +63,14 @@ QScriptValue includeScript(QScriptContext *context, QScriptEngine *engine)
   for (; count < context->argumentCount(); count++)
   {
     QString scriptname = context->argument(count).toString();
-    scriptq.bindValue(":script_name", scriptname);
-    scriptq.exec();
+    ParameterList params;
+    params.append("jsonlist", QString("{\"1\": \"%1\"}").arg(scriptname));
+    MetaSQLQuery mql = mqlLoad("scripts", "fetch");
+    XSqlQuery scriptq = mql.toQuery(params);
+
     while (scriptq.next())
     {
-      QScriptValue result = engine->evaluate(scriptq.value("src").toString(),
+      QScriptValue result = engine->evaluate(scriptq.value("script_source").toString(),
                                              scriptname,
                                              1);
       if (engine->hasUncaughtException())
