@@ -231,7 +231,7 @@ void Comments::setType(QString sourceType)
 void Comments::setId(int pSourceid)
 {
   _sourceid = pSourceid;
-  _newComment->setEnabled(true); 
+  _newComment->setEnabled(_editable);
   refresh();
 }
 
