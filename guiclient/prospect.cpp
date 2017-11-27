@@ -83,6 +83,10 @@ enum SetResponse prospect::set(const ParameterList &pParams)
   if (valid)
     _prospectid = param.toInt();
 
+  param = pParams.value("cntct_id", &valid);
+  if (valid)
+    _contact->setId(param.toInt());
+
   if (_crmacctid >= 0 || _prospectid >= 0)
     if (! sPopulate())
       return UndefinedError;
