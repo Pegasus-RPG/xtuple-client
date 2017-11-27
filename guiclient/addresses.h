@@ -27,6 +27,12 @@ public slots:
     virtual void sEdit();
     virtual void sView();
     virtual void sDelete();
+    virtual void sNewProspect();
+    virtual void sEditProspect();
+    virtual void sViewProspect();
+
+private:
+    int _crmacctid;
 
 };
 

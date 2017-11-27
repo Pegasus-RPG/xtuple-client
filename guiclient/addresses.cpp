@@ -24,6 +24,7 @@
 #include "storedProcErrorLookup.h"
 #include "parameterwidget.h"
 #include "errorReporter.h"
+#include "prospect.h"
 
 addresses::addresses(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "addresses", fl)
@@ -55,6 +56,7 @@ addresses::addresses(QWidget* parent, const char*, Qt::WindowFlags fl)
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
   }
 
+  _crmacctid = -1;
 }
 
 void addresses::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
@@ -69,6 +71,39 @@ void addresses::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 
   menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDelete()));
   menuItem->setEnabled(_privileges->check("MaintainAddresses"));
+
+  // Create, Edit, View Prospect:
+  // Temporary sql hack to determine crmacct. Replace this post crm enhancements project.
+  XSqlQuery sql;
+  sql.prepare("SELECT crmacct_id, crmacct_prospect_id"
+              "  FROM cntct"
+              "  JOIN crmacct ON cntct_crmacct_id=crmacct_id"
+              " WHERE cntct_addr_id=:addr_id"
+              "   AND crmacct_cust_id IS NULL;");
+  sql.bindValue(":addr_id", list()->currentItem()->id());
+  sql.exec();
+
+  if (sql.first())
+  {
+    _crmacctid = sql.value("crmacct_id").toInt();
+    bool editProspectPriv = _privileges->check("MaintainAllCRMAccounts"); // TODO - replace if a new "ViewProspect" priv created
+    bool viewProspectPriv = _privileges->check("ViewAllCRMAccounts"); // TODO - replace if a new "ViewProspect" priv created
+    
+    if (sql.value("crmacct_prospect_id").toInt() > 0)
+    {
+      pMenu->addSeparator();
+      menuItem = pMenu->addAction(tr("Edit Prospect"), this, SLOT(sEditProspect()));
+      menuItem->setEnabled(editProspectPriv);
+      menuItem = pMenu->addAction(tr("View Prospect"), this, SLOT(sViewProspect()));
+      menuItem->setEnabled(viewProspectPriv);
+    }
+    else
+    {
+      pMenu->addSeparator();
+      menuItem = pMenu->addAction(tr("Create Prospect..."), this, SLOT(sNewProspect()));
+      menuItem->setEnabled(editProspectPriv);
+    }
+  }
 }
 
 void addresses::sNew()
@@ -129,5 +164,51 @@ void addresses::sDelete()
                                 deleteAddress, __FILE__, __LINE__))
   {
     return;
+  }
+}
+
+void addresses::sNewProspect()
+{
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    ParameterList params;
+    params.append("mode", "new");
+    params.append("crmacct_id", _crmacctid);
+
+    prospect *newdlg = new prospect();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  sFillList();
+}
+
+void addresses::sEditProspect()
+{
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("prospect_id", ((XTreeWidgetItem*)(selected[i]))->rawValue("prospect"));
+    
+    prospect *newdlg = new prospect();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+}
+
+void addresses::sViewProspect()
+{
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("prospect_id", ((XTreeWidgetItem*)(selected[i]))->rawValue("prospect"));
+
+    prospect *newdlg = new prospect();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
   }
 }
