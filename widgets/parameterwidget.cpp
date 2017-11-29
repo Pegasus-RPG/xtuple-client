@@ -132,16 +132,16 @@ ParameterWidget::~ParameterWidget()
 
 QString ParameterWidget::preferencePrefix() const
 {
-  QString result;
   QWidget* child = parentWidget();
-  while (child)
+  while (child->parentWidget())
   {
-    if (!child->objectName().isEmpty())
-      result.prepend(child->objectName() + "/");
+    if (child->parentWidget()->objectName().isEmpty())
+      break;
     child = child->parentWidget();
   }
 
-  result += objectName();
+  QString result = child->objectName() + "/" + objectName();
+
   if (DEBUG)
     qDebug() << objectName() << __FUNCTION__ << "returning" << result;
   return result;
