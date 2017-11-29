@@ -116,7 +116,7 @@ enum SetResponse contract::set(const ParameterList &pParams)
       _mode = cNew;
       _new = true;
 
-      _newItemSrc->setEnabled(true);
+      _newItemSrc->setEnabled(_privileges->check("MaintainItemSources"));
       _newPo->setEnabled(false);
       _editPo->setEnabled(false);
       _viewPo->setEnabled(false);
@@ -142,7 +142,7 @@ enum SetResponse contract::set(const ParameterList &pParams)
     {
       _mode = cEdit;
       _vendor->setEnabled(false);
-      _newItemSrc->setEnabled(true);
+      _newItemSrc->setEnabled(_privileges->check("MaintainItemSources"));
       _newPo->setEnabled(false);
       _editPo->setEnabled(false);
       _viewPo->setEnabled(false);
@@ -159,8 +159,9 @@ enum SetResponse contract::set(const ParameterList &pParams)
       _dates->setEnabled(false);
       _number->setEnabled(false);
       _descrip->setEnabled(false);
+      _tab->setTabEnabled(_tab->indexOf(_notesTab),false);
 //      _documents->setReadOnly(true);
-      _newItemSrc->setEnabled(true);
+      _newItemSrc->setEnabled(_privileges->check("MaintainItemSources"));
       _newPo->setEnabled(false);
       _editPo->setEnabled(false);
       _viewPo->setEnabled(false);
@@ -304,16 +305,13 @@ void contract::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem * pSelected )
 
   if (!((oper == "Receipt") || (oper == "Return")) && (oper > " "))
   {
-     if (_mode == cNew || _mode == cEdit)
-     {
-       menuItem = pMenu->addAction(tr("Edit Purchase Order..."), this, SLOT(sEditPo()));
-       menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
-     }
+     menuItem = pMenu->addAction(tr("Edit Purchase Order..."), this, SLOT(sEditPo()));
+     menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
 
      menuItem = pMenu->addAction(tr("View Purchase Order..."), this, SLOT(sViewPo()));
      menuItem->setEnabled(_privileges->check("ViewPurchaseOrders") || _privileges->check("MaintainPurchaseOrders"));
 
-     if (stat == "Unreleased" && _mode == cEdit)
+     if (stat == "Unreleased")
      {
        menuItem = pMenu->addAction(tr("Delete Purchase Order..."), this, SLOT(sDeletePo()));
        menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
@@ -327,14 +325,11 @@ void contract::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem * pSelected )
 
   if (_itemSource->altId() > 0)
   {
-    if (_mode == cNew || _mode == cEdit)
-    {
-       menuItem = pMenu->addAction(tr("New Receipt..."), this, SLOT(sNewRcpt()));
-       menuItem->setEnabled(_privileges->check("EnterReceipts"));
+     menuItem = pMenu->addAction(tr("New Receipt..."), this, SLOT(sNewRcpt()));
+     menuItem->setEnabled(_privileges->check("EnterReceipts"));
 
-       menuItem = pMenu->addAction(tr("New Return..."), this, SLOT(sNewRtrn()));
-       menuItem->setEnabled(_privileges->check("EnterReturns"));
-    }
+     menuItem = pMenu->addAction(tr("New Return..."), this, SLOT(sNewRtrn()));
+     menuItem->setEnabled(_privileges->check("EnterReturns"));
   }
 }
 
@@ -358,7 +353,7 @@ void contract::sFillList()
 void contract::sNewItemSrc()
 {
   _captive = true;
-  if (!sSave())
+  if (_mode != cView && !sSave())
     return;
 
   ParameterList params;
@@ -377,11 +372,16 @@ void contract::sNewItemSrc()
 void contract::sEditItemSrc()
 {
   _captive = true;
-  if (!sSave())
+  if (_mode != cView && !sSave())
     return;
-  
+
   ParameterList params;
-  params.append("mode", "edit");
+  if (_privileges->check("MaintainItemSources"))
+    params.append("mode", "edit");
+  else if (_privileges->check("ViewItemSource"))
+    params.append("mode", "view");
+  else
+    return;
   params.append("itemsrc_id", _itemSource->id());
   
   itemSource newdlg(this, "", true);
@@ -457,13 +457,6 @@ void contract::sViewPo()
 
 void contract::sDeletePo()
 {
-  if (_mode == cView)
-  {
-    QMessageBox::warning(omfgThis, tr("View mode"),
-                         tr("Not allowed under View mode.") );
-    return;
-  }
-
   if (QMessageBox::question(this, tr("Delete Purchase Order"),
                                   tr("<p>Are you sure you want to delete the "
                                      "selected Purchase Order?"),
@@ -493,13 +486,6 @@ void contract::sDeletePo()
 
 void contract::sReleasePo()
 {
-  if (_mode == cView)
-  {
-    QMessageBox::warning(omfgThis, tr("View mode"),
-                         tr("Not allowed under View mode.") );
-    return;
-  }
-  
   if (QMessageBox::question(this, tr("Release Purchase Order"),
                             tr("<p>Are you sure you want to release the "
                                "selected Purchase Order?"),
@@ -575,20 +561,16 @@ void contract::sHandleButtons(XTreeWidgetItem *pItem, int pCol)
     stat = pItem->text(_itemSource->column("poitem_status"));
 
     if (!(oper > " "))
-      _newPo->setEnabled(true);
+      _newPo->setEnabled(_privileges->check("MaintainPurchaseOrders"));
     else
       _newPo->setEnabled(false);
 
     if (!((oper == "Receipt") || (oper == "Return")) && (oper > " "))
     {
-      if (_mode == cNew || _mode == cEdit)
-        _editPo->setEnabled(_privileges->check("MaintainPurchaseOrders"));
-      else
-        _editPo->setEnabled(false);
-
+      _editPo->setEnabled(_privileges->check("MaintainPurchaseOrders"));
       _viewPo->setEnabled(_privileges->check("ViewPurchaseOrders") || _privileges->check("MaintainPurchaseOrders"));
 
-      if (stat == "Unreleased" && _mode == cEdit)
+      if (stat == "Unreleased")
       {
         _deletePo->setEnabled(_privileges->check("MaintainPurchaseOrders"));
         _releasePo->setEnabled(_privileges->check("ReleasePurchaseOrders"));
@@ -609,16 +591,8 @@ void contract::sHandleButtons(XTreeWidgetItem *pItem, int pCol)
 
     if (pItem->altId() > 0)
     {
-      if (_mode == cNew || _mode == cEdit)
-      {
-        _newRcpt->setEnabled(_privileges->check("EnterReceipts"));
-        _newRtrn->setEnabled(_privileges->check("EnterReturns"));
-      }
-      else
-      {
-        _newRcpt->setEnabled(false);
-        _newRtrn->setEnabled(false);
-      }
+      _newRcpt->setEnabled(_privileges->check("EnterReceipts"));
+      _newRtrn->setEnabled(_privileges->check("EnterReturns"));
     }
     else
     {
