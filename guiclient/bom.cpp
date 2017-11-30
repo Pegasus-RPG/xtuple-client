@@ -158,6 +158,7 @@ enum SetResponse BOM::set(const ParameterList &pParams)
       _requiredQtyPer->setEnabled(false);
       _documents->setReadOnly(true);
       _save->setEnabled(false);
+      _comments->setReadOnly(true);
       
       connect(_bomitem, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
       

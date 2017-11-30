@@ -280,6 +280,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
 //      _documents->setReadOnly(true);
       _charass->setReadOnly(true);
       _postInvoice->setVisible(false);
+      _comments->setReadOnly(true);
 
       disconnect(_invcitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       disconnect(_invcitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

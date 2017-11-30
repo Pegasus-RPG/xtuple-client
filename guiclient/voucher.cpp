@@ -189,6 +189,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       _charass->setReadOnly(true);
       _close->setText(tr("&Close"));
       _freightGroup->setEnabled(false);
+      _comments->setReadOnly(true);
 
       _save->hide();
 
