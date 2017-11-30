@@ -394,7 +394,7 @@ XComboBoxPrivate::XComboBoxPrivate(XComboBox *pParent)
                        "SELECT flhead_id, flhead_name, flhead_name"
                        "  FROM flhead"
                        " <? if exists('activeOnly') ?>WHERE flhead_active<? endif ?>"
-                       " ORDER BY flhead_name;", "flhead"));
+                       " ORDER BY flhead_name;", "flhead", true, "activeOnly"));
     typeDescrip.insert(XComboBox::FiscalYears,
                        new XComboBoxDescrip(XComboBox::FiscalYears,
                        "accountingYearPeriods", "MaintainAccountingPeriods",
