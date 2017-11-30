@@ -62,6 +62,8 @@ class contactPrivate
 
     bool     _activeCache;
     int      _mode;
+    bool     _close;
+    AppLock  _lock;
     contact *_parent;
 
     struct privSet rowPrivs(XTreeWidgetItem *row)
@@ -350,20 +352,23 @@ enum SetResponse contact::set(const ParameterList &pParams)
       _data->_mode = cEdit;
     }
     else if (param.toString() == "view")
-    {
-      _data->_mode = cView;
-
-      _buttonBox->setStandardButtons(QDialogButtonBox::Close);
-
-      _contact->setEnabled(false);
-      _notes->setEnabled(false);
-      _comments->setReadOnly(true);
-      _documents->setReadOnly(true);
-      _charass->setReadOnly(true);
-    }
+      setViewMode();
   }
 
   return NoError;
+}
+
+void contact::setViewMode()
+{
+  _data->_mode = cView;
+
+  _buttonBox->setStandardButtons(QDialogButtonBox::Close);
+
+  _contact->setEnabled(false);
+  _notes->setEnabled(false);
+  _comments->setReadOnly(true);
+  _documents->setReadOnly(true);
+  _charass->setReadOnly(true);
 }
 
 void contact::sPopulateUsesMenu(QMenu* pMenu)
@@ -591,28 +596,17 @@ void contact::sSave()
 
 void contact::sPopulate()
 {
-  if (!_lock.acquire("cntct", _cntctid, AppLock::Interactive))
+  if (!_data->_lock.acquire("cntct", _cntctid, AppLock::Interactive))
+    setViewMode();
+
+  _data->_close = false;
+
+  foreach (QWidget* widget, QApplication::allWidgets())
   {
-    _data->_mode = cView;
-
-    _buttonBox->setStandardButtons(QDialogButtonBox::Close);
-
-    _contact->setEnabled(false);
-    _notes->setEnabled(false);
-    _comments->setReadOnly(true);
-    _documents->setReadOnly(true);
-    _charass->setReadOnly(true);
-  }
-
-  QWidgetList list = QApplication::allWidgets();
-  _close = false;
-
-  for (int i = 0; i < list.size(); i++)
-  {
-    if (!list.at(i)->isWindow() || !list.at(i)->isVisible())
+    if (!widget->isWindow() || !widget->isVisible())
       continue;
 
-    contact *w = qobject_cast<contact*>(list.at(i));
+    contact *w = qobject_cast<contact*>(widget);
 
     if (w && w->id()==_cntctid)
     {
@@ -624,7 +618,7 @@ void contact::sPopulate()
         w->activateWindow();
       }
 
-      _close = true;
+      _data->_close = true;
       break;
     }
   }
@@ -1294,9 +1288,14 @@ void contact::sViewWarehouse()
   newdlg.exec();
 }
 
+int contact::id()
+{
+  return _cntctid;
+}
+
 void contact::setVisible(bool visible)
 {
-  if (_close)
+  if (_data->_close)
     close();
   else
     XDialog::setVisible(visible);

@@ -197,8 +197,8 @@ void contacts::sDelete()
   if ( QMessageBox::warning(this, tr("Delete Contacts?"),
                             tr("<p>Are you sure that you want to completely "
                                "delete the selected contact(s)?"),
-			    QMessageBox::Yes,
-			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No) == QMessageBox::Yes)
   {
     XSqlQuery delq;
     XSqlQuery chk;
@@ -215,8 +215,8 @@ void contacts::sDelete()
         if (QMessageBox::warning(this, tr("Delete Parent Objects?"),
                                  tr("There are parent objects that use this contact. Do you wish "
                                     "to delete these objects as well?"),
-                                 QMessageBox::Yes,
-                                 QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+                                 QMessageBox::Yes | QMessageBox::No,
+                                 QMessageBox::No) == QMessageBox::Yes)
           cascade = true;
       }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Checking Usage"),
