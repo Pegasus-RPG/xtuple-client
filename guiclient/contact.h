@@ -11,6 +11,7 @@
 #ifndef CONTACT_H
 #define CONTACT_H
 
+#include "applock.h"
 #include "guiclient.h"
 #include "xdialog.h"
 #include <QMenu>
@@ -30,6 +31,8 @@ public:
     contact(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WindowFlags fl = 0);
     ~contact();
 
+    Q_INVOKABLE virtual int id();
+
     QPushButton *_save;
 
 public slots:
@@ -39,6 +42,7 @@ protected slots:
     virtual void languageChange();
 
     virtual void sClose();
+    virtual void setViewMode();
     virtual void sDetachUse();
     virtual void sEditCRMAccount();
     virtual void sEditCustomer();
@@ -79,6 +83,8 @@ protected slots:
     virtual void sViewVendor();
     virtual void sViewVendorAddress();
     virtual void sViewWarehouse();
+
+    virtual void setVisible(bool);
 
 protected:
     contactPrivate *_data;
