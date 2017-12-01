@@ -43,7 +43,7 @@ vendorPriceList::vendorPriceList(QWidget* parent, const char* name, bool modal, 
     _price->addColumn(tr("Order Type"),                        -1, Qt::AlignCenter,true, "itemsrcp_dropship");
   }
   _price->addColumn(tr("Qty Break"),                   _qtyColumn, Qt::AlignRight,true, "itemsrcp_qtybreak");
-  _price->addColumn(tr("Currency"),               _currencyColumn, Qt::AlignLeft, true, "currabbr");
+  _price->addColumn(tr("Currency"),               _currencyColumn, Qt::AlignLeft, true, "item_curr");
   _price->addColumn(tr("Unit Price"),                          -1, Qt::AlignRight,true, "itemsrcp_price");
   _price->addColumn(tr("Discount Percent"),                    -1, Qt::AlignRight,true, "itemsrcp_discntprcnt" );
   _price->addColumn(tr("Discount Fixed Amt."),                 -1, Qt::AlignRight,true, "itemsrcp_fixedamtdiscount" );
