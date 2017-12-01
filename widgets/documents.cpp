@@ -288,6 +288,8 @@ void Documents::sOpenDoc(QString mode)
     {
       ParameterList params;
       params.append("url_id", targetid);
+      params.append("sourceType", _sourcetype);
+      params.append("source_id", _sourceid);
 
       docAttach newdlg(this, "", true);
       newdlg.set(params);
