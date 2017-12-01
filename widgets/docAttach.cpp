@@ -518,7 +518,7 @@ void docAttach::sSave()
                          "  docass_purpose"
                          ") VALUES ("
                          "  :docass_source_id, :docass_source_type,"
-                         "  createfile(:title,:url, :stream, :mime_type), 'FILE'::text,"
+                         "  createfile(:title, :url, :stream, :mime_type), 'FILE'::text,"
                          "  'S'::bpchar"
                          ") RETURNING docass_id;");
 

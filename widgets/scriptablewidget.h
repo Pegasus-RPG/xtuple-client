@@ -29,10 +29,11 @@ class ScriptableWidget
 
     static GuiClientInterface *_guiClientInterface;
 
-    virtual QScriptEngine *engine();
-    virtual void           loadScript(const QStringList &list);
-    virtual void           loadScript(const QString     &oName);
-    virtual void           loadScriptEngine();
+    virtual QScriptEngine    *engine();
+    virtual void              loadScript(const QStringList &list);
+    virtual void              loadScript(const QString     &oName);
+    virtual void              loadScriptEngine();
+    Q_INVOKABLE virtual bool  setScriptableParams(ParameterList &);
 
   protected:
     static ScriptCache    *_cache;

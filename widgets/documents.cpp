@@ -90,7 +90,7 @@ QMap<QString, struct DocumentMap *> &Documents::documentMap() {
 GuiClientInterface* Documents::_guiClientInterface = 0;
 
 Documents::Documents(QWidget *pParent) :
-  QWidget(pParent)
+  QWidget(pParent), ScriptableWidget(this)
 {
   setupUi(this);
 
@@ -161,6 +161,7 @@ void Documents::setType(QString sourceType)
 void Documents::setId(int pSourceid)
 {
   _sourceid = pSourceid;
+  loadScriptEngine();
   refresh();
 }
 
@@ -174,6 +175,12 @@ void Documents::setReadOnly(bool pReadOnly)
   _detachDoc->setEnabled(!pReadOnly);
 
   handleSelection();
+}
+
+void Documents::showEvent(QShowEvent *e)
+{
+  loadScriptEngine();
+  QWidget::showEvent(e);
 }
 
 void Documents::sNewDoc(QString ptype, QString pui)
@@ -462,137 +469,76 @@ void Documents::refresh()
     return;
   }
 
-  XSqlQuery query;
-  
   //Populate doc list
-  QString sql("SELECT id, target_number, target_type, "
-              " target_id AS target_number_xtidrole, source_type, source_id, purpose, "
-              " name, description, "
-              " hasPrivOnObject('view', target_type, target_id) AS canview,"
-              " hasPrivOnObject('edit', target_type, target_id) AS canedit,"
-              " CASE WHEN (purpose='I') THEN :inventory"
-              " WHEN (purpose='P') THEN :product"
-              " WHEN (purpose='E') THEN :engineering"
-              " WHEN (purpose='M') THEN :misc"
-              " WHEN (purpose='A') THEN :child"
-              " WHEN (purpose='C') THEN :parent"
-              " WHEN (purpose='S') THEN :sibling"
-              " WHEN (purpose='D') THEN :dupe"
-              " ELSE :other"
-              " END AS purpose_qtdisplayrole, "
-              " CASE "
-              " WHEN (target_type='ADDR') THEN :address "
-              " WHEN (target_type='BBH') THEN :bbomhead "
-              " WHEN (target_type='BBI') THEN :bbomitem "
-              " WHEN (target_type='BMH') THEN :bomhead "
-              " WHEN (target_type='BMI') THEN :bomitem "
-              " WHEN (target_type='BOH') THEN :boohead "
-              " WHEN (target_type='BOI') THEN :booitem "
-              " WHEN (target_type='CRMA') THEN :crma "
-              " WHEN (target_type='T') THEN :contact "
-              " WHEN (target_type='CNTR') THEN :contract "
-              " WHEN (target_type='CM') THEN :creditmemo "
-              " WHEN (target_type='CMI') THEN :creditmemoitem "
-              " WHEN (target_type='C') THEN :cust "
-              " WHEN (target_type='EMP') THEN :emp "
-              " WHEN (target_type='INCDT') THEN :incident "
-              " WHEN (target_type='INV') THEN :invoice "
-              " WHEN (target_type='INVI') THEN :invoiceitem "
-              " WHEN (target_type='I') THEN :item "
-              " WHEN (target_type='IS') THEN :itemsite "
-              " WHEN (target_type='IR') THEN :itemsrc "
-              " WHEN (target_type='L') THEN :location "
-              " WHEN (target_type='LS') THEN :lotserial "
-              " WHEN (target_type='OPP') THEN :opp "
-              " WHEN (target_type='J') THEN :project "
-              " WHEN (target_type='P') THEN :po "
-              " WHEN (target_type='PI') THEN :poitem "
-              " WHEN (target_type='RA') THEN :ra "
-              " WHEN (target_type='RI') THEN :raitem "
-              " WHEN (target_type='Q') THEN :quote "
-              " WHEN (target_type='QI') THEN :quoteitem "
-              " WHEN (target_type='S') THEN :so "
-              " WHEN (target_type='SI') THEN :soitem "
-              " WHEN (target_type='SHP') THEN :shipto "
-              " WHEN (target_type='TE') THEN :timeexpense "
-              " WHEN (target_type='TODO') THEN :todo "
-              " WHEN (target_type='TO') THEN :to "
-              " WHEN (target_type='TI') THEN :toitem "
-              " WHEN (target_type='V') THEN :vendor "
-              " WHEN (target_type='VCH') THEN :voucher "
-              " WHEN (target_type='WH') THEN :whse "
-              " WHEN (target_type='W') THEN :wo "
-              " WHEN (target_type='TASK') THEN :projecttask "
-              " WHEN (target_type='URL') THEN :url "
-              " WHEN (target_type='FILE') THEN :file "
-              " WHEN (target_type='IMG') THEN :image "
-              " ELSE NULL "
-              " END AS target_type_qtdisplayrole "
-              " FROM _docinfo(:sourceid, :source)"
-              "ORDER by target_type_qtdisplayrole, target_number; ");
-  query.prepare(sql);
-  query.bindValue(":inventory", tr("Inventory Description"));
-  query.bindValue(":product", tr("Product Description"));
-  query.bindValue(":engineering", tr("Engineering Reference"));
-  query.bindValue(":misc", tr("Miscellaneous"));
+  MetaSQLQuery mql = mqlLoad("documents", "list");
+  ParameterList params;
 
-  query.bindValue(":parent", tr("Parent"));
-  query.bindValue(":child", tr("Child"));
-  query.bindValue(":sibling", tr("Related to"));
-  query.bindValue(":dupe", tr("Duplicate of"));
-  query.bindValue(":other", tr("Other"));
+  params.append("inventory", tr("Inventory Description"));
+  params.append("product", tr("Product Description"));
+  params.append("engineering", tr("Engineering Reference"));
+  params.append("misc", tr("Miscellaneous"));
 
-  query.bindValue(":address",        _strMap.contains("ADDR") ? _strMap.value("ADDR")->translation : "ADDR");
-  query.bindValue(":bbomhead",       _strMap.contains("BBH") ? _strMap.value("BBH")->translation : "BBH");
-  query.bindValue(":bbomitem",       _strMap.contains("BBI") ? _strMap.value("BBI")->translation : "BBI");
-  query.bindValue(":bomhead",        _strMap.contains("BMH") ? _strMap.value("BMH")->translation : "BMH");
-  query.bindValue(":bomitem",        _strMap.contains("BMI") ? _strMap.value("BMI")->translation : "BMI");
-  query.bindValue(":boohead",        _strMap.contains("BOH") ? _strMap.value("BOH")->translation : "BOH");
-  query.bindValue(":booitem",        _strMap.contains("BOI") ? _strMap.value("BOI")->translation : "BOI");
-  query.bindValue(":crma",           _strMap.contains("CRMA") ? _strMap.value("CRMA")->translation : "CRMA");
-  query.bindValue(":contact",        _strMap.contains("T") ? _strMap.value("T")->translation : "T");
-  query.bindValue(":contract",       _strMap.contains("CNTR") ? _strMap.value("CNTR")->translation : "CNTR");
-  query.bindValue(":creditmemo",     _strMap.contains("CM") ? _strMap.value("CM")->translation : "CM");
-  query.bindValue(":creditmemoitem", _strMap.contains("CMI") ? _strMap.value("CMI")->translation : "CMI");
-  query.bindValue(":cust",           _strMap.contains("C") ? _strMap.value("C")->translation : "C");
-  query.bindValue(":emp",            _strMap.contains("EMP") ? _strMap.value("EMP")->translation : "EMP");
-  query.bindValue(":incident",       _strMap.contains("INCDT") ? _strMap.value("INCDT")->translation : "INCDT");
-  query.bindValue(":invoice",        _strMap.contains("INV") ? _strMap.value("INV")->translation : "INV");
-  query.bindValue(":invoiceitem",    _strMap.contains("INVI") ? _strMap.value("INVI")->translation : "INVI");
-  query.bindValue(":item",           _strMap.contains("I") ? _strMap.value("I")->translation : "I");
-  query.bindValue(":itemsite",       _strMap.contains("IS") ? _strMap.value("IS")->translation : "IS");
-  query.bindValue(":itemsrc",        _strMap.contains("IR") ? _strMap.value("IR")->translation : "IR");
-  query.bindValue(":location",       _strMap.contains("L") ? _strMap.value("L")->translation : "L");
-  query.bindValue(":lotserial",      _strMap.contains("LS") ? _strMap.value("LS")->translation : "LS");
-  query.bindValue(":opp",            _strMap.contains("OPP") ? _strMap.value("OPP")->translation : "OPP");
-  query.bindValue(":project",        _strMap.contains("J") ? _strMap.value("J")->translation : "J");
-  query.bindValue(":po",             _strMap.contains("P") ? _strMap.value("P")->translation : "P");
-  query.bindValue(":poitem",         _strMap.contains("PI") ? _strMap.value("PI")->translation : "PI");
-  query.bindValue(":ra",             _strMap.contains("RA") ? _strMap.value("RA")->translation : "RA");
-  query.bindValue(":raitem",         _strMap.contains("RI") ? _strMap.value("RI")->translation : "RI");
-  query.bindValue(":quote",          _strMap.contains("Q") ? _strMap.value("Q")->translation : "Q");
-  query.bindValue(":quoteitem",      _strMap.contains("QI") ? _strMap.value("QI")->translation : "QI");
-  query.bindValue(":so",             _strMap.contains("S") ? _strMap.value("S")->translation : "S");
-  query.bindValue(":soitem",         _strMap.contains("SI") ? _strMap.value("SI")->translation : "SI");
-  query.bindValue(":shipto",         _strMap.contains("SHP") ? _strMap.value("SHP")->translation : "SHP");
-  query.bindValue(":timeexpense",    _strMap.contains("TE") ? _strMap.value("TE")->translation : "TE");
-  query.bindValue(":todo",           _strMap.contains("TODO") ? _strMap.value("TODO")->translation : "TODO");
-  query.bindValue(":to",             _strMap.contains("TO") ? _strMap.value("TO")->translation : "TO");
-  query.bindValue(":toitem",         _strMap.contains("TI") ? _strMap.value("TI")->translation : "TI");
-  query.bindValue(":vendor",         _strMap.contains("V") ? _strMap.value("V")->translation : "V");
-  query.bindValue(":voucher",        _strMap.contains("VCH") ? _strMap.value("VCH")->translation : "VCH");
-  query.bindValue(":whse",           _strMap.contains("WH") ? _strMap.value("WH")->translation : "WH");
-  query.bindValue(":wo",             _strMap.contains("W") ? _strMap.value("W")->translation : "W");
-  query.bindValue(":projecttask",    _strMap.contains("TASK") ? _strMap.value("TASK")->translation : "TASK");
+  params.append("parent", tr("Parent"));
+  params.append("child", tr("Child"));
+  params.append("sibling", tr("Related to"));
+  params.append("dupe", tr("Duplicate of"));
+  params.append("other", tr("Other"));
 
-  query.bindValue(":image", tr("Image"));
-  query.bindValue(":url", tr("URL"));
-  query.bindValue(":file", tr("File"));
+  params.append("address",        _strMap.contains("ADDR") ? _strMap.value("ADDR")->translation : "ADDR");
+  params.append("bbomhead",       _strMap.contains("BBH") ? _strMap.value("BBH")->translation : "BBH");
+  params.append("bbomitem",       _strMap.contains("BBI") ? _strMap.value("BBI")->translation : "BBI");
+  params.append("bomhead",        _strMap.contains("BMH") ? _strMap.value("BMH")->translation : "BMH");
+  params.append("bomitem",        _strMap.contains("BMI") ? _strMap.value("BMI")->translation : "BMI");
+  params.append("boohead",        _strMap.contains("BOH") ? _strMap.value("BOH")->translation : "BOH");
+  params.append("booitem",        _strMap.contains("BOI") ? _strMap.value("BOI")->translation : "BOI");
+  params.append("crma",           _strMap.contains("CRMA") ? _strMap.value("CRMA")->translation : "CRMA");
+  params.append("contact",        _strMap.contains("T") ? _strMap.value("T")->translation : "T");
+  params.append("contract",       _strMap.contains("CNTR") ? _strMap.value("CNTR")->translation : "CNTR");
+  params.append("creditmemo",     _strMap.contains("CM") ? _strMap.value("CM")->translation : "CM");
+  params.append("creditmemoitem", _strMap.contains("CMI") ? _strMap.value("CMI")->translation : "CMI");
+  params.append("cust",           _strMap.contains("C") ? _strMap.value("C")->translation : "C");
+  params.append("emp",            _strMap.contains("EMP") ? _strMap.value("EMP")->translation : "EMP");
+  params.append("incident",       _strMap.contains("INCDT") ? _strMap.value("INCDT")->translation : "INCDT");
+  params.append("invoice",        _strMap.contains("INV") ? _strMap.value("INV")->translation : "INV");
+  params.append("invoiceitem",    _strMap.contains("INVI") ? _strMap.value("INVI")->translation : "INVI");
+  params.append("item",           _strMap.contains("I") ? _strMap.value("I")->translation : "I");
+  params.append("itemsite",       _strMap.contains("IS") ? _strMap.value("IS")->translation : "IS");
+  params.append("itemsrc",        _strMap.contains("IR") ? _strMap.value("IR")->translation : "IR");
+  params.append("location",       _strMap.contains("L") ? _strMap.value("L")->translation : "L");
+  params.append("lotserial",      _strMap.contains("LS") ? _strMap.value("LS")->translation : "LS");
+  params.append("opp",            _strMap.contains("OPP") ? _strMap.value("OPP")->translation : "OPP");
+  params.append("project",        _strMap.contains("J") ? _strMap.value("J")->translation : "J");
+  params.append("po",             _strMap.contains("P") ? _strMap.value("P")->translation : "P");
+  params.append("poitem",         _strMap.contains("PI") ? _strMap.value("PI")->translation : "PI");
+  params.append("ra",             _strMap.contains("RA") ? _strMap.value("RA")->translation : "RA");
+  params.append("raitem",         _strMap.contains("RI") ? _strMap.value("RI")->translation : "RI");
+  params.append("quote",          _strMap.contains("Q") ? _strMap.value("Q")->translation : "Q");
+  params.append("quoteitem",      _strMap.contains("QI") ? _strMap.value("QI")->translation : "QI");
+  params.append("so",             _strMap.contains("S") ? _strMap.value("S")->translation : "S");
+  params.append("soitem",         _strMap.contains("SI") ? _strMap.value("SI")->translation : "SI");
+  params.append("shipto",         _strMap.contains("SHP") ? _strMap.value("SHP")->translation : "SHP");
+  params.append("timeexpense",    _strMap.contains("TE") ? _strMap.value("TE")->translation : "TE");
+  params.append("todo",           _strMap.contains("TODO") ? _strMap.value("TODO")->translation : "TODO");
+  params.append("to",             _strMap.contains("TO") ? _strMap.value("TO")->translation : "TO");
+  params.append("toitem",         _strMap.contains("TI") ? _strMap.value("TI")->translation : "TI");
+  params.append("vendor",         _strMap.contains("V") ? _strMap.value("V")->translation : "V");
+  params.append("voucher",        _strMap.contains("VCH") ? _strMap.value("VCH")->translation : "VCH");
+  params.append("whse",           _strMap.contains("WH") ? _strMap.value("WH")->translation : "WH");
+  params.append("wo",             _strMap.contains("W") ? _strMap.value("W")->translation : "W");
+  params.append("projecttask",    _strMap.contains("TASK") ? _strMap.value("TASK")->translation : "TASK");
 
-  query.bindValue(":source",   _sourcetype);
-  query.bindValue(":sourceid", _sourceid);
-  query.exec();
-  _doc->populate(query,true);
+  params.append("image", tr("Image"));
+  params.append("url", tr("URL"));
+  params.append("file", tr("File"));
+
+  params.append("source",   _sourcetype);
+  params.append("sourceid", _sourceid);
+
+  setScriptableParams(params);
+
+  XSqlQuery query = mql.toQuery(params);
+
+  _doc->populate(query, true);
   ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Documents"),
                        query, __FILE__, __LINE__);
 }
