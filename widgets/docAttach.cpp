@@ -179,6 +179,42 @@ docAttach::~docAttach()
   // no need to delete child widgets, Qt does it all for us
 }
 
+
+QString docAttach::mode()
+{
+  return _mode;
+}
+
+QString docAttach::purpose()
+{
+  return _purpose;
+}
+
+int docAttach::sourceId()
+{
+  return _sourceid;
+}
+
+QString docAttach::sourceType()
+{
+  return _sourcetype;
+}
+
+int docAttach::targetId()
+{
+  return _targetid;
+}
+
+QString docAttach::targetType()
+{
+  return _targettype;
+}
+
+int docAttach::urlId()
+{
+  return _urlid;
+}
+
 void docAttach::languageChange()
 {
   retranslateUi(this);
@@ -579,11 +615,13 @@ void docAttach::sSave()
 
   if (_urlid > 0)
   {
-    emit saveBeforeCommit(_urlid);
+    _targetid = _urlid;
+    emit saveBeforeCommit();
   }
   else if (newDocass.first() && newDocass.value("docass_id").toInt() > 0)
   {
-    emit saveBeforeCommit(newDocass.value("docass_id").toInt());
+    _targetid = newDocass.value("docass_id").toInt();
+    emit saveBeforeCommit();
   }
 
   if (_saveStatus==Failed)

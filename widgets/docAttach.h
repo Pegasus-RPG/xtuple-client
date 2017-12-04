@@ -28,31 +28,31 @@ public:
     docAttach(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WindowFlags fl = 0);
     ~docAttach();
 
-    Q_INVOKABLE virtual QString mode() { return _mode; }
-    Q_INVOKABLE virtual QString purpose() { return _purpose; }
-    Q_INVOKABLE virtual int sourceId() { return _sourceid; }
-    Q_INVOKABLE virtual QString sourceType() { return _sourcetype; }
-    Q_INVOKABLE virtual int targetId() { return _targetid; }
-    Q_INVOKABLE virtual QString targetType() { return _targettype; }
-    Q_INVOKABLE virtual int urlId() { return _urlid; }
+    Q_INVOKABLE virtual QString mode();
+    Q_INVOKABLE virtual QString purpose();
+    Q_INVOKABLE virtual int sourceId();
+    Q_INVOKABLE virtual QString sourceType();
+    Q_INVOKABLE virtual int targetId();
+    Q_INVOKABLE virtual QString targetType();
+    Q_INVOKABLE virtual int urlId();
 
     QPushButton* _save;
 
 signals:
     virtual void saveBeforeBegin();
     virtual void saveAfterBegin();
-    virtual void saveBeforeCommit(int);
+    virtual void saveBeforeCommit();
     virtual void saveAfterCommit();
     virtual void saveBeforeRollback(QSqlQuery*);
     virtual void saveAfterRollback(QSqlQuery*);
 
 public slots:
-    void set( const ParameterList & pParams );
-    void sFileList();
-    void sHandleButtons();
-    void sSave();
-    void sHandleNewId(int);
-    inline void setSaveStatus(SaveStatus status) { _saveStatus = status; };
+    virtual void set( const ParameterList & pParams );
+    virtual void sFileList();
+    virtual void sHandleButtons();
+    virtual void sSave();
+    virtual void sHandleNewId(int);
+    inline virtual void setSaveStatus(SaveStatus status) { _saveStatus = status; };
 
 protected slots:
     virtual void languageChange();

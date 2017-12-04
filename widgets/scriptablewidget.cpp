@@ -23,43 +23,13 @@
 #include "qtsetup.h"
 #include "scriptcache.h"
 #include "setupscriptapi.h"
+#include "parameterlistsetup.h"
 #include "widgets.h"
 #include "xsqlquery.h"
 #include "metasql.h"
 #include "mqlutil.h"
 
 #define DEBUG false
-
-QScriptValue ParameterListToScriptValue(QScriptEngine *engine, const ParameterList &params)
-{
-  QScriptValue obj = engine->newObject();
-  for(int i = 0; i < params.count(); i++)
-  {
-    obj.setProperty(params.name(i), engine->newVariant(params.value(i)));
-  }
-
-  return obj;
-}
-
-void ParameterListFromScriptValue(const QScriptValue &obj, ParameterList &params)
-{
-  QScriptValueIterator it(obj);
-  while (it.hasNext())
-  {
-    it.next();
-    if(it.flags() & QScriptValue::SkipInEnumeration)
-      continue;
-    if (it.value().isArray())
-    {
-      QList<QVariant> cpplist;
-      for (int i = 0;  i < it.value().property("length").toInt32(); i++)
-        cpplist.append(it.value().property(i).toVariant());
-      params.append(it.name(), cpplist);
-    }
-    else
-      params.append(it.name(), it.value().toVariant());
-  }
-}
 
 GuiClientInterface *ScriptableWidget::_guiClientInterface = 0;
 ScriptCache        *ScriptableWidget::_cache              = 0;
@@ -198,11 +168,11 @@ bool ScriptableWidget::setScriptableParams(ParameterList & params)
   bool ret = true;
   if(engine() && engine()->globalObject().property("setParams").isFunction())
   {
-    QScriptValue paramArg = ParameterListToScriptValue(engine(), params);
+    QScriptValue paramArg = ParameterListtoScriptValue(engine(), params);
     QScriptValue tmp = engine()->globalObject().property("setParams").call(QScriptValue(), QScriptValueList() << paramArg);
     ret = ret && tmp.toBool();
     params.clear();
-    ParameterListFromScriptValue(paramArg, params);
+    ParameterListfromScriptValue(paramArg, params);
   }
   return ret;
 }
