@@ -11,6 +11,7 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
+#include "applock.h"
 #include "guiclient.h"
 #include "xdialog.h"
 #include <parameter.h>
@@ -24,10 +25,13 @@ public:
     project(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WindowFlags fl = 0);
     ~project();
 
+    Q_INVOKABLE virtual int id();
+
     static bool userHasPriv(const int = cView, const int = 0);
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
+    virtual void setViewMode();
     virtual void populate();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
     virtual void sAssignedToChanged(const int);
@@ -53,6 +57,8 @@ public slots:
     virtual void sNumberChanged();
     virtual void sHandleButtons(bool valid = false);
 
+    virtual void setVisible(bool);
+
 protected slots:
     virtual void languageChange();
 
@@ -60,6 +66,8 @@ private:
     int _mode;
     int _prjid;
     bool _saved;
+    bool _close;
+    AppLock _lock;
 
 signals:
     void saved(int);

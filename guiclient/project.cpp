@@ -141,6 +141,7 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   _totalExpBal->setPrecision(omfgThis->moneyVal());
   
   _saved=false;
+  _close = false;
 
   QMenu * newMenu = new QMenu;
   QAction *menuItem;
@@ -273,38 +274,41 @@ enum SetResponse project::set(const ParameterList &pParams)
       _print->setMenu(printMenu);
     }
     else if (param.toString() == "view")
-    {
-      _mode = cView;
-      
-      _infoGroup->setEnabled(false);
-      _number->setEnabled(false);
-      _status->setEnabled(false);
-      _name->setEnabled(false);
-      _descrip->setEnabled(false);
-      _so->setEnabled(false);
-      _wo->setEnabled(false);
-      _po->setEnabled(false);
-      _cntct->setEnabled(false);
-      _newTask->setEnabled(false);
-      connect(_prjtask, SIGNAL(itemSelected(int)), _viewTask, SLOT(animateClick()));
-      _comments->setReadOnly(true);
-      _charass->setReadOnly(true);
-      _documents->setReadOnly(true);
-      _scheduleGroup->setEnabled(false);
-      _recurring->setEnabled(false);
-      _projectType->setEnabled(false);
-      _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Save));
-      _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Cancel));
-      _buttonBox->addButton(QDialogButtonBox::Close);
-
-      QMenu * printMenu = new QMenu;
-      printMenu->addAction(tr("Print Tasks"), this, SLOT(sPrintTasks()));
-      printMenu->addAction(tr("Print Orders"), this, SLOT(sPrintOrders()));
-      _print->setMenu(printMenu);
-    }
+      setViewMode();
   }
     
   return NoError;
+}
+
+void project::setViewMode()
+{
+  _mode = cView;
+
+  _infoGroup->setEnabled(false);
+  _number->setEnabled(false);
+  _status->setEnabled(false);
+  _name->setEnabled(false);
+  _descrip->setEnabled(false);
+  _so->setEnabled(false);
+  _wo->setEnabled(false);
+  _po->setEnabled(false);
+  _cntct->setEnabled(false);
+  _newTask->setEnabled(false);
+  connect(_prjtask, SIGNAL(itemSelected(int)), _viewTask, SLOT(animateClick()));
+  _comments->setReadOnly(true);
+  _charass->setReadOnly(true);
+  _documents->setReadOnly(true);
+  _scheduleGroup->setEnabled(false);
+  _recurring->setEnabled(false);
+  _projectType->setEnabled(false);
+  _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Save));
+  _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Cancel));
+  _buttonBox->addButton(QDialogButtonBox::Close);
+
+  QMenu * printMenu = new QMenu;
+  printMenu->addAction(tr("Print Tasks"), this, SLOT(sPrintTasks()));
+  printMenu->addAction(tr("Print Orders"), this, SLOT(sPrintOrders()));
+  _print->setMenu(printMenu);
 }
 
 void project::sHandleButtons(bool valid)
@@ -451,6 +455,33 @@ void project::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
 
 void project::populate()
 {
+  if (!_lock.acquire("prj", _prjid, AppLock::Interactive))
+    setViewMode();
+
+  _close = false;
+
+  foreach (QWidget* widget, QApplication::allWidgets())
+  {
+    if (!widget->isWindow() || !widget->isVisible())
+      continue;
+
+    project *w = qobject_cast<project*>(widget);
+
+    if (w && w->id()==_prjid)
+    {
+      w->setFocus();
+
+      if (omfgThis->showTopLevel())
+      {
+        w->raise();
+        w->activateWindow();
+      }
+
+      _close = true;
+      break;
+    }
+  }
+
   XSqlQuery projectpopulate;
   projectpopulate.prepare( "SELECT * "
              "FROM prj "
@@ -1221,3 +1252,15 @@ void project::sViewOrder()
   }
 }
 
+int project::id()
+{
+  return _prjid;
+}
+
+void project::setVisible(bool visible)
+{
+  if (_close)
+    close();
+  else
+    XDialog::setVisible(visible);
+}

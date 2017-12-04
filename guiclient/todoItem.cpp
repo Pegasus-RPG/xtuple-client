@@ -71,6 +71,7 @@ todoItem::todoItem(QWidget* parent, const char* name, bool modal, Qt::WindowFlag
 
   _assignedTo->setEnabled(_privileges->check("MaintainAllToDoItems"));
 
+  _close = false;
 }
 
 void todoItem::languageChange()
@@ -122,32 +123,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       _description->setEnabled(false);
     }
     else if (param.toString() == "view")
-    {
-      _mode = cView;
-
-      _owner->setEnabled(false);
-      _name->setEnabled(false);
-      _priority->setEnabled(false);
-      _incident->setEnabled(false);
-      _ophead->setEnabled(false);
-      _started->setEnabled(false);
-      _assigned->setEnabled(false);
-      _due->setEnabled(false);
-      _completed->setEnabled(false);
-      _pending->setEnabled(false);
-      _deferred->setEnabled(false);
-      _neither->setEnabled(false);
-      _assignedTo->setEnabled(false);
-      _description->setEnabled(false);
-      _notes->setEnabled(false);
-      _alarms->setReadOnly(true);
-      _comments->setReadOnly(true);
-      _documents->setReadOnly(true);
-      _crmacct->setReadOnly(true);
-      _cntct->setReadOnly(true);
-
-      _buttonBox->setStandardButtons(QDialogButtonBox::Close);
-    }
+      setViewMode();
   }
 
   param = pParams.value("incdt_id", &valid);
@@ -181,6 +157,34 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
   }
 
   return NoError;
+}
+
+void todoItem::setViewMode()
+{
+  _mode = cView;
+
+  _owner->setEnabled(false);
+  _name->setEnabled(false);
+  _priority->setEnabled(false);
+  _incident->setEnabled(false);
+  _ophead->setEnabled(false);
+  _started->setEnabled(false);
+  _assigned->setEnabled(false);
+  _due->setEnabled(false);
+  _completed->setEnabled(false);
+  _pending->setEnabled(false);
+  _deferred->setEnabled(false);
+  _neither->setEnabled(false);
+  _assignedTo->setEnabled(false);
+  _description->setEnabled(false);
+  _notes->setEnabled(false);
+  _alarms->setReadOnly(true);
+  _comments->setReadOnly(true);
+  _documents->setReadOnly(true);
+  _crmacct->setReadOnly(true);
+  _cntct->setReadOnly(true);
+
+  _buttonBox->setStandardButtons(QDialogButtonBox::Close);
 }
 
 void todoItem::sSave()
@@ -319,6 +323,33 @@ void todoItem::sSave()
 
 void todoItem::sPopulate()
 {
+  if (!_lock.acquire("todoitem", _todoitemid, AppLock::Interactive))
+    setViewMode();
+
+  _close = false;
+
+  foreach (QWidget* widget, QApplication::allWidgets())
+  {
+    if (!widget->isWindow() || !widget->isVisible())
+      continue;
+
+    todoItem *w = qobject_cast<todoItem*>(widget);
+
+    if (w && w->id()==_todoitemid)
+    {
+      w->setFocus();
+
+      if (omfgThis->showTopLevel())
+      {
+        w->raise();
+        w->activateWindow();
+      }
+
+      _close = true;
+      break;
+    }
+  }
+
   XSqlQuery todoPopulate;
   todoPopulate.prepare( "SELECT * "
              "FROM todoitem "
@@ -404,4 +435,17 @@ void todoItem::sHandleIncident()
       return;
     }
   }
+}
+
+int todoItem::id()
+{
+  return _todoitemid;
+}
+
+void todoItem::setVisible(bool visible)
+{
+  if (_close)
+    close();
+  else
+    XDialog::setVisible(visible);
 }

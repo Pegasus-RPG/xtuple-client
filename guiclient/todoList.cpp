@@ -70,6 +70,8 @@ todoList::todoList(QWidget* parent, const char*, Qt::WindowFlags fl)
   list()->addColumn(tr("Parent"),            100,  Qt::AlignLeft,   false, "parent");
   list()->addColumn(tr("Customer"),    _ynColumn,  Qt::AlignLeft,   false, "cust");
 
+  list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
   QToolButton * newBtn = (QToolButton*)toolBar()->widgetForAction(newAction());
   newBtn->setPopupMode(QToolButton::MenuButtonPopup);
   QAction *menuItem;
@@ -101,67 +103,77 @@ void todoList::showEvent(QShowEvent * event)
 
 void todoList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 {
+  bool edit = false;
+  bool view = false;
+  bool del = false;
+  bool foundDeletable = false;
+  bool foundParent = false;
+  bool editParent = false;
+  bool viewParent = false;
+  bool foundCustomer = false;
+
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    XTreeWidgetItem* item  = (XTreeWidgetItem*)(selected[i]);
+    edit = edit || getPriv(cEdit, item->altId(), item);
+    view = view || getPriv(cView, item->altId(), item);
+
+    if (item->altId() == 1 || item->altId() == 3 || item->altId() == 4)
+    {
+      foundDeletable = true;
+      del = del || getPriv(cEdit, item->altId(), item);
+    }
+
+    if (getParentType(item))
+    {
+      foundParent = true;
+
+      editParent = editParent || getPriv(cEdit, getParentType(item), item);
+      viewParent = viewParent || getPriv(cView, getParentType(item), item);
+    }
+
+    if (item->rawValue("cust").toInt() > 0)
+      foundCustomer = true;
+  }
+
   QAction *menuItem;
 
-  if (list()->currentItem()->altId() == 1)
+  if (selected.size() > 0)
   {
-    menuItem = pMenu->addAction(tr("Edit To-Do..."), this, SLOT(sEdit()));
-    menuItem->setEnabled(todoItem::userHasPriv(cEdit, getId(1)));
+    menuItem = pMenu->addAction(tr("Edit"), this, SLOT(sEdit()));
+    menuItem->setEnabled(edit);
 
-    menuItem = pMenu->addAction(tr("View To-Do..."), this, SLOT(sView()));
-    menuItem->setEnabled(todoItem::userHasPriv(cView, getId(1)));
-
-    menuItem = pMenu->addAction(tr("Delete To-Do"), this, SLOT(sDelete()));
-    menuItem->setEnabled(todoItem::userHasPriv(cEdit, getId(1)));
+    menuItem = pMenu->addAction(tr("View"), this, SLOT(sView()));
+    menuItem->setEnabled(view);
   }
 
-  pMenu->addSeparator();
-
-  if (list()->altId() == 2 ||
-      (list()->currentItem()->altId() == 1 &&
-       list()->currentItem()->rawValue("parent") == "INCDT"))
+  if (foundDeletable)
   {
-    menuItem = pMenu->addAction(tr("Edit Incident"), this, SLOT(sEditIncident()));
-    menuItem->setEnabled(incident::userHasPriv(cEdit, getId(2)));
-    menuItem = pMenu->addAction(tr("View Incident"), this, SLOT(sViewIncident()));
-    menuItem->setEnabled(incident::userHasPriv(cView, getId(2)));
-  }
-  pMenu->addSeparator();
-
-  if (list()->altId() == 3)
-  {
-    menuItem = pMenu->addAction(tr("Edit Task"), this, SLOT(sEditTask()));
-    menuItem->setEnabled(task::userHasPriv(cEdit, getId(3)));
-    menuItem = pMenu->addAction(tr("View Task"), this, SLOT(sViewTask()));
-    menuItem->setEnabled(task::userHasPriv(cView, getId(3)));
-    pMenu->addSeparator();
+    menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDelete()));
+    menuItem->setEnabled(del);
   }
 
-  if (list()->altId() == 3 || list()->altId() == 4)
-  {
-    menuItem = pMenu->addAction(tr("Edit Project"), this, SLOT(sEditProject()));
-    menuItem->setEnabled(project::userHasPriv(cEdit, getId(4)));
-    menuItem = pMenu->addAction(tr("View Project"), this, SLOT(sViewProject()));
-    menuItem->setEnabled(project::userHasPriv(cView, getId(4)));
-  }
-
-  if (list()->altId() == 5  ||
-      (list()->currentItem()->altId() == 1 &&
-       list()->currentItem()->rawValue("parent") == "OPP"))
-  {
-    menuItem = pMenu->addAction(tr("Edit Opportunity"), this, SLOT(sEditOpportunity()));
-    menuItem->setEnabled(opportunity::userHasPriv(cEdit, getId(5)));
-    menuItem = pMenu->addAction(tr("View Opportunity"), this, SLOT(sViewOpportunity()));
-    menuItem->setEnabled(opportunity::userHasPriv(cView, getId(5)));
-  }
-
-  if (list()->currentItem()->rawValue("cust").toInt() > 0)
+  if (foundParent)
   {
     pMenu->addSeparator();
+
+    menuItem = pMenu->addAction(tr("Edit Parent"), this, SLOT(sEditParent()));
+    menuItem->setEnabled(editParent);
+
+    menuItem = pMenu->addAction(tr("View Parent"), this, SLOT(sViewParent()));
+    menuItem->setEnabled(viewParent);
+  }
+
+  if (foundCustomer)
+  {
+    pMenu->addSeparator();
+
     menuItem = pMenu->addAction(tr("Edit Customer"), this, SLOT(sEditCustomer()));
-    menuItem->setEnabled(customer::userHasPriv(cEdit));
+    menuItem->setEnabled(getPriv(cEdit));
+
     menuItem = pMenu->addAction(tr("View Customer"), this, SLOT(sViewCustomer()));
-    menuItem->setEnabled(customer::userHasPriv(cView));
+    menuItem->setEnabled(getPriv(cView));
   }
 }
 
@@ -188,8 +200,9 @@ void todoList::sNew()
   parameterWidget()->appendValue(params);
   params.append("mode", "new");
 
-  todoItem newdlg(this, "", true);
+  todoItem newdlg(0, "", true);
   newdlg.set(params);
+  newdlg.setWindowModality(Qt::WindowModal);
 
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
@@ -201,189 +214,290 @@ void todoList::sNewIncdt()
   parameterWidget()->appendValue(params);
   params.append("mode", "new");
 
-  incident newdlg(this, "", true);
+  incident newdlg(0, "", true);
   newdlg.set(params);
+  newdlg.setWindowModality(Qt::WindowModal);
+
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
 void todoList::sEdit()
 {
-  if (list()->altId() ==2)
-    sEditIncident();
-  else if (list()->altId() == 3)
-    sEditTask();
-  else if (list()->altId() == 4)
-    sEditProject();
-  else if (list()->altId() == 5)
-    sEditOpportunity();
-  else
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    ParameterList params;
-    params.append("mode", "edit");
-    params.append("todoitem_id", list()->id());
+    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
 
-    todoItem newdlg(this, "", true);
-    newdlg.set(params);
+    bool edit = getPriv(cEdit, item->altId(), item);
+    bool view = getPriv(cView, item->altId(), item);
 
-    if (newdlg.exec() != XDialog::Rejected)
-      sFillList();
+    if (!edit && !view)
+      continue;
+
+    if (item->altId() == 1)
+      if (edit)
+        sEditTodo(item->id());
+      else
+        sViewTodo(item->id());
+    if (item->altId() == 2)
+      if (edit)
+        sEditIncident(item->id());
+      else
+        sViewIncident(item->id());
+    if (item->altId() == 3)
+      if (edit)
+        sEditTask(item->id());
+      else
+        sViewTask(item->id());
+    if (item->altId() == 4)
+      if (edit)
+        sEditProject(item->id());
+      else
+        sViewProject(item->id());
+    if (item->altId() == 5)
+      if (edit)
+        sEditOpportunity(item->id());
+      else
+        sViewOpportunity(item->id());
   }
 }
 
 void todoList::sView()
 {
-  if (list()->altId() ==2)
-    sViewIncident();
-  else if (list()->altId() == 3)
-    sViewTask();
-  else if (list()->altId() == 4)
-    sViewProject();
-  else if (list()->altId() == 5)
-    sViewOpportunity();
-  else
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    ParameterList params;
-    params.append("mode", "view");
-    params.append("todoitem_id", list()->id());
+    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
 
-    todoItem newdlg(this, "", true);
-    newdlg.set(params);
+    if(!getPriv(cView, item->altId(), item))
+      continue;
 
-    newdlg.exec();
+    if (item->altId() == 1)
+      sViewTodo(item->id());
+    if (item->altId() == 2)
+      sViewIncident(item->id());
+    if (item->altId() == 3)
+      sViewTask(item->id());
+    if (item->altId() == 4)
+      sViewProject(item->id());
+    if (item->altId() == 5)
+      sViewOpportunity(item->id());
   }
+}
+
+void todoList::sEditParent()
+{
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
+
+    bool edit = getPriv(cEdit, getParentType(item), item);
+    bool view = getPriv(cView, getParentType(item), item);
+
+    if (!edit && !view)
+      continue;
+
+    if (getParentType(item) == 2)
+      if (edit)
+        sEditIncident(item->id("parent"));
+      else
+        sViewIncident(item->id("parent"));
+    if (getParentType(item) == 4)
+      if (edit)
+        sEditProject(item->id("parent"));
+      else
+        sViewProject(item->id("parent"));
+    if (getParentType(item) == 5)
+      if (edit)
+        sEditOpportunity(item->id("parent"));
+      else
+        sViewOpportunity(item->id("parent"));
+  }
+}
+
+void todoList::sViewParent()
+{
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
+
+    if(!getPriv(cView, getParentType(item), item))
+      continue;
+
+    if (getParentType(item) == 2)
+      sViewIncident(item->id("parent"));
+    if (getParentType(item) == 4)
+      sViewProject(item->id("parent"));
+    if (getParentType(item) == 5)
+      sViewOpportunity(item->id("parent"));
+  }
+}
+
+void todoList::sEditTodo(int id)
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("todoitem_id", id);
+
+  todoItem* newdlg = new todoItem(0, "", false);
+  newdlg->set(params);
+  newdlg->show();
+}
+
+void todoList::sViewTodo(int id)
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("todoitem_id", id);
+
+  todoItem* newdlg = new todoItem(0, "", false);
+  newdlg->set(params);
+  newdlg->show();
 }
 
 void todoList::sDelete()
 {
-  XSqlQuery todoDelete;
-  QString recurstr;
-  QString recurtype;
-  if (list()->altId() == 1)
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    recurstr = "SELECT MAX(todoitem_due_date) AS max"
-               "  FROM todoitem"
-               " WHERE todoitem_recurring_todoitem_id=:id"
-               "   AND todoitem_id!=:id;" ;
-    recurtype = "TODO";
-  }
+    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
 
-  bool deleteAll  = false;
-  bool deleteOne  = false;
-  if (! recurstr.isEmpty())
-  {
-    XSqlQuery recurq;
-    recurq.prepare(recurstr);
-    recurq.bindValue(":id", list()->id());
-    recurq.exec();
-    if (recurq.first() && !recurq.value("max").isNull())
+    if(!getPriv(cEdit, item->altId(), item))
+      continue;
+
+    XSqlQuery todoDelete;
+    QString recurstr;
+    QString recurtype;
+    if (item->altId() == 1)
     {
-      QMessageBox askdelete(QMessageBox::Question, tr("Delete Recurring Item?"),
-                            tr("<p>This is a recurring item. Do you want to "
-                               "delete just this one item or delete all open "
-                               "items in this recurrence?"),
-                            QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Cancel,
-                            this);
-      askdelete.setDefaultButton(QMessageBox::Cancel);
-      int ret = askdelete.exec();
-      if (ret == QMessageBox::Cancel)
-        return;
-      else if (ret == QMessageBox::YesToAll)
-        deleteAll = true;
-      // user said delete one but the only one that exists is the parent ToDo
-      else if (ret == QMessageBox::Yes)
-        deleteOne = true;
+      recurstr = "SELECT MAX(todoitem_due_date) AS max"
+                 "  FROM todoitem"
+                 " WHERE todoitem_recurring_todoitem_id=:id"
+                 "   AND todoitem_id!=:id;" ;
+      recurtype = "TODO";
     }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving To Do Item Information"),
-                                  recurq, __FILE__, __LINE__))
+
+    bool deleteAll  = false;
+    bool deleteOne  = false;
+    if (! recurstr.isEmpty())
     {
-      return;
+      XSqlQuery recurq;
+      recurq.prepare(recurstr);
+      recurq.bindValue(":id", item->id());
+      recurq.exec();
+      if (recurq.first() && !recurq.value("max").isNull())
+      {
+        QMessageBox askdelete(QMessageBox::Question, tr("Delete Recurring Item?"),
+                              tr("<p>This is a recurring item. Do you want to "
+                                 "delete just this one item or delete all open "
+                                 "items in this recurrence?"),
+                              QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Cancel,
+                              this);
+        askdelete.setDefaultButton(QMessageBox::Cancel);
+        int ret = askdelete.exec();
+        if (ret == QMessageBox::Cancel)
+          return;
+        else if (ret == QMessageBox::YesToAll)
+          deleteAll = true;
+        // user said delete one but the only one that exists is the parent ToDo
+        else if (ret == QMessageBox::Yes)
+          deleteOne = true;
+      }
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving To Do Item Information"),
+                                    recurq, __FILE__, __LINE__))
+      {
+        return;
+      }
+      else if (QMessageBox::warning(this, tr("Delete List Item?"),
+                                    tr("<p>Are you sure that you want to "
+                                       "completely delete the selected item?"),
+                                    QMessageBox::Yes | QMessageBox::No,
+                                    QMessageBox::No) == QMessageBox::No)
+        return;
     }
     else if (QMessageBox::warning(this, tr("Delete List Item?"),
                                   tr("<p>Are you sure that you want to "
                                      "completely delete the selected item?"),
-	  		    QMessageBox::Yes | QMessageBox::No,
-			    QMessageBox::No) == QMessageBox::No)
+                                  QMessageBox::Yes | QMessageBox::No,
+                                  QMessageBox::No) == QMessageBox::No)
       return;
-  }
-  else if (QMessageBox::warning(this, tr("Delete List Item?"),
-                                tr("<p>Are you sure that you want to "
-                                   "completely delete the selected item?"),
-	  		    QMessageBox::Yes | QMessageBox::No,
-			    QMessageBox::No) == QMessageBox::No)
-    return;
 
-  int procresult = 0;
-  if (deleteAll)  // Delete all todos in the recurring series
-  {
-    todoDelete.prepare("SELECT deleteOpenRecurringItems(:id, :type, NULL, true)"
-              "       AS result;");
-    todoDelete.bindValue(":id",   list()->id());
-    todoDelete.bindValue(":type", recurtype);
-    todoDelete.exec();
-    if (todoDelete.first())
-      procresult = todoDelete.value("result").toInt();
-
-    if (procresult < 0)
+    int procresult = 0;
+    if (deleteAll)  // Delete all todos in the recurring series
     {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Recurring To Do Item Information"),
+      todoDelete.prepare("SELECT deleteOpenRecurringItems(:id, :type, NULL, true)"
+                "       AS result;");
+      todoDelete.bindValue(":id",   item->id());
+      todoDelete.bindValue(":type", recurtype);
+      todoDelete.exec();
+      if (todoDelete.first())
+        procresult = todoDelete.value("result").toInt();
+
+      if (procresult < 0)
+      {
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Recurring To Do Item Information"),
                              storedProcErrorLookup("deleteOpenRecurringItems", procresult),
                              __FILE__, __LINE__);
-      return;
+        return;
+      }
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Recurring To Do Item Information"),
+                                    todoDelete, __FILE__, __LINE__))
+      {
+        return;
+      }
     }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Recurring To Do Item Information"),
-                                  todoDelete, __FILE__, __LINE__))
-    {
-      return;
-    }
-  }
 
-  if (deleteOne) // The base todo in a recurring series has been seleted.  Have to move
-                 // recurrence to the next item else we hit foreign key errors.
-                 // Make the next item on the list the parent in the series
-  {
-    todoDelete.prepare("UPDATE todoitem SET todoitem_recurring_todoitem_id =("
-                        "               SELECT MIN(todoitem_id) FROM todoitem"
-                        "                 WHERE todoitem_recurring_todoitem_id=:id"
-                        "                   AND todoitem_id!=:id)"
-                        "  WHERE todoitem_recurring_todoitem_id=:id"
-                        "  AND todoitem_id!=:id;");
-    todoDelete.bindValue(":id",   list()->id());
+    if (deleteOne) // The base todo in a recurring series has been seleted.  Have to move
+                   // recurrence to the next item else we hit foreign key errors.
+                   // Make the next item on the list the parent in the series
+    {
+      todoDelete.prepare("UPDATE todoitem SET todoitem_recurring_todoitem_id =("
+                          "               SELECT MIN(todoitem_id) FROM todoitem"
+                          "                 WHERE todoitem_recurring_todoitem_id=:id"
+                          "                   AND todoitem_id!=:id)"
+                          "  WHERE todoitem_recurring_todoitem_id=:id"
+                          "  AND todoitem_id!=:id;");
+      todoDelete.bindValue(":id",   item->id());
+      todoDelete.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Recurring To Do Item Information"),
+                               todoDelete, __FILE__, __LINE__))
+      {
+        return;
+      }
+    }
+
+    if (item->altId() == 1)
+      todoDelete.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");
+    else if (item->altId() == 3)
+      todoDelete.prepare("DELETE FROM prjtask"
+                " WHERE (prjtask_id=:todoitem_id); ");
+    else if (item->altId() == 4)
+      todoDelete.prepare("SELECT deleteProject(:todoitem_id) AS result");
+    else
+      return;
+    todoDelete.bindValue(":todoitem_id", item->id());
     todoDelete.exec();
-    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Recurring To Do Item Information"),
-                                  todoDelete, __FILE__, __LINE__))
+    if (todoDelete.first())
     {
-      return;
-    }
-  }
-
-  if (list()->altId() == 1)
-    todoDelete.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");
-  else if (list()->altId() == 3)
-    todoDelete.prepare("DELETE FROM prjtask"
-              " WHERE (prjtask_id=:todoitem_id); ");
-  else if (list()->altId() == 4)
-    todoDelete.prepare("SELECT deleteProject(:todoitem_id) AS result");
-  else
-    return;
-  todoDelete.bindValue(":todoitem_id", list()->id());
-  todoDelete.exec();
-  if (todoDelete.first())
-  {
-    int result = todoDelete.value("result").toInt();
-    if (result < 0)
-    {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving To Do Item Information"),
+      int result = todoDelete.value("result").toInt();
+      if (result < 0)
+      {
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving To Do Item Information"),
                              storedProcErrorLookup("deleteTodoItem", result),
                              __FILE__, __LINE__);
-      return;
+        return;
+      }
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving To Do Item Information"),
+                                  todoDelete, __FILE__, __LINE__))
+    {
+       return;
     }
   }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving To Do Item Information"),
-                                todoDelete, __FILE__, __LINE__))
-  {
-     return;
-  }
+
   sFillList();
 }
 
@@ -430,37 +544,63 @@ bool todoList::setParams(ParameterList &params)
   return true;
 }
 
-int todoList::getId(int pType)
+bool todoList::getPriv(const int pMode, const int pType, XTreeWidgetItem* item)
 {
-  if (list()->currentItem()->altId() == pType)
-    return list()->id();
+  if (!item)
+    item = list()->currentItem();
+
+  int id;
+  if (item->altId() == pType)
+    id = item->id();
   else
-    return list()->currentItem()->id("parent");
+    id = item->id("parent");
+
+  if (pType == 1)
+    return todoItem::userHasPriv(pMode, id);
+  else if (pType == 2)
+    return incident::userHasPriv(pMode, id);
+  else if (pType == 3)
+    return task::userHasPriv(pMode, id);
+  else if (pType == 4)
+    return project::userHasPriv(pMode, id);
+  else if (pType == 5)
+    return opportunity::userHasPriv(pMode, id);
+  else
+    return customer::userHasPriv(pMode);
 }
 
-void todoList::sEditIncident()
+int todoList::getParentType(XTreeWidgetItem* item)
+{
+  if (item->altId() == 1 && item->rawValue("parent") == "INCDT")
+    return 2;
+  if (item->altId() == 1 && item->rawValue("parent") == "OPP")
+    return 5;
+  if (item->altId() == 3)
+    return 4;
+
+  return 0;
+}
+
+void todoList::sEditIncident(int id)
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("incdt_id", getId(2));
+  params.append("incdt_id", id);
 
-  incident newdlg(this, "", true);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+  incident* newdlg = new incident(0, "", false);
+  newdlg->set(params);
+  newdlg->show();
 }
 
-void todoList::sViewIncident()
+void todoList::sViewIncident(int id)
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("incdt_id", getId(2));
+  params.append("incdt_id", id);
 
-  incident newdlg(this, "", true);
-  newdlg.set(params);
-
-  newdlg.exec();
+  incident* newdlg = new incident(0, "", false);
+  newdlg->set(params);
+  newdlg->show();
 }
 
 void todoList::sNewProject()
@@ -469,84 +609,96 @@ void todoList::sNewProject()
   parameterWidget()->appendValue(params);
   params.append("mode", "new");
 
-  project newdlg(this, "", true);
+  project newdlg(0, "", true);
   newdlg.set(params);
+  newdlg.setWindowModality(Qt::WindowModal);
+
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
-void todoList::sEditProject()
+void todoList::sEditProject(int id)
 {
   ParameterList params;
   params.append("mode", "edit");
-  qDebug("project %d", getId(4));
-  params.append("prj_id", getId(4));
+  params.append("prj_id", id);
 
-  project newdlg(this, "", true);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+  project* newdlg = new project(0, "", false);
+  newdlg->set(params);
+  newdlg->show();
 }
 
-void todoList::sViewProject()
+void todoList::sViewProject(int id)
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("prj_id", getId(4));
+  params.append("prj_id", id);
 
-  project newdlg(this, "", true);
-  newdlg.set(params);
-
-  newdlg.exec();
+  project* newdlg = new project(0, "", false);
+  newdlg->set(params);
+  newdlg->show();
 }
 
-void todoList::sEditTask()
+void todoList::sEditTask(int id)
 {
-
   ParameterList params;
   params.append("mode", "edit");
-  params.append("prjtask_id", list()->id());
+  params.append("prjtask_id", id);
 
-  task newdlg(this, "", true);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+  task* newdlg = new task(0, "", false);
+  newdlg->set(params);
+  newdlg->show();
 }
 
-void todoList::sViewTask()
+void todoList::sViewTask(int id)
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("prjtask_id", list()->id());
+  params.append("prjtask_id", id);
 
-  task newdlg(this, "", true);
-  newdlg.set(params);
-
-  newdlg.exec();
+  task* newdlg = new task(0, "", false);
+  newdlg->set(params);
+  newdlg->show();
 }
 
 void todoList::sEditCustomer()
 {
-  ParameterList params;
-  params.append("cust_id", list()->rawValue("cust").toInt());
-  params.append("mode","edit");
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
 
-  customer *newdlg = new customer(this);
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+    if (item->rawValue("cust").toInt() > 0)
+    {
+      ParameterList params;
+      params.append("cust_id", item->rawValue("cust").toInt());
+      params.append("mode","edit");
+
+      customer *newdlg = new customer(this);
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+    }
+  }
 }
 
 void todoList::sViewCustomer()
 {
-  ParameterList params;
-  params.append("cust_id", list()->rawValue("cust").toInt());
-  params.append("mode","view");
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
 
-  customer *newdlg = new customer(this);
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+    if (item->rawValue("cust").toInt() > 0)
+    {
+      ParameterList params;
+      params.append("cust_id", item->rawValue("cust").toInt());
+      params.append("mode","view");
+
+      customer *newdlg = new customer(this);
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+    }
+  }
 }
 
 void todoList::sNewOpportunity()
@@ -555,36 +707,34 @@ void todoList::sNewOpportunity()
   parameterWidget()->appendValue(params);
   params.append("mode", "new");
 
-  opportunity newdlg(this, "", true);
+  opportunity newdlg(0, "", true);
   newdlg.set(params);
+  newdlg.setWindowModality(Qt::WindowModal);
+
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
-void todoList::sEditOpportunity()
+void todoList::sEditOpportunity(int id)
 {
-
   ParameterList params;
   params.append("mode", "edit");
-  params.append("ophead_id", getId(5));
+  params.append("ophead_id", id);
 
-  opportunity newdlg(this, "", true);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+  opportunity* newdlg = new opportunity(0, "", false);
+  newdlg->set(params);
+  newdlg->show();
 }
 
-void todoList::sViewOpportunity()
+void todoList::sViewOpportunity(int id)
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("ophead_id", getId(5));
+  params.append("ophead_id", id);
 
-  opportunity newdlg(this, "", true);
-  newdlg.set(params);
-
-  newdlg.exec();
+  opportunity* newdlg = new opportunity(0, "", false);
+  newdlg->set(params);
+  newdlg->show();
 }
 
 void todoList::sOpen()

@@ -13,6 +13,7 @@
 
 #include "guiclient.h"
 #include "display.h"
+#include "xtreewidget.h"
 
 #include "ui_todoList.h"
 
@@ -27,22 +28,26 @@ class todoList : public display, public Ui::todoList
     virtual SetResponse	set(const ParameterList&);
     virtual void sDelete();
     virtual void sEdit();
-    virtual void sEditIncident();
-    virtual void sEditTask();
-    virtual void sEditProject();
+    virtual void sEditParent();
+    virtual void sEditTodo(int);
+    virtual void sEditIncident(int);
+    virtual void sEditTask(int);
+    virtual void sEditProject(int);
     virtual void sEditCustomer();
-    virtual void sEditOpportunity();
+    virtual void sEditOpportunity(int);
     virtual void sNew();
     virtual void sNewIncdt();
     virtual void sNewProject();
     virtual void sNewOpportunity();
     virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
     virtual void sView();
+    virtual void sViewParent();
+    virtual void sViewTodo(int);
     virtual void sViewCustomer();
-    virtual void sViewIncident();
-    virtual void sViewTask();
-    virtual void sViewProject();
-    virtual void sViewOpportunity();
+    virtual void sViewIncident(int);
+    virtual void sViewTask(int);
+    virtual void sViewProject(int);
+    virtual void sViewOpportunity(int);
     virtual void sOpen();
     virtual bool setParams(ParameterList &);
     virtual void sFillList();
@@ -51,7 +56,8 @@ class todoList : public display, public Ui::todoList
     void showEvent(QShowEvent * event);
 
     int		    _mode;
-    int		    getId(int pType);
+    bool getPriv(const int = cView, const int = 0, XTreeWidgetItem* = 0);
+    int getParentType(XTreeWidgetItem*);
     int       _shown;
     int       _run;
 };
