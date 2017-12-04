@@ -45,6 +45,8 @@ addresses::addresses(QWidget* parent, const char*, Qt::WindowFlags fl)
   list()->addColumn(tr("Country"),	 50, Qt::AlignLeft, true, "addr_country");
   list()->addColumn(tr("Postal Code"),50,Qt::AlignLeft, true, "addr_postalcode");
 
+  list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
   setupCharacteristics("ADDR");
 
   if (_privileges->check("MaintainAddresses"))
@@ -76,8 +78,9 @@ void addresses::sNew()
   ParameterList params;
   params.append("mode", "new");
 
-  address newdlg(this, "", true);
+  address newdlg(0, "", true);
   newdlg.set(params);
+  newdlg.setWindowModality(Qt::WindowModal);
 
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
@@ -85,49 +88,59 @@ void addresses::sNew()
 
 void addresses::sEdit()
 {
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("addr_id", list()->id());
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("addr_id", ((XTreeWidgetItem*)(selected[i]))->id());
 
-  address newdlg(this, "", true);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+    address* newdlg = new address(0, "", false);
+    newdlg->set(params);
+    newdlg->show();
+  }
 }
 
 void addresses::sView()
 {
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("addr_id", list()->id());
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("addr_id", ((XTreeWidgetItem*)(selected[i]))->id());
 
-  address newdlg(this, "", true);
-  newdlg.set(params);
-  newdlg.exec();
+    address* newdlg = new address(0, "", false);
+    newdlg->set(params);
+    newdlg->show();
+  }
 }
 
 void addresses::sDelete()
 {
-  XSqlQuery deleteAddress;
-  deleteAddress.prepare("SELECT deleteAddress(:addr_id) AS result;");
-  deleteAddress.bindValue(":addr_id", list()->id());
-  deleteAddress.exec();
-  if (deleteAddress.first())
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    int result = deleteAddress.value("result").toInt();
-    if (result < 0)
+    XSqlQuery deleteAddress;
+    deleteAddress.prepare("SELECT deleteAddress(:addr_id) AS result;");
+    deleteAddress.bindValue(":addr_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    deleteAddress.exec();
+    if (deleteAddress.first())
     {
-      QMessageBox::warning(this, tr("Cannot Delete Selected Address"),
-			   storedProcErrorLookup("deleteAddress", result));
+      int result = deleteAddress.value("result").toInt();
+      if (result < 0)
+      {
+        QMessageBox::warning(this, tr("Cannot Delete Selected Address"),
+                             storedProcErrorLookup("deleteAddress", result));
+        return;
+      }
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Address"),
+                                deleteAddress, __FILE__, __LINE__))
+    {
       return;
     }
-    else
-      sFillList();
   }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Address"),
-                                deleteAddress, __FILE__, __LINE__))
-  {
-    return;
-  }
+
+  sFillList();
 }

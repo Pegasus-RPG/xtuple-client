@@ -104,6 +104,8 @@ crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WindowFlags fl)
   list()->addColumn(tr("Sales Rep"),      70, Qt::AlignCenter, false, "salesrep");
   list()->addColumn(tr("Create Date"), _dateColumn, Qt::AlignLeft, false, "crmacct_created" );
 
+  list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
   setupCharacteristics("CRMACCT");
 
   connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
@@ -124,42 +126,55 @@ void crmaccounts::sNew()
 
 void crmaccounts::sView()
 {
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("crmacct_id", list()->id());
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("crmacct_id", ((XTreeWidgetItem*)(selected[i]))->id());
 
-  crmaccount* newdlg = new crmaccount();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+    crmaccount* newdlg = new crmaccount();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
 }
 
 void crmaccounts::sDelete()
 {
   if (QMessageBox::question(this, tr("Delete?"),
-                            tr("Are you sure you want to delete this Account?"),
+                            tr("Are you sure you want to delete these Account(s)?"),
                             QMessageBox::Yes,
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
     return;
 
-  XSqlQuery delq;
-  delq.prepare("DELETE FROM crmacct WHERE crmacct_id = :crmacct_id;");
-  delq.bindValue(":crmacct_id", list()->id());
-  delq.exec();
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting Account"),
-                           delq, __FILE__, __LINE__))
-    return;
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    XSqlQuery delq;
+    delq.prepare("DELETE FROM crmacct WHERE crmacct_id = :crmacct_id;");
+    delq.bindValue(":crmacct_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    delq.exec();
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting Account"),
+                             delq, __FILE__, __LINE__))
+      return;
+  }
+
   sFillList();
 }
 
 void crmaccounts::sEdit()
 {
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("crmacct_id", list()->id());
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("crmacct_id", list()->id());
 
-  crmaccount* newdlg = new crmaccount();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+    crmaccount* newdlg = new crmaccount();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
 }
 
 void crmaccounts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)

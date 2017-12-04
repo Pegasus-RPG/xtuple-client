@@ -119,6 +119,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WindowFlags fl)
   _taxauthId    = -1;
   _username     = "";
   _vendId       = -1;
+  _closed       = false;
   _comments->setId(-1);
   _documents->setId(-1);
   _charass->setId(-1);
@@ -234,6 +235,30 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
   {
     _mode = cView;
     setViewMode();
+  }
+
+  _closed = false;
+
+  foreach (QWidget* widget, QApplication::allWidgets())
+  {
+    if (!widget->isWindow() || !widget->isVisible())
+      continue;
+
+    crmaccount *w = qobject_cast<crmaccount*>(widget);
+
+    if (w && w->id()==_crmacctId)
+    {
+      w->setFocus();
+
+      if (omfgThis->showTopLevel())
+      {
+        w->raise();
+        w->activateWindow();
+      }
+
+      _closed = true;
+      break;
+    }
   }
 
   sHandleChildButtons();
@@ -1338,4 +1363,12 @@ void crmaccount::sUser()
   user *newdlg = new user(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
+}
+
+void crmaccount::setVisible(bool visible)
+{
+  if (_closed)
+    close();
+  else
+    XWidget::setVisible(visible);
 }

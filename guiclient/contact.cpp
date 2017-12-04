@@ -54,6 +54,7 @@ class contactPrivate
     {
       _activeCache = false;
       _mode        = cView;
+      _close       = false;
     };
 
     ~contactPrivate()

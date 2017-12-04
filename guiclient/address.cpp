@@ -51,6 +51,8 @@ address::address(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
     _uses->addColumn(tr("Web Address"),	100, Qt::AlignLeft, true, "cntct_webaddr");
 
     _charass->setType("ADDR");
+
+    _close = false;
 }
 
 address::~address()
@@ -102,23 +104,26 @@ enum SetResponse address::set(const ParameterList &pParams)
       _mode = cEdit;
     }
     else if (param.toString() == "view")
-    {
-      _mode = cView;
-
-      _editAddrUse->hide();
-      disconnect(_uses, SIGNAL(itemSelected(int)), _editAddrUse, SLOT(animateClick()));
-      connect(_uses, SIGNAL(itemSelected(int)), _viewAddrUse, SLOT(animateClick()));
-
-      _addr->setEnabled(false);
-      _notes->setEnabled(false);
-      _comments->setReadOnly(true);
-      _editAddrUse->setEnabled(false);
-      _charass->setReadOnly(true);
-      _buttonBox->setStandardButtons(QDialogButtonBox::Close);
-    }
+      setViewMode();
   }
 
   return NoError;
+}
+
+void address::setViewMode()
+{
+  _mode = cView;
+
+  _editAddrUse->hide();
+  disconnect(_uses, SIGNAL(itemSelected(int)), _editAddrUse, SLOT(animateClick()));
+  connect(_uses, SIGNAL(itemSelected(int)), _viewAddrUse, SLOT(animateClick()));
+
+  _addr->setEnabled(false);
+  _notes->setEnabled(false);
+  _comments->setReadOnly(true);
+  _editAddrUse->setEnabled(false);
+  _charass->setReadOnly(true);
+  _buttonBox->setStandardButtons(QDialogButtonBox::Close);
 }
 
 void address::sSave()
@@ -175,6 +180,33 @@ void address::reject()
 
 void address::sPopulate()
 {
+  if (!_lock.acquire("addr", _addrid, AppLock::Interactive))
+    setViewMode();
+
+  _close = false;
+
+  foreach (QWidget* widget, QApplication::allWidgets())
+  {
+    if (!widget->isWindow() || !widget->isVisible())
+      continue;
+
+    address *w = qobject_cast<address*>(widget);
+
+    if (w && w->id()==_addrid)
+    {
+      w->setFocus();
+
+      if (omfgThis->showTopLevel())
+      {
+        w->raise();
+        w->activateWindow();
+      }
+
+      _close = true;
+      break;
+    }
+  }
+
   _notes->setText(_addr->notes());
   _comments->setId(_addr->id());
   _charass->setId(_addr->id());
@@ -414,4 +446,17 @@ void address::sViewWarehouse()
   params.append("warehous_id", _uses->id());
   newdlg.set(params);
   newdlg.exec();
+}
+
+int address::id()
+{
+  return _addrid;
+}
+
+void address::setVisible(bool visible)
+{
+  if (_close)
+    close();
+  else
+    XDialog::setVisible(visible);
 }
