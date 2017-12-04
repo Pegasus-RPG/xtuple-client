@@ -23,6 +23,7 @@
 #include "qtsetup.h"
 #include "scriptcache.h"
 #include "setupscriptapi.h"
+#include "parameterlistsetup.h"
 #include "widgets.h"
 #include "xsqlquery.h"
 #include "metasql.h"
@@ -160,4 +161,18 @@ void ScriptableWidget::loadScriptEngine()
 
   scriptList.removeDuplicates();
   loadScript(scriptList);
+}
+
+bool ScriptableWidget::setScriptableParams(ParameterList & params)
+{
+  bool ret = true;
+  if(engine() && engine()->globalObject().property("setParams").isFunction())
+  {
+    QScriptValue paramArg = ParameterListtoScriptValue(engine(), params);
+    QScriptValue tmp = engine()->globalObject().property("setParams").call(QScriptValue(), QScriptValueList() << paramArg);
+    ret = ret && tmp.toBool();
+    params.clear();
+    ParameterListfromScriptValue(paramArg, params);
+  }
+  return ret;
 }

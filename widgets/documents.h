@@ -15,6 +15,7 @@
 
 #include <xsqlquery.h>
 
+#include "scriptablewidget.h"
 #include "widgets.h"
 #include "guiclientinterface.h"
 
@@ -49,7 +50,7 @@ struct DocumentMap
   }
 };
 
-class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
+class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents, public ScriptableWidget
 {
   Q_OBJECT
 
@@ -84,8 +85,8 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
     Q_ENUM(DocumentSources)
 
     static GuiClientInterface *_guiClientInterface;
-    inline int  sourceid()             { return _sourceid; }
-    int         type() const;
+    Q_INVOKABLE inline int  sourceid()             { return _sourceid; }
+    Q_INVOKABLE int         type() const;
 
     static QMap<QString, struct DocumentMap*> &documentMap();
 
@@ -104,6 +105,9 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
     void sDetachDoc();
     
     void refresh();
+
+  protected slots:
+    virtual void showEvent(QShowEvent *);
 
   private slots:
     void handleSelection(bool = false);

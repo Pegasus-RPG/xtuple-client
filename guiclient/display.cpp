@@ -414,6 +414,7 @@ void display::languageChange()
 
 void display::showEvent(QShowEvent * e)
 {
+  loadScriptEngine();
   XWidget::showEvent(e);
 
   // don't overwrite the user's filter when the window is minimized
@@ -513,14 +514,12 @@ QString display::searchText()
 bool display::setParams(ParameterList & params)
 {
   bool ret = _data->setParams(params);
-  if(engine() && engine()->globalObject().property("setParams").isFunction())
+
+  if (ret)
   {
-    QScriptValue paramArg = ParameterListtoScriptValue(engine(), params);
-    QScriptValue tmp = engine()->globalObject().property("setParams").call(QScriptValue(), QScriptValueList() << paramArg);
-    ret = ret && tmp.toBool();
-    params.clear();
-    ParameterListfromScriptValue(paramArg, params);
+    ret = setScriptableParams(params);
   }
+
   return ret;
 }
 

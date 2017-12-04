@@ -96,11 +96,11 @@ public slots:
 
 protected:
     Q_INVOKABLE ParameterList getParams();
-    virtual void showEvent(QShowEvent*);
 
 protected slots:
     virtual void languageChange();
     virtual void sAutoUpdateToggled();
+    virtual void showEvent(QShowEvent *);
 
 signals:
     void fillList();
