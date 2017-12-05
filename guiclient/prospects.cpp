@@ -63,6 +63,8 @@ prospects::prospects(QWidget* parent, const char*, Qt::WindowFlags fl)
   list()->addColumn(tr("Country"), 100, Qt::AlignLeft  , false, "addr_country" );
   list()->addColumn(tr("Postal Code"), 75, Qt::AlignLeft  , false, "addr_postalcode" );
 
+  list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
   connect(omfgThis, SIGNAL(prospectsUpdated()), SLOT(sFillList()));
 }
 
@@ -78,42 +80,56 @@ void prospects::sNew()
 
 void prospects::sEdit()
 {
-  ParameterList params;
-  params.append("prospect_id", list()->id());
-  params.append("mode", "edit");
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    ParameterList params;
+    params.append("prospect_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    params.append("mode", "edit");
 
-  prospect *newdlg = new prospect();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+    prospect *newdlg = new prospect();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
 }
 
 void prospects::sView()
 {
-  ParameterList params;
-  params.append("prospect_id", list()->id());
-  params.append("mode", "view");
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    ParameterList params;
+    params.append("prospect_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    params.append("mode", "view");
 
-  prospect *newdlg = new prospect();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+    prospect *newdlg = new prospect();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
 }
 
 void prospects::sDelete()
 {
   if (QMessageBox::question(this, tr("Delete?"),
                             tr("<p>Are you sure you want to delete the "
-                               "selected Prospect?"),
+                               "selected Prospect(s)?"),
                             QMessageBox::Yes,
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
     return;
 
-  XSqlQuery delq;
-  delq.prepare("DELETE FROM prospect WHERE (prospect_id=:prospect_id);");
-  delq.bindValue(":prospect_id", list()->id());
-  delq.exec();
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting"),
-                           delq, __FILE__, __LINE__))
-    return;
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    XSqlQuery delq;
+    delq.prepare("DELETE FROM prospect WHERE (prospect_id=:prospect_id);");
+    delq.bindValue(":prospect_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    delq.exec();
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting"),
+                             delq, __FILE__, __LINE__))
+      return;
+  }
+
+  sFillList();
   omfgThis->sProspectsUpdated();
 }
 
