@@ -109,8 +109,6 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   _menu    = new QMenu(this);
   _menu->setObjectName("_menu");
   _savedId = false; // was -1;
-  _scol    = -1;
-  _sord    = Qt::AscendingOrder;
   _linear  = false;
   _alwaysLinear = true;
 
@@ -197,9 +195,16 @@ XTreeWidget::~XTreeWidget()
       }
       xtsettingsSetValue(_settingsName + "/columnWidths", savedString);
     }
-    if (!_forgetfulOrder && header()->isSortIndicatorShown())
-      savedString = QString::number(header()->sortIndicatorSection()) + " "                                                        +
-                    (header()->sortIndicatorOrder() == Qt::AscendingOrder ? "ASC" : "DESC" );
+    if (!_forgetfulOrder && !_sort.isEmpty())
+    {
+      savedString = "";
+      QPair<int, Qt::SortOrder> sort;
+      foreach (sort, _sort)
+      {
+        savedString += QString::number(sort.first) + " " +
+                       (sort.second == Qt::AscendingOrder ? "ASC" : "DESC") + "|";
+      }
+    }
     else
       savedString = "-1,ASC";
     xtsettingsSetValue(_settingsName + "/sortOrder", savedString);
@@ -752,7 +757,7 @@ void XTreeWidget::populateWorker()
     cleanupAfterPopulate();
 
     populateCalculatedColumns();
-    if (sortColumn() >= 0 && header()->isSortIndicatorShown())
+    if (!_sort.isEmpty())
       sortItems(sortColumn(), header()->sortIndicatorOrder());
 
     if (DEBUG)
@@ -839,15 +844,16 @@ void XTreeWidget::addColumn(const QString &pString, int pWidth, int pAlignment, 
     }
     if (!_forgetfulOrder)
     {
-      part = xtsettingsValue(_settingsName + "/sortOrder", "-1,ASC").toString();
-      key  = part.left(part.indexOf(" "));
-      val  = part.right(part.length() - part.indexOf(" ") - 1);
-      b1   = false;
-      int k = key.toInt(&b1);
-      if (b1)
+      savedString = xtsettingsValue(_settingsName + "/sortOrder", "-1,ASC").toString();
+      savedParts  = savedString.split("|", QString::SkipEmptyParts);
+      foreach (part, savedParts)
       {
-        _scol  = k;
-        _sord  = ("ASC" == val ? Qt::AscendingOrder : Qt::DescendingOrder);
+        key  = part.left(part.indexOf(" "));
+        val  = part.right(part.length() - part.indexOf(" ") - 1);
+        b1   = false;
+        int k = key.toInt(&b1);
+        if (b1)
+          _sort.append(qMakePair(k, "ASC" == val ? Qt::AscendingOrder : Qt::DescendingOrder));
       }
     }
 
@@ -874,7 +880,7 @@ void XTreeWidget::addColumn(const QString &pString, int pWidth, int pAlignment, 
   setColumnCount(column + 1);
 
   QTreeWidgetItem *hitem = headerItem();
-  hitem->setText(column, pString);
+  hitem->setText(column, "   " + pString);
   hitem->setTextAlignment(column, pAlignment);
   hitem->setData(column, Xt::ScaleRole, scale);
 
@@ -905,11 +911,18 @@ void XTreeWidget::addColumn(const QString &pString, int pWidth, int pAlignment, 
   _forgetful = true;
   setColumnVisible(column, _savedVisibleColumns.value(column, pVisible));
   _forgetful = forgetCache;
-  if (_scol >= 0 && column == _scol)
+  if (_sort.contains(qMakePair(column, Qt::AscendingOrder)) ||
+      _sort.contains(qMakePair(column, Qt::DescendingOrder)))
   {
-    if (!header()->isSortIndicatorShown())
-      header()->setSortIndicatorShown(true);
-    sortItems(_scol, _sord);
+    if (_roles.size() <= 0 && _sort[0].first == column)
+    {
+      if (!header()->isSortIndicatorShown())
+        header()->setSortIndicatorShown(true);
+
+      sortItems(_sort[0].first, _sort[0].second);
+    }
+    if (_roles.size() > 0)
+      sortItems();
   }
 }
 
@@ -968,104 +981,99 @@ QString XTreeWidgetItem::toString() const
 
 bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
 {
-  QVariant  v1         = data(treeWidget()->sortColumn(), Xt::RawRole);
-  QVariant  v2         = other.data(other.treeWidget()->sortColumn(), Xt::RawRole);
+  bool returnVal = false;
+  bool sorted = false;
 
-  bool      returnVal  = false;
-  switch (v1.type())
+  QPair<int, Qt::SortOrder> sort;
+  foreach (sort, ((XTreeWidget*)treeWidget())->sortColumnOrder())
   {
-    case QVariant::Bool:
-      returnVal = (!v1.toBool() && v1 != v2);
+    if (sort.first < 0 || sort.first >= columnCount() ||
+        treeWidget()->headerItem()->data(sort.first, Qt::UserRole).toString() == "xtrunningrole")
       break;
 
-    case QVariant::Date:
-      returnVal = (v1.toDate() < v2.toDate());
-      break;
+    QVariant v1 = data(sort.first, Xt::RawRole);
+    QVariant v2 = other.data(sort.first, Xt::RawRole);
 
-    case QVariant::DateTime:
-      returnVal = (v1.toDateTime() < v2.toDateTime());
-      break;
+    if (sorted || v1==v2)
+      continue;
 
-    case QVariant::Double:
-      returnVal = (v1.toDouble() < v2.toDouble());
-      break;
+    switch (v1.type())
+    {
+      case QVariant::Bool:
+        sorted = true;
+        returnVal = !v1.toBool();
+        break;
 
-    case QVariant::Int:
-      returnVal = (v1.toInt() < v2.toInt());
-      break;
+      case QVariant::Date:
+        sorted = true;
+        returnVal = (v1.toDate() < v2.toDate());
+        break;
 
-    case QVariant::LongLong:
-      returnVal = (v1.toLongLong() < v2.toLongLong());
-      break;
+      case QVariant::DateTime:
+        sorted = true;
+        returnVal = (v1.toDateTime() < v2.toDateTime());
+        break;
 
-    case QVariant::String:
-      bool ok;
-      if (v1.toString().toDouble() == 0.0 && v2.toDouble() == 0.0)
-        returnVal = (v1.toString() < v2.toString());
-      else if (v1.toString().toDouble() == 0.0 && v2.toDouble(&ok)) //v1 is string, v2 is number
-        returnVal = false; //the number should always be treated as greater than a string
-      else if (v1.toDouble(&ok) && v2.toString().toDouble() == 0.0)
-        returnVal = true;
-      else
+      case QVariant::Double:
+        sorted = true;
         returnVal = (v1.toDouble() < v2.toDouble());
-      break;
+        break;
 
-    default:
-      returnVal = false;
+      case QVariant::Int:
+        sorted = true;
+        returnVal = (v1.toInt() < v2.toInt());
+        break;
+
+      case QVariant::LongLong:
+        sorted = true;
+        returnVal = (v1.toLongLong() < v2.toLongLong());
+        break;
+
+      case QVariant::String:
+        sorted = true;
+        bool ok;
+        if (v1.toString().toDouble() == 0.0 && v2.toDouble() == 0.0)
+          returnVal = (v1.toString() < v2.toString());
+        else if (v1.toString().toDouble() == 0.0 && v2.toDouble(&ok)) //v1 is string, v2 is number
+          returnVal = false; //the number should always be treated as greater than a string
+        else if (v1.toDouble(&ok) && v2.toString().toDouble() == 0.0)
+          returnVal = true;
+        else
+          returnVal = (v1.toDouble() < v2.toDouble());
+        break;
+
+      default:
+        break;
+    }
+
+    if (sort.second==Qt::DescendingOrder)
+      returnVal = !returnVal;
+
+    if (DEBUG)
+      qDebug("returning %d for %s < %s", returnVal,
+             qPrintable(v1.toString()), qPrintable(v2.toString()));
   }
 
-  if (DEBUG)
-    qDebug("returning %d for %s < %s", returnVal,
-           qPrintable(v1.toString()), qPrintable(v2.toString()));
   return returnVal;
 }
 
 bool XTreeWidgetItem::operator==(const XTreeWidgetItem &other) const
 {
-  QVariant  v1         = data(treeWidget()->sortColumn(), Xt::RawRole);
-  QVariant  v2         = other.data(other.treeWidget()->sortColumn(), Xt::RawRole);
-
-  bool      returnVal  = false;
-  switch (v1.type())
+  bool returnVal = true;
+  QPair<int, Qt::SortOrder> sort;
+  foreach (sort, ((XTreeWidget*)treeWidget())->sortColumnOrder())
   {
-    case QVariant::Bool:
-      returnVal = (v1.toBool() && v1 == v2);
-      break;
+    QVariant v1 = data(sort.first, Xt::RawRole);
+    QVariant v2 = other.data(sort.first, Xt::RawRole);
 
-    case QVariant::Date:
-      returnVal = (v1.toDate() == v2.toDate());
-      break;
-
-    case QVariant::DateTime:
-      returnVal = (v1.toDateTime() == v2.toDateTime());
-      break;
-
-    case QVariant::Double:
-      returnVal = (v1.toDouble() == v2.toDouble());
-      break;
-
-    case QVariant::Int:
-      returnVal = (v1.toInt() == v2.toInt());
-      break;
-
-    case QVariant::LongLong:
-      returnVal = (v1.toLongLong() == v2.toLongLong());
-      break;
-
-    case QVariant::String:
-      if (v1.toString().toDouble() == 0.0 && v2.toDouble() == 0.0)
-        returnVal = (v1.toString() == v2.toString());
-      else
-        returnVal = (v1.toDouble() == v2.toDouble());
-      break;
-
-    default:
+    if (v1!=v2)
       returnVal = false;
+
+    if (DEBUG)
+      qDebug("returning %d for %s == %s", returnVal,
+             qPrintable(v1.toString()), qPrintable(v2.toString()));
   }
 
-  if (DEBUG)
-    qDebug("returning %d for %s == %s", returnVal,
-           qPrintable(v1.toString()), qPrintable(v2.toString()));
   return returnVal;
 }
 
@@ -1077,8 +1085,6 @@ bool XTreeWidgetItem::operator>(const XTreeWidgetItem &other) const
 */
 void XTreeWidget::sortItems(int column, Qt::SortOrder order)
 {
-  int previd = id();
-
   // if old style then maintain backwards compatibility
   if (_roles.size() <= 0)
   {
@@ -1086,11 +1092,37 @@ void XTreeWidget::sortItems(int column, Qt::SortOrder order)
     return;
   }
 
-  if (column < 0 || column >= columnCount() ||
-      headerItem()->data(column, Qt::UserRole).toString() == "xtrunningrole")
+  for (int column=0; column<columnCount(); column++)
+  {
+    headerItem()->setIcon(column, QIcon());
+    headerItem()->setText(column, "   " + headerItem()->text(column).mid(3));
+  }
+
+  bool sortable = false;
+  int priority = 0;
+  QPair<int, Qt::SortOrder> sort;
+  foreach (sort, _sort)
+  {
+    if (sort.first < 0 || sort.first >= columnCount() ||
+        headerItem()->data(sort.first, Qt::UserRole).toString() == "xtrunningrole")
+      continue;
+    sortable = true;
+    priority++;
+
+    if (sort.second == Qt::AscendingOrder)
+      headerItem()->setIcon(sort.first, QIcon(QPixmap(":/widgets/images/arrow_down.png")));
+    else
+      headerItem()->setIcon(sort.first, QIcon(QPixmap(":/widgets/images/arrow_up.png")));
+
+    if (_sort.size()>1)
+      headerItem()->setText(sort.first, (priority < 10 ? " " : "") + QString::number(priority) +
+                                        " " + headerItem()->text(sort.first).mid(3));
+  }
+
+  if (!sortable)
     return;
 
-  header()->setSortIndicator(column, order);
+  int previd = id();
 
   // simple insertion sort using binary search to find the right insertion pt
   QString totalrole("totalrole");
@@ -1114,7 +1146,7 @@ void XTreeWidget::sortItems(int column, Qt::SortOrder order)
       itemcount--;
       i--;
     }
-    else if (*item < *prev && order == Qt::AscendingOrder)
+    else if (*item < *prev)
     {
       int left   = 0;
       int right  = i;
@@ -1156,44 +1188,6 @@ void XTreeWidget::sortItems(int column, Qt::SortOrder order)
     {
       ; // nothing to do - make the > case easier to write
     }
-    else if (!(*item < *prev) && order == Qt::DescendingOrder)
-    {
-      int left   = 0;
-      int right  = i;
-      int middle = 0;
-      XTreeWidgetItem *test = 0;
-      while (left <= right)
-      {
-        middle = (left + right) / 2;
-        test   = static_cast<XTreeWidgetItem *>(topLevelItem(middle));
-        if (*test == *item)
-          break;
-        else if (!(*test < *item))
-        {
-          if (!(*item < *(static_cast<XTreeWidgetItem *>(topLevelItem(middle + 1)))))
-            break;
-          else
-            left = middle + 1;
-        }
-        else
-          right = middle - 1;
-      }
-      // can't call takeTopLevelItem() until after < and == are done
-      if (!(*item < *test) || *item == *test)
-      {
-        if (DEBUG)
-          qDebug(">= so moving %d to %d", i, middle);
-        takeTopLevelItem(i);
-        insertTopLevelItem(middle, item);
-      }
-      else
-      {
-        if (DEBUG)
-          qDebug("< so moving %d to %d", i, middle + 1);
-        takeTopLevelItem(i);
-        insertTopLevelItem(middle + 1, item);
-      }
-    }
     // can't reuse item because the thing in position i may have changed
     prev = static_cast<XTreeWidgetItem *>(topLevelItem(i));
   }
@@ -1202,6 +1196,11 @@ void XTreeWidget::sortItems(int column, Qt::SortOrder order)
 
   setId(previd);
   emit resorted();
+}
+
+QList<QPair<int, Qt::SortOrder> > XTreeWidget::sortColumnOrder()
+{
+  return _sort;
 }
 
 void XTreeWidget::populateCalculatedColumns()
@@ -1648,10 +1647,42 @@ void XTreeWidget::mouseMoveEvent(QMouseEvent *event)
 
 void XTreeWidget::sHeaderClicked(int column)
 {
-  // Qt::SortOrder sortOrder = Qt::DescendingOrder;
-  if (!header()->isSortIndicatorShown())
-    header()->setSortIndicatorShown(true);
-  sortItems(column, header()->sortIndicatorOrder());
+  if (_roles.size() <= 0)
+  {
+    _sort.clear();
+    _sort.append(qMakePair(column, header()->sortIndicatorOrder()));
+
+    if (!header()->isSortIndicatorShown())
+      header()->setSortIndicatorShown(true);
+
+    sortItems(column, header()->sortIndicatorOrder());
+    return;
+  }
+
+  bool multisort = QGuiApplication::keyboardModifiers() == Qt::ShiftModifier;
+
+  int sort = -1;
+  for (int i=0; i<_sort.size(); i++)
+    if (_sort.at(i).first==column)
+      sort = i;
+
+  if (!multisort && sort==-1)
+    _sort.clear();
+  if (multisort && sort!=-1)
+  {
+    _sort.removeAt(sort);
+    sortItems();
+    return;
+  }
+
+  if (sort==-1)
+    _sort.append(qMakePair(column, Qt::AscendingOrder));
+  else if (_sort.at(sort).second==Qt::DescendingOrder)
+    _sort[sort].second = Qt::AscendingOrder;
+  else
+    _sort[sort].second = Qt::DescendingOrder;
+
+  sortItems();
 }
 
 void XTreeWidget::sColumnSizeChanged(int logicalIndex, int /*oldSize*/, int /*newSize*/)

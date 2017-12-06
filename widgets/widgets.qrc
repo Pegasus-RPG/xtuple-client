@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/widgets">
+        <file>images/arrow_down.png</file>
+        <file>images/arrow_up.png</file>
         <file>images/calendar_24.png</file>
         <file>images/xcheckbox.png</file>
         <file>images/magnifier.png</file>
