@@ -112,7 +112,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WindowFlags fl)
   ItemCharacteristicDelegate * delegate = new ItemCharacteristicDelegate(this);
   _itemcharView->setItemDelegate(delegate);
 
-  _wocharView->setType("WO");
+  _wocharView->setType("W");
 
   if (!_metrics->boolean("MultiWhs"))
   {
