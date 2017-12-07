@@ -88,12 +88,11 @@ void addresses::sNew()
 
 void addresses::sEdit()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
     ParameterList params;
     params.append("mode", "edit");
-    params.append("addr_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    params.append("addr_id", item->id());
 
     address* newdlg = new address(0, "", false);
     newdlg->set(params);
@@ -103,12 +102,11 @@ void addresses::sEdit()
 
 void addresses::sView()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
     ParameterList params;
     params.append("mode", "view");
-    params.append("addr_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    params.append("addr_id", item->id());
 
     address* newdlg = new address(0, "", false);
     newdlg->set(params);
@@ -118,12 +116,12 @@ void addresses::sView()
 
 void addresses::sDelete()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  XSqlQuery deleteAddress;
+  deleteAddress.prepare("SELECT deleteAddress(:addr_id) AS result;");
+
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XSqlQuery deleteAddress;
-    deleteAddress.prepare("SELECT deleteAddress(:addr_id) AS result;");
-    deleteAddress.bindValue(":addr_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    deleteAddress.bindValue(":addr_id", item->id());
     deleteAddress.exec();
     if (deleteAddress.first())
     {

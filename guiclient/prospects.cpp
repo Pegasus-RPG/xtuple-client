@@ -80,11 +80,10 @@ void prospects::sNew()
 
 void prospects::sEdit()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
     ParameterList params;
-    params.append("prospect_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    params.append("prospect_id", item->id());
     params.append("mode", "edit");
 
     prospect *newdlg = new prospect();
@@ -95,11 +94,10 @@ void prospects::sEdit()
 
 void prospects::sView()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
     ParameterList params;
-    params.append("prospect_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    params.append("prospect_id", item->id());
     params.append("mode", "view");
 
     prospect *newdlg = new prospect();
@@ -117,12 +115,12 @@ void prospects::sDelete()
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
     return;
 
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  XSqlQuery delq;
+  delq.prepare("DELETE FROM prospect WHERE (prospect_id=:prospect_id);");
+
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XSqlQuery delq;
-    delq.prepare("DELETE FROM prospect WHERE (prospect_id=:prospect_id);");
-    delq.bindValue(":prospect_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    delq.bindValue(":prospect_id", item->id());
     delq.exec();
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting"),
                              delq, __FILE__, __LINE__))

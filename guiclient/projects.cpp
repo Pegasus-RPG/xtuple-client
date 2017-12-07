@@ -33,8 +33,23 @@
 #include "purchaseOrderItem.h"
 #include "incident.h"
 #include "errorReporter.h"
+#include "storedProcErrorLookup.h"
 
 #define DEBUG true
+
+static const int PROJECT           = 1;
+static const int TASK              = 5;
+static const int QUOTE             = 15;
+static const int QUOTEITEM         = 17;
+static const int SALESORDER        = 25;
+static const int SALESORDERITEM    = 27;
+static const int INVOICE           = 35;
+static const int INVOICEITEM       = 37;
+static const int WORKORDER         = 45;
+static const int PURCHASEREQUEST   = 55;
+static const int PURCHASEORDER     = 65;
+static const int PURCHASEORDERITEM = 67;
+static const int INCIDENT          = 105;
 
 projects::projects(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "projects", fl)
@@ -219,12 +234,9 @@ void projects::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int)
   bool foundEditable = false;
   bool foundDeletable = false;
 
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
-
-    if(item->altId() != 55)
+    if(item->altId() != PURCHASEREQUEST)
     {
       foundEditable = true;
       edit = edit || getPriv(cEdit, item);
@@ -232,7 +244,7 @@ void projects::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int)
 
     view = view || getPriv(cView, item);
 
-    if(item->altId() == 1)
+    if(item->altId() == PROJECT)
     {
       foundDeletable = true;
       del = del || getPriv(cEdit, item);
@@ -260,11 +272,8 @@ void projects::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int)
 
 void projects::sEdit()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
-
     bool edit = getPriv(cEdit, item);
     bool view = getPriv(cView, item);
 
@@ -280,11 +289,8 @@ void projects::sEdit()
 
 void projects::sView()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
-
     if (!getPriv(cView, item))
       return;
 
@@ -296,7 +302,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
 {
   ParameterList params;
 
-  if(item->altId() == 1)
+  if(item->altId() == PROJECT)
   {
     params.append("prj_id", item->id());
     params.append("mode", mode);
@@ -305,7 +311,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     newdlg->set(params);
     newdlg->show();
   }
-  else if(item->altId() == 5)
+  else if(item->altId() == TASK)
   {
     params.append("mode", mode);
     params.append("prjtask_id", item->id());
@@ -314,7 +320,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     newdlg->set(params);
     newdlg->show();
   }
-  else if(item->altId() == 15)
+  else if(item->altId() == QUOTE)
   {
     params.append("mode", mode + "Quote");
     params.append("quhead_id", item->id());
@@ -323,7 +329,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if(item->altId() == 17)
+  else if(item->altId() == QUOTEITEM)
   {
     params.append("mode", mode + "Quote");
     params.append("soitem_id", item->id());
@@ -332,7 +338,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     newdlg->set(params);
     newdlg->show();
   }
-  else if(item->altId() == 25)
+  else if(item->altId() == SALESORDER)
   {
     params.append("mode", mode);
     params.append("sohead_id", item->id());
@@ -341,7 +347,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if(item->altId() == 27)
+  else if(item->altId() == SALESORDERITEM)
   {
     params.append("mode", mode);
     params.append("soitem_id", item->id());
@@ -350,14 +356,14 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     newdlg->set(params);
     newdlg->show();
   }
-  else if(item->altId() == 35)
+  else if(item->altId() == INVOICE)
   {
     if (mode=="edit")
       invoice::editInvoice(item->id(), this);
     else
       invoice::viewInvoice(item->id(), this);
   }
-  else if(item->altId() == 37)
+  else if(item->altId() == INVOICEITEM)
   {
     params.append("mode", mode);
     params.append("invcitem_id", item->id());
@@ -366,7 +372,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     newdlg->set(params);
     newdlg->show();
   }
-  else if(item->altId() == 45)
+  else if(item->altId() == WORKORDER)
   {
     params.append("mode", mode);
     params.append("wo_id", item->id());
@@ -375,7 +381,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if(list()->altId() == 55)
+  else if(list()->altId() == PURCHASEREQUEST)
   {
     params.append("mode", "view");
     params.append("pr_id", item->id());
@@ -384,7 +390,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     newdlg->set(params);
     newdlg->show();
   }
-  else if(item->altId() == 65)
+  else if(item->altId() == PURCHASEORDER)
   {
     params.append("mode", mode);
     params.append("pohead_id", item->id());
@@ -393,7 +399,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if(item->altId() == 67)
+  else if(item->altId() == PURCHASEORDERITEM)
   {
     params.append("mode", mode);
     params.append("poitem_id", item->id());
@@ -402,7 +408,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
     newdlg->set(params);
     newdlg->show();
   }
-  else if(item->altId() == 105)
+  else if(item->altId() == INCIDENT)
   {
     params.append("mode", mode);
     params.append("incdt_id", item->id());
@@ -415,16 +421,14 @@ void projects::open(XTreeWidgetItem* item, QString mode)
 
 void projects::sDelete()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
-  {
-    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
+  XSqlQuery projectsDelete;
+  projectsDelete.prepare("SELECT deleteProject(:prj_id) AS result");
 
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
+  {
     if (item->altId() != 1 || !getPriv(cEdit, item))
       continue;
 
-    XSqlQuery projectsDelete;
-    projectsDelete.prepare("SELECT deleteProject(:prj_id) AS result");
     projectsDelete.bindValue(":prj_id", item->id());
     projectsDelete.exec();
     if(projectsDelete.first())
@@ -432,32 +436,9 @@ void projects::sDelete()
       int result = projectsDelete.value("result").toInt();
       if(result < 0)
       {
-        QString errmsg;
-        switch(result)
-        {
-          case -1:
-            errmsg = tr("One or more Quote's refer to this project.");
-            break;
-          case -2:
-            errmsg = tr("One or more Sales Orders refer to this project.");
-            break;
-          case -3:
-            errmsg = tr("One or more Work Orders refer to this project.");
-            break;
-          case -4:
-            errmsg = tr("One or more Purchase Requests refer to this project.");
-            break;
-          case -5:
-            errmsg = tr("One or more Purchase order Items refer to this project.");
-            break;
-          case -6:
-            errmsg = tr("One or more Invoices refer to this project.");
-            break;
-          default:
-            errmsg = tr("Error #%1 encountered while trying to delete project.").arg(result);
-        }
-        QMessageBox::critical( this, tr("Cannot Delete Project"),
-          tr("Could not delete the project for one or more reasons.\n") + errmsg);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Project"),
+                             storedProcErrorLookup("deleteProject", result),
+                             __FILE__, __LINE__);
         return;
       }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Project"),
@@ -473,11 +454,8 @@ void projects::sDelete()
 
 void projects::sCopy()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
-
     if (item->altId() != 1 || !getPriv(cEdit, item))
       continue;
 
@@ -503,17 +481,7 @@ void projects::sCopy()
 
 bool projects::getPriv(int mode, XTreeWidgetItem* item)
 {
-  bool editPriv =
-      (omfgThis->username() == list()->currentItem()->rawValue("prj_owner_username") && _privileges->check("MaintainPersonalProjects")) ||
-      (omfgThis->username() == list()->currentItem()->rawValue("prj_username") && _privileges->check("MaintainPersonalProjects")) ||
-      (_privileges->check("MaintainAllProjects"));
-
-  bool viewPriv =
-      (omfgThis->username() == list()->currentItem()->rawValue("prj_owner_username") && _privileges->check("ViewPersonalProjects")) ||
-      (omfgThis->username() == list()->currentItem()->rawValue("prj_username") && _privileges->check("ViewPersonalProjects")) ||
-      (_privileges->check("ViewAllProjects"));
-
-  if(item->altId() == 1 || item->altId() == 5)
+  if(item->altId() == PROJECT || item->altId() == TASK)
     if (mode==cEdit)
       return (omfgThis->username() == item->rawValue("prj_owner_username") &&
               _privileges->check("MaintainPersonalProjects")) ||
@@ -528,53 +496,48 @@ bool projects::getPriv(int mode, XTreeWidgetItem* item)
              _privileges->check("ViewAllProjects");
 
 
-  if(item->altId() == 15 || item->altId() == 17)
+  if(item->altId() == QUOTE || item->altId() == QUOTEITEM)
     if (mode==cEdit)
       return _privileges->check("MaintainQuotes");
     else
-      return _privileges->check("MaintainQuotes") || _privileges->check("ViewQuotes");
+      return _privileges->check("MaintainQuotes ViewQuotes");
 
-  if(item->altId() == 25 || item->altId() == 27)
+  if(item->altId() == SALESORDER || item->altId() == SALESORDERITEM)
     if (mode==cEdit)
       return _privileges->check("MaintainSalesOrders");
     else
-      return _privileges->check("MaintainSalesOrders") || _privileges->check("ViewSalesOrders");
+      return _privileges->check("MaintainSalesOrders ViewSalesOrders");
 
-  if(item->altId() == 35 || item->altId() == 37)
+  if(item->altId() == INVOICE || item->altId() == INVOICEITEM)
     if (mode==cEdit)
       return _privileges->check("MaintainMiscInvoices");
     else
-      return _privileges->check("MaintainMiscInvoices") || _privileges->check("ViewMiscInvoices");
+      return _privileges->check("MaintainMiscInvoices ViewMiscInvoices");
 
-  if(item->altId() == 45)
+  if(item->altId() == WORKORDER)
     if (mode==cEdit)
       return _privileges->check("MaintainWorkOrders");
     else
-      return _privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders");
+      return _privileges->check("MaintainWorkOrders ViewWorkOrders");
 
-  if(item->altId() == 55)
+  if(item->altId() == PURCHASEREQUEST)
     if (mode==cEdit)
       return false;
     else
-      return _privileges->check("MaintainPurchaseRequests") ||
-             _privileges->check("ViewPurchaseRequests");
+      return _privileges->check("MaintainPurchaseRequests ViewPurchaseRequests");
 
-  if(item->altId() == 65 || item->altId() == 67)
+  if(item->altId() == PURCHASEORDER || item->altId() == PURCHASEORDERITEM)
     if (mode==cEdit)
       return _privileges->check("MaintainPurchaseOrders");
     else
-      return _privileges->check("MaintainPurchaseOrders") ||
-             _privileges->check("ViewPurchaseOrders");
+      return _privileges->check("MaintainPurchaseOrders ViewPurchaseOrders");
 
-  if(item->altId() == 105)
+  if(item->altId() == INCIDENT)
     if (mode==cEdit)
-      return _privileges->check("MaintainPersonalIncidents") ||
-             _privileges->check("MaintainAllIncidents");
+      return _privileges->check("MaintainPersonalIncidents MaintainAllIncidents");
     else
-      return _privileges->check("ViewPersonalIncidents") ||
-             _privileges->check("ViewAllIncidents") ||
-             _privileges->check("MaintainPersonalIncidents") ||
-             _privileges->check("MaintainAllIncidents");
+      return _privileges->check("ViewPersonalIncidents ViewAllIncidents MaintainPersonalIncidents "
+                                "MaintainAllIncidents");
 
   return false;
 }

@@ -126,12 +126,11 @@ void crmaccounts::sNew()
 
 void crmaccounts::sView()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
     ParameterList params;
     params.append("mode", "view");
-    params.append("crmacct_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    params.append("crmacct_id", item->id());
 
     crmaccount* newdlg = new crmaccount();
     newdlg->set(params);
@@ -147,12 +146,12 @@ void crmaccounts::sDelete()
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
     return;
 
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  XSqlQuery delq;
+  delq.prepare("DELETE FROM crmacct WHERE crmacct_id = :crmacct_id;");
+
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XSqlQuery delq;
-    delq.prepare("DELETE FROM crmacct WHERE crmacct_id = :crmacct_id;");
-    delq.bindValue(":crmacct_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    delq.bindValue(":crmacct_id", item->id());
     delq.exec();
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting Account"),
                              delq, __FILE__, __LINE__))
@@ -164,12 +163,11 @@ void crmaccounts::sDelete()
 
 void crmaccounts::sEdit()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
     ParameterList params;
     params.append("mode", "edit");
-    params.append("crmacct_id", list()->id());
+    params.append("crmacct_id", item->id());
 
     crmaccount* newdlg = new crmaccount();
     newdlg->set(params);

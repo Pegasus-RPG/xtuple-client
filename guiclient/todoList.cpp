@@ -24,6 +24,12 @@
 #include <QToolBar>
 #include "errorReporter.h"
 
+static const int TODO        = 1;
+static const int INCIDENT    = 2;
+static const int TASK        = 3;
+static const int PROJECT     = 4;
+static const int OPPORTUNITY = 5;
+
 todoList::todoList(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "todoList", fl)
 {
@@ -112,14 +118,12 @@ void todoList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
   bool viewParent = false;
   bool foundCustomer = false;
 
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XTreeWidgetItem* item  = (XTreeWidgetItem*)(selected[i]);
     edit = edit || getPriv(cEdit, item->altId(), item);
     view = view || getPriv(cView, item->altId(), item);
 
-    if (item->altId() == 1 || item->altId() == 3 || item->altId() == 4)
+    if (item->altId() == TODO || item->altId() == TASK || item->altId() == PROJECT)
     {
       foundDeletable = true;
       del = del || getPriv(cEdit, item->altId(), item);
@@ -139,7 +143,7 @@ void todoList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 
   QAction *menuItem;
 
-  if (selected.size() > 0)
+  if (list()->selectedItems().size() > 0)
   {
     menuItem = pMenu->addAction(tr("Edit"), this, SLOT(sEdit()));
     menuItem->setEnabled(edit);
@@ -224,38 +228,35 @@ void todoList::sNewIncdt()
 
 void todoList::sEdit()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
-
     bool edit = getPriv(cEdit, item->altId(), item);
     bool view = getPriv(cView, item->altId(), item);
 
     if (!edit && !view)
       continue;
 
-    if (item->altId() == 1)
+    if (item->altId() == TODO)
       if (edit)
         sEditTodo(item->id());
       else
         sViewTodo(item->id());
-    if (item->altId() == 2)
+    if (item->altId() == INCIDENT)
       if (edit)
         sEditIncident(item->id());
       else
         sViewIncident(item->id());
-    if (item->altId() == 3)
+    if (item->altId() == TASK)
       if (edit)
         sEditTask(item->id());
       else
         sViewTask(item->id());
-    if (item->altId() == 4)
+    if (item->altId() == PROJECT)
       if (edit)
         sEditProject(item->id());
       else
         sViewProject(item->id());
-    if (item->altId() == 5)
+    if (item->altId() == OPPORTUNITY)
       if (edit)
         sEditOpportunity(item->id());
       else
@@ -265,51 +266,45 @@ void todoList::sEdit()
 
 void todoList::sView()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
-
     if(!getPriv(cView, item->altId(), item))
       continue;
 
-    if (item->altId() == 1)
+    if (item->altId() == TODO)
       sViewTodo(item->id());
-    if (item->altId() == 2)
+    if (item->altId() == INCIDENT)
       sViewIncident(item->id());
-    if (item->altId() == 3)
+    if (item->altId() == TASK)
       sViewTask(item->id());
-    if (item->altId() == 4)
+    if (item->altId() == PROJECT)
       sViewProject(item->id());
-    if (item->altId() == 5)
+    if (item->altId() == OPPORTUNITY)
       sViewOpportunity(item->id());
   }
 }
 
 void todoList::sEditParent()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
-
     bool edit = getPriv(cEdit, getParentType(item), item);
     bool view = getPriv(cView, getParentType(item), item);
 
     if (!edit && !view)
       continue;
 
-    if (getParentType(item) == 2)
+    if (getParentType(item) == INCIDENT)
       if (edit)
         sEditIncident(item->id("parent"));
       else
         sViewIncident(item->id("parent"));
-    if (getParentType(item) == 4)
+    if (getParentType(item) == PROJECT)
       if (edit)
         sEditProject(item->id("parent"));
       else
         sViewProject(item->id("parent"));
-    if (getParentType(item) == 5)
+    if (getParentType(item) == OPPORTUNITY)
       if (edit)
         sEditOpportunity(item->id("parent"));
       else
@@ -319,19 +314,16 @@ void todoList::sEditParent()
 
 void todoList::sViewParent()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
-
     if(!getPriv(cView, getParentType(item), item))
       continue;
 
-    if (getParentType(item) == 2)
+    if (getParentType(item) == INCIDENT)
       sViewIncident(item->id("parent"));
-    if (getParentType(item) == 4)
+    if (getParentType(item) == PROJECT)
       sViewProject(item->id("parent"));
-    if (getParentType(item) == 5)
+    if (getParentType(item) == OPPORTUNITY)
       sViewOpportunity(item->id("parent"));
   }
 }
@@ -360,18 +352,15 @@ void todoList::sViewTodo(int id)
 
 void todoList::sDelete()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
-
     if(!getPriv(cEdit, item->altId(), item))
       continue;
 
     XSqlQuery todoDelete;
     QString recurstr;
     QString recurtype;
-    if (item->altId() == 1)
+    if (item->altId() == TODO)
     {
       recurstr = "SELECT MAX(todoitem_due_date) AS max"
                  "  FROM todoitem"
@@ -469,12 +458,12 @@ void todoList::sDelete()
       }
     }
 
-    if (item->altId() == 1)
+    if (item->altId() == TODO)
       todoDelete.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");
-    else if (item->altId() == 3)
+    else if (item->altId() == TASK)
       todoDelete.prepare("DELETE FROM prjtask"
                 " WHERE (prjtask_id=:todoitem_id); ");
-    else if (item->altId() == 4)
+    else if (item->altId() == PROJECT)
       todoDelete.prepare("SELECT deleteProject(:todoitem_id) AS result");
     else
       return;
@@ -555,15 +544,15 @@ bool todoList::getPriv(const int pMode, const int pType, XTreeWidgetItem* item)
   else
     id = item->id("parent");
 
-  if (pType == 1)
+  if (pType == TODO)
     return todoItem::userHasPriv(pMode, id);
-  else if (pType == 2)
+  else if (pType == INCIDENT)
     return incident::userHasPriv(pMode, id);
-  else if (pType == 3)
+  else if (pType == TASK)
     return task::userHasPriv(pMode, id);
-  else if (pType == 4)
+  else if (pType == PROJECT)
     return project::userHasPriv(pMode, id);
-  else if (pType == 5)
+  else if (pType == OPPORTUNITY)
     return opportunity::userHasPriv(pMode, id);
   else
     return customer::userHasPriv(pMode);
@@ -571,12 +560,12 @@ bool todoList::getPriv(const int pMode, const int pType, XTreeWidgetItem* item)
 
 int todoList::getParentType(XTreeWidgetItem* item)
 {
-  if (item->altId() == 1 && item->rawValue("parent") == "INCDT")
-    return 2;
-  if (item->altId() == 1 && item->rawValue("parent") == "OPP")
-    return 5;
-  if (item->altId() == 3)
-    return 4;
+  if (item->altId() == TODO && item->rawValue("parent") == "INCDT")
+    return INCIDENT;
+  if (item->altId() == TODO && item->rawValue("parent") == "OPP")
+    return OPPORTUNITY;
+  if (item->altId() == TASK)
+    return PROJECT;
 
   return 0;
 }
@@ -663,11 +652,8 @@ void todoList::sViewTask(int id)
 
 void todoList::sEditCustomer()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
-
     if (item->rawValue("cust").toInt() > 0)
     {
       ParameterList params;
@@ -683,11 +669,8 @@ void todoList::sEditCustomer()
 
 void todoList::sViewCustomer()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XTreeWidgetItem* item = (XTreeWidgetItem*)(selected[i]);
-
     if (item->rawValue("cust").toInt() > 0)
     {
       ParameterList params;

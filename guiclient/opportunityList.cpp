@@ -150,12 +150,11 @@ void opportunityList::sNew()
 
 void opportunityList::sEdit()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
     ParameterList params;
     params.append("mode", "edit");
-    params.append("ophead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    params.append("ophead_id", item->id());
 
     opportunity* newdlg = new opportunity(0, "", false);
     newdlg->set(params);
@@ -165,12 +164,11 @@ void opportunityList::sEdit()
 
 void opportunityList::sView()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
     ParameterList params;
     params.append("mode", "view");
-    params.append("ophead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    params.append("ophead_id", item->id());
 
     opportunity* newdlg = new opportunity(0, "", false);
     newdlg->set(params);
@@ -180,12 +178,12 @@ void opportunityList::sView()
 
 void opportunityList::sDelete()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  XSqlQuery opportunityDelete;
+  opportunityDelete.prepare("SELECT deleteOpportunity(:ophead_id) AS result;");
+
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XSqlQuery opportunityDelete;
-    opportunityDelete.prepare("SELECT deleteOpportunity(:ophead_id) AS result;");
-    opportunityDelete.bindValue(":ophead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    opportunityDelete.bindValue(":ophead_id", item->id());
     opportunityDelete.exec();
     if (opportunityDelete.first())
     {
@@ -210,12 +208,11 @@ void opportunityList::sDelete()
 
 void opportunityList::sDeactivate()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  XSqlQuery opportunityDeactivate;
+  opportunityDeactivate.prepare("UPDATE ophead SET ophead_active=false WHERE ophead_id=:ophead_id;");
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XSqlQuery opportunityDeactivate;
-    opportunityDeactivate.prepare("UPDATE ophead SET ophead_active=false WHERE ophead_id=:ophead_id;");
-    opportunityDeactivate.bindValue(":ophead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    opportunityDeactivate.bindValue(":ophead_id", item->id());
     opportunityDeactivate.exec();
     if (opportunityDeactivate.lastError().type() != QSqlError::NoError)
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Deactiving Opportunity"),
@@ -227,12 +224,11 @@ void opportunityList::sDeactivate()
 
 void opportunityList::sActivate()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  XSqlQuery opportunityActivate;
+  opportunityActivate.prepare("UPDATE ophead SET ophead_active=true WHERE ophead_id=:ophead_id;");
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    XSqlQuery opportunityActivate;
-    opportunityActivate.prepare("UPDATE ophead SET ophead_active=true WHERE ophead_id=:ophead_id;");
-    opportunityActivate.bindValue(":ophead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    opportunityActivate.bindValue(":ophead_id", item->id());
     opportunityActivate.exec();
     if (opportunityActivate.lastError().type() != QSqlError::NoError)
       ErrorReporter::error(QtCriticalMsg, this, tr("Error Activating Opportunity"),

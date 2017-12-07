@@ -136,12 +136,11 @@ void incidentWorkbench::sNew()
 
 void incidentWorkbench::sEdit()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
     ParameterList params;
     params.append("mode", "edit");
-    params.append("incdt_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    params.append("incdt_id", item->id());
 
     incident* newdlg = new incident(0, 0, false);
     newdlg->set(params);
@@ -151,12 +150,11 @@ void incidentWorkbench::sEdit()
 
 void incidentWorkbench::sView()
 {
-  QList<XTreeWidgetItem*> selected = list()->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
     ParameterList params;
     params.append("mode", "view");
-    params.append("incdt_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    params.append("incdt_id", item->id());
 
     incident* newdlg = new incident(0, 0, false);
     newdlg->set(params);
