@@ -44,6 +44,7 @@ public slots:
     virtual void sNewProspect();
     virtual void sEditProspect();
     virtual void sViewProspect();
+    virtual void sOpenProspect(QString);
    
 signals:
     void cntctDetached(int);

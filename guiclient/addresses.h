@@ -30,9 +30,7 @@ public slots:
     virtual void sNewProspect();
     virtual void sEditProspect();
     virtual void sViewProspect();
-
-private:
-    int _crmacctid;
+    virtual void sOpenProspect(QString);
 
 };
 
