@@ -93,6 +93,8 @@ HEADERS += setupscriptapi.h \
     qmenubarproto.h \
     qmenuproto.h \
     qmessageboxsetup.h \
+    qmimedatabaseproto.h \
+    qmimetypeproto.h \
     qnetworkaccessmanagerproto.h \
     qnetworkinterfaceproto.h \
     qnetworkreplyproto.h \
@@ -227,6 +229,8 @@ SOURCES += setupscriptapi.cpp \
     qmenubarproto.cpp \
     qmenuproto.cpp \
     qmessageboxsetup.cpp \
+    qmimedatabaseproto.cpp \
+    qmimetypeproto.cpp \
     qnetworkaccessmanagerproto.cpp \
     qnetworkinterfaceproto.cpp \
     qnetworkreplyproto.cpp \

@@ -174,7 +174,6 @@ class XTUPLEWIDGETS_EXPORT CurrCluster : public CurrDisplay
 						      WRITE setCurrencyVisible)
     Q_PROPERTY(bool enabled        READ isEnabled     WRITE setEnabled)
     Q_PROPERTY(QString fieldNameCurr  READ fieldNameCurr  WRITE setFieldNameCurr)
-    Q_PROPERTY(int id READ id WRITE setId)
 
     public:
 	CurrCluster(QWidget * parent, const char* name = 0);

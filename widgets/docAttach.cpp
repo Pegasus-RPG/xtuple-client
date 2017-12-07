@@ -16,6 +16,7 @@
 #include <QFileInfo>
 #include <QFormLayout>
 #include <QMessageBox>
+#include <QMimeDatabase>
 #include <QString>
 #include <QUiLoader>
 #include <QUrl>
@@ -128,7 +129,7 @@ class docAttachPrivate {
  */
 
 docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
-  : QDialog(parent, fl)
+  : QDialog(parent, fl), ScriptableWidget(this)
 {
   setupUi(this);
   setObjectName(name ? name : "docAttach");
@@ -176,6 +177,42 @@ docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WindowFl
 docAttach::~docAttach()
 {
   // no need to delete child widgets, Qt does it all for us
+}
+
+
+QString docAttach::mode()
+{
+  return _mode;
+}
+
+QString docAttach::purpose()
+{
+  return _purpose;
+}
+
+int docAttach::sourceId()
+{
+  return _sourceid;
+}
+
+QString docAttach::sourceType()
+{
+  return _sourcetype;
+}
+
+int docAttach::targetId()
+{
+  return _targetid;
+}
+
+QString docAttach::targetType()
+{
+  return _targettype;
+}
+
+int docAttach::urlId()
+{
+  return _urlid;
 }
 
 void docAttach::languageChange()
@@ -251,6 +288,12 @@ void docAttach::set(const ParameterList &pParams)
     ErrorReporter::error(QtCriticalMsg, 0, tr("Error URL"),
                          qry, __FILE__, __LINE__);
   }
+}
+
+void docAttach::showEvent(QShowEvent *e)
+{
+  loadScriptEngine();
+  QWidget::showEvent(e);
 }
 
 void docAttach::sHandleNewId(int id)
@@ -376,6 +419,22 @@ void docAttach::sSave()
       url.setScheme("http");
   }
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  emit saveBeforeBegin();
+  if (_saveStatus==Failed)
+    return;
+
+  XSqlQuery begin("BEGIN;");
+
+  emit saveAfterBegin();
+  if (_saveStatus==Failed)
+  {
+    rollback.exec();
+    return;
+  }
+
   if (_targettype == "IMG")
   {
     // First determine if the id is in the image table, and not one of it's inherited versions
@@ -383,8 +442,18 @@ void docAttach::sSave()
     XSqlQuery qq;
     qq.prepare("SELECT image_id FROM ONLY image WHERE image_id=:image_id");
     qq.bindValue(":image_id", _targetid);
-    if(qq.exec() && !qq.first())
+    qq.exec();
+    if(!qq.first())
     {
+      if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error saving"),
+                               qq, __FILE__, __LINE__))
+      {
+        emit saveBeforeRollback(&qq);
+        rollback.exec();
+        emit saveAfterRollback(&qq);
+        return;
+      }
+
       qq.exec("SELECT nextval(('\"image_image_id_seq\"'::text)::regclass) AS newid;");
       if(qq.first())
       {
@@ -394,15 +463,32 @@ void docAttach::sSave()
                    "  FROM image WHERE image_id=:image_id;");
         qq.bindValue(":newid", newid);
         qq.bindValue(":image_id", _targetid);
-        if(qq.exec())
-          _targetid = newid;
+        qq.exec();
+        if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error saving"),
+                                 qq, __FILE__, __LINE__))
+        {
+          emit saveBeforeRollback(&qq);
+          rollback.exec();
+          emit saveAfterRollback(&qq);
+          return;
+        }
+        _targetid = newid;
+      }
+      else if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error saving"),
+                               qq, __FILE__, __LINE__))
+      {
+        emit saveBeforeRollback(&qq);
+        rollback.exec();
+        emit saveAfterRollback(&qq);
+        return;
       }
     }
      // For now images are handled differently because of legacy structures...
     newDocass.prepare( "INSERT INTO imageass "
                        "( imageass_source, imageass_source_id, imageass_image_id, imageass_purpose ) "
                        "VALUES "
-                       "( :docass_source_type, :docass_source_id, :docass_target_id, :docass_purpose );" );
+                       "( :docass_source_type, :docass_source_id, :docass_target_id, :docass_purpose )"
+                       " RETURNING imageass_id AS docass_id;" );
   }
   else if (_targettype == "URL")
   {
@@ -410,6 +496,9 @@ void docAttach::sSave()
     {
       QMessageBox::warning( this, tr("Must Specify valid path"),
                             tr("You must specify a path before you may save.") );
+      emit saveBeforeRollback(new XSqlQuery());
+      rollback.exec();
+      emit saveAfterRollback(new XSqlQuery());
       return;
     }
 
@@ -424,6 +513,9 @@ void docAttach::sSave()
       {
         QMessageBox::warning( this, tr("File Error"),
                              tr("File %1 was not found and will not be saved.").arg(url.toLocalFile()));
+        emit saveBeforeRollback(new XSqlQuery());
+        rollback.exec();
+        emit saveAfterRollback(new XSqlQuery());
         return;
       }
       QFile sourceFile(url.toLocalFile());
@@ -432,6 +524,9 @@ void docAttach::sSave()
         QMessageBox::warning( this, tr("File Open Error"),
                              tr("Could not open source file %1 for read.")
                                 .arg(url.toLocalFile()));
+        emit saveBeforeRollback(new XSqlQuery());
+        rollback.exec();
+        emit saveAfterRollback(new XSqlQuery());
         return;
       }
       bytarr = sourceFile.readAll();
@@ -439,33 +534,55 @@ void docAttach::sSave()
       url.setScheme("");
     }
 
-    // TODO: replace use of URL view
     if (_mode == "new" && bytarr.isNull())
-      newDocass.prepare( "INSERT INTO url "
-                         "( url_source, url_source_id, url_title, url_url, url_stream ) "
-                         "VALUES "
-                         "( :docass_source_type, :docass_source_id, :title, :url, :stream );" );
+    {
+      newDocass.prepare( "INSERT INTO docass ("
+                         "  docass_source_id, docass_source_type,"
+                         "  docass_target_id, docass_target_type,"
+                         "  docass_purpose"
+                         ") VALUES ("
+                         "  :docass_source_id, :docass_source_type,"
+                         "  createurl(:title, :url), 'URL'::text,"
+                         "  'S'::bpchar"
+                         ") RETURNING docass_id;");
+    }
     else if (_mode == "new")
-      newDocass.prepare( "INSERT INTO url "
-                         "( url_source, url_source_id, url_title, url_url, url_stream ) "
-                         "VALUES "
-                         "( :docass_source_type, :docass_source_id, :title, :url, :stream );" );
+    {
+      newDocass.prepare( "INSERT INTO docass ("
+                         "  docass_source_id, docass_source_type,"
+                         "  docass_target_id, docass_target_type,"
+                         "  docass_purpose"
+                         ") VALUES ("
+                         "  :docass_source_id, :docass_source_type,"
+                         "  createfile(:title, :url, :stream, :mime_type), 'FILE'::text,"
+                         "  'S'::bpchar"
+                         ") RETURNING docass_id;");
+
+      QMimeDatabase mimeDb;
+      QMimeType mime = mimeDb.mimeTypeForFileNameAndData(_filetitle->text(), bytarr);
+
+      newDocass.bindValue(":stream", bytarr);
+      newDocass.bindValue(":mime_type", mime.name());
+    }
     else
-      newDocass.prepare( "UPDATE url SET "
-                         "  url_title = :title, "
-                         "  url_url = :url "
-                         "WHERE (url_id=:url_id);" );
+    {
+      newDocass.prepare( "UPDATE url SET"
+                         "  url_title = :title,"
+                         "  url_url = :url"
+                         " WHERE (url_id=:url_id);");
+    }
+
     newDocass.bindValue(":url_id", _urlid);
     newDocass.bindValue(":title", title);
     newDocass.bindValue(":url", url.toString());
-    newDocass.bindValue(":stream", bytarr);
   }
   else
   {
     newDocass.prepare( "INSERT INTO docass "
                        "( docass_source_type, docass_source_id, docass_target_type, docass_target_id, docass_purpose ) "
                        "VALUES "
-                       "( :docass_source_type, :docass_source_id, :docass_target_type, :docass_target_id, :docass_purpose );" );
+                       "( :docass_source_type, :docass_source_id, :docass_target_type, :docass_target_id, :docass_purpose )"
+                       " RETURNING docass_id;");
     newDocass.bindValue(":docass_target_type", _targettype);
   }
 
@@ -474,6 +591,9 @@ void docAttach::sSave()
   {
     QMessageBox::critical(this,tr("Invalid Selection"),
                           tr("You may not attach a document to itself."));
+    emit saveBeforeRollback(new XSqlQuery());
+    rollback.exec();
+    emit saveAfterRollback(new XSqlQuery());
     return;
   }
 
@@ -483,6 +603,61 @@ void docAttach::sSave()
   newDocass.bindValue(":docass_purpose", _purpose);
 
   newDocass.exec();
+
+  if (ErrorReporter::error(QtCriticalMsg, 0, tr("Error saving"),
+                           newDocass, __FILE__, __LINE__))
+  {
+    emit saveBeforeRollback(&newDocass);
+    rollback.exec();
+    emit saveAfterRollback(&newDocass);
+    return;
+  }
+
+  if (_urlid > 0)
+  {
+    _targetid = _urlid;
+    emit saveBeforeCommit();
+  }
+  else if (newDocass.first() && newDocass.value("docass_id").toInt() > 0)
+  {
+    _targetid = newDocass.value("docass_id").toInt();
+    emit saveBeforeCommit();
+  }
+
+  if (_saveStatus==Failed)
+  {
+    rollback.exec();
+    return;
+  }
+
+  XSqlQuery commit("COMMIT;");
+
+  bool tryAgain = false;
+
+  do
+  {
+    emit saveAfterCommit();
+    if (_saveStatus==Failed)
+    {
+      QMessageBox failure(QMessageBox::Critical, tr("Script Error"),
+                          tr("A script has failed after the main window saved successfully. How do "
+                             "you wish to proceed?"));
+      QPushButton* retry = failure.addButton(tr("Retry"), QMessageBox::NoRole);
+      failure.addButton(tr("Ignore"), QMessageBox::YesRole);
+      QPushButton* cancel = failure.addButton(QMessageBox::Cancel);
+      failure.setDefaultButton(cancel);
+      failure.setEscapeButton((QAbstractButton*)cancel);
+      failure.exec();
+      if (failure.clickedButton() == (QAbstractButton*)retry)
+      {
+        setSaveStatus(OK);
+        tryAgain = true;
+      }
+      else if (failure.clickedButton() == (QAbstractButton*)cancel)
+        return;
+    }
+  }
+  while (tryAgain);
 
   accept();
   return;

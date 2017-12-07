@@ -384,7 +384,8 @@ bool creditMemo::save()
   creditave.bindValue(":cmhead_rsncode_id", _rsnCode->id());
   creditave.bindValue(":cmhead_hold",       QVariant(_hold->isChecked()));
   creditave.bindValue(":cmhead_commission", (_commission->toDouble() / 100));
-  creditave.bindValue(":cmhead_misc", _miscCharge->localValue());
+  if (_miscChargeAccount->id() > 0)
+    creditave.bindValue(":cmhead_misc", _miscCharge->localValue());
   creditave.bindValue(":cmhead_misc_accnt_id", _miscChargeAccount->id());
   creditave.bindValue(":cmhead_misc_descrip", _miscChargeDescription->text());
   creditave.bindValue(":cmhead_freight", _freight->localValue());
@@ -479,7 +480,11 @@ void creditMemo::populateShipto(int pShiptoid)
   if (pShiptoid != -1)
   {
     XSqlQuery query;
-    query.prepare( "SELECT * "
+    query.prepare( "SELECT shipto_id, shipto_name, shipto_commission, "
+                   "       COALESCE(shipto_addr_id, -1) AS shipto_addr_id, "
+                   "       COALESCE(shipto_taxzone_id, -1) AS shipto_taxzone_id, "
+                   "       COALESCE(shipto_salesrep_id, -1) AS shipto_salesrep_id, "
+                   "       COALESCE(shipto_shipzone_id, -1) AS shipto_shipzone_id "
                    "FROM shiptoinfo "
                    "WHERE (shipto_id=:shipto_id);" );
     query.bindValue(":shipto_id", pShiptoid);

@@ -454,6 +454,7 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
 
   XSqlQuery issueDetail;
   issueDetail.prepare("SELECT calcIssueToShippingLineBalance(:orderType, :orderitemId) AS balance, "
+                       "  orderitem_qty_invuomratio, "
                        "  isControlledItemsite(orderitem_itemsite_id) AS controlled, "
                        "  isControlledItemsite(wo_itemsite_id) AS woItemControlled, "
                        "  orderitem_itemsite_id AS itemsite_id, wo_id, wo_itemsite_id, "
@@ -530,7 +531,7 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, "
     ":itemlocSeries, NULL, NULL, :transType) AS result;");
   parentItemlocdist.bindValue(":itemsite_id", itemsiteId);
-  parentItemlocdist.bindValue(":qty", balance * -1);
+  parentItemlocdist.bindValue(":qty", balance * issueDetail.value("orderitem_qty_invuomratio").toDouble() * -1);
   parentItemlocdist.bindValue(":orderitemId", id);
   parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
   parentItemlocdist.bindValue(":orderType", _order->type());

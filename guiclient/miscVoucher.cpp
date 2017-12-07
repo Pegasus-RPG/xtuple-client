@@ -138,6 +138,7 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
       _close->setText(tr("&Close"));
       _save->hide();
       _postVoucher->setVisible(false);
+      _comments->setReadOnly(true);
     }
   }
 

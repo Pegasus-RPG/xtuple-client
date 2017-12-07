@@ -20,6 +20,7 @@
 #include "errorReporter.h"
 #include "returnAuthorization.h"
 #include "storedProcErrorLookup.h"
+#include "incidentHistory.h"
 #include "todoItem.h"
 #include "guiErrorCheck.h"
 
@@ -76,6 +77,7 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WindowFlag
   connect(_deleteTodoItem, SIGNAL(clicked()),       this,       SLOT(sDeleteTodoItem()));
   connect(_editTodoItem,  SIGNAL(clicked()),        this,       SLOT(sEditTodoItem()));
   connect(_item,          SIGNAL(newId(int)),     _lotserial,   SLOT(setItemId(int)));
+  connect(_incdthist,     SIGNAL(itemSelected(int)), this,      SLOT(sIncidentHistory()));
   connect(_newTodoItem,   SIGNAL(clicked()),        this,       SLOT(sNewTodoItem()));
   connect(_buttonBox,     SIGNAL(accepted()),        this,       SLOT(sSave()));
   connect(_print,         SIGNAL(clicked()),        this,       SLOT(sPrint()));
@@ -644,6 +646,16 @@ void incident::sViewTodoItem()
   params.append("todoitem_id", _todoList->id());
 
   todoItem newdlg(this, 0, true);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void incident::sIncidentHistory()
+{
+  ParameterList params;
+  params.append("incdthist_id", _incdthist->id());
+
+  incidentHistory newdlg(this, 0, true);
   newdlg.set(params);
   newdlg.exec();
 }

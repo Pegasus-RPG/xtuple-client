@@ -24,8 +24,8 @@ class returnAuthorizationWorkbench : public XWidget, public Ui::returnAuthorizat
 public:
     returnAuthorizationWorkbench(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
     ~returnAuthorizationWorkbench();
-  
-    virtual bool checkSitePrivs(int ordid);
+
+    Q_INVOKABLE virtual bool checkSitePrivs(int ordid);
 
 public slots:
     virtual void sPrint();

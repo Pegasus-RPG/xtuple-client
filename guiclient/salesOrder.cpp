@@ -3568,6 +3568,7 @@ void salesOrder::setViewMode()
   else
     _saveAndAdd->hide();
   _action->hide();
+  _cancel->hide();
   _delete->hide();
 }
 
@@ -4384,7 +4385,8 @@ void salesOrder::sIssueLineBalance()
                          "  isControlledItemsite(itemsite.itemsite_id) AS controlled, "
                          "  isControlledItemsite(wo_itemsite_id) AS woItemControlled, "
                          "  wo_itemsite_id, "
-                         "  calcIssueToShippingLineBalance('SO', coitem_id) AS balance, wo_id, "
+                         "  calcIssueToShippingLineBalance('SO', coitem_id) AS balance, "
+                         "  coitem_qty_invuomratio, wo_id, "
                          "  CASE WHEN wo_id IS NOT NULL THEN "
                          "    roundQty(woitem.item_fractional, calcIssueToShippingLineBalance('SO', coitem_id) "
                          "    * coitem_qty_invuomratio) "
@@ -4468,7 +4470,7 @@ void salesOrder::sIssueLineBalance()
       parentItemlocdist.prepare("SELECT createItemlocdistParent(:itemsite_id, :qty, :orderType, :orderitemId, "
         ":itemlocSeries, NULL, NULL, :transType) AS result;");
       parentItemlocdist.bindValue(":itemsite_id", itemsiteId);
-      parentItemlocdist.bindValue(":qty", balance * -1);
+      parentItemlocdist.bindValue(":qty", balance * issueSales.value("coitem_qty_invuomratio").toDouble() * -1);
       parentItemlocdist.bindValue(":orderitemId", soitem->id());
       parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
       parentItemlocdist.bindValue(":orderType", "SO");

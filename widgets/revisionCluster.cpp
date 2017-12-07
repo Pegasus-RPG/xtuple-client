@@ -405,8 +405,9 @@ void RevisionLineEdit::sParse()
 {
   if (_completerId)
   {
-    setId(_completerId);
+    int id = _completerId;
     _completerId = 0;
+    setId(id);
   }
   else if (_isRevControl && ! _parsed)
   {
