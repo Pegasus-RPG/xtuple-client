@@ -20,6 +20,7 @@
 #include "contact.h"
 #include "errorReporter.h"
 #include "parameterwidget.h"
+#include "prospect.h"
 #include "storedProcErrorLookup.h"
 
 contacts::contacts(QWidget* parent, const char*, Qt::WindowFlags fl)
@@ -69,6 +70,8 @@ contacts::contacts(QWidget* parent, const char*, Qt::WindowFlags fl)
   list()->addColumn(tr("State"),               50, Qt::AlignLeft, false, "addr_state");
   list()->addColumn(tr("Country"),            100, Qt::AlignLeft, false, "addr_country");
   list()->addColumn(tr("Postal Code"),         75, Qt::AlignLeft, false, "addr_postalcode");
+  list()->addColumn(tr("Customer"),     _ynColumn,  Qt::AlignLeft, false, "cust");
+  list()->addColumn(tr("Prospect"),    _ynColumn,  Qt::AlignLeft, false, "prospect");
 
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -145,6 +148,47 @@ void contacts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 
   menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDelete()));
   menuItem->setEnabled(editPriv);
+
+  // Create, Edit, View Prospect
+
+  bool editProspectPriv = false;
+  bool viewProspectPriv = false;
+  bool foundNewable = false;
+  bool foundEditable = false;
+
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
+  {
+    if (item->rawValue("cust").isNull()) // Can't be a Customer and Prospect
+    {
+      if (item->rawValue("prospect").toInt() > 0)
+        foundEditable = true;
+      else
+        foundNewable = true;
+    }
+
+    editProspectPriv = editProspectPriv ||
+        (omfgThis->username() == list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("MaintainPersonalCRMAccounts")) ||
+        (_privileges->check("MaintainAllCRMAccounts")); // TODO - replace if a new "ViewProspect" priv created
+
+    viewProspectPriv = viewProspectPriv ||
+        (omfgThis->username() == list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("ViewPersonalCRMAccounts")) ||
+        (_privileges->check("ViewAllCRMAccounts")); // TODO - replace if a new "ViewProspect" priv created
+  }
+
+  if (foundEditable)
+  {
+    pMenu->addSeparator();
+    menuItem = pMenu->addAction(tr("Edit Prospect"), this, SLOT(sEditProspect()));
+    menuItem->setEnabled(editProspectPriv);
+    menuItem = pMenu->addAction(tr("View Prospect"), this, SLOT(sViewProspect()));
+    menuItem->setEnabled(viewProspectPriv);
+  }
+  if (foundNewable)
+  {
+    pMenu->addSeparator();
+    menuItem = pMenu->addAction(tr("Create Prospect..."), this, SLOT(sNewProspect()));
+    menuItem->setEnabled(editProspectPriv);
+  }
 }
 
 void contacts::sNew()
@@ -367,5 +411,63 @@ void contacts::sOpen()
     sView();
   else
     QMessageBox::information(this, tr("Restricted Access"), tr("You have not been granted privileges to open this Contact."));
+}
 
+void contacts::sNewProspect()
+{
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
+  {
+    if (item->rawValue("cust").isNull() && item->rawValue("prospect").toInt() <= 0 &&
+        ((omfgThis->username() == list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("MaintainPersonalCRMAccounts")) ||
+         (_privileges->check("MaintainAllCRMAccounts"))))
+    {
+      ParameterList params;
+      params.append("mode", "new");
+
+      XSqlQuery sql;
+      sql.prepare("SELECT cntct_crmacct_id"
+                  "  FROM cntct"
+                  " WHERE cntct_id=:cntct_id");
+      sql.bindValue(":cntct_id", item->id());
+      sql.exec();
+      if (sql.first())
+        params.append("crmacct_id", sql.value("cntct_crmacct_id").toInt());
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Fetching CRM Account"),
+                                    sql, __FILE__, __LINE__))
+        return;
+
+      prospect *newdlg = new prospect();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+    }
+  }
+}
+
+void contacts::sEditProspect()
+{
+  sOpenProspect("edit");
+}
+
+void contacts::sViewProspect()
+{
+  sOpenProspect("view");
+}
+
+void contacts::sOpenProspect(QString mode)
+{
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
+  {
+    if (item->rawValue("cust").isNull() && item->rawValue("prospect").toInt() > 0 &&
+        ((omfgThis->username() == list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("ViewPersonalCRMAccounts")) ||
+         (_privileges->check("ViewAllCRMAccounts"))))
+    {
+      ParameterList params;
+      params.append("mode", mode);
+      params.append("prospect_id", item->rawValue("prospect"));
+
+      prospect *newdlg = new prospect();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+    }
+  }
 }

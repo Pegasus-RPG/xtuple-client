@@ -41,6 +41,10 @@ public slots:
     virtual void sDetach();
     virtual void sOpen();
     virtual bool setParams(ParameterList &);
+    virtual void sNewProspect();
+    virtual void sEditProspect();
+    virtual void sViewProspect();
+    virtual void sOpenProspect(QString);
    
 signals:
     void cntctDetached(int);
