@@ -65,6 +65,7 @@ protected slots:
     virtual void sHandleButtons();
     virtual void sHandleChildButtons();
     virtual void sHandleCntctDetach(int cntctId);
+    virtual void setVisible(bool);
 
 protected:
     virtual void closeEvent(QCloseEvent*);
@@ -93,6 +94,7 @@ private:
     int         _cntct2Id;
     int         _NumberGen;
     bool        _canCreateUsers;
+    bool        _closed;
 
     QSqlError   saveNoErrorCheck(bool pInTxn = false);
 

@@ -124,8 +124,9 @@ void addresses::sNew()
   ParameterList params;
   params.append("mode", "new");
 
-  address newdlg(this, "", true);
+  address newdlg(0, "", true);
   newdlg.set(params);
+  newdlg.setWindowModality(Qt::WindowModal);
 
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
@@ -133,51 +134,59 @@ void addresses::sNew()
 
 void addresses::sEdit()
 {
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("addr_id", list()->id());
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("addr_id", item->id());
 
-  address newdlg(this, "", true);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+    address* newdlg = new address(0, "", false);
+    newdlg->set(params);
+    newdlg->show();
+  }
 }
 
 void addresses::sView()
 {
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("addr_id", list()->id());
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("addr_id", item->id());
 
-  address newdlg(this, "", true);
-  newdlg.set(params);
-  newdlg.exec();
+    address* newdlg = new address(0, "", false);
+    newdlg->set(params);
+    newdlg->show();
+  }
 }
 
 void addresses::sDelete()
 {
   XSqlQuery deleteAddress;
   deleteAddress.prepare("SELECT deleteAddress(:addr_id) AS result;");
-  deleteAddress.bindValue(":addr_id", list()->id());
-  deleteAddress.exec();
-  if (deleteAddress.first())
+
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    int result = deleteAddress.value("result").toInt();
-    if (result < 0)
+    deleteAddress.bindValue(":addr_id", item->id());
+    deleteAddress.exec();
+    if (deleteAddress.first())
     {
-      QMessageBox::warning(this, tr("Cannot Delete Selected Address"),
-			   storedProcErrorLookup("deleteAddress", result));
+      int result = deleteAddress.value("result").toInt();
+      if (result < 0)
+      {
+        QMessageBox::warning(this, tr("Cannot Delete Selected Address"),
+                             storedProcErrorLookup("deleteAddress", result));
+        return;
+      }
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Address"),
+                                deleteAddress, __FILE__, __LINE__))
+    {
       return;
     }
-    else
-      sFillList();
   }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Address"),
-                                deleteAddress, __FILE__, __LINE__))
-  {
-    return;
-  }
+
+  sFillList();
 }
 
 void addresses::sNewProspect()

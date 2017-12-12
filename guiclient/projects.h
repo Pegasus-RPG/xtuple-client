@@ -12,6 +12,7 @@
 #define PROJECTS_H
 
 #include "display.h"
+#include "xtreewidget.h"
 #include "ui_projects.h"
 
 class projects : public display, public Ui::projects
@@ -34,6 +35,8 @@ public slots:
 
 private:
   QStringList _statuses;
+  virtual void open(XTreeWidgetItem*, QString);
+  virtual bool getPriv(int, XTreeWidgetItem*);
   
 };
 

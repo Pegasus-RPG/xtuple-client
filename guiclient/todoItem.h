@@ -11,6 +11,7 @@
 #ifndef TODOITEM_H
 #define TODOITEM_H
 
+#include "applock.h"
 #include "guiclient.h"
 #include "xdialog.h"
 #include "parameter.h"
@@ -26,18 +27,25 @@ public:
 
     static bool userHasPriv(const int = cView, const int = 0);
 
+    Q_INVOKABLE virtual int id();
+
     virtual SetResponse set(const ParameterList & pParams );
     virtual void	languageChange();
 
 protected slots:
     virtual void	sClose();
+    virtual void        setViewMode();
     virtual void	sHandleIncident();
     virtual void	sPopulate();
     virtual void	sSave();
 
+    virtual void        setVisible(bool);
+
 private:
     int _mode;
     int	_todoitemid;
+    bool _close;
+    AppLock _lock;
 };
 
 #endif // TODOITEM_H

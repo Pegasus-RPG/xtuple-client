@@ -11,6 +11,7 @@
 #ifndef ADDRESS_H
 #define ADDRESS_H
 
+#include "applock.h"
 #include "guiclient.h"
 #include "xdialog.h"
 #include <parameter.h>
@@ -25,6 +26,8 @@ public:
     address(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WindowFlags fl = 0);
     ~address();
 
+    Q_INVOKABLE virtual int id();
+
 public slots:
     virtual SetResponse set(const ParameterList &pParams);
 
@@ -32,6 +35,7 @@ protected slots:
     virtual void languageChange();
 
     virtual void reject();
+    virtual void setViewMode();
     virtual void sEdit();
     virtual void sEditContact();
     virtual void sEditShipto();
@@ -48,10 +52,14 @@ protected slots:
     virtual void sViewVendorAddress();
     virtual void sViewWarehouse();
 
+    virtual void setVisible(bool);
+
 private:
     int _mode;
     int _addrid;
     bool _captive;
+    bool _close;
+    AppLock _lock;
 
     virtual void internalSave(AddressCluster::SaveFlags = AddressCluster::CHECK);
 };

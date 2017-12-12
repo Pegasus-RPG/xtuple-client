@@ -11,6 +11,7 @@
 #ifndef PROSPECT_H
 #define PROSPECT_H
 
+#include "applock.h"
 #include "guiclient.h"
 #include "xwidget.h"
 #include <parameter.h>
@@ -31,6 +32,7 @@ public:
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
 
+    virtual void        setViewMode();
     virtual void	sCheckNumber();
     virtual void	sDeleteQuote();
     virtual void	sEditQuote();
@@ -41,6 +43,8 @@ public slots:
     virtual void	sFillQuotesList();
     virtual void	sPopulateQuotesMenu(QMenu * menuThis);
     virtual bool	sPopulate();
+
+    virtual void        setVisible(bool);
 
 signals:
             void newId(int);
@@ -61,6 +65,8 @@ private:
     int _NumberGen;
     QString _cachedNumber;
     QString _crmowner;
+    bool _closed;
+    AppLock _lock;
 };
 
 #endif // PROSPECT_H

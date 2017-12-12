@@ -102,6 +102,8 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WindowFla
   list()->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft, false, "item_number");
   list()->addColumn(tr("Lot/Serial"),   _itemColumn, Qt::AlignLeft, false, "ls_number");
 
+  list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
   setupCharacteristics("INCDT");
 }
 
@@ -124,33 +126,40 @@ void incidentWorkbench::sNew()
   ParameterList params;
   params.append("mode", "new");
 
-  incident newdlg(this, 0, true);
+  incident newdlg(0, 0, true);
   newdlg.set(params);
+  newdlg.setWindowModality(Qt::WindowModal);
+
   if(newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
 void incidentWorkbench::sEdit()
 {
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("incdt_id", list()->id());
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("incdt_id", item->id());
 
-  incident newdlg(this, 0, true);
-  newdlg.set(params);
-  if(newdlg.exec() != XDialog::Rejected)
-    sFillList();
+    incident* newdlg = new incident(0, 0, false);
+    newdlg->set(params);
+    newdlg->show();
+  }
 }
 
 void incidentWorkbench::sView()
 {
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("incdt_id", list()->id());
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("incdt_id", item->id());
 
-  incident newdlg(this, 0, true);
-  newdlg.set(params);
-  newdlg.exec();
+    incident* newdlg = new incident(0, 0, false);
+    newdlg->set(params);
+    newdlg->show();
+  }
 }
 
 bool incidentWorkbench::setParams(ParameterList & params)

@@ -11,6 +11,7 @@
 #ifndef OPPORTUNITY_H
 #define OPPORTUNITY_H
 
+#include "applock.h"
 #include "guiclient.h"
 #include "xdialog.h"
 #include <parameter.h>
@@ -27,8 +28,11 @@ public:
 
     static bool userHasPriv(const int = cView, const int = 0);
 
+    Q_INVOKABLE virtual int id();
+
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
+    virtual void setViewMode();
     virtual void populate();
     virtual void sCancel();
     virtual void sSave();
@@ -63,6 +67,8 @@ public slots:
     virtual void sViewSalesOrder();
     virtual void sHandleCrmacct(int);
 
+    virtual void setVisible(bool);
+
 protected slots:
     virtual void languageChange();
 
@@ -72,6 +78,8 @@ private:
 	int		_prospectid;
     int		_mode;
     bool	_saved;
+    bool        _close;
+    AppLock     _lock;
 };
 
 #endif // OPPORTUNITY_H

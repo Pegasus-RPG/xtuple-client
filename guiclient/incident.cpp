@@ -64,6 +64,7 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WindowFlag
   _incdtid = -1;
   _saved = false;
   _aropenid = -1;
+  _close = false;
 
   _print = _buttonBox->addButton(tr("Print"),QDialogButtonBox::ActionRole);
   _print->setObjectName("_print");
@@ -193,32 +194,7 @@ enum SetResponse incident::set(const ParameterList &pParams)
       _crmacct->setEnabled(true);
     }
     else if (param.toString() == "view")
-    {
-      _mode = cView;
-
-      _crmacct->setEnabled(false);
-      _cntct->setEnabled(false);
-      _assignedTo->setEnabled(false);
-      _category->setEnabled(false);
-      _status->setEnabled(false);
-      _resolution->setEnabled(false);
-      _severity->setEnabled(false);
-      _priority->setEnabled(false);
-      _item->setReadOnly(true);
-      _lotserial->setEnabled(false);
-      _description->setEnabled(false);
-      _notes->setEnabled(false);
-      _deleteTodoItem->setEnabled(false);
-      _editTodoItem->setEnabled(false);
-      _newTodoItem->setEnabled(false);
-      _charass->setReadOnly(true);
-      _owner->setEnabled(false);
-
-      _buttonBox->setStandardButtons(QDialogButtonBox::Close);
-      _comments->setReadOnly(true);
-      _documents->setReadOnly(true);
-      _alarms->setReadOnly(true);
-    }
+      setViewMode();
   }
 
   param = pParams.value("crmacct_id", &valid);
@@ -271,6 +247,34 @@ enum SetResponse incident::set(const ParameterList &pParams)
 
   sHandleTodoPrivs();
   return NoError;
+}
+
+void incident::setViewMode()
+{
+  _mode = cView;
+
+  _crmacct->setEnabled(false);
+  _cntct->setEnabled(false);
+  _assignedTo->setEnabled(false);
+  _category->setEnabled(false);
+  _status->setEnabled(false);
+  _resolution->setEnabled(false);
+  _severity->setEnabled(false);
+  _priority->setEnabled(false);
+  _item->setReadOnly(true);
+  _lotserial->setEnabled(false);
+  _description->setEnabled(false);
+  _notes->setEnabled(false);
+  _deleteTodoItem->setEnabled(false);
+  _editTodoItem->setEnabled(false);
+  _newTodoItem->setEnabled(false);
+  _charass->setReadOnly(true);
+  _owner->setEnabled(false);
+
+  _buttonBox->setStandardButtons(QDialogButtonBox::Close);
+  _comments->setReadOnly(true);
+  _documents->setReadOnly(true);
+  _alarms->setReadOnly(true);
 }
 
 int incident::id() const
@@ -511,6 +515,33 @@ void incident::sFillHistoryList()
 
 void incident::populate()
 {
+  if (!_lock.acquire("incdt", _incdtid, AppLock::Interactive))
+    setViewMode();
+
+  _close = false;
+
+  foreach (QWidget* widget, QApplication::allWidgets())
+  {
+    if (!widget->isWindow() || !widget->isVisible())
+      continue;
+
+    incident *w = qobject_cast<incident*>(widget);
+
+    if (w && w->id()==_incdtid)
+    {
+      w->setFocus();
+
+      if (omfgThis->showTopLevel())
+      {
+        w->raise();
+        w->activateWindow();
+      }
+
+      _close = true;
+      break;
+    }
+  }
+
   XSqlQuery incidentpopulate;
   incidentpopulate.prepare("SELECT incdt_number,"
             "       incdt_crmacct_id,"
@@ -850,4 +881,12 @@ void incident::sAssigned()
 {
   if (_status->currentIndex() < 3 && !_assignedTo->username().isEmpty())
     _status->setCurrentIndex(3);
+}
+
+void incident::setVisible(bool visible)
+{
+  if (_close)
+    close();
+  else
+    XDialog::setVisible(visible);
 }

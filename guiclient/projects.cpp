@@ -33,8 +33,23 @@
 #include "purchaseOrderItem.h"
 #include "incident.h"
 #include "errorReporter.h"
+#include "storedProcErrorLookup.h"
 
 #define DEBUG true
+
+static const int PROJECT           = 1;
+static const int TASK              = 5;
+static const int QUOTE             = 15;
+static const int QUOTEITEM         = 17;
+static const int SALESORDER        = 25;
+static const int SALESORDERITEM    = 27;
+static const int INVOICE           = 35;
+static const int INVOICEITEM       = 37;
+static const int WORKORDER         = 45;
+static const int PURCHASEREQUEST   = 55;
+static const int PURCHASEORDER     = 65;
+static const int PURCHASEORDERITEM = 67;
+static const int INCIDENT          = 105;
 
 projects::projects(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "projects", fl)
@@ -65,6 +80,8 @@ projects::projects(QWidget* parent, const char*, Qt::WindowFlags fl)
   list()->addColumn(tr("Project Assigned"),               _dateColumn,  Qt::AlignCenter, true,  "prj_assigned_date");
   list()->addColumn(tr("Project Started"),                _dateColumn,  Qt::AlignCenter, true,  "prj_start_date");
   list()->addColumn(tr("Project Completed"),              _dateColumn,  Qt::AlignCenter, true,  "prj_completed_date");
+
+  list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
 
@@ -199,8 +216,10 @@ void projects::sNew()
   ParameterList params;
   params.append("mode", "new");
 
-  project newdlg(this, "", true);
+  project newdlg(0, "", true);
   newdlg.set(params);
+  newdlg.setWindowModality(Qt::WindowModal);
+
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
@@ -209,385 +228,194 @@ void projects::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int)
 {
   QAction *menuItem;
 
-  bool editPriv =
-      (omfgThis->username() == list()->currentItem()->rawValue("prj_owner_username") && _privileges->check("MaintainPersonalProjects")) ||
-      (omfgThis->username() == list()->currentItem()->rawValue("prj_username") && _privileges->check("MaintainPersonalProjects")) ||
-      (_privileges->check("MaintainAllProjects"));
+  bool edit = false;
+  bool view = false;
+  bool del = false;
+  bool foundEditable = false;
+  bool foundDeletable = false;
 
-  bool viewPriv =
-      (omfgThis->username() == list()->currentItem()->rawValue("prj_owner_username") && _privileges->check("ViewPersonalProjects")) ||
-      (omfgThis->username() == list()->currentItem()->rawValue("prj_username") && _privileges->check("ViewPersonalProjects")) ||
-      (_privileges->check("ViewAllProjects"));
-
-  if(list()->altId() == 1)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    menuItem = pMenu->addAction(tr("Edit Project..."), this, SLOT(sEdit()));
-    menuItem->setEnabled(editPriv);
+    if(item->altId() != PURCHASEREQUEST)
+    {
+      foundEditable = true;
+      edit = edit || getPriv(cEdit, item);
+    }
 
-    menuItem = pMenu->addAction(tr("View Project..."), this, SLOT(sView()));
-    menuItem->setEnabled(viewPriv);
-  
-    menuItem = pMenu->addAction("Delete Project...", this, SLOT(sDelete()));
-    menuItem->setEnabled(editPriv);
+    view = view || getPriv(cView, item);
 
-    menuItem = pMenu->addAction("Copy Project...", this, SLOT(sCopy()));
-    menuItem->setEnabled(editPriv);
-
+    if(item->altId() == PROJECT)
+    {
+      foundDeletable = true;
+      del = del || getPriv(cEdit, item);
+    }
   }
 
-  if(list()->altId() == 5)
+  if (foundEditable)
   {
-    menuItem = pMenu->addAction(tr("Edit Task..."), this, SLOT(sEdit()));
-    menuItem->setEnabled(editPriv);
-
-    menuItem = pMenu->addAction(tr("View Task..."), this, SLOT(sView()));
-    menuItem->setEnabled(viewPriv);
-
+    menuItem = pMenu->addAction(tr("Edit"), this, SLOT(sEdit()));
+    menuItem->setEnabled(edit);
   }
 
-  if(list()->altId() == 15)
+  menuItem = pMenu->addAction(tr("View"), this, SLOT(sView()));
+  menuItem->setEnabled(view);
+ 
+  if (foundDeletable)
   {
-    menuItem = pMenu->addAction(tr("Edit Quote..."), this, SLOT(sEdit()));
-    menuItem->setEnabled(_privileges->check("MaintainQuotes"));
+    menuItem = pMenu->addAction("Delete", this, SLOT(sDelete()));
+    menuItem->setEnabled(del);
 
-    menuItem = pMenu->addAction(tr("View Quote..."), this, SLOT(sView()));
-    menuItem->setEnabled(_privileges->check("MaintainQuotes") ||
-                         _privileges->check("ViewQuotes") );
+    menuItem = pMenu->addAction("Copy", this, SLOT(sCopy()));
+    menuItem->setEnabled(del);
   }
-
-  if(list()->altId() == 17)
-  {
-    menuItem = pMenu->addAction(tr("Edit Quote Item..."), this, SLOT(sEdit()));
-    menuItem->setEnabled(_privileges->check("MaintainQuotes"));
-
-    menuItem = pMenu->addAction(tr("View Quote Item..."), this, SLOT(sView()));
-    menuItem->setEnabled(_privileges->check("MaintainQuotes") ||
-                         _privileges->check("ViewQuotes"));
-  }
-
-  if(list()->altId() == 25)
-  {
-    menuItem = pMenu->addAction(tr("Edit Sales Order..."), this, SLOT(sEdit()));
-    menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
-
-    menuItem = pMenu->addAction(tr("View Sales Order..."), this, SLOT(sView()));
-    menuItem->setEnabled(_privileges->check("MaintainSalesOrders") ||
-                         _privileges->check("ViewSalesOrders"));
-  }
-
-  if(list()->altId() == 27)
-  {
-    menuItem = pMenu->addAction(tr("Edit Sales Order Item..."), this, SLOT(sEdit()));
-    menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
-
-    menuItem = pMenu->addAction(tr("View Sales Order Item..."), this, SLOT(sView()));
-    menuItem->setEnabled(_privileges->check("MaintainSalesOrders") ||
-                         _privileges->check("ViewSalesOrders"));
-  }
-
-  if(list()->altId() == 35)
-  {
-    menuItem = pMenu->addAction(tr("Edit Invoice..."), this, SLOT(sEdit()));
-    menuItem->setEnabled(_privileges->check("MaintainMiscInvoices"));
-
-    menuItem = pMenu->addAction(tr("View Invoice..."), this, SLOT(sView()));
-    menuItem->setEnabled(_privileges->check("MaintainMiscInvoices") ||
-                         _privileges->check("ViewMiscInvoices"));
-  }
-
-  if(list()->altId() == 37)
-  {
-    menuItem = pMenu->addAction(tr("Edit Invoice Item..."), this, SLOT(sEdit()));
-    menuItem->setEnabled(_privileges->check("MaintainMiscInvoices"));
-
-    menuItem = pMenu->addAction(tr("View Invoice Item..."), this, SLOT(sView()));
-    menuItem->setEnabled(_privileges->check("MaintainMiscInvoices") ||
-                         _privileges->check("ViewMiscInvoices"));
-  }
-
-  if(list()->altId() == 45)
-  {
-    menuItem = pMenu->addAction(tr("Edit Work Order..."), this, SLOT(sEdit()));
-    menuItem->setEnabled(_privileges->check("MaintainWorkOrders"));
-
-    menuItem = pMenu->addAction(tr("View Work Order..."), this, SLOT(sView()));
-    menuItem->setEnabled(_privileges->check("MaintainWorkOrders") ||
-                         _privileges->check("ViewWorkOrders"));
-  }
-
-  if(list()->altId() == 55)
-  {
-    menuItem = pMenu->addAction(tr("View Purchase Request..."), this, SLOT(sView()));
-    menuItem->setEnabled(_privileges->check("MaintainPurchaseRequests") ||
-                         _privileges->check("ViewPurchaseRequests"));
-  }
-
-  if(list()->altId() == 65)
-  {
-    menuItem = pMenu->addAction(tr("Edit Purchase Order..."), this, SLOT(sEdit()));
-    menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
-
-    menuItem = pMenu->addAction(tr("View Purchase Order..."), this, SLOT(sView()));
-    menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders") ||
-                         _privileges->check("ViewPurchaseOrders"));
-  }
-
-  if(list()->altId() == 67)
-  {
-    menuItem = pMenu->addAction(tr("Edit Purchase Order Item..."), this, SLOT(sEdit()));
-    menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
-
-    menuItem = pMenu->addAction(tr("View Purchase Order Item..."), this, SLOT(sView()));
-    menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders") ||
-                         _privileges->check("ViewPurchaseOrders"));
-  }
-
-  if(list()->altId() == 105)
-  {
-    menuItem = pMenu->addAction(tr("Edit Incident..."), this, SLOT(sEdit()));
-    menuItem->setEnabled(_privileges->check("MaintainPersonalIncidents") ||
-			_privileges->check("MaintainAllIncidents"));
-
-    menuItem = pMenu->addAction(tr("View Incident..."), this, SLOT(sView()));
-    menuItem->setEnabled(_privileges->check("ViewPersonalIncidents") ||
-			_privileges->check("ViewAllIncidents") ||
-			_privileges->check("MaintainPersonalIncidents") ||
-			_privileges->check("MaintainAllIncidents"));
-  }
-
 }
 
 void projects::sEdit()
 {
-  ParameterList params;
-
-  if(list()->altId() == 1)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    params.append("prj_id", list()->id());
-    params.append("mode", "edit");
- 
-    project newdlg(this, "", true);
-    newdlg.set(params);
-    if (newdlg.exec() != XDialog::Rejected)
-      sFillList();
-  }
+    bool edit = getPriv(cEdit, item);
+    bool view = getPriv(cView, item);
 
-  else if(list()->altId() == 5)
-  {
-    params.append("mode", "edit");
-    params.append("prjtask_id", list()->id());
+    if (!edit && !view)
+      continue;
 
-    task newdlg(this, "", true);
-    newdlg.set(params);
-    if (newdlg.exec() != XDialog::Rejected)
-     sFillList();
-  }
-  else if(list()->altId() == 15)
-  {
-    params.append("mode", "editQuote");
-    params.append("quhead_id", list()->id());
-
-    salesOrder *newdlg = new salesOrder(this);
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
-  else if(list()->altId() == 17)
-  {
-    params.append("mode", "editQuote");
-    params.append("soitem_id", list()->id());
-
-    salesOrderItem newdlg(this);
-    newdlg.set(params);
-    newdlg.exec();
-  }
-  else if(list()->altId() == 25)
-  {
-    params.append("mode",      "edit");
-    params.append("sohead_id", list()->id());
-    salesOrder *newdlg = new salesOrder(this);
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg, Qt::WindowModal);
-  }
-  else if(list()->altId() == 27)
-  {
-    params.append("mode", "edit");
-    params.append("soitem_id", list()->id());
-
-    salesOrderItem newdlg(this);
-    newdlg.set(params);
-    newdlg.exec();
-  }
-  else if(list()->altId() == 35)
-  {
-    invoice::editInvoice(list()->id(), this);
-  }
-  else if(list()->altId() == 37)
-  {
-    params.append("mode", "edit");
-    params.append("invcitem_id", list()->id());
-
-    invoiceItem newdlg(this);
-    newdlg.set(params);
-    newdlg.exec();
-  }
-  else if(list()->altId() == 45)
-  {
-    params.append("mode", "edit");
-    params.append("wo_id", list()->id());
-
-    workOrder *newdlg = new workOrder(this);
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
-  else if(list()->altId() == 65)
-  {
-    params.append("mode", "edit");
-    params.append("pohead_id", list()->id());
-
-    purchaseOrder *newdlg = new purchaseOrder(this);
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
-  else if(list()->altId() == 67)
-  {
-    ParameterList params;
-    params.append("mode", "edit");
-    params.append("poitem_id", list()->id());
-
-    purchaseOrderItem newdlg(this, "", true);
-    newdlg.set(params);
-    newdlg.exec();
-  }
-
-  else if(list()->altId() == 105)
-  {
-    ParameterList params;
-    params.append("mode", "edit");
-    params.append("incdt_id", list()->id());
-
-    incident newdlg(this, "", true);
-    newdlg.set(params);
-    newdlg.exec();
+    if (edit)
+      open(item, "edit");
+    else
+      open(item, "view");
   }
 }
 
 void projects::sView()
 {
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
+  {
+    if (!getPriv(cView, item))
+      return;
+
+    open(item, "view");
+  }
+}
+
+void projects::open(XTreeWidgetItem* item, QString mode)
+{
   ParameterList params;
 
-  if(list()->altId() == 1)
+  if(item->altId() == PROJECT)
   {
-    params.append("prj_id", list()->id());
-    params.append("mode", "view");
- 
-    project newdlg(this, "", true);
-    newdlg.set(params);
-    if (newdlg.exec() != XDialog::Rejected)
-      sFillList();
+    params.append("prj_id", item->id());
+    params.append("mode", mode);
+   
+    project* newdlg = new project(0, "", false);
+    newdlg->set(params);
+    newdlg->show();
   }
-  else if(list()->altId() == 5)
+  else if(item->altId() == TASK)
   {
-    params.append("mode", "view");
-    params.append("prjtask_id", list()->id());
+    params.append("mode", mode);
+    params.append("prjtask_id", item->id());
 
-    task newdlg(this, "", true);
-    newdlg.set(params);
-    newdlg.exec();
+    task* newdlg = new task(0, "", false);
+    newdlg->set(params);
+    newdlg->show();
   }
-  else if(list()->altId() == 15)
+  else if(item->altId() == QUOTE)
   {
-    params.append("mode", "viewQuote");
-    params.append("quhead_id", list()->id());
+    params.append("mode", mode + "Quote");
+    params.append("quhead_id", item->id());
 
     salesOrder *newdlg = new salesOrder(this);
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if(list()->altId() == 17)
+  else if(item->altId() == QUOTEITEM)
   {
-    params.append("mode", "viewQuote");
-    params.append("soitem_id", list()->id());
+    params.append("mode", mode + "Quote");
+    params.append("soitem_id", item->id());
 
-    salesOrderItem newdlg(this);
-    newdlg.set(params);
-    newdlg.exec();
+    salesOrderItem* newdlg = new salesOrderItem(0, "", false);
+    newdlg->set(params);
+    newdlg->show();
   }
-  else if(list()->altId() == 25)
+  else if(item->altId() == SALESORDER)
   {
-    params.append("mode",      "view");
-    params.append("sohead_id", list()->id());
+    params.append("mode", mode);
+    params.append("sohead_id", item->id());
+
     salesOrder *newdlg = new salesOrder(this);
     newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg, Qt::WindowModal);
+    omfgThis->handleNewWindow(newdlg);
   }
-  else if(list()->altId() == 27)
+  else if(item->altId() == SALESORDERITEM)
   {
-    params.append("mode", "view");
-    params.append("soitem_id", list()->id());
+    params.append("mode", mode);
+    params.append("soitem_id", item->id());
 
-    salesOrderItem newdlg(this);
-    newdlg.set(params);
-    newdlg.exec();
+    salesOrderItem* newdlg = new salesOrderItem(0, "", false);
+    newdlg->set(params);
+    newdlg->show();
   }
-  else if(list()->altId() == 35)
+  else if(item->altId() == INVOICE)
   {
-    invoice::viewInvoice(list()->id(), this);
+    if (mode=="edit")
+      invoice::editInvoice(item->id(), this);
+    else
+      invoice::viewInvoice(item->id(), this);
   }
-  else if(list()->altId() == 37)
+  else if(item->altId() == INVOICEITEM)
   {
-    params.append("mode", "view");
-    params.append("invcitem_id", list()->id());
+    params.append("mode", mode);
+    params.append("invcitem_id", item->id());
 
-    invoiceItem newdlg(this);
-    newdlg.set(params);
-    newdlg.exec();
+    invoiceItem* newdlg = new invoiceItem(this);
+    newdlg->set(params);
+    newdlg->show();
   }
-  else if(list()->altId() == 45)
+  else if(item->altId() == WORKORDER)
   {
-    params.append("mode", "view");
-    params.append("wo_id", list()->id());
+    params.append("mode", mode);
+    params.append("wo_id", item->id());
 
     workOrder *newdlg = new workOrder(this);
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if(list()->altId() == 55)
+  else if(list()->altId() == PURCHASEREQUEST)
   {
     params.append("mode", "view");
-    params.append("pr_id", list()->id());
+    params.append("pr_id", item->id());
 
-    purchaseRequest newdlg(this, "", true);
-    newdlg.set(params);
-    newdlg.exec();
+    purchaseRequest* newdlg = new purchaseRequest(0, "", false);
+    newdlg->set(params);
+    newdlg->show();
   }
-  else if(list()->altId() == 65)
+  else if(item->altId() == PURCHASEORDER)
   {
-    params.append("mode", "view");
-    params.append("pohead_id", list()->id());
+    params.append("mode", mode);
+    params.append("pohead_id", item->id());
 
     purchaseOrder *newdlg = new purchaseOrder(this);
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if(list()->altId() == 67)
+  else if(item->altId() == PURCHASEORDERITEM)
   {
-    ParameterList params;
-    params.append("mode", "view");
-    params.append("poitem_id", list()->id());
+    params.append("mode", mode);
+    params.append("poitem_id", item->id());
 
-    purchaseOrderItem newdlg(this, "", true);
-    newdlg.set(params);
-    newdlg.exec();
+    purchaseOrderItem* newdlg = new purchaseOrderItem(0, "", false);
+    newdlg->set(params);
+    newdlg->show();
   }
-  else if(list()->altId() == 105)
+  else if(item->altId() == INCIDENT)
   {
-    ParameterList params;
-    params.append("mode", "view");
-    params.append("incdt_id", list()->id());
+    params.append("mode", mode);
+    params.append("incdt_id", item->id());
 
-    incident newdlg(this, "", true);
-    newdlg.set(params);
-    newdlg.exec();
+    incident* newdlg = new incident(0, "", false);
+    newdlg->set(params);
+    newdlg->show();
   }
 }
 
@@ -595,69 +423,123 @@ void projects::sDelete()
 {
   XSqlQuery projectsDelete;
   projectsDelete.prepare("SELECT deleteProject(:prj_id) AS result");
-  projectsDelete.bindValue(":prj_id", list()->id());
-  projectsDelete.exec();
-  if(projectsDelete.first())
+
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    int result = projectsDelete.value("result").toInt();
-    if(result < 0)
+    if (item->altId() != 1 || !getPriv(cEdit, item))
+      continue;
+
+    projectsDelete.bindValue(":prj_id", item->id());
+    projectsDelete.exec();
+    if(projectsDelete.first())
     {
-      QString errmsg;
-      switch(result)
+      int result = projectsDelete.value("result").toInt();
+      if(result < 0)
       {
-        case -1:
-          errmsg = tr("One or more Quote's refer to this project.");
-          break;
-        case -2:
-          errmsg = tr("One or more Sales Orders refer to this project.");
-          break;
-        case -3:
-          errmsg = tr("One or more Work Orders refer to this project.");
-          break;
-        case -4:
-          errmsg = tr("One or more Purchase Requests refer to this project.");
-          break;
-        case -5:
-          errmsg = tr("One or more Purchase order Items refer to this project.");
-          break;
-        case -6:
-          errmsg = tr("One or more Invoices refer to this project.");
-          break;
-        default:
-          errmsg = tr("Error #%1 encountered while trying to delete project.").arg(result);
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Project"),
+                             storedProcErrorLookup("deleteProject", result),
+                             __FILE__, __LINE__);
+        return;
       }
-      QMessageBox::critical( this, tr("Cannot Delete Project"),
-        tr("Could not delete the project for one or more reasons.\n") + errmsg);
-      return;
-    }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Project"),
-                                  projectsDelete, __FILE__, __LINE__))
-    {
-      return;
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Project"),
+                                    projectsDelete, __FILE__, __LINE__))
+      {
+        return;
+      }
     }
   }
+
   sFillList();
 }
 
 void projects::sCopy()
 {
-  if (DEBUG)
-    qDebug("Project sCopy() Project ID: %d)", list()->id());  
-
-  if (list()->id() == -1)
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    QMessageBox::information(this, tr("Project Copy"), tr("Please select a project to copy first"));
-    return;
+    if (item->altId() != 1 || !getPriv(cEdit, item))
+      continue;
+
+    if (DEBUG)
+      qDebug("Project sCopy() Project ID: %d)", item->id());  
+
+    if (item->id() == -1)
+    {
+      QMessageBox::information(this, tr("Project Copy"), tr("Please select a project to copy first"));
+      return;
+    }
+  
+    ParameterList params;
+    params.append("prj_id", item->id());
+  
+    projectCopy newdlg(parentWidget(), "", true);
+    newdlg.set(params);
+    newdlg.exec();
   }
-  
-  ParameterList params;
-  params.append("prj_id", list()->id());
-  
-  projectCopy newdlg(parentWidget(), "", true);
-  newdlg.set(params);
-  newdlg.exec();
 
   sFillList();
+}
+
+bool projects::getPriv(int mode, XTreeWidgetItem* item)
+{
+  if(item->altId() == PROJECT || item->altId() == TASK)
+    if (mode==cEdit)
+      return (omfgThis->username() == item->rawValue("prj_owner_username") &&
+              _privileges->check("MaintainPersonalProjects")) ||
+             (omfgThis->username() == item->rawValue("prj_username") &&
+              _privileges->check("MaintainPersonalProjects")) ||
+             _privileges->check("MaintainAllProjects");
+    else
+      return (omfgThis->username() == item->rawValue("prj_owner_username") &&
+              _privileges->check("ViewPersonalProjects")) ||
+             (omfgThis->username() == item->rawValue("prj_username") &&
+              _privileges->check("ViewPersonalProjects")) ||
+             _privileges->check("ViewAllProjects");
+
+
+  if(item->altId() == QUOTE || item->altId() == QUOTEITEM)
+    if (mode==cEdit)
+      return _privileges->check("MaintainQuotes");
+    else
+      return _privileges->check("MaintainQuotes ViewQuotes");
+
+  if(item->altId() == SALESORDER || item->altId() == SALESORDERITEM)
+    if (mode==cEdit)
+      return _privileges->check("MaintainSalesOrders");
+    else
+      return _privileges->check("MaintainSalesOrders ViewSalesOrders");
+
+  if(item->altId() == INVOICE || item->altId() == INVOICEITEM)
+    if (mode==cEdit)
+      return _privileges->check("MaintainMiscInvoices");
+    else
+      return _privileges->check("MaintainMiscInvoices ViewMiscInvoices");
+
+  if(item->altId() == WORKORDER)
+    if (mode==cEdit)
+      return _privileges->check("MaintainWorkOrders");
+    else
+      return _privileges->check("MaintainWorkOrders ViewWorkOrders");
+
+  if(item->altId() == PURCHASEREQUEST)
+    if (mode==cEdit)
+      return false;
+    else
+      return _privileges->check("MaintainPurchaseRequests ViewPurchaseRequests");
+
+  if(item->altId() == PURCHASEORDER || item->altId() == PURCHASEORDERITEM)
+    if (mode==cEdit)
+      return _privileges->check("MaintainPurchaseOrders");
+    else
+      return _privileges->check("MaintainPurchaseOrders ViewPurchaseOrders");
+
+  if(item->altId() == INCIDENT)
+    if (mode==cEdit)
+      return _privileges->check("MaintainPersonalIncidents MaintainAllIncidents");
+    else
+      return _privileges->check("ViewPersonalIncidents ViewAllIncidents MaintainPersonalIncidents "
+                                "MaintainAllIncidents");
+
+  return false;
 }
 
 bool projects::setParams(ParameterList &params)

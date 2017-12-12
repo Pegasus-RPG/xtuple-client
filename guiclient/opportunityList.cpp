@@ -55,6 +55,8 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WindowFlags f
   list()->addColumn(tr("Actual Date"), _dateColumn,     Qt::AlignLeft,   false, "ophead_actual_date" );
   list()->addColumn(tr("Create Date"), _dateColumn,     Qt::AlignLeft,   false, "ophead_created" );
 
+  list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
   connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
 
   if (!_privileges->check("MaintainAllOpportunities") && !_privileges->check("MaintainPersonalOpportunities"))
@@ -138,8 +140,9 @@ void opportunityList::sNew()
   setParams(params);
   params.append("mode","new");
 
-  opportunity newdlg(this, "", true);
+  opportunity newdlg(0, "", true);
   newdlg.set(params);
+  newdlg.setWindowModality(Qt::WindowModal);
 
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
@@ -147,80 +150,92 @@ void opportunityList::sNew()
 
 void opportunityList::sEdit()
 {
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("ophead_id", list()->id());
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("ophead_id", item->id());
 
-  opportunity newdlg(this, "", true);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+    opportunity* newdlg = new opportunity(0, "", false);
+    newdlg->set(params);
+    newdlg->show();
+  }
 }
 
 void opportunityList::sView()
 {
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("ophead_id", list()->id());
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("ophead_id", item->id());
 
-  opportunity newdlg(this, "", true);
-  newdlg.set(params);
-
-  newdlg.exec();
+    opportunity* newdlg = new opportunity(0, "", false);
+    newdlg->set(params);
+    newdlg->show();
+  }
 }
 
 void opportunityList::sDelete()
 {
   XSqlQuery opportunityDelete;
   opportunityDelete.prepare("SELECT deleteOpportunity(:ophead_id) AS result;");
-  opportunityDelete.bindValue(":ophead_id", list()->id());
-  opportunityDelete.exec();
-  if (opportunityDelete.first())
+
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
-    int result = opportunityDelete.value("result").toInt();
-    if (result < 0)
+    opportunityDelete.bindValue(":ophead_id", item->id());
+    opportunityDelete.exec();
+    if (opportunityDelete.first())
     {
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Opportunity"),
+      int result = opportunityDelete.value("result").toInt();
+      if (result < 0)
+      {
+        ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Opportunity"),
                              storedProcErrorLookup("deleteOpportunity", result),
                              __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Opportunity"),
+                                opportunityDelete, __FILE__, __LINE__))
+    {
       return;
     }
-    else
-      sFillList();
-    }
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting Opportunity"),
-                                opportunityDelete, __FILE__, __LINE__))
-  {
-    return;
   }
 
+  sFillList();
 }
 
 void opportunityList::sDeactivate()
 {
   XSqlQuery opportunityDeactivate;
   opportunityDeactivate.prepare("UPDATE ophead SET ophead_active=false WHERE ophead_id=:ophead_id;");
-  opportunityDeactivate.bindValue(":ophead_id", list()->id());
-  opportunityDeactivate.exec();
-  if (opportunityDeactivate.lastError().type() != QSqlError::NoError)
-    ErrorReporter::error(QtCriticalMsg, this, tr("Error Deactiving Opportunity"),
-                       opportunityDeactivate, __FILE__, __LINE__);
-  else
-    sFillList();
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
+  {
+    opportunityDeactivate.bindValue(":ophead_id", item->id());
+    opportunityDeactivate.exec();
+    if (opportunityDeactivate.lastError().type() != QSqlError::NoError)
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Deactiving Opportunity"),
+                           opportunityDeactivate, __FILE__, __LINE__);
+  }
+
+  sFillList();
 }
 
 void opportunityList::sActivate()
 {
   XSqlQuery opportunityActivate;
   opportunityActivate.prepare("UPDATE ophead SET ophead_active=true WHERE ophead_id=:ophead_id;");
-  opportunityActivate.bindValue(":ophead_id", list()->id());
-  opportunityActivate.exec();
-  if (opportunityActivate.lastError().type() != QSqlError::NoError)
-    ErrorReporter::error(QtCriticalMsg, this, tr("Error Activating Opportunity"),
-                       opportunityActivate, __FILE__, __LINE__);
-  else
-    sFillList();
+  foreach (XTreeWidgetItem *item, list()->selectedItems())
+  {
+    opportunityActivate.bindValue(":ophead_id", item->id());
+    opportunityActivate.exec();
+    if (opportunityActivate.lastError().type() != QSqlError::NoError)
+      ErrorReporter::error(QtCriticalMsg, this, tr("Error Activating Opportunity"),
+                           opportunityActivate, __FILE__, __LINE__);
+  }
+
+  sFillList();
 }
 
 bool opportunityList::setParams(ParameterList &params)
