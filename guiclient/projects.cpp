@@ -309,6 +309,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
    
     project* newdlg = new project(0, "", false);
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
     newdlg->show();
   }
   else if(item->altId() == TASK)
@@ -318,6 +319,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
 
     task* newdlg = new task(0, "", false);
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
     newdlg->show();
   }
   else if(item->altId() == QUOTE)
@@ -336,6 +338,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
 
     salesOrderItem* newdlg = new salesOrderItem(0, "", false);
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
     newdlg->show();
   }
   else if(item->altId() == SALESORDER)
@@ -354,6 +357,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
 
     salesOrderItem* newdlg = new salesOrderItem(0, "", false);
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
     newdlg->show();
   }
   else if(item->altId() == INVOICE)
@@ -370,6 +374,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
 
     invoiceItem* newdlg = new invoiceItem(this);
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
     newdlg->show();
   }
   else if(item->altId() == WORKORDER)
@@ -388,6 +393,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
 
     purchaseRequest* newdlg = new purchaseRequest(0, "", false);
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
     newdlg->show();
   }
   else if(item->altId() == PURCHASEORDER)
@@ -406,6 +412,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
 
     purchaseOrderItem* newdlg = new purchaseOrderItem(0, "", false);
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
     newdlg->show();
   }
   else if(item->altId() == INCIDENT)
@@ -415,6 +422,7 @@ void projects::open(XTreeWidgetItem* item, QString mode)
 
     incident* newdlg = new incident(0, "", false);
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
     newdlg->show();
   }
 }
