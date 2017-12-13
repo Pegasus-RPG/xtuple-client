@@ -203,7 +203,7 @@ Comments::Comments(QWidget *pParent, const char *name) :
   connect(_viewComment, SIGNAL(clicked()), this, SLOT( sView()));
   connect(_editComment, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_comment, SIGNAL(valid(bool)), this, SLOT(sCheckButtonPriv(bool)));
-  connect(_comment, SIGNAL(itemSelected(int)), _viewComment, SLOT(animateClick()));
+  connect(_comment, SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
   connect(_browser, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchorClicked(QUrl)));
   connect(_verbose, SIGNAL(toggled(bool)), this, SLOT(setVerboseCommentList(bool)));
 
@@ -288,6 +288,14 @@ void Comments::sEdit()
   newdlg.set(params);
   newdlg.exec();
   refresh();
+}
+
+void Comments::sOpen()
+{
+  if (_editComment->isEnabled())
+    _editComment->animateClick();
+  else
+    _viewComment->animateClick();
 }
 
 void Comments::refresh()
