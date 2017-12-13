@@ -28,13 +28,13 @@ public:
     docAttach(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WindowFlags fl = 0);
     ~docAttach();
 
+    Q_INVOKABLE virtual int id();
     Q_INVOKABLE virtual QString mode();
     Q_INVOKABLE virtual QString purpose();
     Q_INVOKABLE virtual int sourceId();
     Q_INVOKABLE virtual QString sourceType();
     Q_INVOKABLE virtual int targetId();
     Q_INVOKABLE virtual QString targetType();
-    Q_INVOKABLE virtual int urlId();
 
     QPushButton* _save;
 
@@ -59,10 +59,10 @@ protected slots:
     virtual void showEvent(QShowEvent *);
 
 private:
+    int _id;
     int _sourceid;
     QString _sourcetype;
     int _targetid;
-    int _urlid;
     QString _targettype;
     QString _purpose;
     QString _mode;
