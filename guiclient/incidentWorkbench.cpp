@@ -144,6 +144,7 @@ void incidentWorkbench::sEdit()
 
     incident* newdlg = new incident(0, 0, false);
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
     newdlg->show();
   }
 }
@@ -158,6 +159,7 @@ void incidentWorkbench::sView()
 
     incident* newdlg = new incident(0, 0, false);
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
     newdlg->show();
   }
 }

@@ -1285,6 +1285,8 @@ QWidget *ScriptToolbox::openWindow(QString pname, QWidget *parent, Qt::WindowMod
   {
     if(!returnVal->inherits("QDialog"))
       omfgThis->handleNewWindow(returnVal, modality);
+    else
+      returnVal->setAttribute(Qt::WA_DeleteOnClose);
     _lastWindow = returnVal;
     return returnVal;
   }

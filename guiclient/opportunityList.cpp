@@ -158,6 +158,7 @@ void opportunityList::sEdit()
 
     opportunity* newdlg = new opportunity(0, "", false);
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
     newdlg->show();
   }
 }
@@ -172,6 +173,7 @@ void opportunityList::sView()
 
     opportunity* newdlg = new opportunity(0, "", false);
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
     newdlg->show();
   }
 }

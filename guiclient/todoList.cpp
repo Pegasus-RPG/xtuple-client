@@ -336,6 +336,7 @@ void todoList::sEditTodo(int id)
 
   todoItem* newdlg = new todoItem(0, "", false);
   newdlg->set(params);
+  newdlg->setAttribute(Qt::WA_DeleteOnClose);
   newdlg->show();
 }
 
@@ -347,6 +348,7 @@ void todoList::sViewTodo(int id)
 
   todoItem* newdlg = new todoItem(0, "", false);
   newdlg->set(params);
+  newdlg->setAttribute(Qt::WA_DeleteOnClose);
   newdlg->show();
 }
 
@@ -578,6 +580,7 @@ void todoList::sEditIncident(int id)
 
   incident* newdlg = new incident(0, "", false);
   newdlg->set(params);
+  newdlg->setAttribute(Qt::WA_DeleteOnClose);
   newdlg->show();
 }
 
@@ -589,6 +592,7 @@ void todoList::sViewIncident(int id)
 
   incident* newdlg = new incident(0, "", false);
   newdlg->set(params);
+  newdlg->setAttribute(Qt::WA_DeleteOnClose);
   newdlg->show();
 }
 
@@ -614,6 +618,7 @@ void todoList::sEditProject(int id)
 
   project* newdlg = new project(0, "", false);
   newdlg->set(params);
+  newdlg->setAttribute(Qt::WA_DeleteOnClose);
   newdlg->show();
 }
 
@@ -625,6 +630,7 @@ void todoList::sViewProject(int id)
 
   project* newdlg = new project(0, "", false);
   newdlg->set(params);
+  newdlg->setAttribute(Qt::WA_DeleteOnClose);
   newdlg->show();
 }
 
@@ -636,6 +642,7 @@ void todoList::sEditTask(int id)
 
   task* newdlg = new task(0, "", false);
   newdlg->set(params);
+  newdlg->setAttribute(Qt::WA_DeleteOnClose);
   newdlg->show();
 }
 
@@ -647,6 +654,7 @@ void todoList::sViewTask(int id)
 
   task* newdlg = new task(0, "", false);
   newdlg->set(params);
+  newdlg->setAttribute(Qt::WA_DeleteOnClose);
   newdlg->show();
 }
 
@@ -706,6 +714,7 @@ void todoList::sEditOpportunity(int id)
 
   opportunity* newdlg = new opportunity(0, "", false);
   newdlg->set(params);
+  newdlg->setAttribute(Qt::WA_DeleteOnClose);
   newdlg->show();
 }
 
@@ -717,6 +726,7 @@ void todoList::sViewOpportunity(int id)
 
   opportunity* newdlg = new opportunity(0, "", false);
   newdlg->set(params);
+  newdlg->setAttribute(Qt::WA_DeleteOnClose);
   newdlg->show();
 }
 

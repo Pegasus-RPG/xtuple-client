@@ -216,6 +216,7 @@ void contacts::sEdit()
 
     contact* newdlg = new contact(0, "", false);
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
     newdlg->show();
   }
 }
@@ -231,6 +232,7 @@ void contacts::sView()
 
     contact* newdlg = new contact(0, "", false);
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
     newdlg->show();
   }
 }

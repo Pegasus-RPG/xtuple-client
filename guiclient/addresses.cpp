@@ -142,6 +142,7 @@ void addresses::sEdit()
 
     address* newdlg = new address(0, "", false);
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
     newdlg->show();
   }
 }
@@ -156,6 +157,7 @@ void addresses::sView()
 
     address* newdlg = new address(0, "", false);
     newdlg->set(params);
+    newdlg->setAttribute(Qt::WA_DeleteOnClose);
     newdlg->show();
   }
 }
