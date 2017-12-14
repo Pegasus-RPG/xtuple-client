@@ -56,7 +56,6 @@ class menuPurchase : public QObject
     void sPostVouchers();
 
     void sNewItemSource();
-    void sItemSources();
     void sNewContract();
     void sContracts();
     void sItemSites();
@@ -70,6 +69,7 @@ class menuPurchase : public QObject
     void sDspPoItemsByDate();
     void sDspPoHistory();
     void sDspItemSources();
+    void sDspItemSourcePrices();
     void sDspBuyCard();
     void sDspReceiptsReturnsByVendor();
     void sDspReceiptsReturnsByItem();

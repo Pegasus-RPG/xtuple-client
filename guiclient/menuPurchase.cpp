@@ -40,10 +40,10 @@
 #include "contract.h"
 #include "contracts.h"
 #include "itemSource.h"
-#include "itemSources.h"
 #include "itemSites.h"
 
 #include "dspItemSources.h"
+#include "dspItemSourcePrices.h"
 #include "dspPurchaseReqsByItem.h"
 #include "dspPurchaseReqsByPlannerCode.h"
 #include "dspPoItemsByVendor.h"
@@ -181,7 +181,7 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     { "po.itemSites", tr("Item &Sites..."), SLOT(sItemSites()), reportsMenu, "ViewItemSites", NULL, NULL, true , NULL },
     
     // Purchasing | Reports | Item Sources
-    { "po.dspItemSources", tr("&Item Sources..."), SLOT(sDspItemSources()), reportsMenu, "ViewItemSources", NULL, NULL, true , NULL },
+    { "po.dspItemSourcePrices", tr("&Item Source Prices..."), SLOT(sDspItemSourcePrices()), reportsMenu, "ViewItemSources", NULL, NULL, true , NULL },
     { "po.dspBuyCard", tr("&Buy Card..."), SLOT(sDspBuyCard()), reportsMenu, "ViewItemSources", NULL, NULL, true , NULL },
     { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, true , NULL },
  
@@ -230,7 +230,7 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     //  P/O | Item Source
     { "menu", tr("&Item Source"), (char*)itemSourcesMenu, mainMenu, "true", NULL, NULL, true , NULL },
     { "po.enterNewItemSource", tr("&New..."), SLOT(sNewItemSource()), itemSourcesMenu, "MaintainItemSources", NULL, NULL, true , NULL },
-    { "po.listItemSources", tr("&List..."), SLOT(sItemSources()), itemSourcesMenu, "MaintainItemSources ViewItemSources", NULL, NULL, true , NULL },
+    { "po.listItemSources", tr("&List..."), SLOT(sDspItemSources()), itemSourcesMenu, "MaintainItemSources ViewItemSources", NULL, NULL, true , NULL },
 
     { "separator", NULL, NULL, mainMenu, "true", NULL, NULL, true , NULL },
 
@@ -407,11 +407,6 @@ void menuPurchase::sNewItemSource()
   newdlg.exec();
 }
 
-void menuPurchase::sItemSources()
-{
-  omfgThis->handleNewWindow(new itemSources());
-}
-
 void menuPurchase::sNewContract()
 {
   ParameterList params;
@@ -483,6 +478,11 @@ void menuPurchase::sDspPoHistory()
 void menuPurchase::sDspItemSources()
 {
   omfgThis->handleNewWindow(new dspItemSources());
+}
+
+void menuPurchase::sDspItemSourcePrices()
+{
+  omfgThis->handleNewWindow(new dspItemSourcePrices());
 }
 
 void menuPurchase::sDspBuyCard()

@@ -58,6 +58,20 @@ void dspPoItemReceivingsByItem::languageChange()
   retranslateUi(this);
 }
 
+enum SetResponse dspPoItemReceivingsByItem::set(const ParameterList &pParams)
+{
+  display::set(pParams);
+  QVariant param;
+  bool valid;
+
+  param = pParams.value("item_id", &valid);
+
+  if (valid)
+    _item->setId(param.toInt());
+
+  return NoError;
+}
+
 bool dspPoItemReceivingsByItem::setParams(ParameterList &pParams)
 {
   if (!display::setParams(pParams))
