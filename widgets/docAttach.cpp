@@ -148,7 +148,7 @@ docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WindowFl
   _sourcetype = "";
   _sourceid = -1;
   _targetid = -1;
-  _urlid = -1;
+  _id = -1;
   _mode = "new";
 
   _po->setAllowedTypes(OrderLineEdit::Purchase);
@@ -179,6 +179,10 @@ docAttach::~docAttach()
   // no need to delete child widgets, Qt does it all for us
 }
 
+int docAttach::id()
+{
+  return _id;
+}
 
 QString docAttach::mode()
 {
@@ -210,11 +214,6 @@ QString docAttach::targetType()
   return _targettype;
 }
 
-int docAttach::urlId()
-{
-  return _urlid;
-}
-
 void docAttach::languageChange()
 {
   retranslateUi(this);
@@ -241,15 +240,17 @@ void docAttach::set(const ParameterList &pParams)
   {
     if (DEBUG) qDebug() << "got url_id" << param;
     XSqlQuery qry;
-    _urlid = param.toInt();
-    qry.prepare("SELECT url_source, url_source_id, url_title, url_url, url_stream "
+    _id = param.toInt();
+    qry.prepare("SELECT url_source, url_source_id, url_title, url_url, url_stream, url_mime_type, docass_target_id "
                 "  FROM url"
+                "  JOIN docass ON url_id = docass_id"
                 " WHERE (url_id=:url_id);" );
-    qry.bindValue(":url_id", _urlid);
+    qry.bindValue(":url_id", _id);
     qry.exec();
     if(qry.first())
     {
       setWindowTitle(tr("Edit Attachment Link"));
+      _targetid = qry.value("docass_target_id").toInt();
       QUrl url(qry.value("url_url").toString());
       if (url.scheme().isEmpty())
         url.setScheme("file");
@@ -266,6 +267,7 @@ void docAttach::set(const ParameterList &pParams)
         _docType->setId(-2);
         _filetitle->setText(qry.value("url_title").toString());
         _file->setText(url.toString());
+        _mimeType->setText(qry.value("url_mime_type").toString());
         if (qry.value("url_stream").toString().length())
         {
           _fileList->setEnabled(false);
@@ -298,6 +300,7 @@ void docAttach::showEvent(QShowEvent *e)
 
 void docAttach::sHandleNewId(int id)
 {
+  _id = id;
   _save->setEnabled(id != -1);
 }
 
@@ -397,7 +400,7 @@ void docAttach::sSave()
       return;
     }
 
-     _targettype = "URL";
+     _targettype = _saveDbCheck->isChecked() ? "FILE" : "URL";
      title = _filetitle->text();
      url = QUrl(_file->text());
      if (url.scheme().isEmpty())
@@ -488,9 +491,9 @@ void docAttach::sSave()
                        "( imageass_source, imageass_source_id, imageass_image_id, imageass_purpose ) "
                        "VALUES "
                        "( :docass_source_type, :docass_source_id, :docass_target_id, :docass_purpose )"
-                       " RETURNING imageass_id AS docass_id;" );
+                       " RETURNING imageass_id AS docass_id, imageass_image_id AS docass_target_id;" );
   }
-  else if (_targettype == "URL")
+  else if (_targettype == "URL" || _targettype == "FILE")
   {
     if(!url.isValid())
     {
@@ -544,7 +547,7 @@ void docAttach::sSave()
                          "  :docass_source_id, :docass_source_type,"
                          "  createurl(:title, :url), 'URL'::text,"
                          "  'S'::bpchar"
-                         ") RETURNING docass_id;");
+                         ") RETURNING docass_id, docass_target_id;");
     }
     else if (_mode == "new")
     {
@@ -556,7 +559,7 @@ void docAttach::sSave()
                          "  :docass_source_id, :docass_source_type,"
                          "  createfile(:title, :url, :stream, :mime_type), 'FILE'::text,"
                          "  'S'::bpchar"
-                         ") RETURNING docass_id;");
+                         ") RETURNING docass_id, docass_target_id;");
 
       QMimeDatabase mimeDb;
       QMimeType mime = mimeDb.mimeTypeForFileNameAndData(_filetitle->text(), bytarr);
@@ -572,7 +575,7 @@ void docAttach::sSave()
                          " WHERE (url_id=:url_id);");
     }
 
-    newDocass.bindValue(":url_id", _urlid);
+    newDocass.bindValue(":url_id", _id);
     newDocass.bindValue(":title", title);
     newDocass.bindValue(":url", url.toString());
   }
@@ -582,7 +585,7 @@ void docAttach::sSave()
                        "( docass_source_type, docass_source_id, docass_target_type, docass_target_id, docass_purpose ) "
                        "VALUES "
                        "( :docass_source_type, :docass_source_id, :docass_target_type, :docass_target_id, :docass_purpose )"
-                       " RETURNING docass_id;");
+                       " RETURNING docass_id, docass_target_id;");
     newDocass.bindValue(":docass_target_type", _targettype);
   }
 
@@ -613,16 +616,15 @@ void docAttach::sSave()
     return;
   }
 
-  if (_urlid > 0)
+  if (newDocass.first() &&
+      newDocass.value("docass_id").toInt() > 0 &&
+      newDocass.value("docass_target_id").toInt() > 0)
   {
-    _targetid = _urlid;
-    emit saveBeforeCommit();
+    _id = newDocass.value("docass_id").toInt();
+    _targetid = newDocass.value("docass_target_id").toInt();
   }
-  else if (newDocass.first() && newDocass.value("docass_id").toInt() > 0)
-  {
-    _targetid = newDocass.value("docass_id").toInt();
-    emit saveBeforeCommit();
-  }
+
+  emit saveBeforeCommit();
 
   if (_saveStatus==Failed)
   {
