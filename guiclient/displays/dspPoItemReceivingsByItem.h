@@ -25,6 +25,7 @@ public:
     virtual bool setParams(ParameterList &);
 
 public slots:
+    virtual SetResponse set(const ParameterList &pParams );
     virtual void sHandleVariance( bool pShowVariances );
 
 protected slots:

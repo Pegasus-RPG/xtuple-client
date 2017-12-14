@@ -36,12 +36,12 @@ dspItemSourcePrices::dspItemSourcePrices(QWidget* parent, const char*, Qt::Windo
   setCollapseVisible(true);
 
   QString qrySite = QString("SELECT 0, '%1' AS name, '' AS code "
-                    "UNION "
-                    "SELECT warehous_id, warehous_code, warehous_code "
-                    "FROM site() "
-                    "WHERE warehous_active "
-                    "ORDER BY code;")
-                    .arg(tr("[ Not Site Restricted ]"));
+                            "UNION "
+                            "SELECT warehous_id, warehous_code, warehous_code "
+                            "  FROM site() "
+                            " WHERE warehous_active "
+                            " ORDER BY code;")
+                           .arg(tr("[ Not Site Restricted ]"));
 
   if (_metrics->boolean("MultiWhs"))
   {

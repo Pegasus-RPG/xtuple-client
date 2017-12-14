@@ -260,20 +260,10 @@ void dspItemSources::sBuyCard()
 
 void dspItemSources::sReceipts()
 {
-  XSqlQuery item;
-  int itemid = -1;
-  item.prepare("SELECT item_id "
-               "  FROM item "
-               " WHERE item_number=:item_number;");
-  item.bindValue(":item_number", list()->selectedItems()[0]->rawValue("item_number").toString());
-  item.exec();
-  if (item.first())
-    itemid = item.value("item_id").toInt();
-  else if(ErrorReporter::error(QtCriticalMsg, this, tr("Error fetching item id"),
-                               item, __FILE__, __LINE__))
-    return;
+  ParameterList params;
+  params.append("item_id", list()->id("item_number"));
 
   dspPoItemReceivingsByItem *newdlg = new dspPoItemReceivingsByItem();
-  newdlg->findChild<ItemCluster*>("_item")->setId(itemid);
+  newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
