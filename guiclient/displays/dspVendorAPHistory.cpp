@@ -12,16 +12,16 @@
 
 #include <QAction>
 #include <QMenu>
-#include "guiErrorCheck.h"
 #include <QSqlError>
 #include <QVariant>
-#include <xdateinputdialog.h>
 
 #include "apOpenItem.h"
-#include "voucher.h"
-#include "miscVoucher.h"
 #include "dspGLSeries.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
+#include "miscVoucher.h"
+#include "voucher.h"
+#include "xdateinputdialog.h"
 
 dspVendorAPHistory::dspVendorAPHistory(QWidget* parent, const char*, Qt::WindowFlags fl)
   : display(parent, "dspVendorAPHistory", fl)
@@ -50,6 +50,10 @@ dspVendorAPHistory::dspVendorAPHistory(QWidget* parent, const char*, Qt::WindowF
   list()->addColumn(tr("Base Balance"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_balance"  );
   list()->setPopulateLinear();
 
+  connect(_vend, SIGNAL(newVendId(int)),          this, SLOT(sFillList()));
+  connect(_vend, SIGNAL(newVendTypeId(int)),      this, SLOT(sFillList()));
+  connect(_vend, SIGNAL(newTypePattern(QString)), this, SLOT(sFillList()));
+
 }
 
 void dspVendorAPHistory::languageChange()
@@ -67,10 +71,6 @@ enum SetResponse dspVendorAPHistory::set(const ParameterList &pParams)
   param = pParams.value("vend_id", &valid);
   if (valid)
     _vend->setVendId(param.toInt());
-
-  param = pParams.value("vendtype_id", &valid);
-  if (valid)
-    _vend->setVendTypeId(param.toInt());
 
   param = pParams.value("startDate", &valid);
   if (valid)
@@ -165,7 +165,9 @@ bool dspVendorAPHistory::setParams(ParameterList &params)
   if (isVisible())
   {
     QList<GuiErrorCheck> errors;
-    errors<< GuiErrorCheck(!_dates->startDate().isValid(), _dates,
+    errors<< GuiErrorCheck(_vend->isVisible() && !_vend->isValid(), _vend,
+              tr("Please make a valid vendor selection."))
+          << GuiErrorCheck(!_dates->startDate().isValid(), _dates,
               tr("Please enter a valid Start Date."))
           << GuiErrorCheck(!_dates->endDate().isValid(), _dates,
               tr("Please enter a valid End Date."))

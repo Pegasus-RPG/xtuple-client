@@ -75,15 +75,10 @@ apWorkBench::apWorkBench(QWidget* parent, const char* name, Qt::WindowFlags fl)
     _history = new dspVendorAPHistory(this, "dspVendorAPHistory", Qt::Widget);
     _apHistoryTab->layout()->addWidget(_history);
     _history->setCloseVisible(false);
-    _history->findChild<QWidget*>("_vendGroup")->hide();
     _history->findChild<DateCluster*>("_dates")->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
     _history->findChild<DateCluster*>("_dates")->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   true);
     _history->show();
-    VendorGroup *vend = _history->findChild<VendorGroup*>("_vend");
-    _vendorgroup->synchronize(vend);
-    connect(_vendorgroup, SIGNAL(newVendId(int)),          _history, SLOT(sFillList()));
-    connect(_vendorgroup, SIGNAL(newVendTypeId(int)),      _history, SLOT(sFillList()));
-    connect(_vendorgroup, SIGNAL(newTypePattern(QString)), _history, SLOT(sFillList()));
+    _vendorgroup->synchronize(_history->findChild<VendorGroup*>("_vend"));
   }
   else
     _apHistoryTab->setEnabled(false);
