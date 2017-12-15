@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -77,10 +77,13 @@ apWorkBench::apWorkBench(QWidget* parent, const char* name, Qt::WindowFlags fl)
     _history->setCloseVisible(false);
     _history->findChild<QWidget*>("_vendGroup")->hide();
     _history->findChild<DateCluster*>("_dates")->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
-    _history->findChild<DateCluster*>("_dates")->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   true);
-    VendorCluster *histvend = _history->findChild<VendorCluster*>("_vend");
-    connect(histvend, SIGNAL(newId(int)), _history,      SLOT(sFillList()));
-    connect(_vendorgroup,  SIGNAL(newVendId(int)), histvend,      SLOT(setId(int)));
+    _history->findChild<DateCluster*>("_dates")->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   true);
+    _history->show();
+    VendorGroup *vend = _history->findChild<VendorGroup*>("_vend");
+    _vendorgroup->synchronize(vend);
+    connect(_vendorgroup, SIGNAL(newVendId(int)),          _history, SLOT(sFillList()));
+    connect(_vendorgroup, SIGNAL(newVendTypeId(int)),      _history, SLOT(sFillList()));
+    connect(_vendorgroup, SIGNAL(newTypePattern(QString)), _history, SLOT(sFillList()));
   }
   else
     _apHistoryTab->setEnabled(false);
@@ -90,6 +93,7 @@ apWorkBench::apWorkBench(QWidget* parent, const char* name, Qt::WindowFlags fl)
   connect(_query, SIGNAL(clicked()), _credits, SLOT(sFillList()));
   connect(_query, SIGNAL(clicked()), _selectedPayments, SLOT(sFillList()));
   connect(_query, SIGNAL(clicked()), _checkRun, SLOT(sFillList()));
+  connect(_query, SIGNAL(clicked()), _history,  SLOT(sFillList()));
 
   _payables->sFillList();
 }

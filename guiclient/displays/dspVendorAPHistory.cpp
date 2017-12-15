@@ -66,7 +66,11 @@ enum SetResponse dspVendorAPHistory::set(const ParameterList &pParams)
 
   param = pParams.value("vend_id", &valid);
   if (valid)
-    _vend->setId(param.toInt());
+    _vend->setVendId(param.toInt());
+
+  param = pParams.value("vendtype_id", &valid);
+  if (valid)
+    _vend->setVendTypeId(param.toInt());
 
   param = pParams.value("startDate", &valid);
   if (valid)
@@ -161,9 +165,7 @@ bool dspVendorAPHistory::setParams(ParameterList &params)
   if (isVisible())
   {
     QList<GuiErrorCheck> errors;
-    errors<< GuiErrorCheck(_vend->isVisible() && !_vend->isValid(), _vend,
-              tr("Please select a valid Vendor."))
-          << GuiErrorCheck(!_dates->startDate().isValid(), _dates,
+    errors<< GuiErrorCheck(!_dates->startDate().isValid(), _dates,
               tr("Please enter a valid Start Date."))
           << GuiErrorCheck(!_dates->endDate().isValid(), _dates,
               tr("Please enter a valid End Date."))
@@ -177,7 +179,7 @@ bool dspVendorAPHistory::setParams(ParameterList &params)
   params.append("check", tr("Check"));
   params.append("voucher", tr("Voucher"));
   params.append("other", tr("Other"));
-  params.append("vend_id", _vend->id());
+  _vend->appendValue(params);
   _dates->appendValue(params);
 
   return true;
