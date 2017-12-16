@@ -1213,7 +1213,51 @@ Address:</source>
     </message>
 </context>
 <context>
-    <name>CommentMap</name>
+    <name>Comments</name>
+    <message>
+        <source>Public</source>
+        <translation type="unfinished">パブリック</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>タイプ</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>資源ソース</translation>
+    </message>
+    <message>
+        <source>Verbose Text</source>
+        <translation>冗長な文字</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>編集</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>コメント</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation>新規</translation>
+    </message>
+    <message>
+        <source>View</source>
+        <translation>表示</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>None</translation>
+    </message>
+    <message>
+        <source>Date/Time</source>
+        <translation>日/時間</translation>
+    </message>
+    <message>
+        <source>User Account</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>[Pick a Document Type]</source>
         <translation type="unfinished"></translation>
@@ -1277,6 +1321,14 @@ Address:</source>
     <message>
         <source>Incident</source>
         <translation type="unfinished">インシデント</translation>
+    </message>
+    <message>
+        <source>Invoice</source>
+        <translation type="unfinished">請求書</translation>
+    </message>
+    <message>
+        <source>Invoice Item</source>
+        <translation type="unfinished">請求アイテム</translation>
     </message>
     <message>
         <source>Item</source>
@@ -1363,6 +1415,10 @@ Address:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Voucher</source>
+        <translation type="unfinished">伝票</translation>
+    </message>
+    <message>
         <source>Site</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1372,53 +1428,6 @@ Address:</source>
     </message>
     <message>
         <source>Project Task</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>Comments</name>
-    <message>
-        <source>Public</source>
-        <translation type="unfinished">パブリック</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation>タイプ</translation>
-    </message>
-    <message>
-        <source>Source</source>
-        <translation>資源ソース</translation>
-    </message>
-    <message>
-        <source>Verbose Text</source>
-        <translation>冗長な文字</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation>編集</translation>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation>コメント</translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation>新規</translation>
-    </message>
-    <message>
-        <source>View</source>
-        <translation>表示</translation>
-    </message>
-    <message>
-        <source>None</source>
-        <translation>None</translation>
-    </message>
-    <message>
-        <source>Date/Time</source>
-        <translation>日/時間</translation>
-    </message>
-    <message>
-        <source>User Account</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2904,17 +2913,6 @@ What would you like to do?</source>
     </message>
 </context>
 <context>
-    <name>DocumentMap</name>
-    <message>
-        <source>[Pick a Document Type]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error Getting Document Types</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Documents</name>
     <message>
         <source>Relationship</source>
@@ -3054,6 +3052,14 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Cannot find the &apos;%1&apos;&apos; window to create a %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Pick a Document Type]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Getting Document Types</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5907,6 +5913,13 @@ returned %2
     </message>
 </context>
 <context>
+    <name>XDocumentWindow</name>
+    <message>
+        <source>XDocumentWindow</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>XErrorMessage</name>
     <message>
         <source>&amp;OK</source>
@@ -7133,6 +7146,54 @@ Check the database server log for errors.</source>
     </message>
     <message>
         <source>Error Deleting Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Prospect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View Prospect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Prospect...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Checking CRM Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Fetching CRM Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Formatting Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Multiple CRM Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There are Multiple CRM Accounts with
+%1
+as an Address. Please select a CRM Account to use for the new Prospect:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Fetching Prospects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Multiple Prospects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There are multiple Prospects with
+%1
+as an Address. Please select a Prospect to edit:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11341,10 +11402,6 @@ Are you sure that you want to save this change?</source>
         <translation>アメリカンエキスプレス</translation>
     </message>
     <message>
-        <source>P&amp;ost</source>
-        <translation>記帳(&amp;P)</translation>
-    </message>
-    <message>
         <source>Other</source>
         <translation>その他</translation>
     </message>
@@ -11370,6 +11427,14 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <source>Error Posting Cash Receipt Entry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dep&amp;osit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deposit Date</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -15037,14 +15102,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The default number of days prior for the Order History start date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Orders Start Date:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>days</source>
         <translation type="unfinished">日数</translation>
     </message>
@@ -15063,6 +15120,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>On Credit Hold</source>
         <translation type="unfinished">貸方保留（ホールド）中</translation>
+    </message>
+    <message>
+        <source>The default number of days prior for the Order History Start Date (Customer Workbench)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>List SOs Start Date:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -16074,16 +16139,8 @@ p, li { white-space: pre-wrap; }
         <translation>電子メール</translation>
     </message>
     <message>
-        <source>&lt;p&gt;Are you sure that you want to completely delete the selected contact?</source>
-        <translation>選択したコンタクトを完全に削除しても宜しいでしょうか。？</translation>
-    </message>
-    <message>
         <source>Title</source>
         <translation>役職</translation>
-    </message>
-    <message>
-        <source>Delete Contact?</source>
-        <translation>コンタクトを削除しますか？</translation>
     </message>
     <message>
         <source>Account</source>
@@ -16107,6 +16164,46 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Error Detaching Contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer</source>
+        <translation type="unfinished">顧客</translation>
+    </message>
+    <message>
+        <source>Prospect</source>
+        <translation type="unfinished">見込み</translation>
+    </message>
+    <message>
+        <source>Edit Prospect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View Prospect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Prospect...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Contacts?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Are you sure that you want to completely delete the selected contact(s)?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Parent Objects?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There are parent objects that use this contact. Do you wish to delete these objects as well?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Fetching CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -16299,14 +16396,6 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>New Return...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>View mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Not allowed under View mode.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -18365,14 +18454,6 @@ Please contact your Systems Administrator and report this issue.</source>
 <context>
     <name>createLotSerial</name>
     <message>
-        <source>&lt;p&gt;The number entered is not valid.  Please select from the list of valid numbers.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Invalid Number</source>
-        <translation>無効な番号</translation>
-    </message>
-    <message>
         <source>Warranty Date:</source>
         <translation>保証期限日：</translation>
     </message>
@@ -18429,15 +18510,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <translation>シリアル番号を複製</translation>
     </message>
     <message>
-        <source>Invalid Qty</source>
-        <translation>無効な数量</translation>
-    </message>
-    <message>
         <source>&lt;p&gt;You must enter a warranty expiration date for this Lot/Serial number.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;The quantity being assigned is greater than the  quantity preassigned to the order being received.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -20026,10 +20099,6 @@ creating Planned Orders.</source>
         <translation type="unfinished">アクティブ</translation>
     </message>
     <message>
-        <source>Are you sure you want to delete this Account?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error deleting Account</source>
         <translation type="unfinished"></translation>
     </message>
@@ -20044,6 +20113,10 @@ creating Planned Orders.</source>
     <message>
         <source>Create Date</source>
         <translation type="unfinished">作成日</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to delete these Account(s)?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -22725,6 +22798,38 @@ to be deleted.</source>
         <source>Error URL</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>MIME Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quote #:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Return Authorization #:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error saving</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A script has failed after the main window saved successfully. How do you wish to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation type="unfinished">再試行</translation>
+    </message>
+    <message>
+        <source>Ignore</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>documents</name>
@@ -23732,6 +23837,18 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>Invoice Posting Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error voiding invoice</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Date?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not void invoice because the accounting period for the posting date is closed. Try again with a different date?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -29073,11 +29190,210 @@ Total</source>
     </message>
 </context>
 <context>
-    <name>dspItemSources</name>
+    <name>dspItemSourcePrices</name>
+    <message>
+        <source>Item Source Prices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[ Not Site Restricted ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop Ship Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation type="unfinished">アイテム</translation>
+    </message>
+    <message>
+        <source>Item Number Pattern</source>
+        <translation type="unfinished">アイテム番号パターン</translation>
+    </message>
+    <message>
+        <source>Item Description</source>
+        <translation type="unfinished">アイテムの説明</translation>
+    </message>
+    <message>
+        <source>Vendor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vendor Name</source>
+        <translation type="unfinished">ベンダー名</translation>
+    </message>
+    <message>
+        <source>Vendor Item Number Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contract</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contract Number Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manufacturer Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manufacturer Item Number Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Effective Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Effective End</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expires Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expires End</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Inactive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Item Number</source>
+        <translation type="unfinished">アイテム番号</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished">説明</translation>
+    </message>
+    <message>
+        <source>UOM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vendor #</source>
+        <translation type="unfinished">ベンダー #</translation>
+    </message>
+    <message>
+        <source>Contract #</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Effective</source>
+        <translation type="unfinished">効果的</translation>
+    </message>
+    <message>
+        <source>Expires</source>
+        <translation type="unfinished">満期完了</translation>
+    </message>
+    <message>
+        <source>Vendor Currency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vendor Item Number</source>
+        <translation type="unfinished">ベンダーアイテム番号</translation>
+    </message>
+    <message>
+        <source>Manufacturer</source>
+        <translation type="unfinished">製造者</translation>
+    </message>
+    <message>
+        <source>Manuf. Item#</source>
+        <translation type="unfinished">製造者アイテム#</translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished">デフォルト</translation>
+    </message>
+    <message>
+        <source>Vendor UOM</source>
+        <translation type="unfinished">ベンダーUOM</translation>
+    </message>
+    <message>
+        <source>UOM Ratio</source>
+        <translation type="unfinished">UOMレート</translation>
+    </message>
+    <message>
+        <source>Active</source>
+        <translation type="unfinished">アクティブ</translation>
+    </message>
+    <message>
+        <source>Min. Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Order Mult.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vendor Ranking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lead Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Qty. Break</source>
+        <translation type="unfinished">数量 ブレイク</translation>
+    </message>
     <message>
         <source>Base Unit Price</source>
-        <translation></translation>
+        <translation type="unfinished">基本ユニット価格</translation>
     </message>
+    <message>
+        <source>Item Currency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unit Price</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Order Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Item Source...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View Item Source...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&apos;Always&apos;</source>
+        <translation type="unfinished">’常に’</translation>
+    </message>
+    <message>
+        <source>&apos;Never&apos;</source>
+        <translation type="unfinished">&apos;&apos;Never&apos;&apos;</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="unfinished">すべて</translation>
+    </message>
+    <message>
+        <source>Into Stock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop Ship</source>
+        <translation type="unfinished">直送</translation>
+    </message>
+</context>
+<context>
+    <name>dspItemSources</name>
     <message>
         <source>Vendor Ranking</source>
         <translation type="unfinished"></translation>
@@ -29093,10 +29409,6 @@ Total</source>
     <message>
         <source>Default</source>
         <translation type="unfinished">デフォルト</translation>
-    </message>
-    <message>
-        <source>Site</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Contract Number Pattern</source>
@@ -29119,24 +29431,8 @@ Total</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Drop Ship Only</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&apos;Never&apos;</source>
-        <translation type="unfinished">&apos;&apos;Never&apos;&apos;</translation>
-    </message>
-    <message>
-        <source>Into Stock</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Lead Time</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Qty. Break</source>
-        <translation type="unfinished">数量 ブレイク</translation>
     </message>
     <message>
         <source>Item Description</source>
@@ -29145,14 +29441,6 @@ Total</source>
     <message>
         <source>Vendor Name</source>
         <translation type="unfinished">ベンダー名</translation>
-    </message>
-    <message>
-        <source>Item Currency</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unit Price</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Set as Default...</source>
@@ -29187,18 +29475,6 @@ Total</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&apos;Always&apos;</source>
-        <translation type="unfinished">’常に’</translation>
-    </message>
-    <message>
-        <source>All</source>
-        <translation type="unfinished">すべて</translation>
-    </message>
-    <message>
-        <source>Drop Ship</source>
-        <translation type="unfinished">直送</translation>
-    </message>
-    <message>
         <source>Manufacturer</source>
         <translation type="unfinished">製造者</translation>
     </message>
@@ -29231,10 +29507,6 @@ Total</source>
         <translation type="unfinished">ベンダーUOM</translation>
     </message>
     <message>
-        <source>Expires Start</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Expires</source>
         <translation type="unfinished">満期完了</translation>
     </message>
@@ -29247,14 +29519,6 @@ Total</source>
         <translation type="unfinished">アイテム番号</translation>
     </message>
     <message>
-        <source>Order Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Expires End</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Vendor Currency</source>
         <translation type="unfinished"></translation>
     </message>
@@ -29263,19 +29527,11 @@ Total</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Effective End</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Vendor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Vendor Item Number Pattern</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Effective Start</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -29291,7 +29547,35 @@ Total</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>[ Not Site Restricted ]</source>
+        <source>Show Expired</source>
+        <translation type="unfinished">期限切れを表示</translation>
+    </message>
+    <message>
+        <source>Show Future</source>
+        <translation type="unfinished">見込みを表示</translation>
+    </message>
+    <message>
+        <source>Active</source>
+        <translation type="unfinished">アクティブ</translation>
+    </message>
+    <message>
+        <source>Always</source>
+        <translation type="unfinished">常に</translation>
+    </message>
+    <message>
+        <source>Never</source>
+        <translation type="unfinished">Never</translation>
+    </message>
+    <message>
+        <source>Copy...</source>
+        <translation type="unfinished">コピー...</translation>
+    </message>
+    <message>
+        <source>Delete...</source>
+        <translation type="unfinished">削除...</translation>
+    </message>
+    <message>
+        <source>Error Deleting Item Source Information</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -32845,6 +33129,137 @@ Total</source>
     </message>
     <message>
         <source>Sale Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspProcesses</name>
+    <message>
+        <source>Process/Lock Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Database Processes And Locks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Active</source>
+        <translation type="unfinished">アクティブ</translation>
+    </message>
+    <message>
+        <source>Idle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Idle In Transaction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Idle In Transaction (Aborted)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fastpath Function Call</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User</source>
+        <translation type="unfinished">ユーザー</translation>
+    </message>
+    <message>
+        <source>Application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Date</source>
+        <translation type="unfinished">開始日</translation>
+    </message>
+    <message>
+        <source>End Date</source>
+        <translation type="unfinished">終了日</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished">ステータス</translation>
+    </message>
+    <message>
+        <source>Table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">タイプ</translation>
+    </message>
+    <message>
+        <source>Current Connection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Client</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Port</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Started</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last Active</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Record</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Orphaned</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error checking if mobilized</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Process</source>
+        <translation type="unfinished">処理</translation>
+    </message>
+    <message>
+        <source>Lock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished">はい</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kill Process</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Release Lock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Fetching Locks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Killing Process</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Releasing Lock</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -36992,6 +37407,10 @@ Rate</source>
         <source>Error Saving Trial Balance Information</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Fiscal Year</source>
+        <translation type="unfinished">会計年度:</translation>
+    </message>
 </context>
 <context>
     <name>dspUnbalancedQOHByClassCode</name>
@@ -37401,10 +37820,6 @@ Rate</source>
         <translation>基本バランス</translation>
     </message>
     <message>
-        <source>Vendor:</source>
-        <translation>ベンダー:</translation>
-    </message>
-    <message>
         <source>Voucher</source>
         <translation>伝票</translation>
     </message>
@@ -37481,10 +37896,6 @@ Rate</source>
         <translation>支払日</translation>
     </message>
     <message>
-        <source>Please select a valid Vendor.</source>
-        <translation>有効なベンダーを選択してください。</translation>
-    </message>
-    <message>
         <source>Void</source>
         <translation>無効</translation>
     </message>
@@ -37522,6 +37933,10 @@ Rate</source>
     </message>
     <message>
         <source>Cannot set Parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please make a valid vendor selection.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -38392,6 +38807,10 @@ Rate</source>
     <message>
         <source>Cost Method</source>
         <translation type="unfinished">コストの方法</translation>
+    </message>
+    <message>
+        <source>Return Material Item...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -43167,6 +43586,10 @@ You may not create duplicate Forms.</source>
         <source>Continue</source>
         <translation>継続</translation>
     </message>
+    <message>
+        <source>Series Date:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>getLotInfo</name>
@@ -43232,10 +43655,6 @@ You may not create duplicate Forms.</source>
     <message>
         <source>Cannot Maintain G/L Series</source>
         <translation>G/Lシリーズを維持することができません</translation>
-    </message>
-    <message>
-        <source>N&amp;otes:</source>
-        <translation>備考:</translation>
     </message>
     <message>
         <source>Document #:</source>
@@ -43345,6 +43764,14 @@ You may not create duplicate Forms.</source>
         <source>You must enter some Notes to describe this transaction.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Notes</source>
+        <translation type="unfinished">備考</translation>
+    </message>
+    <message>
+        <source>Documents</source>
+        <translation type="unfinished">書類</translation>
+    </message>
 </context>
 <context>
     <name>glSeriesItem</name>
@@ -43438,10 +43865,6 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
         <translation>量（アマント）:</translation>
     </message>
     <message>
-        <source>Notes:</source>
-        <translation>備考:</translation>
-    </message>
-    <message>
         <source>Credit:</source>
         <translation>貸方:</translation>
     </message>
@@ -43472,6 +43895,14 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     <message>
         <source>You must enter some Notes to describe this transaction.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="unfinished">備考</translation>
+    </message>
+    <message>
+        <source>Documents</source>
+        <translation type="unfinished">書類</translation>
     </message>
 </context>
 <context>
@@ -43513,10 +43944,6 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
         <translation>No</translation>
     </message>
     <message>
-        <source>Notes:</source>
-        <translation>備考:</translation>
-    </message>
-    <message>
         <source>Journal Number:</source>
         <translation>仕訳番号:</translation>
     </message>
@@ -43535,6 +43962,14 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     <message>
         <source>&amp;Close</source>
         <translation>閉じる</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="unfinished">備考</translation>
+    </message>
+    <message>
+        <source>Documents</source>
+        <translation type="unfinished">書類</translation>
     </message>
 </context>
 <context>
@@ -44841,6 +45276,21 @@ Are you sure that you want to Implode the selected Work Order?</source>
     </message>
 </context>
 <context>
+    <name>incidentHistory</name>
+    <message>
+        <source>Incident History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+    <message>
+        <source>Error Retrieving Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>incidentPriorities</name>
     <message>
         <source>List Priorities</source>
@@ -45727,6 +46177,10 @@ Could not post Invoice #%1 due to a missing exchange rate.</source>
         <source>There must be at least one line item for an invoice.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Co&amp;mments</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>invoiceItem</name>
@@ -45957,6 +46411,10 @@ Could not post Invoice #%1 due to a missing exchange rate.</source>
     <message>
         <source>Value</source>
         <translation type="unfinished">価値</translation>
+    </message>
+    <message>
+        <source>Co&amp;mments</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -46523,10 +46981,6 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error Issuing Material. %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>%1 Items succeeded.
 %2 Items failed.</source>
         <translation type="unfinished"></translation>
@@ -46609,10 +47063,6 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     </message>
     <message>
         <source>Error Issuing Material To Work Order #: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error Updating Work Order Material Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -47245,6 +47695,10 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     <message>
         <source>Selling UOM:</source>
         <translation type="unfinished">販売 UOM</translation>
+    </message>
+    <message>
+        <source>Error Fetching BOM</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -49662,141 +50116,6 @@ already exists for this Item Source.</source>
     </message>
 </context>
 <context>
-    <name>itemSources</name>
-    <message>
-        <source>&lt;p&gt;This item source is used by existing purchase order records and may not be deleted.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;This item source is used by existing purchase order records and may not be deleted. Would you like to deactivate it instead?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Are you sure that you want to delete the Item Source for %1?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit...</source>
-        <translation>編集...</translation>
-    </message>
-    <message>
-        <source>UOM Ratio</source>
-        <translation>UOMレート</translation>
-    </message>
-    <message>
-        <source>Copy...</source>
-        <translation>コピー...</translation>
-    </message>
-    <message>
-        <source>Item Sources</source>
-        <translation>アイテムソース</translation>
-    </message>
-    <message>
-        <source>UOM</source>
-        <translation>単価</translation>
-    </message>
-    <message>
-        <source>Vendor UOM</source>
-        <translation>ベンダーUOM</translation>
-    </message>
-    <message>
-        <source>Vendor Item Number</source>
-        <translation>ベンダーアイテム番号</translation>
-    </message>
-    <message>
-        <source>Show Future</source>
-        <translation type="unfinished">見込みを表示</translation>
-    </message>
-    <message>
-        <source>Delete...</source>
-        <translation>削除...</translation>
-    </message>
-    <message>
-        <source>View...</source>
-        <translation>表示...</translation>
-    </message>
-    <message>
-        <source>Expires</source>
-        <translation type="unfinished">満期完了</translation>
-    </message>
-    <message>
-        <source>Show Expired</source>
-        <translation type="unfinished">期限切れを表示</translation>
-    </message>
-    <message>
-        <source>Effective</source>
-        <translation type="unfinished">効果的</translation>
-    </message>
-    <message>
-        <source>Item</source>
-        <translation>アイテム</translation>
-    </message>
-    <message>
-        <source>Delete Item Source</source>
-        <translation>アイテムソースの削除</translation>
-    </message>
-    <message>
-        <source>Vendor</source>
-        <translation>ベンダー</translation>
-    </message>
-    <message>
-        <source>Never</source>
-        <translation type="unfinished">Never</translation>
-    </message>
-    <message>
-        <source>Contract #</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Item Number</source>
-        <translation>アイテム番号</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>説明</translation>
-    </message>
-    <message>
-        <source>Contract Number Pattern</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Always</source>
-        <translation type="unfinished">常に</translation>
-    </message>
-    <message>
-        <source>Show Inactive</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Contract</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Manufacturer</source>
-        <translation>製造者</translation>
-    </message>
-    <message>
-        <source>Manuf. Item#</source>
-        <translation>製造者アイテム#</translation>
-    </message>
-    <message>
-        <source>Vendor #</source>
-        <translation type="unfinished">ベンダー #</translation>
-    </message>
-    <message>
-        <source>Error Deleting Item Source Information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Active</source>
-        <translation type="unfinished">アクティブ</translation>
-    </message>
-    <message>
-        <source>Default</source>
-        <translation type="unfinished">デフォルト</translation>
-    </message>
-</context>
-<context>
     <name>itemSubstitute</name>
     <message>
         <source>You cannot define an Item to be a substitute for itself.</source>
@@ -50355,6 +50674,10 @@ You may edit the existing Substitution but you may not create a duplicate.</sour
     </message>
     <message>
         <source>Error Retrieving Recurring Invoice Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Posted</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -53097,10 +53420,6 @@ You must reassign these Item Sites before you may delete the selected Planner Co
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Item Sources...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Close...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -53214,6 +53533,10 @@ You must reassign these Item Sites before you may delete the selected Planner Co
     </message>
     <message>
         <source>&amp;Lookup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Item Source Prices...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -53837,6 +54160,10 @@ You must reassign these Item Sites before you may delete the selected Planner Co
         <source>&lt;p&gt;%1&lt;br/&gt;Version %2&lt;br/&gt;%3&lt;/p&gt;&lt;p&gt;Built with:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;OpenRPT %4 %5&lt;/li&gt;&lt;li&gt;Qt %6&lt;/li&gt;&lt;li&gt;hunspell %7 (modified by xTuple for compiler compatibility)&lt;/li&gt;&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;Process/Lock Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>menuWindow</name>
@@ -54313,27 +54640,8 @@ You must reassign these Item Sites before you may delete the selected Planner Co
         <source>Error Retrieving Misc Distributions</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>newForm</name>
     <message>
-        <source>Query</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>&amp;Close</source>
-        <translation>閉じる</translation>
-    </message>
-    <message>
-        <source>Results:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search Criterion:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Form</source>
+        <source>Co&amp;mments</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -57821,6 +58129,22 @@ post Vouchers.</source>
         <source>Error Preparing Check Run for Printing</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Vouchers Excluded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The system detected voucher(s) dated after the payment date. These have been excluded from the payment run.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Payments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There are no selected payments to prepare.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>priceList</name>
@@ -60693,10 +61017,6 @@ You may not create a Product Category with this code.</source>
 <context>
     <name>projects</name>
     <message>
-        <source>Cannot Delete Project</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Show Complete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -60761,20 +61081,7 @@ You may not create a Product Category with this code.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>One or more Quote&apos;s refer to this project.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Could not delete the project for one or more reasons.
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>AssignedTo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>One or more Work Orders refer to this project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -60788,10 +61095,6 @@ You may not create a Product Category with this code.</source>
     <message>
         <source>Contact</source>
         <translation type="unfinished">コンタクト</translation>
-    </message>
-    <message>
-        <source>One or more Sales Orders refer to this project.</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Assigned To</source>
@@ -60810,14 +61113,6 @@ You may not create a Product Category with this code.</source>
         <translation type="unfinished">所有者</translation>
     </message>
     <message>
-        <source>One or more Purchase order Items refer to this project.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>One or more Purchase Requests refer to this project.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Completed</source>
         <translation type="unfinished">完成</translation>
     </message>
@@ -60827,14 +61122,6 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <source>Start Start Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>One or more Invoices refer to this project.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error #%1 encountered while trying to delete project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -61010,106 +61297,6 @@ You may not create a Product Category with this code.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Edit Project...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>View Project...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Task...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>View Task...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Quote...</source>
-        <translation type="unfinished">見積もりの表示...</translation>
-    </message>
-    <message>
-        <source>View Quote...</source>
-        <translation type="unfinished">見積もりの表示...</translation>
-    </message>
-    <message>
-        <source>Edit Quote Item...</source>
-        <translation type="unfinished">見積もりアイテムの表示...</translation>
-    </message>
-    <message>
-        <source>View Quote Item...</source>
-        <translation type="unfinished">見積もりアイテムの表示...</translation>
-    </message>
-    <message>
-        <source>Edit Sales Order...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>View Sales Order...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Sales Order Item...</source>
-        <translation type="unfinished">販売注文アイテムの編集...</translation>
-    </message>
-    <message>
-        <source>View Sales Order Item...</source>
-        <translation type="unfinished">販売注文アイテムを表示...</translation>
-    </message>
-    <message>
-        <source>Edit Invoice...</source>
-        <translation type="unfinished">請求書を編集...</translation>
-    </message>
-    <message>
-        <source>View Invoice...</source>
-        <translation type="unfinished">請求書を表示...</translation>
-    </message>
-    <message>
-        <source>Edit Invoice Item...</source>
-        <translation type="unfinished">請求アイテムの編集...</translation>
-    </message>
-    <message>
-        <source>View Invoice Item...</source>
-        <translation type="unfinished">請求アイテムの表示...</translation>
-    </message>
-    <message>
-        <source>Edit Work Order...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>View Work Order...</source>
-        <translation type="unfinished">作業オーダーを表示...</translation>
-    </message>
-    <message>
-        <source>View Purchase Request...</source>
-        <translation type="unfinished">購買リクエストの表示...</translation>
-    </message>
-    <message>
-        <source>Edit Purchase Order...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>View Purchase Order...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Purchase Order Item...</source>
-        <translation type="unfinished">供給発注アイテムの編集...</translation>
-    </message>
-    <message>
-        <source>View Purchase Order Item...</source>
-        <translation type="unfinished">発注アイテムの表示...</translation>
-    </message>
-    <message>
-        <source>Edit Incident...</source>
-        <translation type="unfinished">インシデントの編集...</translation>
-    </message>
-    <message>
-        <source>View Incident...</source>
-        <translation type="unfinished">インシデントを表示...</translation>
-    </message>
-    <message>
         <source>Project Copy</source>
         <translation type="unfinished"></translation>
     </message>
@@ -61196,6 +61383,14 @@ You may not create a Product Category with this code.</source>
     <message>
         <source>Error Deleting Project</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation type="unfinished">編集</translation>
+    </message>
+    <message>
+        <source>View</source>
+        <translation type="unfinished">表示</translation>
     </message>
 </context>
 <context>
@@ -61412,10 +61607,6 @@ You may not create a Product Category with this code.</source>
         <translation type="unfinished">電話 パターン</translation>
     </message>
     <message>
-        <source>&lt;p&gt;Are you sure you want to delete the selected Prospect?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error deleting</source>
         <translation type="unfinished"></translation>
     </message>
@@ -61446,6 +61637,10 @@ You may not create a Product Category with this code.</source>
     <message>
         <source>Contact Name Pattern</source>
         <translation type="unfinished">コンタクトネームのパターン</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Are you sure you want to delete the selected Prospect(s)?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -75103,6 +75298,34 @@ You must first delete the Bill of Materials for the selected target item before 
         <source>Cannot Void Credit Memo as aropen not found.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>One or more Quote&apos;s refer to this project.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>One or more Sales Orders refer to this project.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>One or more Work Orders refer to this project.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>One or more Purchase Requests refer to this project.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>One or more Purchase order Items refer to this project.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>One or more Invoices refer to this project.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pItemlocdistId is required.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>subAccntType</name>
@@ -77970,23 +78193,11 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
         <translation type="unfinished">表示</translation>
     </message>
     <message>
-        <source>View To-Do...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Confirmed</source>
         <translation type="unfinished">確定済み</translation>
     </message>
     <message>
-        <source>Edit Task</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Deferred</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>View Task</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -78018,14 +78229,6 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
         <translation type="unfinished">優先順位</translation>
     </message>
     <message>
-        <source>View Project</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete To-Do</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Resolved</source>
         <translation type="unfinished">解決済み</translation>
     </message>
@@ -78051,10 +78254,6 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
     </message>
     <message>
         <source>Start Date on or After</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -78090,20 +78289,12 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
         <translation type="unfinished">見込み</translation>
     </message>
     <message>
-        <source>Edit Opportunity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Assigned To</source>
         <translation type="unfinished">アサイン済み To</translation>
     </message>
     <message>
         <source>Owner</source>
         <translation type="unfinished">所有者</translation>
-    </message>
-    <message>
-        <source>View Opportunity</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Restricted Access</source>
@@ -78116,10 +78307,6 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
     <message>
         <source>Project</source>
         <translation type="unfinished">プロジェクト</translation>
-    </message>
-    <message>
-        <source>Edit To-Do...</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Opportunities</source>
@@ -78151,14 +78338,6 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
     </message>
     <message>
         <source>Due Date on or After</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Incident</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>View Incident</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -78219,6 +78398,26 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
     </message>
     <message>
         <source>Error Deleting Recurring To Do Item Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation type="unfinished">編集</translation>
+    </message>
+    <message>
+        <source>View</source>
+        <translation type="unfinished">表示</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">削除</translation>
+    </message>
+    <message>
+        <source>Edit Parent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View Parent</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -83525,6 +83724,10 @@ and Purchase Order amounts</source>
         <source>&lt;p&gt;The number % is already used by another vendor. Please use a different vendor number.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Tax Type:</source>
+        <translation type="unfinished">税金の種類:</translation>
+    </message>
 </context>
 <context>
     <name>vendorAddress</name>
@@ -84572,6 +84775,10 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
         <source>Error Distributing Voucher Freight</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Co&amp;mments</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>voucherItem</name>
@@ -85471,6 +85678,14 @@ that the selected Work Order does.</source>
         <source>A W/O Material Requirement cannot be created for the selected
 Work Order/Item as the selected Item is Job Costed,
 and Work Order Component Items may not be Job Costed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot add an Item as a Material to itself.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Checking Parents</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -13147,6 +13147,124 @@
     </message>
   </context>
   <context>
+    <name>ItemSourcePrices</name>
+    <message>
+      <width>530</width>
+      <source>Item Source Prices</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>106</width>
+      <source>Item Number</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>50</width>
+      <source>UOM Ratio</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>50</width>
+      <source>Vendor UOM</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>150</width>
+      <source>Vendor Item Number</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>106</width>
+      <source>Description</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>50</width>
+      <source>UOM</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>106</width>
+      <source>Vendor</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>106</width>
+      <source>Qty. Break</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>106</width>
+      <source>Currency</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>106</width>
+      <source>Price</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>150</width>
+      <source>Vendor Item Number</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>106</width>
+      <source>Vendor</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>106</width>
+      <source>Qty. Break</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>106</width>
+      <source>Price</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>50</width>
+      <source>UOM Ratio</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>50</width>
+      <source>Vendor UOM</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>106</width>
+      <source>Description</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>106</width>
+      <source>Currency</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>106</width>
+      <source>Item Number</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>50</width>
+      <source>UOM</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>75</width>
+      <source>Report Date:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>75</width>
+      <source>Page:</source>
+      <translation type="unfinished"/>
+    </message>
+  </context>
+  <context>
     <name>ItemSources</name>
     <message>
       <width>530</width>
@@ -17772,6 +17890,16 @@
       <translation type="unfinished"/>
     </message>
     <message>
+      <width>150</width>
+      <source>BOM Revision:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>150</width>
+      <source>Routing Revision:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
       <width>100</width>
       <source>Issue UOM</source>
       <translation type="unfinished"/>
@@ -22165,6 +22293,16 @@
     <message>
       <width>100</width>
       <source>Run Remain</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>120</width>
+      <source>BOM Revision:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>120</width>
+      <source>Routing Revision:</source>
       <translation type="unfinished"/>
     </message>
     <message>
