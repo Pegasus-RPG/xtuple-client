@@ -151,7 +151,7 @@ void importData::sAdd()
       else if (suffix == "CSV" || suffix == "TSV")
         type = Csv;
 
-      last = new XTreeWidgetItem(_file, last, i, type, QVariant(suffix), QVariant(files[i]));
+      last = new XTreeWidgetItem(_file, last, type, i, QVariant(suffix), QVariant(files[i]));
     }
   }
 }
