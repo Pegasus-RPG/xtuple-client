@@ -188,7 +188,7 @@ void importData::sImportAll()
     XTreeWidgetItem* pItem = _file->topLevelItem(i);
     if (pItem->text("status").isEmpty())
     {
-      if (importOne(pItem->text("filename"), pItem->altId()))
+      if (importOne(pItem->text("filename"), pItem->id()))
         pItem->setText(_file->column("status"), tr("Done"));
       else
         pItem->setText(_file->column("status"), tr("Error"));
@@ -207,7 +207,7 @@ void importData::sImportSelected()
   {
     if (selected[i]->text("status").isEmpty())
     {
-      if (importOne(selected[i]->text("filename"), selected[i]->altId()))
+      if (importOne(selected[i]->text("filename"), selected[i]->id()))
         selected[i]->setText(_file->column("status"), tr("Done"));
       else
         selected[i]->setText(_file->column("status"), tr("Error"));
