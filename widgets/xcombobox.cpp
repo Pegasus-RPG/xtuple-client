@@ -1556,7 +1556,7 @@ void XComboBox::insertEditor(XComboBoxTypes type, QObject *obj,
                              const char *slot, const QString &privilege)
 {
   Q_UNUSED(type);
-  _data->_uiName    = QString();
+  _data->_uiName    = obj->objectName().isEmpty() ? "[unnamed]" : obj->objectName();
   _data->_privilege = privilege;
   _data->_editor    = qobject_cast<QWidget*>(obj);
   _data->_slot      = UNWRAPSLOT(slot);
