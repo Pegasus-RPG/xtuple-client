@@ -137,7 +137,8 @@ void ContactWidget::init()
     _email->setEditable(true);
     _email->setValidator(validator);
     _email->lineEdit()->installEventFilter(this);
-    _email->insertEditor(XComboBox::Adhoc, this, SLOT(sEditEmailList()));
+    _email->insertEditor(XComboBox::Adhoc, this, SLOT(sEditEmailList()),
+                         "MaintainPersonalContacts MaintainAllContacts");
     _webaddrLit		= new QLabel(tr("Web:"), this);
     _webaddrLit->setObjectName("_webaddrLit");
     _webaddr		= new XLineEdit(this, "_webaddr");
