@@ -125,9 +125,10 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WindowFlags fl)
     _history->findChild<QWidget*>("_vend")->hide();
     _history->findChild<DateCluster*>("_dates")->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
     _history->findChild<DateCluster*>("_dates")->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   true);
-    VendorCluster *histvend = _history->findChild<VendorCluster*>("_vend");
-    connect(histvend, SIGNAL(newId(int)), _history,      SLOT(sFillList()));
-    connect(_number,  SIGNAL(newId(int)), histvend,      SLOT(setId(int)));
+    VendorGroup *histvend = _history->findChild<VendorGroup*>("_vend");
+    histvend->setState(VendorGroup::Selected);
+    connect(histvend, SIGNAL(newVendId(int)), _history,  SLOT(sFillList()));
+    connect(_number,  SIGNAL(newId(int)),     histvend,  SLOT(setVendId(int)));
   }
   else
     _apHistoryButton->setEnabled(false);
