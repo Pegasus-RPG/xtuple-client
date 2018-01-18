@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -246,17 +246,27 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
 
     crmaccount *w = qobject_cast<crmaccount*>(widget);
 
-    if (w && w->id()==_crmacctId)
+    if (w && w != this && w->id()==_crmacctId)
     {
-      w->setFocus();
-
-      if (omfgThis->showTopLevel())
+      // detect "i'm my own grandpa"
+      QObject *p;
+      for (p = parent(); p && p != w ; p = p->parent())
+        ; // do nothing
+      if (p == w)
       {
-        w->raise();
-        w->activateWindow();
+        QMessageBox::warning(this, tr("Cannot Open Recursively"),
+                             tr("This account is already open and cannot be "
+                                "raised. Please close windows to get to it."));
+        _closed = true;
+      } else if (p) {
+        w->setFocus();
+        if (omfgThis->showTopLevel())
+        {
+          w->raise();
+          w->activateWindow();
+        }
+        _closed = true;
       }
-
-      _closed = true;
       break;
     }
   }
