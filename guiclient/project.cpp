@@ -97,6 +97,7 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WindowFlags 
   connect(_showPo, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
   connect(_showWo, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
   connect(_showIn, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
+  connect(_showCompleted, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
 
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillTaskList()));
   connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sFillTaskList()));
@@ -896,16 +897,6 @@ void project::sFillTaskList()
   {
     return;
   }
-/* Not sure why the totals are zeroed out 
-   else
-  {
-    _totalHrBud->setDouble(0.0);
-    _totalHrAct->setDouble(0.0);
-    _totalHrBal->setDouble(0.0);
-    _totalExpBud->setDouble(0.0);
-    _totalExpAct->setDouble(0.0);
-    _totalExpBal->setDouble(0.0);
-  }  */
 
 // Populate Task List
   MetaSQLQuery mqltask = mqlLoad("orderActivityByProject", "detail");
@@ -936,6 +927,7 @@ void project::sFillTaskList()
   params.append("resolved",   tr("Resolved"));
   params.append("so",         tr("Sales Order"));
   params.append("sos",        tr("Sales Orders"));
+  params.append("total",      tr("Total"));
   params.append("unposted",   tr("Unposted"));
   params.append("unreleased", tr("Unreleased"));
   params.append("wo",         tr("Work Order"));
@@ -955,12 +947,17 @@ void project::sFillTaskList()
   if(_showIn->isChecked())
     params.append("showIn");
 
+  if (_showCompleted->isChecked())
+    params.append("showCompleted");
+
   if (! _privileges->check("ViewAllProjects") && ! _privileges->check("MaintainAllProjects"))
     params.append("owner_username", omfgThis->username());
 
   XSqlQuery qrytask = mqltask.toQuery(params);
 
   _prjtask->populate(qrytask, true);
+  (void)ErrorReporter::error(QtCriticalMsg, this, tr("Could not get Task Information"),
+                           qrytask, __FILE__, __LINE__);
   _prjtask->expandAll();
 }
 

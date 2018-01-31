@@ -458,6 +458,13 @@ to be bound by its terms.</comment>
               </property>
              </spacer>
             </item>
+            <item>
+             <widget class="XCheckBox" name="_showCompleted">
+              <property name="text">
+               <string>Show Closed Tasks</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
          </layout>
@@ -849,7 +856,7 @@ to be bound by its terms.</comment>
        <item>
         <widget class="Comments" name="_comments">
          <property name="type">
-           <enum>Comments::Project</enum>
+          <enum>Comments::Project</enum>
          </property>
         </widget>
        </item>
@@ -993,6 +1000,7 @@ to be bound by its terms.</comment>
   <tabstop>_so</tabstop>
   <tabstop>_po</tabstop>
   <tabstop>_wo</tabstop>
+  <tabstop>_showCompleted</tabstop>
   <tabstop>_descrip</tabstop>
   <tabstop>_recurring</tabstop>
   <tabstop>_buttonBox</tabstop>
