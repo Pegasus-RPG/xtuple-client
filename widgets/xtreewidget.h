@@ -186,7 +186,9 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void    setPopulateLinear(bool alwaysLinear = true);
 
     void keyPressEvent(QKeyEvent* e);
-
+    void mergeSort(int low, int high);
+    void merge(int low, int high, int mid);
+    
     Q_INVOKABLE int   altId() const;
     Q_INVOKABLE int   id()    const;
     Q_INVOKABLE int   id(const QString)     const;
