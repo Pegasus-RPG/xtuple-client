@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>714</width>
-    <height>751</height>
+    <height>758</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1160,48 +1160,32 @@ to be bound by its terms.</comment>
                  </property>
                  <layout class="QGridLayout" name="gridLayout_7">
                   <item row="0" column="0">
-                   <layout class="QHBoxLayout" name="horizontalLayout_4">
-                    <property name="spacing">
-                     <number>12</number>
+                   <widget class="QCheckBox" name="_partial">
+                    <property name="text">
+                     <string>Accepts Partial Shipments</string>
                     </property>
-                    <item>
-                     <widget class="QCheckBox" name="_partial">
-                      <property name="text">
-                       <string>Accepts Partial Shipments</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QCheckBox" name="_backorders">
-                      <property name="text">
-                       <string>Accepts Backorders</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QCheckBox" name="_freeFormShiptos">
-                      <property name="text">
-                       <string>Allow Free Form Ship-Tos</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <spacer>
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeType">
-                       <enum>QSizePolicy::MinimumExpanding</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>16</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                   </layout>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QCheckBox" name="_backorders">
+                    <property name="text">
+                     <string>Accepts Backorders</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QCheckBox" name="_freeFormShiptos">
+                    <property name="text">
+                     <string>Allow Free Form Ship-Tos</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QCheckBox" name="_freeFormBilltos">
+                    <property name="text">
+                     <string>Allow Free Form Bill-Tos</string>
+                    </property>
+                   </widget>
                   </item>
                  </layout>
                 </widget>
@@ -1307,7 +1291,16 @@ to be bound by its terms.</comment>
          <string>Returns</string>
         </attribute>
         <layout class="QGridLayout">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>5</number>
+         </property>
+         <property name="topMargin">
+          <number>5</number>
+         </property>
+         <property name="rightMargin">
+          <number>5</number>
+         </property>
+         <property name="bottomMargin">
           <number>5</number>
          </property>
          <property name="spacing">
@@ -1799,6 +1792,7 @@ to be bound by its terms.</comment>
   <tabstop>_partial</tabstop>
   <tabstop>_backorders</tabstop>
   <tabstop>_freeFormShiptos</tabstop>
+  <tabstop>_freeFormBilltos</tabstop>
   <tabstop>_creditLimit</tabstop>
   <tabstop>_creditRating</tabstop>
   <tabstop>_enableReturns</tabstop>
