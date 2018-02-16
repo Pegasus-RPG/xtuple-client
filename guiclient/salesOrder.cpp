@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -2556,12 +2556,10 @@ void salesOrder::sDelete()
 
 void salesOrder::populate()
 {
-  if ( (_mode == cNew) || (_mode == cEdit) || (_mode == cView) )
+  if (ISORDER(_mode))
   {
     XSqlQuery so;
-    if (ISEDIT(_mode)
-        && !_lock.acquire(ISORDER(_mode) ? "cohead" : "quhead", _soheadid,
-                          AppLock::Interactive))
+    if (ISEDIT(_mode) && ! _lock.acquire("cohead", _soheadid, AppLock::Interactive))
     {
       setViewMode();
     }
@@ -2748,12 +2746,10 @@ void salesOrder::populate()
       return;
     }
   }
-  else if (  (_mode == cNewQuote) ||(_mode == cEditQuote) || (_mode == cViewQuote) )
+  else if (ISQUOTE(_mode))
   {
     XSqlQuery qu;
-    if (ISEDIT(_mode)
-        && !_lock.acquire(ISORDER(_mode) ? "cohead" : "quhead", _soheadid,
-                          AppLock::Interactive))
+    if (ISEDIT(_mode) && ! _lock.acquire("quhead", _soheadid, AppLock::Interactive))
     {
       setViewMode();
     }
@@ -3520,9 +3516,9 @@ void salesOrder::setViewMode()
   _paymentInformation->removeTab(_paymentInformation->indexOf(_cashPage));
   _paymentInformation->removeTab(_paymentInformation->indexOf(_creditCardPage));
 
-  _mode = cView;
-  emit newModeType(2);
-  emit newModeState(3);
+  _mode = ISORDER(_mode) ? cView : cViewQuote;
+  emit newModeType(ISORDER(_mode) ? 2 : 1);
+  emit newModeState(cView);
   setObjectName(QString("salesOrder view %1").arg(_soheadid));
 
   _orderNumber->setEnabled(false);
