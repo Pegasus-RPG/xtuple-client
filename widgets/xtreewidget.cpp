@@ -1083,6 +1083,48 @@ bool XTreeWidgetItem::operator>(const XTreeWidgetItem &other) const
   return !(this < other || this == other);
 }
 */
+void XTreeWidget::mergeSort(int low, int high){
+    int mid;
+    if(low<high){
+        mid=(low+high)/2;
+        // Split the data into two half.
+        mergeSort(low, mid);
+        mergeSort(mid+1, high);
+
+        // Merge them to get sorted output.
+        merge(low, high, mid);
+    }
+}
+void XTreeWidget::merge(int low, int high, int mid){
+
+    QList<QTreeWidgetItem *> temp;
+    int i = low, j = mid + 1;//i is for left-hand,j is for right-hand
+    int k = 0;//k is for the temporary array
+
+   while(i <= mid && j <=high){
+        XTreeWidgetItem *lhsItem = static_cast<XTreeWidgetItem *>(topLevelItem(i));
+        XTreeWidgetItem *rhsItem = static_cast<XTreeWidgetItem *>(topLevelItem(j));
+
+        if(*lhsItem < *rhsItem || *lhsItem == *rhsItem)
+            temp.insert(k++, static_cast<XTreeWidgetItem *>(topLevelItem(i++)->clone()));
+        else
+            temp.insert(k++, static_cast<XTreeWidgetItem *>(topLevelItem(j++)->clone()));
+    }
+    //rest elements of left-half
+    while(i <= mid)
+        temp.insert(k++, static_cast<XTreeWidgetItem *>(topLevelItem(i++)->clone()));
+    //rest elements of right-half
+    while(j <= high)
+        temp.insert(k++, static_cast<XTreeWidgetItem *>(topLevelItem(j++)->clone()));
+
+    //copy the mergered temporary array to the original array
+    for(k = 0, i = low; i <= high; ++i, ++k){
+        QTreeWidgetItem *item =  topLevelItem(i);
+        //XTreeWidgetItem *delItem = (XTreeWidgetItem*)item;
+        *item = *temp.at(k);
+
+    }
+}
 void XTreeWidget::sortItems(int column, Qt::SortOrder order)
 {
   // if old style then maintain backwards compatibility
@@ -1127,6 +1169,9 @@ void XTreeWidget::sortItems(int column, Qt::SortOrder order)
   // simple insertion sort using binary search to find the right insertion pt
   QString totalrole("totalrole");
   int     itemcount      = topLevelItemCount();
+   
+  mergeSort(0,itemcount-1);
+  /* 
   XTreeWidgetItem *prev  = dynamic_cast<XTreeWidgetItem *>(topLevelItem(0));
   for (int i = 1; i < itemcount; i++)
   {
@@ -1191,7 +1236,7 @@ void XTreeWidget::sortItems(int column, Qt::SortOrder order)
     // can't reuse item because the thing in position i may have changed
     prev = static_cast<XTreeWidgetItem *>(topLevelItem(i));
   }
-
+*/
   populateCalculatedColumns();
 
   setId(previd);
