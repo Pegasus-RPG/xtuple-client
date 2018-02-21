@@ -1170,8 +1170,9 @@ void XTreeWidget::sortItems(int column, Qt::SortOrder order)
   QString totalrole("totalrole");
   int     itemcount      = topLevelItemCount();
    
+#ifdef USENEWSORT
   mergeSort(0,itemcount-1);
-  /* 
+#else
   XTreeWidgetItem *prev  = dynamic_cast<XTreeWidgetItem *>(topLevelItem(0));
   for (int i = 1; i < itemcount; i++)
   {
@@ -1236,7 +1237,7 @@ void XTreeWidget::sortItems(int column, Qt::SortOrder order)
     // can't reuse item because the thing in position i may have changed
     prev = static_cast<XTreeWidgetItem *>(topLevelItem(i));
   }
-*/
+#endif
   populateCalculatedColumns();
 
   setId(previd);
