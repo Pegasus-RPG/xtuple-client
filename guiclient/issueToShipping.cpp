@@ -938,6 +938,13 @@ void issueToShipping::sFillList()
         _order->setId(-1);
         _order->setFocus();
       }
+      else if (issueFillList.value("holdtype").toString() == "T")
+      {
+        QMessageBox::critical( this, tr("Cannot Issue Stock"),
+                              storedProcErrorLookup("issuetoshipping", -15));
+        _order->setId(-1);
+        _order->setFocus();
+      }
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Item Information"),
                                   issueFillList, __FILE__, __LINE__))

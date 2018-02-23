@@ -166,6 +166,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WindowFlags fl)
   _holdType->append(3, tr("Packing"),  "P");
   if (_metrics->boolean("EnableReturnAuth"))
     _holdType->append(4, tr("Return"),   "R");
+  _holdType->append(5, tr("Tax"),      "T");
 
   _orderCurrency->setLabel(_orderCurrencyLit);
 

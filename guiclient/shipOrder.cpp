@@ -497,6 +497,8 @@ void shipOrder::sHandleSo()
       msg = storedProcErrorLookup("shipShipment", -14);
     else if (shipHandleSo.value("holdtype").toString() == "S")
       msg = storedProcErrorLookup("shipShipment", -15);
+    else if (shipHandleSo.value("holdtype").toString() == "T")
+      msg = storedProcErrorLookup("shipShipment", -16);
 
     if (! msg.isEmpty())
     {

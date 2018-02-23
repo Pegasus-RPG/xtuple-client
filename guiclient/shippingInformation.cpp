@@ -323,6 +323,8 @@ void shippingInformation::sFillList()
       msg = storedProcErrorLookup("issuetoshipping", -13);
     else if (shippingFillList.value("holdtype").toString() == "R")
       msg = storedProcErrorLookup("issuetoshipping", -14);
+    else if (shippingFillList.value("holdtype").toString() == "T")
+      msg = storedProcErrorLookup("issuetoshipping", -15);
 
     if (! msg.isEmpty())
     {

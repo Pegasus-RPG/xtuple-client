@@ -1001,7 +1001,10 @@ const struct {
 			       "The Customer must return all materials for a "
 			       "related Return Authorization before any inven"
 			       "tory may be issued to this Order."),	0, "" },
-  { "issueToShipping", -15, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Sales Order is configured for Auto Registration. "
+  { "issueToShipping", -15, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Sales Order is on Tax Hold "
+                               "and must be taken off of Tax Hold before "
+                               "any inventory may be issued to it."),   0, "" },
+  { "issueToShipping", -16, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Sales Order is configured for Auto Registration. "
 			       "The Customer Account does not have a Primary Contact. "
 			       "A Primary Contact must be assigned to this Customer Account before any inven"
 			       "tory may be issued to this Order."),	0, "" },
@@ -1560,6 +1563,9 @@ const struct {
   { "shipShipment", -15, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Order is on Shipping Hold and must "
 			     "be taken off of Shipping Hold before it "
 			     "may be shipped."),			0, "" },
+  { "shipShipment", -16, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Order is on Tax Hold and must be "
+                             "taken off of Tax Hold before it "
+                             "may be shipped."),                        0, "" },
   { "shipShipment", -50, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Shipment cannot be shipped because it "
 			    "does not appear to exist."),		0, "" },
   { "shipShipment", -99, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Order may not be shipped because it has been "
