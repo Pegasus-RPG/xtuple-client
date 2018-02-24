@@ -100,6 +100,7 @@ bool dspPartiallyShippedOrders::setParams(ParameterList &params)
   params.append("pack",   tr("Pack"));
   params.append("return", tr("Return"));
   params.append("ship",   tr("Ship"));
+  params.append("tax",    tr("Tax"));
   params.append("other",  tr("Other"));
 
   if (omfgThis->singleCurrency())

@@ -82,6 +82,7 @@ void salesOrderInformation::populate()
              "            WHEN (soHoldType(cohead_id)='S') THEN :ship"
              "            WHEN (soHoldType(cohead_id)='P') THEN :pack"
              "            WHEN (soHoldType(cohead_id)='R') THEN :return"
+             "            WHEN (soHoldType(cohead_id)='T') THEN :tax"
              "            ELSE :other"
              "       END AS f_holdtype,"
              "       cohead_shipvia, cohead_billtoname,"
@@ -109,6 +110,7 @@ void salesOrderInformation::populate()
   salespopulate.bindValue(":ship",   tr("Ship"));
   salespopulate.bindValue(":pack",   tr("Pack"));
   salespopulate.bindValue(":return", tr("Return"));
+  salespopulate.bindValue(":tax",    tr("Tax"));
   salespopulate.bindValue(":other",  tr("Other"));
   salespopulate.bindValue(":sohead_id", _soheadid);
   salespopulate.bindValue(":soitem_id", _soitemid);
