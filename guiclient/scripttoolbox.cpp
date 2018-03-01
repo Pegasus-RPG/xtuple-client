@@ -9,6 +9,7 @@
  */
 
 #include "scripttoolbox.h"
+#include "scriptapi_internal.h"
 
 #include <QBoxLayout>
 #include <QDateTime>
@@ -30,7 +31,9 @@
 #include <QTextStream>
 #include <QUrl>
 #include <QWidget>
+#if QT_VERSION < 0x050900
 #include <QWebView>
+#endif
 
 #include <parameter.h>
 #include <metasql.h>
@@ -290,6 +293,7 @@ XSqlQuery ScriptToolbox::executeRollback()
  */
 QObject * ScriptToolbox::qtyVal()
 {
+  scriptDeprecated("Use mainwindow.qtyVal() instead of toolbox.qtyVal()");
   QValidator * val = omfgThis->qtyVal();
   return val;
 }
@@ -299,6 +303,7 @@ QObject * ScriptToolbox::qtyVal()
  */
 QObject * ScriptToolbox::TransQtyVal()
 {
+  scriptDeprecated("Use mainwindow.transQtyVal() instead of toolbox.TransQtyVal()");
   QValidator * val = omfgThis->transQtyVal();
   return val;
 }
@@ -308,6 +313,7 @@ QObject * ScriptToolbox::TransQtyVal()
  */
 QObject * ScriptToolbox::qtyPerVal()
 {
+  scriptDeprecated("Use mainwindow.qtyPerVal() instead of toolbox.qtyPerVal()");
   QValidator * val = omfgThis->qtyPerVal();
   return val;
 }
@@ -317,6 +323,7 @@ QObject * ScriptToolbox::qtyPerVal()
  */
 QObject * ScriptToolbox::percentVal()
 {
+  scriptDeprecated("Use mainwindow.percentVal() instead of toolbox.percentVal()");
   QValidator * val = omfgThis->percentVal();
   return val;
 }
@@ -326,6 +333,7 @@ QObject * ScriptToolbox::percentVal()
  */
 QObject * ScriptToolbox::moneyVal()
 {
+  scriptDeprecated("Use mainwindow.moneyVal() instead of toolbox.moneyVal()");
   QValidator * val = omfgThis->moneyVal();
   return val;
 }
@@ -335,6 +343,7 @@ QObject * ScriptToolbox::moneyVal()
  */
 QObject * ScriptToolbox::negMoneyVal()
 {
+  scriptDeprecated("Use mainwindow.negMoneyVal() instead of toolbox.negMoneyVal()");
   QValidator * val = omfgThis->negMoneyVal();
   return val;
 }
@@ -344,6 +353,7 @@ QObject * ScriptToolbox::negMoneyVal()
  */
 QObject * ScriptToolbox::priceVal()
 {
+  scriptDeprecated("Use mainwindow.priceVal() instead of toolbox.priceVal()");
   QValidator * val = omfgThis->priceVal();
   return val;
 }
@@ -353,6 +363,7 @@ QObject * ScriptToolbox::priceVal()
  */
 QObject * ScriptToolbox::costVal()
 {
+  scriptDeprecated("Use mainwindow.costVal() instead of toolbox.costVal()");
   QValidator * val = omfgThis->costVal();
   return val;
 }
@@ -362,6 +373,7 @@ QObject * ScriptToolbox::costVal()
  */
 QObject * ScriptToolbox::ratioVal()
 {
+  scriptDeprecated("Use mainwindow.ratioVal() instead of toolbox.ratioVal()");
   QValidator * val = omfgThis->ratioVal();
   return val;
 }
@@ -371,6 +383,7 @@ QObject * ScriptToolbox::ratioVal()
  */
 QObject * ScriptToolbox::weightVal()
 {
+  scriptDeprecated("Use mainwindow.weightVal() instead of toolbox.weightVal()");
   QValidator * val = omfgThis->weightVal();
   return val;
 }
@@ -380,6 +393,7 @@ QObject * ScriptToolbox::weightVal()
  */
 QObject * ScriptToolbox::runTimeVal()
 {
+  scriptDeprecated("Use mainwindow.runTimeVal() instead of toolbox.runTimeVal()");
   QValidator * val = omfgThis->runTimeVal();
   return val;
 }
@@ -389,6 +403,7 @@ QObject * ScriptToolbox::runTimeVal()
  */
 QObject * ScriptToolbox::orderVal()
 {
+  scriptDeprecated("Use mainwindow.orderVal() instead of toolbox.orderVal()");
   QValidator * val = omfgThis->orderVal();
   return val;
 }
@@ -398,6 +413,7 @@ QObject * ScriptToolbox::orderVal()
  */
 QObject * ScriptToolbox::dayVal()
 {
+  scriptDeprecated("Use mainwindow.dayVal() instead of toolbox.dayVal()");
   QValidator * val = omfgThis->dayVal();
   return val;
 }
@@ -407,6 +423,7 @@ QObject * ScriptToolbox::dayVal()
  */
 QObject * ScriptToolbox::createGridLayout()
 {
+  scriptDeprecated("Use QGridLayout() instead of toolbox.createGridLayout()");
   QGridLayout * layout = new QGridLayout;
   return layout;
 }
@@ -446,6 +463,7 @@ QObject * ScriptToolbox::widgetGetLayout(QWidget * w)
   */
 void ScriptToolbox::layoutGridAddLayout(QObject * parent, QObject * child, int row, int column, int alignment)
 {
+  scriptDeprecated("Use QGridLayout::addLayout instead of toolbox.layoutGridAddLayout()");
   QGridLayout * parentLayout = qobject_cast<QGridLayout*>(parent);
   QGridLayout * childLayout = qobject_cast<QGridLayout*>(child);
 
@@ -458,6 +476,7 @@ void ScriptToolbox::layoutGridAddLayout(QObject * parent, QObject * child, int r
   */
 void ScriptToolbox::layoutBoxInsertWidget(QObject * obj, int index, QWidget * widget, int stretch, int alignment)
 {
+  scriptDeprecated("Use QBoxLayout::insertWidget() instead of toolbox.layoutBoxInsertWidget()");
   QBoxLayout * layout = qobject_cast<QBoxLayout*>(obj);
   if(layout && widget)
     layout->insertWidget(index, widget, stretch, (Qt::Alignment)alignment);
@@ -468,6 +487,7 @@ void ScriptToolbox::layoutBoxInsertWidget(QObject * obj, int index, QWidget * wi
   */
 void ScriptToolbox::layoutGridAddWidget(QObject * obj, QWidget * widget, int row, int column, int alignment)
 {
+  scriptDeprecated("Use QGridLayout::addWidget() instead of toolbox.layoutGridAddWidget()");
   QGridLayout * layout = qobject_cast<QGridLayout*>(obj);
   if(layout && widget)
     layout->addWidget(widget, row, column, (Qt::Alignment)alignment);
@@ -478,6 +498,7 @@ void ScriptToolbox::layoutGridAddWidget(QObject * obj, QWidget * widget, int row
   */
 void ScriptToolbox::layoutGridAddWidget(QObject * obj, QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, int alignment)
 {
+  scriptDeprecated("Use QGridLayout::addWidget() instead of toolbox.layoutGridAddWidget()");
   QGridLayout * layout = qobject_cast<QGridLayout*>(obj);
   if(layout && widget)
     layout->addWidget(widget, fromRow, fromColumn, rowSpan, columnSpan, (Qt::Alignment)alignment);
@@ -488,6 +509,7 @@ void ScriptToolbox::layoutGridAddWidget(QObject * obj, QWidget * widget, int fro
   */
 void ScriptToolbox::layoutStackedInsertWidget(QObject * obj, int index, QWidget * widget)
 {
+  scriptDeprecated("Use QStackedWidget::insertWidget instead of toolbox.layoutStackedInsertWidget()");
   QStackedLayout * layout = qobject_cast<QStackedLayout*>(obj);
   if(layout && widget)
     layout->insertWidget(index, widget);
@@ -498,6 +520,7 @@ void ScriptToolbox::layoutStackedInsertWidget(QObject * obj, int index, QWidget 
   */
 QObject * ScriptToolbox::menuAddAction(QObject * menu, const QString & text, const bool enabled)
 {
+  scriptDeprecated("Use QMenu::addAction instead of toolbox.menuAddAction()");
   QMenu * m = qobject_cast<QMenu*>(menu);
   QAction * act = 0;
   if(m)
@@ -513,6 +536,7 @@ QObject * ScriptToolbox::menuAddAction(QObject * menu, const QString & text, con
   */
 QObject * ScriptToolbox::menuAddMenu(QObject * menu, const QString & text, const QString & name)
 {
+  scriptDeprecated("Use QMenu::addAction instead of toolbox.menuAddMenu()");
   QMenu * m = qobject_cast<QMenu*>(menu);
   QMenu * nm = 0;
   if(m)
@@ -529,6 +553,7 @@ QObject * ScriptToolbox::menuAddMenu(QObject * menu, const QString & text, const
   */
 QObject * ScriptToolbox::menuAddSeparator(QObject * menu)
 {
+  scriptDeprecated("Use QMenu::addSeparator instead of toolbox.menuAddSeparator");
   QMenu * m = qobject_cast<QMenu*>(menu);
   QAction * na = 0;
   if(m)
@@ -541,6 +566,7 @@ QObject * ScriptToolbox::menuAddSeparator(QObject * menu)
   */
 QObject * ScriptToolbox::menuInsertAction(QObject * menu, QObject * before, const QString & name, const bool enabled)
 {
+  scriptDeprecated("Use QMenu::insertAction instead of toolbox.menuInsertAction");
   QMenu * m = qobject_cast<QMenu*>(menu);
   QAction * ba = qobject_cast<QAction*>(before);
   QAction * na = new QAction(name,m);
@@ -558,6 +584,7 @@ QObject * ScriptToolbox::menuInsertAction(QObject * menu, QObject * before, cons
   */
 QObject * ScriptToolbox::menuInsertMenu(QObject * menu, QObject * before, const QString & name)
 {
+  scriptDeprecated("Use QMenu::insertMenu instead of toolbox.menuInsertMenu()");
   QMenu * m = qobject_cast<QMenu*>(menu);
   QAction * ba = qobject_cast<QAction*>(before);
   QMenu * nm = new QMenu(name);
@@ -579,6 +606,7 @@ QObject * ScriptToolbox::menuInsertMenu(QObject * menu, QObject * before, const 
   */
 QObject * ScriptToolbox::menuInsertSeparator(QObject * menu, QObject * before)
 {
+  scriptDeprecated("Use QMenu::insertSeparator instead of toolbox.menuInsertSeparator()");
   QMenu * m = qobject_cast<QMenu*>(menu);
   QAction * ba = qobject_cast<QAction*>(before);
   if (!ba)
@@ -601,6 +629,7 @@ QObject * ScriptToolbox::menuInsertSeparator(QObject * menu, QObject * before)
   */
 void ScriptToolbox::menuRemove(QObject * menu, QObject * action)
 {
+  scriptDeprecated("Use QMenu::removeAction instead of toolbox.menuRemove()");
   QMenu * m = qobject_cast<QMenu*>(menu);
   QAction * act = qobject_cast<QAction*>(action);
   if (!act)
@@ -629,6 +658,7 @@ int ScriptToolbox::menuActionCount(QObject * menu)
  */
 int ScriptToolbox::tabCount(QWidget * tab)
 {
+  scriptDeprecated("Use QTabWidget::count() instead of toolbox.tabCount()");
   QTabWidget *tw = qobject_cast<QTabWidget*>(tab);
   if(tw)
     return tw->count();
@@ -640,6 +670,7 @@ int ScriptToolbox::tabCount(QWidget * tab)
   */
 QWidget * ScriptToolbox::tabWidget(QWidget * tab, int idx)
 {
+  scriptDeprecated("Use QTabWidget::widget() instead of toolbox.tabWidget()");
   QTabWidget *tw = qobject_cast<QTabWidget*>(tab);
   QWidget * w = 0;
   if(tw)
@@ -652,6 +683,7 @@ QWidget * ScriptToolbox::tabWidget(QWidget * tab, int idx)
   */
 int ScriptToolbox::tabInsertTab(QWidget * tab, int idx, QWidget * page, const QString & text)
 {
+  scriptDeprecated("Use QTabWidget::insertTab() instead of toolbox.tabInsertTab()");
   QTabWidget *tw = qobject_cast<QTabWidget*>(tab);
   int i = -1;
   if(tw)
@@ -664,6 +696,7 @@ int ScriptToolbox::tabInsertTab(QWidget * tab, int idx, QWidget * page, const QS
   */
 int ScriptToolbox::tabTabIndex(QWidget * tab, QWidget * page)
 {
+  scriptDeprecated("Use QTabWidget::indexOf() instead of toolbox.tabTabIndex()");
   QTabWidget *tw = qobject_cast<QTabWidget*>(tab);
   if(tw)
     return tw->indexOf(page);
@@ -675,6 +708,7 @@ int ScriptToolbox::tabTabIndex(QWidget * tab, QWidget * page)
   */
 void ScriptToolbox::tabRemoveTab(QWidget * tab, int idx)
 {
+  scriptDeprecated("Use QTabWidget::removeTab() instead of toolbox.tabRemoveTab()");
   QTabWidget *tw = qobject_cast<QTabWidget*>(tab);
   if(tw)
     tw->removeTab(idx);
@@ -685,6 +719,7 @@ void ScriptToolbox::tabRemoveTab(QWidget * tab, int idx)
   */
 void ScriptToolbox::tabSetTabEnabled(QWidget * tab, int idx, bool enable)
 {
+  scriptDeprecated("Use QTabWidget::setTabEnabled() instead of toolbox.tabSetTabEnabled()");
   QTabWidget *tw = qobject_cast<QTabWidget*>(tab);
   if(tw)
     tw->setTabEnabled(idx, enable);
@@ -695,6 +730,7 @@ void ScriptToolbox::tabSetTabEnabled(QWidget * tab, int idx, bool enable)
   */
 void ScriptToolbox::tabSetTabText(QWidget * tab, int idx, const QString & text)
 {
+  scriptDeprecated("Use QTabWidget::setTabText() instead of toolbox.tabSetTabText()");
   QTabWidget *tw = qobject_cast<QTabWidget*>(tab);
   if(tw)
     tw->setTabText(idx, text);
@@ -705,6 +741,7 @@ void ScriptToolbox::tabSetTabText(QWidget * tab, int idx, const QString & text)
   */
 QString ScriptToolbox::tabtabText(QWidget * tab, int idx)
 {
+  scriptDeprecated("Use QTabWidget::tabText() instead of toolbox.tabtabText()");
   QTabWidget *tw = qobject_cast<QTabWidget*>(tab);
   QString str;
   if(tw)
@@ -1045,32 +1082,37 @@ void ScriptToolbox::openUrl(const QString & fileUrl)
 /** @deprecated Use QFile.copyFile(oldName, newName) instead */
 bool ScriptToolbox::copyFile(const QString & oldName, const QString & newName)
 {
-   return QFile::copy(oldName, newName);
+  scriptDeprecated("Use QFile.copyFile(oldName, newName) instead of toolbox.copyFile()");
+  return QFile::copy(oldName, newName);
 }
 
 /** @deprecated Use var file = new QFileInfo(path).fileName() instead */
 QString ScriptToolbox::getFileName(const QString & path)
 {
-    QFileInfo fi(path);
-    return fi.fileName();
+  scriptDeprecated("Use new QFileInfo(path).fileName() instead of toolbox.getFileName(path)");
+  QFileInfo fi(path);
+  return fi.fileName();
 }
 
 /** @deprecated Use QFile.rename(oldName, newName) instead */
 bool ScriptToolbox::renameFile(const QString & oldName, const QString & newName)
 {
-   return QFile::rename(oldName, newName);
+  scriptDeprecated("Use QFile.rename(oldName, newName) instead of toolbox.renameFile()");
+  return QFile::rename(oldName, newName);
 }
 
 /** @deprecated Use QFile.removeFile(oldName, newName) instead */
 bool ScriptToolbox::removeFile(const QString & name)
 {
-   return QFile::remove(name);
+  scriptDeprecated("Use QFile.removeFile() instead of toolbox.removeFile()");
+  return QFile::remove(name);
 }
 
 /** @deprecated Use QFile.exists(name) instead */
 bool ScriptToolbox::fileExists(const QString & name)
 {
-   return QFile::exists(name);
+  scriptDeprecated("Use QFile.exists(name) instead of toolbox.fileExists()");
+  return QFile::exists(name);
 }
 
 /** @brief Read the entire contents of a text %file.
@@ -1128,37 +1170,43 @@ bool ScriptToolbox::textStreamWrite(const QString & pName, const QString & Write
 /** @deprecated use QFile.exists(name) instead */
 bool fileExists(const QString & name)
 {
-   QFile file(name);
-   return file.exists();
+  scriptDeprecated("use QFile.exists(name) instead of toolbox.fileExist()");
+  QFile file(name);
+  return file.exists();
 }
 
 /** @deprecated Use QDir.homePath() instead */
 QString ScriptToolbox::getHomeDir()
 {
-   return QDir::homePath();
+  scriptDeprecated("Use QDir.homePath() instead of toolbox.getHomeDir()");
+  return QDir::homePath();
 }
 
 /** @deprecated Use QDir.currentPath() instead */
 QString ScriptToolbox::getCurrentDir()
 {
-   return QDir::currentPath();
+  scriptDeprecated("Use QDir.currentPath() instead of toolbox.getCurrentDir()");
+  return QDir::currentPath();
 }
 
 /** @deprecated Use QDir.tempPath() instead */
 QString ScriptToolbox::getTempDir()
 {
+  scriptDeprecated("Use QDir.tempPath() instead of toolbox.getTempDir()");
    return QDir::tempPath();
 }
 
 /** @deprecated Use QDir.rootPath() instead */
 QString ScriptToolbox::rootPath()
 {
+  scriptDeprecated("Use QDir.rootPath() instead of toolbox.rootPath()");
    return QDir::rootPath();
 }
 
 /** @deprecated Use var dir = new QDir(rootPath) followed by dir.mkpath(mkPath) instead */
 bool ScriptToolbox::makePath(const QString & mkPath, const QString & rootPath)
 {
+  scriptDeprecated("Use var dir = new QDir(rootPath) ; dir.mkpath(mkPath) instead of toolbox.makePath(mkPath, rootPath)");
    QDir dir(rootPath);
 
    return dir.mkpath(mkPath);
@@ -1167,6 +1215,7 @@ bool ScriptToolbox::makePath(const QString & mkPath, const QString & rootPath)
 /** @deprecated Use var dir = new QDir(rootPath) followed by dir.rmpath(rmPath) instead */
 bool ScriptToolbox::removePath(const QString & rmPath, const QString & rootPath)
 {
+  scriptDeprecated("Use var dir = new QDir(rootPath) ; dir.rmpath(rmPath) instead of toolbox.removePath(rmPath, rootPath)");
    QDir dir(rootPath);
 
    return dir.rmpath(rmPath);
@@ -1233,6 +1282,8 @@ void ScriptToolbox::listProperties(const QScriptValue &obj, const bool showProto
  */
 int ScriptToolbox::messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons, int defaultButton)
 {
+  scriptDeprecated("Use QMessageBox.critical(), QMessageBox.information(), "
+                   "QMessageBox.question(), or QMessageBox.warning() instead of toolbox.messageBox()");
   int btn;
   if(type == "critical")
     btn = QMessageBox::critical(parent, title, text, (QMessageBox::StandardButton)buttons, (QMessageBox::StandardButton)defaultButton);
@@ -1285,8 +1336,6 @@ QWidget *ScriptToolbox::openWindow(QString pname, QWidget *parent, Qt::WindowMod
   {
     if(!returnVal->inherits("QDialog"))
       omfgThis->handleNewWindow(returnVal, modality);
-    else
-      returnVal->setAttribute(Qt::WA_DeleteOnClose);
     _lastWindow = returnVal;
     return returnVal;
   }
@@ -1390,6 +1439,7 @@ QWidget *ScriptToolbox::newDisplay(QString pname, QWidget *parent, Qt::WindowMod
   */
 void ScriptToolbox::addColumnXTreeWidget(QWidget * tree, const QString & pString, int pWidth, int pAlignment, bool pVisible, const QString pEditColumn, const QString pDisplayColumn)
 {
+  scriptDeprecated("Use XTreeWidget::addColumn() instead of toolbox.addColumnXTreeWidget()");
   XTreeWidget *xt = qobject_cast<XTreeWidget*>(tree);
   if(xt)
     xt->addColumn(pString, pWidth, pAlignment, pVisible, pEditColumn, pDisplayColumn);
@@ -1400,19 +1450,23 @@ void ScriptToolbox::addColumnXTreeWidget(QWidget * tree, const QString & pString
   */
 void ScriptToolbox::populateXTreeWidget(QWidget * tree, XSqlQuery pSql, bool pUseAltId)
 {
+  scriptDeprecated("Use XTreeWidget::populate() instead of toolbox.populateXtreeWidget()");
   XTreeWidget *xt = qobject_cast<XTreeWidget*>(tree);
   if(xt)
     xt->populate(pSql, pUseAltId);
 }
 
+#if QT_VERSION < 0x050900
 /** @brief Load the given QWebView with the given URL. */
 void ScriptToolbox::loadQWebView(QWidget * webView, const QString & url)
 {
+  scriptDeprecated("QWebView will not be available in Qt 5.9");
   QUrl p = QUrl(url);
   QWebView *wv = qobject_cast<QWebView*>(webView);
   if(wv)
     wv->load(p);
 }
+#endif
 
 /** @brief Save a credit card definition from a script.
 
@@ -1482,6 +1536,7 @@ QObject *ScriptToolbox::getCreditCardProcessor()
  */
 QString scriptHandleIncludes(QString source)
 {
+  scriptDeprecated("See include.cpp for the proper way to include scripts");
   QString returnVal = source;
   if (returnVal.contains(QRegExp("#include")))
   {

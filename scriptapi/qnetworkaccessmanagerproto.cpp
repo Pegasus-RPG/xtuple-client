@@ -1,13 +1,14 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qnetworkaccessmanagerproto.h"
 
 #include <QByteArray>
@@ -21,19 +22,46 @@ void QNetworkAccessManagerfromScriptValue(const QScriptValue &obj, QNetworkAcces
   item = qobject_cast<QNetworkAccessManager*>(obj.toQObject());
 }
 
+QScriptValue NetworkAccessibilityToScriptValue(QScriptEngine *engine, const enum QNetworkAccessManager::NetworkAccessibility &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void NetworkAccessibilityFromScriptValue(const QScriptValue &obj, enum QNetworkAccessManager::NetworkAccessibility &p)
+{
+  p = (enum QNetworkAccessManager::NetworkAccessibility)obj.toInt32();
+}
+
+QScriptValue OperationToScriptValue(QScriptEngine *engine, const enum QNetworkAccessManager::Operation &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void OperationFromScriptValue(const QScriptValue &obj, enum QNetworkAccessManager::Operation &p)
+{
+  p = (enum QNetworkAccessManager::Operation)obj.toInt32();
+}
+
 void setupQNetworkAccessManagerProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QNetworkAccessManagertoScriptValue, QNetworkAccessManagerfromScriptValue);
-  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue proto = engine->newQObject(new QNetworkAccessManagerProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QNetworkAccessManager*>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQNetworkAccessManager, proto);
   engine->globalObject().setProperty("QNetworkAccessManager",  constructor);
-  proto.setProperty("UnknownAccessibility", QScriptValue(engine, QNetworkAccessManager::UnknownAccessibility),  permanent);
-  proto.setProperty("NotAccessible",        QScriptValue(engine, QNetworkAccessManager::NotAccessible),         permanent);
-  proto.setProperty("Accessible",           QScriptValue(engine, QNetworkAccessManager::Accessible),            permanent);
+
+  qScriptRegisterMetaType(engine, NetworkAccessibilityToScriptValue, NetworkAccessibilityFromScriptValue);
+  proto.setProperty("UnknownAccessibility", QScriptValue(engine, QNetworkAccessManager::UnknownAccessibility), ENUMPROPFLAGS);
+  proto.setProperty("NotAccessible",        QScriptValue(engine, QNetworkAccessManager::NotAccessible),        ENUMPROPFLAGS);
+  proto.setProperty("Accessible",           QScriptValue(engine, QNetworkAccessManager::Accessible),           ENUMPROPFLAGS);
+
+  qScriptRegisterMetaType(engine, OperationToScriptValue, OperationFromScriptValue);
+  proto.setProperty("HeadOperation",   QScriptValue(engine, QNetworkAccessManager::HeadOperation),   ENUMPROPFLAGS);
+  proto.setProperty("GetOperation",    QScriptValue(engine, QNetworkAccessManager::GetOperation),    ENUMPROPFLAGS);
+  proto.setProperty("PutOperation",    QScriptValue(engine, QNetworkAccessManager::PutOperation),    ENUMPROPFLAGS);
+  proto.setProperty("PostOperation",   QScriptValue(engine, QNetworkAccessManager::PostOperation),   ENUMPROPFLAGS);
+  proto.setProperty("DeleteOperation", QScriptValue(engine, QNetworkAccessManager::DeleteOperation), ENUMPROPFLAGS);
+  proto.setProperty("CustomOperation", QScriptValue(engine, QNetworkAccessManager::CustomOperation), ENUMPROPFLAGS);
 }
 QScriptValue constructQNetworkAccessManager(QScriptContext *context, QScriptEngine *engine)
 {

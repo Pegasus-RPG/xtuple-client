@@ -1,13 +1,14 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qnetworkrequestproto.h"
 
 #include <QByteArray>
@@ -45,6 +46,17 @@ void NetworkRequestKnownHeadersFromScriptValue(const QScriptValue &obj, QNetwork
   item = (QNetworkRequest::KnownHeaders)obj.toInt32();
 }
 
+#if QT_VERSION >= 0x050900
+QScriptValue RedirectPolicyToScriptValue(QScriptEngine *engine, const QNetworkRequest::RedirectPolicy &item)
+{
+  return engine->newVariant(item);
+}
+void RedirectPolicyFromScriptValue(const QScriptValue &obj, QNetworkRequest::RedirectPolicy &item)
+{
+  item = (QNetworkRequest::RedirectPolicy)obj.toInt32();
+}
+#endif
+
 QScriptValue NetworkRequestLoadControlToScriptValue(QScriptEngine *engine, const QNetworkRequest::LoadControl &item)
 {
   return engine->newVariant(item);
@@ -67,7 +79,7 @@ void setupQNetworkRequestProto(QScriptEngine *engine)
 {
   if (DEBUG) qDebug("setupQNetworkRequestProto entered");
 
-  QScriptValue::PropertyFlags permanent = QScriptValue::ReadOnly | QScriptValue::Undeletable;
+  QScriptValue::PropertyFlags ENUMPROPFLAGS = QScriptValue::ReadOnly | QScriptValue::Undeletable;
 
   QScriptValue netreqproto = engine->newQObject(new QNetworkRequestProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QNetworkRequest*>(), netreqproto);
@@ -75,57 +87,76 @@ void setupQNetworkRequestProto(QScriptEngine *engine)
   engine->globalObject().setProperty("QNetworkRequest", constructor);
 
   qScriptRegisterMetaType(engine, NetworkRequestAttributeToScriptValue, NetworkRequestAttributeFromScriptValue);
-  constructor.setProperty("HttpStatusCodeAttribute", QScriptValue(engine, QNetworkRequest::HttpStatusCodeAttribute), permanent);
-  constructor.setProperty("HttpReasonPhraseAttribute", QScriptValue(engine, QNetworkRequest::HttpReasonPhraseAttribute), permanent);
-  constructor.setProperty("RedirectionTargetAttribute", QScriptValue(engine, QNetworkRequest::RedirectionTargetAttribute), permanent);
-  constructor.setProperty("ConnectionEncryptedAttribute", QScriptValue(engine, QNetworkRequest::ConnectionEncryptedAttribute), permanent);
-  constructor.setProperty("CacheLoadControlAttribute", QScriptValue(engine, QNetworkRequest::CacheLoadControlAttribute), permanent);
-  constructor.setProperty("CacheSaveControlAttribute", QScriptValue(engine, QNetworkRequest::CacheSaveControlAttribute), permanent);
-  constructor.setProperty("SourceIsFromCacheAttribute", QScriptValue(engine, QNetworkRequest::SourceIsFromCacheAttribute), permanent);
-  constructor.setProperty("DoNotBufferUploadDataAttribute", QScriptValue(engine, QNetworkRequest::DoNotBufferUploadDataAttribute), permanent);
-  constructor.setProperty("HttpPipeliningAllowedAttribute", QScriptValue(engine, QNetworkRequest::HttpPipeliningAllowedAttribute), permanent);
-  constructor.setProperty("HttpPipeliningWasUsedAttribute", QScriptValue(engine, QNetworkRequest::HttpPipeliningWasUsedAttribute), permanent);
-  constructor.setProperty("CustomVerbAttribute", QScriptValue(engine, QNetworkRequest::CustomVerbAttribute), permanent);
-  constructor.setProperty("CookieLoadControlAttribute", QScriptValue(engine, QNetworkRequest::CookieLoadControlAttribute), permanent);
-  constructor.setProperty("CookieSaveControlAttribute", QScriptValue(engine, QNetworkRequest::CookieSaveControlAttribute), permanent);
-  constructor.setProperty("AuthenticationReuseAttribute", QScriptValue(engine, QNetworkRequest::AuthenticationReuseAttribute), permanent);
-#if QT_VERSION >= 0x050000
-  constructor.setProperty("BackgroundRequestAttribute", QScriptValue(engine, QNetworkRequest::BackgroundRequestAttribute), permanent);
-  // Not needed //constructor.setProperty("SpdyAllowedAttribute", QScriptValue(engine, QNetworkRequest::SpdyAllowedAttribute), permanent);
-  // Not needed //constructor.setProperty("SpdyWasUsedAttribute", QScriptValue(engine, QNetworkRequest::SpdyWasUsedAttribute), permanent);
-  constructor.setProperty("EmitAllUploadProgressSignalsAttribute", QScriptValue(engine, QNetworkRequest::EmitAllUploadProgressSignalsAttribute), permanent);
+  constructor.setProperty("HttpStatusCodeAttribute", QScriptValue(engine, QNetworkRequest::HttpStatusCodeAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("HttpReasonPhraseAttribute", QScriptValue(engine, QNetworkRequest::HttpReasonPhraseAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("RedirectionTargetAttribute", QScriptValue(engine, QNetworkRequest::RedirectionTargetAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("ConnectionEncryptedAttribute", QScriptValue(engine, QNetworkRequest::ConnectionEncryptedAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("CacheLoadControlAttribute", QScriptValue(engine, QNetworkRequest::CacheLoadControlAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("CacheSaveControlAttribute", QScriptValue(engine, QNetworkRequest::CacheSaveControlAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("SourceIsFromCacheAttribute", QScriptValue(engine, QNetworkRequest::SourceIsFromCacheAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("DoNotBufferUploadDataAttribute", QScriptValue(engine, QNetworkRequest::DoNotBufferUploadDataAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("HttpPipeliningAllowedAttribute", QScriptValue(engine, QNetworkRequest::HttpPipeliningAllowedAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("HttpPipeliningWasUsedAttribute", QScriptValue(engine, QNetworkRequest::HttpPipeliningWasUsedAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("CustomVerbAttribute", QScriptValue(engine, QNetworkRequest::CustomVerbAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("CookieLoadControlAttribute", QScriptValue(engine, QNetworkRequest::CookieLoadControlAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("CookieSaveControlAttribute", QScriptValue(engine, QNetworkRequest::CookieSaveControlAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("AuthenticationReuseAttribute", QScriptValue(engine, QNetworkRequest::AuthenticationReuseAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("BackgroundRequestAttribute", QScriptValue(engine, QNetworkRequest::BackgroundRequestAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("SpdyAllowedAttribute", QScriptValue(engine, QNetworkRequest::SpdyAllowedAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("SpdyWasUsedAttribute", QScriptValue(engine, QNetworkRequest::SpdyWasUsedAttribute), ENUMPROPFLAGS);
+#if QT_VERSION >= 0x050900
+  constructor.setProperty("HTTP2AllowedAttribute", QScriptValue(engine, QNetworkRequest::HTTP2AllowedAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("HTTP2WasUsedAttribute", QScriptValue(engine, QNetworkRequest::HTTP2WasUsedAttribute), ENUMPROPFLAGS);
 #endif
-  // Not in Qt 5.5 //constructor.setProperty("FollowRedirectsAttribute", QScriptValue(engine, QNetworkRequest::FollowRedirectsAttribute), permanent);
-  constructor.setProperty("User", QScriptValue(engine, QNetworkRequest::User), permanent);
-  constructor.setProperty("UserMax", QScriptValue(engine, QNetworkRequest::UserMax), permanent);
+
+  constructor.setProperty("EmitAllUploadProgressSignalsAttribute", QScriptValue(engine, QNetworkRequest::EmitAllUploadProgressSignalsAttribute), ENUMPROPFLAGS);
+
+#if QT_VERSION >= 0x050600
+  constructor.setProperty("FollowRedirectsAttribute", QScriptValue(engine, QNetworkRequest::FollowRedirectsAttribute), ENUMPROPFLAGS);
+#endif
+
+#if QT_VERSION >= 0x050900
+  constructor.setProperty("OriginalContentLengthAttribute", QScriptValue(engine, QNetworkRequest::OriginalContentLengthAttribute), ENUMPROPFLAGS);
+  constructor.setProperty("RedirectPolicyAttribute", QScriptValue(engine, QNetworkRequest::RedirectPolicyAttribute), ENUMPROPFLAGS);
+#endif
+
+  constructor.setProperty("User", QScriptValue(engine, QNetworkRequest::User), ENUMPROPFLAGS);
+  constructor.setProperty("UserMax", QScriptValue(engine, QNetworkRequest::UserMax), ENUMPROPFLAGS);
 
   qScriptRegisterMetaType(engine, NetworkRequestCacheLoadControlToScriptValue, NetworkRequestCacheLoadControlFromScriptValue);
-  constructor.setProperty("AlwaysNetwork", QScriptValue(engine, QNetworkRequest::AlwaysNetwork), permanent);
-  constructor.setProperty("PreferNetwork", QScriptValue(engine, QNetworkRequest::PreferNetwork), permanent);
-  constructor.setProperty("PreferCache", QScriptValue(engine, QNetworkRequest::PreferCache), permanent);
-  constructor.setProperty("AlwaysCache", QScriptValue(engine, QNetworkRequest::AlwaysCache), permanent);
+  constructor.setProperty("AlwaysNetwork", QScriptValue(engine, QNetworkRequest::AlwaysNetwork), ENUMPROPFLAGS);
+  constructor.setProperty("PreferNetwork", QScriptValue(engine, QNetworkRequest::PreferNetwork), ENUMPROPFLAGS);
+  constructor.setProperty("PreferCache", QScriptValue(engine, QNetworkRequest::PreferCache), ENUMPROPFLAGS);
+  constructor.setProperty("AlwaysCache", QScriptValue(engine, QNetworkRequest::AlwaysCache), ENUMPROPFLAGS);
 
   qScriptRegisterMetaType(engine, NetworkRequestKnownHeadersToScriptValue, NetworkRequestKnownHeadersFromScriptValue);
-  constructor.setProperty("ContentDispositionHeader", QScriptValue(engine, QNetworkRequest::ContentDispositionHeader), permanent);
-  constructor.setProperty("ContentTypeHeader", QScriptValue(engine, QNetworkRequest::ContentTypeHeader), permanent);
-  constructor.setProperty("ContentLengthHeader", QScriptValue(engine, QNetworkRequest::ContentLengthHeader), permanent);
-  constructor.setProperty("LocationHeader", QScriptValue(engine, QNetworkRequest::LocationHeader), permanent);
-  constructor.setProperty("LastModifiedHeader", QScriptValue(engine, QNetworkRequest::LastModifiedHeader), permanent);
-  constructor.setProperty("CookieHeader", QScriptValue(engine, QNetworkRequest::CookieHeader), permanent);
-  constructor.setProperty("SetCookieHeader", QScriptValue(engine, QNetworkRequest::SetCookieHeader), permanent);
-#if QT_VERSION >= 0x050000
-  constructor.setProperty("UserAgentHeader", QScriptValue(engine, QNetworkRequest::UserAgentHeader), permanent);
-  constructor.setProperty("ServerHeader", QScriptValue(engine, QNetworkRequest::ServerHeader), permanent);
-#endif
+  constructor.setProperty("ContentDispositionHeader", QScriptValue(engine, QNetworkRequest::ContentDispositionHeader), ENUMPROPFLAGS);
+  constructor.setProperty("ContentTypeHeader", QScriptValue(engine, QNetworkRequest::ContentTypeHeader), ENUMPROPFLAGS);
+  constructor.setProperty("ContentLengthHeader", QScriptValue(engine, QNetworkRequest::ContentLengthHeader), ENUMPROPFLAGS);
+  constructor.setProperty("LocationHeader", QScriptValue(engine, QNetworkRequest::LocationHeader), ENUMPROPFLAGS);
+  constructor.setProperty("LastModifiedHeader", QScriptValue(engine, QNetworkRequest::LastModifiedHeader), ENUMPROPFLAGS);
+  constructor.setProperty("CookieHeader", QScriptValue(engine, QNetworkRequest::CookieHeader), ENUMPROPFLAGS);
+  constructor.setProperty("SetCookieHeader", QScriptValue(engine, QNetworkRequest::SetCookieHeader), ENUMPROPFLAGS);
+  constructor.setProperty("UserAgentHeader", QScriptValue(engine, QNetworkRequest::UserAgentHeader), ENUMPROPFLAGS);
+  constructor.setProperty("ServerHeader", QScriptValue(engine, QNetworkRequest::ServerHeader), ENUMPROPFLAGS);
 
   qScriptRegisterMetaType(engine, NetworkRequestLoadControlToScriptValue, NetworkRequestLoadControlFromScriptValue);
-  constructor.setProperty("Automatic", QScriptValue(engine, QNetworkRequest::Automatic), permanent);
-  constructor.setProperty("Manual", QScriptValue(engine, QNetworkRequest::Manual), permanent);
+  constructor.setProperty("Automatic", QScriptValue(engine, QNetworkRequest::Automatic), ENUMPROPFLAGS);
+  constructor.setProperty("Manual", QScriptValue(engine, QNetworkRequest::Manual), ENUMPROPFLAGS);
 
   qScriptRegisterMetaType(engine, NetworkRequestPriorityToScriptValue, NetworkRequestPriorityFromScriptValue);
-  constructor.setProperty("HighPriority", QScriptValue(engine, QNetworkRequest::HighPriority), permanent);
-  constructor.setProperty("NormalPriority", QScriptValue(engine, QNetworkRequest::NormalPriority), permanent);
-  constructor.setProperty("LowPriority", QScriptValue(engine, QNetworkRequest::LowPriority), permanent);
+  constructor.setProperty("HighPriority", QScriptValue(engine, QNetworkRequest::HighPriority), ENUMPROPFLAGS);
+  constructor.setProperty("NormalPriority", QScriptValue(engine, QNetworkRequest::NormalPriority), ENUMPROPFLAGS);
+  constructor.setProperty("LowPriority", QScriptValue(engine, QNetworkRequest::LowPriority), ENUMPROPFLAGS);
+
+#if QT_VERSION >= 0x050900
+  qScriptRegisterMetaType(engine, RedirectPolicyToScriptValue, RedirectPolicyFromScriptValue);
+  constructor.setProperty("ManualRedirectPolicy", QScriptValue(engine, QNetworkRequest::ManualRedirectPolicy), ENUMPROPFLAGS);
+  constructor.setProperty("NoLessSafeRedirectPolicy", QScriptValue(engine, QNetworkRequest::NoLessSafeRedirectPolicy), ENUMPROPFLAGS);
+  constructor.setProperty("SameOriginRedirectPolicy", QScriptValue(engine, QNetworkRequest::SameOriginRedirectPolicy), ENUMPROPFLAGS);
+  constructor.setProperty("UserVerifiedRedirectPolicy", QScriptValue(engine, QNetworkRequest::UserVerifiedRedirectPolicy), ENUMPROPFLAGS);
+#endif
+
 }
 
 QScriptValue constructQNetworkRequest(QScriptContext *context,

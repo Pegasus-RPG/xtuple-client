@@ -1,7 +1,7 @@
 /*
  *This file is part of the xTuple ERP: PostBooks Edition, a free and
  *open source Enterprise Resource Planning software suite,
- *Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ *Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
  *It is licensed to you under the Common Public Attribution License
  *version 1.0, the full text of which(including xTuple-specific Exhibits)
  *is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -38,6 +38,15 @@ void OpenModeFlagFromScriptValue(const QScriptValue &obj, enum QIODevice::OpenMo
   p = (enum QIODevice::OpenModeFlag)obj.toInt32();
 }
 
+QScriptValue OpenModeToScriptValue(QScriptEngine *engine, const QIODevice::OpenMode &p)
+{
+  return QScriptValue(engine, (int)p);
+}
+void OpenModeFromScriptValue(const QScriptValue &obj, QIODevice::OpenMode &p)
+{
+  p = (QIODevice::OpenMode)obj.toInt32();
+}
+
 void setupQIODeviceProto(QScriptEngine *engine)
 {
   qScriptRegisterMetaType(engine, QIODevicetoScriptValue, QIODevicefromScriptValue);
@@ -45,7 +54,7 @@ void setupQIODeviceProto(QScriptEngine *engine)
   QScriptValue iodev = engine->newObject();
   engine->globalObject().setProperty("QIODevice",  iodev, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
-  // enum QIODevice::OpenModeFlag
+  qScriptRegisterMetaType(engine, OpenModeToScriptValue, OpenModeFromScriptValue);
   qScriptRegisterMetaType(engine, OpenModeFlagToScriptValue, OpenModeFlagFromScriptValue);
   iodev.setProperty("NotOpen",    QScriptValue(engine, QIODevice::NotOpen),    ENUMPROPFLAGS);
   iodev.setProperty("ReadOnly",   QScriptValue(engine, QIODevice::ReadOnly),   ENUMPROPFLAGS);

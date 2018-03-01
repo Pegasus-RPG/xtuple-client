@@ -1207,14 +1207,7 @@ to be bound by its terms.</comment>
        <string>Advanced</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_6">
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="_debug">
-         <property name="text">
-          <string>Enable Script Debugging</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
+       <item row="4" column="1">
         <spacer name="verticalSpacer_4">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -1226,6 +1219,46 @@ to be bound by its terms.</comment>
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="2" column="1">
+        <widget class="XComboBox" name="_deprecationLevel">
+         <property name="allowNull">
+          <bool>true</bool>
+         </property>
+         <property name="nullStr">
+          <string>None</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="_deprecationLevelLit">
+         <property name="text">
+          <string>Warning level for outdated script constructs:</string>
+         </property>
+         <property name="buddy">
+          <cstring>_deprecationLevel</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QCheckBox" name="_debug">
+         <property name="text">
+          <string>Enable Script Debugging</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -1318,6 +1351,7 @@ to be bound by its terms.</comment>
   <tabstop>_newpassword</tabstop>
   <tabstop>_retypepassword</tabstop>
   <tabstop>_debug</tabstop>
+  <tabstop>_deprecationLevel</tabstop>
   <tabstop>_buttonBox</tabstop>
   <tabstop>_tab</tabstop>
  </tabstops>
