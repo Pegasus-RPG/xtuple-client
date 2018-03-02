@@ -246,7 +246,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
       _salesHistoryButton->hide();
   }
 
-  if (!_privileges->check("ViewItemMaster") && !_privileges->check("MaintainItemMasters"))
+  if (!_privileges->check("ViewItemMasters MaintainItemMasters"))
     _tab->removeTab(_tab->indexOf(_itemTab));
 
   if (!_privileges->check("ViewCosts") && !_privileges->check("ViewBOMs"))
