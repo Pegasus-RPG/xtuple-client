@@ -11,6 +11,7 @@
 #include "widgets.h"
 #include "metrics.h"
 #include "metricsenc.h"
+#include "setupscriptapi.h"
 
 #include "xtupleplugin.h"
 
@@ -208,6 +209,7 @@ void initializePlugin(Preferences *pPreferences, Metrics *pMetrics, Privileges *
 
 void setupWidgetsScriptApi(QScriptEngine *engine, GuiClientInterface *client)
 {
+  setupScriptApi(engine, client ? client->getPreferences() : 0);
 
   setupAddressCluster(engine);
   setupAlarms(engine);

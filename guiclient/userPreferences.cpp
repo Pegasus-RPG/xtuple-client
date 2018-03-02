@@ -121,6 +121,12 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
   _translations->setEnabled(_privileges->check("MaintainTranslations"));
   _dictionaries->setEnabled(_privileges->check("MaintainDictionaries"));
 
+  _deprecationLevel->append(1, tr("Debug"),    "debug");
+  _deprecationLevel->append(2, tr("Info"),     "info");
+  _deprecationLevel->append(3, tr("Warning"),  "warning");
+  _deprecationLevel->append(4, tr("Critical"), "critical");
+  _deprecationLevel->append(5, tr("Fatal"),    "fatal");
+
   sPopulate();
   adjustSize();
 }
@@ -288,6 +294,7 @@ void userPreferences::sPopulate()
     _warehouseGroup->hide();
     
   _debug->setChecked(_pref->boolean("EnableScriptDebug"));
+  _deprecationLevel->setCode(_pref->value("DeprecationLevel"));
 
   sFillList();
   sFillWarehouseList();
@@ -359,6 +366,7 @@ void userPreferences::sSave(bool close)
   _pref->set("AlarmSysmsgDefault", _alarmSysmsg->isChecked());
 
   _pref->set("EnableScriptDebug", _debug->isChecked());
+  _pref->set("DeprecationLevel",  _deprecationLevel->code());
 
   if (_currentUser->isChecked())
   {

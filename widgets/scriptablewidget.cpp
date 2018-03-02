@@ -62,7 +62,7 @@ QScriptEngine *ScriptableWidget::engine()
 
     setupQt(_engine);
     setupInclude(_engine);
-    setupScriptApi(_engine);
+    setupScriptApi(_engine, _x_preferences);
     setupWidgetsScriptApi(_engine, _guiClientInterface);
     QScriptValue mywidget = _engine->newQObject(w);
     _engine->globalObject().setProperty("mywidget",  mywidget);

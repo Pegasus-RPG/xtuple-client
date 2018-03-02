@@ -11,8 +11,9 @@
 #ifndef __SETUPSCRIPTAPI_H__
 #define __SETUPSCRIPTAPI_H__
 
+class Preferences;
 class QScriptEngine;
 
-void setupScriptApi(QScriptEngine *engine);
+void setupScriptApi(QScriptEngine *engine, Preferences *pPreferences = 0);
 
 #endif
