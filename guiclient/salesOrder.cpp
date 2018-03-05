@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -47,6 +47,9 @@
 #include "purchaseOrder.h"
 #include "workOrder.h"
 #include "itemAvailabilityWorkbench.h"
+
+// why did someone invent modetype & modestate for scripting vs. rewriting the macros below or passing _mode?
+enum OrderModeType  { QuoteMode = 1, OrderMode = 2 };
 
 #define cNewQuote   (0x20 | cNew)
 #define cEditQuote  (0x20 | cEdit)
@@ -317,8 +320,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     {
       setObjectName("salesOrder new");
       _mode = cNew;
-      emit newModeType(2);
-      emit newModeState(1);
+      emit newModeType(OrderMode);
+      emit newModeState(cNew);
 
       _cust->setType(CLineEdit::ActiveCustomers);
       _salesRep->setType(XComboBox::SalesRepsActive);
@@ -333,8 +336,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     else if (param.toString() == "newQuote")
     {
       _mode = cNewQuote;
-      emit newModeType(1);
-      emit newModeState(1);
+      emit newModeType(QuoteMode);
+      emit newModeState(cNew);
 
       _cust->setType(CLineEdit::ActiveCustomersAndProspects);
       _salesRep->setType(XComboBox::SalesRepsActive);
@@ -364,8 +367,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      emit newModeType(2);
-      emit newModeState(2);
+      emit newModeType(OrderMode);
+      emit newModeState(cEdit);
 
       if (_metrics->boolean("AlwaysShowSaveAndAdd"))
         _saveAndAdd->setEnabled(true);
@@ -381,8 +384,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     else if (param.toString() == "editQuote")
     {
       _mode = cEditQuote;
-      emit newModeType(1);
-      emit newModeState(2);
+      emit newModeType(QuoteMode);
+      emit newModeState(cEdit);
 
       _cust->setType(CLineEdit::AllCustomersAndProspects);
       _action->setEnabled(false);
@@ -420,8 +423,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     else if (param.toString() == "viewQuote")
     {
       _mode = cViewQuote;
-      emit newModeType(1);
-      emit newModeState(3);
+      emit newModeType(QuoteMode);
+      emit newModeState(cView);
 
       _orderNumber->setEnabled(false);
       _packDate->setEnabled(false);
@@ -681,11 +684,11 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
 int salesOrder::modeState() const
 {
   if (ISNEW(_mode))
-    return 1;
+    return cNew;
   else if (ISEDIT(_mode))
-    return 2;
+    return cEdit;
   else
-    return 3;
+    return cView;
 }
 
 /** \return one of isOrder, isQuote, ...
@@ -693,9 +696,9 @@ int salesOrder::modeState() const
 int salesOrder::modeType() const
 {
   if (ISQUOTE(_mode))
-    return 1;
+    return QuoteMode;
   else
-    return 2;
+    return OrderMode;
 }
 
 void salesOrder::sSave()
@@ -1685,8 +1688,8 @@ void salesOrder::sHandleOrderNumber()
       if (query.first())
       {
         _mode      = cEdit;
-        emit newModeType(2);
-        emit newModeState(2);
+        emit newModeType(OrderMode);
+        emit newModeState(cEdit);
         _soheadid  = query.value("cohead_id").toInt();
         populate();
         _orderNumber->setEnabled(false);
@@ -1756,8 +1759,8 @@ void salesOrder::sHandleOrderNumber()
         {
           _orderNumber->setText(orderNumber);
           _mode = cNewQuote;
-          emit newModeType(1);
-          emit newModeState(1);
+          emit newModeType(QuoteMode);
+          emit newModeState(cNew);
           _orderNumber->setEnabled(false);
         }
       }
@@ -2557,12 +2560,10 @@ void salesOrder::sDelete()
 
 void salesOrder::populate()
 {
-  if ( (_mode == cNew) || (_mode == cEdit) || (_mode == cView) )
+  if (ISORDER(_mode))
   {
     XSqlQuery so;
-    if (ISEDIT(_mode)
-        && !_lock.acquire(ISORDER(_mode) ? "cohead" : "quhead", _soheadid,
-                          AppLock::Interactive))
+    if (ISEDIT(_mode) && ! _lock.acquire("cohead", _soheadid, AppLock::Interactive))
     {
       setViewMode();
     }
@@ -2749,12 +2750,10 @@ void salesOrder::populate()
       return;
     }
   }
-  else if (  (_mode == cNewQuote) ||(_mode == cEditQuote) || (_mode == cViewQuote) )
+  else if (ISQUOTE(_mode))
   {
     XSqlQuery qu;
-    if (ISEDIT(_mode)
-        && !_lock.acquire(ISORDER(_mode) ? "cohead" : "quhead", _soheadid,
-                          AppLock::Interactive))
+    if (ISEDIT(_mode) && ! _lock.acquire("quhead", _soheadid, AppLock::Interactive))
     {
       setViewMode();
     }
@@ -3303,8 +3302,8 @@ void salesOrder::clear()
   if ( (_mode == cEdit) || (_mode == cNew) )
   {
     _mode = cNew;
-    emit newModeType(2);
-    emit newModeState(1);
+    emit newModeType(OrderMode);
+    emit newModeState(cNew);
     setObjectName("salesOrder new");
     _orderDateCache = omfgThis->dbDate();
     _orderDate->setDate(_orderDateCache, true);
@@ -3312,8 +3311,8 @@ void salesOrder::clear()
   else if ( (_mode == cEditQuote) || (_mode == cNewQuote) )
   {
     _mode = cNewQuote;
-    emit newModeType(1);
-    emit newModeState(1);
+    emit newModeType(QuoteMode);
+    emit newModeState(cNew);
   }
 
   populateOrderNumber();
@@ -3521,9 +3520,9 @@ void salesOrder::setViewMode()
   _paymentInformation->removeTab(_paymentInformation->indexOf(_cashPage));
   _paymentInformation->removeTab(_paymentInformation->indexOf(_creditCardPage));
 
-  _mode = cView;
-  emit newModeType(2);
-  emit newModeState(3);
+  _mode = ISORDER(_mode) ? cView : cViewQuote;
+  emit newModeType(ISORDER(_mode) ? OrderMode : QuoteMode);
+  emit newModeState(cView);
   setObjectName(QString("salesOrder view %1").arg(_soheadid));
 
   _orderNumber->setEnabled(false);
