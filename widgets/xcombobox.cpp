@@ -1385,6 +1385,13 @@ void XComboBox::populate(XSqlQuery pQuery, int pSelected)
     } while (pQuery.next());
 
   setId(selected);
+
+  if (count() && selected == -1 && !allowNull())
+  {
+    updateMapperData();
+    emit newID(id());
+    emit valid(isValid());
+  }
 }
 
 void XComboBox::populate(const QString & pSql, int pSelected)
