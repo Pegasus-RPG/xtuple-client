@@ -71,15 +71,6 @@ enum SetResponse address::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("addr_id", &valid);
-  if (valid)
-  {
-    _captive = true;
-    _addr->setId(param.toInt());
-    sPopulate();
-    _charass->setId(_addr->id());
-  }
-
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -105,6 +96,15 @@ enum SetResponse address::set(const ParameterList &pParams)
     }
     else if (param.toString() == "view")
       setViewMode();
+  }
+
+  param = pParams.value("addr_id", &valid);
+  if (valid)
+  {
+    _captive = true;
+    _addr->setId(param.toInt());
+    sPopulate();
+    _charass->setId(_addr->id());
   }
 
   return NoError;
@@ -180,7 +180,7 @@ void address::reject()
 
 void address::sPopulate()
 {
-  if (!_lock.acquire("addr", _addrid, AppLock::Interactive))
+  if (_mode == cEdit && !_lock.acquire("addr", _addrid, AppLock::Interactive))
     setViewMode();
 
   _close = false;
@@ -459,4 +459,13 @@ void address::setVisible(bool visible)
     close();
   else
     XDialog::setVisible(visible);
+}
+
+void address::done(int result)
+{
+  if (!_lock.release())
+    ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                         _lock.lastError(), __FILE__, __LINE__);
+
+  XDialog::done(result);
 }

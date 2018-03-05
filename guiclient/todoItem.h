@@ -38,6 +38,7 @@ protected slots:
     virtual void	sHandleIncident();
     virtual void	sPopulate();
     virtual void	sSave();
+    virtual void        done(int);
 
     virtual void        setVisible(bool);
 

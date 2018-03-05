@@ -140,13 +140,6 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("ophead_id", &valid);
-  if (valid)
-  {
-    _opheadid = param.toInt();
-    populate();
-  }
-
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -194,6 +187,13 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
     }
     else if (param.toString() == "view")
       setViewMode();
+  }
+
+  param = pParams.value("ophead_id", &valid);
+  if (valid)
+  {
+    _opheadid = param.toInt();
+    populate();
   }
 
   param = pParams.value("crmacct_id", &valid);
@@ -414,7 +414,7 @@ bool opportunity::save(bool partial)
 
 void opportunity::populate()
 { 
-  if (!_lock.acquire("ophead", _opheadid, AppLock::Interactive))
+  if (_mode == cEdit && !_lock.acquire("ophead", _opheadid, AppLock::Interactive))
     setViewMode();
 
   _close = false;
@@ -1224,4 +1224,13 @@ void opportunity::setVisible(bool visible)
     close();
   else
     XDialog::setVisible(visible);
+}
+
+void opportunity::done(int result)
+{
+  if (!_lock.release())
+    ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                         _lock.lastError(), __FILE__, __LINE__);
+
+  XDialog::done(result);
 }

@@ -274,6 +274,45 @@ enum SetResponse contact::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("mode", &valid);
+  if (valid)
+  {
+    if (param.toString() == "new")
+    {
+      _data->_mode = cNew;
+      XSqlQuery getq;
+      getq.exec("SELECT fetchNextNumber('ContactNumber') AS result;");
+      getq.first();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Number"),
+                               getq, __FILE__, __LINE__))
+        return UndefinedError;
+      _number->setText(getq.value("result").toString());
+      _contact->setNumber(_number->text());
+      _contact->setFirst("Contact" + QDateTime::currentDateTime().toString());
+      int cntctSaveResult = _contact->save(AddressCluster::CHANGEONE);
+      if (cntctSaveResult < 0)
+      {
+        ErrorReporter::error(QtCriticalMsg, this, tr("Saving Placeholder"),
+                             tr("<p>There was an error creating a new contact (%). "
+                                "Check the database server log for errors.")
+                             .arg(cntctSaveResult), __FILE__, __LINE__);
+        return UndefinedError;
+      }
+      _comments->setId(_contact->id());
+      _documents->setId(_contact->id());
+      _charass->setId(_contact->id());
+      _contact->setFirst("");
+      _contact->setOwnerUsername(omfgThis->username());
+      _tabWidget->setTabEnabled(_tabWidget->indexOf(_usesTab), false);
+    }
+    else if (param.toString() == "edit")
+    {
+      _data->_mode = cEdit;
+    }
+    else if (param.toString() == "view")
+      setViewMode();
+  }
+
   param = pParams.value("cntct_id", &valid);
   if (valid)
   {
@@ -316,45 +355,6 @@ enum SetResponse contact::set(const ParameterList &pParams)
   param = pParams.value("addr_country", &valid);
   if (valid)
     _contact->addressWidget()->setCountry(param.toString());
-
-  param = pParams.value("mode", &valid);
-  if (valid)
-  {
-    if (param.toString() == "new")
-    {
-      _data->_mode = cNew;
-      XSqlQuery getq;
-      getq.exec("SELECT fetchNextNumber('ContactNumber') AS result;");
-      getq.first();
-      if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Number"),
-                               getq, __FILE__, __LINE__))
-        return UndefinedError;
-      _number->setText(getq.value("result").toString());
-      _contact->setNumber(_number->text());
-      _contact->setFirst("Contact" + QDateTime::currentDateTime().toString());
-      int cntctSaveResult = _contact->save(AddressCluster::CHANGEONE);
-      if (cntctSaveResult < 0)
-      {
-        ErrorReporter::error(QtCriticalMsg, this, tr("Saving Placeholder"),
-                             tr("<p>There was an error creating a new contact (%). "
-                                "Check the database server log for errors.")
-                             .arg(cntctSaveResult), __FILE__, __LINE__);
-        return UndefinedError;
-      }
-      _comments->setId(_contact->id());
-      _documents->setId(_contact->id());
-      _charass->setId(_contact->id());
-      _contact->setFirst("");
-      _contact->setOwnerUsername(omfgThis->username());
-      _tabWidget->setTabEnabled(_tabWidget->indexOf(_usesTab), false);
-    }
-    else if (param.toString() == "edit")
-    {
-      _data->_mode = cEdit;
-    }
-    else if (param.toString() == "view")
-      setViewMode();
-  }
 
   return NoError;
 }
@@ -597,7 +597,7 @@ void contact::sSave()
 
 void contact::sPopulate()
 {
-  if (!_data->_lock.acquire("cntct", _cntctid, AppLock::Interactive))
+  if (_data->_mode == cEdit && !_data->_lock.acquire("cntct", _cntctid, AppLock::Interactive))
     setViewMode();
 
   _data->_close = false;
@@ -1300,4 +1300,13 @@ void contact::setVisible(bool visible)
     close();
   else
     XDialog::setVisible(visible);
+}
+
+void contact::done(int result)
+{
+  if (!_data->_lock.release())
+    ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                         _data->_lock.lastError(), __FILE__, __LINE__);
+
+  XDialog::done(result);
 }

@@ -56,6 +56,7 @@ public slots:
     virtual void sNewWorkOrder();
     virtual void sNumberChanged();
     virtual void sHandleButtons(bool valid = false);
+    virtual void done(int);
 
     virtual void setVisible(bool);
 

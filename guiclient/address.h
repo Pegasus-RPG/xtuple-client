@@ -51,6 +51,7 @@ protected slots:
     virtual void sViewVendor();
     virtual void sViewVendorAddress();
     virtual void sViewWarehouse();
+    virtual void done(int);
 
     virtual void setVisible(bool);
 

@@ -188,27 +188,6 @@ enum SetResponse project::set(const ParameterList &pParams)
   if (valid)
     _assignedTo->setUsername(param.toString());
 
-  param = pParams.value("prj_id", &valid);
-  if (valid)
-  {
-    _prjid = param.toInt();
-    populate();
-    _charass->setId(_prjid);
-  }
-
-  param = pParams.value("crmacct_id", &valid);
-  if (valid)
-  {
-    _crmacct->setId(param.toInt());
-    _crmacct->setEnabled(false);
-  }
-
-  param = pParams.value("cntct_id", &valid);
-  if (valid)
-  {
-    _cntct->setId(param.toInt());
-  }
-
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -276,6 +255,27 @@ enum SetResponse project::set(const ParameterList &pParams)
     }
     else if (param.toString() == "view")
       setViewMode();
+  }
+
+  param = pParams.value("prj_id", &valid);
+  if (valid)
+  {
+    _prjid = param.toInt();
+    populate();
+    _charass->setId(_prjid);
+  }
+
+  param = pParams.value("crmacct_id", &valid);
+  if (valid)
+  {
+    _crmacct->setId(param.toInt());
+    _crmacct->setEnabled(false);
+  }
+
+  param = pParams.value("cntct_id", &valid);
+  if (valid)
+  {
+    _cntct->setId(param.toInt());
   }
     
   return NoError;
@@ -456,7 +456,7 @@ void project::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
 
 void project::populate()
 {
-  if (!_lock.acquire("prj", _prjid, AppLock::Interactive))
+  if (_mode == cEdit && !_lock.acquire("prj", _prjid, AppLock::Interactive))
     setViewMode();
 
   _close = false;
@@ -1260,4 +1260,13 @@ void project::setVisible(bool visible)
     close();
   else
     XDialog::setVisible(visible);
+}
+
+void project::done(int result)
+{
+  if (!_lock.release())
+    ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                         _lock.lastError(), __FILE__, __LINE__);
+
+  XDialog::done(result);
 }
