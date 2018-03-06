@@ -609,17 +609,27 @@ void contact::sPopulate()
 
     contact *w = qobject_cast<contact*>(widget);
 
-    if (w && w->id()==_cntctid)
+    if (w && w != this && w->id()==_cntctid)
     {
-      w->setFocus();
-
-      if (omfgThis->showTopLevel())
+      // detect "i'm my own grandpa"
+      QObject *p;
+      for (p = parent(); p && p != w ; p = p->parent())
+        ; // do nothing
+      if (p == w)
       {
-        w->raise();
-        w->activateWindow();
+        QMessageBox::warning(this, tr("Cannot Open Recursively"),
+                             tr("This contact is already open and cannot be "
+                                "raised. Please close windows to get to it."));
+        _data->_close = true;
+      } else if (p) {
+        w->setFocus();
+        if (omfgThis->showTopLevel())
+        {
+          w->raise();
+          w->activateWindow();
+        }
+        _data->_close = true;
       }
-
-      _data->_close = true;
       break;
     }
   }
