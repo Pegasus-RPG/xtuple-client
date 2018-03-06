@@ -58,6 +58,7 @@ public slots:
     virtual void sViewAR();
     virtual void sAssigned();
     virtual void sNewCharacteristic();
+    virtual void done(int);
 
     virtual void setVisible(bool);
 

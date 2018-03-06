@@ -323,7 +323,7 @@ void todoItem::sSave()
 
 void todoItem::sPopulate()
 {
-  if (!_lock.acquire("todoitem", _todoitemid, AppLock::Interactive))
+  if (_mode == cEdit && !_lock.acquire("todoitem", _todoitemid, AppLock::Interactive))
     setViewMode();
 
   _close = false;
@@ -448,4 +448,13 @@ void todoItem::setVisible(bool visible)
     close();
   else
     XDialog::setVisible(visible);
+}
+
+void todoItem::done(int result)
+{
+  if (!_lock.release())
+    ErrorReporter::error(QtCriticalMsg, this, tr("Locking Error"),
+                         _lock.lastError(), __FILE__, __LINE__);
+
+  XDialog::done(result);
 }
