@@ -49,9 +49,6 @@ XMainWindow::XMainWindow(QWidget * parent, Qt::WindowFlags flags)
     ScriptablePrivate(parent, this),
     _private(0)
 {
-  if(!parent || !parent->isModal())
-    setParent(omfgThis);
-
   _showMe = new QAction(this);
   _showMe->setShortcutContext(Qt::ApplicationShortcut);
   _showMe->setText(windowTitle());
@@ -67,8 +64,6 @@ XMainWindow::XMainWindow(QWidget * parent, const char * name, Qt::WindowFlags fl
 {
   if(name)
     setObjectName(name);
-  if(!parent || !parent->isModal())
-    setParent(omfgThis);
 
   _showMe = new QAction(this);
   _showMe->setShortcutContext(Qt::ApplicationShortcut);
