@@ -309,7 +309,10 @@ bool displayPrivate::setParams(ParameterList &params)
       for (int j = 0; j < param.toStringList().count(); j++)
         list << QString(":char%1_%2").arg(columnid.toString()).arg(j);
 
-      clauses.append(QString("charass_alias%1.charass_value IN (%2) ").arg(columnid.toString()).arg(list.join(",")));
+      if (list.size())
+        clauses.append(QString("charass_alias%1.charass_value IN (%2) ").arg(columnid.toString()).arg(list.join(",")));
+      else
+        clauses.append("FALSE");
     }
   }
   // Handle date based sections of clause
