@@ -12,6 +12,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
+#include "errorReporter.h"
 #include "guiclient.h"
 
 forwardUpdateAccounts::forwardUpdateAccounts(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
@@ -74,5 +75,10 @@ void forwardUpdateAccounts::sUpdate()
               " WHERE (NOT COALESCE(company_external,false));");
   
   forwardUpdate.exec();
+
+  if (!ErrorReporter::error(QtCriticalMsg, this, tr("Error updating accounts"),
+                            forwardUpdate, __FILE__, __LINE__))
+    QMessageBox::information(this, tr("Accounts Updated"),
+                             tr("All accounts were successfully updated."));
 }
 
