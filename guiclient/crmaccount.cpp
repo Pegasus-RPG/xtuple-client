@@ -351,6 +351,21 @@ void crmaccount::sClose()
       return;
     }
 
+    if (_metrics->boolean("LotSerialControl"))
+    {
+      XSqlQuery deleteReg;
+      deleteReg.prepare("DELETE FROM lsreg "
+                        "      WHERE lsreg_crmacct_id=:crmacct_id;");
+      deleteReg.bindValue(":crmacct_id", _crmacctId);
+      deleteReg.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting Registrations from Account"),
+                               deleteReg, __FILE__, __LINE__))
+      {
+        rollback.exec();
+        return;
+      }
+    }
+
     // TODO: handle _username
     // can't delete in alpha order because of dependencies
     struct {
