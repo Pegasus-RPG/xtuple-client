@@ -896,8 +896,8 @@ OrderList::OrderList(QWidget *pParent, Qt::WindowFlags pFlags) :
   resize( QSize(490, 390).expandedTo(minimumSizeHint()) );
 
   QTreeWidgetItem *headerItem = _listTab->headerItem();
-  headerItem->setText(1, tr("   Order Type"));
-  headerItem->setText(2, tr("   Status"));
+  headerItem->setText(1, tr("Order Type"));
+  headerItem->setText(2, tr("Status"));
 
   _listTab->addColumn(tr("From"), -1, Qt::AlignLeft, true, "orderhead_from");
   _listTab->addColumn(tr("To"),   -1, Qt::AlignLeft, true, "orderhead_to");
@@ -942,8 +942,8 @@ OrderSearch::OrderSearch(QWidget *pParent, Qt::WindowFlags pFlags) :
 {
   setAttribute(Qt::WA_DeleteOnClose, false);
   QTreeWidgetItem *headerItem = _listTab->headerItem();
-  headerItem->setText(1, tr("   Order Type"));
-  headerItem->setText(2, tr("   Status"));
+  headerItem->setText(1, tr("Order Type"));
+  headerItem->setText(2, tr("Status"));
 
   resize( QSize(490, 390).expandedTo(minimumSizeHint()) );
 
