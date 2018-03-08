@@ -1136,6 +1136,8 @@ void XTreeWidget::sortItems(int column, Qt::SortOrder order)
 
   for (int column=0; column<columnCount(); column++)
   {
+    if (!QRegExp("[\\d ][\\d ] ").exactMatch(headerItem()->text(column).left(3)))
+      headerItem()->setText(column, "   " + headerItem()->text(column));
     headerItem()->setIcon(column, QIcon());
     headerItem()->setText(column, "   " + headerItem()->text(column).mid(3));
   }
