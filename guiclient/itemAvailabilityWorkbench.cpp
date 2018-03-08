@@ -191,6 +191,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _itemMaster->findChild<QWidget*>("_sold")->setEnabled(false);
   _itemMaster->findChild<QWidget*>("_itemGroup")->setEnabled(false);
   _itemMaster->findChild<QWidget*>("_weightGroup")->setEnabled(false);
+  _itemMaster->findChild<QWidget*>("_remarksTab")->findChild<Comments*>("_comments")->setReadOnly(true);
   
   connect(_tab, SIGNAL(currentChanged(int)), this, SLOT(sFillList()));
   connect(_availabilityButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
