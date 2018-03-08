@@ -182,6 +182,8 @@ void group::reject()
     {
       case QMessageBox::Yes:
         sSave();
+        if (_modified)
+          sCancel();
         break;
 
       case QMessageBox::No:
@@ -236,10 +238,7 @@ void group::sSave()
      ;
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Role"), errors))
-  {
-    sCancel();
     return;
-  }
 
   groupSave.prepare( "UPDATE grp "
              "   SET grp_name=:grp_name,"
