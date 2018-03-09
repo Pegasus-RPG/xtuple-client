@@ -214,6 +214,11 @@ bool cashReceipt::isOverApplied()
   return _overapplied;
 }
 
+void cashReceipt::languageChange()
+{
+  retranslateUi(this);
+}
+
 void cashReceipt::activateButtons(bool c)
 {
   _save->setEnabled(c);
@@ -942,7 +947,7 @@ bool cashReceipt::save(bool partial)
                                  cardproc->errorMsg());
 
       _save->setEnabled(true);
-      _postReceipt->isChecked(true);
+      _postReceipt->setChecked(true);
 
       if (returnVal < 0)
         return false;
