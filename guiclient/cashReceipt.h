@@ -25,6 +25,15 @@ public:
     cashReceipt(QWidget* parent = 0, const char* name = 0, Qt::WindowFlags fl = Qt::Window);
     ~cashReceipt();
     Q_INVOKABLE virtual bool save( bool partial );
+    Q_INVOKABLE static  int id();
+    Q_INVOKABLE static  int setId( int cashrcptId );
+    Q_INVOKABLE static  int ccpayId();
+    Q_INVOKABLE static  int setCcpayId( int ccpayId );
+    Q_INVOKABLE static  int mode();
+    Q_INVOKABLE static  int transType();
+    Q_INVOKABLE static  bool isCcEdit();
+    Q_INVOKABLE static  bool isPosted();
+    Q_INVOKABLE static  bool isOverApplied();
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
@@ -66,15 +75,15 @@ protected slots:
 signals:
     void populated();
 
-
 private:
+    int     _cashrcptid;
+    int     _ccpayid;
     int     _mode;
     int     _transType;
-    int     _cashrcptid;
     bool    _ccEdit;
-    QString _origFunds;
     bool    _overapplied;
     bool    _posted;
+    QString _origFunds;
     QDate   _mindate;
 
 };
