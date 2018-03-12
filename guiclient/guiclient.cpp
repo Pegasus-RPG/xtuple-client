@@ -913,7 +913,7 @@ void GUIClient::sReportError(const QString &pError)
     */
 void GUIClient::sTick()
 {
-  XSqlQuery tickle("SELECT CURRENT_DATE AS dbdate, hasEvents() AS events;" );
+  XSqlQuery tickle("SELECT CURRENT_DATE AS dbdate, hasEvents() AS events, processAlarms();" );
   if (tickle.first())
   {
     _dbDate = tickle.value("dbdate").toDate();
