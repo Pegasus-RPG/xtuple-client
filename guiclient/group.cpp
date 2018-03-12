@@ -182,6 +182,8 @@ void group::reject()
     {
       case QMessageBox::Yes:
         sSave();
+        if (_modified)
+          sCancel();
         break;
 
       case QMessageBox::No:
