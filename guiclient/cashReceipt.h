@@ -26,7 +26,6 @@ public:
     ~cashReceipt();
     Q_INVOKABLE virtual bool save( bool partial );
     Q_INVOKABLE virtual int  id();
-    Q_INVOKABLE virtual int  setId( int cashrcptId );
     Q_INVOKABLE virtual int  ccpayId();
     Q_INVOKABLE virtual int  setCcpayId( int ccpayId );
     Q_INVOKABLE virtual int  mode();

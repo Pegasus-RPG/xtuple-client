@@ -170,13 +170,6 @@ int cashReceipt::id()
   return _cashrcptid;
 }
 
-int cashReceipt::setId(int cashrcptId)
-{
-  _cashrcptid = cashrcptId;
-
-  return _cashrcptid;
-}
-
 int cashReceipt::ccpayId()
 {
   return _ccpayid;
