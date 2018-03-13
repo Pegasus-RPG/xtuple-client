@@ -44,6 +44,20 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _shipTo->setNameVisible(false);
   _shipTo->setDescriptionVisible(false);
 
+  _disposition->append(1, tr("Credit"),     "C");
+  _disposition->append(2, tr("Return"),     "R");
+  _disposition->append(3, tr("Replace"),    "P");
+  _disposition->append(4, tr("Service"),    "V");
+  _disposition->append(5, tr("Substitute"), "M");
+
+  _timing->append(1, tr("Immediately"),  "I");
+  _timing->append(2, tr("Upon Receipt"), "R");
+
+  _creditBy->append(1, tr("None"),         "N");
+  _creditBy->append(2, tr("Sales Credit"), "M");
+  _creditBy->append(3, tr("Cash Payment"), "K");
+  _creditBy->append(4, tr("Credit Card"),  "C");
+
   connect(_copyToShipto, SIGNAL(clicked()), this, SLOT(sCopyToShipto()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -142,7 +156,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   }
 
   if (! _metrics->boolean("CCAccept"))
-    _creditBy->removeItem(3);
+    _creditBy->removeItem(4);
 
   _printRA->setChecked(_metrics->boolean("DefaultPrintRAOnSave"));
 
@@ -221,39 +235,9 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
         return UndefinedError;
       }
 
-      metric = _metrics->value("DefaultRaDisposition");
-      if (metric == "C")
-        _disposition->setCurrentIndex(0);
-      else if (metric == "R")
-        _disposition->setCurrentIndex(1);
-      else if (metric == "P")
-        _disposition->setCurrentIndex(2);
-      else if (metric == "V")
-        _disposition->setCurrentIndex(3);
-      else if (metric == "M")
-        _disposition->setCurrentIndex(4);
-      else
-        _disposition->setCurrentIndex(5);
-
-      metric = _metrics->value("DefaultRaTiming");
-      if (metric == "I")
-        _timing->setCurrentIndex(0);
-      else if (metric == "R")
-        _timing->setCurrentIndex(1);
-      else
-        _timing->setCurrentIndex(2);
-
-      metric = _metrics->value("DefaultRaCreditMethod");
-      if (metric == "N")
-        _creditBy->setCurrentIndex(0);
-      else if (metric == "M")
-        _creditBy->setCurrentIndex(1);
-      else if (metric == "K")
-        _creditBy->setCurrentIndex(2);
-      else if (metric == "C")
-        _creditBy->setCurrentIndex(3);
-      else
-        _creditBy->setCurrentIndex(4);
+      _disposition->setCode(_metrics->value("DefaultRaDisposition"));
+      _timing->setCode(_metrics->value("DefaultRaTiming"));
+      _creditBy->setCode(_metrics->value("DefaultRaCreditMethod"));
 
       connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo()));
       connect(_cust, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
@@ -393,27 +377,20 @@ void returnAuthorization::setNumber()
 bool returnAuthorization::sSave(bool partial)
 {
   XSqlQuery returnSave;
-  const char *dispositionTypes[] = { "C", "R", "P", "V", "M", "" };
-  const char *timingTypes[] = { "I", "R", "" };
-  const char *creditMethods[] = { "N", "M", "K", "C", "" };
-
-  QString disposition = QString(dispositionTypes[_disposition->currentIndex()]);
-  QString timing = QString(timingTypes[_timing->currentIndex()]);
-  QString creditBy = QString(creditMethods[_creditBy->currentIndex()]);
 
   QList<GuiErrorCheck> errors;
   errors
-  << GuiErrorCheck((!partial && disposition.isEmpty()), _disposition,
+  << GuiErrorCheck((!partial && _disposition->code().isEmpty()), _disposition,
                    tr("<p>You must enter a Disposition."))
-  << GuiErrorCheck((!partial && timing.isEmpty()), _timing,
+  << GuiErrorCheck((!partial && _timing->code().isEmpty()), _timing,
                    tr("<p>You must enter a Credit/Ship Timing."))
-  << GuiErrorCheck((!partial && creditBy.isEmpty()), _creditBy,
+  << GuiErrorCheck((!partial && _creditBy->code().isEmpty()), _creditBy,
                    tr("<p>You must enter a Credit Method."))
   << GuiErrorCheck(!partial && _authNumber->text().isEmpty(), _authNumber,
                    tr("You must enter a valid Authorization Number."))
   << GuiErrorCheck(!_authDate->isValid(), _authDate,
                    tr("You must enter a valid Authorization Date."))
-  << GuiErrorCheck((!partial && (disposition == "C") && (creditBy == "N")), _creditBy,
+  << GuiErrorCheck((!partial && (_disposition->code() == "C") && (_creditBy->code() == "N")), _creditBy,
                    tr("<p>You may not enter a Disposition of Credit "
                       "and a Credit By of None."))
   << GuiErrorCheck((! _miscCharge->isZero() && (!_miscChargeAccount->isValid())), _miscChargeAccount,
@@ -479,12 +456,12 @@ bool returnAuthorization::sSave(bool partial)
     returnSave.bindValue(":rahead_taxzone_id", _taxzone->id());
   if (_rsnCode->id() > 0)
     returnSave.bindValue(":rahead_rsncode_id", _rsnCode->id());
-  if (!disposition.isEmpty())
-    returnSave.bindValue(":rahead_disposition", disposition);
-  if (!timing.isEmpty())
-    returnSave.bindValue(":rahead_timing", timing);
-  if (!creditBy.isEmpty())
-    returnSave.bindValue(":rahead_creditmethod", creditBy);
+  if (!_disposition->code().isEmpty())
+    returnSave.bindValue(":rahead_disposition", _disposition->code());
+  if (!_timing->code().isEmpty())
+    returnSave.bindValue(":rahead_timing", _timing->code());
+  if (!_creditBy->code().isEmpty())
+    returnSave.bindValue(":rahead_creditmethod", _creditBy->code());
   if (_origso->isValid())
     returnSave.bindValue(":rahead_orig_cohead_id", _origso->id());
   if (_newso->isValid())
@@ -1279,19 +1256,9 @@ void returnAuthorization::populate()
     if (!rahead.value("rahead_rsncode_id").isNull() && rahead.value("rahead_rsncode_id").toInt() != -1)
       _rsnCode->setId(rahead.value("rahead_rsncode_id").toInt());
 
-    if (rahead.value("rahead_timing").toString() == "I")
-      _timing->setCurrentIndex(0);
-    else
-      _timing->setCurrentIndex(1);
+    _timing->setCode(rahead.value("rahead_timing").toString());
 
-    if (rahead.value("rahead_creditmethod").toString() == "N")
-      _creditBy->setCurrentIndex(0);
-    else if (rahead.value("rahead_creditmethod").toString() == "M")
-      _creditBy->setCurrentIndex(1);
-    else if (rahead.value("rahead_creditmethod").toString() == "K")
-      _creditBy->setCurrentIndex(2);
-    else if (rahead.value("rahead_creditmethod").toString() == "C")
-      _creditBy->setCurrentIndex(3);
+    _creditBy->setCode(rahead.value("rahead_creditmethod").toString());
 
     _ignoreSoSignals = true;
     _origso->setId(rahead.value("rahead_orig_cohead_id").toInt());
@@ -1365,16 +1332,7 @@ void returnAuthorization::populate()
     }
 
     _ignoreSoSignals = true;
-    if (rahead.value("rahead_disposition").toString() == "C")
-      sDispositionChanged();
-    else if (rahead.value("rahead_disposition").toString() == "R")
-      _disposition->setCurrentIndex(1);
-    else if (rahead.value("rahead_disposition").toString() == "P")
-      _disposition->setCurrentIndex(2);
-    else if (rahead.value("rahead_disposition").toString() == "V")
-      _disposition->setCurrentIndex(3);
-    else if (rahead.value("rahead_disposition").toString() == "M")
-      _disposition->setCurrentIndex(4);
+    _disposition->setCode(rahead.value("rahead_disposition").toString());
     _ignoreSoSignals = false;
     _saved = true;
     sFillList();
@@ -1516,25 +1474,25 @@ void returnAuthorization::sShipWhsChanged()
 void returnAuthorization::sDispositionChanged()
 {
   _new->setEnabled(_cust->isValid() ||
-              (_disposition->currentIndex() == 1 && _creditBy->currentIndex() == 0));
+              (_disposition->code() == "R" && _creditBy->code() == "N"));
 
   bool enableReceipt = _privileges->check("EnterReceipts") &&
-                      (_disposition->currentIndex() != 0);
+                      (_disposition->code() != "C");
 
   _receiveAll->setEnabled(enableReceipt);
   _postReceipts->setEnabled(enableReceipt);
 
-  if (_disposition->currentIndex() == 0)
+  if (_disposition->code() == "C")
   {
-    _timing->setCurrentIndex(0);
+    _timing->setCode("I");
     _timing->setEnabled(false);
-    if (_creditBy->currentIndex() == 0)
-      _creditBy->setCurrentIndex(1);
+    if (_creditBy->code() == "N")
+      _creditBy->setCode("M");
   }
   else
     _timing->setEnabled(true);
 
-  _refund->setEnabled(_creditBy->currentIndex() == 3);
+  _refund->setEnabled(_creditBy->code() == "C");
 
   if (!_ignoreSoSignals)
   {
@@ -1547,17 +1505,17 @@ void returnAuthorization::sDispositionChanged()
 void returnAuthorization::sCreditByChanged()
 {
   _new->setEnabled(_cust->isValid() ||
-                   (_disposition->currentIndex() == 1 && _creditBy->currentIndex() == 0));
+                   (_disposition->code() == "R" && _creditBy->code() == "N"));
   
-  if (_creditBy->currentIndex() == 0 && _total->localValue() > 0)
+  if (_creditBy->code() == "N" && _total->localValue() > 0)
   {
     QMessageBox::information(this, tr("Credit By 'None' not allowed"),
                           tr("<p>This Return Authorization has authorized "
                              "credit amounts. You may not set the Credit By "
                              "to 'None' unless all credit amounts are zero."));
-    _creditBy->setCurrentIndex(1);
+    _creditBy->setCode("M");
   }
-  else if (_creditBy->currentIndex() == 0  || _total->localValue() == 0)
+  else if (_creditBy->code() == "N" || _total->localValue() == 0)
   {
     _currency->setEnabled(true);
     _miscChargeDescription->setEnabled(false);
@@ -1777,9 +1735,7 @@ void returnAuthorization::sRefund()
 
   XSqlQuery begin("BEGIN;");
 
-  bool _post = _disposition->currentIndex() == 0 &&
-               _timing->currentIndex() == 0 &&
-               _creditBy->currentIndex() == 3;
+  bool _post = _disposition->code() == "C" && _timing->code() == "I" && _creditBy->code() == "C";
 
   XSqlQuery cmq;
   cmq.prepare("SELECT createRaCreditMemo(:rahead_id,:post) AS result;");

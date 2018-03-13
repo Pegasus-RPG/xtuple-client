@@ -124,6 +124,10 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     QString           listSchemaName()       const;
     QString           listTableName()        const;
 
+    Q_INVOKABLE void  replace(int index, const QString &text, const QString &code);
+    Q_INVOKABLE void  setItemCode(int index, const QString &code);
+    Q_INVOKABLE void  setItemIcon(int index, const QIcon &icon);
+    Q_INVOKABLE void  setItemText(int index, const QString &text);
     virtual void      showPopup();
     QSize             sizeHint()             const;
 
