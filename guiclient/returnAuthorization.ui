@@ -291,36 +291,6 @@ to be bound by its terms.</comment>
          </item>
          <item row="0" column="7">
           <widget class="XComboBox" name="_disposition">
-           <item>
-            <property name="text">
-             <string>Credit</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Return</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Replace</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Service</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Substitute</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>[ no default ]</string>
-            </property>
-           </item>
           </widget>
          </item>
          <item row="1" column="6">
@@ -335,21 +305,6 @@ to be bound by its terms.</comment>
          </item>
          <item row="1" column="7">
           <widget class="XComboBox" name="_timing">
-           <item>
-            <property name="text">
-             <string>Immediately</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Upon Receipt</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>[ no default ]</string>
-            </property>
-           </item>
           </widget>
          </item>
          <item row="2" column="6">
@@ -367,31 +322,6 @@ to be bound by its terms.</comment>
            <property name="enabled">
             <bool>true</bool>
            </property>
-           <item>
-            <property name="text">
-             <string>None</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Sales Credit</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Cash Payment</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Credit Card</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>[ no default ]</string>
-            </property>
-           </item>
           </widget>
          </item>
          <item row="0" column="8">

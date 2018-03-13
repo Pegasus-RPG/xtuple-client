@@ -969,6 +969,12 @@ QString XComboBox::nullStr() const
   return _data->_nullStr;
 }
 
+void XComboBox::replace(int index, const QString &text, const QString &code)
+{
+  setItemText(index, text);
+  setItemCode(index, code);
+}
+
 void XComboBox::setDefaultCode(Defaults p)
 {
   _data->_default = p;
@@ -977,6 +983,21 @@ void XComboBox::setDefaultCode(Defaults p)
 void XComboBox::setFieldName(QString p)
 {
   _data->_fieldName = p;
+}
+
+void XComboBox::setItemCode(int index, const QString &code)
+{
+  _data->_codes.replace(index, code);
+}
+
+void XComboBox::setItemIcon(int index, const QIcon &icon)
+{
+  QComboBox::setItemIcon(index, icon);
+}
+
+void XComboBox::setItemText(int index, const QString &text)
+{
+  QComboBox::setItemText(index, text);
 }
 
 void XComboBox::setListDisplayFieldName(QString p)
