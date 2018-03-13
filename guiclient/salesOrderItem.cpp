@@ -2349,13 +2349,8 @@ void salesOrderItem::sDetermineAvailability( bool p )
         (!p) )
     return;
 
-  if (_qtyOrdered->toDouble() > 0)
-  {
-    if (!_item->isValid())
-      _item->setFocus();
-    else
-      sSave(true);
-  }
+  if (_partialsaved)
+    sSave(true);
 
   _availabilityLastItemid      = _item->id();
   _availabilityLastWarehousid  = _warehouse->id();
@@ -2390,8 +2385,16 @@ void salesOrderItem::sDetermineAvailability( bool p )
     params.append("qty", _availabilityQtyOrdered);
     params.append("origQtyOrd", _originalQtyOrd);
 
-    params.append("qtyOrdered",     0); // set to 0 to fix bug 29022 with
-    params.append("supplyOrderQty", 0); // only client-side changes
+    if (_partialsaved)
+    {
+      params.append("qtyOrdered", _qtyOrdered->toDouble());
+      params.append("supplyOrderQty", _supplyOrderType != "R" ? _supplyOrderQty->toDouble() : 0.0);
+    }
+    else
+    {
+      params.append("qtyOrdered", 0.0);
+      params.append("supplyOrderQty", 0.0);
+    }
 
     availability = mql.toQuery(params);
     if (availability.first())
@@ -3505,7 +3508,6 @@ void salesOrderItem::sHandleSupplyOrder()
       _woIndentedList->clear();
     }
   }  // end createSupplyOrder is not checked
-  sDetermineAvailability(true);
 }
 
 void salesOrderItem::sPopulateOrderInfo()
