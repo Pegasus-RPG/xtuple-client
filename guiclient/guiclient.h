@@ -18,8 +18,9 @@
 
 #include <xsqlquery.h>
 
-#include "../common/format.h"
+#include "format.h"
 #include "../hunspell/hunspell.hxx"
+#include "mqlhash.h"
 
 #include <xtuplecommon.h>
 #include <version.h>
@@ -236,6 +237,7 @@ class GUIClient : public QMainWindow
     QString _key;
     Q_INVOKABLE QString key() { return _key; }
 
+    MqlHash *_mqlhash;
     QString _singleWindow;
 
     Q_INVOKABLE        void  launchBrowser(QWidget*, const QString &);

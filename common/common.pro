@@ -42,6 +42,7 @@ SOURCES = applock.cpp              \
           login2.cpp \
           metrics.cpp \
           metricsenc.cpp \
+          mqlhash.cpp                   \
           qbase64encode.cpp \
           qmd5.cpp \
           shortcuts.cpp \
@@ -50,6 +51,7 @@ SOURCES = applock.cpp              \
           tarfile.cpp \
           xabstractmessagehandler.cpp \
           xbase32.cpp \
+          xcachedhash.cpp               \
           xtupleproductkey.cpp \
           xtNetworkRequestManager.cpp \
           xtsettings.cpp
@@ -69,6 +71,7 @@ HEADERS = applock.h              \
           login2.h \
           metrics.h \
           metricsenc.h \
+          mqlhash.h                     \
           qbase64encode.h \
           qmd5.h \
           shortcuts.h \
@@ -77,6 +80,7 @@ HEADERS = applock.h              \
           tarfile.h \
           xabstractmessagehandler.h \
           xbase32.h \
+          xcachedhash.h                 \
           xtupleproductkey.h \
           xtNetworkRequestManager.h \
           xtsettings.h

@@ -12,6 +12,7 @@
 #define guiclientinterface_h
 
 #include "parameter.h"
+#include "mqlhash.h"
 
 #include <QString>
 #include <QAction>
@@ -45,6 +46,8 @@ class GuiClientInterface : public QObject
     virtual Metricsenc  *getMetricsenc()            = 0;
     virtual Preferences *getPreferences()           = 0;
     virtual Privileges  *getPrivileges()            = 0;
+    virtual MqlHash     *getMqlHash()               = 0;
+    virtual void         setMqlHash(MqlHash *pHash) = 0;
 
   signals:
     void dbConnectionLost();
