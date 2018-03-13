@@ -910,7 +910,7 @@ to be bound by its terms.</comment>
            <item row="0" column="1">
             <widget class="XLabel" name="_invCharLit">
              <property name="text">
-              <string>Invoice Item Characteristics</string>
+              <string>Invoice Line Characteristics</string>
              </property>
             </widget>
            </item>
