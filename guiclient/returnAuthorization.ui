@@ -291,6 +291,12 @@ to be bound by its terms.</comment>
          </item>
          <item row="0" column="7">
           <widget class="XComboBox" name="_disposition">
+           <property name="allowNull">
+            <bool>true</bool>
+           </property>
+           <property name="nullStr">
+            <string>[ no default ]</string>
+           </property>
           </widget>
          </item>
          <item row="1" column="6">
@@ -305,6 +311,12 @@ to be bound by its terms.</comment>
          </item>
          <item row="1" column="7">
           <widget class="XComboBox" name="_timing">
+           <property name="allowNull">
+            <bool>true</bool>
+           </property>
+           <property name="nullStr">
+            <string>[ no default ]</string>
+           </property>
           </widget>
          </item>
          <item row="2" column="6">
@@ -321,6 +333,12 @@ to be bound by its terms.</comment>
           <widget class="XComboBox" name="_creditBy">
            <property name="enabled">
             <bool>true</bool>
+           </property>
+           <property name="allowNull">
+            <bool>true</bool>
+           </property>
+           <property name="nullStr">
+            <string>[ no default ]</string>
            </property>
           </widget>
          </item>

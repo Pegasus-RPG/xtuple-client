@@ -44,25 +44,19 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _shipTo->setNameVisible(false);
   _shipTo->setDescriptionVisible(false);
 
-  _disposition->setAllowNull(true);
-  _disposition->setNullStr(tr("[ no default ]"));
-  _disposition->append(1, tr("Credit"),         "C");
-  _disposition->append(2, tr("Return"),         "R");
-  _disposition->append(3, tr("Replace"),        "P");
-  _disposition->append(4, tr("Service"),        "V");
-  _disposition->append(5, tr("Substitute"),     "M");
+  _disposition->append(1, tr("Credit"),     "C");
+  _disposition->append(2, tr("Return"),     "R");
+  _disposition->append(3, tr("Replace"),    "P");
+  _disposition->append(4, tr("Service"),    "V");
+  _disposition->append(5, tr("Substitute"), "M");
 
-  _timing->setAllowNull(true);
-  _timing->setNullStr(tr("[ no default ]"));
-  _timing->append(1, tr("Immediately"),    "I");
-  _timing->append(2, tr("Upon Receipt"),   "R");
+  _timing->append(1, tr("Immediately"),  "I");
+  _timing->append(2, tr("Upon Receipt"), "R");
 
-  _creditBy->setAllowNull(true);
-  _creditBy->setNullStr(tr("[ no default ]"));
-  _creditBy->append(1, tr("None"),           "N");
-  _creditBy->append(2, tr("Sales Credit"),   "M");
-  _creditBy->append(3, tr("Cash Payment"),   "K");
-  _creditBy->append(4, tr("Credit Card"),    "C");
+  _creditBy->append(1, tr("None"),         "N");
+  _creditBy->append(2, tr("Sales Credit"), "M");
+  _creditBy->append(3, tr("Cash Payment"), "K");
+  _creditBy->append(4, tr("Credit Card"),  "C");
 
   connect(_copyToShipto, SIGNAL(clicked()), this, SLOT(sCopyToShipto()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
