@@ -156,12 +156,55 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WindowFlags fl)
 
   _overapplied = false;
   _cashrcptid = -1;
+  _ccpayid = -1;
   _posted = false;
 }
 
 cashReceipt::~cashReceipt()
 {
   // no need to delete child widgets, Qt does it all for us
+}
+
+int cashReceipt::id()
+{
+  return _cashrcptid;
+}
+
+int cashReceipt::ccpayId()
+{
+  return _ccpayid;
+}
+
+int cashReceipt::setCcpayId(int ccpayId)
+{
+  _ccpayid = ccpayId;
+
+  return _ccpayid;
+}
+
+int cashReceipt::mode()
+{
+  return _mode;
+}
+
+int cashReceipt::transType()
+{
+  return _transType;
+}
+
+bool cashReceipt::isCcEdit()
+{
+  return _ccEdit;
+}
+
+bool cashReceipt::isPosted()
+{
+  return _posted;
+}
+
+bool cashReceipt::isOverApplied()
+{
+  return _overapplied;
 }
 
 void cashReceipt::languageChange()
@@ -782,7 +825,7 @@ void cashReceipt::sSave()
   if (save(false))
   {
     if (_postReceipt->isChecked() && !_posted)
-    {    
+    {
       if (!postReceipt())
         return;
     }
@@ -876,7 +919,6 @@ bool cashReceipt::save(bool partial)
       }
 
       _save->setEnabled(false);
-      int ccpayid = -1;
       QString neworder = _docNumber->text().isEmpty() ?
                            QString::number(_cashrcptid) : _docNumber->text();
       QString reforder = neworder; // 2 sep variables because they're passed by ref
@@ -885,7 +927,7 @@ bool cashReceipt::save(bool partial)
                                        _received->localValue(),
                                        0, false, 0, 0,
                                        _received->id(),
-                                       neworder, reforder, ccpayid,
+                                       neworder, reforder, _ccpayid,
                                        QString("cashrcpt"), _cashrcptid);
       if (returnVal < 0)
         QMessageBox::critical(this, tr("Credit Card Processing Error"),
@@ -898,6 +940,8 @@ bool cashReceipt::save(bool partial)
                                  cardproc->errorMsg());
 
       _save->setEnabled(true);
+      _postReceipt->setChecked(true);
+
       if (returnVal < 0)
         return false;
     }
@@ -913,13 +957,13 @@ bool cashReceipt::save(bool partial)
                     "  cashrcpt_fundstype, cashrcpt_bankaccnt_id, cashrcpt_curr_id, "
                     "  cashrcpt_usecustdeposit, cashrcpt_docnumber, cashrcpt_docdate, "
                     "  cashrcpt_notes, cashrcpt_salescat_id, cashrcpt_number, cashrcpt_applydate, "
-                    "  cashrcpt_discount, cashrcpt_alt_curr_rate, cashrcpt_prj_id ) "
+                    "  cashrcpt_discount, cashrcpt_alt_curr_rate, cashrcpt_prj_id, cashrcpt_ccpay_id ) "
                     "VALUES "
                     "( :cashrcpt_id, :cashrcpt_cust_id, :cashrcpt_custgrp_id, :cashrcpt_distdate, :cashrcpt_amount,"
                     "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :curr_id, "
                     "  :cashrcpt_usecustdeposit, :cashrcpt_docnumber, :cashrcpt_docdate, "
                     "  :cashrcpt_notes, :cashrcpt_salescat_id, :cashrcpt_number, :cashrcpt_applydate, "
-                    "  :cashrcpt_discount, ROUND(:cashrcpt_alt_curr_rate, 8), :cashrcpt_prj_id );";
+                    "  :cashrcpt_discount, ROUND(:cashrcpt_alt_curr_rate, 8), :cashrcpt_prj_id, :ccpayid );";
   else
     sql= "UPDATE cashrcpt "
                     "SET cashrcpt_cust_id=:cashrcpt_cust_id,"
@@ -938,6 +982,7 @@ bool cashReceipt::save(bool partial)
                     "    cashrcpt_discount=:cashrcpt_discount, "
                     "    cashrcpt_alt_curr_rate= ROUND(:cashrcpt_alt_curr_rate, 8), "
                     "    cashrcpt_prj_id=:cashrcpt_prj_id, "
+                    "    cashrcpt_ccpay_id=:ccpayid, "
                     "    cashrcpt_curr_rate=null " // force a curr rate re-evaluation
                     "WHERE (cashrcpt_id=:cashrcpt_id);";
 
@@ -972,7 +1017,11 @@ bool cashReceipt::save(bool partial)
   }
   if(_project->isValid())
     cashave.bindValue(":cashrcpt_prj_id", _project->id());
+  if(_ccpayid > 0)
+    cashave.bindValue(":ccpayid", _ccpayid);
+
   cashave.exec();
+
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Cash Receipt"),
                                 cashave, __FILE__, __LINE__))
   {
@@ -988,7 +1037,7 @@ bool cashReceipt::postReceipt()
   bool changeDate = false;
   QDate newDate = QDate();
   QDate seriesDate;
-  
+
   if (_privileges->check("ChangeCashRecvPostDate"))
   {
     getGLDistDate newdlg(this, "", true);
@@ -1002,7 +1051,7 @@ bool cashReceipt::postReceipt()
     else
       return false;
   }
-  
+
   XSqlQuery tx;
   tx.exec("BEGIN;");
 
@@ -1011,7 +1060,7 @@ bool cashReceipt::postReceipt()
                   "                    cashrcpt_applydate=CASE WHEN (cashrcpt_applydate < :distdate) THEN :distdate"
                   "                                            ELSE cashrcpt_applydate END "
                   "WHERE cashrcpt_id=:cashrcpt_id;");
-   
+
   if (changeDate)
   {
     setDate.bindValue(":distdate",    newDate);
@@ -1024,7 +1073,7 @@ bool cashReceipt::postReceipt()
       return false;
     }
   }
-  
+
   cashPost.prepare("SELECT postCashReceipt(:cashrcpt_id, fetchJournalNumber('C/R', :seriesDate)) AS result;");
   cashPost.bindValue(":cashrcpt_id", _cashrcptid);
   cashPost.bindValue(":seriesDate", seriesDate);
