@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -41,7 +41,6 @@
 
 #include "creditCard.h"
 #include "creditcardprocessor.h"
-#include "mqlutil.h"
 #include "storedProcErrorLookup.h"
 #include "xdialog.h"
 #include "xmainwindow.h"
@@ -204,7 +203,6 @@ XSqlQuery ScriptToolbox::executeQuery(const QString & query, const ParameterList
 
   @return The XSqlQuery object after calling XSqlQuery::exec()
 
-  @see mqlLoad
   @see MetaSQLQuery
   @see XSqlQuery
   @see QSqlQuery
@@ -212,7 +210,7 @@ XSqlQuery ScriptToolbox::executeQuery(const QString & query, const ParameterList
 XSqlQuery ScriptToolbox::executeDbQuery(const QString & group, const QString & name)
 {
   ParameterList params;
-  MetaSQLQuery mql = mqlLoad(group, name);
+  MetaSQLQuery mql(omfgThis->_mqlhash->value(group, name));
   return mql.toQuery(params);
 }
 
@@ -254,7 +252,7 @@ XSqlQuery ScriptToolbox::executeDbQuery(const QString & group, const QString & n
  */
 XSqlQuery ScriptToolbox::executeDbQuery(const QString & group, const QString & name, const ParameterList & params)
 {
-  MetaSQLQuery mql = mqlLoad(group, name);
+  MetaSQLQuery mql(omfgThis->_mqlhash->value(group, name));
   return mql.toQuery(params);
 }
 /** @example ccvoid.js */
@@ -1562,7 +1560,7 @@ QString scriptHandleIncludes(QString source)
         ParameterList params;
         params.append("jsonlist", QString("{\"1\": \"%1\"}").arg(name));
         params.append("order", order);
-        MetaSQLQuery mql = mqlLoad("scripts", "fetch");
+        MetaSQLQuery mql(omfgThis->_mqlhash->value("scripts", "fetch"));
         XSqlQuery inclq = mql.toQuery(params);
         bool found = false;
         while (inclq.next())

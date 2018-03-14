@@ -51,7 +51,7 @@
 #include "login2.h"
 #include "storedProcErrorLookup.h"
 #include "metasql.h"
-#include "mqlutil.h"
+#include "mqlhash.h"
 
 #include "systemMessage.h"
 #include "menuProducts.h"
@@ -333,6 +333,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   qApp->processEvents();
 
   _showTopLevel = (_preferences->value("InterfaceWindowOption") != "Workspace");
+  _mqlhash = new MqlHash(this);
 
   qry.exec("SELECT startOfTime() AS sot, endOfTime() AS eot;");
   if (qry.first())
@@ -420,7 +421,9 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   connect(_privileges, SIGNAL(loaded()), this, SLOT(initMenuBar()));
 
   ScriptableWidget::_guiClientInterface = new xTupleGuiClientInterface(this);
-  // the following can be removed when they all inherit from ScriptableWidget
+  ScriptableWidget::_guiClientInterface->setMqlHash(_mqlhash);
+
+  // the following can be removed when they all inherit from ScriptableWidget {
   VirtualClusterLineEdit::_guiClientInterface = ScriptableWidget::_guiClientInterface;
   Documents::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
   MenuButton::_guiClientInterface =  VirtualClusterLineEdit::_guiClientInterface;
@@ -428,6 +431,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   XComboBox::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
   XTextEdit::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
   XTextEditHighlighter::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
+  // }
 
   _splash->showMessage(tr("Completing Initialization"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
@@ -816,7 +820,7 @@ void GUIClient::showEvent(QShowEvent *event)
     // START script code
       ParameterList params;
       params.append("jsonlist", "{\"1\": \"initMenu\"}");
-      MetaSQLQuery mql = mqlLoad("scripts", "fetch");
+      MetaSQLQuery mql(_mqlhash->value("scripts", "fetch"));
       XSqlQuery sq = mql.toQuery(params);
       QScriptEngine * engine = 0;
       QScriptEngineDebugger * debugger = 0;

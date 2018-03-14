@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -20,7 +20,7 @@
 #include <QToolButton>
 
 #include <metasql.h>
-#include <mqlutil.h>
+#include <metasql.h>
 #include <orprerender.h>
 #include <orprintrender.h>
 #include <renderobjects.h>
@@ -759,15 +759,7 @@ void display::sFillList(ParameterList pParams, bool forceSetParams)
       return;
   }
   int itemid = _data->_list->id();
-  bool ok = true;
-  QString errorString;
-  MetaSQLQuery mql = MQLUtil::mqlLoad(_data->metasqlGroup, _data->metasqlName, errorString, &ok);
-  if(!ok)
-  {
-    ErrorReporter::error(QtCriticalMsg, this, tr("Error Retrieving Information"),
-                         errorString, __FILE__, __LINE__);
-    return;
-  }
+  MetaSQLQuery mql(omfgThis->_mqlhash->value(_data->metasqlGroup, _data->metasqlName));
   XSqlQuery xq = mql.toQuery(pParams, QSqlDatabase(), false);
 
   QString column;
