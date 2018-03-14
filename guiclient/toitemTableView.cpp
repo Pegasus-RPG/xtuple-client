@@ -166,7 +166,7 @@ QWidget *ToitemTableDelegate::createEditor(QWidget *parent,
 
     case TOITEM_DUEDATE_COL:
     {
-      DLineEdit *duedate = new DLineEdit(parent);
+      XDateEdit *duedate = new XDateEdit(parent);
       editor = duedate;
       editor->setObjectName("toitem_duedate");
       break;
@@ -225,7 +225,7 @@ void ToitemTableDelegate::setEditorData(QWidget *editor, const QModelIndex &inde
 
     case TOITEM_DUEDATE_COL:
     {
-      DLineEdit *duedate = static_cast<DLineEdit*>(editor);
+      XDateEdit *duedate = static_cast<XDateEdit*>(editor);
       duedate->setDate(index.data().toDate());
       break;
     }
@@ -320,7 +320,7 @@ void ToitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
     
     case TOITEM_DUEDATE_COL:
     {
-      DLineEdit *duedate = static_cast<DLineEdit*>(editor);
+      XDateEdit *duedate = static_cast<XDateEdit*>(editor);
       if (duedate->date() != oldval.toDate())
       {
 	model->setData(index, duedate->date());
