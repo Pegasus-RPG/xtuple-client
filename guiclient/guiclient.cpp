@@ -820,7 +820,7 @@ void GUIClient::showEvent(QShowEvent *event)
     // START script code
       ParameterList params;
       params.append("jsonlist", "{\"1\": \"initMenu\"}");
-      MetaSQLQuery mql = _mqlhash->value("scripts", "fetch");
+      MetaSQLQuery mql(_mqlhash->value("scripts", "fetch"));
       XSqlQuery sq = mql.toQuery(params);
       QScriptEngine * engine = 0;
       QScriptEngineDebugger * debugger = 0;

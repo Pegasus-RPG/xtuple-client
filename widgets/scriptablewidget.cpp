@@ -91,7 +91,7 @@ void ScriptableWidget::loadScript(const QStringList &list)
 
     ParameterList params;
     params.append("jsonlist", "{" + pair.join(", ") + "}");
-    MetaSQLQuery mql = _guiClientInterface->getMqlHash()->value("scripts", "fetch");
+    MetaSQLQuery mql(_guiClientInterface->getMqlHash()->value("scripts", "fetch"));
     XSqlQuery q = mql.toQuery(params);
     while (q.next())
     {

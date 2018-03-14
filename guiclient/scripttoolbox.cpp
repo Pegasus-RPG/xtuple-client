@@ -207,7 +207,7 @@ XSqlQuery ScriptToolbox::executeQuery(const QString & query, const ParameterList
 XSqlQuery ScriptToolbox::executeDbQuery(const QString & group, const QString & name)
 {
   ParameterList params;
-  MetaSQLQuery mql = omfgThis->_mqlhash->value(group, name);
+  MetaSQLQuery mql(omfgThis->_mqlhash->value(group, name));
   return mql.toQuery(params);
 }
 
@@ -249,7 +249,7 @@ XSqlQuery ScriptToolbox::executeDbQuery(const QString & group, const QString & n
  */
 XSqlQuery ScriptToolbox::executeDbQuery(const QString & group, const QString & name, const ParameterList & params)
 {
-  MetaSQLQuery mql = omfgThis->_mqlhash->value(group, name);
+  MetaSQLQuery mql(omfgThis->_mqlhash->value(group, name));
   return mql.toQuery(params);
 }
 /** @example ccvoid.js */
@@ -1505,7 +1505,7 @@ QString scriptHandleIncludes(QString source)
         ParameterList params;
         params.append("jsonlist", QString("{\"1\": \"%1\"}").arg(name));
         params.append("order", order);
-        MetaSQLQuery mql = omfgThis->_mqlhash->value("scripts", "fetch");
+        MetaSQLQuery mql(omfgThis->_mqlhash->value("scripts", "fetch"));
         XSqlQuery inclq = mql.toQuery(params);
         bool found = false;
         while (inclq.next())
