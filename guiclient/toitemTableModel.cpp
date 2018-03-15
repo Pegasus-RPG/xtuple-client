@@ -224,6 +224,20 @@ bool ToitemTableModel::validRow(QSqlRecord& record)
     errormsg = tr("<p>There is no Transfer Order header yet. "
 	     "Try entering ????.");
 
+  if (record.value("toitem_stdcost").isNull())
+  {
+    XSqlQuery cost;
+    cost.prepare("SELECT stdCost(:item_id) AS stdcost;");
+    cost.bindValue(":item_id", record.value("toitem_item_id"));
+    cost.exec();
+    if (cost.first())
+      record.setValue("toitem_stdcost", cost.value("stdcost"));
+    else if (cost.lastError().type() != QSqlError::NoError)
+      errormsg = cost.lastError().databaseText();
+  }
+
+  record.setGenerated("toitem_stdcost", true);
+
   int index = record.indexOf("toitem_tohead_id");
   if (index < 0)
   {
@@ -233,6 +247,8 @@ bool ToitemTableModel::validRow(QSqlRecord& record)
   }
   else
     record.setValue(index, _toheadid);
+
+  record.setGenerated("toitem_tohead_id", true);
 
   XSqlQuery ln;
   ln.prepare("SELECT COUNT(*) + 1 AS newln "
@@ -264,6 +280,8 @@ bool ToitemTableModel::validRow(QSqlRecord& record)
     }
   }
 
+  record.setGenerated("toitem_linenumber", true);
+
   if (record.value("toitem_id").isNull())
   {
     XSqlQuery idq("SELECT NEXTVAL('toitem_toitem_id_seq') AS toitem_id;");
@@ -272,6 +290,8 @@ bool ToitemTableModel::validRow(QSqlRecord& record)
     else if (idq.lastError().type() != QSqlError::NoError)
       errormsg = idq.lastError().databaseText();
   }
+
+  record.setGenerated("toitem_id", true);
 
   if (_tostatus.isEmpty())
     findHeadData();
@@ -286,6 +306,8 @@ bool ToitemTableModel::validRow(QSqlRecord& record)
   else if (record.field(index).value().toString().isEmpty())
     record.setValue(index, _toheadcurrid);
 
+  record.setGenerated("toitem_freight_curr_id", true);
+
   index = record.indexOf("toitem_status");
   if (index < 0)
   {
@@ -296,6 +318,8 @@ bool ToitemTableModel::validRow(QSqlRecord& record)
   else if (record.field(index).value().toString().isEmpty())
     record.setValue(index, _tostatus);
 
+  record.setGenerated("toitem_status", true);
+
   index = record.indexOf("toitem_schedshipdate");
   if (index < 0)
   {
@@ -305,6 +329,8 @@ bool ToitemTableModel::validRow(QSqlRecord& record)
   }
   else if (record.field(index).value().isNull())
     record.setValue(index, _toshipdate);
+
+  record.setGenerated("toitem_schedshipdate", true);
 
   if (! errormsg.isEmpty())
   {
