@@ -466,35 +466,26 @@ int main(int argc, char *argv[])
     invalid   = true;
     checkPassReason = QObject::tr("<p>The Registration key installed for this system does not appear to be valid.");
   }
-  if(!checkPass)
+  if (! checkPass)
   {
     _splash->hide();
-    if (expired)
+    if (invalid || expired)
     {
-      registrationKeyDialog newdlg(0, "", true);
-      if(newdlg.exec() == -1)
-      {
-        QMessageBox::critical(0, QObject::tr("Registration Key"), checkPassReason);
+      ParameterList params;
+      params.append("message", checkPassReason);
+      if (invalid)
+        params.append("invalid");
+
+      registrationKeyDialog newdlg;
+      newdlg.set(params);
+      if (newdlg.exec() == QDialog::Rejected)
         return 0;
-      }
     }
     else if(checkLock)
     {
       QMessageBox::critical(0, QObject::tr("Registration Key"), checkPassReason);
       if(!forced)
         return 0;
-    }
-    else if(invalid)
-    {
-      ParameterList params;
-      params.append("invalid");
-      registrationKeyDialog newdlg(0, "", true);
-      newdlg.set(params);
-      if(newdlg.exec() == -1)
-      {
-        QMessageBox::critical(0, QObject::tr("Registration Key"), checkPassReason);
-        return 0;
-      }
     }
     else
     {
