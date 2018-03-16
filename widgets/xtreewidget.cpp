@@ -994,6 +994,14 @@ bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
     QVariant v1 = data(sort.first, Xt::RawRole);
     QVariant v2 = other.data(sort.first, Xt::RawRole);
 
+    // bugs 17968 & 32496: sort strings according to user expectations AND preserve raw role
+    // here and case QVariant::String below: why not trust QVariant::toDouble()?
+    if (v1.toString().toDouble() == 0.0 && v2.toString().toDouble() == 0.0)
+    {
+      v1 = data(sort.first,       Qt::DisplayRole);
+      v2 = other.data(sort.first, Qt::DisplayRole);
+    }
+
     if (sorted || v1==v2)
       continue;
 
@@ -1030,8 +1038,9 @@ bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
         break;
 
       case QVariant::String:
+        {
         sorted = true;
-        bool ok;
+        bool ok = false;
         if (v1.toString().toDouble() == 0.0 && v2.toDouble() == 0.0)
           returnVal = (v1.toString() < v2.toString());
         else if (v1.toString().toDouble() == 0.0 && v2.toDouble(&ok)) //v1 is string, v2 is number
@@ -1040,6 +1049,7 @@ bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
           returnVal = true;
         else
           returnVal = (v1.toDouble() < v2.toDouble());
+        }
         break;
 
       default:
