@@ -137,12 +137,14 @@ void quoteList::sFillList()
 {
   QString sql;
 
-  sql = "SELECT DISTINCT quhead_id, quhead_number, cust_name, quhead_quotedate,"
-        "                MIN(quitem_scheddate) AS duedate "
-        "FROM quhead, quitem, itemsite, custinfo "
-        "WHERE ((quhead_cust_id=cust_id)"
-        " AND (quitem_quhead_id=quhead_id)"
-        " AND (quitem_itemsite_id=itemsite_id)";
+  sql = "SELECT quhead_id, quhead_number, COALESCE(cust_name, prospect_name), "
+        "       quhead_quotedate, MIN(quitem_scheddate) AS duedate "
+        "  FROM quhead "
+        "  JOIN quitem ON quitem_quhead_id = quhead_id "
+        "  JOIN itemsite ON quitem_itemsite_id = itemsite_id "
+        "  LEFT OUTER JOIN custinfo ON quhead_cust_id = cust_id "
+        "  LEFT OUTER JOIN prospect ON quhead_cust_id = prospect_id "
+        " WHERE TRUE";
 
   if (_warehouse->isSelected())
     sql += " AND (itemsite_warehous_id=:warehous_id)";
