@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -136,26 +136,23 @@ void address::internalSave(AddressCluster::SaveFlags flag)
 {
   _addr->setNotes(_notes->toPlainText());
 
+  int oldId      = _addr->id();
   int saveResult = _addr->save(flag);
-  if (-2 == saveResult)
+  if (saveResult == -2)
   {
-    int answer = QMessageBox::question(this,
-		    tr("Saving Shared Address"),
-		    tr("There are multiple Contacts sharing this Address.\n"
-		       "If you save this Address, the Address for all "
-		       "of these Contacts will be changed. Would you like to "
-		       "save this Address?"),
-		    QMessageBox::No | QMessageBox::Default, QMessageBox::Yes);
-    if (QMessageBox::No == answer)
+    AddressCluster::SaveFlags answer = AddressCluster::askForSaveMode(_addr->id(), this);
+    if (answer == AddressCluster::CHECK)
       return;
-    saveResult = _addr->save(AddressCluster::CHANGEALL);
+    saveResult = _addr->save(answer);
   }
-  if (0 > saveResult)	// NOT else if
-  {
+  if (saveResult < 0)	// NOT else if
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Address"),
               tr("There was an error saving this address (%1).\n"
                  "Check the database server log for errors.") .arg(saveResult), __FILE__, __LINE__);
-  }
+  else if (saveResult != oldId)
+    QMessageBox::information(this, tr("Not Saved"),
+                             tr("This change was not saved because it would create a duplicate. "
+                                "Merge the two addresses instead."));
 }
 
 void address::reject()

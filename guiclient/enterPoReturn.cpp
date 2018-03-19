@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -120,25 +120,22 @@ void enterPoReturn::sPost()
     return;
   }
 
+  AddressCluster::SaveFlags addrSaveMode = AddressCluster::CHECK;
   int saveResult = _returnAddr->save(AddressCluster::CHECK);
-  if (-2 == saveResult)
+  if (saveResult == -2)
   {
-    if (QMessageBox::question(this,
-		    tr("Saving Shared Address"),
-		    tr("<p>There are multiple uses for this Address. "
-		       "If you save this Address, the Address for all "
-		       "of these uses will be changed. Would you like to "
-		       "save this Address?"),
-		    QMessageBox::No | QMessageBox::Default, QMessageBox::Yes))
-	saveResult = _returnAddr->save(AddressCluster::CHANGEALL);
+    addrSaveMode = AddressCluster::askForSaveMode(_returnAddr->id());
+    if (addrSaveMode == AddressCluster::CHECK)
+      return;
   }
-  if (0 > saveResult)	// NOT else if
+  saveResult = _returnAddr->save(addrSaveMode);
+  if (saveResult < 0)	// NOT else if
   {
-    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Data"),
-                         tr("%1: There was an error saving P/O Return Information. "
-                            "Check the database server log for errors.")
-                         .arg(windowTitle()),
-                         __FILE__,__LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error saving address"),
+                         storedProcErrorLookup("saveAddr", saveResult),
+                         __FILE__, __LINE__);
+    _returnAddr->setFocus();
+    return;
   }
 
   // print while we can still differentiate current from previous returns

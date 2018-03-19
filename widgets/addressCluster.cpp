@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -180,6 +180,58 @@ AddressCluster::AddressCluster(QWidget* pParent, const char* pName)
   : VirtualCluster(pParent, pName)
 {
   init();
+}
+
+/** @brief As the user if s/he wants to change one use of this address or all.
+    @return AddressCluster::CHECK Cancel the save ("check again")
+    @return AddressCluster::CHANGEONE change one use
+    @return AddressCluster::CHANGEALL change all uses
+ */
+AddressCluster::SaveFlags AddressCluster::askForSaveMode(int pAddrId, QWidget *pParent)
+{
+  ParameterList params;
+  params.append("addr_id",  pAddrId);
+  params.append("contact",  tr("Contact"));
+  params.append("shipto",   tr("Ship-to Address"));
+  params.append("vendor",   tr("Vendor"));
+  params.append("vendaddr", tr("Vendor addresss"));
+  params.append("whs",      tr("Site"));
+
+  MetaSQLQuery mql(_guiClientInterface->getMqlHash()->value("address", "uses"));
+  XSqlQuery q = mql.toQuery(params);
+
+  QString type;
+  QHash<QString, int> count;
+  while (q.next())
+  {
+    type = q.value("type").toString();
+    if (count.contains(type))
+      count[type]++;
+    else
+      count[type] = 1;
+  }
+
+  if (count.isEmpty() || (count.size() == 1 && count[type] == 1))
+    return CHANGEALL;
+
+  QStringList countlist;
+  foreach (QString type, count.keys())
+    countlist << QString("%1 - %2").arg(type).arg(count[type]);
+
+  QString message = tr("There are multiple uses of this address:<UL><li>%1</li></UL>"
+                       "<p>Would you like to save just this one use, save all "
+                       "uses of this address, or cancel this save action?")
+                    .arg(countlist.join("</li><li>"));
+  QMessageBox::StandardButton answer =
+    QMessageBox::question(pParent, tr("Saving Shared Address"), message,
+                                     QMessageBox::Save | QMessageBox::SaveAll | QMessageBox::Cancel,
+                                     QMessageBox::Cancel);
+  if (answer == QMessageBox::Save)
+    return CHANGEONE;
+  if (answer == QMessageBox::SaveAll)
+    return CHANGEALL;
+
+  return CHECK;
 }
 
 void AddressCluster::populateStateComboBox()

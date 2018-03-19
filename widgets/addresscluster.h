@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -104,6 +104,8 @@ class XTUPLEWIDGETS_EXPORT AddressCluster : public VirtualCluster
         Q_ENUM(Mode)
 
 	AddressCluster(QWidget*, const char* = 0);
+
+        static SaveFlags askForSaveMode(int pAddrId, QWidget *pParent = 0);
 	
 	inline virtual bool    activeVisible() const { return _active->isVisible(); };
         inline virtual QString addrChange()   const { return _addrChange->text(); };

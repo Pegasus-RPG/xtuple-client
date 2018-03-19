@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -179,25 +179,19 @@ bool taxAuthority::sSave()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  XSqlQuery begin("BEGIN;");
-
+  AddressCluster::SaveFlags addrSaveMode = AddressCluster::CHECK;
   int saveResult = _address->save(AddressCluster::CHECK);
   if (-2 == saveResult)
   {
-    int answer = QMessageBox::question(this,
-                   tr("Question Saving Address"),
-                   tr("<p>There are multiple uses of this "
-                      "Address. What would you like to do?"),
-                   tr("Change This One"),
-                   tr("Change Address for All"),
-                   tr("Cancel"),
-                   2, 2);
-    if (0 == answer)
-      saveResult = _address->save(AddressCluster::CHANGEONE);
-    else if (1 == answer)
-      saveResult = _address->save(AddressCluster::CHANGEALL);
+    addrSaveMode = AddressCluster::askForSaveMode(_address->id());
+    if (addrSaveMode == AddressCluster::CHECK)
+      return false;
   }
-  if (saveResult < 0)  // not else-if: this is error check for CHANGE{ONE,ALL}
+
+  XSqlQuery begin("BEGIN;");
+
+  saveResult = _address->save(addrSaveMode);
+  if (saveResult < 0)
   {
     rollback.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error saving Address"),
