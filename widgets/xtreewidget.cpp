@@ -982,7 +982,7 @@ QString XTreeWidgetItem::toString() const
 bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
 {
   bool returnVal = false;
-  bool sorted = false;
+  bool sorted    = false;
 
   QPair<int, Qt::SortOrder> sort;
   foreach (sort, ((XTreeWidget*)treeWidget())->sortColumnOrder())
@@ -991,15 +991,21 @@ bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
         treeWidget()->headerItem()->data(sort.first, Qt::UserRole).toString() == "xtrunningrole")
       break;
 
+    bool ok = false;
     QVariant v1 = data(sort.first, Xt::RawRole);
     QVariant v2 = other.data(sort.first, Xt::RawRole);
 
     // bugs 17968 & 32496: sort strings according to user expectations AND preserve raw role
-    // here and case QVariant::String below: why not trust QVariant::toDouble()?
-    if (v1.toString().toDouble() == 0.0 && v2.toString().toDouble() == 0.0)
+    if (v1.type() == QVariant::String && v1.toDouble(&ok) == 0.0 && ! ok &&
+        v2.type() == QVariant::String && v2.toDouble(&ok) == 0.0 && ! ok)
     {
-      v1 = data(sort.first,       Qt::DisplayRole);
-      v2 = other.data(sort.first, Qt::DisplayRole);
+      QVariant d1 = data(sort.first,       Qt::DisplayRole);
+      QVariant d2 = other.data(sort.first, Qt::DisplayRole);
+      if (d1.type() == QVariant::String && d1.toDouble(&ok) == 0.0 && ! ok &&
+          d2.type() == QVariant::String && d2.toDouble(&ok) == 0.0 && ! ok) {
+        v1 = d1;
+        v2 = d2;
+      }
     }
 
     if (sorted || v1==v2)
@@ -1038,9 +1044,7 @@ bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
         break;
 
       case QVariant::String:
-        {
         sorted = true;
-        bool ok = false;
         if (v1.toString().toDouble() == 0.0 && v2.toDouble() == 0.0)
           returnVal = (v1.toString() < v2.toString());
         else if (v1.toString().toDouble() == 0.0 && v2.toDouble(&ok)) //v1 is string, v2 is number
@@ -1049,7 +1053,6 @@ bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
           returnVal = true;
         else
           returnVal = (v1.toDouble() < v2.toDouble());
-        }
         break;
 
       default:
