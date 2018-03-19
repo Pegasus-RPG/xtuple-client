@@ -219,17 +219,16 @@ AddressCluster::SaveFlags AddressCluster::askForSaveMode(int pAddrId, QWidget *p
     countlist << QString("%1 - %2").arg(type).arg(count[type]);
 
   QString message = tr("There are multiple uses of this address:<UL><li>%1</li></UL>"
-                       "<p>Would you like to change just this one use, change all "
+                       "<p>Would you like to save just this one use, save all "
                        "uses of this address, or cancel this save action?")
                     .arg(countlist.join("</li><li>"));
-  int answer = QMessageBox::question(pParent, tr("Saving Shared Address"), message,
-                                     tr("Change This One"),
-                                     tr("Change Address for All"),
-                                     tr("Cancel"),
-                                     2, 2);
-  if (answer == 0)
+  QMessageBox::StandardButton answer =
+    QMessageBox::question(pParent, tr("Saving Shared Address"), message,
+                                     QMessageBox::Save | QMessageBox::SaveAll | QMessageBox::Cancel,
+                                     QMessageBox::Cancel);
+  if (answer == QMessageBox::Save)
     return CHANGEONE;
-  if (answer == 1)
+  if (answer == QMessageBox::SaveAll)
     return CHANGEALL;
 
   return CHECK;
