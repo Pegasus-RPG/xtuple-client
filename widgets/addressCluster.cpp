@@ -200,17 +200,18 @@ AddressCluster::SaveFlags AddressCluster::askForSaveMode(int pAddrId, QWidget *p
   MetaSQLQuery mql(_guiClientInterface->getMqlHash()->value("address", "uses"));
   XSqlQuery q = mql.toQuery(params);
 
+  QString type;
   QHash<QString, int> count;
   while (q.next())
   {
-    QString type = q.value("type").toString();
+    type = q.value("type").toString();
     if (count.contains(type))
       count[type]++;
     else
       count[type] = 1;
   }
 
-  if (count.isEmpty())
+  if (count.isEmpty() || (count.size() == 1 && count[type] == 1))
     return CHANGEALL;
 
   QStringList countlist;
