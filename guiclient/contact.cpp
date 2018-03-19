@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -551,21 +551,10 @@ void contact::sSave()
   int saveResult = addr->save(AddressCluster::CHECK);
   if (-2 == saveResult)
   {
-    int answer = 2;     // Cancel
-    answer = QMessageBox::question(this, tr("Question Saving Address"),
-                    tr("<p>There are multiple Contacts sharing this Address. "
-                       "What would you like to do?"),
-                    tr("Change This One"),
-                    tr("Change Address for All"),
-                    tr("Cancel"),
-                    2, 2);
-
-    if (0 == answer)
-      saveResult = addr->save(AddressCluster::CHANGEONE);
-    else if (1 == answer)
-      saveResult = addr->save(AddressCluster::CHANGEALL);
-    else
+    AddressCluster::SaveFlags answer = AddressCluster::askForSaveMode(addr->id());
+    if (answer == AddressCluster::CHECK)
       return;
+    saveResult = addr->save(answer);
   }
   if (saveResult < 0)   // check from errors for CHECK and CHANGE* saves
   {
