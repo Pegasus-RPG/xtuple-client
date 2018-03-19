@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -15,6 +15,7 @@
 #include <QVariant>
 #include <vendorcluster.h>
 #include "errorReporter.h"
+#include "storedProcErrorLookup.h"
 
 vendorAddress::vendorAddress(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -100,6 +101,18 @@ enum SetResponse vendorAddress::set(const ParameterList &pParams)
 
 void vendorAddress::sSave()
 {
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  AddressCluster::SaveFlags addrSaveMode = AddressCluster::CHECK;
+  int saveResult = _address->save(AddressCluster::CHECK);
+  if (-2 == saveResult)
+  {
+    addrSaveMode = AddressCluster::askForSaveMode(_address->id());
+    if (addrSaveMode == AddressCluster::CHECK)
+      return;
+  }
+
   XSqlQuery vendorSave;
   if (! vendorSave.exec("BEGIN"))
   {
@@ -108,33 +121,13 @@ void vendorAddress::sSave()
     return;
   }
 
-  XSqlQuery rollback;
-  rollback.prepare("ROLLBACK;");
-
-  int saveResult = _address->save(AddressCluster::CHECK);
-  if (-2 == saveResult)
-  {
-    int answer = QMessageBox::question(this,
-		    tr("Question Saving Address"),
-		    tr("There are multiple uses of this Vendor "
-		       "Address.\nWhat would you like to do?"),
-		    tr("Change This One"),
-		    tr("Change Address for All"),
-		    tr("Cancel"),
-		    2, 2);
-    if (0 == answer)
-      saveResult = _address->save(AddressCluster::CHANGEONE);
-    else if (1 == answer)
-      saveResult = _address->save(AddressCluster::CHANGEALL);
-  }
-  if (saveResult < 0)	// not else-if: this is error check for CHANGE{ONE,ALL}
+  saveResult = _address->save(addrSaveMode);
+  if (saveResult < 0)
   {
     rollback.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Occurred"),
-                         tr("%1: There was an error saving this address (%2).\n"
-                            "Check the database server log for errors.")
-                         .arg(windowTitle())
-                         .arg(saveResult),__FILE__,__LINE__);
+                         storedProcErrorLookup("saveAddr", saveResult),
+                         __FILE__, __LINE__);
     _address->setFocus();
     return;
   }
