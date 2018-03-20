@@ -991,22 +991,28 @@ bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
         treeWidget()->headerItem()->data(sort.first, Qt::UserRole).toString() == "xtrunningrole")
       break;
 
-    bool ok = false;
     QVariant v1 = data(sort.first, Xt::RawRole);
     QVariant v2 = other.data(sort.first, Xt::RawRole);
 
-    // bugs 17968 & 32496: sort strings according to user expectations AND preserve raw role
-    if (v1.type() == QVariant::String && v1.toDouble(&ok) == 0.0 && ! ok &&
-        v2.type() == QVariant::String && v2.toDouble(&ok) == 0.0 && ! ok)
+    // bugs 17968 & 32496: sort strings according to user expectations AND preserve raw role [
+    bool ok1, ok2;
+    (void)v1.toString().toDouble(&ok1); // we want ok1 & ok2, not the numeric value
+    (void)v2.toString().toDouble(&ok2);
+
+    if (v1.type() == QVariant::String && ! ok1 && v2.type() == QVariant::String && ! ok2)
     {
       QVariant d1 = data(sort.first,       Qt::DisplayRole);
       QVariant d2 = other.data(sort.first, Qt::DisplayRole);
-      if (d1.type() == QVariant::String && d1.toDouble(&ok) == 0.0 && ! ok &&
-          d2.type() == QVariant::String && d2.toDouble(&ok) == 0.0 && ! ok) {
+
+      (void)d1.toString().toDouble(&ok1);
+      (void)d2.toString().toDouble(&ok2);
+
+      if (d1.type() == QVariant::String && ! ok1 && d2.type() == QVariant::String && ! ok2)
+      {
         v1 = d1;
         v2 = d2;
       }
-    }
+    } // ] end 17968/32496
 
     if (sorted || v1==v2)
       continue;
@@ -1047,9 +1053,9 @@ bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
         sorted = true;
         if (v1.toString().toDouble() == 0.0 && v2.toDouble() == 0.0)
           returnVal = (v1.toString() < v2.toString());
-        else if (v1.toString().toDouble() == 0.0 && v2.toDouble(&ok)) //v1 is string, v2 is number
+        else if (v1.toString().toDouble() == 0.0 && v2.toDouble(&ok2)) //v1 is string, v2 is number
           returnVal = false; //the number should always be treated as greater than a string
-        else if (v1.toDouble(&ok) && v2.toString().toDouble() == 0.0)
+        else if (v1.toDouble(&ok1) && v2.toString().toDouble() == 0.0)
           returnVal = true;
         else
           returnVal = (v1.toDouble() < v2.toDouble());
