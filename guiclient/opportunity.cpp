@@ -889,7 +889,10 @@ void opportunity::sAttachQuote()
 {
   XSqlQuery opportunityAttachQuote;
   ParameterList params;
-  params.append("cust_id", _custid);
+  if (_custid > -1)
+    params.append("cust_id", _custid);
+  else
+    params.append("cust_id", _prospectid);
   params.append("openOnly", true);
   
   quoteList newdlg(this, "", true);
