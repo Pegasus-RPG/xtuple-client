@@ -155,8 +155,7 @@ void quoteList::sFillList()
   if (_openOnly)
     sql += " AND (quhead_status='O')";
 
-  sql += ") "
-         "GROUP BY quhead_id, quhead_number, cust_name, quhead_quotedate "
+  sql += "GROUP BY quhead_id, quhead_number, cust_name, prospect_name, quhead_quotedate "
          "ORDER BY quhead_number;";
 
   XSqlQuery q;
