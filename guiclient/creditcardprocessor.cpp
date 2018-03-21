@@ -56,7 +56,7 @@
     for configuring the credit card handling.
   */
 /** @ingroup creditcards
-  
+
     @class CreditCardProcessor
 
     @brief This is a generic class that defines the interface between
@@ -184,7 +184,7 @@ static struct {
   { -18, QT_TRANSLATE_NOOP("CreditCardProcessor", "Error with message transfer program:\n%1 %2\n\n%3")	},
   { -19, QT_TRANSLATE_NOOP("CreditCardProcessor", "%1 is not implemented.")					},
   { -20, QT_TRANSLATE_NOOP("CreditCardProcessor", "The application does not support either Credit Cards or "
-	    "Checks with %1. Please choose a different company.")	}, 
+	    "Checks with %1. Please choose a different company.")	},
   // preauthorizing charges
   { -21, QT_TRANSLATE_NOOP("CreditCardProcessor", "The amount to charge must be greater than 0.00.")		},
   { -24, QT_TRANSLATE_NOOP("CreditCardProcessor", "Could not generate a sequence number while preauthorizing.") },
@@ -775,7 +775,7 @@ int CreditCardProcessor::charge(const int pccardid, const QString &pcvv, const d
     XSqlQuery cashq;
     cashq.prepare("SELECT postCCcashReceipt(:ccpayid,"
                   "                         :docid, :doctype) AS cm_id;");
-    cashq.bindValue(":ccpayid",   pccpayid); 
+    cashq.bindValue(":ccpayid",   pccpayid);
     cashq.bindValue(":doctype",   preftype);
     cashq.bindValue(":docid",     prefid);
     cashq.exec();
@@ -1917,7 +1917,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
       request.setValues(_extraHeaders);
     }
     request.setValue("Host", ccurl.host());
-    
+
     QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
     _http->request(request, prequest.toUtf8());
     while(_http->hasPendingRequests() || _http->currentId() != 0)
@@ -2130,7 +2130,7 @@ bool CreditCardProcessor::waitForHTTP()
 
  */
 int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
-{ 
+{
   if (DEBUG)
     qDebug("updateCCPay(%d, %d params)", pccpayid, pparams.size());
 
@@ -2534,7 +2534,7 @@ bool CreditCardProcessor::handlesCreditCards()
 }
 
 /** @brief Construct a valid URL from the information in the configuration.
-  
+
     Handle the case where someone leaves off a piece of the URL when
     entering the basic configuration. Note that a lot of people are used
     to typing in web browsers, which fill in some parts for them.
@@ -2604,7 +2604,7 @@ QString CreditCardProcessor::buildURL(const QString pserver, const QString pport
     Instead of passing all of the arguments in order, this method
     allows creating a QtScript object and setting properties
     on this object by name. Then the script can pass this object
-    to 
+    to
     authorize(const int pccardid, const int pcvv, const double pamount, double ptax, bool ptaxexempt, double pfreight, double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid):
     @code
       var params = new Object;
@@ -2620,7 +2620,7 @@ QString CreditCardProcessor::buildURL(const QString pserver, const QString pport
         // handle warnings
       ...
     @endcode
-    
+
     @param pinput The parameter list to unpack and use to call authorize
     @return A parameter list containing the output parameters, plus one
             called returnVal holding the return value of authorize
@@ -2774,7 +2774,7 @@ ParameterList CreditCardProcessor::authorize(const ParameterList &pinput)
     allows creating a QtScript object and setting properties
     on this object by name. Then the script can pass this object
     to charge.
-    
+
     @param pinput The parameter list to unpack and use to call charge
     @return A parameter list containing the output parameters, plus one
             called returnVal holding the return value of charge
@@ -2930,7 +2930,7 @@ ParameterList CreditCardProcessor::charge(const ParameterList &pinput)
     allows creating a QtScript object and setting properties
     on this object by name. Then the script can pass this object
     to chargePreauthorized.
-    
+
     @param pinput The parameter list to unpack and use to call chargePreauthorized
     @return A parameter list containing the output parameters, plus one
             called returnVal holding the return value of chargePreauthorized
@@ -3021,7 +3021,7 @@ ParameterList CreditCardProcessor::chargePreauthorized(const ParameterList &pinp
     allows creating a QtScript object and setting properties
     on this object by name. Then the script can pass this object
     to credit.
-    
+
     @param pinput The parameter list to unpack and use to call credit
     @return A parameter list containing the output parameters, plus one
             called returnVal holding the return value of credit
@@ -3189,7 +3189,7 @@ ParameterList CreditCardProcessor::credit(const ParameterList &pinput)
     allows creating a QtScript object and setting properties
     on this object by name. Then the script can pass this object
     to voidPrevious.
-    
+
     @param pinput The parameter list to unpack and use to call voidPrevious
     @return A parameter list containing the output parameters, plus one
             called returnVal holding the return value of voidPrevious

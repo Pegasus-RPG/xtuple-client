@@ -65,7 +65,7 @@ class CreditCardProcessor : public QObject
     virtual int credit(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid);
     virtual int reversePreauthorized(const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int prefid);
     virtual int voidPrevious(int &);
-    
+
     // methods for script access
     Q_INVOKABLE static ParameterList authorize(const ParameterList &);
     Q_INVOKABLE static ParameterList charge(const ParameterList &);
