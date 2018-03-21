@@ -17,6 +17,7 @@
 #include <metasql.h>
 
 #include "arCreditMemoApplication.h"
+#include "getGLDistDate.h"
 #include "mqlutil.h"
 #include "storedProcErrorLookup.h"
 #include "errorReporter.h"
@@ -91,6 +92,55 @@ void applyARCreditMemo::sPost()
   XSqlQuery applyPost;
   populate(); // repeat in case someone else has updated applications
 
+  QVariant applyDate; // starts null
+  while (_privileges->check("ChangeCashRecvPostDate"))
+  {
+    getGLDistDate newdlg(this, "", true);
+    newdlg.sSetDefaultLit(tr("Distribution Date"));
+    if (newdlg.exec() == XDialog::Accepted)
+    {
+      applyDate = QVariant(newdlg.date());
+
+      XSqlQuery closedPeriod;
+      closedPeriod.prepare("SELECT period_closed "
+                           "  FROM period "
+                           " WHERE (SELECT COALESCE(:distdate, "
+                           "                        GREATEST(s.aropen_distdate, "
+                           "                                 MAX(t.aropen_distdate)), "
+                           "                        CURRENT_DATE) "
+                           "          FROM aropen s "
+                           "          LEFT OUTER JOIN arcreditapply "
+                           "                       ON s.aropen_id = arcreditapply_source_aropen_id "
+                           "          LEFT OUTER JOIN aropen t "
+                           "                       ON arcreditapply_target_aropen_id = t.aropen_id "
+                           "         WHERE s.aropen_id=:aropen_id "
+                           "         GROUP BY s.aropen_distdate) "
+                           "       BETWEEN period_start AND period_end;");
+      closedPeriod.bindValue(":distdate", applyDate);
+      closedPeriod.bindValue(":aropen_id", _aropenid);
+      closedPeriod.exec();
+      if (closedPeriod.first() && !closedPeriod.value("period_closed").toBool())
+        break;
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting A/R CM"),
+                                    closedPeriod, __FILE__, __LINE__))
+        return;
+      else
+      {
+        if (QMessageBox::question(this, tr("Change Date?"),
+                                  tr("Could not post application because the accounting period for "
+                                     "the posting date is closed. Try again with a different "
+                                     "date?"),
+                                  QMessageBox::Yes | QMessageBox::No,
+                                  QMessageBox::No) == QMessageBox::Yes)
+          continue;
+        else
+          return;
+      }
+    }
+    else
+      return;
+  }
+
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
@@ -101,8 +151,9 @@ void applyARCreditMemo::sPost()
     return;
   }
 
-  applyPost.prepare("SELECT postARCreditMemoApplication(:aropen_id) AS result;");
+  applyPost.prepare("SELECT postARCreditMemoApplication(:aropen_id, :applydate) AS result;");
   applyPost.bindValue(":aropen_id", _aropenid);
+  applyPost.bindValue(":applydate", applyDate);
   applyPost.exec();
   if (applyPost.first())
   {
