@@ -27,6 +27,7 @@ class ErrorReporter : public QObject
     static bool error(QtMsgType type, QWidget *parent, const QString title, const QString &userMessage, const QSqlError &err, const QString file = QString(), int line = -1);
     static bool error(QtMsgType type, QWidget *parent, const QString title, const QSqlQuery &qry, const QString file = QString(), int line = -1);
     static bool error(QtMsgType type, QWidget *parent, const QString title, const QString &userMessage, const QSqlQuery &qry, const QString file = QString(), int line = -1);
+    static QString getQueryStoredProcErrorMsg(const QSqlQuery &qry);
 
   protected:
     ErrorReporter(QObject *parent = 0);

@@ -34,6 +34,7 @@
 
 #include "guiclient.h"
 #include "creditcardprocessor.h"
+#include "errorReporter.h"
 #include "storedProcErrorLookup.h"
 
 #include "authorizedotnetprocessor.h"
@@ -236,6 +237,9 @@ static struct {
 	    "Please enter one and try again.")				},
   { -99, QT_TRANSLATE_NOOP("CreditCardProcessor", "The CVV value is not valid.")				},
   {-100, QT_TRANSLATE_NOOP("CreditCardProcessor", "No approval code was received:\n%1\n%2\n%3")		},
+
+  // accounting setup errors
+  {-110, QT_TRANSLATE_NOOP("CreditCardProcessor", "Credit Card Processing Accounting Configuration Error: %1") },
 
   // positive values: credit card company successfully processed the
   // transaction but there was a local failure
@@ -558,6 +562,11 @@ int CreditCardProcessor::authorize(const int pccardid, const QString &pcvv, cons
   if (returnVal < 0)
     return returnVal;
 
+  if (canProcessCCTrans(pccardid, pcurrid) < 0)
+  {
+    return -110;
+  }
+
   if (_metrics->boolean("CCConfirmPreauth") &&
       QMessageBox::question(0,
 		    tr("Confirm Preauthorization of Credit Card Purchase"),
@@ -717,6 +726,11 @@ int CreditCardProcessor::charge(const int pccardid, const QString &pcvv, const d
   {
     _errorMsg = errorMsg(-40).arg(preftype).arg(prefid);
     return -40;
+  }
+
+  if (canProcessCCTrans(pccardid, pcurrid) < 0)
+  {
+    return -110;
   }
 
   QString ccard_x;
@@ -926,6 +940,11 @@ int CreditCardProcessor::chargePreauthorized(const QString &pcvv, const double p
       return returnVal;
   }
 
+  if (canProcessCCTrans(ccardid, pcurrid) < 0)
+  {
+    return -110;
+  }
+
   if (_metrics->boolean("CCConfirmChargePreauth") &&
       QMessageBox::question(0,
 	      tr("Confirm Post-authorization of Credit Card Purchase"),
@@ -986,6 +1005,42 @@ int CreditCardProcessor::chargePreauthorized(const QString &pcvv, const double p
   }
 
   return returnVal;
+}
+
+/** @brief Checks if all accounting related setup and mapping is valid for
+           a Credit Card and Currency.
+
+    Calls the database stored procedure, canProcessPaymentGatewayTransaction()
+    to check if setup is valid.
+ */
+int CreditCardProcessor::canProcessCCTrans(int pCardId, int pCurrId)
+{
+  QString sql;
+  sql = "SELECT canProcessPaymentGatewayTransaction("
+        "  :ccardid,"
+        "  :currid) AS can_process_trans;";
+  XSqlQuery canProcessTransaction;
+  canProcessTransaction.prepare(sql);
+  canProcessTransaction.bindValue(":ccardid", pCardId);
+  canProcessTransaction.bindValue(":currid", pCurrId);
+  canProcessTransaction.exec();
+
+  /*
+  if (ErrorReporter::error(QtCriticalMsg, new QWidget(),
+                           tr("Credit Card Processing Accounting Configuration Error"),
+                           canProcessTransaction, __FILE__, __LINE__))
+  {
+    return -110;
+  }
+  */
+
+  if (canProcessTransaction.lastError().type() != QSqlError::NoError)
+  {
+    _errorMsg = errorMsg(-110).arg(ErrorReporter::getQueryStoredProcErrorMsg(canProcessTransaction));
+    return -110;
+  }
+
+  return 0;
 }
 
 /** @brief Test whether common credit card processing configuration options
@@ -1170,14 +1225,27 @@ int CreditCardProcessor::credit(const int pccardid, const QString &pcvv, const d
     returnVal = checkCreditCard(pccardid, pcvv,  ccard_x);
     if (returnVal < 0)
       return returnVal;
+
+    if (canProcessCCTrans(pccardid, pcurrid) < 0)
+    {
+      return -110;
+    }
   }
   else if (pccpayid > 0) {
-    ccq.prepare("SELECT ccpay_card_pan_trunc"
+    ccq.prepare("SELECT ccpay_card_pan_trunc, ccpay_ccard_id"
                 "  FROM ccpay WHERE ccpay_id=:ccpayid;");
     ccq.bindValue(":ccpayid", pccpayid);
     ccq.exec();
     if (ccq.first())
+    {
       ccard_x = ccq.value("ccpay_card_pan_trunc").toString();
+
+      if (ccq.value("ccpay_ccard_id").toInt() > 0 &&
+          canProcessCCTrans(ccq.value("ccpay_ccard_id").toInt(), pcurrid) < 0)
+      {
+        return -110;
+      }
+    }
     else if (ccq.lastError().type() != QSqlError::NoError)
     {
       _errorMsg = ccq.lastError().databaseText();

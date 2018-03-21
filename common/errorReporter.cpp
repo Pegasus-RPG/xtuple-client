@@ -1488,3 +1488,11 @@ bool ErrorReporter::error(QtMsgType type,       QWidget *parent,
   dlg.exec();
   return true;
 }
+
+QString ErrorReporter::getQueryStoredProcErrorMsg(const QSqlQuery &qry)
+{
+  if (qry.lastError().type() == QSqlError::NoError)
+    return "";
+
+  return reporter()->_private->text(qry.lastError(), Unknown);
+}

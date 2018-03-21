@@ -74,7 +74,8 @@ class CreditCardProcessor : public QObject
     Q_INVOKABLE static ParameterList voidPrevious(const ParameterList &);
 
     // these are support methods that typically won't be overridden
-    Q_INVOKABLE virtual int	testConfiguration();
+    Q_INVOKABLE virtual int     canProcessCCTrans(int pCardId, int pCurrId);
+    Q_INVOKABLE virtual int     testConfiguration();
     Q_INVOKABLE virtual int     defaultPort(bool = false);
     Q_INVOKABLE virtual QString defaultServer();
     Q_INVOKABLE virtual bool    handlesChecks();
