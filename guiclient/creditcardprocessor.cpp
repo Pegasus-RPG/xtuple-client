@@ -1025,15 +1025,6 @@ int CreditCardProcessor::canProcessCCTrans(int pCardId, int pCurrId)
   canProcessTransaction.bindValue(":currid", pCurrId);
   canProcessTransaction.exec();
 
-  /*
-  if (ErrorReporter::error(QtCriticalMsg, new QWidget(),
-                           tr("Credit Card Processing Accounting Configuration Error"),
-                           canProcessTransaction, __FILE__, __LINE__))
-  {
-    return -110;
-  }
-  */
-
   if (canProcessTransaction.lastError().type() != QSqlError::NoError)
   {
     _errorMsg = errorMsg(-110).arg(ErrorReporter::getQueryStoredProcErrorMsg(canProcessTransaction));
