@@ -886,38 +886,18 @@ bool salesOrder::save(bool partial)
     }
 
 //  S/O Credit Check
-    if (_saving && _metrics->boolean("CreditCheckSOOnSave"))
+    if (_saving &&
+        _metrics->boolean("CreditCheckSOOnSave") && !creditLimitCheck() && _holdType->code() != "C")
     {
-      if (!creditLimitCheck())
-      {
-        if (_privileges->check("CreateSOForHoldCustomer"))
-        {
-          if(_holdType->code() != "C")
-          {
-            if (QMessageBox::question(this, tr("Sales Order Credit Check"),
-                            tr("<p>The customer has exceeded their credit limit "
-                               "and this order will be placed on Credit Hold.\n"
-                               "Do you wish to continue saving the order?"),
-                            QMessageBox::Yes,
-                            QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
-            {
-              _holdType->setCode("C");
-            }
-            else
-            {
-              return false;
-            }
-          }
-        }
-        else
-        {
-          errors << GuiErrorCheck(true, _cust,
-                                tr("<p>The customer has exceeded their credit limit "
-                                   "and you have insufficient privileges to complete "
-                                   "this order. You will need to edit the order to ensure "
-                                   "it falls within the credit limit or obtain a payment first." ) );
-        }
-      }
+      if (QMessageBox::question(this, tr("Sales Order Credit Check"),
+                      tr("<p>The customer has exceeded their credit limit "
+                         "and this order will be placed on Credit Hold.\n"
+                         "Do you wish to continue saving the order?"),
+                      QMessageBox::Yes,
+                      QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+        _holdType->setCode("C");
+      else
+        return false;
     }
   }
 
@@ -5781,30 +5761,12 @@ bool salesOrder::creditLimitCheck()
 
 bool salesOrder::creditLimitCheckIssue()
 {
-  if (_metrics->boolean("CreditCheckSOOnSave"))
+  if (_metrics->boolean("CreditCheckSOOnSave") && !creditLimitCheck() && _holdType->code() != "C")
   {
-    if (!creditLimitCheck())
-    {
-      if (_privileges->check("CreateSOForHoldCustomer"))
-      {
-        if(_holdType->code() != "C")
-        {
-          QMessageBox::warning(this, tr("Sales Order Credit Check"),
-                               tr("<p>The customer has exceeded their credit limit "
-                                  "and this order will be placed on Credit Hold."));
-          _holdType->setCode("C");
-        }
-      }
-      else
-      {
-        QMessageBox::critical(this, tr("Sales Order Credit Check"),
-                                    tr("<p>The customer has exceeded their credit limit "
-                                       "and you have insufficient privileges to issue stock for "
-                                       "this order. You will need to edit the order to ensure "
-                                       "it falls within the credit limit or obtain a payment first."));
-        return false;
-      }
-    }
+        QMessageBox::warning(this, tr("Sales Order Credit Check"),
+                             tr("<p>The customer has exceeded their credit limit "
+                                "and this order will be placed on Credit Hold."));
+        _holdType->setCode("C");
   }
 
   save(true);
