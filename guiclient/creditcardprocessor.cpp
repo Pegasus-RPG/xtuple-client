@@ -239,7 +239,7 @@ static struct {
   {-100, QT_TRANSLATE_NOOP("CreditCardProcessor", "No approval code was received:\n%1\n%2\n%3")		},
 
   // accounting setup errors
-  {-110, QT_TRANSLATE_NOOP("CreditCardProcessor", "Credit Card Processing Accounting Configuration Error: %1") },
+  {-110, QT_TRANSLATE_NOOP("CreditCardProcessor", "Accounting Configuration Error: %1") },
 
   // positive values: credit card company successfully processed the
   // transaction but there was a local failure

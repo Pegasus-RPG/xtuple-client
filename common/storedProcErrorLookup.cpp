@@ -64,116 +64,93 @@ const struct {
                             "The order type is not valid for issue to shipping."),     0, "" },
 
   { "canProcessPaymentGatewayTransaction",
-    -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Invaid Customer or Payment Method."),
+    -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Invalid Customer or Payment Method."),
                           0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Payment Method Bank Account is not mapped. "
-                          "Ensure as assignment is configured at: System > Setup > Creidt Cards"),
+    -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Payment Method Bank Account is not set up. "
+                          "Ensure an assignment is configured at: System > Setup > Credit Cards"),
                           0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Payment Method Bank Account is not setup. "
-                          "Ensure as assignment is configured at: System > Setup > Creidt Cards"),
-                          0, "" },
-  { "canProcessPaymentGatewayTransaction",
-    -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Payment Method Bank Account is not used for "
-                          "accounts receivable. Configure the Bank Account at: Accounting > Setup "
-                          "Bank Accounts"),
-                          0, "" },
-  { "canProcessPaymentGatewayTransaction",
-    -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Payment Method Bank Account does not have a "
+    -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Payment Method Bank Account does not have a "
                           "G/L Account assigned. Configure the Bank Account at: Accounting > Setup "
                           "Bank Accounts"),
                           0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Payment Method Bank Account G/L Account is not "
-                          "an Asset account. Configure the Bank Account at: Accounting > Setup "
-                          "Bank Accounts"),
-                          0, "" },
-  { "canProcessPaymentGatewayTransaction",
-    -7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Payment Method Bank Account G/L Account is not "
-                          "Active. Configure the G/L Account at: Accounting > Ledger Accounts > "
+    -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Payment Method Bank Account G/L Account is not "
+                          "valid. Configure the G/L Account at: Accounting > Ledger Accounts > "
                           "Chart of Accounts"),
                           0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -8, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer does not have a A/R G/L Account "
+    -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer does not have an A/R G/L Account "
                           "assigned. Ensure an assignment is configured at: Sales > Setup > "
                           "Accounting Mappings > Receivables Assignments"),
                           0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -9, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer A/R Account is not an Asset account. "
-                          "Configure the assignment at: Sales > Setup > Accounting Mappings > "
-                          "Receivables Assignments"),
-                          0, "" },
-  { "canProcessPaymentGatewayTransaction",
-    -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer A/R Account is not Active. Configure "
+    -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer A/R Account is not valid. Configure "
                            "the G/L Account at: Accounting > Ledger Accounts > Chart of Accounts"),
                            0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer does not have a Prepaid G/L Account "
+    -7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer does not have a Prepaid G/L Account "
                            "assigned. Configure the assignment at: Sales > Setup > "
                            "Accounting Mappings > Receivables Assignments"),
                            0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -12, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer Prepaid Account is not a Revenue "
-                           "account. Configure the assignment at: Sales > Setup > "
-                           "Accounting Mappings > Receivables Assignments"),
-                           0, "" },
-  { "canProcessPaymentGatewayTransaction",
-    -13, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer Prepaid Account is not Active. "
+    -8, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer Prepaid Account is not Active. "
                            "Configure the G/L Account at: Accounting > Ledger Accounts > "
                            "Chart of Accounts"),
                            0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -14, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer does not have a Deferred Revenue G/L "
+    -9, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer does not have a Deferred Revenue G/L "
                            "Account assigned. Configure the assignment at: Sales > Setup > "
                            "Accounting Mappings > Receivables Assignments"),
                            0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -15, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer Deferred Revenue Account is not a "
-                           "Liability account. Configure the assignment at: Sales > Setup > "
-                           "Accounting Mappings > Receivables Assignments"),
-                           0, "" },
-  { "canProcessPaymentGatewayTransaction",
-    -16, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer Deferred Revenue Account is not "
+    -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Customer Deferred Revenue Account is not "
                            "Active. Configure the G/L Account at: Accounting > Ledger Accounts > "
                            "Chart of Accounts"),
                            0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -17, QT_TRANSLATE_NOOP("storedProcErrorLookup", "G/L Accounts are not for the same Company. "
-                           "Configure the G/L Account at: Accounting > Ledger Accounts > "
-                           "Chart of Accounts"),
+    -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Payment Methods Bank Account and Customer A/R "
+                           "G/L Accounts are not for the same Company. Configure the G/L Account "
+                           "at: Accounting > Ledger Accounts > Chart of Accounts"),
                            0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -18, QT_TRANSLATE_NOOP("storedProcErrorLookup", "G/L Series Discrepancy Account is not setup. "
+    -12, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Payment Methods Bank Account and Customer "
+                           "Prepaid G/L Accounts are not for the same Company. Configure the G/L "
+                           "Account at: Accounting > Ledger Accounts > Chart of Accounts"),
+                           0, "" },
+  { "canProcessPaymentGatewayTransaction",
+    -13, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Payment Methods Bank Account and Customer "
+                           "Deferred Revenue G/L Accounts are not for the same Company. Configure "
+                           "the G/L Account at: Accounting > Ledger Accounts > Chart of Accounts"),
+                           0, "" },
+  { "canProcessPaymentGatewayTransaction",
+    -14, QT_TRANSLATE_NOOP("storedProcErrorLookup", "G/L Series Discrepancy Account is not set up. "
                            "Configure the G/L Account at: Accounting > Ledger Accounts > "
                            "Companies"),
                            0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -19, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unassigned G/L Account is not setup. "
+    -15, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unassigned G/L Account is not set up. "
                            "Configure the G/L Account at: Accounting > Ledger Accounts > "
                            "Companies"),
                            0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -20, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Tax Code does not have a G/L Account "
+    -16, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Tax Code does not have a G/L Account "
                            "assigned. Configure the G/L Account at: Accounting > Tax > Tax Codes"),
                            0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -21, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Tax Code G/L Account is not a Liability "
-                           "account. Configure the G/L Account at: Accounting > Tax > Tax Codes"),
-                           0, "" },
-  { "canProcessPaymentGatewayTransaction",
-    -22, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Tax Code G/L Account is not Active. "
+    -17, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Tax Code G/L Account is not valid. "
                            "Configure the G/L Account at: Accounting > Ledger Accounts > "
                            "Chart of Accounts"),
                            0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -23, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post to nonexistent Accounting Period."),
+    -18, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post to nonexistent Accounting Period."),
                            0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -24, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post to a closed Accounting Period."),
+    -19, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post to a closed Accounting Period."),
                            0, "" },
   { "canProcessPaymentGatewayTransaction",
-    -25, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post to a frozen Accounting Period."),
+    -20, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post to a frozen Accounting Period."),
                            0, "" },
 
 
