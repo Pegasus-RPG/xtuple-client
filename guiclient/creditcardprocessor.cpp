@@ -34,6 +34,7 @@
 
 #include "guiclient.h"
 #include "creditcardprocessor.h"
+#include "errorReporter.h"
 #include "storedProcErrorLookup.h"
 
 #include "authorizedotnetprocessor.h"
@@ -55,7 +56,7 @@
     for configuring the credit card handling.
   */
 /** @ingroup creditcards
-  
+
     @class CreditCardProcessor
 
     @brief This is a generic class that defines the interface between
@@ -183,7 +184,7 @@ static struct {
   { -18, QT_TRANSLATE_NOOP("CreditCardProcessor", "Error with message transfer program:\n%1 %2\n\n%3")	},
   { -19, QT_TRANSLATE_NOOP("CreditCardProcessor", "%1 is not implemented.")					},
   { -20, QT_TRANSLATE_NOOP("CreditCardProcessor", "The application does not support either Credit Cards or "
-	    "Checks with %1. Please choose a different company.")	}, 
+	    "Checks with %1. Please choose a different company.")	},
   // preauthorizing charges
   { -21, QT_TRANSLATE_NOOP("CreditCardProcessor", "The amount to charge must be greater than 0.00.")		},
   { -24, QT_TRANSLATE_NOOP("CreditCardProcessor", "Could not generate a sequence number while preauthorizing.") },
@@ -236,6 +237,9 @@ static struct {
 	    "Please enter one and try again.")				},
   { -99, QT_TRANSLATE_NOOP("CreditCardProcessor", "The CVV value is not valid.")				},
   {-100, QT_TRANSLATE_NOOP("CreditCardProcessor", "No approval code was received:\n%1\n%2\n%3")		},
+
+  // accounting setup errors
+  {-110, QT_TRANSLATE_NOOP("CreditCardProcessor", "Accounting Configuration Error: %1") },
 
   // positive values: credit card company successfully processed the
   // transaction but there was a local failure
@@ -558,6 +562,11 @@ int CreditCardProcessor::authorize(const int pccardid, const QString &pcvv, cons
   if (returnVal < 0)
     return returnVal;
 
+  if (canProcessCCTrans(pccardid, pcurrid) < 0)
+  {
+    return -110;
+  }
+
   if (_metrics->boolean("CCConfirmPreauth") &&
       QMessageBox::question(0,
 		    tr("Confirm Preauthorization of Credit Card Purchase"),
@@ -719,6 +728,11 @@ int CreditCardProcessor::charge(const int pccardid, const QString &pcvv, const d
     return -40;
   }
 
+  if (canProcessCCTrans(pccardid, pcurrid) < 0)
+  {
+    return -110;
+  }
+
   QString ccard_x;
   int returnVal = checkCreditCard(pccardid, pcvv, ccard_x);
   if (returnVal < 0)
@@ -761,7 +775,7 @@ int CreditCardProcessor::charge(const int pccardid, const QString &pcvv, const d
     XSqlQuery cashq;
     cashq.prepare("SELECT postCCcashReceipt(:ccpayid,"
                   "                         :docid, :doctype) AS cm_id;");
-    cashq.bindValue(":ccpayid",   pccpayid); 
+    cashq.bindValue(":ccpayid",   pccpayid);
     cashq.bindValue(":doctype",   preftype);
     cashq.bindValue(":docid",     prefid);
     cashq.exec();
@@ -926,6 +940,11 @@ int CreditCardProcessor::chargePreauthorized(const QString &pcvv, const double p
       return returnVal;
   }
 
+  if (canProcessCCTrans(ccardid, pcurrid) < 0)
+  {
+    return -110;
+  }
+
   if (_metrics->boolean("CCConfirmChargePreauth") &&
       QMessageBox::question(0,
 	      tr("Confirm Post-authorization of Credit Card Purchase"),
@@ -986,6 +1005,33 @@ int CreditCardProcessor::chargePreauthorized(const QString &pcvv, const double p
   }
 
   return returnVal;
+}
+
+/** @brief Checks if all accounting related setup and mapping is valid for
+           a Credit Card and Currency.
+
+    Calls the database stored procedure, canProcessPaymentGatewayTransaction()
+    to check if setup is valid.
+ */
+int CreditCardProcessor::canProcessCCTrans(int pCardId, int pCurrId)
+{
+  QString sql;
+  sql = "SELECT canProcessPaymentGatewayTransaction("
+        "  :ccardid,"
+        "  :currid) AS can_process_trans;";
+  XSqlQuery canProcessTransaction;
+  canProcessTransaction.prepare(sql);
+  canProcessTransaction.bindValue(":ccardid", pCardId);
+  canProcessTransaction.bindValue(":currid", pCurrId);
+  canProcessTransaction.exec();
+
+  if (canProcessTransaction.lastError().type() != QSqlError::NoError)
+  {
+    _errorMsg = errorMsg(-110).arg(ErrorReporter::getQueryStoredProcErrorMsg(canProcessTransaction));
+    return -110;
+  }
+
+  return 0;
 }
 
 /** @brief Test whether common credit card processing configuration options
@@ -1170,14 +1216,27 @@ int CreditCardProcessor::credit(const int pccardid, const QString &pcvv, const d
     returnVal = checkCreditCard(pccardid, pcvv,  ccard_x);
     if (returnVal < 0)
       return returnVal;
+
+    if (canProcessCCTrans(pccardid, pcurrid) < 0)
+    {
+      return -110;
+    }
   }
   else if (pccpayid > 0) {
-    ccq.prepare("SELECT ccpay_card_pan_trunc"
+    ccq.prepare("SELECT ccpay_card_pan_trunc, ccpay_ccard_id"
                 "  FROM ccpay WHERE ccpay_id=:ccpayid;");
     ccq.bindValue(":ccpayid", pccpayid);
     ccq.exec();
     if (ccq.first())
+    {
       ccard_x = ccq.value("ccpay_card_pan_trunc").toString();
+
+      if (ccq.value("ccpay_ccard_id").toInt() > 0 &&
+          canProcessCCTrans(ccq.value("ccpay_ccard_id").toInt(), pcurrid) < 0)
+      {
+        return -110;
+      }
+    }
     else if (ccq.lastError().type() != QSqlError::NoError)
     {
       _errorMsg = ccq.lastError().databaseText();
@@ -1849,7 +1908,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
       request.setValues(_extraHeaders);
     }
     request.setValue("Host", ccurl.host());
-    
+
     QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
     _http->request(request, prequest.toUtf8());
     while(_http->hasPendingRequests() || _http->currentId() != 0)
@@ -2062,7 +2121,7 @@ bool CreditCardProcessor::waitForHTTP()
 
  */
 int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
-{ 
+{
   if (DEBUG)
     qDebug("updateCCPay(%d, %d params)", pccpayid, pparams.size());
 
@@ -2466,7 +2525,7 @@ bool CreditCardProcessor::handlesCreditCards()
 }
 
 /** @brief Construct a valid URL from the information in the configuration.
-  
+
     Handle the case where someone leaves off a piece of the URL when
     entering the basic configuration. Note that a lot of people are used
     to typing in web browsers, which fill in some parts for them.
@@ -2536,7 +2595,7 @@ QString CreditCardProcessor::buildURL(const QString pserver, const QString pport
     Instead of passing all of the arguments in order, this method
     allows creating a QtScript object and setting properties
     on this object by name. Then the script can pass this object
-    to 
+    to
     authorize(const int pccardid, const int pcvv, const double pamount, double ptax, bool ptaxexempt, double pfreight, double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid):
     @code
       var params = new Object;
@@ -2552,7 +2611,7 @@ QString CreditCardProcessor::buildURL(const QString pserver, const QString pport
         // handle warnings
       ...
     @endcode
-    
+
     @param pinput The parameter list to unpack and use to call authorize
     @return A parameter list containing the output parameters, plus one
             called returnVal holding the return value of authorize
@@ -2706,7 +2765,7 @@ ParameterList CreditCardProcessor::authorize(const ParameterList &pinput)
     allows creating a QtScript object and setting properties
     on this object by name. Then the script can pass this object
     to charge.
-    
+
     @param pinput The parameter list to unpack and use to call charge
     @return A parameter list containing the output parameters, plus one
             called returnVal holding the return value of charge
@@ -2862,7 +2921,7 @@ ParameterList CreditCardProcessor::charge(const ParameterList &pinput)
     allows creating a QtScript object and setting properties
     on this object by name. Then the script can pass this object
     to chargePreauthorized.
-    
+
     @param pinput The parameter list to unpack and use to call chargePreauthorized
     @return A parameter list containing the output parameters, plus one
             called returnVal holding the return value of chargePreauthorized
@@ -2953,7 +3012,7 @@ ParameterList CreditCardProcessor::chargePreauthorized(const ParameterList &pinp
     allows creating a QtScript object and setting properties
     on this object by name. Then the script can pass this object
     to credit.
-    
+
     @param pinput The parameter list to unpack and use to call credit
     @return A parameter list containing the output parameters, plus one
             called returnVal holding the return value of credit
@@ -3121,7 +3180,7 @@ ParameterList CreditCardProcessor::credit(const ParameterList &pinput)
     allows creating a QtScript object and setting properties
     on this object by name. Then the script can pass this object
     to voidPrevious.
-    
+
     @param pinput The parameter list to unpack and use to call voidPrevious
     @return A parameter list containing the output parameters, plus one
             called returnVal holding the return value of voidPrevious
