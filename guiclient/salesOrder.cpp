@@ -893,8 +893,8 @@ bool salesOrder::save(bool partial)
                       tr("<p>The customer has exceeded their credit limit "
                          "and this order will be placed on Credit Hold.\n"
                          "Do you wish to continue saving the order?"),
-                      QMessageBox::Yes,
-                      QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+                      QMessageBox::Yes | QMessageBox::No,
+                      QMessageBox::No) == QMessageBox::Yes)
         _holdType->setCode("C");
       else
         return false;
