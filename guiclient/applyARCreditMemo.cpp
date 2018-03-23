@@ -17,6 +17,7 @@
 #include <metasql.h>
 
 #include "arCreditMemoApplication.h"
+#include "getGLDistDate.h"
 #include "mqlutil.h"
 #include "storedProcErrorLookup.h"
 #include "errorReporter.h"
@@ -91,6 +92,46 @@ void applyARCreditMemo::sPost()
   XSqlQuery applyPost;
   populate(); // repeat in case someone else has updated applications
 
+  QDate applyDate = QDate::currentDate();
+  while (_privileges->check("ChangeCashRecvPostDate"))
+  {
+    getGLDistDate newdlg(this, "", true);
+    newdlg.sSetDefaultLit(tr("Current Date"));
+    if (newdlg.exec() == XDialog::Accepted)
+    {
+      applyDate = newdlg.date();
+      if (applyDate.isNull())
+        applyDate = QDate::currentDate();
+
+      XSqlQuery closedPeriod;
+      closedPeriod.prepare("SELECT period_closed "
+                           "  FROM period "
+                           " WHERE :distdate BETWEEN period_start AND period_end;");
+      closedPeriod.bindValue(":distdate", applyDate);
+      closedPeriod.bindValue(":aropen_id", _aropenid);
+      closedPeriod.exec();
+      if (closedPeriod.first() && !closedPeriod.value("period_closed").toBool())
+        break;
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting A/R CM"),
+                                    closedPeriod, __FILE__, __LINE__))
+        return;
+      else
+      {
+        if (QMessageBox::question(this, tr("Change Date?"),
+                                  tr("Could not post application because the accounting period for "
+                                     "the posting date is closed. Try again with a different "
+                                     "date?"),
+                                  QMessageBox::Yes | QMessageBox::No,
+                                  QMessageBox::No) == QMessageBox::Yes)
+          continue;
+        else
+          return;
+      }
+    }
+    else
+      return;
+  }
+
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
@@ -101,8 +142,9 @@ void applyARCreditMemo::sPost()
     return;
   }
 
-  applyPost.prepare("SELECT postARCreditMemoApplication(:aropen_id) AS result;");
+  applyPost.prepare("SELECT postARCreditMemoApplication(:aropen_id, :applydate) AS result;");
   applyPost.bindValue(":aropen_id", _aropenid);
+  applyPost.bindValue(":applydate", applyDate);
   applyPost.exec();
   if (applyPost.first())
   {
