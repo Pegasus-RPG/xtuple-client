@@ -92,30 +92,21 @@ void applyARCreditMemo::sPost()
   XSqlQuery applyPost;
   populate(); // repeat in case someone else has updated applications
 
-  QVariant applyDate; // starts null
+  QDate applyDate = QDate::currentDate();
   while (_privileges->check("ChangeCashRecvPostDate"))
   {
     getGLDistDate newdlg(this, "", true);
-    newdlg.sSetDefaultLit(tr("Distribution Date"));
+    newdlg.sSetDefaultLit(tr("Current Date"));
     if (newdlg.exec() == XDialog::Accepted)
     {
-      applyDate = QVariant(newdlg.date());
+      applyDate = newdlg.date();
+      if (applyDate.isNull())
+        applyDate = QDate::currentDate();
 
       XSqlQuery closedPeriod;
       closedPeriod.prepare("SELECT period_closed "
                            "  FROM period "
-                           " WHERE (SELECT COALESCE(:distdate, "
-                           "                        GREATEST(s.aropen_distdate, "
-                           "                                 MAX(t.aropen_distdate)), "
-                           "                        CURRENT_DATE) "
-                           "          FROM aropen s "
-                           "          LEFT OUTER JOIN arcreditapply "
-                           "                       ON s.aropen_id = arcreditapply_source_aropen_id "
-                           "          LEFT OUTER JOIN aropen t "
-                           "                       ON arcreditapply_target_aropen_id = t.aropen_id "
-                           "         WHERE s.aropen_id=:aropen_id "
-                           "         GROUP BY s.aropen_distdate) "
-                           "       BETWEEN period_start AND period_end;");
+                           " WHERE :distdate BETWEEN period_start AND period_end;");
       closedPeriod.bindValue(":distdate", applyDate);
       closedPeriod.bindValue(":aropen_id", _aropenid);
       closedPeriod.exec();
