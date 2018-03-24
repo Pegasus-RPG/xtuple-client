@@ -98,6 +98,34 @@ Address:</source>
         <source>Change This One</source>
         <translation>Cambiar Esta</translation>
     </message>
+    <message>
+        <source>Contact</source>
+        <translation type="unfinished">Contacto</translation>
+    </message>
+    <message>
+        <source>Ship-to Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vendor</source>
+        <translation type="unfinished">Proveedor</translation>
+    </message>
+    <message>
+        <source>Vendor addresss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished">Sitio</translation>
+    </message>
+    <message>
+        <source>There are multiple uses of this address:&lt;UL&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/UL&gt;&lt;p&gt;Would you like to save just this one use, save all uses of this address, or cancel this save action?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saving Shared Address</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AddressList</name>
@@ -2275,6 +2303,10 @@ What would you like to do?</source>
     </message>
     <message>
         <source>&lt;p&gt;The security of this transaction may be compromised. The following SSL errors have been reported:&lt;ul&gt;%1&lt;/ul&gt;&lt;/p&gt;&lt;p&gt;Would you like to continue anyway?&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Accounting Configuration Error: %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4694,6 +4726,14 @@ returned %2
         <source>Error Getting Extension Names</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Deprecated Script Call</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fatal error:&lt;p&gt;%1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QueryItem</name>
@@ -7014,16 +7054,6 @@ or Name</source>
         <translation>Página Web</translation>
     </message>
     <message>
-        <source>Saving Shared Address</source>
-        <translation>Guardando Dirección Compartida</translation>
-    </message>
-    <message>
-        <source>There are multiple Contacts sharing this Address.
-If you save this Address, the Address for all of these Contacts will be changed. Would you like to save this Address?</source>
-        <translation>	
-Existen múltiples contactos compartiendo esta Dirección. Si guarda esta Dirección, la Dirección de todos estos contactos será cambiada. ¿Desea guardar esta Dirección?</translation>
-    </message>
-    <message>
         <source>There was an error saving this address (%1).
 Check the database server log for errors.</source>
         <translation>	
@@ -7072,6 +7102,26 @@ Check the database server log for errors.</source>
     </message>
     <message>
         <source>Error Rejecting Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not Saved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This change was not saved because it would create a duplicate. Merge the two addresses instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot Open Recursively</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This address is already open and cannot be raised. Please close windows to get to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locking Error</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8294,6 +8344,18 @@ as an Address. Please select a Prospect to edit:</source>
     </message>
     <message>
         <source>Error Retrieving A/R CM Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Current Date</source>
+        <translation type="unfinished">Fecha Actual</translation>
+    </message>
+    <message>
+        <source>Change Date?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not post application because the accounting period for the posting date is closed. Try again with a different date?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -15137,6 +15199,10 @@ p, li { white-space: pre-wrap; }
         <source>List SOs Start Date:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Allow Free Form Bill-Tos</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>configureSearchPath</name>
@@ -15439,10 +15505,6 @@ p, li { white-space: pre-wrap; }
         <translation>¿Está seguro que desea remover el vínculo entre este Contacto y esta Orden de Transferencia? El nombre y la dirección se conservarán en la orden para referencias futuras.</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Cancelar</translation>
-    </message>
-    <message>
         <source>Contact</source>
         <translation>Contacto</translation>
     </message>
@@ -15469,10 +15531,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Comments</source>
         <translation>Comentarios</translation>
-    </message>
-    <message>
-        <source>Change This One</source>
-        <translation>Cambiar Este</translation>
     </message>
     <message>
         <source>Are you sure you want to remove this Contact as the Contact for this Opportunity?</source>
@@ -15523,20 +15581,12 @@ p, li { white-space: pre-wrap; }
         <translation>Editar</translation>
     </message>
     <message>
-        <source>&lt;p&gt;There are multiple Contacts sharing this Address. What would you like to do?</source>
-        <translation>Hay múltiples contactos compartiendo esta Dirección, ¿Qué desea hacer?</translation>
-    </message>
-    <message>
         <source>Saving Address</source>
         <translation>Guardando Dirección</translation>
     </message>
     <message>
         <source>Source Contact</source>
         <translation>Contacto Origen</translation>
-    </message>
-    <message>
-        <source>Question Saving Address</source>
-        <translation>Pregunta al Guardar Dirección</translation>
     </message>
     <message>
         <source>Vendor Contact</source>
@@ -15561,10 +15611,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Sales Order</source>
         <translation>Orden de Venta</translation>
-    </message>
-    <message>
-        <source>Change Address for All</source>
-        <translation>Cambiar Dirección para Todos</translation>
     </message>
     <message>
         <source>Edit...</source>
@@ -15676,6 +15722,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cannot Save Contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot Open Recursively</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This contact is already open and cannot be raised. Please close windows to get to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locking Error</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -16345,11 +16403,11 @@ Contract Number you have specified.</source>
     </message>
     <message>
         <source>Vendor Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Número de Parte Proveedor</translation>
     </message>
     <message>
         <source>Vendor UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">UM Proveedor</translation>
     </message>
     <message>
         <source>PO Number/Oper</source>
@@ -19772,6 +19830,18 @@ Continuar el proceso?</translation>
     </message>
     <message>
         <source>Locking Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot Open Recursively</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This account is already open and cannot be raised. Please close windows to get to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error deleting Registrations from Account</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -29241,7 +29311,7 @@ Total</source>
     </message>
     <message>
         <source>Contract Number Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Contrato # comienza con</translation>
     </message>
     <message>
         <source>Manufacturer Pattern</source>
@@ -29305,7 +29375,7 @@ Total</source>
     </message>
     <message>
         <source>Vendor Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Número de Parte Proveedor</translation>
     </message>
     <message>
         <source>Manufacturer</source>
@@ -29321,11 +29391,11 @@ Total</source>
     </message>
     <message>
         <source>Vendor UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">UM Proveedor</translation>
     </message>
     <message>
         <source>UOM Ratio</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ratio UM</translation>
     </message>
     <message>
         <source>Active</source>
@@ -29377,11 +29447,11 @@ Total</source>
     </message>
     <message>
         <source>&apos;Always&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Siempre</translation>
     </message>
     <message>
         <source>&apos;Never&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nunca</translation>
     </message>
     <message>
         <source>All</source>
@@ -29552,7 +29622,7 @@ Total</source>
     </message>
     <message>
         <source>Show Expired</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mostrar Vencidos</translation>
     </message>
     <message>
         <source>Show Future</source>
@@ -31059,6 +31129,10 @@ Total</source>
     </message>
     <message>
         <source>Sale Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tax</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -35967,6 +36041,10 @@ Total</source>
         <source>Error Retrieving Sales Order Information</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Tax</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>dspSummarizedBankrecHistory</name>
@@ -39822,10 +39900,6 @@ Would you like to automatically create a credit memo against this return?</sourc
         <translation>Nada seleccionado para Devolver</translation>
     </message>
     <message>
-        <source>Saving Shared Address</source>
-        <translation>Guardar Direccion Compartida</translation>
-    </message>
-    <message>
         <source>&amp;Enter Return</source>
         <translation>&amp;Ingresar Devolución</translation>
     </message>
@@ -39836,10 +39910,6 @@ Would you like to automatically create a credit memo against this return?</sourc
     <message>
         <source>Create Credit Memo</source>
         <translation>Crear Nota Crédito</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;There are multiple uses for this Address. If you save this Address, the Address for all of these uses will be changed. Would you like to save this Address?</source>
-        <translation>Hay múltiple usuarios para esta Dirección. Si la guarda, la Dirección para todo los usuarios cambiará. ¿Desea guardarla?</translation>
     </message>
     <message>
         <source>Return Address:</source>
@@ -39866,14 +39936,6 @@ Would you like to automatically create a credit memo against this return?</sourc
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error Saving Data</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1: There was an error saving P/O Return Information. Check the database server log for errors.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error Retrieving P/O Item Information</source>
         <translation type="unfinished"></translation>
     </message>
@@ -39891,6 +39953,10 @@ Would you like to automatically create a credit memo against this return?</sourc
     </message>
     <message>
         <source>Posting Distribution Detail Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error saving address</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -43396,6 +43462,18 @@ You may not create duplicate Forms.</source>
         <source>You have choosen to use an account but no account was specified.</source>
         <translation>Ha elegido utilizar una cuenta pero no especificó ninguna.</translation>
     </message>
+    <message>
+        <source>Error updating accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Accounts Updated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All accounts were successfully updated.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>freightBreakdown</name>
@@ -45170,6 +45248,18 @@ Are you sure that you want to Implode the selected Work Order?</source>
         <source>Cannot Save Incident</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cannot Open Recursively</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This incident is already open and cannot be raised. Please close windows to get to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locking Error</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>incidentCategories</name>
@@ -46411,10 +46501,6 @@ Could not post Invoice #%1 due to a missing exchange rate.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invoice Item Characteristics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -46425,6 +46511,10 @@ Could not post Invoice #%1 due to a missing exchange rate.</source>
     <message>
         <source>Co&amp;mments</source>
         <translation type="unfinished">Co&amp;mentarios</translation>
+    </message>
+    <message>
+        <source>Invoice Line Characteristics</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -55069,6 +55159,10 @@ You must reassign these Item Sites before you may delete the selected Planner Co
         <source>Error Retrieving Packing List Information</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Tax</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>openVouchers</name>
@@ -55534,6 +55628,18 @@ el prospecto en cliente utilizando los valores globales predefinidos?</translati
     </message>
     <message>
         <source>Cannot Save Incident</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot Open Recursively</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This opportunity is already open and cannot be raised. Please close windows to get to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locking Error</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -56436,6 +56542,10 @@ Si su respuesta es &apos;&apos;Sí&apos;&apos; entonces debería haber respaldad
     </message>
     <message>
         <source>Remove Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tax</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -60878,6 +60988,26 @@ Si responde &apos;&apos;No&apos;&apos; entonces cambie el Número de vuelta a %2
         <source>Please first select an order type or types to print.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Show Closed Tasks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot Open Recursively</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This project is already open and cannot be raised. Please close windows to get to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not get Task Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locking Error</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>projectCopy</name>
@@ -61563,6 +61693,18 @@ Si responde &apos;&apos;No&apos;&apos; entonces cambie el Número de vuelta a %2
     </message>
     <message>
         <source>You must enter a name for this Prospect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot Open Recursively</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This prospect is already open and cannot be raised. Please close windows to get to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locking Error</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -62527,15 +62669,15 @@ Click Yes to use the existing Purchase Order otherwise a new one will be created
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Purchase Item Characteristics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>No Supplying Site</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>No Supplying Sites exist for this item.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Purchase Line Characteristics</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -63769,10 +63911,6 @@ Please correct this before continuing.</source>
 <context>
     <name>registrationKeyDialog</name>
     <message>
-        <source>New Registration Key</source>
-        <translation type="unfinished">Nueva Llave de Registro</translation>
-    </message>
-    <message>
         <source>&amp;Cancel</source>
         <translation>&amp;Cancelar</translation>
     </message>
@@ -63787,6 +63925,34 @@ Please correct this before continuing.</source>
     <message>
         <source>Invalid Registration Key</source>
         <translation type="unfinished">Llave de Registro Inávida</translation>
+    </message>
+    <message>
+        <source>New Registration Key:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Request New Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Valid key expiring %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expired key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New key requested on %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -68076,10 +68242,6 @@ Do you wish to continue saving the order?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;The customer has exceeded their credit limit and you have insufficient privileges to complete this order. You will need to edit the order to ensure it falls within the credit limit or obtain a payment first.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error Retrieving Purchase Order Information</source>
         <translation type="unfinished"></translation>
     </message>
@@ -68240,10 +68402,6 @@ Do you wish to continue saving the order?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;The customer has exceeded their credit limit and you have insufficient privileges to issue stock for this order. You will need to edit the order to ensure it falls within the credit limit or obtain a payment first.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Cancel</source>
         <translation type="unfinished">&amp;Cancelar</translation>
     </message>
@@ -68277,6 +68435,10 @@ Do you wish to continue saving the order?</source>
     </message>
     <message>
         <source>Error Cancelling Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tax</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -68356,6 +68518,10 @@ Do you wish to continue saving the order?</source>
     </message>
     <message>
         <source>Error Retrieving Item Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tax</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -69469,10 +69635,6 @@ Are you sure you want to do this?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Sales Item Characteristics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Delete Purchase Order Item?</source>
         <translation type="unfinished">¿Eliminar partida de Orden de Compra?</translation>
     </message>
@@ -69486,6 +69648,10 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Error deleting P/O Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sales Line Characteristics</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -72149,10 +72315,6 @@ de la Orden de Trabajo seleccionada para desechar.</translation>
 <context>
     <name>shipTo</name>
     <message>
-        <source>Change This One</source>
-        <translation type="unfinished">Cambiar Este</translation>
-    </message>
-    <message>
         <source>Cannot Save Ship To</source>
         <translation>No se pudo guardar el Consignatario</translation>
     </message>
@@ -72173,20 +72335,8 @@ de la Orden de Trabajo seleccionada para desechar.</translation>
         <translation>Dirección</translation>
     </message>
     <message>
-        <source>Change Address for All</source>
-        <translation>Cambiar Dirección para Todos</translation>
-    </message>
-    <message>
         <source>Contact</source>
         <translation>Contacto</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;There are multiple uses of this Ship-To Address. What would you like to do?</source>
-        <translation>Hay múltiples usos de esta Dirección de Consignatario. ¿Qué desea hacer?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Cancelar</translation>
     </message>
     <message>
         <source>Ship Zone:</source>
@@ -72253,10 +72403,6 @@ de la Orden de Trabajo seleccionada para desechar.</translation>
         <translation>Cliente #:</translation>
     </message>
     <message>
-        <source>Question Saving Address</source>
-        <translation>Preguntar al Guardar Dirección</translation>
-    </message>
-    <message>
         <source>Sales Rep.:</source>
         <translation>Rep. Ventas:</translation>
     </message>
@@ -72281,15 +72427,15 @@ de la Orden de Trabajo seleccionada para desechar.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error Saving Ship To Information (%1). </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error Retrieving Ship To Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Error Retrieving Sales Rep Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error saving address</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -75372,6 +75518,94 @@ You must first delete the Bill of Materials for the selected target item before 
         <source>pItemlocdistId is required.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Invalid Customer or Payment Method.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Payment Method Bank Account is not set up. Ensure an assignment is configured at: System &gt; Setup &gt; Credit Cards</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Payment Method Bank Account does not have a G/L Account assigned. Configure the Bank Account at: Accounting &gt; Setup Bank Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Payment Method Bank Account G/L Account is not valid. Configure the G/L Account at: Accounting &gt; Ledger Accounts &gt; Chart of Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer does not have an A/R G/L Account assigned. Ensure an assignment is configured at: Sales &gt; Setup &gt; Accounting Mappings &gt; Receivables Assignments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer A/R Account is not valid. Configure the G/L Account at: Accounting &gt; Ledger Accounts &gt; Chart of Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer does not have a Prepaid G/L Account assigned. Configure the assignment at: Sales &gt; Setup &gt; Accounting Mappings &gt; Receivables Assignments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer Prepaid Account is not Active. Configure the G/L Account at: Accounting &gt; Ledger Accounts &gt; Chart of Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer does not have a Deferred Revenue G/L Account assigned. Configure the assignment at: Sales &gt; Setup &gt; Accounting Mappings &gt; Receivables Assignments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Customer Deferred Revenue Account is not Active. Configure the G/L Account at: Accounting &gt; Ledger Accounts &gt; Chart of Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Payment Methods Bank Account and Customer A/R G/L Accounts are not for the same Company. Configure the G/L Account at: Accounting &gt; Ledger Accounts &gt; Chart of Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Payment Methods Bank Account and Customer Prepaid G/L Accounts are not for the same Company. Configure the G/L Account at: Accounting &gt; Ledger Accounts &gt; Chart of Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Payment Methods Bank Account and Customer Deferred Revenue G/L Accounts are not for the same Company. Configure the G/L Account at: Accounting &gt; Ledger Accounts &gt; Chart of Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>G/L Series Discrepancy Account is not set up. Configure the G/L Account at: Accounting &gt; Ledger Accounts &gt; Companies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unassigned G/L Account is not set up. Configure the G/L Account at: Accounting &gt; Ledger Accounts &gt; Companies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tax Code does not have a G/L Account assigned. Configure the G/L Account at: Accounting &gt; Tax &gt; Tax Codes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tax Code G/L Account is not valid. Configure the G/L Account at: Accounting &gt; Ledger Accounts &gt; Chart of Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot post to nonexistent Accounting Period.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot post to a closed Accounting Period.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot post to a frozen Accounting Period.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The selected Sales Order is on Tax Hold and must be taken off of Tax Hold before any inventory may be issued to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The selected Order is on Tax Hold and must be taken off of Tax Hold before it may be shipped.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>subAccntType</name>
@@ -76856,10 +77090,6 @@ You first need to Revoke those Tax Codes.</source>
         <translation>Error guardando dirección</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Cancelar</translation>
-    </message>
-    <message>
         <source>A Tax Authority with the entered code already exists. You may not create a Tax Authority with this code.</source>
         <translation>Una Autoridad Fiscal con el código ingresado ya existe. No puede crear una Autoridad Fiscal con ese código.</translation>
     </message>
@@ -76868,16 +77098,8 @@ You first need to Revoke those Tax Codes.</source>
         <translation>Error en base de datos</translation>
     </message>
     <message>
-        <source>Change This One</source>
-        <translation>Cambiar Esta</translation>
-    </message>
-    <message>
         <source>Cannot Create Tax Authority</source>
         <translation>No se pudo crear la Autoridad Fiscal</translation>
-    </message>
-    <message>
-        <source>Change Address for All</source>
-        <translation>Cambiar Dirección para Todo</translation>
     </message>
     <message>
         <source>Currency:</source>
@@ -76906,14 +77128,6 @@ You first need to Revoke those Tax Codes.</source>
     <message>
         <source>You must enter a valid Code.</source>
         <translation>Debe ingresar un Código valido.</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;There are multiple uses of this Address. What would you like to do?</source>
-        <translation>Hay múltiples usuarios de esta Dirección. ¿Que desea hacer?</translation>
-    </message>
-    <message>
-        <source>Question Saving Address</source>
-        <translation>Preguntar al Guardar Direccion</translation>
     </message>
     <message>
         <source>Account...</source>
@@ -78228,6 +78442,18 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
     </message>
     <message>
         <source>Error Retrieving Incident Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot Open Recursively</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This todo is already open and cannot be raised. Please close windows to get to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locking Error</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -83184,6 +83410,30 @@ Please enter both again carefully.</source>
         <source> GB</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Warning level for outdated script constructs:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Debug</source>
+        <translation type="unfinished">Depurar</translation>
+    </message>
+    <message>
+        <source>Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished">Advertencia</translation>
+    </message>
+    <message>
+        <source>Critical</source>
+        <translation type="unfinished">Crítico</translation>
+    </message>
+    <message>
+        <source>Fatal</source>
+        <translation type="unfinished">Fatal</translation>
+    </message>
 </context>
 <context>
     <name>users</name>
@@ -83251,10 +83501,6 @@ Please enter both again carefully.</source>
         <translation type="unfinished">Debe seleccionar Tipo de Proveedor para este Proveedor.</translation>
     </message>
     <message>
-        <source>Error Saving Address</source>
-        <translation>Error guardando dirección</translation>
-    </message>
-    <message>
         <source>Deleting Tax Registration</source>
         <translation>Eliminando Registros de Impuestos</translation>
     </message>
@@ -83265,10 +83511,6 @@ Please enter both again carefully.</source>
     <message>
         <source>Getting Vendor</source>
         <translation>Obteniendo Proveedor</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;There was an error saving this address (%1). Check the database server log for errors.</source>
-        <translation>&lt;p&gt;Hubo un error al guardar la dirección (%1). Verifique la bitácora del servidor de base de datos por errores.</translation>
     </message>
     <message>
         <source>Getting Tax Registrations</source>
@@ -83289,10 +83531,6 @@ Please enter both again carefully.</source>
     <message>
         <source>Getting Vendor Addresses</source>
         <translation>Obteniendo DIrección del Proveedor</translation>
-    </message>
-    <message>
-        <source>Change Address for All</source>
-        <translation>Cambiar la Dirección para Todos</translation>
     </message>
     <message>
         <source>None</source>
@@ -83344,10 +83582,6 @@ and Purchase Order amounts</source>
         <translation>Cuenta</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Cancelar</translation>
-    </message>
-    <message>
         <source>Save Changes?</source>
         <translation>¿Guardar Cambios?</translation>
     </message>
@@ -83370,10 +83604,6 @@ and Purchase Order amounts</source>
     <message>
         <source>Print</source>
         <translation>Imprimir</translation>
-    </message>
-    <message>
-        <source>Change This One</source>
-        <translation>Cambiar Esta solamente</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -83422,10 +83652,6 @@ and Purchase Order amounts</source>
     <message>
         <source>Convert</source>
         <translation>Convertir</translation>
-    </message>
-    <message>
-        <source>Question Saving Address</source>
-        <translation>Preguntar al Guardar la Dirección</translation>
     </message>
     <message>
         <source>Use Instead of Vendor Number and Name:</source>
@@ -83616,10 +83842,6 @@ and Purchase Order amounts</source>
         <translation>Usted ya está en el primer registro.</translation>
     </message>
     <message>
-        <source>&lt;p&gt;There are multiple uses of this Vendor&apos;s Address. What would you like to do?</source>
-        <translation>Hay múltiples usos para esta dirección del proveedor. ¿Que desea hacer?</translation>
-    </message>
-    <message>
         <source>Account...</source>
         <translation type="unfinished">Cuenta...</translation>
     </message>
@@ -83784,6 +84006,10 @@ by an Item Source</source>
         <source>Tax Type:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error saving address</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>vendorAddress</name>
@@ -83804,10 +84030,6 @@ by an Item Source</source>
         <translation>Cerrar</translation>
     </message>
     <message>
-        <source>Change Address for All</source>
-        <translation>Cambiar Dirección para Todo</translation>
-    </message>
-    <message>
         <source>Notes:</source>
         <translation>Notas:</translation>
     </message>
@@ -83816,29 +84038,12 @@ by an Item Source</source>
         <translation>Guardar</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Cancelar</translation>
-    </message>
-    <message>
         <source>&amp;Cancel</source>
         <translation>&amp;Cancelar</translation>
     </message>
     <message>
         <source>Vendor Address</source>
         <translation>Direccion Proveedor</translation>
-    </message>
-    <message>
-        <source>Change This One</source>
-        <translation>Cambiar Esta</translation>
-    </message>
-    <message>
-        <source>Question Saving Address</source>
-        <translation>Preguntar al Guardar Direccion</translation>
-    </message>
-    <message>
-        <source>There are multiple uses of this Vendor Address.
-What would you like to do?</source>
-        <translation>Hay múltiples usuarios de esta Dirección del Proveedor. ¿Que desea hacer?</translation>
     </message>
     <message>
         <source>Error Retrieving Vendor Information</source>
@@ -83850,11 +84055,6 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Error Occurred</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1: There was an error saving this address (%2).
-Check the database server log for errors.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -85216,10 +85416,6 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
         <translation type="unfinished">&amp;Editar</translation>
     </message>
     <message>
-        <source>&lt;p&gt;There are multiple uses of this Site Address.&lt;/p&gt;&lt;p&gt;What would you like to do?&lt;/p&gt;</source>
-        <translation>Hay múltiples usuarios de esta Direccion del Sitio.&lt;br&gt;&lt;br&gt;¿Que desea hacer?</translation>
-    </message>
-    <message>
         <source>&amp;New</source>
         <translation>&amp;Nuevo</translation>
     </message>
@@ -85320,28 +85516,12 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
         <translation>Permitir Caracteres Alfanum.</translation>
     </message>
     <message>
-        <source>Question Saving Address</source>
-        <translation>Preguntar al Guardar Direccion</translation>
-    </message>
-    <message>
         <source>Shipping Comments:</source>
         <translation>Comentarios de Embarques:</translation>
     </message>
     <message>
-        <source>Change This One</source>
-        <translation>Cambiar Este</translation>
-    </message>
-    <message>
         <source>General</source>
         <translation>General</translation>
-    </message>
-    <message>
-        <source>Change Address for All</source>
-        <translation>Cambiar Dirección para Todo</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Cancelar</translation>
     </message>
     <message>
         <source>None</source>
@@ -85460,16 +85640,11 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error Occurred</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1: There was an error saving this address (%2).
-Check the database server log for errors.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error Deleting Site Zone Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error saving address</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
