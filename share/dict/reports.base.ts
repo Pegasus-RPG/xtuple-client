@@ -1885,6 +1885,89 @@
     </message>
   </context>
   <context>
+    <name>Artina800L</name>
+    <message>
+      <width>55</width>
+      <source>Amount:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>75</width>
+      <source>Check Total:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>60</width>
+      <source>Memo:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>70</width>
+      <source>Net Amount:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>90</width>
+      <source>Discount / Credit:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>111</width>
+      <source>Invoice / Document:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>61</width>
+      <source>Check #</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>75</width>
+      <source>Reference:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>75</width>
+      <source>Reference:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>60</width>
+      <source>Memo:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>61</width>
+      <source>Check #</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>70</width>
+      <source>Net Amount:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>111</width>
+      <source>Invoice / Document:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>90</width>
+      <source>Discount / Credit:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>55</width>
+      <source>Amount:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>75</width>
+      <source>Check Total:</source>
+      <translation type="unfinished"/>
+    </message>
+  </context>
+  <context>
     <name>Backlog</name>
     <message>
       <width>102</width>
@@ -3613,7 +3696,7 @@
       <translation type="unfinished"/>
     </message>
     <message>
-      <width>55</width>
+      <width>140</width>
       <source>Prod. Cat.</source>
       <translation type="unfinished"/>
     </message>
@@ -3658,7 +3741,7 @@
       <translation type="unfinished"/>
     </message>
     <message>
-      <width>55</width>
+      <width>140</width>
       <source>Prod. Cat.</source>
       <translation type="unfinished"/>
     </message>
