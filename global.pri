@@ -109,6 +109,7 @@ isEmpty( XTLIBEXT ) {
 }
 
 macx:exists(macx.pri) {
+  CONFIG += c++11
   include(macx.pri)
 }
 
