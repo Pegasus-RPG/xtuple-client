@@ -101,6 +101,8 @@ win32:OPENRPTLIBEXT = a
 win32:XTLIBEXT      = a
 macx:OPENRPTLIBEXT  = a
 macx:XTLIBEXT       = a
+macx:CONFIG += c++11
+
 isEmpty( OPENRPTLIBEXT ) {
   unix:OPENRPTLIBEXT  = so
 }
@@ -109,7 +111,6 @@ isEmpty( XTLIBEXT ) {
 }
 
 macx:exists(macx.pri) {
-  CONFIG += c++11
   include(macx.pri)
 }
 
