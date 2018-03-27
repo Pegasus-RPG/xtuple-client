@@ -137,7 +137,7 @@ void quoteList::sFillList()
 {
   QString sql;
 
-  sql = "SELECT quhead_id, quhead_number, COALESCE(cust_name, prospect_name), "
+  sql = "SELECT quhead_id, quhead_number, COALESCE(cust_name, prospect_name) AS cust_name, "
         "       quhead_quotedate, MIN(quitem_scheddate) AS duedate "
         "  FROM quhead "
         "  JOIN quitem ON quitem_quhead_id = quhead_id "
