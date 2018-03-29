@@ -1,13 +1,14 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which(including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qwebviewproto.h"
 
 #include <QAction>
@@ -63,6 +64,7 @@ QWebViewProto::~QWebViewProto()
 
 bool QWebViewProto::hasSelection() const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->hasSelection();
@@ -71,6 +73,7 @@ bool QWebViewProto::hasSelection() const
 
 bool QWebViewProto::findText(const QString &subString, QWebPage::FindFlags options)
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->findText(subString, options);
@@ -79,6 +82,7 @@ bool QWebViewProto::findText(const QString &subString, QWebPage::FindFlags optio
 
 QWebHistory* QWebViewProto::history() const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->history();
@@ -87,6 +91,7 @@ QWebHistory* QWebViewProto::history() const
 
 QIcon QWebViewProto::icon() const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->icon();
@@ -95,6 +100,7 @@ QIcon QWebViewProto::icon() const
 
 bool QWebViewProto::isModified() const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->isModified();
@@ -103,6 +109,7 @@ bool QWebViewProto::isModified() const
 
 void QWebViewProto::load(const QUrl &url)
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     item->load(url);
@@ -110,6 +117,7 @@ void QWebViewProto::load(const QUrl &url)
 
 void QWebViewProto::load(const QNetworkRequest &request, QNetworkAccessManager::Operation operation, const QByteArray &body)
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     item->load(request, operation, body);
@@ -117,6 +125,7 @@ void QWebViewProto::load(const QNetworkRequest &request, QNetworkAccessManager::
 
 QWebPage* QWebViewProto::page() const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->page();
@@ -125,6 +134,7 @@ QWebPage* QWebViewProto::page() const
 
 QAction* QWebViewProto::pageAction(QWebPage::WebAction action)  const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->pageAction(action);
@@ -133,6 +143,7 @@ QAction* QWebViewProto::pageAction(QWebPage::WebAction action)  const
 
 QPainter::RenderHints QWebViewProto::renderHints() const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->renderHints();
@@ -141,6 +152,7 @@ QPainter::RenderHints QWebViewProto::renderHints() const
 
 QString QWebViewProto::selectedHtml() const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->selectedHtml();
@@ -149,6 +161,7 @@ QString QWebViewProto::selectedHtml() const
 
 QString QWebViewProto::selectedText() const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->selectedText();
@@ -157,6 +170,7 @@ QString QWebViewProto::selectedText() const
 
 void QWebViewProto::setContent(const QByteArray &data, const QString &mimeType, const QUrl &baseUrl)
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     item->setContent(data, mimeType, baseUrl);
@@ -164,6 +178,7 @@ void QWebViewProto::setContent(const QByteArray &data, const QString &mimeType, 
 
 void QWebViewProto::setHtml(const QString &html, const QUrl &baseUrl)
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     item->setHtml(html, baseUrl);
@@ -171,6 +186,7 @@ void QWebViewProto::setHtml(const QString &html, const QUrl &baseUrl)
 
 void QWebViewProto::setPage(QWebPage *page)
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     item->setPage(page);
@@ -178,6 +194,7 @@ void QWebViewProto::setPage(QWebPage *page)
 
 void QWebViewProto::setRenderHint(QPainter::RenderHint hint, bool enabled)
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     item->setRenderHint(hint, enabled);
@@ -185,6 +202,7 @@ void QWebViewProto::setRenderHint(QPainter::RenderHint hint, bool enabled)
 
 void QWebViewProto::setRenderHints(QPainter::RenderHints hints)
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     item->setRenderHints(hints);
@@ -192,6 +210,7 @@ void QWebViewProto::setRenderHints(QPainter::RenderHints hints)
 
 void QWebViewProto::setTextSizeMultiplier(qreal factor)
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     item->setTextSizeMultiplier(factor);
@@ -199,6 +218,7 @@ void QWebViewProto::setTextSizeMultiplier(qreal factor)
 
 QWebSettings* QWebViewProto::settings() const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->settings();
@@ -207,6 +227,7 @@ QWebSettings* QWebViewProto::settings() const
 
 void QWebViewProto::setUrl(const QUrl & url)
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     item->setUrl(url);
@@ -214,6 +235,7 @@ void QWebViewProto::setUrl(const QUrl & url)
 
 void QWebViewProto::setZoomFactor(qreal factor)
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     item->setZoomFactor(factor);
@@ -221,6 +243,7 @@ void QWebViewProto::setZoomFactor(qreal factor)
 
 qreal QWebViewProto::textSizeMultiplier() const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->textSizeMultiplier();
@@ -229,6 +252,7 @@ qreal QWebViewProto::textSizeMultiplier() const
 
 QString QWebViewProto::title() const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->title();
@@ -237,6 +261,7 @@ QString QWebViewProto::title() const
 
 void QWebViewProto::triggerPageAction(QWebPage::WebAction action, bool checked)
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     item->triggerPageAction(action, checked);
@@ -244,6 +269,7 @@ void QWebViewProto::triggerPageAction(QWebPage::WebAction action, bool checked)
 
 QUrl QWebViewProto::url() const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->url();
@@ -252,6 +278,7 @@ QUrl QWebViewProto::url() const
 
 qreal QWebViewProto::zoomFactor() const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->zoomFactor();
@@ -261,6 +288,7 @@ qreal QWebViewProto::zoomFactor() const
 // Reimplemented Public Functions.
 bool QWebViewProto::event(QEvent * e)
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->event(e);
@@ -269,6 +297,7 @@ bool QWebViewProto::event(QEvent * e)
 
 QVariant QWebViewProto::inputMethodQuery(Qt::InputMethodQuery property) const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->inputMethodQuery(property);
@@ -277,6 +306,7 @@ QVariant QWebViewProto::inputMethodQuery(Qt::InputMethodQuery property) const
 
 QSize QWebViewProto::sizeHint() const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->sizeHint();
@@ -286,6 +316,7 @@ QSize QWebViewProto::sizeHint() const
 // Public Slots.
 void QWebViewProto::back()
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->back();
@@ -293,6 +324,7 @@ void QWebViewProto::back()
 
 void QWebViewProto::forward()
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->forward();
@@ -300,6 +332,7 @@ void QWebViewProto::forward()
 
 void QWebViewProto::print(QPrinter * printer) const
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->print(printer);
@@ -307,6 +340,7 @@ void QWebViewProto::print(QPrinter * printer) const
 
 void QWebViewProto::reload()
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->reload();
@@ -314,6 +348,7 @@ void QWebViewProto::reload()
 
 void QWebViewProto::stop()
 {
+  scriptDeprecated("QWebView will not be available in a future version");
   QWebView *item = qscriptvalue_cast<QWebView*>(thisObject());
   if (item)
     return item->stop();

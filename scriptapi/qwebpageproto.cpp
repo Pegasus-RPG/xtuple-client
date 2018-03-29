@@ -1,13 +1,14 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which(including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qwebpageproto.h"
 
 #include <QAction>
@@ -283,6 +284,7 @@ void setupQWebPageProto(QScriptEngine *engine)
 QScriptValue constructQWebPage(QScriptContext * context,
                                     QScriptEngine  *engine)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *obj = 0;
   if (context->argumentCount() == 1)
     obj = new QWebPage(qobject_cast<QWidget*>(context->argument(0).toQObject()));
@@ -294,13 +296,16 @@ QScriptValue constructQWebPage(QScriptContext * context,
 QWebPageProto::QWebPageProto(QObject *parent)
     : QObject(parent)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
 }
 QWebPageProto::~QWebPageProto()
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
 }
 
 QAction* QWebPageProto::action(QWebPage::WebAction action) const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->action(action);
@@ -309,6 +314,7 @@ QAction* QWebPageProto::action(QWebPage::WebAction action) const
 
 quint64 QWebPageProto::bytesReceived() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->bytesReceived();
@@ -317,6 +323,7 @@ quint64 QWebPageProto::bytesReceived() const
 
 QMenu* QWebPageProto::createStandardContextMenu()
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->createStandardContextMenu();
@@ -325,6 +332,7 @@ QMenu* QWebPageProto::createStandardContextMenu()
 
 QWebFrame* QWebPageProto::currentFrame() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->currentFrame();
@@ -333,6 +341,7 @@ QWebFrame* QWebPageProto::currentFrame() const
 
 bool QWebPageProto::extension(QWebPage::Extension extension, const QWebPage::ExtensionOption * option, QWebPage::ExtensionReturn * output)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->extension(extension, option, output);
@@ -341,6 +350,7 @@ bool QWebPageProto::extension(QWebPage::Extension extension, const QWebPage::Ext
 
 bool QWebPageProto::findText(const QString & subString, QWebPage::FindFlags options)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->findText(subString, options);
@@ -349,6 +359,7 @@ bool QWebPageProto::findText(const QString & subString, QWebPage::FindFlags opti
 
 bool QWebPageProto::focusNextPrevChild(bool next)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->focusNextPrevChild(next);
@@ -357,6 +368,7 @@ bool QWebPageProto::focusNextPrevChild(bool next)
 
 bool QWebPageProto::forwardUnsupportedContent() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->forwardUnsupportedContent();
@@ -365,6 +377,7 @@ bool QWebPageProto::forwardUnsupportedContent() const
 
 QWebFrame* QWebPageProto::frameAt(const QPoint & pos) const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->frameAt(pos);
@@ -373,6 +386,7 @@ QWebFrame* QWebPageProto::frameAt(const QPoint & pos) const
 
 bool QWebPageProto::hasSelection() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->hasSelection();
@@ -381,6 +395,7 @@ bool QWebPageProto::hasSelection() const
 
 QWebHistory* QWebPageProto::history() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->history();
@@ -389,6 +404,7 @@ QWebHistory* QWebPageProto::history() const
 
 QVariant QWebPageProto::inputMethodQuery(Qt::InputMethodQuery property) const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->inputMethodQuery(property);
@@ -397,6 +413,7 @@ QVariant QWebPageProto::inputMethodQuery(Qt::InputMethodQuery property) const
 
 bool QWebPageProto::isContentEditable() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->isContentEditable();
@@ -405,6 +422,7 @@ bool QWebPageProto::isContentEditable() const
 
 bool QWebPageProto::isModified() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->isModified();
@@ -413,6 +431,7 @@ bool QWebPageProto::isModified() const
 
 QWebPage::LinkDelegationPolicy QWebPageProto::linkDelegationPolicy() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->linkDelegationPolicy();
@@ -421,6 +440,7 @@ QWebPage::LinkDelegationPolicy QWebPageProto::linkDelegationPolicy() const
 
 QWebFrame* QWebPageProto::mainFrame() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->mainFrame();
@@ -429,6 +449,7 @@ QWebFrame* QWebPageProto::mainFrame() const
 
 QNetworkAccessManager* QWebPageProto::networkAccessManager() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->networkAccessManager();
@@ -437,6 +458,7 @@ QNetworkAccessManager* QWebPageProto::networkAccessManager() const
 
 QPalette QWebPageProto::palette() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->palette();
@@ -445,6 +467,7 @@ QPalette QWebPageProto::palette() const
 
 QWebPluginFactory* QWebPageProto::pluginFactory() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->pluginFactory();
@@ -453,6 +476,7 @@ QWebPluginFactory* QWebPageProto::pluginFactory() const
 
 QSize QWebPageProto::preferredContentsSize() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->preferredContentsSize();
@@ -461,6 +485,7 @@ QSize QWebPageProto::preferredContentsSize() const
 
 QString QWebPageProto::selectedHtml() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->selectedHtml();
@@ -469,6 +494,7 @@ QString QWebPageProto::selectedHtml() const
 
 QString QWebPageProto::selectedText() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->selectedText();
@@ -477,6 +503,7 @@ QString QWebPageProto::selectedText() const
 
 void QWebPageProto::setActualVisibleContentRect(const QRect & rect) const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     item->setActualVisibleContentRect(rect);
@@ -484,6 +511,7 @@ void QWebPageProto::setActualVisibleContentRect(const QRect & rect) const
 
 void QWebPageProto::setContentEditable(bool editable)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     item->setContentEditable(editable);
@@ -491,6 +519,7 @@ void QWebPageProto::setContentEditable(bool editable)
 
 void QWebPageProto::setFeaturePermission(QWebFrame * frame, QWebPage::Feature feature, QWebPage::PermissionPolicy policy)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     item->setFeaturePermission(frame, feature, policy);
@@ -498,6 +527,7 @@ void QWebPageProto::setFeaturePermission(QWebFrame * frame, QWebPage::Feature fe
 
 void QWebPageProto::setForwardUnsupportedContent(bool forward)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     item->setForwardUnsupportedContent(forward);
@@ -505,6 +535,7 @@ void QWebPageProto::setForwardUnsupportedContent(bool forward)
 
 void QWebPageProto::setLinkDelegationPolicy(QWebPage::LinkDelegationPolicy policy)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     item->setLinkDelegationPolicy(policy);
@@ -512,6 +543,7 @@ void QWebPageProto::setLinkDelegationPolicy(QWebPage::LinkDelegationPolicy polic
 
 void QWebPageProto::setNetworkAccessManager(QNetworkAccessManager * manager)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     item->setNetworkAccessManager(manager);
@@ -519,6 +551,7 @@ void QWebPageProto::setNetworkAccessManager(QNetworkAccessManager * manager)
 
 void QWebPageProto::setPalette(const QPalette & palette)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     item->setPalette(palette);
@@ -526,6 +559,7 @@ void QWebPageProto::setPalette(const QPalette & palette)
 
 void QWebPageProto::setPluginFactory(QWebPluginFactory * factory)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     item->setPluginFactory(factory);
@@ -533,6 +567,7 @@ void QWebPageProto::setPluginFactory(QWebPluginFactory * factory)
 
 void QWebPageProto::setPreferredContentsSize(const QSize & size) const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     item->setPreferredContentsSize(size);
@@ -540,6 +575,7 @@ void QWebPageProto::setPreferredContentsSize(const QSize & size) const
 
 void QWebPageProto::setView(QWidget * view)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     item->setView(view);
@@ -547,6 +583,7 @@ void QWebPageProto::setView(QWidget * view)
 
 void QWebPageProto::setViewportSize(const QSize & size) const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     item->setViewportSize(size);
@@ -555,6 +592,7 @@ void QWebPageProto::setViewportSize(const QSize & size) const
 #if QT_VERSION >= 0x050000
 void QWebPageProto::setVisibilityState(QWebPage::VisibilityState state)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     item->setVisibilityState(state);
@@ -563,6 +601,7 @@ void QWebPageProto::setVisibilityState(QWebPage::VisibilityState state)
 
 QWebSettings* QWebPageProto::settings() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->settings();
@@ -571,6 +610,7 @@ QWebSettings* QWebPageProto::settings() const
 
 bool QWebPageProto::shouldInterruptJavaScript()
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->shouldInterruptJavaScript();
@@ -579,6 +619,7 @@ bool QWebPageProto::shouldInterruptJavaScript()
 
 QStringList QWebPageProto::supportedContentTypes() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->supportedContentTypes();
@@ -587,6 +628,7 @@ QStringList QWebPageProto::supportedContentTypes() const
 
 bool QWebPageProto::supportsContentType(const QString & mimeType) const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->supportsContentType(mimeType);
@@ -595,6 +637,7 @@ bool QWebPageProto::supportsContentType(const QString & mimeType) const
 
 bool QWebPageProto::supportsExtension(QWebPage::Extension extension) const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->supportsExtension(extension);
@@ -603,6 +646,7 @@ bool QWebPageProto::supportsExtension(QWebPage::Extension extension) const
 
 bool QWebPageProto::swallowContextMenuEvent(QContextMenuEvent * event)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->swallowContextMenuEvent(event);
@@ -611,6 +655,7 @@ bool QWebPageProto::swallowContextMenuEvent(QContextMenuEvent * event)
 
 quint64 QWebPageProto::totalBytes() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->totalBytes();
@@ -619,6 +664,7 @@ quint64 QWebPageProto::totalBytes() const
 
 void QWebPageProto::triggerAction(QWebPage::WebAction action, bool checked)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     item->triggerAction(action, checked);
@@ -626,6 +672,7 @@ void QWebPageProto::triggerAction(QWebPage::WebAction action, bool checked)
 
 QUndoStack* QWebPageProto::undoStack() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->undoStack();
@@ -634,6 +681,7 @@ QUndoStack* QWebPageProto::undoStack() const
 
 void QWebPageProto::updatePositionDependentActions(const QPoint & pos)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     item->updatePositionDependentActions(pos);
@@ -641,6 +689,7 @@ void QWebPageProto::updatePositionDependentActions(const QPoint & pos)
 
 QWidget* QWebPageProto::view() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->view();
@@ -649,6 +698,7 @@ QWidget* QWebPageProto::view() const
 
 QWebPage::ViewportAttributes QWebPageProto::viewportAttributesForSize(const QSize & availableSize) const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->viewportAttributesForSize(availableSize);
@@ -657,6 +707,7 @@ QWebPage::ViewportAttributes QWebPageProto::viewportAttributesForSize(const QSiz
 
 QSize QWebPageProto::viewportSize() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->viewportSize();
@@ -666,6 +717,7 @@ QSize QWebPageProto::viewportSize() const
 #if QT_VERSION >= 0x050000
 QWebPage::VisibilityState QWebPageProto::visibilityState() const
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->visibilityState();
@@ -676,6 +728,7 @@ QWebPage::VisibilityState QWebPageProto::visibilityState() const
 // Reimplemented Public Functions
 bool QWebPageProto::event(QEvent * ev)
 {
+  scriptDeprecated("QWebPage will not be available in a future version");
   QWebPage *item = qscriptvalue_cast<QWebPage*>(thisObject());
   if (item)
     return item->event(ev);

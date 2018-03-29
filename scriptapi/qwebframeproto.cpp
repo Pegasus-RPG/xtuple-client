@@ -1,13 +1,14 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which(including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qwebframeproto.h"
 
 #include <QIcon>
@@ -82,6 +83,7 @@ QWebFrameProto::QWebFrameProto(QObject *parent)
 #if QT_VERSION >= 0x050000
 void QWebFrameProto::addToJavaScriptWindowObject(const QString & name, QObject * object, QWebFrame::ValueOwnership own)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     item->addToJavaScriptWindowObject(name, object, own);
@@ -90,6 +92,7 @@ void QWebFrameProto::addToJavaScriptWindowObject(const QString & name, QObject *
 
 QUrl QWebFrameProto::baseUrl() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->baseUrl();
@@ -99,6 +102,7 @@ QUrl QWebFrameProto::baseUrl() const
 QList<QWebFrame *> QWebFrameProto::childFrames() const
 {
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
+  scriptDeprecated("QWebFrame will not be available in future versions");
   if (item)
     return item->childFrames();
   return QList<QWebFrame *>();
@@ -106,6 +110,7 @@ QList<QWebFrame *> QWebFrameProto::childFrames() const
 
 QSize QWebFrameProto::contentsSize() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->contentsSize();
@@ -114,6 +119,7 @@ QSize QWebFrameProto::contentsSize() const
 
 QWebElement QWebFrameProto::documentElement() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->documentElement();
@@ -122,6 +128,7 @@ QWebElement QWebFrameProto::documentElement() const
 
 QWebElementCollection QWebFrameProto::findAllElements(const QString & selectorQuery) const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->findAllElements(selectorQuery);
@@ -130,6 +137,7 @@ QWebElementCollection QWebFrameProto::findAllElements(const QString & selectorQu
 
 QWebElement QWebFrameProto::findFirstElement(const QString & selectorQuery) const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->findFirstElement(selectorQuery);
@@ -138,6 +146,7 @@ QWebElement QWebFrameProto::findFirstElement(const QString & selectorQuery) cons
 
 QString QWebFrameProto::frameName() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->frameName();
@@ -146,6 +155,7 @@ QString QWebFrameProto::frameName() const
 
 QRect QWebFrameProto::geometry() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->geometry();
@@ -154,6 +164,7 @@ QRect QWebFrameProto::geometry() const
 
 bool QWebFrameProto::hasFocus() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->hasFocus();
@@ -162,6 +173,7 @@ bool QWebFrameProto::hasFocus() const
 
 QWebHitTestResult QWebFrameProto::hitTestContent(const QPoint & pos) const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->hitTestContent(pos);
@@ -170,6 +182,7 @@ QWebHitTestResult QWebFrameProto::hitTestContent(const QPoint & pos) const
 
 QIcon QWebFrameProto::icon() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->icon();
@@ -178,6 +191,7 @@ QIcon QWebFrameProto::icon() const
 
 void QWebFrameProto::load(const QUrl & url)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     item->load(url);
@@ -185,6 +199,7 @@ void QWebFrameProto::load(const QUrl & url)
 
 void QWebFrameProto::load(const QNetworkRequest & req, QNetworkAccessManager::Operation operation, const QByteArray & body)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     item->load(req, operation, body);
@@ -192,6 +207,7 @@ void QWebFrameProto::load(const QNetworkRequest & req, QNetworkAccessManager::Op
 
 QMultiMap<QString, QString> QWebFrameProto::metaData() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->metaData();
@@ -200,6 +216,7 @@ QMultiMap<QString, QString> QWebFrameProto::metaData() const
 
 QWebPage* QWebFrameProto::page() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->page();
@@ -208,6 +225,7 @@ QWebPage* QWebFrameProto::page() const
 
 QWebFrame* QWebFrameProto::parentFrame() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->parentFrame();
@@ -216,6 +234,7 @@ QWebFrame* QWebFrameProto::parentFrame() const
 
 QPoint QWebFrameProto::pos() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->pos();
@@ -224,6 +243,7 @@ QPoint QWebFrameProto::pos() const
 
 void QWebFrameProto::render(QPainter * painter, const QRegion & clip)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     item->render(painter, clip);
@@ -231,6 +251,7 @@ void QWebFrameProto::render(QPainter * painter, const QRegion & clip)
 
 void QWebFrameProto::render(QPainter * painter, int layer, const QRegion & clip)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     item->render(painter, QWebFrame::RenderLayer(layer), clip);
@@ -238,6 +259,7 @@ void QWebFrameProto::render(QPainter * painter, int layer, const QRegion & clip)
 
 QUrl QWebFrameProto::requestedUrl() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->requestedUrl();
@@ -246,6 +268,7 @@ QUrl QWebFrameProto::requestedUrl() const
 
 void QWebFrameProto::scroll(int dx, int dy)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->scroll(dx, dy);
@@ -253,6 +276,7 @@ void QWebFrameProto::scroll(int dx, int dy)
 
 QRect QWebFrameProto::scrollBarGeometry(Qt::Orientation orientation) const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->scrollBarGeometry(orientation);
@@ -261,6 +285,7 @@ QRect QWebFrameProto::scrollBarGeometry(Qt::Orientation orientation) const
 
 int QWebFrameProto::scrollBarMaximum(Qt::Orientation orientation) const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->scrollBarMaximum(orientation);
@@ -269,6 +294,7 @@ int QWebFrameProto::scrollBarMaximum(Qt::Orientation orientation) const
 
 int QWebFrameProto::scrollBarMinimum(Qt::Orientation orientation) const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->scrollBarMinimum(orientation);
@@ -277,6 +303,7 @@ int QWebFrameProto::scrollBarMinimum(Qt::Orientation orientation) const
 
 Qt::ScrollBarPolicy QWebFrameProto::scrollBarPolicy(Qt::Orientation orientation) const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->scrollBarPolicy(orientation);
@@ -285,6 +312,7 @@ Qt::ScrollBarPolicy QWebFrameProto::scrollBarPolicy(Qt::Orientation orientation)
 
 int QWebFrameProto::scrollBarValue(Qt::Orientation orientation) const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->scrollBarValue(orientation);
@@ -293,6 +321,7 @@ int QWebFrameProto::scrollBarValue(Qt::Orientation orientation) const
 
 QPoint QWebFrameProto::scrollPosition() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->scrollPosition();
@@ -301,6 +330,7 @@ QPoint QWebFrameProto::scrollPosition() const
 
 void QWebFrameProto::scrollToAnchor(const QString & anchor)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     item->scrollToAnchor(anchor);
@@ -308,6 +338,7 @@ void QWebFrameProto::scrollToAnchor(const QString & anchor)
 
 QWebSecurityOrigin QWebFrameProto::securityOrigin() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->securityOrigin();
@@ -320,6 +351,7 @@ QWebSecurityOrigin QWebFrameProto::securityOrigin() const
 
 void QWebFrameProto::setContent(const QByteArray & data, const QString & mimeType, const QUrl & baseUrl)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     item->setContent(data, mimeType, baseUrl);
@@ -327,6 +359,7 @@ void QWebFrameProto::setContent(const QByteArray & data, const QString & mimeTyp
 
 void QWebFrameProto::setFocus()
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     item->setFocus();
@@ -334,6 +367,7 @@ void QWebFrameProto::setFocus()
 
 void QWebFrameProto::setHtml(const QString & html, const QUrl & baseUrl)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     item->setHtml(html, baseUrl);
@@ -341,6 +375,7 @@ void QWebFrameProto::setHtml(const QString & html, const QUrl & baseUrl)
 
 void QWebFrameProto::setScrollBarPolicy(Qt::Orientation orientation, Qt::ScrollBarPolicy policy)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     item->setScrollBarPolicy(orientation, policy);
@@ -348,6 +383,7 @@ void QWebFrameProto::setScrollBarPolicy(Qt::Orientation orientation, Qt::ScrollB
 
 void QWebFrameProto::setScrollBarValue(Qt::Orientation orientation, int value)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     item->setScrollBarValue(orientation, value);
@@ -355,6 +391,7 @@ void QWebFrameProto::setScrollBarValue(Qt::Orientation orientation, int value)
 
 void QWebFrameProto::setScrollPosition(const QPoint & pos)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     item->setScrollPosition(pos);
@@ -362,6 +399,7 @@ void QWebFrameProto::setScrollPosition(const QPoint & pos)
 
 void QWebFrameProto::setTextSizeMultiplier(qreal factor)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     item->setTextSizeMultiplier(factor);
@@ -369,6 +407,7 @@ void QWebFrameProto::setTextSizeMultiplier(qreal factor)
 
 void QWebFrameProto::setUrl(const QUrl & url)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     item->setUrl(url);
@@ -376,6 +415,7 @@ void QWebFrameProto::setUrl(const QUrl & url)
 
 void QWebFrameProto::setZoomFactor(qreal factor)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     item->setZoomFactor(factor);
@@ -383,6 +423,7 @@ void QWebFrameProto::setZoomFactor(qreal factor)
 
 qreal QWebFrameProto::textSizeMultiplier() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->textSizeMultiplier();
@@ -391,6 +432,7 @@ qreal QWebFrameProto::textSizeMultiplier() const
 
 QString QWebFrameProto::title() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->title();
@@ -399,6 +441,7 @@ QString QWebFrameProto::title() const
 
 QString QWebFrameProto::toHtml() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->toHtml();
@@ -407,6 +450,7 @@ QString QWebFrameProto::toHtml() const
 
 QString QWebFrameProto::toPlainText() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->toPlainText();
@@ -415,6 +459,7 @@ QString QWebFrameProto::toPlainText() const
 
 QUrl QWebFrameProto::url() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->url();
@@ -423,6 +468,7 @@ QUrl QWebFrameProto::url() const
 
 qreal QWebFrameProto::zoomFactor() const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->zoomFactor();
@@ -432,6 +478,7 @@ qreal QWebFrameProto::zoomFactor() const
 // Reimplemented Public Functions.
 bool QWebFrameProto::event(QEvent * e)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->event(e);
@@ -441,6 +488,7 @@ bool QWebFrameProto::event(QEvent * e)
 // Public slots.
 QVariant QWebFrameProto::evaluateJavaScript(const QString& scriptSource)
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     return item->evaluateJavaScript(scriptSource);
@@ -449,6 +497,7 @@ QVariant QWebFrameProto::evaluateJavaScript(const QString& scriptSource)
 
 void QWebFrameProto::print(QPrinter * printer) const
 {
+  scriptDeprecated("QWebFrame will not be available in future versions");
   QWebFrame *item = qscriptvalue_cast<QWebFrame*>(thisObject());
   if (item)
     item->print(printer);
