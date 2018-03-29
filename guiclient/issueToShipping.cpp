@@ -104,7 +104,7 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WindowFl
     _warehouseLit->hide();
     _warehouse->hide();
   }
-  
+
   if(_metrics->boolean("EnableSOReservations") || _metrics->boolean("DisallowNegativeInventory"))
   {
     _requireInventory->setForgetful(true);
@@ -326,7 +326,7 @@ void issueToShipping::sIssueStock()
 
     if(_requireInventory->isChecked())
       params.append("requireInventory");
-    
+
     issueLineToShipping newdlg(this, "", true);
     if (newdlg.set(params) == NoError && newdlg.exec() != XDialog::Rejected)
       update = true;
@@ -445,7 +445,7 @@ void issueToShipping::sIssueLineBalance()
 }
 
 bool issueToShipping::sIssueLineBalance(int id, int altId)
-{   
+{
   if (altId == 0) // Not a Job costed item
   {
     if (! sufficientItemInventory(id))
@@ -481,7 +481,7 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
       return false;
     }
 
-    
+
   }
   else
   {
@@ -536,7 +536,7 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
   parentItemlocdist.bindValue(":itemlocSeries", itemlocSeries);
   parentItemlocdist.bindValue(":orderType", _order->type());
   parentItemlocdist.bindValue(":transType", "SH");
-  
+
   // If this is a lot/serial controlled job item, we need to post production first
   if (jobItem)
   {
@@ -581,7 +581,7 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
         if (!womatlItemlocdist.first())
         {
           cleanup.exec();
-          QMessageBox::information( this, tr("Issue Line to Shipping"), 
+          QMessageBox::information( this, tr("Issue Line to Shipping"),
             tr("Failed to Create an itemlocdist record for work order backflushed material item %1.")
             .arg(backflushItems.value("item_number").toString()) );
           return false;
@@ -603,13 +603,13 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
       parentItemlocdist.bindValue(":orderType", "WO");
       parentItemlocdist.bindValue(":transType", "RM");
       parentItemlocdist.bindValue(":qty", issueDetail.value("postprodqty").toDouble());
-    } 
+    }
   }
 
   // Create the itemlocdist record if controlled item and distribute detail if controlled or controlled backflush items
   if (controlled || (issueDetail.value("woItemControlled").toBool() && jobItem) || hasControlledBackflushItems)
   {
-    // If controlled item, execute the sql to create the parent itemlocdist record 
+    // If controlled item, execute the sql to create the parent itemlocdist record
     // (for WO post prod item if job, else for issue to shipping transaction).
     if (controlled || (issueDetail.value("woItemControlled").toBool() && jobItem))
     {
@@ -663,7 +663,7 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
         return false;
       }
 
-      // If controlled item, get the inventory history from post production trans. 
+      // If controlled item, get the inventory history from post production trans.
       // so we can create itemlocdist records for issue to shipping transaction and auto-distribute to them in postInvTrans.
       if (issueDetail.value("woItemControlled").toBool())
       {
@@ -763,7 +763,7 @@ void issueToShipping::sReturnStock()
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
-    
+
     issueReturnStock.prepare("SELECT returnItemShipments(:ordertype, :soitem_id, 0, :ts) AS result;");
     issueReturnStock.bindValue(":ordertype", _order->type());
     issueReturnStock.bindValue(":soitem_id", cursor->id());
@@ -829,12 +829,12 @@ void issueToShipping::sReserveStock()
   {
     ParameterList params;
     params.append("soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
-    
+
     reserveSalesOrderItem newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }
-  
+
   sFillList();
 }
 
@@ -864,7 +864,7 @@ void issueToShipping::sReserveLineBalance()
       return;
     }
   }
-  
+
   sFillList();
 }
 
@@ -894,7 +894,7 @@ void issueToShipping::sUnreserveStock()
       return;
     }
   }
-  
+
   sFillList();
 }
 
@@ -941,7 +941,7 @@ void issueToShipping::sFillList()
       else if (issueFillList.value("holdtype").toString() == "T")
       {
         QMessageBox::critical( this, tr("Cannot Issue Stock"),
-                              storedProcErrorLookup("issuetoshipping", -15));
+                              storedProcErrorLookup("issuetoshipping", -16));
         _order->setId(-1);
         _order->setFocus();
       }
@@ -978,7 +978,7 @@ void issueToShipping::sFillList()
 
   if (_metrics->boolean("EnableSOReservationsByLocation"))
     listp.append("includeReservations");
-  
+
   MetaSQLQuery listm = mqlLoad("issueToShipping", "detail");
   XSqlQuery listq = listm.toQuery(listp);
   _soitem->populate(listq, true);
