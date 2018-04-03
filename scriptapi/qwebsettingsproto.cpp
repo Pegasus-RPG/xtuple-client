@@ -1,13 +1,14 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2018 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
+#include "scriptapi_internal.h"
 #include "qwebsettingsproto.h"
 
 #if QT_VERSION < 0x050000
@@ -63,6 +64,7 @@ void WebGraphicFromScriptValue(const QScriptValue &obj, QWebSettings::WebGraphic
 
 QScriptValue clearIconDatabaseForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   Q_UNUSED(context);
   QWebSettings::clearIconDatabase();
   return engine->undefinedValue();
@@ -70,6 +72,7 @@ QScriptValue clearIconDatabaseForJS(QScriptContext* context, QScriptEngine* engi
 
 QScriptValue clearMemoryCachesForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   Q_UNUSED(context);
   QWebSettings::clearMemoryCaches();
   return engine->undefinedValue();
@@ -77,6 +80,7 @@ QScriptValue clearMemoryCachesForJS(QScriptContext* context, QScriptEngine* engi
 
 QScriptValue enablePersistentStorageForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   if (context->argumentCount() == 1) {
     QString path = context->argument(0).toString();
     QWebSettings::enablePersistentStorage(path);
@@ -88,12 +92,14 @@ QScriptValue enablePersistentStorageForJS(QScriptContext* context, QScriptEngine
 
 QScriptValue globalSettingsForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   Q_UNUSED(context);
   return engine->toScriptValue(QWebSettings::globalSettings());
 }
 
 QScriptValue iconDatabasePathForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   Q_UNUSED(context);
   return engine->toScriptValue(QWebSettings::iconDatabasePath());
 }
@@ -102,6 +108,7 @@ QScriptValue iconDatabasePathForJS(QScriptContext* context, QScriptEngine* engin
 /*
 QScriptValue iconForUrlForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   if (context->argumentCount() == 1) {
     QUrl url = qscriptvalue_cast<QUrl>(context->argument(0));
     return engine->toScriptValue(QWebSettings::iconForUrl(url));
@@ -113,36 +120,42 @@ QScriptValue iconForUrlForJS(QScriptContext* context, QScriptEngine* engine)
 
 QScriptValue maximumPagesInCacheForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   Q_UNUSED(context);
   return engine->toScriptValue(QWebSettings::maximumPagesInCache());
 }
 
 QScriptValue offlineStorageDefaultQuotaForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   Q_UNUSED(context);
   return engine->toScriptValue(QWebSettings::offlineStorageDefaultQuota());
 }
 
 QScriptValue offlineStoragePathForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   Q_UNUSED(context);
   return engine->toScriptValue(QWebSettings::offlineStoragePath());
 }
 
 QScriptValue offlineWebApplicationCachePathForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   Q_UNUSED(context);
   return engine->toScriptValue(QWebSettings::offlineWebApplicationCachePath());
 }
 
 QScriptValue offlineWebApplicationCacheQuotaForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   Q_UNUSED(context);
   return engine->toScriptValue(QWebSettings::offlineWebApplicationCacheQuota());
 }
 
 QScriptValue setIconDatabasePathForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   if (context->argumentCount() == 1) {
     QString path = context->argument(0).toString();
     QWebSettings::setIconDatabasePath(path);
@@ -152,6 +165,7 @@ QScriptValue setIconDatabasePathForJS(QScriptContext* context, QScriptEngine* en
 
 QScriptValue setMaximumPagesInCacheForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   if (context->argumentCount() == 1) {
     int pages = context->argument(0).toInteger();
     QWebSettings::setMaximumPagesInCache(pages);
@@ -161,6 +175,7 @@ QScriptValue setMaximumPagesInCacheForJS(QScriptContext* context, QScriptEngine*
 
 QScriptValue setObjectCacheCapacitiesForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   if (context->argumentCount() == 3) {
     int cacheMinDeadCapacity = context->argument(0).toInteger();
     int cacheMaxDead = context->argument(1).toInteger();
@@ -172,6 +187,7 @@ QScriptValue setObjectCacheCapacitiesForJS(QScriptContext* context, QScriptEngin
 
 QScriptValue setOfflineStorageDefaultQuotaForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   if (context->argumentCount() == 1) {
     qint64 maximumSize = context->argument(0).toInteger();
     QWebSettings::setOfflineStorageDefaultQuota(maximumSize);
@@ -181,6 +197,7 @@ QScriptValue setOfflineStorageDefaultQuotaForJS(QScriptContext* context, QScript
 
 QScriptValue setOfflineStoragePathForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   if (context->argumentCount() == 1) {
     QString path = context->argument(0).toString();
     QWebSettings::setOfflineStoragePath(path);
@@ -190,6 +207,7 @@ QScriptValue setOfflineStoragePathForJS(QScriptContext* context, QScriptEngine* 
 
 QScriptValue setOfflineWebApplicationCachePathForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   if (context->argumentCount() == 1) {
     QString path = context->argument(0).toString();
     QWebSettings::setOfflineWebApplicationCachePath(path);
@@ -199,6 +217,7 @@ QScriptValue setOfflineWebApplicationCachePathForJS(QScriptContext* context, QSc
 
 QScriptValue setOfflineWebApplicationCacheQuotaForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   if (context->argumentCount() == 1) {
     qint64 maximumSize = context->argument(0).toInteger();
     QWebSettings::setOfflineWebApplicationCacheQuota(maximumSize);
@@ -208,6 +227,7 @@ QScriptValue setOfflineWebApplicationCacheQuotaForJS(QScriptContext* context, QS
 
 QScriptValue setWebGraphicForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   if (context->argumentCount() == 2) {
     QWebSettings::WebGraphic type = (QWebSettings::WebGraphic)context->argument(0).toInt32();
     QPixmap graphic = qscriptvalue_cast<QPixmap>(context->argument(1));
@@ -220,6 +240,7 @@ QScriptValue setWebGraphicForJS(QScriptContext* context, QScriptEngine* engine)
 /*
 QScriptValue webGraphicForJS(QScriptContext* context, QScriptEngine* engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   if (context->argumentCount() == 1) {
     QWebSettings::WebGraphic type = (QWebSettings::WebGraphic)context->argument(0).toInt32();
     return engine->toScriptValue(QWebSettings::webGraphic(type, graphic));
@@ -373,6 +394,7 @@ void setupQWebSettingsProto(QScriptEngine *engine)
 
 QScriptValue constructQWebSettings(QScriptContext * /*context*/, QScriptEngine  *engine)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *obj = 0;
   // TODO: QWebSettings does not have a constructor.
   //obj = new QWebSettings();
@@ -386,6 +408,7 @@ QWebSettingsProto::QWebSettingsProto(QObject *parent)
 
 QString QWebSettingsProto::cssMediaType() const
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     return item->cssMediaType();
@@ -394,6 +417,7 @@ QString QWebSettingsProto::cssMediaType() const
 
 QString QWebSettingsProto::defaultTextEncoding() const
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     return item->defaultTextEncoding();
@@ -402,6 +426,7 @@ QString QWebSettingsProto::defaultTextEncoding() const
 
 QString QWebSettingsProto::fontFamily(QWebSettings::FontFamily which) const
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     return item->fontFamily(which);
@@ -410,6 +435,7 @@ QString QWebSettingsProto::fontFamily(QWebSettings::FontFamily which) const
 
 int QWebSettingsProto::fontSize(QWebSettings::FontSize type) const
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     return item->fontSize(type);
@@ -418,6 +444,7 @@ int QWebSettingsProto::fontSize(QWebSettings::FontSize type) const
 
 QString QWebSettingsProto::localStoragePath() const
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     return item->localStoragePath();
@@ -426,6 +453,7 @@ QString QWebSettingsProto::localStoragePath() const
 
 void QWebSettingsProto::resetAttribute(QWebSettings::WebAttribute attribute)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     item->resetAttribute(attribute);
@@ -433,6 +461,7 @@ void QWebSettingsProto::resetAttribute(QWebSettings::WebAttribute attribute)
 
 void QWebSettingsProto::resetFontFamily(QWebSettings::FontFamily which)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     item->resetFontFamily(which);
@@ -440,6 +469,7 @@ void QWebSettingsProto::resetFontFamily(QWebSettings::FontFamily which)
 
 void QWebSettingsProto::resetFontSize(QWebSettings::FontSize type)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     item->resetFontSize(type);
@@ -447,6 +477,7 @@ void QWebSettingsProto::resetFontSize(QWebSettings::FontSize type)
 
 void QWebSettingsProto::setAttribute(QWebSettings::WebAttribute attribute, bool on)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     item->setAttribute(attribute, on);
@@ -454,6 +485,7 @@ void QWebSettingsProto::setAttribute(QWebSettings::WebAttribute attribute, bool 
 
 void QWebSettingsProto::setCSSMediaType(const QString & type)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     item->setCSSMediaType(type);
@@ -461,6 +493,7 @@ void QWebSettingsProto::setCSSMediaType(const QString & type)
 
 void QWebSettingsProto::setDefaultTextEncoding(const QString & encoding)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     item->setDefaultTextEncoding(encoding);
@@ -468,6 +501,7 @@ void QWebSettingsProto::setDefaultTextEncoding(const QString & encoding)
 
 void QWebSettingsProto::setFontFamily(QWebSettings::FontFamily which, const QString & family)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     item->setFontFamily(which, family);
@@ -475,6 +509,7 @@ void QWebSettingsProto::setFontFamily(QWebSettings::FontFamily which, const QStr
 
 void QWebSettingsProto::setFontSize(QWebSettings::FontSize type, int size)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     item->setFontSize(type, size);
@@ -482,6 +517,7 @@ void QWebSettingsProto::setFontSize(QWebSettings::FontSize type, int size)
 
 void QWebSettingsProto::setLocalStoragePath(const QString & path)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     item->setLocalStoragePath(path);
@@ -489,6 +525,7 @@ void QWebSettingsProto::setLocalStoragePath(const QString & path)
 
 void QWebSettingsProto::setThirdPartyCookiePolicy(QWebSettings::ThirdPartyCookiePolicy policy)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     item->setThirdPartyCookiePolicy(policy);
@@ -496,6 +533,7 @@ void QWebSettingsProto::setThirdPartyCookiePolicy(QWebSettings::ThirdPartyCookie
 
 void QWebSettingsProto::setUserStyleSheetUrl(const QUrl & location)
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     item->setUserStyleSheetUrl(location);
@@ -503,6 +541,7 @@ void QWebSettingsProto::setUserStyleSheetUrl(const QUrl & location)
 
 bool QWebSettingsProto::testAttribute(QWebSettings::WebAttribute attribute) const
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     return item->testAttribute(attribute);
@@ -511,6 +550,7 @@ bool QWebSettingsProto::testAttribute(QWebSettings::WebAttribute attribute) cons
 
 QWebSettings::ThirdPartyCookiePolicy QWebSettingsProto::thirdPartyCookiePolicy() const
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     return item->thirdPartyCookiePolicy();
@@ -521,6 +561,7 @@ QWebSettings::ThirdPartyCookiePolicy QWebSettingsProto::thirdPartyCookiePolicy()
 /*
 QUrl QWebSettingsProto::userStyleSheetUrl() const
 {
+  scriptDeprecated("QWebSettings will not be available in a future version");
   QWebSettings *item = qscriptvalue_cast<QWebSettings*>(thisObject());
   if (item)
     return item->userStyleSheetUrl();
