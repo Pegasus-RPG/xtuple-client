@@ -422,7 +422,10 @@ void AddressCluster::setState(const QString &p)
     return;
 
   if (p.isEmpty())
+  {
     _state->setId(-1);
+    _state->setEditText("");
+  }
   else if (_state->findText(p, Qt::MatchExactly) >= 0)
     _state->setText(p);
   else // invalid state?
