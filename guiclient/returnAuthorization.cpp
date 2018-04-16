@@ -235,9 +235,11 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
         return UndefinedError;
       }
 
+      _ignoreSoSignals = true;
       _disposition->setCode(_metrics->value("DefaultRaDisposition"));
       _timing->setCode(_metrics->value("DefaultRaTiming"));
       _creditBy->setCode(_metrics->value("DefaultRaCreditMethod"));
+      _ignoreSoSignals = false;
 
       connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo()));
       connect(_cust, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
@@ -1184,7 +1186,8 @@ void returnAuthorization::sFillList()
     _billToAddr->setEnabled(true);
   }
   _comments->refresh();
-  sCreditByChanged();
+  if (!_ignoreSoSignals)
+    sCreditByChanged();
 }
 
 void returnAuthorization::sCalculateSubtotal()
@@ -1258,9 +1261,9 @@ void returnAuthorization::populate()
 
     _timing->setCode(rahead.value("rahead_timing").toString());
 
+    _ignoreSoSignals = true;
     _creditBy->setCode(rahead.value("rahead_creditmethod").toString());
 
-    _ignoreSoSignals = true;
     _origso->setId(rahead.value("rahead_orig_cohead_id").toInt());
     _newso->setId(rahead.value("rahead_new_cohead_id").toInt(),"SO");
     _ignoreSoSignals = false;
@@ -1487,7 +1490,11 @@ void returnAuthorization::sDispositionChanged()
     _timing->setCode("I");
     _timing->setEnabled(false);
     if (_creditBy->code() == "N")
+    {
+      _ignoreSoSignals = true;
       _creditBy->setCode("M");
+      _ignoreSoSignals = false;
+    }
   }
   else
     _timing->setEnabled(true);
@@ -1513,7 +1520,9 @@ void returnAuthorization::sCreditByChanged()
                           tr("<p>This Return Authorization has authorized "
                              "credit amounts. You may not set the Credit By "
                              "to 'None' unless all credit amounts are zero."));
+    _ignoreSoSignals = true;
     _creditBy->setCode("M");
+    _ignoreSoSignals = false;
   }
   else if (_creditBy->code() == "N" || _total->localValue() == 0)
   {
@@ -1530,6 +1539,14 @@ void returnAuthorization::sCreditByChanged()
     _miscChargeAccount->setEnabled(true);
     _miscCharge->setEnabled(true);
     _freight->setEnabled(true);
+  }
+
+  if (!_ignoreSoSignals)
+  {
+    sSave(true);
+    _ignoreSoSignals = true;
+    sFillList();
+    _ignoreSoSignals = false;
   }
 }
 
