@@ -135,7 +135,9 @@ class ScriptToolbox : public QObject
     void addColumnXTreeWidget(QWidget * tree, const QString &, int, int, bool = true, const QString = QString(), const QString = QString());
     void populateXTreeWidget(QWidget * tree, XSqlQuery pSql, bool = false);
 
+#if QT_VERSION < 0x050900
     void loadQWebView(QWidget * webView, const QString & url);
+#endif
 
     bool printReport(const QString & name, const ParameterList & params, const QString & pdfFilename = QString::null);
     bool printReport(const QString & name, const ParameterList & params, const bool preview, QWidget *parent = 0);
